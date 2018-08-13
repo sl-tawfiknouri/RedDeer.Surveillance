@@ -31,5 +31,21 @@ namespace Domain.Equity.Trading
 
             return _factory.Create(_observers, observer);
         }
+
+        public void Add(ExchangeTick tick)
+        {
+            if (tick == null)
+            {
+                return;
+            }
+
+            if (_observers == null)
+            {
+                return;
+            }
+
+            foreach (var obs in _observers)
+                obs.Value?.OnNext(tick);
+        }
     }
 }

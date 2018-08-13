@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{0F54D773-0644-4BB0-81AF-3F5F525298AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness.Tests", "TestHarness.Tests\TestHarness.Tests.csproj", "{4D65E9D0-641D-42A4-83AE-806E4A237E51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0F54D773-0644-4BB0-81AF-3F5F525298AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F54D773-0644-4BB0-81AF-3F5F525298AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F54D773-0644-4BB0-81AF-3F5F525298AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D65E9D0-641D-42A4-83AE-806E4A237E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D65E9D0-641D-42A4-83AE-806E4A237E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D65E9D0-641D-42A4-83AE-806E4A237E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D65E9D0-641D-42A4-83AE-806E4A237E51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,21 +8,22 @@ namespace Domain.Equity.Trading
         /// <summary>
         /// Shared by reference
         /// </summary>
-        private readonly ConcurrentBag<IObserver<ExchangeTick>> _observers;
+        private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
 
         private IObserver<ExchangeTick> _observer;
 
-        public Unsubscriber(ConcurrentBag<IObserver<ExchangeTick>> observers, IObserver<ExchangeTick> observer)
+        public Unsubscriber(ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> observers, IObserver<ExchangeTick> observer)
         {
-            _observers = observers ?? new ConcurrentBag<IObserver<ExchangeTick>>();
-            _observer = observer;
+            _observers = observers ?? new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
+            _observer = observer ?? throw new ArgumentNullException(nameof(observer));
         }
 
         public void Dispose()
         {
-            if (_observers != null)
+            if (_observers != null 
+                && _observers.ContainsKey(_observer))
             {
-                _observers.TryTake(out _observer);
+                _observers.TryRemove(_observer, out _observer);
             }
         }
     }

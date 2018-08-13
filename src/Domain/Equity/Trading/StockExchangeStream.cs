@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace Domain.Equity.Trading
 {
+    /// <summary>
+    /// An observable stream of stock exchange ticks
+    /// </summary>
     public class StockExchangeStream : IObservable<ExchangeTick>
     {
-        private readonly IList<IObserver<ExchangeTick>> _observers;
+        private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
+        private readonly IUnsubscriberFactory _factory;
 
-        public StockExchangeStream()
+        public StockExchangeStream(IUnsubscriberFactory unsubscriberFactory)
         {
-            _observers = new List<IObserver<ExchangeTick>>();
+            _observers = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
+            _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
         }
 
         public IDisposable Subscribe(IObserver<ExchangeTick> observer)
         {
-            if (!_observers.Contains(observer))
+            if (observer == null)
             {
-                _observers.Add(observer);
+                throw new ArgumentNullException(nameof(observer));
             }
 
-            throw new ArgumentException();
+            if (!_observers.ContainsKey(observer))
+            {
+                _observers.TryAdd(observer, observer);
+            }
+
+            return _factory.Create(_observers, observer);
         }
     }
 }

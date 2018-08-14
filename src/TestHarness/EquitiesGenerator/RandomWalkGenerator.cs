@@ -90,6 +90,7 @@ namespace TestHarness.EquitiesGenerator
                 if (!_walkInitiated)
                 {
                     _activeTimer.Stop();
+                    _tickLocked = false;
                     return;
                 }
 

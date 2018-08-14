@@ -1,8 +1,10 @@
-﻿using Domain.Equity.Trading;
+﻿using Domain.Equity.Market;
+using Domain.Equity.Trading;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Domain.Tests.Equity.Trading
 {
@@ -70,9 +72,10 @@ namespace Domain.Tests.Equity.Trading
             var stream = new StockExchangeStream(_factory);
             var obs1 = A.Fake<IObserver<ExchangeTick>>();
             var obs2 = A.Fake<IObserver<ExchangeTick>>();
-            var tick1 = new ExchangeTick();
-            var tick2 = new ExchangeTick();
-            var tick3 = new ExchangeTick();
+            var exch = new StockExchange(new Market.MarketId("id"), "LSE");
+            var tick1 = new ExchangeTick(exch, new List<SecurityTick>());
+            var tick2 = new ExchangeTick(exch, new List<SecurityTick>());
+            var tick3 = new ExchangeTick(exch, new List<SecurityTick>());
 
             stream.Subscribe(obs1);
             stream.Subscribe(obs2);

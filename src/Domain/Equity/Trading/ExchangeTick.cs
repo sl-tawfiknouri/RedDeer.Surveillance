@@ -8,6 +8,14 @@ namespace Domain.Equity.Trading
     /// </summary>
     public class ExchangeTick
     {
+        public ExchangeTick(
+            StockExchange exchange,
+            IReadOnlyCollection<SecurityTick> securities)
+        {
+            Exchange = exchange;
+            Securities = securities ?? new List<SecurityTick>();
+        }
+
         /// <summary>
         /// The exchange the data update is issued by
         /// </summary>
@@ -16,6 +24,6 @@ namespace Domain.Equity.Trading
         /// <summary>
         /// The securities with updated data
         /// </summary>
-        IReadOnlyCollection<SecurityTick> Securities { get; }
+        public IReadOnlyCollection<SecurityTick> Securities { get; }
     }
 }

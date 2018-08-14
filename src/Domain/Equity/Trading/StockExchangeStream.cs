@@ -6,7 +6,7 @@ namespace Domain.Equity.Trading
     /// <summary>
     /// An observable stream of stock exchange ticks
     /// </summary>
-    public class StockExchangeStream : IObservable<ExchangeTick>
+    public class StockExchangeStream : IStockExchangeStream
     {
         private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
         private readonly IUnsubscriberFactory _factory;

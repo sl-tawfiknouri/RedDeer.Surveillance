@@ -5,7 +5,6 @@ namespace Domain.Equity.Trading
 {
     /// <summary>
     /// This observer just records all the data it has recorded upto the maximum ring buffer allowance
-    /// todo - implement ring buffer to prevent memory problems on long runs
     /// </summary>
     public class RecordingObserver<T> : IObserver<T> where T : class
     {

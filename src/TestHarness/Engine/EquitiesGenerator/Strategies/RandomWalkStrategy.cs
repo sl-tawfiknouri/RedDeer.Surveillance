@@ -43,6 +43,17 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 return null;
             }
 
+            decimal newBuy = CalculateNewBuyValue(tick);
+            decimal newSell = CalculateNewSellValue(tick, newBuy);
+
+            var newSpread = new Spread(new Price(newBuy), new Price(newSell));
+            var newVolume = CalculateNewVolume(tick);
+
+            return new SecurityTick(tick.Security, newSpread, newVolume);
+        }
+
+        private decimal CalculateNewBuyValue(SecurityTick tick)
+        {
             var newBuy = (decimal)Normal.Sample((double)tick.Spread.Buy.Value, _pricingStandardDeviation);
 
             if (newBuy < 0.001m)
@@ -51,20 +62,29 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             }
 
             newBuy = Math.Round(newBuy, 2);
+
+            return newBuy;
+        }
+
+        private decimal CalculateNewSellValue(SecurityTick tick, decimal newBuy)
+        {
             var newSellSample = (decimal)Normal.Sample((double)tick.Spread.Sell.Value, _pricingStandardDeviation);
 
             var newSellLimit = Math.Min(newBuy, newSellSample);
-            var newSellFloor = (newBuy * (1-_maxSpread)); // allow for a max of 5% spread
+            var newSellFloor = (newBuy * (1 - _maxSpread)); // allow for a max of 5% spread
             var newSell = newSellFloor > newSellLimit ? newSellFloor : newSellLimit;
             newSell = Math.Round(newSell, 2);
 
-            var newSpread = new Spread(new Price(newBuy), new Price(newSell));
+            return newSell;
+        }
 
+        private Volume CalculateNewVolume(SecurityTick tick)
+        {
             var newVolumeSample = (int)Normal.Sample(tick.Volume.Traded, _tradingStandardDeviation);
             var newVolumeSampleFloor = Math.Max(0, newVolumeSample);
             var newVolume = new Volume(newVolumeSampleFloor);
 
-            return new SecurityTick(tick.Security, newSpread, newVolume);
+            return newVolume;
         }
     }
 }

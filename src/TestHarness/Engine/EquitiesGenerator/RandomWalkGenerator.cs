@@ -5,7 +5,7 @@ using System.Timers;
 using System.Linq;
 using MathNet.Numerics.Distributions;
 
-namespace TestHarness.EquitiesGenerator
+namespace TestHarness.Engine.EquitiesGenerator
 {
     /// <summary>
     /// Apply a random walk to securities in your stream

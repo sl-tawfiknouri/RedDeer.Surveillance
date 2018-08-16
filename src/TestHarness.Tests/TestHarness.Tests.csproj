@@ -15,4 +15,9 @@
     <ProjectReference Include="..\TestHarness\TestHarness.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Display\" />
+    <Folder Include="Factory\" />
+  </ItemGroup>
+
 </Project>

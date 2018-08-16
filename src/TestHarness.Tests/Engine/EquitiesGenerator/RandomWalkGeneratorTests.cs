@@ -3,9 +3,9 @@ using FakeItEasy;
 using NLog;
 using NUnit.Framework;
 using System;
-using TestHarness.EquitiesGenerator;
+using TestHarness.Engine.EquitiesGenerator;
 
-namespace TestHarness.Tests.EquitiesGenerator
+namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
     [TestFixture]
     public class RandonWalkGeneratorTests

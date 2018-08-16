@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using TestHarness.EquitiesGenerator;
+using TestHarness.Engine.EquitiesGenerator;
 
-namespace TestHarness.Tests.EquitiesGenerator
+namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
     [TestFixture]
     public class NasdaqInitialiserTests

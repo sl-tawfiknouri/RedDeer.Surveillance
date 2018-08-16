@@ -9,9 +9,9 @@ namespace Domain.Equity.Trading
     public class StockExchangeStream : IStockExchangeStream
     {
         private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
-        private readonly IUnsubscriberFactory _factory;
+        private readonly IUnsubscriberFactory<ExchangeTick> _factory;
 
-        public StockExchangeStream(IUnsubscriberFactory unsubscriberFactory)
+        public StockExchangeStream(IUnsubscriberFactory<ExchangeTick> unsubscriberFactory)
         {
             _observers = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
             _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));

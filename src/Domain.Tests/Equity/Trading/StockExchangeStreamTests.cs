@@ -11,12 +11,12 @@ namespace Domain.Tests.Equity.Trading
     [TestFixture]
     public class StockExchangeStreamTests
     {
-        private IUnsubscriberFactory _factory;
+        private IUnsubscriberFactory<ExchangeTick> _factory;
 
         [SetUp]
         public void Setup()
         {
-            _factory = A.Fake<IUnsubscriberFactory>();
+            _factory = A.Fake<IUnsubscriberFactory<ExchangeTick>>();
         }
 
         [Test]

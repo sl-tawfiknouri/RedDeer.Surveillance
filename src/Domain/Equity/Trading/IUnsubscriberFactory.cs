@@ -3,8 +3,8 @@ using System.Collections.Concurrent;
 
 namespace Domain.Equity.Trading
 {
-    public interface IUnsubscriberFactory
+    public interface IUnsubscriberFactory<T>
     {
-        Unsubscriber Create(ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> observers, IObserver<ExchangeTick> observer);
+        Unsubscriber<T> Create(ConcurrentDictionary<IObserver<T>, IObserver<T>> observers, IObserver<T> observer);
     }
 }

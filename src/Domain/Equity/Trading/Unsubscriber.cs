@@ -3,18 +3,18 @@ using System.Collections.Concurrent;
 
 namespace Domain.Equity.Trading
 {
-    public class Unsubscriber : IDisposable
+    public class Unsubscriber<T> : IDisposable
     {
         /// <summary>
         /// Shared by reference
         /// </summary>
-        private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
+        private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observers;
 
-        private IObserver<ExchangeTick> _observer;
+        private IObserver<T> _observer;
 
-        public Unsubscriber(ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> observers, IObserver<ExchangeTick> observer)
+        public Unsubscriber(ConcurrentDictionary<IObserver<T>, IObserver<T>> observers, IObserver<T> observer)
         {
-            _observers = observers ?? new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
+            _observers = observers ?? new ConcurrentDictionary<IObserver<T>, IObserver<T>>();
             _observer = observer ?? throw new ArgumentNullException(nameof(observer));
         }
 

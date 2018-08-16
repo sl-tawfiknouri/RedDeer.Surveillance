@@ -20,7 +20,7 @@ namespace Domain.Tests.Equity.Trading
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber(dict, obs3);
+            var unsub = new Unsubscriber<ExchangeTick>(dict, obs3);
             unsub.Dispose();
 
             Assert.AreEqual(2, dict.Count);
@@ -39,7 +39,7 @@ namespace Domain.Tests.Equity.Trading
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber(dict, obs3);
+            var unsub = new Unsubscriber<ExchangeTick>(dict, obs3);
             dict.TryRemove(obs3, out obs3);
             unsub.Dispose();
 
@@ -53,7 +53,7 @@ namespace Domain.Tests.Equity.Trading
         {
             var obs1 = A.Fake<IObserver<ExchangeTick>>();
            
-            var unsub = new Unsubscriber(null, obs1);
+            var unsub = new Unsubscriber<ExchangeTick>(null, obs1);
 
             Assert.DoesNotThrow(() => unsub.Dispose());
         }
@@ -63,7 +63,7 @@ namespace Domain.Tests.Equity.Trading
         {
             var dict = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
 
-            Assert.Throws<ArgumentNullException>(() => new Unsubscriber(dict, null));
+            Assert.Throws<ArgumentNullException>(() => new Unsubscriber<ExchangeTick>(dict, null));
         }
     }
 }

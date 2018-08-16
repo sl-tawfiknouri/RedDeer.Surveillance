@@ -1,4 +1,6 @@
-﻿namespace Domain.Equity.Trading.Orders
+﻿using System;
+
+namespace Domain.Equity.Trading.Orders
 {
     /// <summary>
     /// A trade order to trade securities in a market
@@ -21,6 +23,12 @@
             Volume = volume;
             Direction = direction;
             OrderStatus = orderStatus;
+
+            if (orderType == OrderType.Limit
+                && limit == null)
+            {
+                throw new ArgumentException(nameof(orderType));
+            }
         }
 
         public OrderType OrderType { get; }

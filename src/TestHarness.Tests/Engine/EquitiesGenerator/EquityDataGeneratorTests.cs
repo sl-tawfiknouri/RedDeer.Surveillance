@@ -4,6 +4,7 @@ using NLog;
 using NUnit.Framework;
 using System;
 using TestHarness.Engine.EquitiesGenerator;
+using TestHarness.Engine.EquitiesGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
@@ -12,18 +13,20 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
     {
         private ILogger _logger;
         private IExchangeTickInitialiser _exchangeTickInitialiser;
+        private IEquityDataGeneratorStrategy _strategy;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger>();
             _exchangeTickInitialiser = A.Fake<IExchangeTickInitialiser>();
+            _strategy = A.Fake<IEquityDataGeneratorStrategy>();
         }
 
         [Test]
         public void InitiateWalk_ThrowsExceptionFor_NullStream()
         {
-            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _logger);
+            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _strategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
 
             Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null, freq));
@@ -32,7 +35,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_ReceivesTicks_AfterInitiationImmediately()
         {
-            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _logger);
+            var randomWalkStrategy = new RandomWalkStrategy();
+            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, randomWalkStrategy, _logger);
             var freq = TimeSpan.FromDays(1);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 10);
@@ -42,7 +46,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             Assert.AreEqual(observer.Buffer.Count, 1);
             A
-                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in random walk generator"))
+                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in equity generator"))
                 .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
@@ -51,7 +55,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
         {
-            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _logger);
+            var randomWalkStrategy = new RandomWalkStrategy();
+            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), randomWalkStrategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 5);
@@ -69,7 +74,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             Assert.AreEqual(observer.Buffer.Count, 2);
             A
-                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in random walk generator"))
+                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in equity generator"))
                 .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
@@ -78,7 +83,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
-            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _logger);
+            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _strategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 5);

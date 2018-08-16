@@ -8,7 +8,7 @@ using TestHarness.EquitiesGenerator;
 namespace TestHarness.Tests.EquitiesGenerator
 {
     [TestFixture]
-    public class RandomWalkGeneratorTests
+    public class RandonWalkGeneratorTests
     {
         private ILogger _logger;
         private IExchangeTickInitialiser _exchangeTickInitialiser;

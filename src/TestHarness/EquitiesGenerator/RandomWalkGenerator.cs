@@ -3,6 +3,7 @@ using NLog;
 using System;
 using System.Timers;
 using System.Linq;
+using MathNet.Numerics.Distributions;
 
 namespace TestHarness.EquitiesGenerator
 {
@@ -19,6 +20,7 @@ namespace TestHarness.EquitiesGenerator
         private ExchangeTick _activeTick;
         private Timer _activeTimer;
         private Random _random;
+        private double _standardDeviation = 0.6; // good value for 15 minute tick updates
 
         private readonly ILogger _logger;
 
@@ -108,17 +110,31 @@ namespace TestHarness.EquitiesGenerator
             }
         }
 
+        /// <summary>
+        /// TODO refactor to geometric brownian motion generator
+        /// </summary>
+        /// <param name="tick"></param>
+        /// <returns></returns>
         private SecurityTick TickSecurity(SecurityTick tick)
         {
-            var newPriceRange = (int)((tick.Spread.Buy.Value) * 0.01m);
-            var newPriceOffset = _random.Next(-newPriceRange, newPriceRange);
-            var newBuy = tick.Spread.Buy.Value + newPriceOffset;
-            var newSell = tick.Spread.Sell.Value + newPriceOffset;
+            var newBuy = (decimal)Normal.Sample((double)tick.Spread.Buy.Value, _standardDeviation);
+
+            if (newBuy < 0.001m)
+            {
+                newBuy = 0.001m;
+            }
+
+            var newSellSample = (decimal)Normal.Sample((double)tick.Spread.Sell.Value, _standardDeviation);
+
+            var newSellLimit = Math.Min(newBuy, newSellSample);
+            var newSellFloor = (newBuy * 0.95m); // allow for a max of 5% spread
+            var newSell = newSellFloor > newSellLimit ? newSellFloor : newSellLimit;
+
             var newSpread = new Spread(new Price(newBuy), new Price(newSell));
 
-            var newVolumeRange = (int)((tick.Volume.Traded) * 0.05m);
-            var newVolumeOffset = _random.Next(-newVolumeRange, newVolumeRange);
-            var newVolume = new Volume(tick.Volume.Traded + newVolumeOffset);
+            var newVolumeSample = (int)Normal.Sample((double)tick.Volume.Traded, _standardDeviation);
+            var newVolumeSampleFloor = Math.Max(0, newVolumeSample);
+            var newVolume = new Volume(newVolumeSampleFloor);
 
             return new SecurityTick(tick.Security, newSpread, newVolume);
         }

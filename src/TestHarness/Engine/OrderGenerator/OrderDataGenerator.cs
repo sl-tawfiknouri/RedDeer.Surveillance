@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Trading;
 using NLog;
 using System;
+using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
@@ -8,24 +9,33 @@ namespace TestHarness.Engine.OrderGenerator
     {
         private IDisposable _unsubscriber;
         private IStockExchangeStream _stockStream;
+        private ITradeOrderStream _tradeStream;
+        private ITradeStrategy _orderStrategy;
 
         private object _stateTransition = new object();
         private volatile bool _generatorExecuting;
 
         private ILogger _logger;
 
-        public OrderDataGenerator(ILogger logger)
+        public OrderDataGenerator(ILogger logger, ITradeStrategy orderStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _orderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
         }
 
-        public void InitiateTrading(IStockExchangeStream stockStream)
+        public void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream tradeStream)
         {
             lock (_stateTransition)
             {
                 if (stockStream == null)
                 {
                     _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null stock stream");
+                    return;
+                }
+
+                if (tradeStream == null)
+                {
+                    _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null trade stream");
                     return;
                 }
 
@@ -37,6 +47,7 @@ namespace TestHarness.Engine.OrderGenerator
 
                 _logger.Log(LogLevel.Info, "Order data generator initiated with new stock stream");
                 _stockStream = stockStream;
+                _tradeStream = tradeStream;
                 _unsubscriber = stockStream.Subscribe(this);
                 _generatorExecuting = true;
             }
@@ -61,7 +72,12 @@ namespace TestHarness.Engine.OrderGenerator
 
         public void OnNext(ExchangeTick value)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                return;
+            }
+
+            _orderStrategy.ExecuteTradeStrategy(value, _tradeStream);
         }
 
         /// <summary>
@@ -88,6 +104,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             _stockStream = null;
+            _tradeStream = null;
             _generatorExecuting = false;
         }
     }

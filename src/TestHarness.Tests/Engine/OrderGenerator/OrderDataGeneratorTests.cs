@@ -4,6 +4,7 @@ using NLog;
 using NUnit.Framework;
 using System;
 using TestHarness.Engine.OrderGenerator;
+using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.OrderGenerator
 {
@@ -12,6 +13,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator
     {
         private IDisposable _unsubscriber;
         private IStockExchangeStream _stockStream;
+        private ITradeOrderStream _tradeStream;
+        private ITradeStrategy _tradeStrategy;
         private ILogger _logger;
 
         [SetUp]
@@ -19,6 +22,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         {
             _unsubscriber = A.Fake<IDisposable>();
             _stockStream = A.Fake<IStockExchangeStream>();
+            _tradeStream = A.Fake<ITradeOrderStream>();
+            _tradeStrategy = A.Fake<ITradeStrategy>();
             _logger = A.Fake<ILogger>();
 
             A
@@ -29,15 +34,21 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new OrderDataGenerator(null));
+            Assert.Throws<ArgumentNullException>(() => new OrderDataGenerator(null, _tradeStrategy));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNullStrategy_ToBeExceptional()
+        {
+            Assert.Throws<ArgumentNullException>(() => new OrderDataGenerator(_logger, null));
         }
 
         [Test]
         public void InitiateTrading_WithNullStockStream_LogsError()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
-            orderDataGenerator.InitiateTrading(null);
+            orderDataGenerator.InitiateTrading(null, _tradeStream);
 
             A
                 .CallTo(() => _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null stock stream"))
@@ -45,11 +56,23 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         }
 
         [Test]
+        public void InitiateTrading_WithNullTradeStream_LogsError()
+        {
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
+
+            orderDataGenerator.InitiateTrading(_stockStream, null);
+
+            A
+                .CallTo(() => _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null trade stream"))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
         public void InitiateTrading_LogsInitiation()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
-            orderDataGenerator.InitiateTrading(_stockStream);
+            orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
 
             A
                 .CallTo(() => _logger.Log(LogLevel.Info, "Order data generator initiated with new stock stream"))
@@ -63,10 +86,10 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void InitiateTrading_WithExistingTrading_DoesNotDeadLockOnTerminatingOldTrading()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
-            orderDataGenerator.InitiateTrading(_stockStream);
-            orderDataGenerator.InitiateTrading(_stockStream);
+            orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
+            orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
 
             A
                 .CallTo(() => _unsubscriber.Dispose())
@@ -88,7 +111,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void TerminateTrading_LogsOnTermination()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
             orderDataGenerator.TerminateTrading();
 
@@ -100,7 +123,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnCompleted_LogsMessageAndCallsTerminate()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
             orderDataGenerator.OnCompleted();
 
@@ -116,7 +139,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnError_LogsWhenException_IsNull()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
 
             orderDataGenerator.OnError(null);
 
@@ -128,7 +151,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnError_LogsWhenException_IsPassedIn()
         {
-            var orderDataGenerator = new OrderDataGenerator(_logger);
+            var orderDataGenerator = new OrderDataGenerator(_logger, _tradeStrategy);
             var exception = new StackOverflowException();
 
             orderDataGenerator.OnError(exception);

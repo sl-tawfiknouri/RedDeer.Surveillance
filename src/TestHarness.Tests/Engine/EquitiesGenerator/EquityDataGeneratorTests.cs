@@ -8,7 +8,7 @@ using TestHarness.Engine.EquitiesGenerator;
 namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
     [TestFixture]
-    public class RandonWalkGeneratorTests
+    public class EquityDataGeneratorTests
     {
         private ILogger _logger;
         private IExchangeTickInitialiser _exchangeTickInitialiser;
@@ -23,7 +23,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_ThrowsExceptionFor_NullStream()
         {
-            var randomWalk = new RandomWalkGenerator(_exchangeTickInitialiser, _logger);
+            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
 
             Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null, freq));
@@ -32,7 +32,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_ReceivesTicks_AfterInitiationImmediately()
         {
-            var randomWalk = new RandomWalkGenerator(_exchangeTickInitialiser, _logger);
+            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _logger);
             var freq = TimeSpan.FromDays(1);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 10);
@@ -51,7 +51,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
         {
-            var randomWalk = new RandomWalkGenerator(new NasdaqInitialiser(), _logger);
+            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 5);
@@ -78,7 +78,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
-            var randomWalk = new RandomWalkGenerator(new NasdaqInitialiser(), _logger);
+            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory());
             var observer = new RecordingObserver<ExchangeTick>(_logger, 5);

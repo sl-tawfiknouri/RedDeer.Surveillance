@@ -11,7 +11,7 @@ namespace TestHarness.Engine.EquitiesGenerator
     /// Apply a random walk to securities in your stream
     /// Not multithread safe, only use with transitory life style
     /// </summary>
-    public class RandomWalkGenerator
+    public class EquityDataGenerator
     {
         private volatile bool _walkInitiated;
         private volatile bool _tickLocked;
@@ -19,7 +19,6 @@ namespace TestHarness.Engine.EquitiesGenerator
         private IStockExchangeStream _stream;
         private ExchangeTick _activeTick;
         private Timer _activeTimer;
-        private Random _random;
         private double _standardDeviation = 0.6; // good value for 15 minute tick updates
 
         private readonly ILogger _logger;
@@ -27,10 +26,9 @@ namespace TestHarness.Engine.EquitiesGenerator
         private object _stateTransitionLock = new object();
         private object _walkingLock = new object();
 
-        public RandomWalkGenerator(IExchangeTickInitialiser exchangeTickInitialiser, ILogger logger)
+        public EquityDataGenerator(IExchangeTickInitialiser exchangeTickInitialiser, ILogger logger)
         {
             _exchangeTickInitialiser = exchangeTickInitialiser;
-            _random = new Random();
             _logger = logger;
         }
 

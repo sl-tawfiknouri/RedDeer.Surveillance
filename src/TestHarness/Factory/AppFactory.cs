@@ -42,7 +42,7 @@ namespace TestHarness.Factory
             exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(5));
+            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(1));
 
             return equityDataGenerator;
         }

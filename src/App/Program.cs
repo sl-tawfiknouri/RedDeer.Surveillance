@@ -14,7 +14,7 @@ namespace App
             var mediator = Initiate();
             ProgramLoop(mediator);
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
         }
 
         private static void InitialSetup()
@@ -26,12 +26,8 @@ namespace App
 
         private static void InitialWelcomeMessage()
         {
-            Console.SetCursorPosition(2, 2);
-            Console.WriteLine("RED DEER SURVEILLANCE");
-
-            Console.SetCursorPosition(2, 4);
-            Console.WriteLine("TEST HARNESS");
-            Console.WriteLine();
+            WriteToLine(2, "RED DEER SURVEILLANCE");
+            WriteToLine(4, "TEST HARNESS");
         }
 
         private static Mediator Initiate()
@@ -40,16 +36,6 @@ namespace App
             mediator.Initiate(null);
 
             return mediator;
-        }
-
-        private static void Commands()
-        {
-            Console.WriteLine();
-            Console.WriteLine("Available commands");
-            Console.WriteLine();
-            Console.WriteLine("--help");
-            Console.WriteLine("--quit");
-            Console.WriteLine();
         }
 
         private static void ProgramLoop(Mediator mediator)
@@ -64,23 +50,30 @@ namespace App
                 switch (io)
                 {
                     case "help":
-                        Commands();
+                        WriteToLine(0, "Available commands | help | quit");
                         break;
 
                     case "quit":
-                        Console.WriteLine("Exiting application...");
+                        WriteToLine(0, "Exiting application...");
+
 
                         programLoop = false;
                         mediator.Terminate();
                         break;
 
                     default:
-                        Console.WriteLine();
-                        Console.WriteLine("Enter 'help' to see available commands");
-                        Console.WriteLine();
+                        WriteToLine(0, "Enter 'help' to see available commands");
                         break;
                 }
             }
+        }
+
+        private static void WriteToLine(int targetLine, string message)
+        {
+            System.Console.SetCursorPosition(0, targetLine);
+            System.Console.Write(new string(' ', System.Console.WindowWidth));
+            System.Console.SetCursorPosition(5, targetLine);
+            System.Console.Write(message);
         }
     }
 }

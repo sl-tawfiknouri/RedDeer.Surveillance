@@ -13,7 +13,7 @@ namespace TestHarness.Factory
     /// <summary>
     /// Replace with a DI approach later on
     /// </summary>
-    public class AppFactory
+    public class AppFactory : IAppFactory
     {
         public IEquityDataGenerator Build()
         {

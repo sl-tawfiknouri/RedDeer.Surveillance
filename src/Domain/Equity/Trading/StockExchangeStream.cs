@@ -8,16 +8,16 @@ namespace Domain.Equity.Trading
     /// </summary>
     public class StockExchangeStream : IStockExchangeStream
     {
-        private readonly ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>> _observers;
-        private readonly IUnsubscriberFactory<ExchangeTick> _factory;
+        private readonly ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>> _observers;
+        private readonly IUnsubscriberFactory<ExchangeFrame> _factory;
 
-        public StockExchangeStream(IUnsubscriberFactory<ExchangeTick> unsubscriberFactory)
+        public StockExchangeStream(IUnsubscriberFactory<ExchangeFrame> unsubscriberFactory)
         {
-            _observers = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
+            _observers = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
             _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
         }
 
-        public IDisposable Subscribe(IObserver<ExchangeTick> observer)
+        public IDisposable Subscribe(IObserver<ExchangeFrame> observer)
         {
             if (observer == null)
             {
@@ -32,7 +32,7 @@ namespace Domain.Equity.Trading
             return _factory.Create(_observers, observer);
         }
 
-        public void Add(ExchangeTick tick)
+        public void Add(ExchangeFrame tick)
         {
             if (tick == null)
             {

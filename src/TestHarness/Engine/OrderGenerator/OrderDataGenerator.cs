@@ -5,7 +5,7 @@ using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
-    public class OrderDataGenerator : IObserver<ExchangeTick>
+    public class OrderDataGenerator : IObserver<ExchangeFrame>
     {
         private IDisposable _unsubscriber;
         private IStockExchangeStream _stockStream;
@@ -70,7 +70,7 @@ namespace TestHarness.Engine.OrderGenerator
             _logger.Log(LogLevel.Error, error);
         }
 
-        public void OnNext(ExchangeTick value)
+        public void OnNext(ExchangeFrame value)
         {
             if (value == null)
             {

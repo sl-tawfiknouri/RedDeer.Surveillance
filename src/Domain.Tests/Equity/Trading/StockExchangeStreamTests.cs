@@ -11,12 +11,12 @@ namespace Domain.Tests.Equity.Trading
     [TestFixture]
     public class StockExchangeStreamTests
     {
-        private IUnsubscriberFactory<ExchangeTick> _factory;
+        private IUnsubscriberFactory<ExchangeFrame> _factory;
 
         [SetUp]
         public void Setup()
         {
-            _factory = A.Fake<IUnsubscriberFactory<ExchangeTick>>();
+            _factory = A.Fake<IUnsubscriberFactory<ExchangeFrame>>();
         }
 
         [Test]
@@ -34,8 +34,8 @@ namespace Domain.Tests.Equity.Trading
             A
                 .CallTo(() => 
                     _factory.Create(
-                        A<ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>>.Ignored, 
-                        A<IObserver<ExchangeTick>>.Ignored))
+                        A<ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>>.Ignored, 
+                        A<IObserver<ExchangeFrame>>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -43,14 +43,14 @@ namespace Domain.Tests.Equity.Trading
         public void Subscribe_WithValidObserver_CallsFactoryCreate()
         {
             var stream = new StockExchangeStream(_factory);
-            var tick = A.Fake<IObserver<ExchangeTick>>();
+            var tick = A.Fake<IObserver<ExchangeFrame>>();
 
             stream.Subscribe(tick);
 
             A
                 .CallTo(() => 
                     _factory.Create(
-                     A<ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>>.Ignored, A<IObserver<ExchangeTick>>.Ignored))
+                     A<ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>>.Ignored, A<IObserver<ExchangeFrame>>.Ignored))
                .MustHaveHappenedOnceExactly();
         }
 
@@ -58,24 +58,24 @@ namespace Domain.Tests.Equity.Trading
         public void Add_NullTick_DoesNothing()
         {
             var stream = new StockExchangeStream(_factory);
-            var obs = A.Fake<IObserver<ExchangeTick>>();
+            var obs = A.Fake<IObserver<ExchangeFrame>>();
 
             stream.Subscribe(obs);
             stream.Add(null);
 
-            A.CallTo(() => obs.OnNext(A<ExchangeTick>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => obs.OnNext(A<ExchangeFrame>.Ignored)).MustNotHaveHappened();
         }
 
         [Test]
         public void Add_Tick_CallsOnNextForAllObservers()
         {
             var stream = new StockExchangeStream(_factory);
-            var obs1 = A.Fake<IObserver<ExchangeTick>>();
-            var obs2 = A.Fake<IObserver<ExchangeTick>>();
+            var obs1 = A.Fake<IObserver<ExchangeFrame>>();
+            var obs2 = A.Fake<IObserver<ExchangeFrame>>();
             var exch = new StockExchange(new Market.MarketId("id"), "LSE");
-            var tick1 = new ExchangeTick(exch, new List<SecurityTick>());
-            var tick2 = new ExchangeTick(exch, new List<SecurityTick>());
-            var tick3 = new ExchangeTick(exch, new List<SecurityTick>());
+            var tick1 = new ExchangeFrame(exch, new List<SecurityFrame>());
+            var tick2 = new ExchangeFrame(exch, new List<SecurityFrame>());
+            var tick3 = new ExchangeFrame(exch, new List<SecurityFrame>());
 
             stream.Subscribe(obs1);
             stream.Subscribe(obs2);

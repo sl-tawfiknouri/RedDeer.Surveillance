@@ -24,7 +24,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         {
             var strategy = new RandomWalkStrategy();
 
-            var result = strategy.TickSecurity(null);
+            var result = strategy.AdvanceFrame(null);
 
             Assert.IsNull(result);
         }
@@ -33,13 +33,13 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new RandomWalkStrategy();
-            var security = new SecurityTick(
+            var security = new SecurityFrame(
                 new Domain.Equity.Security(
                     new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),
                     new Spread(new Price(66), new Price(65)),
                     new Volume(200000));
 
-            var result = strategy.TickSecurity(security);
+            var result = strategy.AdvanceFrame(security);
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             var printableGeneratedSecurity = JsonConvert.SerializeObject(result);
@@ -56,7 +56,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new RandomWalkStrategy();
-            var security = new SecurityTick(
+            var security = new SecurityFrame(
                 new Domain.Equity.Security(
                     new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),
                     new Spread(new Price(66), new Price(65)),
@@ -67,7 +67,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 
             for(var i = 0; i < 99; i++)
             {
-                security = strategy.TickSecurity(security);
+                security = strategy.AdvanceFrame(security);
 
                 var printableGeneratedSecurity = JsonConvert.SerializeObject(security);
                 Console.WriteLine(printableGeneratedSecurity);

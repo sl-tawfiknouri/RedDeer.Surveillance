@@ -27,7 +27,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
             _logger = A.Fake<ILogger>();
 
             A
-                .CallTo(() => _stockStream.Subscribe(A<IObserver<ExchangeTick>>.Ignored))
+                .CallTo(() => _stockStream.Subscribe(A<IObserver<ExchangeFrame>>.Ignored))
                 .Returns(_unsubscriber);
         }
 
@@ -79,7 +79,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
                 .MustHaveHappenedOnceExactly();
 
             A
-                .CallTo(() => _stockStream.Subscribe(A<IObserver<ExchangeTick>>.Ignored))
+                .CallTo(() => _stockStream.Subscribe(A<IObserver<ExchangeFrame>>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 

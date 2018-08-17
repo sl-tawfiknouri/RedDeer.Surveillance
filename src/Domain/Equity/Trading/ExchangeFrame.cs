@@ -6,14 +6,14 @@ namespace Domain.Equity.Trading
     /// <summary>
     /// An aggregatino of security ticks
     /// </summary>
-    public class ExchangeTick
+    public class ExchangeFrame
     {
-        public ExchangeTick(
+        public ExchangeFrame(
             StockExchange exchange,
-            IReadOnlyCollection<SecurityTick> securities)
+            IReadOnlyCollection<SecurityFrame> securities)
         {
             Exchange = exchange;
-            Securities = securities ?? new List<SecurityTick>();
+            Securities = securities ?? new List<SecurityFrame>();
         }
 
         /// <summary>
@@ -24,6 +24,6 @@ namespace Domain.Equity.Trading
         /// <summary>
         /// The securities with updated data
         /// </summary>
-        public IReadOnlyCollection<SecurityTick> Securities { get; }
+        public IReadOnlyCollection<SecurityFrame> Securities { get; }
     }
 }

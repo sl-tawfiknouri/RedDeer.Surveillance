@@ -4,6 +4,6 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 {
     public interface IEquityDataGeneratorStrategy
     {
-        SecurityTick TickSecurity(SecurityTick tick);
+        SecurityFrame AdvanceFrame(SecurityFrame frame);
     }
 }

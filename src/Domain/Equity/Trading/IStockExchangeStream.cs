@@ -2,8 +2,8 @@
 
 namespace Domain.Equity.Trading
 {
-    public interface IStockExchangeStream : IObservable<ExchangeTick>
+    public interface IStockExchangeStream : IObservable<ExchangeFrame>
     {
-        void Add(ExchangeTick tick);
+        void Add(ExchangeFrame tick);
     }
 }

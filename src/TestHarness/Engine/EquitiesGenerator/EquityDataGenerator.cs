@@ -15,10 +15,10 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private volatile bool _walkInitiated;
         private volatile bool _tickLocked;
-        private readonly IExchangeTickInitialiser _exchangeTickInitialiser;
+        private readonly IExchangeSeriesInitialiser _exchangeTickInitialiser;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
-        private ExchangeTick _activeTick;
+        private ExchangeFrame _activeFrame;
         private Timer _activeTimer;
 
         private readonly ILogger _logger;
@@ -27,7 +27,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private object _walkingLock = new object();
 
         public EquityDataGenerator(
-            IExchangeTickInitialiser exchangeTickInitialiser,
+            IExchangeSeriesInitialiser exchangeTickInitialiser,
             IEquityDataGeneratorStrategy dataStrategy,
             ILogger logger)
         {
@@ -51,8 +51,8 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _walkInitiated = true;
 
                 _stream = stream;
-                _activeTick = _exchangeTickInitialiser.InitialTick();
-                _stream.Add(_activeTick);
+                _activeFrame = _exchangeTickInitialiser.InitialFrame();
+                _stream.Add(_activeFrame);
 
                 SetNewTimer(tickFrequency);
             }
@@ -98,13 +98,13 @@ namespace TestHarness.Engine.EquitiesGenerator
                     return;
                 }
 
-                var tockedSecurities = _activeTick
+                var tockedSecurities = _activeFrame
                     .Securities
                     .Select(TickSecurity)
                     .ToArray();
 
-                var tickTock = new ExchangeTick(_activeTick.Exchange, tockedSecurities);
-                _activeTick = tickTock;
+                var tickTock = new ExchangeFrame(_activeFrame.Exchange, tockedSecurities);
+                _activeFrame = tickTock;
 
                 _stream.Add(tickTock);
 
@@ -112,9 +112,9 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private SecurityTick TickSecurity(SecurityTick tick)
+        private SecurityFrame TickSecurity(SecurityFrame frame)
         {
-            return _dataStrategy.TickSecurity(tick);
+            return _dataStrategy.AdvanceFrame(frame);
         }
 
         public void TerminateWalk()

@@ -7,25 +7,25 @@ using System.Linq;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
-    public class NasdaqInitialiser : IExchangeTickInitialiser
+    public class NasdaqInitialiser : IExchangeSeriesInitialiser
     {
-        public ExchangeTick InitialTick()
+        public ExchangeFrame InitialFrame()
         {
             var exchange = new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ");
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(_initialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
-            var tick = new ExchangeTick(exchange, securities);
+            var tick = new ExchangeFrame(exchange, securities);
 
             return tick;
         }
 
-        private List<SecurityTick> ProjectToSecurities(NasdaqData[] nasdaqRaw)
+        private List<SecurityFrame> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
 
             return nasdaqRaw.Select(raw =>
-                new SecurityTick(
+                new SecurityFrame(
                     new Domain.Equity.Security
                         (new Domain.Equity.Security.SecurityId(raw.Symbol), raw.Symbol, raw.Symbol),
                         new Spread(new Price(decimal.Parse(raw.Buy)), new Price(decimal.Parse(raw.Sell))),

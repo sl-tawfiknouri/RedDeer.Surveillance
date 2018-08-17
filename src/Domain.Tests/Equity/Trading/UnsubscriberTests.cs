@@ -12,15 +12,15 @@ namespace Domain.Tests.Equity.Trading
         [Test]
         public void Dispose_RemovesObserverFromBag_WhenOnlyAction()
         {
-            var dict = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
-            var obs1 = A.Fake<IObserver<ExchangeTick>>();
-            var obs2 = A.Fake<IObserver<ExchangeTick>>();
-            var obs3 = A.Fake<IObserver<ExchangeTick>>();
+            var dict = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
+            var obs1 = A.Fake<IObserver<ExchangeFrame>>();
+            var obs2 = A.Fake<IObserver<ExchangeFrame>>();
+            var obs3 = A.Fake<IObserver<ExchangeFrame>>();
             dict.TryAdd(obs1, obs1);
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber<ExchangeTick>(dict, obs3);
+            var unsub = new Unsubscriber<ExchangeFrame>(dict, obs3);
             unsub.Dispose();
 
             Assert.AreEqual(2, dict.Count);
@@ -31,15 +31,15 @@ namespace Domain.Tests.Equity.Trading
         [Test]
         public void Dispose_RemovesObserverFromBag_WhenAlreadyRemoved()
         {
-            var dict = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
-            var obs1 = A.Fake<IObserver<ExchangeTick>>();
-            var obs2 = A.Fake<IObserver<ExchangeTick>>();
-            var obs3 = A.Fake<IObserver<ExchangeTick>>();
+            var dict = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
+            var obs1 = A.Fake<IObserver<ExchangeFrame>>();
+            var obs2 = A.Fake<IObserver<ExchangeFrame>>();
+            var obs3 = A.Fake<IObserver<ExchangeFrame>>();
             dict.TryAdd(obs1, obs1);
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber<ExchangeTick>(dict, obs3);
+            var unsub = new Unsubscriber<ExchangeFrame>(dict, obs3);
             dict.TryRemove(obs3, out obs3);
             unsub.Dispose();
 
@@ -51,9 +51,9 @@ namespace Domain.Tests.Equity.Trading
         [Test]
         public void Dispose_DoesNotThrow_ForNullDictionary()
         {
-            var obs1 = A.Fake<IObserver<ExchangeTick>>();
+            var obs1 = A.Fake<IObserver<ExchangeFrame>>();
            
-            var unsub = new Unsubscriber<ExchangeTick>(null, obs1);
+            var unsub = new Unsubscriber<ExchangeFrame>(null, obs1);
 
             Assert.DoesNotThrow(() => unsub.Dispose());
         }
@@ -61,9 +61,9 @@ namespace Domain.Tests.Equity.Trading
         [Test]
         public void Dispose_DoesThrowForNull_Observer()
         {
-            var dict = new ConcurrentDictionary<IObserver<ExchangeTick>, IObserver<ExchangeTick>>();
+            var dict = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
 
-            Assert.Throws<ArgumentNullException>(() => new Unsubscriber<ExchangeTick>(dict, null));
+            Assert.Throws<ArgumentNullException>(() => new Unsubscriber<ExchangeFrame>(dict, null));
         }
     }
 }

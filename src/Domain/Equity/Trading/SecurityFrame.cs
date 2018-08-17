@@ -3,9 +3,9 @@
     /// <summary>
     /// Stock market update for a security
     /// </summary>
-    public class SecurityTick
+    public class SecurityFrame
     {
-        public SecurityTick(Security security, Spread spread, Volume volume)
+        public SecurityFrame(Security security, Spread spread, Volume volume)
         {
             Security = security;
             Spread = spread;

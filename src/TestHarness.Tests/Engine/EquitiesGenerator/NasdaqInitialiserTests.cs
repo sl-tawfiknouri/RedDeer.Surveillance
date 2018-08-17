@@ -11,7 +11,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         {
             var initialiser = new NasdaqInitialiser();
 
-            var tick = initialiser.InitialTick();
+            var tick = initialiser.InitialFrame();
 
             Assert.AreEqual(tick.Exchange.Name, "NASDAQ");
             Assert.AreEqual(tick.Securities.Count, 3109);

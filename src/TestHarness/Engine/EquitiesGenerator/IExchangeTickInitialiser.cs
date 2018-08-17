@@ -2,8 +2,8 @@
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
-    public interface IExchangeTickInitialiser
+    public interface IExchangeSeriesInitialiser
     {
-        ExchangeTick InitialTick();
+        ExchangeFrame InitialFrame();
     }
 }

@@ -18,6 +18,8 @@
   <ItemGroup>
     <Folder Include="Display\" />
     <Folder Include="Factory\" />
+    <Folder Include="Commands\" />
+    <Folder Include="Network IO\" />
   </ItemGroup>
 
 </Project>

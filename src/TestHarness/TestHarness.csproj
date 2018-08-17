@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="Display\" />
+    <Folder Include="Network IO\" />
   </ItemGroup>
 
 </Project>

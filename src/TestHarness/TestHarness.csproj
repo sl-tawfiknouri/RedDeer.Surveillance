@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <Folder Include="Display\" />
-    <Folder Include="Factory\" />
   </ItemGroup>
 
 </Project>

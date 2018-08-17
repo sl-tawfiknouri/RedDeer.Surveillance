@@ -1,5 +1,4 @@
-﻿using Domain.Equity.Trading;
-using NLog;
+﻿using NLog;
 using System;
 using System.Timers;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace TestHarness.Engine.EquitiesGenerator
     /// Apply a random walk to securities in your stream
     /// Not multithread safe, only use with transitory life style
     /// </summary>
-    public class EquityDataGenerator
+    public class EquityDataGenerator : IEquityDataGenerator
     {
         private volatile bool _walkInitiated;
         private volatile bool _tickLocked;

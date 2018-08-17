@@ -5,7 +5,7 @@ using NLog;
 using NUnit.Framework;
 using System;
 
-namespace Domain.Tests.Equity.Trading
+namespace Domain.Tests.Streams
 {
     [TestFixture]
     public class RecordingObserverTests

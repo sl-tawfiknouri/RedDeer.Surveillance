@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 
-namespace Domain.Tests.Equity.Trading
+namespace Domain.Tests.Streams
 {
     [TestFixture]
     public class UnsubscriberTests

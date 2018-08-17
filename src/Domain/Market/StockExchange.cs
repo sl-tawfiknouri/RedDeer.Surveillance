@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Market
+﻿namespace Domain.Market
 {
     /// <summary>
     /// Stock exchanges LSE

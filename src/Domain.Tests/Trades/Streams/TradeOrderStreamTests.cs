@@ -1,13 +1,13 @@
-﻿using Domain.Equity.Market;
-using Domain.Equity.Trading;
+﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
+using Domain.Market;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 
-namespace Domain.Tests.Equity.Trading
+namespace Domain.Tests.Trades.Streams
 {
     [TestFixture]
     public class TradeOrderStreamTests
@@ -66,7 +66,7 @@ namespace Domain.Tests.Equity.Trading
             var stream = new TradeOrderStream(_factory);
             var obs1 = A.Fake<IObserver<TradeOrder>>();
             var obs2 = A.Fake<IObserver<TradeOrder>>();
-            var exch = new StockExchange(new Market.MarketId("id"), "LSE");
+            var exch = new StockExchange(new MarketId("id"), "LSE");
             var order1 = new TradeOrder(
                 OrderType.Limit,
                 exch,

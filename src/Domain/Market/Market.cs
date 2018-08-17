@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Market
+﻿namespace Domain.Market
 {
     /// <summary>
     /// Shared type for all mediums where equity securities are trading

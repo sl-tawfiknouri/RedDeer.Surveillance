@@ -3,7 +3,7 @@
     /// <summary>
     /// Volume traded within parent datetime range context
     /// </summary>
-    public class Volume
+    public struct Volume
     {
         public Volume(int traded)
         {

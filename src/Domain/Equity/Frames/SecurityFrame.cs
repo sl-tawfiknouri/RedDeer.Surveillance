@@ -13,17 +13,17 @@
         }
 
         /// <summary>
-        /// The security the tick related to
+        /// The security the frame related to
         /// </summary>
         public Security Security { get; }
 
         /// <summary>
-        /// Price spread at the tick point
+        /// Price spread at the frame point
         /// </summary>
         public Spread Spread { get; }
 
         /// <summary>
-        /// The volume of the security traded since the last tick
+        /// The volume of the security traded since the last frame
         /// </summary>
         public Volume Volume { get; }
     }

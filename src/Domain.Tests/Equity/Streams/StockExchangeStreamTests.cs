@@ -1,14 +1,14 @@
-﻿using Domain.Equity.Market;
-using Domain.Equity.Trading;
+﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Streams.Interfaces;
+using Domain.Market;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Domain.Tests.Equity.Trading
+namespace Domain.Tests.Equity.Streams
 {
     [TestFixture]
     public class StockExchangeStreamTests
@@ -74,7 +74,7 @@ namespace Domain.Tests.Equity.Trading
             var stream = new StockExchangeStream(_factory);
             var obs1 = A.Fake<IObserver<ExchangeFrame>>();
             var obs2 = A.Fake<IObserver<ExchangeFrame>>();
-            var exch = new StockExchange(new Market.MarketId("id"), "LSE");
+            var exch = new StockExchange(new MarketId("id"), "LSE");
             var tick1 = new ExchangeFrame(exch, new List<SecurityFrame>());
             var tick2 = new ExchangeFrame(exch, new List<SecurityFrame>());
             var tick3 = new ExchangeFrame(exch, new List<SecurityFrame>());

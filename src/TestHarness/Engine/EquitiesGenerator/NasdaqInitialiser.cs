@@ -1,6 +1,6 @@
-﻿using Domain.Equity.Market;
-using Domain.Equity.Trading;
+﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Frames;
+using Domain.Market;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

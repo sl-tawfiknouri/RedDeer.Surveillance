@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Market;
+﻿using Domain.Market;
 using System.Collections.Generic;
 
 namespace Domain.Equity.Trading.Frames
 {
     /// <summary>
-    /// An aggregatino of security ticks
+    /// An aggregation of security frames
     /// </summary>
     public class ExchangeFrame
     {

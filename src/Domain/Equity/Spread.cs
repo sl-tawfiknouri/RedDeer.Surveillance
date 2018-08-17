@@ -3,7 +3,7 @@
     /// <summary>
     /// Sell / Buy
     /// </summary>
-    public class Spread
+    public struct Spread
     {
         public Spread(Price buy, Price sell)
         {

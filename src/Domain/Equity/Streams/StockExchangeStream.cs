@@ -34,9 +34,9 @@ namespace Domain.Equity.Trading
             return _factory.Create(_observers, observer);
         }
 
-        public void Add(ExchangeFrame tick)
+        public void Add(ExchangeFrame frame)
         {
-            if (tick == null)
+            if (frame == null)
             {
                 return;
             }
@@ -47,7 +47,7 @@ namespace Domain.Equity.Trading
             }
 
             foreach (var obs in _observers)
-                obs.Value?.OnNext(tick);
+                obs.Value?.OnNext(frame);
         }
     }
 }

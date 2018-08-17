@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Market;
-using Domain.Equity.Trading;
+﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
+using Domain.Market;
 using FakeItEasy;
 using MathNet.Numerics.Distributions;
 using NLog;

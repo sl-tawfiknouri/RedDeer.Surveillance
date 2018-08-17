@@ -79,7 +79,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frame = GenerateFrame(frames);
 
             A
-                .CallTo(() => _tradeOrderStream.Add(A<TradeOrder>.Ignored))
+                .CallTo(() => _tradeOrderStream.Add(A<TradeOrderFrame>.Ignored))
                 .Invokes(x => Console.WriteLine(x.Arguments[0]));
 
             A

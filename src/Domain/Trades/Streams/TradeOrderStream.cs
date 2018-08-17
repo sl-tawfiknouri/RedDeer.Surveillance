@@ -7,16 +7,16 @@ namespace Domain.Equity.Trading
 {
     public class TradeOrderStream : ITradeOrderStream
     {
-        private readonly ConcurrentDictionary<IObserver<TradeOrder>, IObserver<TradeOrder>> _observers;
-        private readonly IUnsubscriberFactory<TradeOrder> _unsubscriberFactory;
+        private readonly ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>> _observers;
+        private readonly IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
 
-        public TradeOrderStream(IUnsubscriberFactory<TradeOrder> unsubscriberFactory)
+        public TradeOrderStream(IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory)
         {
-            _observers = new ConcurrentDictionary<IObserver<TradeOrder>, IObserver<TradeOrder>>();
+            _observers = new ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>>();
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
         }
 
-        public IDisposable Subscribe(IObserver<TradeOrder> observer)
+        public IDisposable Subscribe(IObserver<TradeOrderFrame> observer)
         {
             if (observer == null)
             {
@@ -31,7 +31,7 @@ namespace Domain.Equity.Trading
             return _unsubscriberFactory.Create(_observers, observer);
         }
 
-        public void Add(TradeOrder order)
+        public void Add(TradeOrderFrame order)
         {
             if (order == null)
             {

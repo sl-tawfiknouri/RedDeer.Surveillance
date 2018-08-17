@@ -30,7 +30,6 @@ namespace TestHarness
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
 
-
                 if (command == null)
                 {
                     _appFactory.Logger.Log(LogLevel.Warn, "Mediator receieved a null initiation command");

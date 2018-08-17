@@ -25,7 +25,7 @@ namespace TestHarness.Factory
         {
             var tradeStrategy = new ProbabilisticTradeStrategy(Logger);
             var tradeOrderGenerator = new OrderDataGenerator(Logger, tradeStrategy);
-            var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrder>();
+            var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
 
             var equityDataStrategy = new RandomWalkStrategy();

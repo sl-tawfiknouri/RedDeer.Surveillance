@@ -128,7 +128,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return (int)sqrt;
         }
 
-        private TradeOrder GenerateTrade(SecurityFrame frame, ExchangeFrame exchFrame)
+        private TradeOrderFrame GenerateTrade(SecurityFrame frame, ExchangeFrame exchFrame)
         {
             if (frame == null)
             {
@@ -141,7 +141,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var volume = CalculateVolume(frame);
             var orderStatus = CalculateOrderStatus();
 
-            return new TradeOrder(
+            return new TradeOrderFrame(
                 orderType,
                 exchFrame.Exchange,
                 frame.Security,

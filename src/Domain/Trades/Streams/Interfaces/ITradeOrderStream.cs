@@ -3,8 +3,8 @@ using Domain.Equity.Trading.Orders;
 
 namespace Domain.Equity.Trading.Streams.Interfaces
 {
-    public interface ITradeOrderStream : IObservable<TradeOrder>
+    public interface ITradeOrderStream : IObservable<TradeOrderFrame>
     {
-        void Add(TradeOrder order);
+        void Add(TradeOrderFrame order);
     }
 }

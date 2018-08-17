@@ -5,9 +5,9 @@ namespace Domain.Equity.Trading.Orders
     /// <summary>
     /// A trade order to trade securities in a market
     /// </summary>
-    public class TradeOrder
+    public class TradeOrderFrame
     {
-        public TradeOrder(
+        public TradeOrderFrame(
             OrderType orderType,
             Market.Market market,
             Security security,

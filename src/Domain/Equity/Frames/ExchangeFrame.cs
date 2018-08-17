@@ -25,5 +25,22 @@ namespace Domain.Equity.Trading.Frames
         /// The securities with updated data
         /// </summary>
         public IReadOnlyCollection<SecurityFrame> Securities { get; }
+
+        public override string ToString()
+        {
+            var str = string.Empty;
+
+            if (Exchange != null)
+            {
+                str += $"|Exchange.{Exchange.Id}.{Exchange.Name}";   
+            }
+
+            if (Securities != null)
+            {
+                str += $"|Securities.{Securities.Count}";
+            }
+
+            return str;
+        }
     }
 }

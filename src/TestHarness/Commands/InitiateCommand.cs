@@ -8,11 +8,13 @@ namespace TestHarness.Commands
             bool generateSecurityMarket,
             bool generateSecurityTrades,
             bool initiateOnStartup,
+            bool outputDisplay,
             TimeSpan frequency)
         {
             GenerateSecurityMarket = generateSecurityMarket;
             GenerateSecurityTrades = generateSecurityTrades;
             InitiateOnStartup = initiateOnStartup;
+            OutputDisplay = outputDisplay;
             Frequency = frequency;
         }
 
@@ -22,6 +24,9 @@ namespace TestHarness.Commands
 
         public bool InitiateOnStartup { get; }
 
+        public bool OutputDisplay { get; }
+
         public TimeSpan Frequency { get; }
+
     }
 }

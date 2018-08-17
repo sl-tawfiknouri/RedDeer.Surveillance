@@ -12,14 +12,14 @@ namespace Domain.Tests.Trades.Streams
     [TestFixture]
     public class TradeOrderStreamTests
     {
-        private IUnsubscriberFactory<TradeOrder> _factory;
-        private IObserver<TradeOrder> _tradeOrderObserver;
+        private IUnsubscriberFactory<TradeOrderFrame> _factory;
+        private IObserver<TradeOrderFrame> _tradeOrderObserver;
 
         [SetUp]
         public void Setup()
         {
-            _factory = A.Fake<IUnsubscriberFactory<TradeOrder>>();
-            _tradeOrderObserver = A.Fake<IObserver<TradeOrder>>();
+            _factory = A.Fake<IUnsubscriberFactory<TradeOrderFrame>>();
+            _tradeOrderObserver = A.Fake<IObserver<TradeOrderFrame>>();
         }
 
         [Test]
@@ -45,8 +45,8 @@ namespace Domain.Tests.Trades.Streams
 
             A
                 .CallTo(() => _factory.Create(
-                    A<ConcurrentDictionary<IObserver<TradeOrder>, IObserver<TradeOrder>>>.Ignored, 
-                    A<IObserver<TradeOrder>>.Ignored))
+                    A<ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>>>.Ignored, 
+                    A<IObserver<TradeOrderFrame>>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -64,10 +64,10 @@ namespace Domain.Tests.Trades.Streams
         public void Add_OrderIsPassedOnto_Subscribers()
         {
             var stream = new TradeOrderStream(_factory);
-            var obs1 = A.Fake<IObserver<TradeOrder>>();
-            var obs2 = A.Fake<IObserver<TradeOrder>>();
+            var obs1 = A.Fake<IObserver<TradeOrderFrame>>();
+            var obs2 = A.Fake<IObserver<TradeOrderFrame>>();
             var exch = new StockExchange(new MarketId("id"), "LSE");
-            var order1 = new TradeOrder(
+            var order1 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
                 new Domain.Equity.Security(
@@ -79,7 +79,7 @@ namespace Domain.Tests.Trades.Streams
                 OrderDirection.Buy,
                 OrderStatus.Placed);
 
-            var order2 = new TradeOrder(
+            var order2 = new TradeOrderFrame(
                 OrderType.Market,
                 exch,
                 new Domain.Equity.Security(
@@ -91,7 +91,7 @@ namespace Domain.Tests.Trades.Streams
                 OrderDirection.Sell,
                 OrderStatus.Fulfilled);
 
-            var order3 = new TradeOrder(
+            var order3 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
                 new Domain.Equity.Security(

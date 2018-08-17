@@ -185,15 +185,17 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (buyOrSell == OrderDirection.Buy)
             {
-                return new Price(
-                    Math.Round((decimal)Normal.Sample((double)frame.Spread.Buy.Value,
-                    _limitStandardDeviation), 2));
+                var price = (decimal)Normal.Sample((double)frame.Spread.Buy.Value, _limitStandardDeviation);
+                var adjustedPrice = Math.Max(0, Math.Round(price, 2));
+
+                return new Price(adjustedPrice);
             }
             else if (buyOrSell == OrderDirection.Sell)
             {
-                return new Price(
-                    Math.Round((decimal)Normal.Sample((double)frame.Spread.Sell.Value,
-                    _limitStandardDeviation), 2));
+                var price = (decimal)Normal.Sample((double)frame.Spread.Sell.Value, _limitStandardDeviation);
+                var adjustedPrice = Math.Max(0, Math.Round(price, 2));
+
+                return new Price(adjustedPrice);
             }
 
             return null;

@@ -1,4 +1,5 @@
 ﻿using Domain.Equity.Trading;
+using Domain.Equity.Trading.Frames;
 using FakeItEasy;
 using NUnit.Framework;
 using System;

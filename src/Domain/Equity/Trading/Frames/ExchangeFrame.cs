@@ -1,7 +1,7 @@
 ﻿using Domain.Equity.Market;
 using System.Collections.Generic;
 
-namespace Domain.Equity.Trading
+namespace Domain.Equity.Trading.Frames
 {
     /// <summary>
     /// An aggregatino of security ticks

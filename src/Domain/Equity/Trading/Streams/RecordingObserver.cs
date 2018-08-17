@@ -1,7 +1,7 @@
 ﻿using NLog;
 using System;
 
-namespace Domain.Equity.Trading
+namespace Domain.Equity.Trading.Streams
 {
     /// <summary>
     /// This observer just records all the data it has recorded upto the maximum ring buffer allowance

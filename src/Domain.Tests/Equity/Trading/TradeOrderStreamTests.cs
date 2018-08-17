@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Market;
 using Domain.Equity.Trading;
 using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using FakeItEasy;
 using NUnit.Framework;
 using System;

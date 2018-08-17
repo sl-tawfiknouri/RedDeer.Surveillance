@@ -1,4 +1,6 @@
 ﻿using Domain.Equity.Trading;
+using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
 using System;
 using TestHarness.Engine.OrderGenerator.Strategies;

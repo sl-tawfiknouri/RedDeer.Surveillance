@@ -1,4 +1,6 @@
 ﻿using Domain.Equity.Trading;
+using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Streams.Interfaces;
 using FakeItEasy;
 using NLog;
 using NUnit.Framework;

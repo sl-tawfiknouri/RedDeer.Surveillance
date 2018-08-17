@@ -1,4 +1,5 @@
 ﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using System;
 using System.Collections.Concurrent;
 

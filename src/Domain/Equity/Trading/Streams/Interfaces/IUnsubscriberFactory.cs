@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Domain.Equity.Trading
+namespace Domain.Equity.Trading.Streams.Interfaces
 {
     public interface IUnsubscriberFactory<T>
     {

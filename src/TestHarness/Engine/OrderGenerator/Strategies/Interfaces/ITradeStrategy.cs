@@ -1,4 +1,5 @@
-﻿using Domain.Equity.Trading;
+﻿using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Streams.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {

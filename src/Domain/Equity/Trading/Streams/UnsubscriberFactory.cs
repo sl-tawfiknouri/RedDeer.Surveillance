@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Equity.Trading.Streams.Interfaces;
+using System;
 using System.Collections.Concurrent;
 
 namespace Domain.Equity.Trading

@@ -3,7 +3,10 @@ using NLog;
 using System;
 using System.Timers;
 using System.Linq;
-using TestHarness.Engine.EquitiesGenerator.Strategies;
+using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
+using Domain.Equity.Trading.Streams.Interfaces;
+using Domain.Equity.Trading.Frames;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {

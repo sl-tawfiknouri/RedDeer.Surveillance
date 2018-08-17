@@ -1,14 +1,14 @@
 ﻿using Domain.Equity.Market;
 using Domain.Equity.Trading;
+using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using FakeItEasy;
 using MathNet.Numerics.Distributions;
-using Newtonsoft.Json;
 using NLog;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.OrderGenerator.Strategies

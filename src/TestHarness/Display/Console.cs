@@ -1,63 +1,43 @@
-﻿namespace TestHarness.Display
+﻿using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Orders;
+using System;
+
+namespace TestHarness.Display
 {
-    public class Console : BaseDisplay, IConsole
+    public class Console : IConsole
     {
-        private object _lock = new object();
-        private volatile bool initiated;
-
-        public void Initiate()
+        public void OutputMarketFrame(ExchangeFrame frame)
         {
-            lock (_lock)
-            {
-                if (initiated)
-                {
-                    _Terminate();
-                }
-
-                MarketFrameEvent += OutputMarketFrameEvent;
-                TradeFrameEvent += OutputTradeFrameEvent;
-                initiated = true;
-            }
-        }
-
-        public void Terminate()
-        {
-            lock (_lock)
-            {
-                _Terminate();
-            }
-        }
-
-        private void _Terminate()
-        {
-            MarketFrameEvent -= OutputMarketFrameEvent;
-            TradeFrameEvent -= OutputTradeFrameEvent;
-            initiated = false;
-        }
-
-
-        private void OutputMarketFrameEvent(object sender, MarketFrameEventArgs e)
-        {
-            if (e == null
-                || e.Frame == null)
+            if (frame == null)
             {
                 System.Console.WriteLine("Market. Empty frame");
                 return;
             }
 
-            System.Console.WriteLine($"Market. {e.Frame.ToString()}");
+            System.Console.WriteLine($"Market. {frame.ToString()}");
         }
 
-        private void OutputTradeFrameEvent(object sender, TradeFrameEventArgs e)
+        public void OutputTradeFrame(TradeOrderFrame frame)
         {
-            if (e == null
-                || e.Frame == null)
+            if (frame == null)
             {
                 System.Console.WriteLine("Trade. Empty frame");
                 return;
             }
 
-            System.Console.WriteLine($"Trade. {e.Frame.ToString()}");
+            System.Console.WriteLine($"Trade. {frame.ToString()}");
+        }
+
+        public void OutputException(Exception e)
+        {
+            if (e == null)
+            {
+                System.Console.WriteLine("Exception. Empty exception");
+                return;
+            }
+
+            System.Console.WriteLine($"Exception. {e.ToString()}");
+            System.Console.WriteLine($"Inner.Exception. {e.InnerException.ToString()}");
         }
     }
 }

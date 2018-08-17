@@ -14,7 +14,11 @@ namespace TestHarness.Display
                 return;
             }
 
-            System.Console.WriteLine($"Market. {frame.ToString()}");
+            System.Console.WriteLine();
+            System.Console.WriteLine($"****************************");
+            System.Console.WriteLine($"Market Frame. {frame.ToString()}");
+            System.Console.WriteLine($"****************************");
+            System.Console.WriteLine();
         }
 
         public void OutputTradeFrame(TradeOrderFrame frame)

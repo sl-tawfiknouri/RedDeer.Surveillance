@@ -47,7 +47,7 @@ namespace Domain.Equity.Trading.Orders
 
         public override string ToString()
         {
-            return $"Market.{Market.Id.Id} | Security.{Security.Id.Id} | Direction.{Direction} | Order.{OrderType} | Volume.{Volume} | Limit.{Limit?.Value}  | Status.{OrderStatus}";
+            return $"Market({Market.Id.Id}) Security({Security.Id.Id}) Direction({Direction}) Order({OrderType}) Volume({Volume}) Limit({Limit?.Value}) Status({OrderStatus})";
         }
     }
 }

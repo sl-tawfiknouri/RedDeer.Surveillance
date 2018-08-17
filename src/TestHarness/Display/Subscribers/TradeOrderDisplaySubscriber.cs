@@ -3,11 +3,11 @@ using System;
 
 namespace TestHarness.Display.Subscribers
 {
-    public class TradeOrderDisplaySubscriber : IObserver<TradeOrderFrame>
+    public class TradeOrderFrameDisplaySubscriber : IObserver<TradeOrderFrame>
     {
         private readonly IConsole _display;
 
-        public TradeOrderDisplaySubscriber(IConsole display)
+        public TradeOrderFrameDisplaySubscriber(IConsole display)
         {
             _display = display ?? throw new ArgumentNullException(nameof(display));
         }

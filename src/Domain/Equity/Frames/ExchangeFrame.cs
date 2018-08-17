@@ -32,12 +32,12 @@ namespace Domain.Equity.Trading.Frames
 
             if (Exchange != null)
             {
-                str += $"|Exchange.{Exchange.Id}.{Exchange.Name}";   
+                str += $"Exchange ({Exchange.Id.Id}.{Exchange.Name}) ";   
             }
 
             if (Securities != null)
             {
-                str += $"|Securities.{Securities.Count}";
+                str += $"Securities({Securities.Count})  ";
             }
 
             return str;

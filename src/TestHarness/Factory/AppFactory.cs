@@ -30,7 +30,7 @@ namespace TestHarness.Factory
             var tradeOrderGenerator = new OrderDataGenerator(Logger, tradeStrategy);
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
-            var tradeOrderDisplaySubscriber = new TradeOrderDisplaySubscriber(display);
+            var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 
             var equityDataStrategy = new RandomWalkStrategy();
@@ -38,6 +38,8 @@ namespace TestHarness.Factory
             var equityDataGenerator = new EquityDataGenerator(nasdaqInitialiser, equityDataStrategy, Logger);
             var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
             var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
+            var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(display);
+            exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
             equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(5));

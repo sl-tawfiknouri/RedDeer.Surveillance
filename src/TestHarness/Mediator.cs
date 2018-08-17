@@ -1,4 +1,5 @@
-﻿using TestHarness.Commands;
+﻿using NLog;
+using TestHarness.Commands;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Interfaces;
@@ -15,9 +16,9 @@ namespace TestHarness
         private IAppFactory _appFactory;
         private IEquityDataGenerator _equityDataGenerator;
 
-        public Mediator()
+        public Mediator(IAppFactory appFactory)
         {
-            _appFactory = new AppFactory();
+            _appFactory = appFactory ?? new AppFactory();
         }
 
         /// <summary>
@@ -27,6 +28,19 @@ namespace TestHarness
         {
             lock (_lock)
             {
+                _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
+
+
+                if (command == null)
+                {
+                    _appFactory.Logger.Log(LogLevel.Warn, "Mediator receieved a null initiation command");
+                }
+
+                if (_equityDataGenerator != null)
+                {
+                    _equityDataGenerator.TerminateWalk();
+                }
+
                 _equityDataGenerator = _appFactory.Build();
             }
         }
@@ -46,6 +60,8 @@ namespace TestHarness
         {
             lock (_lock)
             {
+                _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating");
+
                 if (_equityDataGenerator != null)
                 {
                     _equityDataGenerator.TerminateWalk();

@@ -16,7 +16,7 @@ namespace Domain.Equity.Trading.Orders
             OrderDirection direction,
             OrderStatus orderStatus)
         {
-            OrderType = OrderType;
+            OrderType = orderType;
             Market = market;
             Security = security;
             Limit = limit;
@@ -44,5 +44,10 @@ namespace Domain.Equity.Trading.Orders
         public OrderDirection Direction { get; }
 
         public OrderStatus OrderStatus { get; }
+
+        public override string ToString()
+        {
+            return $"Market.{Market.Id.Id} | Security.{Security.Id.Id} | Direction.{Direction} | Order.{OrderType} | Volume.{Volume} | Limit.{Limit?.Value}  | Status.{OrderStatus}";
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using WebSocket4Net;
 
-namespace TestHarness.Network_IO
+namespace Utilities.Websockets
 {
     public interface IWebsocket
     {

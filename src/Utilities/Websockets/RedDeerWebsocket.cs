@@ -3,7 +3,7 @@ using System.Net;
 using System.Security.Authentication;
 using WebSocket4Net;
 
-namespace TestHarness.Network_IO
+namespace Utilities.Websockets
 {
     public class RedDeerWebsocket : WebSocket, IWebsocket
     {

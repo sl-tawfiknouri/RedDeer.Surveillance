@@ -11,6 +11,7 @@ using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Network_IO;
 using TestHarness.Network_IO.Subscribers;
+using Utilities.Websockets;
 
 namespace TestHarness.Factory
 {

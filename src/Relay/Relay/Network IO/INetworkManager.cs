@@ -1,8 +1,10 @@
-﻿namespace Relay.Network_IO
+﻿using Domain.Equity.Trading.Streams.Interfaces;
+
+namespace Relay.Network_IO
 {
     public interface INetworkManager
     {
-        void InitiateConnections();
+        void InitiateConnections(ITradeOrderStream tradeStream);
         void TerminateConnections();
     }
 }

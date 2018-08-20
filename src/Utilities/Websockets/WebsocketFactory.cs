@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestHarness.Network_IO
+namespace Utilities.Websockets
 {
     public class WebsocketFactory : IWebsocketFactory
     {

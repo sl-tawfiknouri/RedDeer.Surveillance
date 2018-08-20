@@ -1,14 +1,14 @@
-﻿using System;
-using Domain.Equity.Trading.Orders;
+﻿using Domain.Equity.Trading.Orders;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NLog;
 using SuperSocket.ClientEngine;
+using System;
 using Utilities.Websockets;
 using WebSocket4Net;
 
-namespace TestHarness.Network_IO.Subscribers
+namespace Relay.Network_IO.RelaySubscribers
 {
-    public class TradeOrderWebsocketSubscriber : ITradeOrderWebsocketSubscriber
+    public class TradeRelaySubscriber : ITradeRelaySubscriber
     {
         private object _stateLock = new object();
         private IWebsocketFactory _websocketFactory;
@@ -16,9 +16,9 @@ namespace TestHarness.Network_IO.Subscribers
         private ILogger _logger;
         private volatile bool _initiated;
 
-        public TradeOrderWebsocketSubscriber(
+        public TradeRelaySubscriber(
             IWebsocketFactory websocketFactory,
-            ILogger logger)
+            ILogger<TradeRelaySubscriber> logger)
         {
             _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -38,19 +38,19 @@ namespace TestHarness.Network_IO.Subscribers
 
             lock (_stateLock)
             {
-                _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber initiate called");
+                _logger.LogInformation($"Trade Relay Subscriber initiate called");
 
                 if (_initiated)
                 {
-                    _logger.Log(LogLevel.Warn, $"Trade Order Websocket Subscriber initiate called before termination. Terminating active connection first.");
+                    _logger.LogInformation($"Trade Relay Subscriber initiate called before termination. Terminating active connection first.");
 
                     _Terminate();
                 }
 
                 _initiated = true;
-                
+
                 var connectionString = $"ws://{domain}:{port}/";
-                _logger.Log(LogLevel.Info, $"Opening web socket to {connectionString}");
+                _logger.LogInformation($"Opening web socket to {connectionString}");
 
                 _activeWebsocket = _websocketFactory.Build(connectionString);
                 _activeWebsocket.Opened += new EventHandler(Open_Event);
@@ -62,21 +62,22 @@ namespace TestHarness.Network_IO.Subscribers
                     _activeWebsocket.Open();
                     while (_activeWebsocket.State == WebSocketState.Connecting) { };
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    _logger.Log(LogLevel.Error, e);
+                    _logger.LogError("An exception was encountered in Trade Relay Subscriber initiation", e);
+                    throw;
                 }
             }
         }
 
         private void Open_Event(object sender, EventArgs e)
         {
-            _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber Successfully Opened Connection");
+            _logger.LogInformation($"Trade Relay Subscriber Successfully Opened Connection");
         }
 
         private void Error_Event(object sender, ErrorEventArgs e)
         {
-            _logger.Log(LogLevel.Error, $"Trade Order Websocket Subscriber encountered an error {e.Exception.Message}");
+            _logger.LogInformation($"Trade Relay Subscriber encountered an error {e.Exception.Message}");
 
             lock (_stateLock)
             {
@@ -86,14 +87,14 @@ namespace TestHarness.Network_IO.Subscribers
 
         private void Closed_Event(object sender, EventArgs e)
         {
-            _logger.Log(LogLevel.Info, "Trade Order Websocket Subscriber connection closed");
+            _logger.LogInformation("Trade Relay Subscriber connection closed");
         }
 
         public void Terminate()
         {
             lock (_stateLock)
             {
-                _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber Termination called");
+                _logger.LogInformation($"Trade Relay Subscriber Termination called");
 
                 _Terminate();
             }
@@ -103,7 +104,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             if (_activeWebsocket != null)
             {
-                _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber Closing Active Web Socket");
+                _logger.LogInformation($"Trade Relay Subscriber Closing Active Web Socket");
 
                 try
                 {
@@ -111,7 +112,7 @@ namespace TestHarness.Network_IO.Subscribers
                 }
                 catch (Exception e)
                 {
-                    _logger.Log(LogLevel.Error, e);
+                    _logger.LogError("An exception was encountered whilst terminating the trade relay subscriber web socket connections", e);
                     throw;
                 }
             }
@@ -119,7 +120,7 @@ namespace TestHarness.Network_IO.Subscribers
 
         public void OnCompleted()
         {
-            _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber underlying stream completed.");
+            _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
 
             Terminate();
         }
@@ -128,7 +129,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             if (error != null)
             {
-                _logger.Log(LogLevel.Error, error);
+                _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
             }
         }
 

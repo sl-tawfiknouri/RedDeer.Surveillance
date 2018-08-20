@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Network_IO
+﻿namespace Utilities.Websockets
 {
     public interface IWebsocketFactory
     {

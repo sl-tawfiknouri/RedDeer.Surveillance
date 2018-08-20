@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System;
+using Utilities.Websockets;
 
 namespace TestHarness.Network_IO.Subscribers
 {

@@ -1,5 +1,8 @@
-﻿using Fleck;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
+using Fleck;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 
 namespace Relay.Network_IO
@@ -9,14 +12,14 @@ namespace Relay.Network_IO
         private ILogger _logger;
         private IWebSocketServer _server;
         private volatile bool _initiated;
-        private object _stateTransition = new object();
+        private readonly object _stateTransition = new object();
 
         public NetworkManager(ILogger<NetworkManager> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
-        public void InitiateConnections()
+        public void InitiateConnections(ITradeOrderStream tradeStream)
         {
             lock (_stateTransition)
             {
@@ -37,7 +40,12 @@ namespace Relay.Network_IO
                     socket.OnClose = () => 
                         _logger.LogInformation("Relay Network Manager terminated web socket connection");
 
-                    socket.OnMessage = message => _logger.LogError($"Message received {message}");
+                    socket.OnMessage = message =>
+                    {
+                        _logger.LogError($"Message received {message}");
+                        var tradeOrder = JsonConvert.DeserializeObject<TradeOrderFrame>(message);
+                        tradeStream.Add(tradeOrder);
+                    };
                 }));
             }
         }

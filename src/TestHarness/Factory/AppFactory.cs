@@ -9,11 +9,13 @@ using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Network_IO;
+using TestHarness.Network_IO.Subscribers;
 
 namespace TestHarness.Factory
 {
     /// <summary>
-    /// Replace with a DI approach later on
+    /// Replace with a DI approach later on | this is a bit messy
     /// </summary>
     public class AppFactory : IAppFactory
     {
@@ -33,6 +35,13 @@ namespace TestHarness.Factory
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 
+            var websocketFactory = new WebsocketFactory();
+            var configuration = new Configuration.Configuration("reddeer", "9090");
+            var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
+            NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);
+            NetworkManager.InitiateNetworkConnections();
+            NetworkManager.AttachTradeOrderSubscriberToStream(tradeOrderStream);
+
             var equityDataStrategy = new RandomWalkStrategy();
             var nasdaqInitialiser = new NasdaqInitialiser();
             var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, Logger);
@@ -47,6 +56,14 @@ namespace TestHarness.Factory
             return equityDataGenerator;
         }
 
-        public ILogger Logger { get;  }
+        /// <summary>
+        /// Ctor is used to construct this
+        /// </summary>
+        public ILogger Logger { get; }
+
+        /// <summary>
+        /// Build is used to construct this
+        /// </summary>
+        public INetworkManager NetworkManager { get; private set; }
     }
 }

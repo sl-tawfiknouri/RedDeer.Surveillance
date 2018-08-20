@@ -13,7 +13,7 @@ namespace TestHarness.Engine.EquitiesGenerator
     /// Apply a random walk to securities in your stream
     /// Not multithread safe, only use with transitory life style
     /// </summary>
-    public class EquityDataGenerator : IEquityDataGenerator
+    public class EquitiesMarkovProcess : IEquityDataGenerator
     {
         private volatile bool _walkInitiated;
         private volatile bool _tickLocked;
@@ -28,7 +28,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private object _stateTransitionLock = new object();
         private object _walkingLock = new object();
 
-        public EquityDataGenerator(
+        public EquitiesMarkovProcess(
             IExchangeSeriesInitialiser exchangeTickInitialiser,
             IEquityDataGeneratorStrategy dataStrategy,
             ILogger logger)

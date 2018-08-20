@@ -7,7 +7,7 @@ using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
-    public class OrderDataGenerator : IOrderDataGenerator
+    public class TradingMarkovProcess : IOrderDataGenerator
     {
         private IDisposable _unsubscriber;
         private IStockExchangeStream _stockStream;
@@ -19,7 +19,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private ILogger _logger;
 
-        public OrderDataGenerator(ILogger logger, ITradeStrategy orderStrategy)
+        public TradingMarkovProcess(ILogger logger, ITradeStrategy orderStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _orderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));

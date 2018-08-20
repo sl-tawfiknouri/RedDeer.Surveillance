@@ -13,7 +13,7 @@ using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
     [TestFixture]
-    public class EquityDataGeneratorTests
+    public class EquitiesMarkovProcessTests
     {
         private ILogger _logger;
         private IExchangeSeriesInitialiser _exchangeTickInitialiser;
@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_ThrowsExceptionFor_NullStream()
         {
-            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, _strategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, _strategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
 
             Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null, freq));
@@ -40,7 +40,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_ReceivesTicks_AfterInitiationImmediately()
         {
             var randomWalkStrategy = new RandomWalkStrategy();
-            var randomWalk = new EquityDataGenerator(_exchangeTickInitialiser, randomWalkStrategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _logger);
             var freq = TimeSpan.FromDays(1);
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 10);
@@ -60,7 +60,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
         {
             var randomWalkStrategy = new RandomWalkStrategy();
-            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), randomWalkStrategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);
@@ -87,7 +87,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
-            var randomWalk = new EquityDataGenerator(new NasdaqInitialiser(), _strategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);

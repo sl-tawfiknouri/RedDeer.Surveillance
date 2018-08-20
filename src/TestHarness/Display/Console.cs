@@ -2,20 +2,24 @@
 using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TestHarness.Display
 {
     public class Console : IConsole
     {
-        private RingBuffer<TradeOrderFrame> _tradeOrders;
+        private Stack<TradeOrderFrame> _tradeOrders;
         private object _lock = new object();
 
         private int _marketFrameOffset = 6;
         private int _tradeFrameOffset = 10;
 
+        private long _id = 0;
+
         public Console()
         {
-            _tradeOrders = new RingBuffer<TradeOrderFrame>(10); // don't display more than last 10 trade orders
+            _tradeOrders = new Stack<TradeOrderFrame>();
         }
 
         public void OutputMarketFrame(ExchangeFrame frame)
@@ -29,7 +33,7 @@ namespace TestHarness.Display
                 }
 
                 WriteToLine(_marketFrameOffset, "*****************************");
-                WriteToLine(_marketFrameOffset + 1, $"Market Frame. {frame.ToString()}");
+                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({DateTime.Now}). {frame.ToString()}");
                 WriteToLine(_marketFrameOffset + 2, "*****************************");
             }
         }
@@ -44,8 +48,29 @@ namespace TestHarness.Display
                     return;
                 }
 
-                _tradeOrders.Add(frame);
-                WriteToLine(_tradeFrameOffset, $"Trade Frame. {frame.ToString()}");
+                if (_tradeOrders.Count > 10)
+                    _tradeOrders.Pop();
+
+                _tradeOrders.Reverse();
+                _tradeOrders.Push(frame);
+
+                WriteToLine(_tradeFrameOffset, $"Trades to date. {_id}");
+
+                var newStack = new Stack<TradeOrderFrame>();
+
+                var loopSize = _tradeOrders.Count();
+                for (var x = 1; x <= loopSize; x++)
+                {
+                    var order = _tradeOrders.Pop();
+                    WriteToLine(_tradeFrameOffset + x, $"Trade Frame. {order.ToString()}");
+                    newStack.Push(order);
+                }
+
+                newStack.Reverse();
+
+                _tradeOrders = newStack;
+
+                _id++;
             }
         }
 

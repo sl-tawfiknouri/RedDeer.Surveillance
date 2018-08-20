@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Domain.Equity.Trading
 {
-    public class RingBuffer<T> : IEnumerable<T> where T: class
+    public class RingBuffer<T> where T : class
     {
         private int _limit;
         private Queue<T> _queue;
@@ -20,6 +20,7 @@ namespace Domain.Equity.Trading
 
             _limit = limit;
             _queue = new Queue<T>();
+
         }
 
         public int Count { get { return _queue.Count(); } }
@@ -44,16 +45,6 @@ namespace Domain.Equity.Trading
 
                 return null;
             }
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _queue.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _queue.GetEnumerator();
         }
     }
 }

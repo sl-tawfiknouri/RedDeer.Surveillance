@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+    - source: /publish/
+      destination: /reddeer/relayservice/
+hooks:
+  BeforeInstall:
+    - location: DeploymentScripts/BeforeInstall.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: DeploymentScripts/AfterInstall.sh
+      timeout: 300
+      runas: root

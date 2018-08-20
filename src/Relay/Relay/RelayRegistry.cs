@@ -1,8 +1,9 @@
-﻿using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Relay.Network_IO;
 using StructureMap;
+using NLog.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 
-namespace RedDeer.Relay.App
+namespace RedDeer.Relay
 {
     public class RelayRegistry : Registry
     {
@@ -12,7 +13,7 @@ namespace RedDeer.Relay.App
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<IStartUpTaskRunner>().Use<NoTaskRunner>();
+            For<INetworkManager>().Use<NetworkManager>();
         }
     }
 }

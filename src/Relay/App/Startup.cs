@@ -17,6 +17,7 @@ namespace RedDeer.Relay.App
             container.Configure(config =>
             {
                 config.IncludeRegistry<RelayRegistry>();
+                config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });
 

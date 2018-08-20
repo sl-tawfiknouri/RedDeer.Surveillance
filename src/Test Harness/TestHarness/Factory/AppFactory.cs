@@ -36,7 +36,7 @@ namespace TestHarness.Factory
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 
             var websocketFactory = new WebsocketFactory();
-            var configuration = new Configuration.Configuration("reddeer", "9090");
+            var configuration = new Configuration.Configuration("localhost", "9067");
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
             NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);
             NetworkManager.InitiateNetworkConnections();

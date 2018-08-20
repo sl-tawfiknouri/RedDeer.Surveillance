@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Relay", "Relay\Relay.csproj", "{76F323C6-9C2E-444D-B443-9563E5B6C38F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{8EF93F20-21B9-4A22-A5D9-0F9D35E6E7F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EF93F20-21B9-4A22-A5D9-0F9D35E6E7F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EF93F20-21B9-4A22-A5D9-0F9D35E6E7F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76F323C6-9C2E-444D-B443-9563E5B6C38F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76F323C6-9C2E-444D-B443-9563E5B6C38F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76F323C6-9C2E-444D-B443-9563E5B6C38F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76F323C6-9C2E-444D-B443-9563E5B6C38F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

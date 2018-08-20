@@ -34,6 +34,7 @@ namespace RedDeer.Relay.App
                 _container.Configure(config =>
                 {
                     config.IncludeRegistry<RelayRegistry>();
+                    config.IncludeRegistry<AppRegistry>();
                 });
 
                 var startUpTaskRunner = _container.GetInstance<IStartUpTaskRunner>();

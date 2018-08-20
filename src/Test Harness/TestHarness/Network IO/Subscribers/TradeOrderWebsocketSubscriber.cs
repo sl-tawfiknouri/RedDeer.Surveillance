@@ -3,6 +3,7 @@ using Domain.Equity.Trading.Orders;
 using Newtonsoft.Json;
 using NLog;
 using SuperSocket.ClientEngine;
+using WebSocket4Net;
 
 namespace TestHarness.Network_IO.Subscribers
 {
@@ -44,8 +45,10 @@ namespace TestHarness.Network_IO.Subscribers
 
                     _Terminate();
                 }
+
+                _initiated = true;
                 
-                var connectionString = $"wss://{domain}:{port}/";
+                var connectionString = $"ws://{domain}:{port}/";
                 _logger.Log(LogLevel.Info, $"Opening web socket to {connectionString}");
 
                 _activeWebsocket = _websocketFactory.Build(connectionString);
@@ -56,6 +59,7 @@ namespace TestHarness.Network_IO.Subscribers
                 try
                 {
                     _activeWebsocket.Open();
+                    while (_activeWebsocket.State == WebSocketState.Connecting) { };
                 }
                 catch(Exception e)
                 {
@@ -71,7 +75,7 @@ namespace TestHarness.Network_IO.Subscribers
 
         private void Error_Event(object sender, ErrorEventArgs e)
         {
-            _logger.Log(LogLevel.Error, "Trade Order Websocket Subscriber encountered an error");
+            _logger.Log(LogLevel.Error, $"Trade Order Websocket Subscriber encountered an error {e.Exception.Message}");
 
             lock (_stateLock)
             {

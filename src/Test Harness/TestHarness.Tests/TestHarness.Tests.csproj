@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Domain\Domain\Domain.csproj" />
     <ProjectReference Include="..\TestHarness\TestHarness.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using TestHarness;
+using NLog;
 
 namespace App
 {
@@ -8,6 +9,8 @@ namespace App
     {
         static void Main(string[] args)
         {
+            LogManager.LoadConfiguration("nlog.config");
+
             InitialSetup();
             InitialWelcomeMessage();
 

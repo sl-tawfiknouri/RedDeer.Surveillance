@@ -38,6 +38,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Surveillance\Surveillance.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="nlog.config">
       <TransformOnBuild Condition="'$(Configuration)' == 'Release'">true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

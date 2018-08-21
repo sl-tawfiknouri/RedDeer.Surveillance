@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.Tests", "TestHarness.Tests\TestHarness.Tests.csproj", "{4D65E9D0-641D-42A4-83AE-806E4A237E51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{72746561-1101-4004-84AA-400784181535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness.App", "App\TestHarness.App.csproj", "{72746561-1101-4004-84AA-400784181535}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "..\Domain\Domain\Domain.csproj", "{B214B139-15E6-4317-81E8-50C37DDD2197}"
 EndProject

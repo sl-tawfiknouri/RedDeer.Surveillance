@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>RedDeer.Relay.App</AssemblyName>
-    <RootNamespace>RedDeer.Worm.App</RootNamespace>
+    <AssemblyName>RedDeer.Surveillance.App</AssemblyName>
+    <RootNamespace>RedDeer.Surveillance.App</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -38,10 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Relay\Relay.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="nlog.config">
       <TransformOnBuild Condition="'$(Configuration)' == 'Release'">true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -61,7 +57,7 @@
     <None Update="DeploymentScripts\BeforeInstall.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="relayservice.service">
+    <None Update="surveillanceservice.service">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="_InstallService.bat">

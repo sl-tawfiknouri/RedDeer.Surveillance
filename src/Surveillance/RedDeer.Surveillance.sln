@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App\App.csproj", "{8EF93F20-21B9-4A22-A5D9-0F9D35E6E7F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "App\Surveillance.App.csproj", "{8EF93F20-21B9-4A22-A5D9-0F9D35E6E7F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E155D2AC-4111-497E-933A-1D74583FDED2}"
 	ProjectSection(SolutionItems) = preProject

@@ -6,7 +6,7 @@ using Domain.Equity.Trading.Streams.Interfaces;
 using Domain.Equity.Trading;
 using Relay.Trades;
 using Relay.Network_IO.RelaySubscribers;
-using Utilities.Websockets;
+using Utilities.Network_IO.Websocket_Connections;
 
 namespace RedDeer.Relay
 {
@@ -22,7 +22,7 @@ namespace RedDeer.Relay
             For<ITradeOrderStream>().Use<TradeOrderStream>();
             For<ITradeProcessor>().Use<TradeProcessor>();
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
-            For<IWebsocketFactory>().Use<WebsocketFactory>();
+            For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
         }
     }

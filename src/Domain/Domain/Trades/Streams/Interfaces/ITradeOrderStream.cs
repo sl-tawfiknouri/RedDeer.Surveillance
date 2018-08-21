@@ -1,10 +1,9 @@
-﻿using System;
-using Domain.Equity.Trading.Orders;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Streams;
 
 namespace Domain.Equity.Trading.Streams.Interfaces
 {
-    public interface ITradeOrderStream : IObservable<TradeOrderFrame>
+    public interface ITradeOrderStream : PublishingStream<TradeOrderFrame>
     {
-        void Add(TradeOrderFrame order);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Domain.Equity.Trading.Frames;
-using System;
+using Domain.Streams;
 
 namespace Domain.Equity.Trading.Streams.Interfaces
 {
-    public interface IStockExchangeStream : IObservable<ExchangeFrame>
+    public interface IStockExchangeStream : PublishingStream<ExchangeFrame>
     {
-        void Add(ExchangeFrame frame);
     }
 }

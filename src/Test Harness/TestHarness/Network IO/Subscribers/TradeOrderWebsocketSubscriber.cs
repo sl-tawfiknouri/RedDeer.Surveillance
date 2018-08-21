@@ -3,7 +3,7 @@ using Domain.Equity.Trading.Orders;
 using Newtonsoft.Json;
 using NLog;
 using SuperSocket.ClientEngine;
-using Utilities.Websockets;
+using Utilities.Network_IO.Websocket_Connections;
 using WebSocket4Net;
 
 namespace TestHarness.Network_IO.Subscribers
@@ -11,13 +11,13 @@ namespace TestHarness.Network_IO.Subscribers
     public class TradeOrderWebsocketSubscriber : ITradeOrderWebsocketSubscriber
     {
         private object _stateLock = new object();
-        private IWebsocketFactory _websocketFactory;
-        private IWebsocket _activeWebsocket;
+        private IWebsocketConnectionFactory _websocketFactory;
+        private IConnectionWebsocket _activeWebsocket;
         private ILogger _logger;
         private volatile bool _initiated;
 
         public TradeOrderWebsocketSubscriber(
-            IWebsocketFactory websocketFactory,
+            IWebsocketConnectionFactory websocketFactory,
             ILogger logger)
         {
             _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));

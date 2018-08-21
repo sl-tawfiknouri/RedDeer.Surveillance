@@ -3,11 +3,11 @@ using System.Net;
 using System.Security.Authentication;
 using WebSocket4Net;
 
-namespace Utilities.Websockets
+namespace Utilities.Network_IO.Websocket_Connections
 {
-    public class RedDeerWebsocket : WebSocket, IWebsocket
+    public class RedDeerWebsocketConnection : WebSocket, IConnectionWebsocket
     {
-        public RedDeerWebsocket(
+        public RedDeerWebsocketConnection(
             string uri,
             string subProtocol,
             WebSocketVersion version) 
@@ -15,7 +15,7 @@ namespace Utilities.Websockets
         {
         }
 
-        public RedDeerWebsocket(
+        public RedDeerWebsocketConnection(
             string uri,
             string subProtocol = "",
             List<KeyValuePair<string, string>> cookies = null,

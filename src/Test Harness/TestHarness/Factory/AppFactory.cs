@@ -11,7 +11,7 @@ using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Network_IO;
 using TestHarness.Network_IO.Subscribers;
-using Utilities.Websockets;
+using Utilities.Network_IO.Websocket_Connections;
 
 namespace TestHarness.Factory
 {
@@ -36,7 +36,7 @@ namespace TestHarness.Factory
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 
-            var websocketFactory = new WebsocketFactory();
+            var websocketFactory = new WebsocketConnectionFactory();
             var configuration = new Configuration.Configuration("localhost", "9067");
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
             NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);

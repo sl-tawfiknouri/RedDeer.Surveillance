@@ -3,7 +3,7 @@ using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Domain.Equity.Trading;
-using Utilities.Websockets;
+using Utilities.Network_IO.Websocket_Connections;
 
 namespace Surveillance
 {
@@ -16,7 +16,7 @@ namespace Surveillance
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
 
-            For<IWebsocketFactory>().Use<WebsocketFactory>();
+            For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
         }
     }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SuperSocket.ClientEngine;
 using System;
-using Utilities.Websockets;
+using Utilities.Network_IO.Websocket_Connections;
 using WebSocket4Net;
 
 namespace Relay.Network_IO.RelaySubscribers
@@ -15,13 +15,13 @@ namespace Relay.Network_IO.RelaySubscribers
     public class TradeRelaySubscriber : ITradeRelaySubscriber
     {
         private object _stateLock = new object();
-        private IWebsocketFactory _websocketFactory;
-        private IWebsocket _activeWebsocket;
+        private IWebsocketConnectionFactory _websocketFactory;
+        private IConnectionWebsocket _activeWebsocket;
         private ILogger _logger;
         private volatile bool _initiated;
 
         public TradeRelaySubscriber(
-            IWebsocketFactory websocketFactory,
+            IWebsocketConnectionFactory websocketFactory,
             ILogger<TradeRelaySubscriber> logger)
         {
             _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));

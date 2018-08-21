@@ -5,9 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using WebSocket4Net;
 
-namespace Utilities.Websockets
+namespace Utilities.Network_IO.Websocket_Connections
 {
-    public interface IWebsocket
+    public interface IConnectionWebsocket
     {
         DateTime LastActiveTime { get; }
         WebSocketVersion Version { get; }

@@ -42,7 +42,6 @@ namespace Relay.Network_IO
 
                     socket.OnMessage = message =>
                     {
-                        _logger.LogError($"Message received {message}");
                         var tradeOrder = JsonConvert.DeserializeObject<TradeOrderFrame>(message);
                         tradeStream.Add(tradeOrder);
                     };

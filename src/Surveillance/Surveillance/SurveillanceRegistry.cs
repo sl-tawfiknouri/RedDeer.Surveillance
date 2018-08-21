@@ -7,6 +7,9 @@ using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
 using Surveillance.Network_IO.RedDeer;
 using Utilities.Network_IO.Websocket_Hosts;
+using Surveillance.Rules;
+using Surveillance.Rules.BarredAssets;
+using Surveillance.Rules.ProhibitedAssetTradingRule;
 
 namespace Surveillance
 {
@@ -21,6 +24,9 @@ namespace Surveillance
             For<IMediator>().Use<Mediator>();
             For<IReddeerTradeService>().Use<ReddeerTradeService>();
             For<IReddeerTradeNetworkManager>().Use<ReddeerTradeNetworkManager>();
+            For<IRuleManager>().Use<RuleManager>();
+            For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
+            For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

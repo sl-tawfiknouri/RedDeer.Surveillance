@@ -11,18 +11,18 @@ using NLog;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {
-    public class ProbabilisticTradeStrategy : ITradeStrategy
+    public class MarkovTradeStrategy : ITradeStrategy
     {
         private readonly ILogger _logger;
         private readonly double _limitStandardDeviation = 4;
         private readonly double _tradedSecurityStandardDeviation = 6;
 
-        public ProbabilisticTradeStrategy(ILogger logger)
+        public MarkovTradeStrategy(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ProbabilisticTradeStrategy(
+        public MarkovTradeStrategy(
             ILogger logger,
             double? limitStandardDeviation,
             double? tradedSecurityStandardDeviation)
@@ -40,20 +40,20 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
         {
             if (tradeOrders == null)
             {
-                _logger.Log(LogLevel.Error, "Received a null trade orders in the probabilistic trade strategy");
+                _logger.Log(LogLevel.Error, "Received a null trade orders in the markov trade strategy");
                 throw new ArgumentNullException(nameof(tradeOrders));
             }
 
             if (frame == null)
             {
-                _logger.Log(LogLevel.Info, "A null frame was passed to the probabilistic trade strategy");
+                _logger.Log(LogLevel.Info, "A null frame was passed to the markov trade strategy");
                 return;
             }
 
             if (frame.Securities == null
                 || !frame.Securities.Any(sec => sec != null))
             {
-                _logger.Log(LogLevel.Info, "No securities were present on the exchange frame in the probabilistic trade strategy");
+                _logger.Log(LogLevel.Info, "No securities were present on the exchange frame in the markov trade strategy");
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (numberOfTradeOrders <= 0)
             {
-                _logger.Log(LogLevel.Info, "Probabilistic trading strategy decided not to trade on this frame");
+                _logger.Log(LogLevel.Info, "Markov trading strategy decided not to trade on this frame");
                 return;
             }
 

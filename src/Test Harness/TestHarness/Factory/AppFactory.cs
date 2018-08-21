@@ -29,7 +29,7 @@ namespace TestHarness.Factory
         {
             var display = new Display.Console();
 
-            var tradeStrategy = new ProbabilisticTradeStrategy(Logger);
+            var tradeStrategy = new MarkovTradeStrategy(Logger);
             var tradeOrderGenerator = new TradingMarkovProcess(Logger, tradeStrategy);
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);

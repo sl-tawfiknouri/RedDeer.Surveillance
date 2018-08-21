@@ -29,13 +29,13 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [Test]
         public void Constructor_ConsidersANullLogger_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new ProbabilisticTradeStrategy(null));
+            Assert.Throws<ArgumentNullException>(() => new MarkovTradeStrategy(null));
         }
 
         [Test]
         public void ExecuteTradeStrategy_NullTick_DoesNotThrow()
         {
-            var tradeStrategy = new ProbabilisticTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger);
 
             Assert.DoesNotThrow(() => tradeStrategy.ExecuteTradeStrategy(null, _tradeOrderStream));
         }
@@ -43,7 +43,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [Test]
         public void ExecuteTradeStrategy_NullTradeOrders_DoesThrow()
         {
-            var tradeStrategy = new ProbabilisticTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger);
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"), 
@@ -55,7 +55,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [Test]
         public void ExecuteTradeStrategy_NoSecuritiesInFrame_Logs()
         {
-            var tradeStrategy = new ProbabilisticTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger);
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"),
@@ -75,7 +75,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [TestCase(1000)]
         public void ExecuteTradeStategy_RecordsTrades_100Iterations(int frames)
         {
-            var tradeStrategy = new ProbabilisticTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger);
             var frame = GenerateFrame(frames);
 
             A

@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "..\Domain\D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\Utilities.csproj", "{C2E1533A-BD41-4401-9351-CDE4AA4F45AD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance", "Surveillance\Surveillance.csproj", "{A6E83797-F46D-4F77-88D8-95829B5C1F60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{C2E1533A-BD41-4401-9351-CDE4AA4F45AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2E1533A-BD41-4401-9351-CDE4AA4F45AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2E1533A-BD41-4401-9351-CDE4AA4F45AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E83797-F46D-4F77-88D8-95829B5C1F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E83797-F46D-4F77-88D8-95829B5C1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E83797-F46D-4F77-88D8-95829B5C1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E83797-F46D-4F77-88D8-95829B5C1F60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

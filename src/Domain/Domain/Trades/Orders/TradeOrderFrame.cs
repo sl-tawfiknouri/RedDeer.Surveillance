@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Market;
+using System;
 
 namespace Domain.Equity.Trading.Orders
 {
@@ -9,7 +10,7 @@ namespace Domain.Equity.Trading.Orders
     {
         public TradeOrderFrame(
             OrderType orderType,
-            Market.Market market,
+            StockExchange market,
             Security security,
             Price? limit,
             int volume,
@@ -33,7 +34,7 @@ namespace Domain.Equity.Trading.Orders
 
         public OrderType OrderType { get; }
 
-        public Market.Market Market { get; }
+        public StockExchange Market { get; }
 
         public Security Security { get; }
 

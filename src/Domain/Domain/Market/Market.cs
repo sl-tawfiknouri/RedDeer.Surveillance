@@ -3,7 +3,7 @@
     /// <summary>
     /// Shared type for all mediums where equity securities are trading
     /// </summary>
-    public abstract class Market
+    public abstract class Market : IMarket
     {
         public Market(MarketId id, string name)
         {

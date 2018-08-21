@@ -10,7 +10,7 @@ namespace App
         static void Main(string[] args)
         {
             LogManager.LoadConfiguration("nlog.config");
-
+            
             InitialSetup();
             InitialWelcomeMessage();
 

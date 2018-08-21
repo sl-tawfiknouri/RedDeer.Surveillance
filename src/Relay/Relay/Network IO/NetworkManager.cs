@@ -35,10 +35,13 @@ namespace Relay.Network_IO
                 {
                     socket.OnOpen = () =>
                     {
-                        _logger.LogInformation("Relay Network Manager initiated web socket connection");
+                        _logger.LogInformation("Relay Network Manager initiated web socket connection at 9067");
                     };
                     socket.OnClose = () => 
-                        _logger.LogInformation("Relay Network Manager terminated web socket connection");
+                        _logger.LogInformation("Relay Network Manager terminated web socket connection at 9067");
+
+                    socket.OnError = (e) =>
+                        _logger.LogCritical("Critical error in relay network manager for 9067 port", e);
 
                     socket.OnMessage = message =>
                     {

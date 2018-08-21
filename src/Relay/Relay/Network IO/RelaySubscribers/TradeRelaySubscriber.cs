@@ -81,7 +81,7 @@ namespace Relay.Network_IO.RelaySubscribers
 
         private void Error_Event(object sender, ErrorEventArgs e)
         {
-            _logger.LogInformation($"Trade Relay Subscriber encountered an error {e.Exception.Message}");
+            _logger.LogCritical($"Trade Relay Subscriber encountered an error {e.Exception.Message}");
 
             lock (_stateLock)
             {

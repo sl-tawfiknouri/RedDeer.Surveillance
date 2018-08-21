@@ -1,0 +1,1 @@
+dotnet RedDeer.Surveillance.App.dll --unregister-service

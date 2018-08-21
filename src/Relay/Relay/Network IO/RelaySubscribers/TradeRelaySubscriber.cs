@@ -8,6 +8,10 @@ using WebSocket4Net;
 
 namespace Relay.Network_IO.RelaySubscribers
 {
+    /// <summary>
+    /// Receives data from its subscribed (to) trade stream and forwards it onto
+    /// a listening websockets service elsewhere via its active web socket connection
+    /// </summary>
     public class TradeRelaySubscriber : ITradeRelaySubscriber
     {
         private object _stateLock = new object();

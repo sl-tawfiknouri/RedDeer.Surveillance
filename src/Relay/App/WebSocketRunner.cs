@@ -33,7 +33,7 @@ namespace RedDeer.Relay.App
                 // attach internal pub-sub trade processor to initial stream
                 _tradeOrderStream.Subscribe(_tradeProcessor);
                 // fire up trade data relay
-                _tradeRelaySubscriber.Initiate("localhost", "9068");
+                _tradeRelaySubscriber.Initiate("localhost", "9069");
                 // attach trade data relay to the internal trade processor to pass data onto surveillance service
                 _tradeProcessor.Subscribe(_tradeRelaySubscriber);
 

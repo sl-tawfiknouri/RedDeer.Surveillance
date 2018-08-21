@@ -13,6 +13,7 @@ namespace RedDeer.Surveillance.App
         {
             await Task.Run(() => 
             {
+                // trades on 69, stocks on 70 [ports]
             });
         }
     }

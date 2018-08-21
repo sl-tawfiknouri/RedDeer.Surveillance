@@ -13,7 +13,7 @@ namespace Surveillance.Network_IO
     /// </summary>
     /// <typeparam name="U">Publishing stream</typeparam>
     /// <typeparam name="V">DTO being streamed</typeparam>
-    public abstract class NetworkManager<U, V>
+    public abstract class NetworkManager<U, V> : INetworkManager<U, V>
         where U : PublishingStream<V>
         where V : class
     {

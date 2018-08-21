@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
 using NLog;
 using StructureMap;
+using Surveillance;
 
 namespace RedDeer.Surveillance.App
 {
@@ -33,6 +34,7 @@ namespace RedDeer.Surveillance.App
                 _container = new Container();
                 _container.Configure(config =>
                 {
+                    config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
 

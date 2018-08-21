@@ -12,7 +12,7 @@ namespace RedDeer.Surveillance.App
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
             
-            For<IStartUpTaskRunner>().Use<WebSocketRunner>();
+            For<IStartUpTaskRunner>().Use<MediatorBootstrapper>();
         }
     }
 }

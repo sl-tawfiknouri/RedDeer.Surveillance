@@ -29,7 +29,7 @@ namespace RedDeer.Surveillance.App
             _webHost = WebHost.CreateDefaultBuilder(startupArguments)
                 .UseStartup<Startup>()
                 .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls($"[]://*:[]/") //scheme [] port []
+                .UseUrls($"http://*:9065/")
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

@@ -29,7 +29,7 @@ namespace RedDeer.Relay.App
             _webHost = WebHost.CreateDefaultBuilder(startupArguments)
                 .UseStartup<Startup>()
                 .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls($"[]://*:[]/") //scheme [] port []
+                .UseUrls($"http://*:9066/")
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

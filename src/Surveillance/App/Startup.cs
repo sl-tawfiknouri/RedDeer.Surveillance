@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StructureMap;
+using Surveillance;
 
 namespace RedDeer.Surveillance.App
 {
@@ -16,6 +17,7 @@ namespace RedDeer.Surveillance.App
             var container = new Container();
             container.Configure(config =>
             {
+                config.IncludeRegistry<SurveillanceRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });
@@ -33,7 +35,7 @@ namespace RedDeer.Surveillance.App
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                await context.Response.WriteAsync("Red Deer Surveillance Service App");
             });
         }
     }

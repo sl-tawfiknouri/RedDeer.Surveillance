@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Surveillance;
+using System;
 using System.Threading.Tasks;
 
 namespace RedDeer.Surveillance.App
 {
-    public class WebSocketRunner : IStartUpTaskRunner
+    public class MediatorBootstrapper : IStartUpTaskRunner
     {
-        public WebSocketRunner()
+        private IMediator _mediator;
+
+        public MediatorBootstrapper(IMediator mediator)
         {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public async Task Run()
@@ -14,6 +18,7 @@ namespace RedDeer.Surveillance.App
             await Task.Run(() => 
             {
                 // trades on 69, stocks on 70 [ports]
+                _mediator.Initiate();
             });
         }
     }

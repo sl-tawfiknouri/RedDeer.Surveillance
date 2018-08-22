@@ -9,6 +9,7 @@ using TestHarness.Display.Subscribers;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
+using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Interfaces;
@@ -61,8 +62,11 @@ namespace TestHarness.Factory
             var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(display);
             exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
+            // there is our problem with it initially walking
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(2));
+
+            var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
+            equityDataGenerator.InitiateWalk(exchangeStream, heartBeat);
 
             EquityDataGenerator = equityDataGenerator;
         }

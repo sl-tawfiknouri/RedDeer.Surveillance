@@ -7,6 +7,9 @@ using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
+    /// <summary>
+    /// Equity update driven trading process
+    /// </summary>
     public class TradingMarkovProcess : IOrderDataGenerator
     {
         private IDisposable _unsubscriber;

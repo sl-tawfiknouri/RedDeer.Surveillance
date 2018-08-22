@@ -1,11 +1,11 @@
 ﻿using NLog;
 using System;
-using System.Timers;
 using System.Linq;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Domain.Equity.Trading.Frames;
+using TestHarness.Engine.Heartbeat.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -21,7 +21,8 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
-        private Timer _activeTimer;
+
+        private IHeartbeat _heartBeat;
 
         private readonly ILogger _logger;
 
@@ -38,7 +39,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             _logger = logger;
         }
 
-        public void InitiateWalk(IStockExchangeStream stream, TimeSpan tickFrequency)
+        public void InitiateWalk(IStockExchangeStream stream, IHeartbeat heartBeat)
         {
             _logger.Log(LogLevel.Info, "Walk initiated in equity generator");
 
@@ -47,37 +48,23 @@ namespace TestHarness.Engine.EquitiesGenerator
                 throw new ArgumentNullException(nameof(stream));
             }
 
+            if (heartBeat == null)
+            {
+                throw new ArgumentNullException(nameof(heartBeat));
+            }
+
             lock (_stateTransitionLock)
             {
-                ResetTimer();
                 _walkInitiated = true;
 
                 _stream = stream;
                 _activeFrame = _exchangeTickInitialiser.InitialFrame();
                 _stream.Add(_activeFrame);
 
-                SetNewTimer(tickFrequency);
+                _heartBeat = heartBeat;
+                _heartBeat.OnBeat(Tick);
+                _heartBeat.Start();
             }
-        }
-
-        private void ResetTimer()
-        {
-            if (_activeTimer != null)
-            {
-                _activeTimer.Stop();
-                _activeTimer.Dispose();
-                _activeTimer = null;
-            }
-        }
-
-        private void SetNewTimer(TimeSpan tickFrequency)
-        {
-            _activeTimer = new Timer();
-            _activeTimer.Interval = tickFrequency.TotalMilliseconds;
-            _activeTimer.Elapsed += Tick;
-            _activeTimer.AutoReset = true;
-
-            _activeTimer.Enabled = true;
         }
 
         private void Tick(object sender, EventArgs e)
@@ -95,7 +82,10 @@ namespace TestHarness.Engine.EquitiesGenerator
 
                 if (!_walkInitiated)
                 {
-                    _activeTimer.Stop();
+                    if (_heartBeat != null)
+                    {
+                        _heartBeat.Stop();
+                    }
                     _tickLocked = false;
                     return;
                 }
@@ -125,8 +115,8 @@ namespace TestHarness.Engine.EquitiesGenerator
             {
                 _walkInitiated = false;
 
-                _activeTimer.Stop();
-                _activeTimer.Dispose();
+                _heartBeat.Stop();
+                _heartBeat.Dispose();
 
                 _logger.Log(LogLevel.Info, "Random walk generator terminating walk");
             }

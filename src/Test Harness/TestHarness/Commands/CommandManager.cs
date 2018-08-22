@@ -33,11 +33,11 @@ namespace TestHarness.Commands
 
             _commands = new List<ICommand>
             {
+                new InitiateCommand(programState, this),
                 new HelpCommand(),
                 new QuitCommand(programState),
-                _unrecognisedCommand,
-                new InitiateCommand(programState, this),
-                new DemoCommand(appFactory)
+                new DemoCommand(appFactory),
+               _unrecognisedCommand,
             };
         }
 

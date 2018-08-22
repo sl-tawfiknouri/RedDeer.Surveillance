@@ -2,7 +2,7 @@
 using NLog;
 using NUnit.Framework;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using TestHarness.Factory;
+using TestHarness.Factory.Interfaces;
 
 namespace TestHarness.Tests
 {

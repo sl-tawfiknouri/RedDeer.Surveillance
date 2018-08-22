@@ -5,6 +5,7 @@ using NLog;
 using System;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Display;
 using TestHarness.Display.Subscribers;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -12,6 +13,8 @@ using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Factory.Interfaces;
+using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Interfaces;
 using TestHarness.Network_IO;
 using TestHarness.Network_IO.Subscribers;
@@ -27,18 +30,23 @@ namespace TestHarness.Factory
         public AppFactory()
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
-            State = new ProgramState();
 
-            // not state dependant on the other console
-            var console = new Display.Console();
-            CommandManager = new CommandManager(State, Logger, console);
+            State = new ProgramState();
+            Console = new Display.Console();
             CommandManifest = new CommandManifest();
+            CommandManager = new CommandManager(State, Logger, Console);
+            TradingFactory = new TradingFactory.TradingFactory(Logger);
+
+            var stratlol = 
+                TradingFactory
+                .Create()
+                .Heartbeat()
+                .Regular(TimeSpan.FromMilliseconds(100))
+                .TradingFixedVolume(10).Finish();
         }
 
         public void Build()
         {
-            var display = new Display.Console();
-
             // if normal distri
             // var tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(8);
 
@@ -52,7 +60,7 @@ namespace TestHarness.Factory
             var tradeOrderGenerator = new TradingHeatbeatDrivenProcess(Logger, tradeStrategy, irregularHeartbeat);
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
-            var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
+            var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(Console);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
 
             var websocketFactory = new WebsocketConnectionFactory();
@@ -72,7 +80,7 @@ namespace TestHarness.Factory
             var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, Logger);
             var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
             var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
-            var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(display);
+            var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(Console);
             exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
             // there is our problem with it initially walking
@@ -80,7 +88,6 @@ namespace TestHarness.Factory
 
             var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
             equityDataGenerator.InitiateWalk(exchangeStream, heartBeat);
-
             irregularHeartbeat.Start();
 
             EquityDataGenerator = equityDataGenerator;
@@ -115,5 +122,9 @@ namespace TestHarness.Factory
         /// Ctor is used to construct this
         /// </summary>
         public IProgramState State { get; private set; }
+
+        public IConsole Console { get; private set; }
+
+        public ITradingFactory TradingFactory { get; private set;}
     }
 }

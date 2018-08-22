@@ -26,5 +26,13 @@ namespace TestHarness.Engine.OrderGenerator
 
             _orderStrategy.ExecuteTradeStrategy(value, _tradeStream);
         }
+
+        protected override void _InitiateTrading()
+        {
+        }
+
+        protected override void _TerminateTradingStrategy()
+        {
+        }
     }
 }

@@ -46,6 +46,16 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
+        protected override void _InitiateTrading()
+        {
+            _heartbeat.Start();
+        }
+
+        protected override void _TerminateTradingStrategy()
+        {
+            _heartbeat.Stop();
+        }
+
         private void TradeOnHeartbeat(object sender, EventArgs e)
         {
             lock (_lock)

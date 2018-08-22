@@ -55,8 +55,12 @@ namespace TestHarness.Engine.OrderGenerator
                 _tradeStream = tradeStream;
                 _unsubscriber = stockStream.Subscribe(this);
                 _generatorExecuting = true;
+
+                _InitiateTrading();
             }
         }
+
+        protected abstract void _InitiateTrading();
 
         public void OnCompleted()
         {
@@ -103,6 +107,10 @@ namespace TestHarness.Engine.OrderGenerator
             _stockStream = null;
             _tradeStream = null;
             _generatorExecuting = false;
+
+            _TerminateTradingStrategy();
         }
+
+        protected abstract void _TerminateTradingStrategy();
     }
 }

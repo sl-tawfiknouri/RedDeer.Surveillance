@@ -1,11 +1,10 @@
 ﻿using NLog;
-using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Interfaces;
 using TestHarness.Network_IO;
 
-namespace TestHarness.Factory
+namespace TestHarness.Factory.Interfaces
 {
     public interface IAppFactory
     {

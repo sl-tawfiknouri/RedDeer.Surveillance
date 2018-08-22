@@ -1,8 +1,8 @@
 ﻿using NLog;
-using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory;
+using TestHarness.Factory.Interfaces;
 using TestHarness.Interfaces;
 
 namespace TestHarness

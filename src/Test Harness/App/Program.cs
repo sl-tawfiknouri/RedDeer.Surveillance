@@ -1,6 +1,6 @@
 ﻿using System.Threading;
-using TestHarness;
 using NLog;
+using TestHarness.App;
 
 namespace App
 {
@@ -10,8 +10,7 @@ namespace App
         {
             LogManager.LoadConfiguration("nlog.config");
 
-            var mediator = new Mediator(null);
-            mediator.Initiate(null);
+            Bootstrapper.Start();
 
             Thread.Sleep(50);
         }

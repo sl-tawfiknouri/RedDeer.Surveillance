@@ -29,39 +29,23 @@ namespace TestHarness
 
         /// <summary>
         /// Call factory component then initiate initial domain execution
+        /// Does not start any long running processes
         /// </summary>
-        public void Initiate(InitiateCommand command)
+        public void Initiate()
         {
             lock (_lock)
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
-
-                if (command == null)
-                {
-                    _appFactory.Logger.Log(LogLevel.Warn, "Mediator receieved a null initiation command");
-                }
 
                 if (_equityDataGenerator != null)
                 {
                     _equityDataGenerator.TerminateWalk();
                 }
 
-                _equityDataGenerator = _appFactory.Build();
+                _appFactory.Build();
+                _equityDataGenerator = _appFactory.EquityDataGenerator;
 
-                InitiateProgram();
-            }
-        }
-
-        private void InitiateProgram()
-        {
-            _programState.Executing = true;
-
-            while (_programState.Executing)
-            {
-                var io = System.Console.ReadLine();
-                io = io.ToLowerInvariant();
-
-                _commandManager.InterpretIOCommand(io);
+                _commandManager.InterpretIOCommand("initiate");
             }
         }
 

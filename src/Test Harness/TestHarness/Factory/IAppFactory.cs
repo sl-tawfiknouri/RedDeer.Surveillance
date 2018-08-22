@@ -9,7 +9,7 @@ namespace TestHarness.Factory
 {
     public interface IAppFactory
     {
-        IEquityDataGenerator Build();
+        void Build();
 
         ILogger Logger { get; }
 
@@ -18,5 +18,7 @@ namespace TestHarness.Factory
         ICommandManager CommandManager { get; }
 
         IProgramState State { get; }
+
+        IEquityDataGenerator EquityDataGenerator { get; }
     }
 }

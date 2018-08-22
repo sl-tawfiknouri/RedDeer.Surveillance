@@ -1,32 +1,43 @@
 ﻿using System;
+using TestHarness.Commands.Interfaces;
+using TestHarness.Interfaces;
 
 namespace TestHarness.Commands
 {
-    public class InitiateCommand
+    public class InitiateCommand : ICommand
     {
+        private readonly IProgramState _state;
+        private readonly ICommandManager _commandManager;
+
         public InitiateCommand(
-            bool generateSecurityMarket,
-            bool generateSecurityTrades,
-            bool initiateOnStartup,
-            bool outputDisplay,
-            TimeSpan frequency)
+            IProgramState state,
+            ICommandManager commandManager)
         {
-            GenerateSecurityMarket = generateSecurityMarket;
-            GenerateSecurityTrades = generateSecurityTrades;
-            InitiateOnStartup = initiateOnStartup;
-            OutputDisplay = outputDisplay;
-            Frequency = frequency;
+            _state = state ?? throw new ArgumentNullException(nameof(state));
+            _commandManager = commandManager ?? throw new ArgumentNullException(nameof(commandManager));
         }
 
-        public bool GenerateSecurityMarket { get; }
+        public bool Handles(string command)
+        {
+            if (string.IsNullOrWhiteSpace(command))
+            {
+                return false;
+            }
 
-        public bool GenerateSecurityTrades { get; }
+            return string.Equals(command, "initiate", StringComparison.InvariantCultureIgnoreCase);
+        }
 
-        public bool InitiateOnStartup { get; }
+        public void Run()
+        {
+            _state.Executing = true;
 
-        public bool OutputDisplay { get; }
+            while (_state.Executing)
+            {
+                var io = System.Console.ReadLine();
+                io = io.ToLowerInvariant();
 
-        public TimeSpan Frequency { get; }
-
+                _commandManager.InterpretIOCommand(io);
+            }
+        }
     }
 }

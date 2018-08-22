@@ -30,7 +30,7 @@ namespace TestHarness.Factory
             CommandManager = new CommandManager(State);
         }
 
-        public IEquityDataGenerator Build()
+        public void Build()
         {
             var display = new Display.Console();
 
@@ -62,9 +62,9 @@ namespace TestHarness.Factory
             exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(3));
+            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(2));
 
-            return equityDataGenerator;
+            EquityDataGenerator = equityDataGenerator;
         }
 
         /// <summary>
@@ -77,8 +77,20 @@ namespace TestHarness.Factory
         /// </summary>
         public INetworkManager NetworkManager { get; private set; }
 
+        /// <summary>
+        /// Build is used to construct this
+        /// </summary>
+        public IEquityDataGenerator EquityDataGenerator { get; private set; }
+
+        /// <summary>
+        /// Ctor is used to construct this
+        /// </summary>
         public ICommandManager CommandManager { get; private set; }
 
+        /// <summary>
+        /// Ctor is used to construct this
+        /// </summary>
         public IProgramState State { get; private set; }
+
     }
 }

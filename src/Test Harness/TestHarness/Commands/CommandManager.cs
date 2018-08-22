@@ -19,6 +19,7 @@ namespace TestHarness.Commands
                 new HelpCommand(),
                 new QuitCommand(programState),
                 _unrecognisedCommand,
+                new InitiateCommand(programState, this)
             };
         }
 

@@ -4,7 +4,7 @@ namespace TestHarness.Interfaces
 {
     public interface IMediator
     {
-        void Initiate(InitiateCommand command);
+        void Initiate();
         void Terminate();
         void ActionCommand(string command);
     }

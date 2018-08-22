@@ -1,7 +1,9 @@
 ﻿using System;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO;
 
@@ -76,6 +78,11 @@ namespace TestHarness.Commands
                 .TradingFixedVolume(3)
                 .Finish();
 
+            var prohibitedTradeProcess = new TradingHeartbeatProhibitedSecuritiesProcess(
+                _appFactory.ProhibitedSecurityHeartbeat,
+                _appFactory.Logger,
+                new StubTradeStrategy());
+
             _networkManager =
                 _appFactory
                 .NetworkManagerFactory
@@ -90,6 +97,7 @@ namespace TestHarness.Commands
 
             // start updating trading data
             _tradeProcess.InitiateTrading(equityStream, tradeStream);
+            prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
         private void Stop()

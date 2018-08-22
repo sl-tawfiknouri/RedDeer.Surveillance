@@ -51,11 +51,7 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
         /// <returns>boolean true/false true if the trade is prohibited</returns>
         private bool TradeOrderAgainstProhibitedAsset(TradeOrderFrame frame)
         {
-            return 
-                (frame.Security?.Name?.StartsWith("a", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                || (frame.Security?.Name?.StartsWith("b", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                || (frame.Security?.Name?.StartsWith("c", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                || (_assetsRepository.ProhibitedEquities?.Contains(frame?.Security?.Name) ?? false);
+            return _assetsRepository.ProhibitedEquities?.Contains(frame?.Security?.Name) ?? false;
         }
     }
 }

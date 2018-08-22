@@ -1,18 +1,10 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using NLog;
-using System;
+﻿using NLog;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
-using TestHarness.Display.Subscribers;
-using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.Heartbeat;
-using TestHarness.Engine.OrderGenerator;
-using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.Interfaces;
@@ -22,8 +14,6 @@ using TestHarness.Factory.TradingFactory;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Interfaces;
 using TestHarness.Network_IO;
-using TestHarness.Network_IO.Subscribers;
-using Utilities.Network_IO.Websocket_Connections;
 
 namespace TestHarness.Factory
 {
@@ -37,8 +27,9 @@ namespace TestHarness.Factory
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
 
             State = new ProgramState();
-            Console = new Display.Console();
+            Console = new Console();
             CommandManifest = new CommandManifest();
+            ProhibitedSecurityHeartbeat = new PulsatingHeartbeat(); // singleton
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
@@ -47,51 +38,6 @@ namespace TestHarness.Factory
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
 
             CommandManager = new CommandManager(this, State, Logger, Console);
-        }
-
-        public void Build()
-        {
-            // if normal distri
-            // var tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(8);
-
-            // if fixed
-            var tradeVolumeStrategy = new TradeVolumeFixedStrategy(1);
-
-            // if heartbeat
-            var irregularHeartbeat = new IrregularHeartbeat(TimeSpan.FromMilliseconds(300), 10);
-
-            var tradeStrategy = new MarkovTradeStrategy(Logger, tradeVolumeStrategy);
-            var tradeOrderGenerator = new TradingHeatbeatDrivenProcess(Logger, tradeStrategy, irregularHeartbeat);
-            var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
-            var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
-            var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(Console);
-            tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
-            var websocketFactory = new WebsocketConnectionFactory();
-            var configuration = new Configuration.Configuration();
-            var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
-            // if networking
-            //NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);
-            //NetworkManager.InitiateNetworkConnections();
-            //NetworkManager.AttachTradeOrderSubscriberToStream(tradeOrderStream);
-            // if stubbing out networking (default mode)
-            NetworkManager = new StubNetworkManager(Logger);
-            var equityDataStrategy = new MarkovEquityStrategy();
-            var nasdaqInitialiser = new NasdaqInitialiser();
-            var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
-            var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, heartBeat, Logger);
-            var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
-            var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
-            var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(Console);
-            exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
-
-
-
-            // there is our problem with it initially walking
-            tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            equityDataGenerator.InitiateWalk(exchangeStream);
-            irregularHeartbeat.Start();
-            heartBeat.Start();
-            EquityDataGenerator = equityDataGenerator;
         }
 
         /// <summary>
@@ -125,8 +71,8 @@ namespace TestHarness.Factory
         public IProgramState State { get; private set; }
 
         public IConsole Console { get; private set; }
-
-
+        
+        public IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; private set; }
 
         // new factories
         public IEquitiesProcessFactory EquitiesProcessFactory { get; private set; } 

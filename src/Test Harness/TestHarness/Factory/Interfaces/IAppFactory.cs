@@ -2,6 +2,7 @@
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -12,8 +13,6 @@ namespace TestHarness.Factory.Interfaces
 {
     public interface IAppFactory
     {
-        void Build();
-
         ILogger Logger { get; }
 
         INetworkManager NetworkManager { get; }
@@ -27,6 +26,8 @@ namespace TestHarness.Factory.Interfaces
         IEquityDataGenerator EquityDataGenerator { get; }
 
         IConsole Console { get; }
+
+        IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; }
 
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 

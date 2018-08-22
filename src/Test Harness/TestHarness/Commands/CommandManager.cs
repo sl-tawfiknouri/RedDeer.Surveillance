@@ -38,6 +38,7 @@ namespace TestHarness.Commands
                 new QuitCommand(programState),
                 new DemoCommand(appFactory),
                 new DemoNetworkingCommand(appFactory),
+                new TradeProhibitedSecurityCommand(appFactory),
                _unrecognisedCommand,
             };
         }

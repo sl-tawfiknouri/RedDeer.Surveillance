@@ -86,6 +86,8 @@ namespace TestHarness
                 {
                     _equityDataGenerator.TerminateWalk();
                 }
+
+                _commandManager.InterpretIOCommand("quit");
             }
         }
     }

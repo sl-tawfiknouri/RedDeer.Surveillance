@@ -8,9 +8,9 @@ namespace TestHarness.Engine.OrderGenerator
     /// <summary>
     /// Equity update driven trading process
     /// </summary>
-    public class TradingMarketUpdateDrivenMarkovProcess : BaseTradingProcess, IOrderDataGenerator
+    public class TradingMarketUpdateDrivenProcess : BaseTradingProcess, IOrderDataGenerator
     {
-        public TradingMarketUpdateDrivenMarkovProcess(
+        public TradingMarketUpdateDrivenProcess(
             ILogger logger,
             ITradeStrategy orderStrategy) 
             : base(logger, orderStrategy)

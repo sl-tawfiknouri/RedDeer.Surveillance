@@ -39,8 +39,17 @@ namespace TestHarness.Factory
         {
             var display = new Display.Console();
 
-            var tradeStrategy = new MarkovTradeStrategy(Logger);
-            var tradeOrderGenerator = new TradingMarketUpdateDrivenMarkovProcess(Logger, tradeStrategy);
+            // if normal distri
+            // var tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(8);
+
+            // if fixed
+            var tradeVolumeStrategy = new TradeVolumeFixedStrategy(1);
+
+            // if heartbeat
+            var irregularHeartbeat = new IrregularHeartbeat(TimeSpan.FromMilliseconds(300), 10);
+
+            var tradeStrategy = new MarkovTradeStrategy(Logger, tradeVolumeStrategy);
+            var tradeOrderGenerator = new TradingHeatbeatDrivenProcess(Logger, tradeStrategy, irregularHeartbeat);
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
@@ -71,6 +80,8 @@ namespace TestHarness.Factory
 
             var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
             equityDataGenerator.InitiateWalk(exchangeStream, heartBeat);
+
+            irregularHeartbeat.Start();
 
             EquityDataGenerator = equityDataGenerator;
         }

@@ -18,24 +18,27 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
     {
         private ILogger _logger;
         private ITradeOrderStream _tradeOrderStream;
+        private ITradeVolumeStrategy _tradeVolumeStrategy;
 
         [SetUp]
         public void Setup()
         {
             _tradeOrderStream = A.Fake<ITradeOrderStream>();
             _logger = A.Fake<ILogger>();
+
+            _tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(6);
         }
 
         [Test]
         public void Constructor_ConsidersANullLogger_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new MarkovTradeStrategy(null));
+            Assert.Throws<ArgumentNullException>(() => new MarkovTradeStrategy(null, _tradeVolumeStrategy));
         }
 
         [Test]
         public void ExecuteTradeStrategy_NullTick_DoesNotThrow()
         {
-            var tradeStrategy = new MarkovTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
 
             Assert.DoesNotThrow(() => tradeStrategy.ExecuteTradeStrategy(null, _tradeOrderStream));
         }
@@ -43,7 +46,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [Test]
         public void ExecuteTradeStrategy_NullTradeOrders_DoesThrow()
         {
-            var tradeStrategy = new MarkovTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"), 
@@ -55,7 +58,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [Test]
         public void ExecuteTradeStrategy_NoSecuritiesInFrame_Logs()
         {
-            var tradeStrategy = new MarkovTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"),
@@ -75,7 +78,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         [TestCase(1000)]
         public void ExecuteTradeStategy_RecordsTrades_100Iterations(int frames)
         {
-            var tradeStrategy = new MarkovTradeStrategy(_logger);
+            var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = GenerateFrame(frames);
 
             A

@@ -30,6 +30,9 @@ namespace TestHarness.Display
             System.Console.ForegroundColor = ConsoleColor.White;
             System.Console.BackgroundColor = ConsoleColor.Black;
 
+            var height = Math.Min(30, System.Console.LargestWindowHeight);
+            System.Console.SetWindowSize(System.Console.LargestWindowWidth, height);
+
             WriteToLine(2, "RED DEER SURVEILLANCE");
             WriteToLine(4, "TEST HARNESS");
         }

@@ -14,26 +14,28 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
     public class MarkovTradeStrategy : ITradeStrategy
     {
         private readonly ILogger _logger;
-        private readonly double _limitStandardDeviation = 4;
-        private readonly double _tradedSecurityStandardDeviation = 6;
+        private readonly ITradeVolumeStrategy _tradeVolumeStratey;
 
-        public MarkovTradeStrategy(ILogger logger)
+        private readonly double _limitStandardDeviation = 4;
+
+        public MarkovTradeStrategy(
+            ILogger logger,
+            ITradeVolumeStrategy volumeStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradeVolumeStratey = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
         }
 
         public MarkovTradeStrategy(
             ILogger logger,
             double? limitStandardDeviation,
-            double? tradedSecurityStandardDeviation)
+            ITradeVolumeStrategy volumeStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradeVolumeStratey = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
 
             if (limitStandardDeviation != null && limitStandardDeviation >= 0)
                 _limitStandardDeviation = limitStandardDeviation.Value;
-
-            if (tradedSecurityStandardDeviation != null && tradedSecurityStandardDeviation >= 0)
-                _tradedSecurityStandardDeviation = tradedSecurityStandardDeviation.Value;
         }
 
         public void ExecuteTradeStrategy(ExchangeFrame frame, ITradeOrderStream tradeOrders)
@@ -58,7 +60,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             }
 
             var tradeableSecurities = frame.Securities.Where(sec => sec != null).ToList();
-            int numberOfTradeOrders = CalculateSecuritiesToTrade(tradeableSecurities);
+            int numberOfTradeOrders = _tradeVolumeStratey.CalculateSecuritiesToTrade(tradeableSecurities);
 
             if (numberOfTradeOrders <= 0)
             {
@@ -98,34 +100,6 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             }
 
             return securitiesToTradeIds;
-        }
-
-        private int CalculateSecuritiesToTrade(IReadOnlyCollection<SecurityFrame> frames)
-        {
-            var tradingMean = TradingMean(frames);
-            var totalSecuritiesToTrade = (int)Normal.Sample(tradingMean, _tradedSecurityStandardDeviation);
-            var adjustedSecuritiesToTrade = Math.Max(totalSecuritiesToTrade, 0);
-
-            return adjustedSecuritiesToTrade;
-        }
-
-        private int TradingMean(IReadOnlyCollection<SecurityFrame> frames)
-        {
-            var rawCount = frames.Count();
-
-            if (rawCount <= 0)
-            {
-                return 0;
-            }
-
-            var sqrt = Math.Sqrt(rawCount);
-
-            if (sqrt < 10)
-            {
-                return rawCount;
-            }
-
-            return (int)sqrt;
         }
 
         private TradeOrderFrame GenerateTrade(SecurityFrame frame, ExchangeFrame exchFrame)

@@ -13,7 +13,7 @@ namespace App
             var mediator = new Mediator(null);
             mediator.Initiate(null);
 
-            Thread.Sleep(1000);
+            Thread.Sleep(50);
         }
     }
 }

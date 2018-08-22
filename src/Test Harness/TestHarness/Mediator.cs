@@ -14,14 +14,17 @@ namespace TestHarness
     {
         private readonly object _lock = new object();
 
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
+        private readonly ICommandManager _commandManager;
+        private readonly IProgramState _programState;
+
         private IEquityDataGenerator _equityDataGenerator;
-        private ICommandManager _commandManager;
 
         public Mediator(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? new AppFactory();
             _commandManager = _appFactory.CommandManager;
+            _programState = _appFactory.State;
         }
 
         /// <summary>
@@ -51,9 +54,9 @@ namespace TestHarness
 
         private void InitiateProgram()
         {
-            var programLoop = true;
+            _programState.Executing = true;
 
-            while (programLoop)
+            while (_programState.Executing)
             {
                 var io = System.Console.ReadLine();
                 io = io.ToLowerInvariant();

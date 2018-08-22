@@ -11,6 +11,7 @@ using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Interfaces;
 using TestHarness.Network_IO;
 using TestHarness.Network_IO.Subscribers;
 using Utilities.Network_IO.Websocket_Connections;
@@ -25,7 +26,8 @@ namespace TestHarness.Factory
         public AppFactory()
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
-            CommandManager = new CommandManager();
+            State = new ProgramState();
+            CommandManager = new CommandManager(State);
         }
 
         public IEquityDataGenerator Build()
@@ -76,5 +78,7 @@ namespace TestHarness.Factory
         public INetworkManager NetworkManager { get; private set; }
 
         public ICommandManager CommandManager { get; private set; }
+
+        public IProgramState State { get; private set; }
     }
 }

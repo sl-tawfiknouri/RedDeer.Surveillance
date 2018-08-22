@@ -1,10 +1,18 @@
 ﻿using System;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Interfaces;
 
 namespace TestHarness.Commands
 {
     public class QuitCommand : ICommand
     {
+        private readonly IProgramState _programState;
+
+        public QuitCommand(IProgramState programState)
+        {
+            _programState = programState ?? throw new ArgumentNullException(nameof(programState));
+        }
+
         public bool Handles(string command)
         {
             if (string.IsNullOrWhiteSpace(command))
@@ -17,8 +25,7 @@ namespace TestHarness.Commands
 
         public void Run()
         {
-            // ironically this works for now lol
-            throw new NotImplementedException();
+            _programState.Executing = false;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace TestHarness.Commands
 
         public void Run(string command)
         {
-            Display.Console.WriteToLine(1, "Available commands | help | quit | run demo | stop demo");
+            Display.Console.WriteToLine(1, "Available commands | help | quit | run demo | stop demo | run demo networking | stop demo networking");
         }
     }
 }

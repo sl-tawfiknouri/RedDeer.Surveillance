@@ -37,6 +37,7 @@ namespace TestHarness.Commands
                 new HelpCommand(),
                 new QuitCommand(programState),
                 new DemoCommand(appFactory),
+                new DemoNetworkingCommand(appFactory),
                _unrecognisedCommand,
             };
         }

@@ -3,6 +3,7 @@ using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using NLog;
 using System;
+using TestHarness.Commands;
 using TestHarness.Display.Subscribers;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -23,6 +24,7 @@ namespace TestHarness.Factory
         public AppFactory()
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
+            CommandManager = new CommandManager();
         }
 
         public IEquityDataGenerator Build()
@@ -39,9 +41,14 @@ namespace TestHarness.Factory
             var websocketFactory = new WebsocketConnectionFactory();
             var configuration = new Configuration.Configuration("localhost", "9067");
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
-            NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);
-            NetworkManager.InitiateNetworkConnections();
-            NetworkManager.AttachTradeOrderSubscriberToStream(tradeOrderStream);
+
+            // if networking
+            //NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);
+            //NetworkManager.InitiateNetworkConnections();
+            //NetworkManager.AttachTradeOrderSubscriberToStream(tradeOrderStream);
+
+            // if stubbing out networking (default mode)
+            NetworkManager = new StubNetworkManager(Logger);
 
             var equityDataStrategy = new RandomWalkStrategy();
             var nasdaqInitialiser = new NasdaqInitialiser();
@@ -66,5 +73,7 @@ namespace TestHarness.Factory
         /// Build is used to construct this
         /// </summary>
         public INetworkManager NetworkManager { get; private set; }
+
+        public ICommandManager CommandManager { get; private set; }
     }
 }

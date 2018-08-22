@@ -41,6 +41,22 @@ namespace TestHarness
                 }
 
                 _equityDataGenerator = _appFactory.Build();
+
+                InitiateProgram();
+            }
+        }
+
+        private void InitiateProgram()
+        {
+            var commandManager = _appFactory.CommandManager;
+            var programLoop = true;
+
+            while (programLoop)
+            {
+                var io = System.Console.ReadLine();
+                io = io.ToLowerInvariant();
+
+                commandManager.InterpretIOCommand(io);
             }
         }
 

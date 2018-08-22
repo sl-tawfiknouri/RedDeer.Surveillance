@@ -1,5 +1,4 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
+﻿using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using System;
 using System.Collections.Generic;
@@ -20,6 +19,18 @@ namespace TestHarness.Display
         public Console()
         {
             _tradeOrders = new Stack<TradeOrderFrame>();
+
+            InitialConfiguration();
+        }
+
+        private void InitialConfiguration()
+        {
+            System.Console.Title = "Red Deer Surveillance | Test Harness";
+            System.Console.ForegroundColor = ConsoleColor.White;
+            System.Console.BackgroundColor = ConsoleColor.Black;
+
+            WriteToLine(2, "RED DEER SURVEILLANCE");
+            WriteToLine(4, "TEST HARNESS");
         }
 
         public void OutputMarketFrame(ExchangeFrame frame)
@@ -80,7 +91,7 @@ namespace TestHarness.Display
             {
                 if (e == null)
                 {
-                    System.Console.WriteLine("Exception. Empty exception");
+                    WriteToLine(0, "Exception. Empty exception");
                     return;
                 }
 
@@ -88,12 +99,13 @@ namespace TestHarness.Display
             }
         }
 
-        private void WriteToLine(int targetLine, string message)
+        public static void WriteToLine(int targetLine, string message)
         {
             System.Console.SetCursorPosition(0, targetLine);
             System.Console.Write(new string(' ', System.Console.WindowWidth));
             System.Console.SetCursorPosition(5, targetLine);
             System.Console.Write(message);
+            System.Console.SetCursorPosition(0, 0);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace TestHarness.Factory
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
             State = new ProgramState();
-            CommandManager = new CommandManager(State);
+            CommandManager = new CommandManager(State, Logger);
         }
 
         public void Build()

@@ -21,7 +21,6 @@ namespace TestHarness.Tests
             _logger = A.Fake<ILogger>();
 
             A.CallTo(() => _appFactory.Logger).Returns(_logger);
-            A.CallTo(() => _appFactory.Build()).Returns(_equityDataGenerator);
         }
 
         [Test]
@@ -35,7 +34,7 @@ namespace TestHarness.Tests
         {
             var mediator = new Mediator(_appFactory);
 
-            mediator.Initiate(null);
+            mediator.Initiate();
 
             A
                 .CallTo(() => _logger.Log(LogLevel.Info, "Mediator Initiating"))
@@ -51,7 +50,7 @@ namespace TestHarness.Tests
         {
             var mediator = new Mediator(_appFactory);
 
-            mediator.Initiate(null);
+            mediator.Initiate();
 
             A
                 .CallTo(() => _appFactory.Build())
@@ -63,8 +62,8 @@ namespace TestHarness.Tests
         {
             var mediator = new Mediator(_appFactory);
 
-            mediator.Initiate(null);
-            mediator.Initiate(null);
+            mediator.Initiate();
+            mediator.Initiate();
 
             A
                 .CallTo(() => _appFactory.Build())
@@ -80,7 +79,7 @@ namespace TestHarness.Tests
         {
             var mediator = new Mediator(_appFactory);
 
-            mediator.Initiate(null);
+            mediator.Initiate();
             mediator.Terminate();
 
             A

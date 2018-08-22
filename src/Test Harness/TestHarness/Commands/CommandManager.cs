@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NLog;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Interfaces;
@@ -9,10 +11,14 @@ namespace TestHarness.Commands
     {
         private IReadOnlyCollection<ICommand> _commands;
         private ICommand _unrecognisedCommand;
+        private ILogger _logger;
 
-        public CommandManager(IProgramState programState)
+        public CommandManager(
+            IProgramState programState,
+            ILogger logger)
         {
             _unrecognisedCommand = new UnrecognisedCommand();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _commands = new List<ICommand>
             {
@@ -25,6 +31,8 @@ namespace TestHarness.Commands
 
         public void InterpretIOCommand(string command)
         {
+            _logger.Info($"Command Manager receieved command: {command}");
+
             var executableCommands =
                 _commands
                     .Where(cmd => cmd.Handles(command))

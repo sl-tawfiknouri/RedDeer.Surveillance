@@ -15,7 +15,8 @@ namespace Domain.Equity.Trading.Orders
             Price? limit,
             int volume,
             OrderDirection direction,
-            OrderStatus orderStatus)
+            OrderStatus orderStatus,
+            DateTime date)
         {
             OrderType = orderType;
             Market = market;
@@ -24,6 +25,7 @@ namespace Domain.Equity.Trading.Orders
             Volume = volume;
             Direction = direction;
             OrderStatus = orderStatus;
+            StatusChangedOn = date;
 
             if (orderType == OrderType.Limit
                 && limit == null)
@@ -40,6 +42,8 @@ namespace Domain.Equity.Trading.Orders
 
         public Price? Limit { get; }
 
+        public DateTime StatusChangedOn { get; }
+
         public int Volume { get; }
 
         public OrderDirection Direction { get; }
@@ -48,7 +52,7 @@ namespace Domain.Equity.Trading.Orders
 
         public override string ToString()
         {
-            return $"Market({Market.Id.Id}) Security({Security.Id.Id}) Direction({Direction}) Order({OrderType}) Volume({Volume}) Limit({Limit?.Value}) Status({OrderStatus})";
+            return $"Market({Market.Id.Id}) Time({StatusChangedOn.ToLongTimeString()}) Security({Security.Id.Id}) Direction({Direction}) Order({OrderType}) Volume({Volume}) Limit({Limit?.Value}) Status({OrderStatus})";
         }
     }
 }

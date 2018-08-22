@@ -1,5 +1,6 @@
 ﻿using NLog;
 using TestHarness.Commands;
+using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Network_IO;
 

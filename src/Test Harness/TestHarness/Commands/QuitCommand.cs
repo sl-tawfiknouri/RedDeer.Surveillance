@@ -1,4 +1,5 @@
 ﻿using System;
+using TestHarness.Commands.Interfaces;
 
 namespace TestHarness.Commands
 {

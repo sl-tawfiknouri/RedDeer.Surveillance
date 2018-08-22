@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Commands
+﻿namespace TestHarness.Commands.Interfaces
 {
     public interface ICommand
     {

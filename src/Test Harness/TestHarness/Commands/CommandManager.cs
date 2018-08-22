@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TestHarness.Commands.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -10,11 +11,13 @@ namespace TestHarness.Commands
 
         public CommandManager()
         {
+            _unrecognisedCommand = new UnrecognisedCommand();
+
             _commands = new List<ICommand>
             {
                 new HelpCommand(),
                 new QuitCommand(),
-                new UnrecognisedCommand()
+                _unrecognisedCommand,
             };
         }
 

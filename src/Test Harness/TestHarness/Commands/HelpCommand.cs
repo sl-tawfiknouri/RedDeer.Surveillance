@@ -1,4 +1,6 @@
-﻿namespace TestHarness.Commands
+﻿using TestHarness.Commands.Interfaces;
+
+namespace TestHarness.Commands
 {
     public class HelpCommand : ICommand
     {

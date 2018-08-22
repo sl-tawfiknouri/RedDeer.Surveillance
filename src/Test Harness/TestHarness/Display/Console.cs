@@ -13,6 +13,7 @@ namespace TestHarness.Display
 
         private int _marketFrameOffset = 6;
         private int _tradeFrameOffset = 10;
+        private int _tradeLimitToPrint = 10;
 
         private long _id = 0;
 
@@ -39,7 +40,9 @@ namespace TestHarness.Display
             {
                 if (frame == null)
                 {
-                    WriteToLine(_marketFrameOffset, "Market. Empty frame");
+                    WriteToLine(_marketFrameOffset, "*****************************");
+                    WriteToLine(_marketFrameOffset + 1, "Market. Empty frame");
+                    WriteToLine(_marketFrameOffset + 2, "*****************************");
                     return;
                 }
 
@@ -49,6 +52,9 @@ namespace TestHarness.Display
             }
         }
 
+        /// <summary>
+        /// Paint the last (_tradeLimitToPrint) trades most recent first
+        /// </summary>
         public void OutputTradeFrame(TradeOrderFrame frame)
         {
             lock (_lock)
@@ -59,27 +65,32 @@ namespace TestHarness.Display
                     return;
                 }
 
-                if (_tradeOrders.Count > 10)
-                    _tradeOrders.Pop();
-
-                _tradeOrders.Reverse();
-                _tradeOrders.Push(frame);
-
                 WriteToLine(_tradeFrameOffset, $"Trades to date. {_id}");
 
                 var newStack = new Stack<TradeOrderFrame>();
+
+                _tradeOrders.Push(frame);
 
                 var loopSize = _tradeOrders.Count();
                 for (var x = 1; x <= loopSize; x++)
                 {
                     var order = _tradeOrders.Pop();
-                    WriteToLine(_tradeFrameOffset + x, $"Trade Frame. {order.ToString()}");
-                    newStack.Push(order);
+                    WriteToLine(_tradeFrameOffset + x, $"Trade. {order.ToString()}");
+
+                    if (x < _tradeLimitToPrint)
+                    {
+                        newStack.Push(order);
+                    }
                 }
 
-                newStack.Reverse();
+                var reversedStack = new Stack<TradeOrderFrame>();
+                var reverseLoopSize = newStack.Count();
+                for (var x = 1; x <= reverseLoopSize; x++)
+                {
+                    reversedStack.Push(newStack.Pop());
+                }
 
-                _tradeOrders = newStack;
+                _tradeOrders = reversedStack;
 
                 _id++;
             }

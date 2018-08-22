@@ -17,13 +17,13 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         [TestCase(-0.0001)]
         public void Constructor_ConsidersOutOfRangeMaxSpread_ToBeOutOfRange(decimal maxSpread)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new RandomWalkStrategy(0, 1, maxSpread));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MarkovEquityStrategy(0, 1, maxSpread));
         }
 
         [Test]
         public void TickSecurity_ReturnsNullTick_ForNullArgument()
         {
-            var strategy = new RandomWalkStrategy();
+            var strategy = new MarkovEquityStrategy();
 
             var result = strategy.AdvanceFrame(null);
 
@@ -33,7 +33,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         [Test]
         public void TickSecurity_UpdatesWithNewTickData()
         {
-            var strategy = new RandomWalkStrategy();
+            var strategy = new MarkovEquityStrategy();
             var security = new SecurityFrame(
                 new Domain.Equity.Security(
                     new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),
@@ -56,7 +56,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         [Explicit]
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
-            var strategy = new RandomWalkStrategy();
+            var strategy = new MarkovEquityStrategy();
             var security = new SecurityFrame(
                 new Domain.Equity.Security(
                     new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),

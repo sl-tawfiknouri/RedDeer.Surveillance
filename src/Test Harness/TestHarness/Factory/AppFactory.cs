@@ -4,6 +4,7 @@ using Domain.Equity.Trading.Orders;
 using NLog;
 using System;
 using TestHarness.Commands;
+using TestHarness.Commands.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -50,7 +51,7 @@ namespace TestHarness.Factory
             // if stubbing out networking (default mode)
             NetworkManager = new StubNetworkManager(Logger);
 
-            var equityDataStrategy = new RandomWalkStrategy();
+            var equityDataStrategy = new MarkovEquityStrategy();
             var nasdaqInitialiser = new NasdaqInitialiser();
             var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, Logger);
             var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
@@ -59,7 +60,7 @@ namespace TestHarness.Factory
             exchangeStream.Subscribe(exchangeStreamDisplaySubscriber);
 
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(1));
+            equityDataGenerator.InitiateWalk(exchangeStream, TimeSpan.FromSeconds(3));
 
             return equityDataGenerator;
         }

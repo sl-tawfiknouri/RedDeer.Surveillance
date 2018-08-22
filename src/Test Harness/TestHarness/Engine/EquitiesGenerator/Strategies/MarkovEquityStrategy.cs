@@ -10,13 +10,13 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
     /// A strategy to update security ticks by sampling the next value
     /// from the standard deviation
     /// </summary>
-    public class RandomWalkStrategy : IEquityDataGeneratorStrategy
+    public class MarkovEquityStrategy : IEquityDataGeneratorStrategy
     {
         private readonly double _pricingStandardDeviation = 1; // good value for 15 minute tick updates
         private readonly double _tradingStandardDeviation = 4; // volume of trades will track larger volatility
         private readonly decimal _maxSpread = 0.05m;
 
-        public RandomWalkStrategy()
+        public MarkovEquityStrategy()
         {
         }
 
@@ -26,7 +26,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         /// <param name="pricingStandardDeviation">standard deviation to sample prices</param>
         /// <param name="tradingStandardDeviation">standard deviation to sample trades</param>
         /// <param name="maxSpread">Number [0..0.99]</param>
-        public RandomWalkStrategy(double pricingStandardDeviation, double tradingStandardDeviation, decimal maxSpread)
+        public MarkovEquityStrategy(double pricingStandardDeviation, double tradingStandardDeviation, decimal maxSpread)
         {
             _pricingStandardDeviation = pricingStandardDeviation;
             _tradingStandardDeviation = tradingStandardDeviation;

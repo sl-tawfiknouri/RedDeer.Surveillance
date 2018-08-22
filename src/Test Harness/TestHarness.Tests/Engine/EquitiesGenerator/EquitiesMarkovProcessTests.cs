@@ -39,7 +39,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_ReceivesTicks_AfterInitiationImmediately()
         {
-            var randomWalkStrategy = new RandomWalkStrategy();
+            var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _logger);
             var freq = TimeSpan.FromDays(1);
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
@@ -59,7 +59,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
         {
-            var randomWalkStrategy = new RandomWalkStrategy();
+            var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _logger);
             var freq = TimeSpan.FromMilliseconds(500);
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());

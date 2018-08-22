@@ -140,6 +140,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var limit = CalculateLimit(frame, direction, orderType);
             var volume = CalculateVolume(frame);
             var orderStatus = CalculateOrderStatus();
+            var orderDate = DateTime.Now;
 
             return new TradeOrderFrame(
                 orderType,
@@ -148,7 +149,8 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 limit,
                 volume,
                 direction,
-                orderStatus);
+                orderStatus,
+                orderDate);
         }
 
         private OrderStatus CalculateOrderStatus()

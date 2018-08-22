@@ -1,5 +1,6 @@
 ﻿using NLog;
 using TestHarness.Commands;
+using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Interfaces;
@@ -15,10 +16,12 @@ namespace TestHarness
 
         private IAppFactory _appFactory;
         private IEquityDataGenerator _equityDataGenerator;
+        private ICommandManager _commandManager;
 
         public Mediator(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? new AppFactory();
+            _commandManager = _appFactory.CommandManager;
         }
 
         /// <summary>
@@ -48,7 +51,6 @@ namespace TestHarness
 
         private void InitiateProgram()
         {
-            var commandManager = _appFactory.CommandManager;
             var programLoop = true;
 
             while (programLoop)
@@ -56,16 +58,16 @@ namespace TestHarness
                 var io = System.Console.ReadLine();
                 io = io.ToLowerInvariant();
 
-                commandManager.InterpretIOCommand(io);
+                _commandManager.InterpretIOCommand(io);
             }
         }
 
         /// <summary>
         /// Commands received during execution
         /// </summary>
-        public void ActionCommand()
+        public void ActionCommand(string command)
         {
-
+            _commandManager.InterpretIOCommand(command);
         }
 
         /// <summary>

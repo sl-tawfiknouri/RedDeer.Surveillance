@@ -49,7 +49,8 @@ namespace TestHarness.Tests.Display.Subscribers
                     null,
                     10,
                     OrderDirection.Buy,
-                    OrderStatus.Cancelled);
+                    OrderStatus.Cancelled,
+                    DateTime.Now);
 
             tradeOrderSubscriber.OnNext(tradeOrderFrame);
 

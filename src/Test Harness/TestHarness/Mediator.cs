@@ -1,6 +1,5 @@
 ﻿using NLog;
 using TestHarness.Commands.Interfaces;
-using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Interfaces;
@@ -19,8 +18,6 @@ namespace TestHarness
         private readonly ICommandManifest _commandManifest;
         private readonly IProgramState _programState;
 
-        private IEquityDataGenerator _equityDataGenerator;
-
         public Mediator(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? new AppFactory();
@@ -38,11 +35,6 @@ namespace TestHarness
             lock (_lock)
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
-
-                if (_equityDataGenerator != null)
-                {
-                    _equityDataGenerator.TerminateWalk();
-                }
 
                 _commandManager.InterpretIOCommand(_commandManifest.Initiate);
             }
@@ -64,11 +56,6 @@ namespace TestHarness
             lock (_lock)
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating");
-
-                if (_equityDataGenerator != null)
-                {
-                    _equityDataGenerator.TerminateWalk();
-                }
 
                 _commandManager.InterpretIOCommand(_commandManifest.Quit);
             }

@@ -11,7 +11,7 @@ namespace TestHarness.Commands
 
         public void Run()
         {
-            Display.Console.WriteToLine(0, "Enter 'help' to see available commands");
+            Display.Console.WriteToLine(1, "Enter 'help' to see available commands");
         }
     }
 }

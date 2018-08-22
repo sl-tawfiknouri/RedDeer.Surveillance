@@ -67,7 +67,7 @@ namespace TestHarness.Factory
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(Console);
             tradeOrderStream.Subscribe(tradeOrderDisplaySubscriber);
             var websocketFactory = new WebsocketConnectionFactory();
-            var configuration = new Configuration.Configuration("localhost", "9067");
+            var configuration = new Configuration.Configuration();
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, Logger);
             // if networking
             //NetworkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, Logger);

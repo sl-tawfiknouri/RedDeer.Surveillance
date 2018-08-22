@@ -2,15 +2,13 @@
 {
     public class Configuration : INetworkConfiguration
     {
-        public Configuration(
-            string tradeDomainUriSegment,
-            string tradeDomainUriPort)
-        {
-            TradeDomainUriDomainSegment = tradeDomainUriSegment ?? string.Empty;
-            TradeDomainUriPort = tradeDomainUriPort ?? string.Empty;
-        }
+        /// <summary>
+        /// Use defaults
+        /// </summary>
+        public Configuration()
+        { }
 
-        public string TradeDomainUriDomainSegment { get; }
-        public string TradeDomainUriPort { get; }
+        public string TradeDomainUriDomainSegment { get; } = "localhost";
+        public string TradeDomainUriPort { get; } = "9067";
     }
 }

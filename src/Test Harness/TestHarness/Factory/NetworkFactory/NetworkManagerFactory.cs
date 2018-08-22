@@ -18,9 +18,8 @@ namespace TestHarness.Factory.NetworkFactory
 
         public INetworkManager CreateWebsockets()
         {
-
             var websocketFactory = new WebsocketConnectionFactory();
-            var configuration = new Configuration.Configuration("localhost", "9067");
+            var configuration = new Configuration.Configuration();
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, _logger);
 
             var networkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, _logger);

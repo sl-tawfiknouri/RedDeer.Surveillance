@@ -36,19 +36,19 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new TradingMarkovProcess(null, _tradeStrategy));
+            Assert.Throws<ArgumentNullException>(() => new TradingMarketUpdateDrivenMarkovProcess(null, _tradeStrategy));
         }
 
         [Test]
         public void Constructor_ConsidersNullStrategy_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new TradingMarkovProcess(_logger, null));
+            Assert.Throws<ArgumentNullException>(() => new TradingMarketUpdateDrivenMarkovProcess(_logger, null));
         }
 
         [Test]
         public void InitiateTrading_WithNullStockStream_LogsError()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.InitiateTrading(null, _tradeStream);
 
@@ -60,7 +60,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void InitiateTrading_WithNullTradeStream_LogsError()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.InitiateTrading(_stockStream, null);
 
@@ -72,7 +72,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void InitiateTrading_LogsInitiation()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
 
@@ -88,7 +88,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void InitiateTrading_WithExistingTrading_DoesNotDeadLockOnTerminatingOldTrading()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
             orderDataGenerator.InitiateTrading(_stockStream, _tradeStream);
@@ -113,7 +113,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void TerminateTrading_LogsOnTermination()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.TerminateTrading();
 
@@ -125,7 +125,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnCompleted_LogsMessageAndCallsTerminate()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.OnCompleted();
 
@@ -141,7 +141,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnError_LogsWhenException_IsNull()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
 
             orderDataGenerator.OnError(null);
 
@@ -153,7 +153,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void OnError_LogsWhenException_IsPassedIn()
         {
-            var orderDataGenerator = new TradingMarkovProcess(_logger, _tradeStrategy);
+            var orderDataGenerator = new TradingMarketUpdateDrivenMarkovProcess(_logger, _tradeStrategy);
             var exception = new StackOverflowException();
 
             orderDataGenerator.OnError(exception);

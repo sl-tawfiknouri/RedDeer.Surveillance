@@ -16,6 +16,7 @@ namespace TestHarness
 
         private readonly IAppFactory _appFactory;
         private readonly ICommandManager _commandManager;
+        private readonly ICommandManifest _commandManifest;
         private readonly IProgramState _programState;
 
         private IEquityDataGenerator _equityDataGenerator;
@@ -24,6 +25,7 @@ namespace TestHarness
         {
             _appFactory = appFactory ?? new AppFactory();
             _commandManager = _appFactory.CommandManager;
+            _commandManifest = _appFactory.CommandManifest;
             _programState = _appFactory.State;
         }
 
@@ -45,7 +47,7 @@ namespace TestHarness
                 _appFactory.Build();
                 _equityDataGenerator = _appFactory.EquityDataGenerator;
 
-                _commandManager.InterpretIOCommand("initiate");
+                _commandManager.InterpretIOCommand(_commandManifest.Initiate);
             }
         }
 
@@ -71,7 +73,7 @@ namespace TestHarness
                     _equityDataGenerator.TerminateWalk();
                 }
 
-                _commandManager.InterpretIOCommand("quit");
+                _commandManager.InterpretIOCommand(_commandManifest.Quit);
             }
         }
     }

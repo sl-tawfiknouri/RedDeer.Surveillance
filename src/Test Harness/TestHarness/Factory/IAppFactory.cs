@@ -17,6 +17,8 @@ namespace TestHarness.Factory
 
         ICommandManager CommandManager { get; }
 
+        ICommandManifest CommandManifest { get; }
+
         IProgramState State { get; }
 
         IEquityDataGenerator EquityDataGenerator { get; }

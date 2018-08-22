@@ -11,5 +11,7 @@ namespace TestHarness.Display
         void OutputTradeFrame(TradeOrderFrame frame);
 
         void OutputException(Exception e);
+
+        void ClearCommandInputLine();
     }
 }

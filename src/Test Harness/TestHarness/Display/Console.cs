@@ -110,6 +110,11 @@ namespace TestHarness.Display
             }
         }
 
+        public void ClearCommandInputLine()
+        {
+            WriteToLine(0, string.Empty);
+        }
+
         public static void WriteToLine(int targetLine, string message)
         {
             System.Console.SetCursorPosition(0, targetLine);

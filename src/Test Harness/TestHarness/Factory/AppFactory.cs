@@ -28,7 +28,11 @@ namespace TestHarness.Factory
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
             State = new ProgramState();
-            CommandManager = new CommandManager(State, Logger);
+
+            // not state dependant on the other console
+            var console = new Display.Console();
+            CommandManager = new CommandManager(State, Logger, console);
+            CommandManifest = new CommandManifest();
         }
 
         public void Build()
@@ -36,7 +40,7 @@ namespace TestHarness.Factory
             var display = new Display.Console();
 
             var tradeStrategy = new MarkovTradeStrategy(Logger);
-            var tradeOrderGenerator = new TradingMarkovProcess(Logger, tradeStrategy);
+            var tradeOrderGenerator = new TradingMarketUpdateDrivenMarkovProcess(Logger, tradeStrategy);
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(display);
@@ -94,7 +98,11 @@ namespace TestHarness.Factory
         /// <summary>
         /// Ctor is used to construct this
         /// </summary>
-        public IProgramState State { get; private set; }
+        public ICommandManifest CommandManifest { get; private set; }
 
+        /// <summary>
+        /// Ctor is used to construct this
+        /// </summary>
+        public IProgramState State { get; private set; }
     }
 }

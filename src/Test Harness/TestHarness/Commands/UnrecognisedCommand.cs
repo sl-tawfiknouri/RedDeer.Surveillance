@@ -9,7 +9,7 @@ namespace TestHarness.Commands
             return string.IsNullOrWhiteSpace(command);
         }
 
-        public void Run()
+        public void Run(string command)
         {
             Display.Console.WriteToLine(1, "Enter 'help' to see available commands");
         }

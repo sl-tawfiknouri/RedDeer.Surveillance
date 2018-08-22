@@ -17,11 +17,11 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private volatile bool _walkInitiated;
         private volatile bool _tickLocked;
+
         private readonly IExchangeSeriesInitialiser _exchangeTickInitialiser;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
-
         private IHeartbeat _heartBeat;
 
         private readonly ILogger _logger;
@@ -32,25 +32,33 @@ namespace TestHarness.Engine.EquitiesGenerator
         public EquitiesMarkovProcess(
             IExchangeSeriesInitialiser exchangeTickInitialiser,
             IEquityDataGeneratorStrategy dataStrategy,
+            IHeartbeat heartbeat,
             ILogger logger)
         {
-            _exchangeTickInitialiser = exchangeTickInitialiser;
-            _dataStrategy = dataStrategy;
-            _logger = logger;
+            _exchangeTickInitialiser =
+                exchangeTickInitialiser 
+                ?? throw new ArgumentNullException(nameof(exchangeTickInitialiser));
+
+            _dataStrategy =
+                dataStrategy
+                ?? throw new ArgumentNullException(nameof(dataStrategy));
+
+            _heartBeat =
+                heartbeat
+                ?? throw new ArgumentNullException(nameof(heartbeat));
+
+            _logger =
+                logger
+                ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void InitiateWalk(IStockExchangeStream stream, IHeartbeat heartBeat)
+        public void InitiateWalk(IStockExchangeStream stream)
         {
             _logger.Log(LogLevel.Info, "Walk initiated in equity generator");
 
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
-            }
-
-            if (heartBeat == null)
-            {
-                throw new ArgumentNullException(nameof(heartBeat));
             }
 
             lock (_stateTransitionLock)
@@ -61,7 +69,6 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _activeFrame = _exchangeTickInitialiser.InitialFrame();
                 _stream.Add(_activeFrame);
 
-                _heartBeat = heartBeat;
                 _heartBeat.OnBeat(Tick);
                 _heartBeat.Start();
             }

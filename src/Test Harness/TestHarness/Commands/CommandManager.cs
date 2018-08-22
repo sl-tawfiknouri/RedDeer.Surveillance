@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
+using TestHarness.Factory.Interfaces;
 using TestHarness.Interfaces;
 
 namespace TestHarness.Commands
@@ -16,6 +17,7 @@ namespace TestHarness.Commands
         private ILogger _logger;
 
         public CommandManager(
+            IAppFactory appFactory,
             IProgramState programState,
             ILogger logger,
             IConsole console)
@@ -24,12 +26,18 @@ namespace TestHarness.Commands
             _console = console ?? throw new ArgumentNullException(nameof(console));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+            if (appFactory == null)
+            {
+                throw new ArgumentNullException(nameof(appFactory));
+            }
+
             _commands = new List<ICommand>
             {
                 new HelpCommand(),
                 new QuitCommand(programState),
                 _unrecognisedCommand,
-                new InitiateCommand(programState, this)
+                new InitiateCommand(programState, this),
+                new DemoCommand(appFactory)
             };
         }
 
@@ -46,13 +54,13 @@ namespace TestHarness.Commands
 
             foreach (var cmd in executableCommands)
             {
-                cmd.Run();
+                cmd.Run(command);
             }
 
             if (executableCommands == null
                 || !executableCommands.Any())
             {
-                _unrecognisedCommand.Run();  
+                _unrecognisedCommand.Run(command);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace TestHarness.Commands
             return string.Equals(command, "quit", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void Run()
+        public void Run(string command)
         {
             _programState.Executing = false;
         }

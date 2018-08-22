@@ -2,7 +2,8 @@
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using TestHarness.Factory.TradingFactory;
+using TestHarness.Factory.EquitiesFactory.Interfaces;
+using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Interfaces;
 using TestHarness.Network_IO;
@@ -26,6 +27,12 @@ namespace TestHarness.Factory.Interfaces
         IEquityDataGenerator EquityDataGenerator { get; }
 
         IConsole Console { get; }
+
+        IEquitiesProcessFactory EquitiesProcessFactory { get; }
+
+        IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
+
+        INetworkManagerFactory NetworkManagerFactory { get; }
 
         ITradingFactory TradingFactory { get; }
 

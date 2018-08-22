@@ -10,6 +10,7 @@ using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Heartbeat;
+using TestHarness.Engine.Heartbeat.Interfaces;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator
 {
@@ -19,6 +20,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         private ILogger _logger;
         private IExchangeSeriesInitialiser _exchangeTickInitialiser;
         private IEquityDataGeneratorStrategy _strategy;
+        private IHeartbeat _heartbeat;
 
         [SetUp]
         public void Setup()
@@ -26,28 +28,29 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
             _logger = A.Fake<ILogger>();
             _exchangeTickInitialiser = A.Fake<IExchangeSeriesInitialiser>();
             _strategy = A.Fake<IEquityDataGeneratorStrategy>();
+            _heartbeat = new Heartbeat(TimeSpan.FromMilliseconds(500));
         }
 
         [Test]
         public void InitiateWalk_ThrowsExceptionFor_NullStream()
         {
-            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, _strategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, _strategy, _heartbeat, _logger);
             var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
 
-            Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null, freq));
+            Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null));
         }
 
         [Test]
         public void InitiateWalk_ReceivesTicks_AfterInitiationImmediately()
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
-            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _heartbeat, _logger);
             var freq = new Heartbeat(TimeSpan.FromDays(1));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 10);
             stream.Subscribe(observer);
 
-            randomWalk.InitiateWalk(stream, freq);
+            randomWalk.InitiateWalk(stream);
 
             Assert.AreEqual(observer.Buffer.Count, 1);
             A
@@ -61,13 +64,13 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
-            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _heartbeat, _logger);
             var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);
             stream.Subscribe(observer);
 
-            randomWalk.InitiateWalk(stream, freq);
+            randomWalk.InitiateWalk(stream);
 
             var timeOut = DateTime.Now.AddSeconds(5);
 
@@ -88,13 +91,13 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         [Test]
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
-            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _logger);
+            var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _heartbeat, _logger);
             var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);
             stream.Subscribe(observer);
 
-            randomWalk.InitiateWalk(stream, freq);
+            randomWalk.InitiateWalk(stream);
 
             var timeOut = DateTime.Now.AddSeconds(5);
 

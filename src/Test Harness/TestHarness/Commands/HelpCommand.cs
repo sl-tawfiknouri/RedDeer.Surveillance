@@ -14,9 +14,9 @@ namespace TestHarness.Commands
             return string.Equals(command, "help", System.StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void Run()
+        public void Run(string command)
         {
-            Display.Console.WriteToLine(1, "Available commands | help | quit");
+            Display.Console.WriteToLine(1, "Available commands | help | quit | run demo | stop demo");
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface ICommand
     {
-        void Run();
+        void Run(string command);
 
         bool Handles(string command);
     }

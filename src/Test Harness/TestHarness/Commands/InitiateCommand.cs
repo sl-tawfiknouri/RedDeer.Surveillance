@@ -27,7 +27,7 @@ namespace TestHarness.Commands
             return string.Equals(command, "initiate", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public void Run()
+        public void Run(string command)
         {
             _state.Executing = true;
 

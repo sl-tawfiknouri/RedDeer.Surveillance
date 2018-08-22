@@ -39,7 +39,6 @@ namespace TestHarness.Factory
             State = new ProgramState();
             Console = new Display.Console();
             CommandManifest = new CommandManifest();
-            CommandManager = new CommandManager(State, Logger, Console);
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
@@ -47,13 +46,7 @@ namespace TestHarness.Factory
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
 
-            var tradingStrat = 
-                TradingFactory
-                .Create()
-                .Heartbeat()
-                .Regular(TimeSpan.FromMilliseconds(100))
-                .TradingFixedVolume(10)
-                .Finish();
+            CommandManager = new CommandManager(this, State, Logger, Console);
         }
 
         public void Build()
@@ -84,7 +77,8 @@ namespace TestHarness.Factory
             NetworkManager = new StubNetworkManager(Logger);
             var equityDataStrategy = new MarkovEquityStrategy();
             var nasdaqInitialiser = new NasdaqInitialiser();
-            var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, Logger);           
+            var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
+            var equityDataGenerator = new EquitiesMarkovProcess(nasdaqInitialiser, equityDataStrategy, heartBeat, Logger);
             var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
             var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
             var exchangeStreamDisplaySubscriber = new ExchangeFrameDisplaySubscriber(Console);
@@ -94,8 +88,7 @@ namespace TestHarness.Factory
 
             // there is our problem with it initially walking
             tradeOrderGenerator.InitiateTrading(exchangeStream, tradeOrderStream);
-            var heartBeat = new Heartbeat(TimeSpan.FromMilliseconds(1500));
-            equityDataGenerator.InitiateWalk(exchangeStream, heartBeat);
+            equityDataGenerator.InitiateWalk(exchangeStream);
             irregularHeartbeat.Start();
             heartBeat.Start();
             EquityDataGenerator = equityDataGenerator;

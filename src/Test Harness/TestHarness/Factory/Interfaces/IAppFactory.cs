@@ -1,6 +1,9 @@
 ﻿using NLog;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Factory.TradingFactory;
+using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Interfaces;
 using TestHarness.Network_IO;
 
@@ -21,5 +24,11 @@ namespace TestHarness.Factory.Interfaces
         IProgramState State { get; }
 
         IEquityDataGenerator EquityDataGenerator { get; }
+
+        IConsole Console { get; }
+
+        ITradingFactory TradingFactory { get; }
+
+        ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
     }
 }

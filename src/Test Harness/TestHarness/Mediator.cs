@@ -44,9 +44,6 @@ namespace TestHarness
                     _equityDataGenerator.TerminateWalk();
                 }
 
-                _appFactory.Build();
-                _equityDataGenerator = _appFactory.EquityDataGenerator;
-
                 _commandManager.InterpretIOCommand(_commandManifest.Initiate);
             }
         }

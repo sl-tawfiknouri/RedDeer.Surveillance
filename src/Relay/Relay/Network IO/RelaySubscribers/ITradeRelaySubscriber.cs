@@ -5,7 +5,10 @@ namespace Relay.Network_IO.RelaySubscribers
 {
     public interface ITradeRelaySubscriber : IObserver<TradeOrderFrame>
     {
-        void Initiate(string domain, string port);
+        /// <summary>
+        /// Indicates success of operation
+        /// </summary>
+        bool Initiate(string domain, string port);
         void Terminate();
     }
 }

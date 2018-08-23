@@ -1,11 +1,9 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SuperSocket.ClientEngine;
 using System;
-using Utilities.Network_IO.Websocket_Connections;
+using System.Threading;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
-using WebSocket4Net;
 
 namespace Relay.Network_IO.RelaySubscribers
 {
@@ -15,119 +13,51 @@ namespace Relay.Network_IO.RelaySubscribers
     /// </summary>
     public class TradeRelaySubscriber : ITradeRelaySubscriber
     {
-        private object _stateLock = new object();
-        private IWebsocketConnectionFactory _websocketFactory;
-        private IConnectionWebsocket _activeWebsocket;
-        private ILogger _logger;
         private volatile bool _initiated;
+        private object _stateLock = new object();
+        private INetworkTrunk _networkTrunk;
+        private ILogger _logger;
 
         public TradeRelaySubscriber(
-            IWebsocketConnectionFactory websocketFactory,
+            INetworkTrunk networkTrunk,
             ILogger<TradeRelaySubscriber> logger)
         {
-            _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));
+            _networkTrunk = networkTrunk ?? throw new ArgumentNullException(nameof(networkTrunk));   
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Initiate(string domain, string port)
+        public bool Initiate(string domain, string port)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-            {
-                throw new ArgumentNullException(nameof(domain));
-            }
-
-            if (string.IsNullOrWhiteSpace(port))
-            {
-                throw new ArgumentNullException(nameof(port));
-            }
-
             lock (_stateLock)
             {
-                _logger.LogInformation($"Trade Relay Subscriber initiate called");
+                _logger.LogInformation("Trade Relay Subscriber initiating network trunk with 15 second timeout");
 
-                if (_initiated)
-                {
-                    _logger.LogInformation($"Trade Relay Subscriber initiate called before termination. Terminating active connection first.");
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                var success = _networkTrunk.Initiate(domain, port, cts.Token);
 
-                    _Terminate();
-                }
-
-                _initiated = true;
-
-                var connectionString = $"ws://{domain}:{port}/";
-                _logger.LogInformation($"Opening web socket to {connectionString}");
-
-                _activeWebsocket = _websocketFactory.Build(connectionString);
-                _activeWebsocket.Opened += new EventHandler(Open_Event);
-                _activeWebsocket.Error += new EventHandler<ErrorEventArgs>(Error_Event);
-                _activeWebsocket.Closed += new EventHandler(Closed_Event);
-
-                try
-                {
-                    _activeWebsocket.Open();
-                    while (_activeWebsocket.State == WebSocketState.Connecting) { };
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("An exception was encountered in Trade Relay Subscriber initiation", e);
-                    throw;
-                }
+               _initiated = success;
+                return success;
             }
-        }
-
-        private void Open_Event(object sender, EventArgs e)
-        {
-            _logger.LogInformation($"Trade Relay Subscriber Successfully Opened Connection");
-        }
-
-        private void Error_Event(object sender, ErrorEventArgs e)
-        {
-            _logger.LogCritical($"Trade Relay Subscriber encountered an error {e.Exception.Message}");
-
-            lock (_stateLock)
-            {
-                _Terminate();
-            }
-        }
-
-        private void Closed_Event(object sender, EventArgs e)
-        {
-            _logger.LogInformation("Trade Relay Subscriber connection closed");
         }
 
         public void Terminate()
         {
             lock (_stateLock)
             {
-                _logger.LogInformation($"Trade Relay Subscriber Termination called");
-
-                _Terminate();
-            }
-        }
-
-        private void _Terminate()
-        {
-            if (_activeWebsocket != null)
-            {
-                _logger.LogInformation($"Trade Relay Subscriber Closing Active Web Socket");
-
-                try
-                {
-                    _activeWebsocket.Close();
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("An exception was encountered whilst terminating the trade relay subscriber web socket connections", e);
-                    throw;
-                }
+                _networkTrunk.Terminate();
+                _initiated = false;
             }
         }
 
         public void OnCompleted()
         {
+            lock (_stateLock)
+            {
             _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
 
-            Terminate();
+            _initiated = false;
+            _networkTrunk.Terminate();
+            }
         }
 
         public void OnError(Exception error)
@@ -135,6 +65,9 @@ namespace Relay.Network_IO.RelaySubscribers
             if (error != null)
             {
                 _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
+
+                _initiated = false;
+                _networkTrunk.Terminate();
             }
         }
 
@@ -142,12 +75,10 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-                if (_initiated
-                    && _activeWebsocket != null)
+                if (_initiated)
                 {
-                    var jsonFrame = JsonConvert.SerializeObject(value);
-                    _activeWebsocket.Send(jsonFrame);
-                }
+                    _networkTrunk.Send(value);
+                };
             }
         }
     }

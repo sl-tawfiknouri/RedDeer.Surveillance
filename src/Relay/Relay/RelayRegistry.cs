@@ -9,6 +9,7 @@ using Relay.Network_IO.RelaySubscribers;
 using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Relay;
+using Utilities.Network_IO.Interfaces;
 
 namespace RedDeer.Relay
 {
@@ -26,6 +27,8 @@ namespace RedDeer.Relay
             For<ITradeProcessor>().Use<TradeProcessor>();
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
+            For<IMessageWriter>().Use<LoggingMessageWriter>();
+            For<INetworkTrunk>().Use<NetworkTrunk>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
         }
     }

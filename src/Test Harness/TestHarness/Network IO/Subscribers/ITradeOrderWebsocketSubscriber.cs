@@ -5,7 +5,7 @@ namespace TestHarness.Network_IO.Subscribers
 {
     public interface ITradeOrderWebsocketSubscriber : IObserver<TradeOrderFrame>
     {
-        void Initiate(string domain, string port);
+        bool Initiate(string domain, string port);
         void Terminate();
     }
 }

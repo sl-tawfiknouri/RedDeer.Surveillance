@@ -29,7 +29,10 @@ namespace TestHarness.Network_IO.Subscribers
             _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
-        public void Initiate(string domain, string port)
+        /// <summary>
+        /// Returns success result
+        /// </summary>
+        public bool Initiate(string domain, string port)
         {
             if (string.IsNullOrWhiteSpace(domain))
             {
@@ -78,7 +81,7 @@ namespace TestHarness.Network_IO.Subscribers
                     {
                         _console.WriteToUserFeedbackLine($"Opening web socket to {connectionString} for last {stopWatch.Elapsed.TotalSeconds} seconds. Timeout at (60) seconds.");
 
-                        if (stopWatch.Elapsed.TotalSeconds > 20)
+                        if (stopWatch.Elapsed.TotalSeconds > 60)
                         {
                             timeoutCheck = false;
                         }
@@ -91,16 +94,21 @@ namespace TestHarness.Network_IO.Subscribers
                             $"Trade order websocket subscriber timed out connecting to {connectionString}");
 
                         _console.WriteToUserFeedbackLine($"Could not open web socket to {connectionString}. Aborting process.");
+
+                        _activeWebsocket.Close();
                     }
                     else
                     {
                         _console.WriteToUserFeedbackLine(string.Empty);
                     }
 
+                    return timeoutCheck;
+
                 }
                 catch(Exception e)
                 {
                     _logger.Log(LogLevel.Error, e);
+                    return false;
                 }
             }
         }

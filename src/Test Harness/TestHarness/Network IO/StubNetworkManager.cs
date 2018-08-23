@@ -13,9 +13,10 @@ namespace TestHarness.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
+        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
         {
             _logger.Info("Stub Network Manager. Attach trade order subscriber to stream called.");
+            return true;
         }
 
         public void DetatchTradeOrderSubscriber()
@@ -23,9 +24,10 @@ namespace TestHarness.Network_IO
             _logger.Info("Stub Network Manager. Detatch trade order subscriber called.");
         }
 
-        public void InitiateNetworkConnections()
+        public bool InitiateNetworkConnections()
         {
             _logger.Info("Stub Network Manager. Initiate network connections called.");
+            return true;
         }
 
         public void TerminateNetworkConnections()

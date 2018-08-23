@@ -89,8 +89,21 @@ namespace TestHarness.Commands
                 .CreateWebsockets();
 
             // start networking processes
-            _networkManager.InitiateNetworkConnections();
-            _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
+            var connectionEstablished = _networkManager.InitiateNetworkConnections();
+
+            if (!connectionEstablished)
+            {
+                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
+                return;
+            }
+
+            connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
+
+            if (!connectionEstablished)
+            {
+                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
+                return;
+            }
 
             // start updating equity data
             _equityProcess.InitiateWalk(equityStream);

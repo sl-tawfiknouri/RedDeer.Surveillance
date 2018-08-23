@@ -32,15 +32,15 @@ namespace TestHarness.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void InitiateNetworkConnections()
+        public bool InitiateNetworkConnections()
         {
             lock (_stateTransition)
             {
-                _InitiateNetworkConnections();
+                return _InitiateNetworkConnections();
             }
         }
 
-        private void _InitiateNetworkConnections()
+        private bool _InitiateNetworkConnections()
         {
             _logger.Log(LogLevel.Info, "Network Manager initiating network connections");
 
@@ -49,7 +49,7 @@ namespace TestHarness.Network_IO
                 _tradeOrderWebsocketSubscriber = _tradeOrderSocketSubscriberFactory.Build();
             }
 
-            _tradeOrderWebsocketSubscriber.Initiate(
+            return _tradeOrderWebsocketSubscriber.Initiate(
                 _networkConfiguration.TradeDomainUriDomainSegment,
                 _networkConfiguration.TradeDomainUriPort);
         }
@@ -67,13 +67,17 @@ namespace TestHarness.Network_IO
             }
         }
 
-        public void AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
+        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
         {
             lock (_stateTransition)
             {
                 if (_tradeOrderWebsocketSubscriber == null)
                 {
-                    _InitiateNetworkConnections();
+                    var successfullyInitiated = _InitiateNetworkConnections();
+                    if (!successfullyInitiated)
+                    {
+                        return false;
+                    }
                 }
 
                 if (orderStream != null
@@ -81,7 +85,11 @@ namespace TestHarness.Network_IO
                 {
                     _logger.Log(LogLevel.Info, "Network Manager attaching trade order subscriber to stream");
                     _tradeOrderUnsubscriber = orderStream.Subscribe(_tradeOrderWebsocketSubscriber);
+
+                    return true;
                 }
+
+                return false;
             }
         }
 

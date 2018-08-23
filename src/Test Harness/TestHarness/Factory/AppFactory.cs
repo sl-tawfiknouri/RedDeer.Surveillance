@@ -15,6 +15,7 @@ using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.State.Interfaces;
 using TestHarness.State;
 using TestHarness.Network_IO;
+using TestHarness.Factory.TradingProhibitedSecurityFactory;
 
 namespace TestHarness.Factory
 {
@@ -37,6 +38,7 @@ namespace TestHarness.Factory
             NetworkManagerFactory = new NetworkManagerFactory(Console, Logger);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
+            TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -85,5 +87,7 @@ namespace TestHarness.Factory
         public ITradingFactory TradingFactory { get; private set; }
 
         public ITradeOrderStreamFactory TradeOrderStreamFactory { get; private set; }
+
+        public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; private set; }
     }
 }

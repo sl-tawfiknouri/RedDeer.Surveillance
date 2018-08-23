@@ -1,9 +1,7 @@
 ﻿using System;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO;
 
@@ -13,7 +11,7 @@ namespace TestHarness.Commands
     {
         private IAppFactory _appFactory;
         private IEquityDataGenerator _equityProcess;
-        private IOrderDataGenerator _tradeProcess;
+        private IOrderDataGenerator _tradingProcess;
         private INetworkManager _networkManager;
 
         private object _lock = new object();
@@ -69,7 +67,7 @@ namespace TestHarness.Commands
                 .TradeOrderStreamFactory
                 .CreateDisplayable(console);
 
-            _tradeProcess =
+            _tradingProcess =
                 _appFactory
                 .TradingFactory
                 .Create()
@@ -78,10 +76,9 @@ namespace TestHarness.Commands
                 .TradingFixedVolume(3)
                 .Finish();
 
-            var prohibitedTradeProcess = new TradingHeartbeatProhibitedSecuritiesProcess(
-                _appFactory.ProhibitedSecurityHeartbeat,
-                _appFactory.Logger,
-                new StubTradeStrategy());
+            var prohibitedTradeProcess = _appFactory
+                .TradingProhibitedSecurityFactory
+                .Create();
 
             _networkManager =
                 _appFactory
@@ -109,7 +106,7 @@ namespace TestHarness.Commands
             _equityProcess.InitiateWalk(equityStream);
 
             // start updating trading data
-            _tradeProcess.InitiateTrading(equityStream, tradeStream);
+            _tradingProcess.InitiateTrading(equityStream, tradeStream);
             prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
@@ -120,9 +117,9 @@ namespace TestHarness.Commands
                 _networkManager.TerminateNetworkConnections();
             }
 
-            if (_tradeProcess != null)
+            if (_tradingProcess != null)
             {
-                _tradeProcess.TerminateTrading();
+                _tradingProcess.TerminateTrading();
             }
 
             if (_equityProcess != null)

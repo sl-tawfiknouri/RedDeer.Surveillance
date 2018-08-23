@@ -3,17 +3,17 @@ using Utilities.Network_IO.Websocket_Connections.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
-    public class NetworkFailoverLocalMemory<T> : INetworkFailover<T>
+    public class NetworkFailoverLocalMemory : INetworkFailover
     {
-        private List<T> _storedData;
+        private Dictionary<System.Type, List<object>> _dict;
         private object _lock = new object();
 
         public NetworkFailoverLocalMemory()
         {
-            _storedData = new List<T>();
+            _dict = new Dictionary<System.Type, List<object>>();
         }
 
-        public void Store(T value)
+        public void Store<T>(T value)
         {
             lock (_lock)
             {
@@ -22,24 +22,34 @@ namespace Utilities.Network_IO.Websocket_Connections
                     return;
                 }
 
-                _storedData.Add(value);
+                _dict.TryGetValue(typeof(T), out List<object> _itemList);
+
+                if (_itemList == null)
+                {
+                    _itemList = new List<object>() { value };
+                    _dict.Add(typeof(T), _itemList);
+                }
+                else
+                {
+                    _itemList.Add(value);
+                }
             }
         }
 
-        public IReadOnlyCollection<T> Retrieve()
+        public Dictionary<System.Type, List<object>> Retrieve()
         {
             lock (_lock)
             {
-                return _storedData;
+                return new Dictionary<System.Type, List<object>>(_dict);
             }
         }
 
-        public IReadOnlyCollection<T> RetrieveAndRemove()
+        public Dictionary<System.Type, List<object>> RetrieveAndRemove()
         {
             lock (_lock)
             {
-                var newStoredData = new List<T>(_storedData);
-                _storedData = new List<T>();
+                var newStoredData = new Dictionary<System.Type, List<object>>(_dict);
+                _dict = new Dictionary<System.Type, List<object>>();
 
                 return newStoredData;
             }

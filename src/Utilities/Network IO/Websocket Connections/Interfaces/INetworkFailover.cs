@@ -2,10 +2,10 @@
 
 namespace Utilities.Network_IO.Websocket_Connections.Interfaces
 {
-    public interface INetworkFailover<T>
+    public interface INetworkFailover
     {
-        void Store(T value);
-        IReadOnlyCollection<T> Retrieve();
-        IReadOnlyCollection<T> RetrieveAndRemove();
+        void Store<T>(T value);
+        Dictionary<System.Type, List<object>> Retrieve();
+        Dictionary<System.Type, List<object>> RetrieveAndRemove();
     }
 }

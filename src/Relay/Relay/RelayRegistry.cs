@@ -7,6 +7,7 @@ using Domain.Equity.Trading;
 using Relay.Trades;
 using Relay.Network_IO.RelaySubscribers;
 using Utilities.Network_IO.Websocket_Connections;
+using Relay;
 
 namespace RedDeer.Relay
 {
@@ -18,6 +19,7 @@ namespace RedDeer.Relay
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
+            For<IMediator>().Use<Mediator>();
             For<INetworkManager>().Use<NetworkManager>();
             For<ITradeOrderStream>().Use<TradeOrderStream>();
             For<ITradeProcessor>().Use<TradeProcessor>();

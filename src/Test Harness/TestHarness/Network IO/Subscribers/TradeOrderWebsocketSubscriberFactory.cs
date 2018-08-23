@@ -2,6 +2,7 @@
 using System;
 using TestHarness.Display;
 using Utilities.Network_IO.Websocket_Connections;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 
 namespace TestHarness.Network_IO.Subscribers
 {

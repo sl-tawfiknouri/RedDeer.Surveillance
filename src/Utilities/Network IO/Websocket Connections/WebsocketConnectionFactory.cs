@@ -1,4 +1,5 @@
 ﻿using System;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {

@@ -7,6 +7,7 @@ using Domain.Equity.Trading;
 using Relay.Trades;
 using Relay.Network_IO.RelaySubscribers;
 using Utilities.Network_IO.Websocket_Connections;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Relay;
 
 namespace RedDeer.Relay

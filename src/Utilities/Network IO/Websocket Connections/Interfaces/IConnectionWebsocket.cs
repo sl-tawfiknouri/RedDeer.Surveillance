@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using WebSocket4Net;
 
-namespace Utilities.Network_IO.Websocket_Connections
+namespace Utilities.Network_IO.Websocket_Connections.Interfaces
 {
     public interface IConnectionWebsocket
     {

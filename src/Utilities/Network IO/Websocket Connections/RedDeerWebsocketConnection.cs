@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Security.Authentication;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using WebSocket4Net;
 
 namespace Utilities.Network_IO.Websocket_Connections

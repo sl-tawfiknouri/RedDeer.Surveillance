@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using SuperSocket.ClientEngine;
 using System;
 using Utilities.Network_IO.Websocket_Connections;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using WebSocket4Net;
 
 namespace Relay.Network_IO.RelaySubscribers

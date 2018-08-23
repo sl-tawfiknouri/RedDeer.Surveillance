@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using NLog;
 using SuperSocket.ClientEngine;
 using TestHarness.Display;
-using Utilities.Network_IO.Websocket_Connections;
+using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using WebSocket4Net;
 
 namespace TestHarness.Network_IO.Subscribers

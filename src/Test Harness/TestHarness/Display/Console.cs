@@ -68,7 +68,7 @@ namespace TestHarness.Display
                     return;
                 }
 
-                WriteToLine(_tradeFrameOffset, $"Showing last {_tradeLimitToPrint} trades of {_id}.");
+                WriteToLine(_tradeFrameOffset, $"Showing last {_tradeLimitToPrint} trades of {_id + 1}.");
                 var newStack = new Stack<TradeOrderFrame>();
                 _tradeOrders.Push(frame);
 

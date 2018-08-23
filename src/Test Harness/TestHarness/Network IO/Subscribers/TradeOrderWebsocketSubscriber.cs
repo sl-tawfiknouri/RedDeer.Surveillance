@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using Domain.Equity.Trading.Orders;
 using Newtonsoft.Json;
 using NLog;
 using SuperSocket.ClientEngine;
+using TestHarness.Display;
 using Utilities.Network_IO.Websocket_Connections;
 using WebSocket4Net;
 
@@ -13,15 +15,18 @@ namespace TestHarness.Network_IO.Subscribers
         private object _stateLock = new object();
         private IWebsocketConnectionFactory _websocketFactory;
         private IConnectionWebsocket _activeWebsocket;
+        private IConsole _console;
         private ILogger _logger;
         private volatile bool _initiated;
 
         public TradeOrderWebsocketSubscriber(
             IWebsocketConnectionFactory websocketFactory,
+            IConsole console,
             ILogger logger)
         {
             _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
         public void Initiate(string domain, string port)
@@ -50,6 +55,7 @@ namespace TestHarness.Network_IO.Subscribers
                 _initiated = true;
                 
                 var connectionString = $"ws://{domain}:{port}/";
+
                 _logger.Log(LogLevel.Info, $"Opening web socket to {connectionString}");
 
                 _activeWebsocket = _websocketFactory.Build(connectionString);
@@ -59,8 +65,38 @@ namespace TestHarness.Network_IO.Subscribers
 
                 try
                 {
+                    _console.WriteToUserFeedbackLine($"Opening web socket to {connectionString}");
+
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
+
                     _activeWebsocket.Open();
-                    while (_activeWebsocket.State == WebSocketState.Connecting) { };
+                    var timeoutCheck = true;
+                    while (
+                        _activeWebsocket.State == WebSocketState.Connecting
+                        && timeoutCheck)
+                    {
+                        _console.WriteToUserFeedbackLine($"Opening web socket to {connectionString} for last {stopWatch.Elapsed.TotalSeconds} seconds. Timeout at (60) seconds.");
+
+                        if (stopWatch.Elapsed.TotalSeconds > 20)
+                        {
+                            timeoutCheck = false;
+                        }
+                    };
+
+                    if (!timeoutCheck)
+                    {
+                        _logger.Log(
+                            LogLevel.Error,
+                            $"Trade order websocket subscriber timed out connecting to {connectionString}");
+
+                        _console.WriteToUserFeedbackLine($"Could not open web socket to {connectionString}. Aborting process.");
+                    }
+                    else
+                    {
+                        _console.WriteToUserFeedbackLine(string.Empty);
+                    }
+
                 }
                 catch(Exception e)
                 {
@@ -107,7 +143,15 @@ namespace TestHarness.Network_IO.Subscribers
 
                 try
                 {
-                    _activeWebsocket.Close();
+                    if (_activeWebsocket.State != WebSocketState.Closed
+                        && _activeWebsocket.State != WebSocketState.Closing
+                        && _activeWebsocket.State != WebSocketState.None)
+                    {
+                        _activeWebsocket.Close();
+
+                        while (_activeWebsocket.State != WebSocketState.Closed)
+                        { }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -137,7 +181,10 @@ namespace TestHarness.Network_IO.Subscribers
             lock (_stateLock)
             {
                 if (_initiated
-                    && _activeWebsocket != null)
+                    && _activeWebsocket != null
+                    && _activeWebsocket.State == WebSocketState.Open
+                    && _activeWebsocket.State != WebSocketState.Connecting
+                    && _activeWebsocket.State != WebSocketState.Closing)
                 {
                     var jsonFrame = JsonConvert.SerializeObject(value);
                     _activeWebsocket.Send(jsonFrame);

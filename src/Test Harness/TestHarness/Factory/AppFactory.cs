@@ -34,7 +34,7 @@ namespace TestHarness.Factory
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
-            NetworkManagerFactory = new NetworkManagerFactory(Logger);
+            NetworkManagerFactory = new NetworkManagerFactory(Console, Logger);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
 

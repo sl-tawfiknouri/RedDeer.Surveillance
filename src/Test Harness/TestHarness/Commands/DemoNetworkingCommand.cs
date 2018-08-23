@@ -88,7 +88,7 @@ namespace TestHarness.Commands
                 .NetworkManagerFactory
                 .CreateWebsockets();
 
-            // start networking processes 
+            // start networking processes
             _networkManager.InitiateNetworkConnections();
             _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
 

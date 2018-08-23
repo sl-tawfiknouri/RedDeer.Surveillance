@@ -4,6 +4,7 @@ using WebSocket4Net;
 using System;
 using System.Threading;
 using Newtonsoft.Json;
+using Utilities.Network_IO.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
@@ -12,11 +13,15 @@ namespace Utilities.Network_IO.Websocket_Connections
         private object _stateLock = new object();
         private IWebsocketConnectionFactory _websocketFactory;
         private IConnectionWebsocket _activeWebsocket;
+        private IMessageWriter _messageWriter;
         private volatile bool _initiated;
 
-        public NetworkTrunk(IWebsocketConnectionFactory websocketFactory)
+        public NetworkTrunk(
+            IWebsocketConnectionFactory websocketFactory,
+            IMessageWriter messageWriter)
         {
             _websocketFactory = websocketFactory ?? throw new ArgumentNullException(nameof(websocketFactory));
+            _messageWriter = messageWriter ?? throw new ArgumentNullException(nameof(messageWriter));
         }
 
         /// <summary>
@@ -26,11 +31,13 @@ namespace Utilities.Network_IO.Websocket_Connections
         {
             if (string.IsNullOrWhiteSpace(domain))
             {
+                _messageWriter.Write("Network trunk passed null domain");
                 throw new ArgumentNullException(nameof(domain));
             }
 
             if (string.IsNullOrWhiteSpace(port))
             {
+                _messageWriter.Write("Network trunk passed null port");
                 throw new ArgumentNullException(nameof(port));
             }
 
@@ -38,12 +45,15 @@ namespace Utilities.Network_IO.Websocket_Connections
             {
                 if (_initiated)
                 {
+                    _messageWriter.Write("Network trunk initiating with already initiated instance. Terminating old process first.");
                     _Terminate();
                 }
 
                 _initiated = true;
 
                 var connectionString = $"ws://{domain}:{port}/";
+
+                _messageWriter.Write($"Network trunk initiating against connection {connectionString}");
                 BuildActiveSocket(connectionString);
 
                 return ConnectToActiveSocket(token);
@@ -61,22 +71,18 @@ namespace Utilities.Network_IO.Websocket_Connections
 
         private void Open_Event(object sender, EventArgs e)
         {
-            // add logging
         }
 
         private void Error_Event(object sender, ErrorEventArgs e)
         {
             lock (_stateLock)
             {
-                // add logging
-
                 _Terminate();
             }
         }
 
         private void Closed_Event(object sender, EventArgs e)
         {
-            // add logging
         }
 
         private bool ConnectToActiveSocket(CancellationToken token)
@@ -85,6 +91,7 @@ namespace Utilities.Network_IO.Websocket_Connections
             {
                 _activeWebsocket.Open();
 
+                _messageWriter.Write($"Network trunk connecting to web socket...");
                 while (_activeWebsocket.State == WebSocketState.Connecting)
                 {
                     if (token != null && token.IsCancellationRequested)
@@ -95,6 +102,8 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 if (token != null && token.IsCancellationRequested)
                 {
+                    _messageWriter.Write($"Network trunk connection attempt timed out. Closing web socket...");
+
                     _activeWebsocket.Close();
                 }
 
@@ -102,6 +111,7 @@ namespace Utilities.Network_IO.Websocket_Connections
             }
             catch
             {
+                _messageWriter.Write("Network trunk encountered an exception on connection. Closing socket.");
                 return false;
             }
         }
@@ -110,6 +120,7 @@ namespace Utilities.Network_IO.Websocket_Connections
         {
             lock (_stateLock)
             {
+                _messageWriter.Write("Network trunk terminating web socket");
                 _Terminate();
             }
         }
@@ -130,9 +141,9 @@ namespace Utilities.Network_IO.Websocket_Connections
                         { }
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    // add logging
+                    _messageWriter.Write($"Network trunk encountered error terminating web socket {e.Message}");
                     throw;
                 }
             }

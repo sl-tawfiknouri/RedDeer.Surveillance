@@ -129,5 +129,10 @@ namespace TestHarness.Display
             System.Console.Write(message);
             System.Console.SetCursorPosition(0, 0);
         }
+
+        public void Write(string message)
+        {
+            WriteToUserFeedbackLine(message);
+        }
     }
 }

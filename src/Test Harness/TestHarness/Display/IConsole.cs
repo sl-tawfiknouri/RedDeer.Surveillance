@@ -1,10 +1,11 @@
 ﻿using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using System;
+using Utilities.Network_IO.Interfaces;
 
 namespace TestHarness.Display
 {
-    public interface IConsole
+    public interface IConsole : IMessageWriter
     {
         void OutputMarketFrame(ExchangeFrame frame);
 

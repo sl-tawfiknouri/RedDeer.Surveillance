@@ -24,7 +24,9 @@ namespace TestHarness.Network_IO.Subscribers
 
         public ITradeOrderWebsocketSubscriber Build()
         {
-            return new TradeOrderWebsocketSubscriber(_websocketFactory, _console, _logger);
+            var networkTrunk = new NetworkTrunk(_websocketFactory, _console);
+
+            return new TradeOrderWebsocketSubscriber(networkTrunk, _logger);
         }
     }
 }

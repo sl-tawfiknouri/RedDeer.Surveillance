@@ -116,6 +116,11 @@ namespace TestHarness.Display
             WriteToLine(0, string.Empty);
         }
 
+        public void WriteToUserFeedbackLine(string feedback)
+        {
+            WriteToLine(1, feedback);
+        }
+
         public static void WriteToLine(int targetLine, string message)
         {
             System.Console.SetCursorPosition(0, targetLine);

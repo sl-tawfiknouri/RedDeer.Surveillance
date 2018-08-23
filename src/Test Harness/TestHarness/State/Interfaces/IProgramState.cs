@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Interfaces
+﻿namespace TestHarness.State.Interfaces
 {
     public interface IProgramState
     {

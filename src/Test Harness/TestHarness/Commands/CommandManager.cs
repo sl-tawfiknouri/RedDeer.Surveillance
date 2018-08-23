@@ -5,7 +5,7 @@ using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Interfaces;
+using TestHarness.State.Interfaces;
 
 namespace TestHarness.Commands
 {

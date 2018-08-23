@@ -12,7 +12,8 @@ using TestHarness.Factory.NetworkFactory;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory;
 using TestHarness.Factory.TradingFactory.Interfaces;
-using TestHarness.Interfaces;
+using TestHarness.State.Interfaces;
+using TestHarness.State;
 using TestHarness.Network_IO;
 
 namespace TestHarness.Factory

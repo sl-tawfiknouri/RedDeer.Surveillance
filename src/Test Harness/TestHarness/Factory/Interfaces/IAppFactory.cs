@@ -6,8 +6,8 @@ using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
-using TestHarness.Interfaces;
 using TestHarness.Network_IO;
+using TestHarness.State.Interfaces;
 
 namespace TestHarness.Factory.Interfaces
 {

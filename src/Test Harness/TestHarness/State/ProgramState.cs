@@ -1,6 +1,6 @@
-﻿using TestHarness.Interfaces;
+﻿using TestHarness.State.Interfaces;
 
-namespace TestHarness
+namespace TestHarness.State
 {
     public class ProgramState : IProgramState
     {

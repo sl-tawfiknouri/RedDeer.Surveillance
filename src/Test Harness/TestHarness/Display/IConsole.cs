@@ -13,5 +13,7 @@ namespace TestHarness.Display
         void OutputException(Exception e);
 
         void ClearCommandInputLine();
+
+        void WriteToUserFeedbackLine(string feedback);
     }
 }

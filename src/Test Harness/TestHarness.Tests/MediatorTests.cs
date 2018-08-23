@@ -3,6 +3,9 @@ using NLog;
 using NUnit.Framework;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
+using TestHarness.State.Interfaces;
+using TestHarness.State;
+using TestHarness.Interfaces;
 
 namespace TestHarness.Tests
 {
@@ -30,51 +33,6 @@ namespace TestHarness.Tests
         }
 
         [Test]
-        public void Initiate_NullCommand_Logs()
-        {
-            var mediator = new Mediator(_appFactory);
-
-            mediator.Initiate();
-
-            A
-                .CallTo(() => _logger.Log(LogLevel.Info, "Mediator Initiating"))
-                .MustHaveHappenedOnceExactly();
-
-            A
-                .CallTo(() => _logger.Log(LogLevel.Warn, "Mediator receieved a null initiation command"))
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void Initiate_CallsAppFactoryBuild()
-        {
-            var mediator = new Mediator(_appFactory);
-
-            mediator.Initiate();
-
-            A
-                .CallTo(() => _appFactory.Build())
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void Initiate_WalkAlreadyInitiated_TerminatesOldWalk()
-        {
-            var mediator = new Mediator(_appFactory);
-
-            mediator.Initiate();
-            mediator.Initiate();
-
-            A
-                .CallTo(() => _appFactory.Build())
-                .MustHaveHappenedTwiceExactly();
-
-            A
-                .CallTo(() => _equityDataGenerator.TerminateWalk())
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
         public void Terminate_LogsTermination_AndCallsTerminateWalk()
         {
             var mediator = new Mediator(_appFactory);
@@ -85,11 +43,6 @@ namespace TestHarness.Tests
             A
                 .CallTo(() => _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating"))
                 .MustHaveHappenedOnceExactly();
-
-            A
-                .CallTo(() => _equityDataGenerator.TerminateWalk())
-                .MustHaveHappenedOnceExactly();
-
         }
     }
 }

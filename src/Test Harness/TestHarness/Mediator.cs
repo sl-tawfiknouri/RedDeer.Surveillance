@@ -2,6 +2,7 @@
 using TestHarness.Commands.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Factory.Interfaces;
+using TestHarness.State.Interfaces;
 using TestHarness.Interfaces;
 
 namespace TestHarness

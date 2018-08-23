@@ -1,6 +1,6 @@
 ﻿using System;
 using TestHarness.Commands.Interfaces;
-using TestHarness.Interfaces;
+using TestHarness.State.Interfaces;
 
 namespace TestHarness.Commands
 {

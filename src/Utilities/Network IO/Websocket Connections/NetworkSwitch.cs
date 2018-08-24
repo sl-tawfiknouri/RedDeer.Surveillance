@@ -98,7 +98,7 @@ namespace Utilities.Network_IO.Websocket_Connections
                     _trunk.Initiate(_domain, _port, cts.Token);
                 }
 
-                _hasFailedOverData = false;
+                _hasFailedOverData = false || failedToResend;
             }
         }
 

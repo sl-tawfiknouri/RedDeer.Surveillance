@@ -72,8 +72,8 @@ namespace TestHarness.Commands
                 .TradingFactory
                 .Create()
                 .Heartbeat()
-                .Irregular(TimeSpan.FromMilliseconds(600), 8)
-                .TradingFixedVolume(3)
+                .Irregular(TimeSpan.FromMilliseconds(1000), 8)
+                .TradingFixedVolume(1)
                 .Finish();
 
             var prohibitedTradeProcess = _appFactory

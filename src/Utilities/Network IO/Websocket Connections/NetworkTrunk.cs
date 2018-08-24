@@ -5,17 +5,23 @@ using System;
 using System.Threading;
 using Newtonsoft.Json;
 using Utilities.Network_IO.Interfaces;
+using System.Diagnostics;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkTrunk : INetworkTrunk
     {
         private object _stateLock = new object();
+        private object _closeEventLock = new object();
+
         private IWebsocketConnectionFactory _websocketFactory;
         private IConnectionWebsocket _activeWebsocket;
         private IMessageWriter _messageWriter;
         private volatile bool _initiated;
 
+        private string _port;
+        private string _domain;
+        
         public NetworkTrunk(
             IWebsocketConnectionFactory websocketFactory,
             IMessageWriter messageWriter)
@@ -43,12 +49,15 @@ namespace Utilities.Network_IO.Websocket_Connections
                 throw new ArgumentNullException(nameof(port));
             }
 
+            _port = port;
+            _domain = domain;
+
             lock (_stateLock)
             {
                 if (_initiated)
                 {
                     _messageWriter.Write("Network trunk initiating with already initiated instance. Terminating old process first.");
-                    _Terminate();
+                    _Terminate(false);
                 }
 
                 _initiated = true;
@@ -75,16 +84,16 @@ namespace Utilities.Network_IO.Websocket_Connections
         {
         }
 
+        private void Closed_Event(object sender, EventArgs e)
+        {
+        }
+
         private void Error_Event(object sender, ErrorEventArgs e)
         {
             lock (_stateLock)
             {
-                _Terminate();
+                _Terminate(false);
             }
-        }
-
-        private void Closed_Event(object sender, EventArgs e)
-        {
         }
 
         private bool ConnectToActiveSocket(CancellationToken token)
@@ -127,12 +136,17 @@ namespace Utilities.Network_IO.Websocket_Connections
             lock (_stateLock)
             {
                 _messageWriter.Write("Network trunk terminating web socket");
-                _Terminate();
+                _Terminate(true);
             }
         }
 
-        private void _Terminate()
+        private void _Terminate(bool userTriggered)
         {
+            if (userTriggered)
+            {
+                _initiated = false;
+            }
+
             Active = false;
 
             if (_activeWebsocket != null)

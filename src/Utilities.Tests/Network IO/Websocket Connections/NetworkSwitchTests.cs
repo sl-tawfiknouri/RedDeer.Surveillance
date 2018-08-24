@@ -38,7 +38,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
 
-            networkSwitch.Add<string>(null);
+            networkSwitch.Send<string>(null);
 
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _networkFailover.Store(A<string>.Ignored)).MustNotHaveHappened();
@@ -49,7 +49,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
             
-            networkSwitch.Add("test");
+            networkSwitch.Send("test");
 
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _networkFailover.Store(A<string>.Ignored)).MustHaveHappened();
@@ -62,7 +62,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             A.CallTo(() => _networkTrunk.Active).Returns(true);
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).Returns(true);
 
-            networkSwitch.Add("test");
+            networkSwitch.Send("test");
 
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).MustHaveHappened();
             A.CallTo(() => _networkFailover.Store(A<string>.Ignored)).MustNotHaveHappened();
@@ -74,7 +74,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
             A.CallTo(() => _networkTrunk.Active).Returns(true);
 
-            networkSwitch.Add("test");
+            networkSwitch.Send("test");
 
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).MustHaveHappened();
             A.CallTo(() => _networkFailover.Store(A<string>.Ignored)).MustHaveHappened();
@@ -88,7 +88,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             var failover = new NetworkFailoverLocalMemory();
             var networkSwitch = new NetworkSwitch(_networkTrunk, failover, 1);
 
-            networkSwitch.Add("test");
+            networkSwitch.Send("test");
 
             A.CallTo(() => _networkTrunk.Send(A<string>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _networkTrunk.Active).Returns(true);

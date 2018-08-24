@@ -11,14 +11,14 @@ namespace TestHarness.Network_IO.Subscribers
         private object _stateLock = new object();
         private const int _timeoutSeconds = 10;
 
-        private INetworkTrunk _networkTrunk;
+        private INetworkSwitch _networkSwitch;
         private ILogger _logger;
 
         public TradeOrderWebsocketSubscriber(
-            INetworkTrunk networkTrunk,
+            INetworkSwitch networkSwitch,
             ILogger logger)
         {
-            _networkTrunk = networkTrunk ?? throw new ArgumentNullException(nameof(networkTrunk));
+            _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(_networkSwitch));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -35,7 +35,7 @@ namespace TestHarness.Network_IO.Subscribers
 
                 // allow a 10 second one off attempt to connect
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_timeoutSeconds));
-                return _networkTrunk.Initiate(domain, port, cts.Token);
+                return _networkSwitch.Initiate(domain, port, cts.Token);
             }
         }
 
@@ -43,7 +43,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (_stateLock)
             {
-                _networkTrunk.Terminate();
+                _networkSwitch.Terminate();
             }
         }
 
@@ -53,7 +53,7 @@ namespace TestHarness.Network_IO.Subscribers
             {
                 _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber underlying stream completed.");
 
-                _networkTrunk.Terminate();
+                _networkSwitch.Terminate();
             }
         }
 
@@ -69,7 +69,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (_stateLock)
             {
-                _networkTrunk.Send(value);
+                _networkSwitch.Send(value);
             }
         }
     }

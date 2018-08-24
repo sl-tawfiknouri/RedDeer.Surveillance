@@ -25,8 +25,10 @@ namespace TestHarness.Network_IO.Subscribers
         public ITradeOrderWebsocketSubscriber Build()
         {
             var networkTrunk = new NetworkTrunk(_websocketFactory, _console);
+            var networkFailover = new NetworkFailoverLocalMemory();
+            var networkSwitch = new NetworkSwitch(networkTrunk, networkFailover);
 
-            return new TradeOrderWebsocketSubscriber(networkTrunk, _logger);
+            return new TradeOrderWebsocketSubscriber(networkSwitch, _logger);
         }
     }
 }

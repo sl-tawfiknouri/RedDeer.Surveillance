@@ -7,13 +7,18 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkSwitch : INetworkSwitch
     {
-        private int _failoverScanFrequencyMilliseconds = 3000;
+        private int _failoverScanFrequencyMilliseconds = 5000;
         private volatile bool _hasFailedOverData;
         private Timer _timer;
         
         private INetworkTrunk _trunk;
         private INetworkFailover _failover;
         private object _lock = new object();
+
+        private string _domain;
+        private string _port;
+
+        public bool Active { get; private set; }
 
         public NetworkSwitch(INetworkTrunk trunk, INetworkFailover failover)
         {
@@ -52,6 +57,8 @@ namespace Utilities.Network_IO.Websocket_Connections
             {
                 var itemsToRemove = new List<Tuple<Type, object>>();
 
+                var failedToResend = false;
+
                 foreach (var item in _failover.Retrieve())
                 {
                     if (item.Value == null)
@@ -72,6 +79,10 @@ namespace Utilities.Network_IO.Websocket_Connections
                         {
                             itemsToRemove.Add(new Tuple<Type, object>(item.Key, dataPoint));
                         }
+                        else
+                        {
+                            failedToResend = true;
+                        }
                     }
                 }
 
@@ -79,13 +90,22 @@ namespace Utilities.Network_IO.Websocket_Connections
                 {
                     _failover.RemoveItem(item.Item1, item.Item2);
                 }
+
+                if (failedToResend)
+                {
+                    var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMilliseconds(3000));
+
+                    _trunk.Initiate(_domain, _port, cts.Token);
+                }
+
+                _hasFailedOverData = false;
             }
         }
 
         /// <summary>
         /// Success response if added to trunk and successfully sent only
         /// </summary>
-        public bool Add<T>(T value)
+        public bool Send<T>(T value)
         {
             lock (_lock)
             {
@@ -124,7 +144,27 @@ namespace Utilities.Network_IO.Websocket_Connections
                 return false;
             }
 
-            return !_trunk.Send(value);
+            return _trunk.Send(value);
+        }
+
+        public bool Initiate(
+            string domain,
+            string port,
+            System.Threading.CancellationToken token)
+        {
+            _domain = domain;
+            _port = port;
+            Active = true;
+
+            var initiated = _trunk.Initiate(domain, port, token);
+
+            return initiated;
+        }
+
+        public void Terminate()
+        {
+            _trunk.Terminate();
+            _timer.Stop();
         }
 
         public void Dispose()

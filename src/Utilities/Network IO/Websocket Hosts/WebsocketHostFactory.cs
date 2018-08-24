@@ -1,4 +1,6 @@
-﻿namespace Utilities.Network_IO.Websocket_Hosts
+﻿using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+
+namespace Utilities.Network_IO.Websocket_Hosts
 {
     public class WebsocketHostFactory : IWebsocketHostFactory
     {

@@ -29,6 +29,8 @@ namespace RedDeer.Relay
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For<IMessageWriter>().Use<LoggingMessageWriter>();
             For<INetworkTrunk>().Use<NetworkTrunk>();
+            For<INetworkFailover>().Use<NetworkFailoverLocalMemory>();
+            For<INetworkSwitch>().Use<NetworkSwitch>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
         }
     }

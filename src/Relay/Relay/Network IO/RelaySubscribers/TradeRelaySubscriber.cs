@@ -15,14 +15,14 @@ namespace Relay.Network_IO.RelaySubscribers
     {
         private volatile bool _initiated;
         private object _stateLock = new object();
-        private INetworkTrunk _networkTrunk;
+        private INetworkSwitch _networkSwitch;
         private ILogger _logger;
 
         public TradeRelaySubscriber(
-            INetworkTrunk networkTrunk,
+            INetworkSwitch networkSwitch,
             ILogger<TradeRelaySubscriber> logger)
         {
-            _networkTrunk = networkTrunk ?? throw new ArgumentNullException(nameof(networkTrunk));   
+            _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -33,9 +33,9 @@ namespace Relay.Network_IO.RelaySubscribers
                 _logger.LogInformation("Trade Relay Subscriber initiating network trunk with 15 second timeout");
 
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-                var success = _networkTrunk.Initiate(domain, port, cts.Token);
+                var success = _networkSwitch.Initiate(domain, port, cts.Token);
 
-               _initiated = success;
+               _initiated = true;
                 return success;
             }
         }
@@ -44,7 +44,7 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-                _networkTrunk.Terminate();
+                _networkSwitch.Terminate();
                 _initiated = false;
             }
         }
@@ -53,10 +53,10 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-            _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
+                _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
 
-            _initiated = false;
-            _networkTrunk.Terminate();
+                _initiated = false;
+                _networkSwitch.Terminate();
             }
         }
 
@@ -67,7 +67,7 @@ namespace Relay.Network_IO.RelaySubscribers
                 _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
 
                 _initiated = false;
-                _networkTrunk.Terminate();
+                _networkSwitch.Terminate();
             }
         }
 
@@ -77,7 +77,7 @@ namespace Relay.Network_IO.RelaySubscribers
             {
                 if (_initiated)
                 {
-                    _networkTrunk.Send(value);
+                    _networkSwitch.Send(value);
                 };
             }
         }

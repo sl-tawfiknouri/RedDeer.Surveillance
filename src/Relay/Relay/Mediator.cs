@@ -42,19 +42,12 @@ namespace Relay
             tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
 
             // hook the relay subscriber to begin comms with the outgoing network stream
-            var successfullyEstablishedUpstream = _tradeRelaySubscriber.Initiate("localhost", "9069");
-
-            var connectedUpstream = false;
-            while (!connectedUpstream)
-            {
-                // attempts a new connection every 15 seconds until it can finally talk upstream
-                connectedUpstream = _tradeRelaySubscriber.Initiate("localhost", "9069");
-            }
+            _tradeRelaySubscriber.Initiate("localhost", "9069");
 
             // hook the trade processor to receieve the incoming network stream
             _tradeOrderStream.Subscribe(tradeProcessor);
 
-            // begin hosting connection for downstream processes
+            // begin hosting connection for downstream processes (i.e. surveillance service)
             _networkManager.InitiateConnections(_tradeOrderStream);
 
             _logger.LogInformation("Completed initiating relay in mediator");

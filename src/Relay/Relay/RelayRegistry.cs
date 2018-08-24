@@ -24,7 +24,6 @@ namespace RedDeer.Relay
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
-            For<INetworkManager>().Use<NetworkManager>();
             For(typeof(ITradeOrderStream<>)).Use(typeof(TradeOrderStream<>));
             For(typeof(ITradeProcessor<>)).Use(typeof(TradeProcessor<>));
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();

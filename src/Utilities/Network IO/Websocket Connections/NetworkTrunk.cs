@@ -24,6 +24,8 @@ namespace Utilities.Network_IO.Websocket_Connections
             _messageWriter = messageWriter ?? throw new ArgumentNullException(nameof(messageWriter));
         }
 
+        public bool Active { get; private set; }
+
         /// <summary>
         /// Returns success result
         /// </summary>
@@ -107,7 +109,11 @@ namespace Utilities.Network_IO.Websocket_Connections
                     _activeWebsocket.Close();
                 }
 
-                return token == null || !token.IsCancellationRequested;
+                var connectionEstablished = token == null || !token.IsCancellationRequested;
+
+                Active = connectionEstablished;
+
+                return Active;
             }
             catch
             {
@@ -127,6 +133,8 @@ namespace Utilities.Network_IO.Websocket_Connections
 
         private void _Terminate()
         {
+            Active = false;
+
             if (_activeWebsocket != null)
             {
                 try
@@ -149,11 +157,11 @@ namespace Utilities.Network_IO.Websocket_Connections
             }
         }
 
-        public void Send<T>(T value)
+        public bool Send<T>(T value)
         {
             if (value == null)
             {
-                return;
+                return false;
             }
 
             lock (_stateLock)
@@ -166,6 +174,12 @@ namespace Utilities.Network_IO.Websocket_Connections
                 {
                     var jsonFrame = JsonConvert.SerializeObject(value);
                     _activeWebsocket.Send(jsonFrame);
+                    return true;
+                }
+                else
+                {
+                    Active = false;
+                    return false;
                 }
             }
         }

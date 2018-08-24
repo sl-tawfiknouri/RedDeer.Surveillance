@@ -9,7 +9,7 @@ namespace TestHarness.Network_IO.Subscribers
     public class TradeOrderWebsocketSubscriber : ITradeOrderWebsocketSubscriber
     {
         private object _stateLock = new object();
-        private const int _timeoutSeconds = 15;
+        private const int _timeoutSeconds = 10;
 
         private INetworkTrunk _networkTrunk;
         private ILogger _logger;
@@ -33,7 +33,7 @@ namespace TestHarness.Network_IO.Subscribers
                     LogLevel.Info,
                     $"Initiating trade order websocket subscriber with {_timeoutSeconds} second timeout");
 
-                // allow a 15 second one off attempt to connect
+                // allow a 10 second one off attempt to connect
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_timeoutSeconds));
                 return _networkTrunk.Initiate(domain, port, cts.Token);
             }

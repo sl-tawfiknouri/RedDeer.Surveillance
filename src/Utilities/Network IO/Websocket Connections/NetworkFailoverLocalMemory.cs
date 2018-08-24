@@ -1,16 +1,25 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkFailoverLocalMemory : INetworkFailover
     {
-        private Dictionary<System.Type, List<object>> _dict;
         private object _lock = new object();
+        private Dictionary<System.Type, List<object>> _dict;
 
         public NetworkFailoverLocalMemory()
         {
             _dict = new Dictionary<System.Type, List<object>>();
+        }
+
+        public bool HasData()
+        {
+            return 
+                Retrieve()
+                ?.Any(ret => ret.Value != null && ret.Value.Any())
+                ?? false;
         }
 
         public void Store<T>(T value)
@@ -52,6 +61,24 @@ namespace Utilities.Network_IO.Websocket_Connections
                 _dict = new Dictionary<System.Type, List<object>>();
 
                 return newStoredData;
+            }
+        }
+
+        public void RemoveItem(System.Type key, object item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            lock (_lock)
+            {
+                _dict.TryGetValue(key, out List<object> listWithRemovedItem);
+
+                if (listWithRemovedItem != null)
+                {
+                    listWithRemovedItem.RemoveAll(listElement => listElement == item);
+                }
             }
         }
     }

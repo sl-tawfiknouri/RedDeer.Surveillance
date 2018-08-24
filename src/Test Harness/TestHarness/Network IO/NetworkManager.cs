@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
 using TestHarness.Configuration;
@@ -67,7 +68,7 @@ namespace TestHarness.Network_IO
             }
         }
 
-        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
+        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream)
         {
             lock (_stateTransition)
             {

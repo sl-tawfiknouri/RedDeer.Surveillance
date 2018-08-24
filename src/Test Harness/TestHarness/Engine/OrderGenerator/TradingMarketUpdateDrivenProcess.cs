@@ -1,4 +1,5 @@
 ﻿using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Orders;
 using NLog;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
@@ -12,7 +13,7 @@ namespace TestHarness.Engine.OrderGenerator
     {
         public TradingMarketUpdateDrivenProcess(
             ILogger logger,
-            ITradeStrategy orderStrategy) 
+            ITradeStrategy<TradeOrderFrame> orderStrategy) 
             : base(logger, orderStrategy)
         {
         }

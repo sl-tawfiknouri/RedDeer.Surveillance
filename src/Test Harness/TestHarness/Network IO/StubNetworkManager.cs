@@ -1,4 +1,5 @@
-﻿using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
 using System;
 
@@ -13,7 +14,7 @@ namespace TestHarness.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream)
+        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream)
         {
             _logger.Info("Stub Network Manager. Attach trade order subscriber to stream called.");
             return true;

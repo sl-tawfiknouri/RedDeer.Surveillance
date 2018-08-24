@@ -1,4 +1,5 @@
 ﻿using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
 using System;
@@ -14,21 +15,21 @@ namespace TestHarness.Engine.OrderGenerator
     {
         private IDisposable _unsubscriber;
         protected IStockExchangeStream _stockStream;
-        protected ITradeOrderStream _tradeStream;
-        protected ITradeStrategy _orderStrategy;
+        protected ITradeOrderStream<TradeOrderFrame> _tradeStream;
+        protected ITradeStrategy<TradeOrderFrame> _orderStrategy;
 
         private object _stateTransition = new object();
         private volatile bool _generatorExecuting;
 
         private ILogger _logger;
 
-        public BaseTradingProcess(ILogger logger, ITradeStrategy orderStrategy)
+        public BaseTradingProcess(ILogger logger, ITradeStrategy<TradeOrderFrame> orderStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _orderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
         }
 
-        public void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream tradeStream)
+        public void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream<TradeOrderFrame> tradeStream)
         {
             lock (_stateTransition)
             {

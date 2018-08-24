@@ -25,7 +25,7 @@ namespace Surveillance.Services
 
         public void Initialise()
         {
-            var stream = new TradeOrderStream(_unsubscriberFactory);
+            var stream = new TradeOrderStream<TradeOrderFrame>(_unsubscriberFactory);
             _networkManager.InitiateConnections(stream);
 
             _ruleManager.RegisterTradingRules(stream);

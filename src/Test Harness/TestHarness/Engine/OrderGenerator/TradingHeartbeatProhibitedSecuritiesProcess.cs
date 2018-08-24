@@ -20,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
         public TradingHeartbeatProhibitedSecuritiesProcess(
             IPulsatingHeartbeat heartbeat,
             ILogger logger,
-            ITradeStrategy orderStrategy) 
+            ITradeStrategy<TradeOrderFrame> orderStrategy) 
             : base(logger, orderStrategy)
         {
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));

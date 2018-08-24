@@ -13,17 +13,17 @@ namespace Relay
     public class Mediator : IMediator
     {
         private INetworkManager _networkManager;
-        private ITradeOrderStream _tradeOrderStream;
+        private ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
         private ITradeRelaySubscriber _tradeRelaySubscriber;
         private ILogger _logger;
-        private ILogger<TradeProcessor> _tpLogger;
+        private ILogger<TradeProcessor<TradeOrderFrame>> _tpLogger;
 
         public Mediator(
             INetworkManager networkManager,
-            ITradeOrderStream tradeOrderStream,
+            ITradeOrderStream<TradeOrderFrame> tradeOrderStream,
             ITradeRelaySubscriber tradeRelaySubscriber,
             ILogger<Mediator> logger,
-            ILogger<TradeProcessor> tpLogger)
+            ILogger<TradeProcessor<TradeOrderFrame>> tpLogger)
         {
             _networkManager = networkManager ?? throw new ArgumentNullException(nameof(networkManager));
             _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
@@ -37,8 +37,8 @@ namespace Relay
             _logger.LogInformation("Initiating relay in mediator");
 
             var unsubFactory = new UnsubscriberFactory<TradeOrderFrame>();
-            var tradeProcessorOrderStream = new TradeOrderStream(unsubFactory); // from trade processor TO relay
-            var tradeProcessor = new TradeProcessor(_tpLogger, tradeProcessorOrderStream);
+            var tradeProcessorOrderStream = new TradeOrderStream<TradeOrderFrame>(unsubFactory); // from trade processor TO relay
+            var tradeProcessor = new TradeProcessor<TradeOrderFrame>(_tpLogger, tradeProcessorOrderStream);
             tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
 
             // hook the relay subscriber to begin comms with the outgoing network stream

@@ -11,6 +11,7 @@ using Surveillance.Rules;
 using Surveillance.Rules.BarredAssets;
 using Surveillance.Rules.ProhibitedAssetTradingRule;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance
 {

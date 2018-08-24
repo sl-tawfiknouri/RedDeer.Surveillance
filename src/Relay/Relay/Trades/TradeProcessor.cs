@@ -9,14 +9,14 @@ namespace Relay.Trades
     /// Internal logic for the relay acting on the trades stream
     /// Decorates its own trade order stream internally
     /// </summary>
-    public class TradeProcessor : ITradeProcessor
+    public class TradeProcessor<T> : ITradeProcessor<T>
     {
         private ILogger _logger;
-        private ITradeOrderStream _tradeOrderStream;
+        private ITradeOrderStream<T> _tradeOrderStream;
 
         public TradeProcessor(
-            ILogger<TradeProcessor> logger,
-            ITradeOrderStream tradeOrderStream)
+            ILogger<TradeProcessor<TradeOrderFrame>> logger,
+            ITradeOrderStream<T> tradeOrderStream)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
@@ -32,7 +32,7 @@ namespace Relay.Trades
             _logger.LogError("Relay Trade Processor read in an exception from its source stream.", error);
         }
 
-        public void OnNext(TradeOrderFrame value)
+        public void OnNext(T value)
         {
             if (value == null)
             {
@@ -44,7 +44,7 @@ namespace Relay.Trades
             _tradeOrderStream.Add(value);
         }
 
-        public IDisposable Subscribe(IObserver<TradeOrderFrame> observer)
+        public IDisposable Subscribe(IObserver<T> observer)
         {
             return _tradeOrderStream.Subscribe(observer);
         }

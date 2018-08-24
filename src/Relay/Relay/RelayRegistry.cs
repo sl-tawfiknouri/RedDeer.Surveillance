@@ -23,8 +23,8 @@ namespace RedDeer.Relay
 
             For<IMediator>().Use<Mediator>();
             For<INetworkManager>().Use<NetworkManager>();
-            For<ITradeOrderStream>().Use<TradeOrderStream>();
-            For<ITradeProcessor>().Use<TradeProcessor>();
+            For(typeof(ITradeOrderStream<>)).Use(typeof(TradeOrderStream<>));
+            For(typeof(ITradeProcessor<>)).Use(typeof(TradeProcessor<>));
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For<IMessageWriter>().Use<LoggingMessageWriter>();

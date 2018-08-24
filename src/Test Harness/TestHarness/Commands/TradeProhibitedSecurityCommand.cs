@@ -20,7 +20,9 @@ namespace TestHarness.Commands
                 return false;
             }
 
-            return string.Equals(command, "buy prohibited security", StringComparison.InvariantCultureIgnoreCase);
+            return
+                string.Equals(command, "buy prohibited security", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(command, "buy lehman bros", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public void Run(string command)

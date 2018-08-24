@@ -1,5 +1,6 @@
 ﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using FakeItEasy;
 using NLog;
@@ -15,8 +16,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator
     {
         private IDisposable _unsubscriber;
         private IStockExchangeStream _stockStream;
-        private ITradeOrderStream _tradeStream;
-        private ITradeStrategy _tradeStrategy;
+        private ITradeOrderStream<TradeOrderFrame> _tradeStream;
+        private ITradeStrategy<TradeOrderFrame> _tradeStrategy;
         private ILogger _logger;
 
         [SetUp]
@@ -24,8 +25,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         {
             _unsubscriber = A.Fake<IDisposable>();
             _stockStream = A.Fake<IStockExchangeStream>();
-            _tradeStream = A.Fake<ITradeOrderStream>();
-            _tradeStrategy = A.Fake<ITradeStrategy>();
+            _tradeStream = A.Fake<ITradeOrderStream<TradeOrderFrame>>();
+            _tradeStrategy = A.Fake<ITradeStrategy<TradeOrderFrame>>();
             _logger = A.Fake<ILogger>();
 
             A

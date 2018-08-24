@@ -3,7 +3,7 @@ using System;
 
 namespace Relay.Trades
 {
-    public interface ITradeProcessor : IObserver<TradeOrderFrame>, IObservable<TradeOrderFrame>
+    public interface ITradeProcessor<T> : IObserver<T>, IObservable<T>
     {
     }
 }

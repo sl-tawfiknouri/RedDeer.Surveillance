@@ -25,13 +25,13 @@ namespace Domain.Tests.Trades.Streams
         [Test]
         public void Constructor_ThrowsExceptionForNull_UnsubscriberFactory()
         {
-            Assert.Throws<ArgumentNullException>(() => new TradeOrderStream(null));
+            Assert.Throws<ArgumentNullException>(() => new TradeOrderStream<TradeOrderFrame>(null));
         }
 
         [Test]
         public void Subscribe_ThrowsArgumentNullException_ForNullObserver()
         {
-            var tradeOrderStream = new TradeOrderStream(_factory);
+            var tradeOrderStream = new TradeOrderStream<TradeOrderFrame>(_factory);
 
             Assert.Throws<ArgumentNullException>(() => tradeOrderStream.Subscribe(null));
         }
@@ -39,7 +39,7 @@ namespace Domain.Tests.Trades.Streams
         [Test]
         public void Subscribe_CallsUnsubscriberFactory_ReturnsUnsubscriber()
         {
-            var tradeOrderStream = new TradeOrderStream(_factory);
+            var tradeOrderStream = new TradeOrderStream<TradeOrderFrame>(_factory);
 
             tradeOrderStream.Subscribe(_tradeOrderObserver);
 
@@ -53,7 +53,7 @@ namespace Domain.Tests.Trades.Streams
         [Test]
         public void Add_NullOrder_DoesNothing()
         {
-            var tradeOrderStream = new TradeOrderStream(_factory);
+            var tradeOrderStream = new TradeOrderStream<TradeOrderFrame>(_factory);
 
             tradeOrderStream.Subscribe(_tradeOrderObserver);
 
@@ -63,7 +63,7 @@ namespace Domain.Tests.Trades.Streams
         [Test]
         public void Add_OrderIsPassedOnto_Subscribers()
         {
-            var stream = new TradeOrderStream(_factory);
+            var stream = new TradeOrderStream<TradeOrderFrame>(_factory);
             var obs1 = A.Fake<IObserver<TradeOrderFrame>>();
             var obs2 = A.Fake<IObserver<TradeOrderFrame>>();
             var exch = new StockExchange(new MarketId("id"), "LSE");

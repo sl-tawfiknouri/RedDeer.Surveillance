@@ -11,7 +11,7 @@ using NLog;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {
-    public class MarkovTradeStrategy : ITradeStrategy
+    public class MarkovTradeStrategy : ITradeStrategy<TradeOrderFrame>
     {
         private readonly ILogger _logger;
         private readonly ITradeVolumeStrategy _tradeVolumeStratey;
@@ -38,7 +38,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 _limitStandardDeviation = limitStandardDeviation.Value;
         }
 
-        public void ExecuteTradeStrategy(ExchangeFrame frame, ITradeOrderStream tradeOrders)
+        public void ExecuteTradeStrategy(ExchangeFrame frame, ITradeOrderStream<TradeOrderFrame> tradeOrders)
         {
             if (tradeOrders == null)
             {
@@ -75,7 +75,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
         private void GenerateAndSubmitTrades(
             ExchangeFrame frame,
-            ITradeOrderStream tradeOrders,
+            ITradeOrderStream<TradeOrderFrame> tradeOrders,
             int numberOfTradeOrders)
         {
             var securitiesToTradeIds = SecuritiesToTrade(frame, numberOfTradeOrders);

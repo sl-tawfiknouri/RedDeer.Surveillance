@@ -17,13 +17,13 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
     public class ProbabilisticTradeStrategyTests
     {
         private ILogger _logger;
-        private ITradeOrderStream _tradeOrderStream;
+        private ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
         private ITradeVolumeStrategy _tradeVolumeStrategy;
 
         [SetUp]
         public void Setup()
         {
-            _tradeOrderStream = A.Fake<ITradeOrderStream>();
+            _tradeOrderStream = A.Fake<ITradeOrderStream<TradeOrderFrame>>();
             _logger = A.Fake<ILogger>();
 
             _tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(6);

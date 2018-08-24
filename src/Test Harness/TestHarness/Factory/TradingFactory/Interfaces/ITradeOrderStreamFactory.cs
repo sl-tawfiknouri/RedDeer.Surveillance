@@ -1,11 +1,12 @@
-﻿using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using TestHarness.Display;
 
 namespace TestHarness.Factory.TradingFactory.Interfaces
 {
     public interface ITradeOrderStreamFactory
     {
-        ITradeOrderStream Create();
-        ITradeOrderStream CreateDisplayable(IConsole console);
+        ITradeOrderStream<TradeOrderFrame> Create();
+        ITradeOrderStream<TradeOrderFrame> CreateDisplayable(IConsole console);
     }
 }

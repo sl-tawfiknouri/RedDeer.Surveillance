@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using Utilities.Network_IO.Websocket_Hosts;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Network_IO
 {

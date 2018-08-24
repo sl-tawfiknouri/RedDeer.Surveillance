@@ -5,18 +5,18 @@ using System.Collections.Concurrent;
 
 namespace Domain.Equity.Trading
 {
-    public class TradeOrderStream : ITradeOrderStream
+    public class TradeOrderStream<T> : ITradeOrderStream<T>
     {
-        private readonly ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>> _observers;
-        private readonly IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
+        private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observers;
+        private readonly IUnsubscriberFactory<T> _unsubscriberFactory;
 
-        public TradeOrderStream(IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory)
+        public TradeOrderStream(IUnsubscriberFactory<T> unsubscriberFactory)
         {
-            _observers = new ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>>();
+            _observers = new ConcurrentDictionary<IObserver<T>, IObserver<T>>();
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
         }
 
-        public IDisposable Subscribe(IObserver<TradeOrderFrame> observer)
+        public IDisposable Subscribe(IObserver<T> observer)
         {
             if (observer == null)
             {
@@ -31,7 +31,7 @@ namespace Domain.Equity.Trading
             return _unsubscriberFactory.Create(_observers, observer);
         }
 
-        public void Add(TradeOrderFrame order)
+        public void Add(T order)
         {
             if (order == null)
             {

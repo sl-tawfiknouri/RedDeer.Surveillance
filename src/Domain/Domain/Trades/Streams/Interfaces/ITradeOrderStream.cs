@@ -3,7 +3,7 @@ using Domain.Streams;
 
 namespace Domain.Equity.Trading.Streams.Interfaces
 {
-    public interface ITradeOrderStream : PublishingStream<TradeOrderFrame>
+    public interface ITradeOrderStream<T> : PublishingStream<T>
     {
     }
 }

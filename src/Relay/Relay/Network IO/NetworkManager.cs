@@ -19,7 +19,7 @@ namespace Relay.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
-        public void InitiateConnections(ITradeOrderStream tradeStream)
+        public void InitiateConnections(ITradeOrderStream<TradeOrderFrame> tradeStream)
         {
             lock (_stateTransition)
             {

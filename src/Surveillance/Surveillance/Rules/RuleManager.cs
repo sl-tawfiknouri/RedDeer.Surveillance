@@ -1,4 +1,5 @@
-﻿using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 using Surveillance.Rules.ProhibitedAssetTradingRule;
 using System;
 
@@ -14,12 +15,12 @@ namespace Surveillance.Rules
                 ?? throw new ArgumentNullException(nameof(prohibitedAssetTradingRule));
         }
 
-        public void RegisterTradingRules(ITradeOrderStream stream)
+        public void RegisterTradingRules(ITradeOrderStream<TradeOrderFrame> stream)
         {
             RegisterProhibitedAssetRule(stream);
         }
 
-        public void RegisterProhibitedAssetRule(ITradeOrderStream stream)
+        public void RegisterProhibitedAssetRule(ITradeOrderStream<TradeOrderFrame> stream)
         {
             if (stream == null)
             {

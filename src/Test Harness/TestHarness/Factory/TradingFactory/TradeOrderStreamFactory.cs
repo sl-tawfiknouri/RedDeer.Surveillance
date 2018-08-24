@@ -9,15 +9,15 @@ namespace TestHarness.Factory.TradingFactory
 {
     public class TradeOrderStreamFactory : ITradeOrderStreamFactory
     {
-        public ITradeOrderStream Create()
+        public ITradeOrderStream<TradeOrderFrame> Create()
         {
             var tradeUnsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
-            var tradeOrderStream = new TradeOrderStream(tradeUnsubscriberFactory);
+            var tradeOrderStream = new TradeOrderStream<TradeOrderFrame>(tradeUnsubscriberFactory);
 
             return tradeOrderStream;
         }
 
-        public ITradeOrderStream CreateDisplayable(IConsole console)
+        public ITradeOrderStream<TradeOrderFrame> CreateDisplayable(IConsole console)
         {
             var tradeOrderStream = Create();
             var tradeOrderDisplaySubscriber = new TradeOrderFrameDisplaySubscriber(console);

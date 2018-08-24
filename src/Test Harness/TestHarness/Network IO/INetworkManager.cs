@@ -1,4 +1,5 @@
-﻿using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Trading.Orders;
+using Domain.Equity.Trading.Streams.Interfaces;
 
 namespace TestHarness.Network_IO
 {
@@ -6,7 +7,7 @@ namespace TestHarness.Network_IO
     {
         bool InitiateNetworkConnections();
         void TerminateNetworkConnections();
-        bool AttachTradeOrderSubscriberToStream(ITradeOrderStream orderStream);
+        bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream);
         void DetatchTradeOrderSubscriber();
     }
 }

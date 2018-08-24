@@ -3,6 +3,7 @@ using System;
 using TestHarness.Display;
 using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts;
 
 namespace TestHarness.Network_IO.Subscribers
 {
@@ -27,8 +28,9 @@ namespace TestHarness.Network_IO.Subscribers
             var networkTrunk = new NetworkTrunk(_websocketFactory, _console);
             var networkFailover = new NetworkFailoverLocalMemory();
             var networkSwitch = new NetworkSwitch(networkTrunk, networkFailover);
+            var networkDuplexer = new DuplexMessageFactory();
 
-            return new TradeOrderWebsocketSubscriber(networkSwitch, _logger);
+            return new TradeOrderWebsocketSubscriber(networkSwitch, networkDuplexer, _logger);
         }
     }
 }

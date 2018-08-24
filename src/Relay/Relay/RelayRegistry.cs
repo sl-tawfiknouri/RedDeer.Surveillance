@@ -10,6 +10,8 @@ using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Relay;
 using Utilities.Network_IO.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts;
 
 namespace RedDeer.Relay
 {
@@ -31,6 +33,11 @@ namespace RedDeer.Relay
             For<INetworkTrunk>().Use<NetworkTrunk>();
             For<INetworkFailover>().Use<NetworkFailoverLocalMemory>();
             For<INetworkSwitch>().Use<NetworkSwitch>();
+
+            For<INetworkExchange>().Use<NetworkExchange>();
+            For<INetworkDuplexer>().Use<RelayNetworkDuplexer>();
+            For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
+            For<IWebsocketHost>().Use<RedDeerWebsocketHost>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
         }
     }

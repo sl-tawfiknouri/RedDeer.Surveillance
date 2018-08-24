@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using Newtonsoft.Json;
 using Utilities.Network_IO.Interfaces;
-using System.Diagnostics;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
@@ -180,6 +179,10 @@ namespace Utilities.Network_IO.Websocket_Connections
             }
         }
 
+        /// <summary>
+        /// If using a duplexed connection
+        /// make sure that the value is already duplexed
+        /// </summary>
         public bool Send<T>(T value)
         {
             if (value == null)

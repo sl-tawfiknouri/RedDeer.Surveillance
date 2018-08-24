@@ -5,7 +5,7 @@ using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Hosts
 {
-    public class NetworkExchange
+    public class NetworkExchange : INetworkExchange
     {
         IWebsocketHostFactory _websocketHostFactory;
         INetworkDuplexer _networkDuplexer;

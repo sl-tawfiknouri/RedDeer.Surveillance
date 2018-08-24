@@ -3,6 +3,8 @@ using System.Threading;
 using Domain.Equity.Trading.Orders;
 using NLog;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts;
 
 namespace TestHarness.Network_IO.Subscribers
 {
@@ -12,13 +14,16 @@ namespace TestHarness.Network_IO.Subscribers
         private const int _timeoutSeconds = 10;
 
         private INetworkSwitch _networkSwitch;
+        private IDuplexMessageFactory _duplexMessageFactory;
         private ILogger _logger;
 
         public TradeOrderWebsocketSubscriber(
             INetworkSwitch networkSwitch,
+            IDuplexMessageFactory factory,
             ILogger logger)
         {
-            _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(_networkSwitch));
+            _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
+            _duplexMessageFactory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -69,7 +74,8 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (_stateLock)
             {
-                _networkSwitch.Send(value);
+                var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
+                _networkSwitch.Send(duplexedMessage);
             }
         }
     }

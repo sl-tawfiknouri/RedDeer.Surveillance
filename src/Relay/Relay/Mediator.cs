@@ -7,29 +7,36 @@ using Relay.Network_IO.RelaySubscribers;
 using Relay.Trades;
 using System;
 using System.Threading.Tasks;
+using Utilities.Network_IO.Websocket_Hosts;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Relay
 {
     public class Mediator : IMediator
     {
-        private INetworkManager _networkManager;
         private ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
         private ITradeRelaySubscriber _tradeRelaySubscriber;
+        private IWebsocketHostFactory _websocketHostFactory;
+
         private ILogger _logger;
         private ILogger<TradeProcessor<TradeOrderFrame>> _tpLogger;
+        private ILogger<NetworkExchange> _exchLogger;
 
         public Mediator(
-            INetworkManager networkManager,
             ITradeOrderStream<TradeOrderFrame> tradeOrderStream,
             ITradeRelaySubscriber tradeRelaySubscriber,
+            IWebsocketHostFactory websocketHostFactory,
             ILogger<Mediator> logger,
-            ILogger<TradeProcessor<TradeOrderFrame>> tpLogger)
+            ILogger<TradeProcessor<TradeOrderFrame>> tpLogger,
+            ILogger<NetworkExchange> exchLogger)
         {
-            _networkManager = networkManager ?? throw new ArgumentNullException(nameof(networkManager));
             _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
             _tradeRelaySubscriber = tradeRelaySubscriber ?? throw new ArgumentNullException(nameof(tradeRelaySubscriber));
+            _websocketHostFactory = websocketHostFactory ?? throw new ArgumentNullException(nameof(websocketHostFactory));
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tpLogger = tpLogger;
+            _exchLogger = exchLogger;
         }
 
         public async Task Initiate()
@@ -48,7 +55,10 @@ namespace Relay
             _tradeOrderStream.Subscribe(tradeProcessor);
 
             // begin hosting connection for downstream processes (i.e. surveillance service)
-            _networkManager.InitiateConnections(_tradeOrderStream);
+
+            var networkDuplexer = new RelayNetworkDuplexer(_tradeOrderStream);
+            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchLogger);
+            exchange.Initialise("ws://0.0.0.0:9067");
 
             _logger.LogInformation("Completed initiating relay in mediator");
         }

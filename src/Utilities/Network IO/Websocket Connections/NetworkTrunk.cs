@@ -122,6 +122,15 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 Active = connectionEstablished;
 
+                if (connectionEstablished)
+                {
+                    _messageWriter.Write($"Network trunk connection established");
+                }
+                else
+                {
+                    _messageWriter.Write($"Network trunk connection failed to establish");
+                }
+
                 return Active;
             }
             catch

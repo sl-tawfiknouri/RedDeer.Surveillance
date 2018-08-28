@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
@@ -11,20 +12,27 @@ namespace TestHarness.Network_IO
     {
         private object _stateTransition = new object();
 
-        INetworkConfiguration _networkConfiguration;
+        private INetworkConfiguration _networkConfiguration;
         private ITradeOrderWebsocketSubscriberFactory _tradeOrderSocketSubscriberFactory;
         private ITradeOrderWebsocketSubscriber _tradeOrderWebsocketSubscriber;
+        private IStockMarketWebsocketSubscriberFactory _stockMarketSocketSubscriberFactory;
+        private IStockMarketWebsocketSubscriber _stockMarketWebsocketSubscriber;
         private IDisposable _tradeOrderUnsubscriber;
+        private IDisposable _stockMarketUnsubscriber;
         private ILogger _logger;
 
         public NetworkManager(
             ITradeOrderWebsocketSubscriberFactory tradeOrderSocketSubscriberFactory,
+            IStockMarketWebsocketSubscriberFactory stockMarketSocketSubscriberFactory,
             INetworkConfiguration networkConfiguration,
             ILogger logger)
         {
             _tradeOrderSocketSubscriberFactory =
                 tradeOrderSocketSubscriberFactory 
                 ?? throw new ArgumentNullException(nameof(tradeOrderSocketSubscriberFactory));
+
+            _stockMarketSocketSubscriberFactory = stockMarketSocketSubscriberFactory
+                ?? throw new ArgumentNullException(nameof(stockMarketSocketSubscriberFactory));
 
             _networkConfiguration = 
                 networkConfiguration
@@ -62,7 +70,14 @@ namespace TestHarness.Network_IO
         {
             _logger.Log(LogLevel.Info, "Network Manager initiating stock market network connections");
 
-            return true;
+            if (_stockMarketWebsocketSubscriber == null)
+            {
+                _stockMarketWebsocketSubscriber = _stockMarketSocketSubscriberFactory.Build();
+            }
+
+            return _stockMarketWebsocketSubscriber.Initiate(
+                _networkConfiguration.StockExchangeDomainUriDomainSegment,
+                _networkConfiguration.StockExchangeDomainUriPort);
         }
 
         public void TerminateAllNetworkConnections()
@@ -74,6 +89,11 @@ namespace TestHarness.Network_IO
                 if (_tradeOrderWebsocketSubscriber != null)
                 {
                     _tradeOrderWebsocketSubscriber.Terminate();
+                }
+
+                if (_stockMarketWebsocketSubscriber != null)
+                {
+                    _stockMarketWebsocketSubscriber.Terminate();
                 }
             }
         }
@@ -119,6 +139,51 @@ namespace TestHarness.Network_IO
                 if (_tradeOrderUnsubscriber != null)
                 {
                     _tradeOrderUnsubscriber.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Join the stock exchange stream to the websocket connections
+        /// </summary>
+        public bool AttachStockExchangeSubscriberToStream(IStockExchangeStream exchangeStream)
+        {
+            lock (_stateTransition)
+            {
+                if (_stockMarketWebsocketSubscriber == null)
+                {
+                    var successfullyInitiated = _InitiateStockMarketNetworkConnections();
+                    if (!successfullyInitiated)
+                    {
+                        return false;
+                    }
+                }
+
+                if (exchangeStream != null
+                    && _stockMarketWebsocketSubscriber != null)
+                {
+                    _logger.Log(LogLevel.Info, "Network Manager attaching stock exchange subscriber to stream");
+                    _stockMarketUnsubscriber = exchangeStream.Subscribe(_stockMarketWebsocketSubscriber);
+
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Detatch the stock exchange stream by calling the unsubscriber for the websocket connections
+        /// </summary>
+        public void DetatchStockExchangeSubscriber()
+        {
+            lock (_stateTransition)
+            {
+                _logger.Log(LogLevel.Info, "Network Manager detatching stock exchange subscriber from stream");
+
+                if (_stockMarketUnsubscriber != null)
+                {
+                    _stockMarketUnsubscriber.Dispose();
                 }
             }
         }

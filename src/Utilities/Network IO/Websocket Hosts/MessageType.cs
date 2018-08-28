@@ -4,6 +4,7 @@
     {
         Unknown = 0,
         ReddeerTradeFormat = 1,
-        FixTradeFormat = 2
+        FixTradeFormat = 2,
+        RedderStockFormat = 10,
     }
 }

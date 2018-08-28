@@ -9,5 +9,7 @@ namespace TestHarness.Network_IO
         void TerminateAllNetworkConnections();
         bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream);
         void DetatchTradeOrderSubscriber();
+        bool AttachStockExchangeSubscriberToStream(IStockExchangeStream exchangeStream);
+        void DetatchStockExchangeSubscriber();
     }
 }

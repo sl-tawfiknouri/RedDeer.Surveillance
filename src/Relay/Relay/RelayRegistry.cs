@@ -35,6 +35,7 @@ namespace RedDeer.Relay
 
             For<INetworkExchange>().Use<NetworkExchange>();
             For<INetworkDuplexer>().Use<RelayNetworkDuplexer>();
+            For<IDuplexMessageFactory>().Use<DuplexMessageFactory>();
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketHost>().Use<RedDeerWebsocketHost>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));

@@ -1,9 +1,10 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Threading;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
+using Utilities.Network_IO.Websocket_Hosts;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Relay.Network_IO.RelaySubscribers
 {
@@ -16,13 +17,16 @@ namespace Relay.Network_IO.RelaySubscribers
         private volatile bool _initiated;
         private object _stateLock = new object();
         private INetworkSwitch _networkSwitch;
+        private IDuplexMessageFactory _duplexMessageFactory;
         private ILogger _logger;
 
         public TradeRelaySubscriber(
             INetworkSwitch networkSwitch,
+            IDuplexMessageFactory duplexMessageFactory,
             ILogger<TradeRelaySubscriber> logger)
         {
             _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
+            _duplexMessageFactory = duplexMessageFactory ?? throw new ArgumentNullException(nameof(duplexMessageFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -77,7 +81,8 @@ namespace Relay.Network_IO.RelaySubscribers
             {
                 if (_initiated)
                 {
-                    _networkSwitch.Send(value);
+                    var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
+                    _networkSwitch.Send(duplexedMessage);
                 };
             }
         }

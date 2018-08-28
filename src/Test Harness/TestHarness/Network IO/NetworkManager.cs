@@ -33,17 +33,20 @@ namespace TestHarness.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public bool InitiateNetworkConnections()
+        public bool InitiateAllNetworkConnections()
         {
             lock (_stateTransition)
             {
-                return _InitiateNetworkConnections();
+                return 
+                    _InitiateTradingNetworkConnections()
+                    && _InitiateStockMarketNetworkConnections();
             }
         }
 
-        private bool _InitiateNetworkConnections()
+        private bool _InitiateTradingNetworkConnections()
         {
-            _logger.Log(LogLevel.Info, "Network Manager initiating network connections");
+
+            _logger.Log(LogLevel.Info, "Network Manager initiating trading network connections");
 
             if (_tradeOrderWebsocketSubscriber == null)
             {
@@ -55,7 +58,14 @@ namespace TestHarness.Network_IO
                 _networkConfiguration.TradeDomainUriPort);
         }
 
-        public void TerminateNetworkConnections()
+        private bool _InitiateStockMarketNetworkConnections()
+        {
+            _logger.Log(LogLevel.Info, "Network Manager initiating stock market network connections");
+
+            return true;
+        }
+
+        public void TerminateAllNetworkConnections()
         {
             lock (_stateTransition)
             {
@@ -68,13 +78,16 @@ namespace TestHarness.Network_IO
             }
         }
 
+        /// <summary>
+        /// Join the trade order stream to the websocket connections
+        /// </summary>
         public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream)
         {
             lock (_stateTransition)
             {
                 if (_tradeOrderWebsocketSubscriber == null)
                 {
-                    var successfullyInitiated = _InitiateNetworkConnections();
+                    var successfullyInitiated = _InitiateTradingNetworkConnections();
                     if (!successfullyInitiated)
                     {
                         return false;
@@ -94,6 +107,9 @@ namespace TestHarness.Network_IO
             }
         }
 
+        /// <summary>
+        /// Detatch the trade order stream by calling the unsubscriber for the websocket connections
+        /// </summary>
         public void DetatchTradeOrderSubscriber()
         {
             lock (_stateTransition)

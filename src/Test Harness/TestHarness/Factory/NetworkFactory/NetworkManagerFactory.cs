@@ -26,7 +26,7 @@ namespace TestHarness.Factory.NetworkFactory
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, _console, _logger);
 
             var networkManager = new NetworkManager(tradeOrderSubscriberFactory, configuration, _logger);
-            networkManager.InitiateNetworkConnections();
+            networkManager.InitiateAllNetworkConnections();
 
             return networkManager;
         }

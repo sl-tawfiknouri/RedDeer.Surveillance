@@ -86,7 +86,7 @@ namespace TestHarness.Commands
                 .CreateWebsockets();
 
             // start networking processes
-            var connectionEstablished = _networkManager.InitiateNetworkConnections();
+            var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
 
             if (!connectionEstablished)
             {
@@ -114,7 +114,7 @@ namespace TestHarness.Commands
         {
             if (_networkManager != null)
             {
-                _networkManager.TerminateNetworkConnections();
+                _networkManager.TerminateAllNetworkConnections();
             }
 
             if (_tradingProcess != null)

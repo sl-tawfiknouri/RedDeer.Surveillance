@@ -25,13 +25,13 @@ namespace TestHarness.Network_IO
             _logger.Info("Stub Network Manager. Detatch trade order subscriber called.");
         }
 
-        public bool InitiateNetworkConnections()
+        public bool InitiateAllNetworkConnections()
         {
             _logger.Info("Stub Network Manager. Initiate network connections called.");
             return true;
         }
 
-        public void TerminateNetworkConnections()
+        public void TerminateAllNetworkConnections()
         {
             _logger.Info("Stub Network Manager. Terminate network connections called.");
         }

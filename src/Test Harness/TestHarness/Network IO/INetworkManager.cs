@@ -5,8 +5,8 @@ namespace TestHarness.Network_IO
 {
     public interface INetworkManager
     {
-        bool InitiateNetworkConnections();
-        void TerminateNetworkConnections();
+        bool InitiateAllNetworkConnections();
+        void TerminateAllNetworkConnections();
         bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream);
         void DetatchTradeOrderSubscriber();
     }

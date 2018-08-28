@@ -5,13 +5,13 @@ using Domain.Equity.Trading.Streams.Interfaces;
 using Domain.Equity.Trading;
 using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
-using Surveillance.Network_IO.RedDeer;
 using Utilities.Network_IO.Websocket_Hosts;
 using Surveillance.Rules;
 using Surveillance.Rules.BarredAssets;
 using Surveillance.Rules.ProhibitedAssetTradingRule;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+using Surveillance.Network_IO;
 
 namespace Surveillance
 {
@@ -25,10 +25,11 @@ namespace Surveillance
 
             For<IMediator>().Use<Mediator>();
             For<IReddeerTradeService>().Use<ReddeerTradeService>();
-            For<IReddeerTradeNetworkManager>().Use<ReddeerTradeNetworkManager>();
             For<IRuleManager>().Use<RuleManager>();
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
+            For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
+            For<INetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

@@ -29,7 +29,8 @@ namespace Utilities.Network_IO.Websocket_Hosts
         }
 
         /// <summary>
-        /// "ws://0.0.0.0:9067" RELAY
+        /// "ws://0.0.0.0:9067" RELAY SERVICE
+        /// "ws://0.0.0.0:9069" SURVEILLANCE SERVICE
         /// </summary>
         public void Initialise(string hostUrl)
         {

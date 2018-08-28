@@ -1,24 +1,26 @@
 ﻿using Domain.Equity.Trading;
 using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
-using Surveillance.Network_IO.RedDeer;
+using Surveillance.Network_IO;
 using Surveillance.Rules;
 using System;
+using Utilities.Network_IO.Websocket_Hosts;
 
 namespace Surveillance.Services
 {
     public class ReddeerTradeService : IReddeerTradeService
     {
-        private IReddeerTradeNetworkManager _networkManager;
+        private INetworkExchange _networkExchange;
+        private ISurveillanceNetworkExchangeFactory _networkExchangeFactory;
         private IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
         private IRuleManager _ruleManager;
 
         public ReddeerTradeService(
-            IReddeerTradeNetworkManager networkManager,
+            ISurveillanceNetworkExchangeFactory networkExchangeFactory,
             IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
             IRuleManager ruleManager)
         {
-            _networkManager = networkManager ?? throw new ArgumentNullException(nameof(networkManager));
+            _networkExchangeFactory = networkExchangeFactory ?? throw new ArgumentNullException(nameof(networkExchangeFactory));
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _ruleManager = ruleManager ?? throw new ArgumentNullException(nameof(ruleManager));
         }
@@ -26,16 +28,18 @@ namespace Surveillance.Services
         public void Initialise()
         {
             var stream = new TradeOrderStream<TradeOrderFrame>(_unsubscriberFactory);
-            _networkManager.InitiateConnections(stream);
+            var duplexer = new SurveillanceNetworkDuplexer(stream);
+            _networkExchange = _networkExchangeFactory.Create(duplexer);
+            _networkExchange.Initialise("ws://0.0.0.0:9069");
 
             _ruleManager.RegisterTradingRules(stream);
         }
 
         public void Dispose()
         {
-            if (_networkManager != null)
+            if (_networkExchange != null)
             {
-                _networkManager.TerminateConnections();
+                _networkExchange.TerminateConnections();
             }
         }
     }

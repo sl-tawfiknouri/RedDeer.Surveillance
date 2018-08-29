@@ -12,6 +12,7 @@ using Surveillance.Rules.ProhibitedAssetTradingRule;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Surveillance.Network_IO;
+using Surveillance.Network_IO.Interfaces;
 
 namespace Surveillance
 {
@@ -29,7 +30,9 @@ namespace Surveillance
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
-            For<INetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
+
+            For<ISurveillanceTradeNetworkDuplexer>().Use<SurveillanceTradeNetworkDuplexer>();
+            For<ISurveillanceEquityNetworkDuplexer>().Use<SurveillanceEquityNetworkDuplexer>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

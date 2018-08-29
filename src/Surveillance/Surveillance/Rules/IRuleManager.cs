@@ -7,5 +7,6 @@ namespace Surveillance.Rules
     {
         void RegisterProhibitedAssetRule(ITradeOrderStream<TradeOrderFrame> stream);
         void RegisterTradingRules(ITradeOrderStream<TradeOrderFrame> stream);
+        void RegisterEquityRules(IStockExchangeStream stream);
     }
 }

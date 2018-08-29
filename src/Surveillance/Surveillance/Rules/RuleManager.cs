@@ -20,6 +20,11 @@ namespace Surveillance.Rules
             RegisterProhibitedAssetRule(stream);
         }
 
+        public void RegisterEquityRules(IStockExchangeStream stream)
+        {
+
+        }
+
         public void RegisterProhibitedAssetRule(ITradeOrderStream<TradeOrderFrame> stream)
         {
             if (stream == null)

@@ -1,17 +1,17 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Newtonsoft.Json;
+using Surveillance.Network_IO.Interfaces;
 using System;
 using Utilities.Network_IO.Websocket_Hosts;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Network_IO
 {
-    public class SurveillanceNetworkDuplexer : INetworkDuplexer
+    public class SurveillanceTradeNetworkDuplexer : ISurveillanceTradeNetworkDuplexer
     {
         private ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
 
-        public SurveillanceNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
+        public SurveillanceTradeNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
         {
             _ReddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
         }

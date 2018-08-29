@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surveillance.Services
+namespace Surveillance.Services.Interfaces
 {
     public interface IReddeerTradeService : IDisposable
     {

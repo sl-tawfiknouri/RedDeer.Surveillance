@@ -13,6 +13,7 @@ using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
+using Surveillance.Services.Interfaces;
 
 namespace Surveillance
 {
@@ -25,11 +26,13 @@ namespace Surveillance
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
-            For<IReddeerTradeService>().Use<ReddeerTradeService>();
             For<IRuleManager>().Use<RuleManager>();
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
+
+            For<IReddeerTradeService>().Use<ReddeerTradeService>();
+            For<IReddeerEquityService>().Use<ReddeerEquityService>();
 
             For<ISurveillanceTradeNetworkDuplexer>().Use<SurveillanceTradeNetworkDuplexer>();
             For<ISurveillanceEquityNetworkDuplexer>().Use<SurveillanceEquityNetworkDuplexer>();

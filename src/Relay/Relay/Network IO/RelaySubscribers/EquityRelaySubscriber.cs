@@ -1,4 +1,4 @@
-﻿using Domain.Equity.Trading.Orders;
+﻿using Domain.Equity.Trading.Frames;
 using Microsoft.Extensions.Logging;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
 using System;
@@ -9,11 +9,7 @@ using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Relay.Network_IO.RelaySubscribers
 {
-    /// <summary>
-    /// Receives data from its subscribed (to) trade stream and forwards it onto
-    /// a listening websockets service elsewhere via its active web socket connection
-    /// </summary>
-    public class TradeRelaySubscriber : ITradeRelaySubscriber
+    public class EquityRelaySubscriber : IEquityRelaySubscriber
     {
         private volatile bool _initiated;
         private object _stateLock = new object();
@@ -21,10 +17,10 @@ namespace Relay.Network_IO.RelaySubscribers
         private IDuplexMessageFactory _duplexMessageFactory;
         private ILogger _logger;
 
-        public TradeRelaySubscriber(
+        public EquityRelaySubscriber(
             INetworkSwitch networkSwitch,
             IDuplexMessageFactory duplexMessageFactory,
-            ILogger<TradeRelaySubscriber> logger)
+            ILogger<EquityRelaySubscriber> logger)
         {
             _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
             _duplexMessageFactory = duplexMessageFactory ?? throw new ArgumentNullException(nameof(duplexMessageFactory));
@@ -35,12 +31,12 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-                _logger.LogInformation("Trade Relay Subscriber initiating network trunk with 15 second timeout");
+                _logger.LogInformation("Equity Relay Subscriber initiating network trunk with 15 second timeout");
 
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 var success = _networkSwitch.Initiate(domain, port, cts.Token);
 
-               _initiated = true;
+                _initiated = true;
                 return success;
             }
         }
@@ -58,7 +54,7 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-                _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
+                _logger.LogInformation($"Equity Relay Subscriber underlying stream completed.");
 
                 _initiated = false;
                 _networkSwitch.Terminate();
@@ -69,20 +65,20 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             if (error != null)
             {
-                _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
+                _logger.LogError("Equity Relay Subscriber was passed an error from its source stream", error);
 
                 _initiated = false;
                 _networkSwitch.Terminate();
             }
         }
 
-        public void OnNext(TradeOrderFrame value)
+        public void OnNext(ExchangeFrame value)
         {
             lock (_stateLock)
             {
                 if (_initiated)
                 {
-                    var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
+                    var duplexedMessage = _duplexMessageFactory.Create(MessageType.RedderStockFormat, value);
                     _networkSwitch.Send(duplexedMessage);
                 };
             }

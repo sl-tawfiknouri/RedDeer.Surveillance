@@ -1,17 +1,20 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Newtonsoft.Json;
+using Relay.Network_IO.Interfaces;
 using System;
 using Utilities.Network_IO.Websocket_Hosts;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Relay.Network_IO
 {
-    public class RelayNetworkDuplexer : INetworkDuplexer
+    /// <summary>
+    /// deserialises incoming duplexed messages and forwards them onto subscribing streams
+    /// </summary>
+    public class RelayTradeNetworkDuplexer : IRelayTradeNetworkDuplexer
     {
         private ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
 
-        public RelayNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
+        public RelayTradeNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
         {
             _ReddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
         }
@@ -27,16 +30,17 @@ namespace Relay.Network_IO
             switch (message.Type)
             {
                 case MessageType.ReddeerTradeFormat:
-                    ReddeerFormat(message);
+                    ReddeerTradeFormat(message);
                     break;
                 case MessageType.FixTradeFormat:
+                    FixFormat(message);
                     break;
                 default:
                     break;
             }
         }
 
-        private void ReddeerFormat(IDuplexedMessage message)
+        private void ReddeerTradeFormat(IDuplexedMessage message)
         {
             var formattedMessage = JsonConvert.DeserializeObject<TradeOrderFrame>(message.Message);
             _ReddeerTradeFormatStream?.Add(formattedMessage);

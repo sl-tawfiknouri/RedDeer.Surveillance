@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
+using Relay.Processors.Interfaces;
 using System;
 
 namespace Relay.Trades

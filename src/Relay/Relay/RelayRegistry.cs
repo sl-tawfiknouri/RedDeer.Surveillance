@@ -12,6 +12,11 @@ using Relay;
 using Utilities.Network_IO.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
+using Domain.Equity.Trading.Frames;
+using Relay.Equities;
+using Relay.Network_IO.Interfaces;
+using Relay.Network_IO.RelaySubscribers.Interfaces;
+using Relay.Processors.Interfaces;
 
 namespace RedDeer.Relay
 {
@@ -24,17 +29,27 @@ namespace RedDeer.Relay
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
-            For(typeof(ITradeOrderStream<>)).Use(typeof(TradeOrderStream<>));
+
             For(typeof(ITradeProcessor<>)).Use(typeof(TradeProcessor<>));
+            For<IEquityProcessor<ExchangeFrame>>().Use<EquityProcessor>();
+
+            For(typeof(ITradeOrderStream<>)).Use(typeof(TradeOrderStream<>));
+            For<IStockExchangeStream>().Use<StockExchangeStream>();
+
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
+            For<IEquityRelaySubscriber>().Use<EquityRelaySubscriber>();
+
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For<IMessageWriter>().Use<LoggingMessageWriter>();
+
             For<INetworkTrunk>().Use<NetworkTrunk>();
             For<INetworkFailover>().Use<NetworkFailoverLocalMemory>();
             For<INetworkSwitch>().Use<NetworkSwitch>();
 
             For<INetworkExchange>().Use<NetworkExchange>();
-            For<INetworkDuplexer>().Use<RelayNetworkDuplexer>();
+            For<IRelayTradeNetworkDuplexer>().Use<RelayTradeNetworkDuplexer>();
+            For<IRelayEquityNetworkDuplexer>().Use<RelayEquityNetworkDuplexer>();
+
             For<IDuplexMessageFactory>().Use<DuplexMessageFactory>();
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketHost>().Use<RedDeerWebsocketHost>();

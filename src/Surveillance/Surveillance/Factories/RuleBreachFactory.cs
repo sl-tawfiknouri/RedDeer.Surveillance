@@ -9,7 +9,8 @@ namespace Surveillance.Factories
         public RuleBreachDocument Build(
             RuleBreachCategories category,
             DateTime breachCommencedOn,
-            DateTime? breachTerminatedOn)
+            DateTime? breachTerminatedOn,
+            string ruleBreachDescription)
         {
             var id = GenerateDate();
 
@@ -18,6 +19,7 @@ namespace Surveillance.Factories
                 Id = id,
                 CategoryId = (int)category,
                 CategoryDescription = category.ToString(),
+                RuleBreachDescription = ruleBreachDescription,
                 BreachRaisedOn = DateTime.UtcNow,
                 BreachCommencedOn = breachCommencedOn,
                 BreachTerminatedOn = breachTerminatedOn

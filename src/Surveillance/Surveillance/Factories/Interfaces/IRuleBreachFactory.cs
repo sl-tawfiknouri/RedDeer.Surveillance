@@ -8,6 +8,7 @@ namespace Surveillance.Factories.Interfaces
         RuleBreachDocument Build(
             RuleBreachCategories category,
             DateTime breachCommencedOn,
-            DateTime? breachTerminatedOn);
+            DateTime? breachTerminatedOn,
+            string ruleBreachDescription);
     }
 }

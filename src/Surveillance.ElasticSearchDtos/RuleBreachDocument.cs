@@ -21,8 +21,17 @@ namespace Surveillance.ElasticSearchDtos
         [Keyword]
         public int CategoryId { get; set; }
 
+        /// <summary>
+        /// Textual description of the category id underlying category
+        /// </summary>
         [Text]
         public string CategoryDescription { get; set; }
+
+        /// <summary>
+        /// A high level description of the rule breach intended for the end client
+        /// </summary>
+        [Text]
+        public string RuleBreachDescription { get; set; }
 
         /// <summary>
         /// The date we identified a breach and created a record

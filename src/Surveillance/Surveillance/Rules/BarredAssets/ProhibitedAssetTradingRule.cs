@@ -49,17 +49,24 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
 
             if (TradeOrderAgainstProhibitedAsset(value))
             {
-                _logger.LogError($"ILLEGAL TRADE DETECTED: PROHIBITED ASSET {value?.Security?.Name}");
-
-                var timeBreachDetected = DateTime.UtcNow;
-
-                var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
-                    ElasticSearchDtos.RuleBreachCategories.Spoofing,
-                    timeBreachDetected,
-                    timeBreachDetected);
-
-                _ruleBreachRepository.Save(prohibitedAssetBreachDocument);
+                RuleBreached(value);
             }
+        }
+
+        private void RuleBreached(TradeOrderFrame value)
+        {
+            _logger.LogError($"ILLEGAL TRADE DETECTED: PROHIBITED ASSET {value?.Security?.Name}");
+
+            var timeBreachDetected = DateTime.UtcNow;
+            var description = $"The prohibited asset trading rule detected a breach. The prohibited security that was traded was {value?.Security?.Name}. Full details {value.ToString()}";
+
+            var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
+                ElasticSearchDtos.RuleBreachCategories.Spoofing,
+                timeBreachDetected,
+                timeBreachDetected,
+                description);
+
+            _ruleBreachRepository.Save(prohibitedAssetBreachDocument);
         }
 
         /// <summary>

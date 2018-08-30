@@ -93,10 +93,6 @@ namespace Surveillance.DataLayer.ElasticSearch
                         _indexExistsCache[indexName] = indexName;
                     }
                 }
-                catch (Exception e)
-                {
-                    var o = e;
-                }
                 finally
                 {
                     _indexExistsCacheLock.Release();

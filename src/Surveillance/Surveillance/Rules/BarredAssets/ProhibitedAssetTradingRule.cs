@@ -61,7 +61,7 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
             var description = $"The prohibited asset trading rule detected a breach. The prohibited security that was traded was {value?.Security?.Name}. Full details {value.ToString()}";
 
             var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
-                ElasticSearchDtos.RuleBreachCategories.Spoofing,
+                ElasticSearchDtos.RuleBreachCategories.ProhibitedAsset,
                 timeBreachDetected,
                 timeBreachDetected,
                 description);

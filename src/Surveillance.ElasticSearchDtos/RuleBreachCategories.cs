@@ -3,6 +3,7 @@
     public enum RuleBreachCategories
     {
         Unknown,
-        Spoofing
+        Spoofing,
+        ProhibitedAsset,
     }
 }

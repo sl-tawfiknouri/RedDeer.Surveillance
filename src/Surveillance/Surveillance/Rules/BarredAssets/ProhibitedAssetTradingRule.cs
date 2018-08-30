@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.ElasticSearch;
+using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.BarredAssets;
 using System;
@@ -61,7 +62,7 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
             var description = $"The prohibited asset trading rule detected a breach. The prohibited security that was traded was {value?.Security?.Name}. Full details {value.ToString()}";
 
             var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
-                ElasticSearchDtos.RuleBreachCategories.ProhibitedAsset,
+                RuleBreachCategories.ProhibitedAsset,
                 timeBreachDetected,
                 timeBreachDetected,
                 description);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Nest;
 using Surveillance.DataLayer.ElasticSearch.Interfaces;
 using Surveillance.ElasticSearchDtos;
+using Surveillance.ElasticSearchDtos.Rules;
 
 namespace Surveillance.DataLayer.ElasticSearch
 {
@@ -52,7 +53,6 @@ namespace Surveillance.DataLayer.ElasticSearch
                 _indexExistsCacheLock.Release();
             }
         }
-
 
         public async Task<string> GetOrCreateDateBasedIndexAsync<T>(
             string name,

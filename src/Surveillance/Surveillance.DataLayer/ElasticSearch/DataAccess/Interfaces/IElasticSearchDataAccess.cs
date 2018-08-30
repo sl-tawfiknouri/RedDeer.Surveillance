@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
-using Surveillance.ElasticSearchDtos;
+using Surveillance.ElasticSearchDtos.Rules;
 
 namespace Surveillance.DataLayer.ElasticSearch.Interfaces
 {

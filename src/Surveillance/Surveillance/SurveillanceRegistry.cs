@@ -30,6 +30,7 @@ namespace Surveillance
             For<IMediator>().Use<Mediator>();
             For<IRuleManager>().Use<RuleManager>();
             For<IRuleBreachFactory>().Use<RuleBreachFactory>();
+            For<IOriginFactory>().Use<OriginFactory>();
 
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();

@@ -1,5 +1,5 @@
 ﻿using Surveillance.DataLayer.ElasticSearch.Interfaces;
-using Surveillance.ElasticSearchDtos;
+using Surveillance.ElasticSearchDtos.Rules;
 using System;
 using System.Threading;
 

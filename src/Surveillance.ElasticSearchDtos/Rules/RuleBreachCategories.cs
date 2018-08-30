@@ -1,4 +1,4 @@
-﻿namespace Surveillance.ElasticSearchDtos
+﻿namespace Surveillance.ElasticSearchDtos.Rules
 {
     public enum RuleBreachCategories
     {

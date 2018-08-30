@@ -1,4 +1,4 @@
-﻿using Surveillance.ElasticSearchDtos;
+﻿using Surveillance.ElasticSearchDtos.Rules;
 
 namespace Surveillance.DataLayer.ElasticSearch
 {

@@ -1,4 +1,4 @@
-﻿using Surveillance.ElasticSearchDtos;
+﻿using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
 using System;
 
@@ -6,6 +6,13 @@ namespace Surveillance.Factories
 {
     public class RuleBreachFactory : IRuleBreachFactory
     {
+        private IOriginFactory _originFactory;
+
+        public RuleBreachFactory(IOriginFactory originFactory)
+        {
+            _originFactory = originFactory ?? throw new ArgumentNullException(nameof(originFactory));
+        }
+
         public RuleBreachDocument Build(
             RuleBreachCategories category,
             DateTime breachCommencedOn,
@@ -22,7 +29,8 @@ namespace Surveillance.Factories
                 RuleBreachDescription = ruleBreachDescription,
                 BreachRaisedOn = DateTime.UtcNow,
                 BreachCommencedOn = breachCommencedOn,
-                BreachTerminatedOn = breachTerminatedOn
+                BreachTerminatedOn = breachTerminatedOn,
+                Origin = _originFactory.Origin(),
             };
         }
 

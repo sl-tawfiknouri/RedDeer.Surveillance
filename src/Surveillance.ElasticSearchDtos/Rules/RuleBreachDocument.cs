@@ -1,13 +1,14 @@
 ﻿using System;
 using Nest;
+using Surveillance.ElasticSearchDtos.Interfaces;
 
-namespace Surveillance.ElasticSearchDtos
+namespace Surveillance.ElasticSearchDtos.Rules
 {
     /// <summary>
     /// A data type for representing a breach of MAR legalisation
     /// </summary>
     [ElasticsearchType(Name = "rule-breach-document")]
-    public class RuleBreachDocument
+    public class RuleBreachDocument : ITraceableDocument
     {
         /// <summary>
         /// A GUID for identifying the breach {Guid.TimeStamp}
@@ -51,5 +52,8 @@ namespace Surveillance.ElasticSearchDtos
         /// </summary>
         [Date]
         public DateTime? BreachTerminatedOn { get; set; }
+
+        [Text]
+        public string Origin { get; set; }
     }
 }

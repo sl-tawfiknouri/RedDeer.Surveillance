@@ -1,4 +1,5 @@
 ﻿using Surveillance.ElasticSearchDtos;
+using Surveillance.ElasticSearchDtos.Rules;
 using System;
 
 namespace Surveillance.Factories.Interfaces

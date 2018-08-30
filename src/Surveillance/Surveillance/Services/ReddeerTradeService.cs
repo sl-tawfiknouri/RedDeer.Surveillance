@@ -21,21 +21,32 @@ namespace Surveillance.Services
         private IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
         private IRuleManager _ruleManager;
         private IRedDeerTradeRecorder _reddeerTradeRecorder;
+        private IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
 
         public ReddeerTradeService(
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,
             IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
             IUnsubscriberFactory<ExchangeFrame> equityUnsubscriberFactory,
             IRuleManager ruleManager,
-            IRedDeerTradeRecorder reddeerTradeRecorder)
+            IRedDeerTradeRecorder reddeerTradeRecorder,
+            IRedDeerStockExchangeRecorder reddeerStockExchangeRecorder)
         {
-            _networkExchangeFactory = networkExchangeFactory ?? throw new ArgumentNullException(nameof(networkExchangeFactory));
-            _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+            _networkExchangeFactory = 
+                networkExchangeFactory 
+                ?? throw new ArgumentNullException(nameof(networkExchangeFactory));
+            _unsubscriberFactory = 
+                unsubscriberFactory 
+                ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _equityUnsubscriberFactory = 
                 equityUnsubscriberFactory 
                 ?? throw new ArgumentNullException(nameof(equityUnsubscriberFactory));
             _ruleManager = ruleManager ?? throw new ArgumentNullException(nameof(ruleManager));
-            _reddeerTradeRecorder = reddeerTradeRecorder ?? throw new ArgumentNullException(nameof(reddeerTradeRecorder));
+            _reddeerTradeRecorder = 
+                reddeerTradeRecorder 
+                ?? throw new ArgumentNullException(nameof(reddeerTradeRecorder));
+            _reddeerStockExchangeRecorder = 
+                reddeerStockExchangeRecorder 
+                ?? throw new ArgumentNullException(nameof(reddeerStockExchangeRecorder));
         }
 
         public void Initialise()
@@ -44,7 +55,8 @@ namespace Surveillance.Services
             tradeStream.Subscribe(_reddeerTradeRecorder);
 
             var exchangeStream = new StockExchangeStream(_equityUnsubscriberFactory);
-            
+            exchangeStream.Subscribe(_reddeerStockExchangeRecorder);
+
             var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
 
             _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);

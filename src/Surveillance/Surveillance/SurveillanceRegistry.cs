@@ -48,6 +48,9 @@ namespace Surveillance
             For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
             For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
 
+            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
+            For<IReddeerMarketExchangeFormatProjector>().Use<ReddeerMarketExchangeFormatProjector>();
+
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));

@@ -22,6 +22,7 @@ namespace Surveillance.DataLayer.ElasticSearch
 
         public string RuleBreachIndexName => "rule-breach";
         public string ReddeerTradeFormatIndexName => "reddeer-trade";
+        public string ReddeerStockExchangeFormatIndexName => "reddeer-stock-market";
 
         public ElasticSearchDataAccess()
         {

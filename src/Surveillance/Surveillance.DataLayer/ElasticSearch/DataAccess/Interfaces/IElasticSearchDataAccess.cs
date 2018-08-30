@@ -23,6 +23,7 @@ namespace Surveillance.DataLayer.ElasticSearch.Interfaces
 
         string RuleBreachIndexName { get; }
         string ReddeerTradeFormatIndexName { get; }
+        string ReddeerStockExchangeFormatIndexName { get; }
         Task IndexRuleBreachAsync(RuleBreachDocument document, CancellationToken cancellationToken);
         Task DeleteIndexesAsync(string name, CancellationToken cancellationToken);
         void HandleResponseErrors(IResponse response);

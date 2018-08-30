@@ -1,6 +1,8 @@
 ﻿using StructureMap;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.DataLayer.ElasticSearch.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Market;
+using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.DataLayer.Trade;
 using Surveillance.DataLayer.Trade.Interfaces;
 
@@ -13,6 +15,7 @@ namespace Surveillance
             For<IElasticSearchDataAccess>().Use<ElasticSearchDataAccess>();
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRedDeerTradeFormatRepository>().Use<RedDeerTradeFormatRepository>();
+            For<IRedDeerMarketExchangeFormatRepository>().Use<RedDeerMarketExchangeFormatRepository>();
         }
     }
 }

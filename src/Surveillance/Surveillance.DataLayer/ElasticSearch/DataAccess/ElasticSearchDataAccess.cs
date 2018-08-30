@@ -24,7 +24,7 @@ namespace Surveillance.DataLayer.ElasticSearch
 
         public ElasticSearchDataAccess()
         {
-            var url = "localhost:9200";
+            var url = "http://localhost:9200";
             var settings = new ConnectionSettings(new Uri(url));
 
 #if DEBUG
@@ -60,7 +60,7 @@ namespace Surveillance.DataLayer.ElasticSearch
             CancellationToken cancellationToken)
             where T : class
         {
-            var indexName = $"Surveillance-{name.ToLower()}-{dateTime.ToString("yyyy-MM-dd")}";
+            var indexName = $"surveillance-{name.ToLower()}-{dateTime.ToString("yyyy-MM-dd")}";
             if (!_indexExistsCache.ContainsKey(indexName))
             {
                 await _indexExistsCacheLock.WaitAsync();
@@ -92,6 +92,10 @@ namespace Surveillance.DataLayer.ElasticSearch
 
                         _indexExistsCache[indexName] = indexName;
                     }
+                }
+                catch (Exception e)
+                {
+                    var o = e;
                 }
                 finally
                 {

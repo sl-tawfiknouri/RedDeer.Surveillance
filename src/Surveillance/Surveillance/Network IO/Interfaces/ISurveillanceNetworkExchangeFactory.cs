@@ -5,6 +5,6 @@ namespace Surveillance.Network_IO.Interfaces
 {
     public interface ISurveillanceNetworkExchangeFactory
     {
-        NetworkExchange Create(INetworkDuplexer networkDuplexer);
+        NetworkExchange Create(ISurveillanceNetworkDuplexer networkDuplexer);
     }
 }

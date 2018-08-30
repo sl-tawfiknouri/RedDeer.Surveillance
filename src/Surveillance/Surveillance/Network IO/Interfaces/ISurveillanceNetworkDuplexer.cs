@@ -2,7 +2,7 @@
 
 namespace Surveillance.Network_IO.Interfaces
 {
-    public interface ISurveillanceTradeNetworkDuplexer : INetworkDuplexer
+    public interface ISurveillanceNetworkDuplexer : INetworkDuplexer
     {
     }
 }

@@ -37,10 +37,8 @@ namespace Surveillance
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
 
             For<IReddeerTradeService>().Use<ReddeerTradeService>();
-            For<IReddeerEquityService>().Use<ReddeerEquityService>();
 
-            For<ISurveillanceTradeNetworkDuplexer>().Use<SurveillanceTradeNetworkDuplexer>();
-            For<ISurveillanceEquityNetworkDuplexer>().Use<SurveillanceEquityNetworkDuplexer>();
+            For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

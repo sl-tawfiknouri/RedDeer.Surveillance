@@ -19,7 +19,7 @@ namespace Surveillance.Network_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public NetworkExchange Create(INetworkDuplexer networkDuplexer)
+        public NetworkExchange Create(ISurveillanceNetworkDuplexer networkDuplexer)
         {
             return new NetworkExchange(
                 _websocketHostFactory,

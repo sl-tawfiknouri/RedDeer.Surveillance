@@ -1,4 +1,5 @@
-﻿using Domain.Equity.Trading.Orders;
+﻿using Domain.Equity.Trading.Frames;
+using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Newtonsoft.Json;
 using Surveillance.Network_IO.Interfaces;
@@ -7,13 +8,19 @@ using Utilities.Network_IO.Websocket_Hosts;
 
 namespace Surveillance.Network_IO
 {
-    public class SurveillanceTradeNetworkDuplexer : ISurveillanceTradeNetworkDuplexer
+    public class SurveillanceNetworkDuplexer : ISurveillanceNetworkDuplexer
     {
         private ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
+        private IStockExchangeStream _ReddeerStockExchangeStream;
 
-        public SurveillanceTradeNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
+        public SurveillanceNetworkDuplexer(
+            ITradeOrderStream<TradeOrderFrame> reddeerStream,
+            IStockExchangeStream stockExchangeStream)
         {
             _ReddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
+            _ReddeerStockExchangeStream =
+                stockExchangeStream
+                ?? throw new ArgumentNullException(nameof(stockExchangeStream));
         }
 
         public void Transmit(IDuplexedMessage message)
@@ -31,6 +38,9 @@ namespace Surveillance.Network_IO
                     break;
                 case MessageType.FixTradeFormat:
                     break;
+                case MessageType.RedderStockFormat:
+                    ReddeerStockFormat(message);
+                    break;
                 default:
                     break;
             }
@@ -45,6 +55,12 @@ namespace Surveillance.Network_IO
         private void FixFormat(IDuplexedMessage message)
         {
 
+        }
+
+        private void ReddeerStockFormat(IDuplexedMessage message)
+        {
+            var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message);
+            _ReddeerStockExchangeStream?.Add(formattedMessage);
         }
     }
 }

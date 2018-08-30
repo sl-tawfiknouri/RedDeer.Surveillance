@@ -19,7 +19,10 @@ namespace Surveillance.ElasticSearchDtos
         /// The type of the rule breach i.e. spoofing, layering...
         /// </summary>
         [Keyword]
-        public int Category { get; set; }
+        public int CategoryId { get; set; }
+
+        [Text]
+        public string CategoryDescription { get; set; }
 
         /// <summary>
         /// The date we identified a breach and created a record

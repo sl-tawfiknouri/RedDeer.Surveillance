@@ -16,7 +16,8 @@ namespace Surveillance.Factories
             return new RuleBreachDocument
             {
                 Id = id,
-                Category = (int)category,
+                CategoryId = (int)category,
+                CategoryDescription = category.ToString(),
                 BreachRaisedOn = DateTime.UtcNow,
                 BreachCommencedOn = breachCommencedOn,
                 BreachTerminatedOn = breachTerminatedOn

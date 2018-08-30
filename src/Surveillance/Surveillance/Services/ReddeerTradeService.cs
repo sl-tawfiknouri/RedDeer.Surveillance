@@ -4,6 +4,7 @@ using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
+using Surveillance.Recorders.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Services.Interfaces;
 using System;
@@ -19,12 +20,14 @@ namespace Surveillance.Services
         private IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
         private IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
         private IRuleManager _ruleManager;
+        private IRedDeerTradeRecorder _reddeerTradeRecorder;
 
         public ReddeerTradeService(
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,
             IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
             IUnsubscriberFactory<ExchangeFrame> equityUnsubscriberFactory,
-            IRuleManager ruleManager)
+            IRuleManager ruleManager,
+            IRedDeerTradeRecorder reddeerTradeRecorder)
         {
             _networkExchangeFactory = networkExchangeFactory ?? throw new ArgumentNullException(nameof(networkExchangeFactory));
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -32,24 +35,28 @@ namespace Surveillance.Services
                 equityUnsubscriberFactory 
                 ?? throw new ArgumentNullException(nameof(equityUnsubscriberFactory));
             _ruleManager = ruleManager ?? throw new ArgumentNullException(nameof(ruleManager));
+            _reddeerTradeRecorder = reddeerTradeRecorder ?? throw new ArgumentNullException(nameof(reddeerTradeRecorder));
         }
 
         public void Initialise()
         {
-            var stream = new TradeOrderStream<TradeOrderFrame>(_unsubscriberFactory);
-            var stream2 = new StockExchangeStream(_equityUnsubscriberFactory);
+            var tradeStream = new TradeOrderStream<TradeOrderFrame>(_unsubscriberFactory);
+            tradeStream.Subscribe(_reddeerTradeRecorder);
 
-            var duplexer = new SurveillanceNetworkDuplexer(stream, stream2);
+            var exchangeStream = new StockExchangeStream(_equityUnsubscriberFactory);
+            
+            var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
+
             _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);
             _tradeNetworkExchange.Initialise("ws://0.0.0.0:9069");
 
             // order stream only rules
-            _ruleManager.RegisterTradingRules(stream);           
+            _ruleManager.RegisterTradingRules(tradeStream);           
 
             _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
             _equityNetworkExchange.Initialise("ws://0.0.0.0:9070");
             // equity stream only rules
-            _ruleManager.RegisterEquityRules(stream2);
+            _ruleManager.RegisterEquityRules(exchangeStream);
         }
 
         private void HostEquityProcessingPipeline()

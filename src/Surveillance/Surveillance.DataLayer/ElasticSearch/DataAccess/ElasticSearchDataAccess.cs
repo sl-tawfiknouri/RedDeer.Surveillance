@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nest;
 using Surveillance.DataLayer.ElasticSearch.Interfaces;
-using Surveillance.ElasticSearchDtos;
 using Surveillance.ElasticSearchDtos.Rules;
 
 namespace Surveillance.DataLayer.ElasticSearch
@@ -22,6 +21,7 @@ namespace Surveillance.DataLayer.ElasticSearch
         private SemaphoreSlim _indexExistsCacheLock;
 
         public string RuleBreachIndexName => "rule-breach";
+        public string ReddeerTradeFormatIndexName => "reddeer-trade";
 
         public ElasticSearchDataAccess()
         {
@@ -100,6 +100,30 @@ namespace Surveillance.DataLayer.ElasticSearch
             }
 
             return indexName;
+        }
+
+        /// <summary>
+        /// Use fully formatted index name i.e. with surveillance-name-date
+        /// </summary>
+        public async Task IndexDocumentAsync<T>(
+            string indexName,
+            T indexableDocument, 
+            DateTime timestamp,
+            CancellationToken cancellationToken)
+            where T : class
+        {
+            if (indexableDocument == null)
+            {
+                return;
+            }
+
+            var indexResponse = await _elasticClient.IndexAsync(
+                indexableDocument,
+                i => i.Index(indexName),
+                cancellationToken: cancellationToken
+            );
+
+            HandleResponseErrors(indexResponse);
         }
 
         public async Task IndexRuleBreachAsync(RuleBreachDocument ruleBreachDocument, CancellationToken cancellationToken)

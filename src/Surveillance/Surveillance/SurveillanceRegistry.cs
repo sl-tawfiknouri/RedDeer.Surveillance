@@ -16,6 +16,10 @@ using Surveillance.Network_IO.Interfaces;
 using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Recorders.Interfaces;
+using Surveillance.Recorders;
+using Surveillance.Recorders.Projectors;
+using Surveillance.Recorders.Projectors.Interfaces;
 
 namespace Surveillance
 {
@@ -40,6 +44,9 @@ namespace Surveillance
             For<IReddeerTradeService>().Use<ReddeerTradeService>();
 
             For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
+
+            For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
+            For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

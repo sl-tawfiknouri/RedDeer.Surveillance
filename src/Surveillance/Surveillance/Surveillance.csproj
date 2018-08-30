@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Domain\Domain.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 
 </Project>

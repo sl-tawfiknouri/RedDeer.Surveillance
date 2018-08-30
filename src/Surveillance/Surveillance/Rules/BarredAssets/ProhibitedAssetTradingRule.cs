@@ -1,5 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.ElasticSearch;
+using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.BarredAssets;
 using System;
 
@@ -13,13 +15,19 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
     {
         private ILogger _logger;
         private IProhibitedAssetsRepository _assetsRepository;
+        private IRuleBreachFactory _ruleBreachFactory;
+        private IRuleBreachRepository _ruleBreachRepository;
 
         public ProhibitedAssetTradingRule(
             ILogger<ProhibitedAssetTradingRule> logger,
-            IProhibitedAssetsRepository assetsRepository)
+            IProhibitedAssetsRepository assetsRepository,
+            IRuleBreachFactory ruleBreachFactory,
+            IRuleBreachRepository ruleBreachRepository)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _assetsRepository = assetsRepository ?? throw new ArgumentNullException(nameof(assetsRepository));
+            _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
+            _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
         }
 
         public void OnCompleted()
@@ -42,6 +50,15 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
             if (TradeOrderAgainstProhibitedAsset(value))
             {
                 _logger.LogError($"ILLEGAL TRADE DETECTED: PROHIBITED ASSET {value?.Security?.Name}");
+
+                var timeBreachDetected = DateTime.UtcNow;
+
+                var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
+                    ElasticSearchDtos.RuleBreachCategories.Spoofing,
+                    timeBreachDetected,
+                    timeBreachDetected);
+
+                _ruleBreachRepository.Save(prohibitedAssetBreachDocument);
             }
         }
 

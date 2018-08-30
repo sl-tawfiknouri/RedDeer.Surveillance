@@ -14,6 +14,8 @@ using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
 using Surveillance.Services.Interfaces;
+using Surveillance.Factories.Interfaces;
+using Surveillance.Factories;
 
 namespace Surveillance
 {
@@ -27,8 +29,11 @@ namespace Surveillance
 
             For<IMediator>().Use<Mediator>();
             For<IRuleManager>().Use<RuleManager>();
+            For<IRuleBreachFactory>().Use<RuleBreachFactory>();
+
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
+
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
 
             For<IReddeerTradeService>().Use<ReddeerTradeService>();

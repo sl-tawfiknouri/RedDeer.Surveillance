@@ -17,6 +17,7 @@ namespace RedDeer.Surveillance.App
             var container = new Container();
             container.Configure(config =>
             {
+                config.IncludeRegistry<DataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);

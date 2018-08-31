@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Trading.Frames;
 using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.Recorders.Projectors.Interfaces;
 using System;
 using System.Linq;

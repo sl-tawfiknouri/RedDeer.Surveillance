@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Rules.BarredAssets;
+using Surveillance.Rules.ProhibitedAssets.Interfaces;
 using System;
 
 namespace Surveillance.Rules.ProhibitedAssetTradingRule
@@ -11,6 +11,7 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
     /// <summary>
     /// Trading can be prohibited against certain assets
     /// This may apply to all employees; groups of employees; or a singular employee
+    /// This is a test rule - I'm using it a a base to test logic before implementing other rules.
     /// </summary>
     public class ProhibitedAssetTradingRule : IProhibitedAssetTradingRule
     {

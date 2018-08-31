@@ -1,6 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Surveillance.ElasticSearchDtos.Trades;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.Recorders.Projectors.Interfaces;
 using System;
 

@@ -1,6 +1,6 @@
 ﻿using Surveillance.Rules.Interfaces;
 
-namespace Surveillance.Rules.ProhibitedAssetTradingRule
+namespace Surveillance.Rules.ProhibitedAssets.Interfaces
 {
     public interface IProhibitedAssetTradingRule : ITradeRule
     {

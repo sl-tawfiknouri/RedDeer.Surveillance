@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Surveillance.Rules.BarredAssets
+namespace Surveillance.Rules.ProhibitedAssets.Interfaces
 {
     public interface IProhibitedAssetsRepository
     {

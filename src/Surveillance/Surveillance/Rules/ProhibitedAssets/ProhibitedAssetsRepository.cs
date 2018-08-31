@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surveillance.Rules.ProhibitedAssets.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Surveillance.Rules.BarredAssets

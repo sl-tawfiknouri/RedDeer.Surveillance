@@ -25,6 +25,7 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
+using Surveillance.Rules.ProhibitedAssets.Interfaces;
 
 namespace Surveillance
 {

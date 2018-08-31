@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surveillance.Factories.Interfaces;
+using System;
 
 namespace Surveillance.Factories
 {

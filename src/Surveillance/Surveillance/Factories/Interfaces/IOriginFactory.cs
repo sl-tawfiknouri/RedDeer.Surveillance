@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Factories
+﻿namespace Surveillance.Factories.Interfaces
 {
     public interface IOriginFactory
     {

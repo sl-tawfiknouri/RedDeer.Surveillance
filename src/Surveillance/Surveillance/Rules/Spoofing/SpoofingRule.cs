@@ -85,7 +85,7 @@ namespace Surveillance.Rules.Spoofing
 
                     var now = DateTime.UtcNow;
                     history.Add(value, now);
-                    //history.ArchiveExpiredActiveItems(now);
+                    history.ArchiveExpiredActiveItems(now);
                 }
 
                 _tradingHistory.TryGetValue(value.Security.Id, out ITradingHistoryStack updatedHistory);
@@ -161,21 +161,7 @@ namespace Surveillance.Rules.Spoofing
 
                 if (hasBreachedSpoofingRule)
                 {
-                    _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Id.Id}");
-
-
-                    var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
-                    var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
-
-                    var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Id.Id} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
-
-                    var spoofingBreach = _ruleBreachFactory.Build(
-                        ElasticSearchDtos.Rules.RuleBreachCategories.Spoofing,
-                        mostRecentTrade.StatusChangedOn,
-                        mostRecentTrade.StatusChangedOn,
-                        description);
-
-                    _ruleBreachRepository.Save(spoofingBreach);
+                    RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
                 }
             }
         }
@@ -194,6 +180,28 @@ namespace Surveillance.Rules.Spoofing
                     _logger.LogError("Spoofing rule not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException("Order direction");
             }
+        }
+
+        private void RecordRuleBreach(
+            TradeOrderFrame mostRecentTrade,
+            TradePosition tradingPosition,
+            TradePosition opposingPosition)
+        {
+            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Id.Id}");
+
+
+            var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
+            var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
+
+            var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Id.Id} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
+
+            var spoofingBreach = _ruleBreachFactory.Build(
+                ElasticSearchDtos.Rules.RuleBreachCategories.Spoofing,
+                mostRecentTrade.StatusChangedOn,
+                mostRecentTrade.StatusChangedOn,
+                description);
+
+            _ruleBreachRepository.Save(spoofingBreach);
         }
     }
 }

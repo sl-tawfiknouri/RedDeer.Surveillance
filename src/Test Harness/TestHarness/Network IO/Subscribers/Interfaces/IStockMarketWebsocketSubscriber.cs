@@ -1,7 +1,7 @@
 ﻿using Domain.Equity.Trading.Frames;
 using System;
 
-namespace TestHarness.Network_IO.Subscribers
+namespace TestHarness.Network_IO.Subscribers.Interfaces
 {
     public interface IStockMarketWebsocketSubscriber : IObserver<ExchangeFrame>
     {

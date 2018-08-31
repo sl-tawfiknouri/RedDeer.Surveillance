@@ -1,6 +1,6 @@
 ﻿using TestHarness.Engine.OrderGenerator.Interfaces;
 
-namespace TestHarness.Factory.TradingSpoofingFactory
+namespace TestHarness.Factory.TradingSpoofingFactory.Interfaces
 {
     public interface ITradingSpoofingProcessFactory
     {

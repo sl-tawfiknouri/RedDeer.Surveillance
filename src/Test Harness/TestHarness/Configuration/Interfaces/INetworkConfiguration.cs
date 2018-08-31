@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Configuration
+﻿namespace TestHarness.Configuration.Interfaces
 {
     public interface INetworkConfiguration
     {

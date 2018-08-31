@@ -2,6 +2,7 @@
 using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
 using System;
+using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Network_IO
 {

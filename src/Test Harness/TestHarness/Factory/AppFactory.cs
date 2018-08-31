@@ -14,9 +14,11 @@ using TestHarness.Factory.TradingFactory;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.State.Interfaces;
 using TestHarness.State;
-using TestHarness.Network_IO;
 using TestHarness.Factory.TradingProhibitedSecurityFactory;
 using TestHarness.Factory.TradingSpoofingFactory;
+using TestHarness.Network_IO.Interfaces;
+using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
+using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 
 namespace TestHarness.Factory
 {

@@ -1,7 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 
-namespace TestHarness.Network_IO
+namespace TestHarness.Network_IO.Interfaces
 {
     public interface INetworkManager
     {

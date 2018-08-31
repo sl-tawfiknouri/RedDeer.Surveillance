@@ -3,7 +3,7 @@ using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Network_IO;
+using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands
 {

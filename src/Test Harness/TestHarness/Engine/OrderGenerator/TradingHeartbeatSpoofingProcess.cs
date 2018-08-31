@@ -11,6 +11,10 @@ using Domain.Equity.Trading;
 
 namespace TestHarness.Engine.OrderGenerator
 {
+    /// <summary>
+    /// Fairly basic spoofing process
+    /// for generating very vanilla spoofing type trades
+    /// </summary>
     public class TradingHeartbeatSpoofingProcess : BaseTradingProcess, IOrderDataGenerator
     {
         private ExchangeFrame _lastFrame;

@@ -1,10 +1,10 @@
 ﻿using System;
-using Domain.Equity.Trading.Frames;
 using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 using NLog;
-using TestHarness.Configuration;
-using TestHarness.Network_IO.Subscribers;
+using TestHarness.Configuration.Interfaces;
+using TestHarness.Network_IO.Interfaces;
+using TestHarness.Network_IO.Subscribers.Interfaces;
 
 namespace TestHarness.Network_IO
 {

@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "..\Domain\D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\Utilities.csproj", "{C97A2A20-C342-4185-8522-760AE96C296C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Tests", "..\Utilities.Tests\Utilities.Tests.csproj", "{168E4978-6977-44A9-AABD-01635BEC2359}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "..\Utilities.Tests\Utilities.Tests.csproj", "{168E4978-6977-44A9-AABD-01635BEC2359}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

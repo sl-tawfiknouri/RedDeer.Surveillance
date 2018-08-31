@@ -1,5 +1,6 @@
 ﻿using Domain.Equity.Trading.Frames;
 using NLog;
+using TestHarness.Network_IO.Subscribers.Interfaces;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

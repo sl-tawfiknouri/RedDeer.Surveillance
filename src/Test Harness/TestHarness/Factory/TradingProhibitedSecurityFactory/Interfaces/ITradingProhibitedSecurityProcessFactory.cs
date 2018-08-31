@@ -1,6 +1,6 @@
 ﻿using TestHarness.Engine.OrderGenerator.Interfaces;
 
-namespace TestHarness.Factory.TradingProhibitedSecurityFactory
+namespace TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces
 {
     public interface ITradingProhibitedSecurityProcessFactory
     {

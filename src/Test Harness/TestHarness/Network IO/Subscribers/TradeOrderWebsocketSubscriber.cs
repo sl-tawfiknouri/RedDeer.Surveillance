@@ -3,6 +3,7 @@ using Domain.Equity.Trading.Orders;
 using NLog;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+using TestHarness.Network_IO.Subscribers.Interfaces;
 
 namespace TestHarness.Network_IO.Subscribers
 {

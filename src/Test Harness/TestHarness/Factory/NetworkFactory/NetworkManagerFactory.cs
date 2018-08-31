@@ -3,6 +3,7 @@ using System;
 using TestHarness.Display;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Network_IO;
+using TestHarness.Network_IO.Interfaces;
 using TestHarness.Network_IO.Subscribers;
 using Utilities.Network_IO.Websocket_Connections;
 

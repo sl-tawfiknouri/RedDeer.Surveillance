@@ -1,4 +1,4 @@
-﻿using TestHarness.Network_IO;
+﻿using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Factory.NetworkFactory.Interfaces
 {

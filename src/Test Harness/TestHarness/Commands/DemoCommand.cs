@@ -80,12 +80,19 @@ namespace TestHarness.Commands
                 .TradingProhibitedSecurityFactory
                 .Create();
 
+            var spoofingTradeProcess = _appFactory
+                .TradingSpoofingFactory
+                .Create();
+
             // start updating equity data
             _equityProcess.InitiateWalk(equityStream);
 
             // start updating trading data
             _tradingProcess.InitiateTrading(equityStream, tradeStream);
+
+            // start ad hoc heartbeat driven commands
             prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
+            spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
         private void StopDemo()

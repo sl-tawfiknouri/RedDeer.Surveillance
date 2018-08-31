@@ -16,6 +16,7 @@ using TestHarness.State.Interfaces;
 using TestHarness.State;
 using TestHarness.Network_IO;
 using TestHarness.Factory.TradingProhibitedSecurityFactory;
+using TestHarness.Factory.TradingSpoofingFactory;
 
 namespace TestHarness.Factory
 {
@@ -32,6 +33,7 @@ namespace TestHarness.Factory
             Console = new Console();
             CommandManifest = new CommandManifest();
             ProhibitedSecurityHeartbeat = new PulsatingHeartbeat(); // singleton
+            SpoofedTradeHeartbeat = new PulsatingHeartbeat(); // singleton
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
@@ -39,6 +41,7 @@ namespace TestHarness.Factory
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);
+            TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -77,6 +80,8 @@ namespace TestHarness.Factory
         
         public IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; private set; }
 
+        public IPulsatingHeartbeat SpoofedTradeHeartbeat { get; private set; }
+
         // new factories
         public IEquitiesProcessFactory EquitiesProcessFactory { get; private set; } 
 
@@ -89,5 +94,7 @@ namespace TestHarness.Factory
         public ITradeOrderStreamFactory TradeOrderStreamFactory { get; private set; }
 
         public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; private set; }
+
+        public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; private set; }
     }
 }

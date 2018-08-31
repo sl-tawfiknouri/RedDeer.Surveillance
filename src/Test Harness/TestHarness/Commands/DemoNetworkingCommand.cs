@@ -80,6 +80,10 @@ namespace TestHarness.Commands
                 .TradingProhibitedSecurityFactory
                 .Create();
 
+            var spoofingTradeProcess = _appFactory
+                .TradingSpoofingFactory
+                .Create();
+
             _networkManager =
                 _appFactory
                 .NetworkManagerFactory
@@ -115,7 +119,9 @@ namespace TestHarness.Commands
 
             // start updating trading data
             _tradingProcess.InitiateTrading(equityStream, tradeStream);
+
             prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
+            spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
         private void Stop()

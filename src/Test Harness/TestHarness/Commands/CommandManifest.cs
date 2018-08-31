@@ -11,6 +11,7 @@ namespace TestHarness.Commands
         public string StopDemo { get { return "stop demo"; } }
         public string RunDemoWithNetworking { get { return "run demo networking"; } }
         public string StopDemoWithNetworking { get { return "stop demo networking"; } }
-        public string BuyProhibitedSecurity { get { return "buy prohibited security"; } }
+        public string BuyProhibitedSecurity { get { return "run prohibited trade"; } }
+        public string RunSpoofedTrade { get { return "run spoofed trade"; } }
     }
 }

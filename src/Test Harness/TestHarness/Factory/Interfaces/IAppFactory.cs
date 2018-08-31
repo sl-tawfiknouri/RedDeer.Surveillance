@@ -7,6 +7,7 @@ using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingProhibitedSecurityFactory;
+using TestHarness.Factory.TradingSpoofingFactory;
 using TestHarness.Network_IO;
 using TestHarness.State.Interfaces;
 
@@ -30,6 +31,8 @@ namespace TestHarness.Factory.Interfaces
 
         IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; }
 
+        IPulsatingHeartbeat SpoofedTradeHeartbeat { get; }
+
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
@@ -41,5 +44,6 @@ namespace TestHarness.Factory.Interfaces
         ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
 
         ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
+        ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
     }
 }

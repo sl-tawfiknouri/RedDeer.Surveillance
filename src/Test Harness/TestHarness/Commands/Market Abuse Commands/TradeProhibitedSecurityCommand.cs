@@ -2,7 +2,7 @@
 using TestHarness.Commands.Interfaces;
 using TestHarness.Factory.Interfaces;
 
-namespace TestHarness.Commands
+namespace TestHarness.Commands.Market_Abuse_Commands
 {
     public class TradeProhibitedSecurityCommand : ICommand
     {
@@ -21,7 +21,8 @@ namespace TestHarness.Commands
             }
 
             return
-                string.Equals(command, "buy prohibited security", StringComparison.InvariantCultureIgnoreCase)
+                string.Equals(command, "run prohibited trade", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(command, "buy prohibited security", StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals(command, "buy lehman bros", StringComparison.InvariantCultureIgnoreCase);
         }
 

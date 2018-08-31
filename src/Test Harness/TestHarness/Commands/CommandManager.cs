@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Commands.Market_Abuse_Commands;
 using TestHarness.Display;
 using TestHarness.Factory.Interfaces;
 using TestHarness.State.Interfaces;
@@ -39,6 +40,7 @@ namespace TestHarness.Commands
                 new DemoCommand(appFactory),
                 new DemoNetworkingCommand(appFactory),
                 new TradeProhibitedSecurityCommand(appFactory),
+                new SpoofingCommand(appFactory),
                _unrecognisedCommand,
             };
         }

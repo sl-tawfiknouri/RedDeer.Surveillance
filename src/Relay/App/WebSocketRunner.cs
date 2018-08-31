@@ -20,11 +20,11 @@ namespace RedDeer.Relay.App
 
         public async Task Run()
         {
-            await Task.Run(async() => 
+            await Task.Run(() =>
             {
                 try
                 {
-                    await _mediator.Initiate();
+                    _mediator.Initiate();
                 }
                 catch (Exception e)
                 {

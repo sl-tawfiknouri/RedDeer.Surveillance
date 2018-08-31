@@ -17,6 +17,8 @@ using Relay.Equities;
 using Relay.Network_IO.Interfaces;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
 using Relay.Processors.Interfaces;
+using Relay.Managers.Interfaces;
+using Relay.Managers;
 
 namespace RedDeer.Relay
 {
@@ -49,6 +51,9 @@ namespace RedDeer.Relay
             For<INetworkExchange>().Use<NetworkExchange>();
             For<IRelayTradeNetworkDuplexer>().Use<RelayTradeNetworkDuplexer>();
             For<IRelayEquityNetworkDuplexer>().Use<RelayEquityNetworkDuplexer>();
+
+            For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
+            For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
 
             For<IDuplexMessageFactory>().Use<DuplexMessageFactory>();
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();

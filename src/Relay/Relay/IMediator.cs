@@ -4,6 +4,6 @@ namespace Relay
 {
     public interface IMediator
     {
-        Task Initiate();
+        void Initiate();
     }
 }

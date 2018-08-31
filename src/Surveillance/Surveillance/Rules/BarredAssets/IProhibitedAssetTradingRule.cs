@@ -1,9 +1,8 @@
-﻿using System;
-using Domain.Equity.Trading.Orders;
+﻿using Surveillance.Rules.Interfaces;
 
 namespace Surveillance.Rules.ProhibitedAssetTradingRule
 {
-    public interface IProhibitedAssetTradingRule : IObserver<TradeOrderFrame>
+    public interface IProhibitedAssetTradingRule : ITradeRule
     {
     }
 }

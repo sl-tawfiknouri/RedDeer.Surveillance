@@ -1,7 +1,7 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
 
-namespace Surveillance.Rules
+namespace Surveillance.Rules.Interfaces
 {
     public interface IRuleManager
     {

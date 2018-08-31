@@ -1,5 +1,6 @@
 ﻿using Domain.Equity.Trading.Orders;
 using Domain.Equity.Trading.Streams.Interfaces;
+using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.ProhibitedAssetTradingRule;
 using System;
 

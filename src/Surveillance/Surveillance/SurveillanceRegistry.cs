@@ -20,6 +20,7 @@ using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
 using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
+using Surveillance.Rules.Interfaces;
 
 namespace Surveillance
 {

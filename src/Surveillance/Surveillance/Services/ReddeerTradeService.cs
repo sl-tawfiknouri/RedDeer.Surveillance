@@ -6,6 +6,7 @@ using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Rules;
+using Surveillance.Rules.Interfaces;
 using Surveillance.Services.Interfaces;
 using System;
 using Utilities.Network_IO.Websocket_Hosts;

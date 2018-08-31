@@ -4,6 +4,7 @@ using TestHarness.Factory;
 using TestHarness.Factory.Interfaces;
 using TestHarness.State.Interfaces;
 using TestHarness.Interfaces;
+using Newtonsoft.Json;
 
 namespace TestHarness
 {

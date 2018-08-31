@@ -21,6 +21,10 @@ using Surveillance.Recorders;
 using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
 using Surveillance.Rules.Interfaces;
+using Surveillance.Trades;
+using Surveillance.Trades.Interfaces;
+using Surveillance.Rules.Spoofing.Interfaces;
+using Surveillance.Rules.Spoofing;
 
 namespace Surveillance
 {
@@ -39,6 +43,7 @@ namespace Surveillance
 
             For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
             For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
+            For<ISpoofingRule>().Use<SpoofingRule>();
 
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
 
@@ -49,7 +54,11 @@ namespace Surveillance
             For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
             For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
 
-            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
+            For<ITradingHistory>().Use<TradingHistory>();
+            For<ITradingHistoryStack>().Use<TradingHistoryStack>();
+
+            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
+            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
             For<IReddeerMarketExchangeFormatProjector>().Use<ReddeerMarketExchangeFormatProjector>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();

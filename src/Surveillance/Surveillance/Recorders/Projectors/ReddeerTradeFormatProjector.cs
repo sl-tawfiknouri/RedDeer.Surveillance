@@ -30,7 +30,7 @@ namespace Surveillance.Recorders.Projectors
                 OrderTypeDescription = order.OrderType.ToString(),
                 MarketId = order.Market?.Id?.Id?.ToString() ?? string.Empty,
                 MarketName = order.Market?.Name ?? string.Empty,
-                SecurityId = order.Security?.Id?.Id ?? string.Empty,
+                SecurityId = order.Security?.Id.Id ?? string.Empty,
                 SecurityName = order.Security?.Name ?? string.Empty,
                 Limit = order.Limit?.Value,
                 StatusChangedOn = order.StatusChangedOn,

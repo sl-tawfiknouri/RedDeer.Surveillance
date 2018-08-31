@@ -107,7 +107,7 @@ namespace TestHarness.Engine.OrderGenerator
                 volume,
                 OrderDirection.Buy,
                 OrderStatus.Cancelled,
-                DateTime.Now.AddMinutes(-10 + remainingSpoofedOrders));
+                DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders));
 
             return 
                 new[] { spoofedTrade }
@@ -127,7 +127,7 @@ namespace TestHarness.Engine.OrderGenerator
                 volumeToTrade,
                 OrderDirection.Sell,
                 OrderStatus.Fulfilled,
-                DateTime.Now);
+                DateTime.UtcNow);
         }
     }
 }

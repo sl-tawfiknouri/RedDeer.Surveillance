@@ -34,21 +34,21 @@ namespace Domain.Equity.Trading.Orders
             }
         }
 
-        public OrderType OrderType { get; }
+        public OrderType OrderType { get; set;}
 
-        public StockExchange Market { get; }
+        public StockExchange Market { get; set; }
 
-        public Security Security { get; }
+        public Security Security { get; set; }
 
-        public Price? Limit { get; }
+        public Price? Limit { get; set; }
 
-        public DateTime StatusChangedOn { get; }
+        public DateTime StatusChangedOn { get; set; }
 
-        public int Volume { get; }
+        public int Volume { get; set; }
 
-        public OrderDirection Direction { get; }
+        public OrderDirection Direction { get; set; }
 
-        public OrderStatus OrderStatus { get; }
+        public OrderStatus OrderStatus { get; set; }
 
         public override string ToString()
         {

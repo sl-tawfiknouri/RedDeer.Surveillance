@@ -39,7 +39,12 @@ namespace Relay.Network_IO
 
         private void ReddeerStockExchangeFormat(IDuplexedMessage message)
         {
-            var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message);
+            var serialiserSettings = new JsonSerializerSettings()
+            {
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            };
+
+            var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message, serialiserSettings);
             _RedeerStockFormatStream?.Add(formattedMessage);
         }
     }

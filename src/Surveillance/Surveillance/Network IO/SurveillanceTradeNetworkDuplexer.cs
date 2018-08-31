@@ -48,7 +48,12 @@ namespace Surveillance.Network_IO
 
         private void ReddeerFormat(IDuplexedMessage message)
         {
-            var formattedMessage = JsonConvert.DeserializeObject<TradeOrderFrame>(message.Message);
+            var serialiserSettings = new JsonSerializerSettings()
+            {
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            };
+
+            var formattedMessage = JsonConvert.DeserializeObject<TradeOrderFrame>(message.Message, serialiserSettings);
             _ReddeerTradeFormatStream?.Add(formattedMessage);
         }
 
@@ -59,7 +64,12 @@ namespace Surveillance.Network_IO
 
         private void ReddeerStockFormat(IDuplexedMessage message)
         {
-            var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message);
+            var serialiserSettings = new JsonSerializerSettings()
+            {
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            };
+
+            var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message, serialiserSettings);
             _ReddeerStockExchangeStream?.Add(formattedMessage);
         }
     }

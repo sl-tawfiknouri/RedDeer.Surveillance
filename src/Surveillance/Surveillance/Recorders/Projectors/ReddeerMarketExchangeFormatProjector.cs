@@ -48,7 +48,7 @@ namespace Surveillance.Recorders.Projectors
                 {
                 return new ReddeerSecurityDocument
                 {
-                    SecurityId = sec?.Security?.Id?.Id ?? string.Empty,
+                    SecurityId = sec?.Security?.Id.Id ?? string.Empty,
                     SecurityName = sec?.Security?.Name ?? string.Empty,
                     SpreadBuy = sec?.Spread.Buy.Value,
                     SpreadSell = sec?.Spread.Sell.Value,

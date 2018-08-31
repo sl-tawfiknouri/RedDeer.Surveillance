@@ -69,7 +69,7 @@ namespace TestHarness.Engine.OrderGenerator
                         666,
                         OrderDirection.Buy,
                         OrderStatus.Placed,
-                        DateTime.Now);
+                        DateTime.UtcNow);
 
                     _tradeStream.Add(prohibitedTrade);
                 }

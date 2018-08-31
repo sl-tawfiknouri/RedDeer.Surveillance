@@ -24,7 +24,7 @@
         /// </summary>
         public string ExchangeAbbr { get; }
 
-        public class SecurityId
+        public struct SecurityId
         {
             public SecurityId(string id)
             {
@@ -32,6 +32,23 @@
             }
 
             public string Id { get; }
+
+            public override int GetHashCode()
+            {
+                return Id?.GetHashCode() ?? 0;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is SecurityId))
+                {
+                    return false;
+                }
+
+                var otherId = (SecurityId)obj;
+
+                return string.Equals(Id, otherId.Id, System.StringComparison.InvariantCultureIgnoreCase);
+            }
         }
     }
 }

@@ -23,14 +23,14 @@ namespace Surveillance.DataLayer.Trade
                 return;
             }
 
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));           
+            var cts = new CancellationTokenSource(TimeSpan.FromMinutes(15));           
             var index = await
                 _dataAccess.GetOrCreateDateBasedIndexAsync<ReddeerTradeDocument>(
                     _dataAccess.ReddeerTradeFormatIndexName,
                     DateTime.UtcNow,
                     cts.Token);
 
-            var saveCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var saveCts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
             await _dataAccess.IndexDocumentAsync(index, document, DateTime.UtcNow, saveCts.Token);
         }
     }

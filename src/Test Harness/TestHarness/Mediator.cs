@@ -2,9 +2,7 @@
 using TestHarness.Commands.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Factory.Interfaces;
-using TestHarness.State.Interfaces;
 using TestHarness.Interfaces;
-using Newtonsoft.Json;
 
 namespace TestHarness
 {
@@ -18,14 +16,12 @@ namespace TestHarness
         private readonly IAppFactory _appFactory;
         private readonly ICommandManager _commandManager;
         private readonly ICommandManifest _commandManifest;
-        private readonly IProgramState _programState;
 
         public Mediator(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? new AppFactory(new Configuration.Configuration());
             _commandManager = _appFactory.CommandManager;
             _commandManifest = _appFactory.CommandManifest;
-            _programState = _appFactory.State;
         }
 
         /// <summary>
@@ -47,7 +43,10 @@ namespace TestHarness
         /// </summary>
         public void ActionCommand(string command)
         {
-            _commandManager.InterpretIOCommand(command);
+            lock (_lock)
+            {
+                _commandManager.InterpretIOCommand(command);
+            }
         }
 
         /// <summary>

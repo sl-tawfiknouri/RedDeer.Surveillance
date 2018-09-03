@@ -3,9 +3,6 @@ using NLog;
 using NUnit.Framework;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.State.Interfaces;
-using TestHarness.State;
-using TestHarness.Interfaces;
 
 namespace TestHarness.Tests
 {

@@ -1,7 +1,6 @@
 ﻿using NLog;
 using System;
 using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;

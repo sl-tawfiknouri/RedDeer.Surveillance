@@ -5,7 +5,6 @@ using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator

@@ -2,7 +2,6 @@
 using NLog;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies;
 using MathNet.Numerics.Distributions;
 using System.Linq;
 using Domain.Equity;

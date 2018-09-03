@@ -1,6 +1,4 @@
-﻿using TestHarness.Commands;
-
-namespace TestHarness.Interfaces
+﻿namespace TestHarness.Interfaces
 {
     public interface IMediator
     {

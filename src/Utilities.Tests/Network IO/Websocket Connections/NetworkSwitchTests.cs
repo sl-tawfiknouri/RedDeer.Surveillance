@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using System.Threading;
 using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 

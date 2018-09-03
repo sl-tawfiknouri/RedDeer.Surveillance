@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Trading.Orders;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
 using System;
 using System.Threading;
+using Domain.Trades.Orders;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

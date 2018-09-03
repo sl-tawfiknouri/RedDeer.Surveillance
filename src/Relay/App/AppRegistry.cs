@@ -1,8 +1,8 @@
-﻿using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using StructureMap;
 
-namespace RedDeer.Relay.App
+namespace RedDeer.Relay.Relay.App
 {
     public class AppRegistry : Registry
     {

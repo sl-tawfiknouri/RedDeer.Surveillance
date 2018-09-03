@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Relay
+﻿namespace Relay
 {
     public interface IMediator
     {

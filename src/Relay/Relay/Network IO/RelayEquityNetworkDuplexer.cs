@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Relay.Network_IO.Interfaces;
 using System;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 

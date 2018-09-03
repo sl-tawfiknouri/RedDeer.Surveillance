@@ -1,14 +1,14 @@
-﻿using DasMulli.Win32.ServiceUtils;
+﻿using System.IO;
+using System.Threading;
+using DasMulli.Win32.ServiceUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
-using System.IO;
-using System.Threading;
 
-namespace RedDeer.Relay.App
+namespace RedDeer.Relay.Relay.App
 {
     public class Service : IWin32Service
     {

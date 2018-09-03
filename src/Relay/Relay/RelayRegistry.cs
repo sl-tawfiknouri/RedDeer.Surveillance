@@ -1,26 +1,27 @@
-﻿using Relay.Network_IO;
-using StructureMap;
-using NLog.Extensions.Logging;
+﻿using Domain.Equity.Frames;
+using Domain.Equity.Streams;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Streams;
+using Domain.Trades.Streams;
+using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Domain.Equity.Trading;
-using Relay.Trades;
+using NLog.Extensions.Logging;
+using Relay.Managers;
+using Relay.Managers.Interfaces;
+using Relay.Network_IO;
+using Relay.Network_IO.Interfaces;
 using Relay.Network_IO.RelaySubscribers;
+using Relay.Network_IO.RelaySubscribers.Interfaces;
+using Relay.Processors;
+using Relay.Processors.Interfaces;
+using StructureMap;
+using Utilities.Network_IO.Interfaces;
 using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
-using Relay;
-using Utilities.Network_IO.Interfaces;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
-using Domain.Equity.Trading.Frames;
-using Relay.Equities;
-using Relay.Network_IO.Interfaces;
-using Relay.Network_IO.RelaySubscribers.Interfaces;
-using Relay.Processors.Interfaces;
-using Relay.Managers.Interfaces;
-using Relay.Managers;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
-namespace RedDeer.Relay
+namespace Relay
 {
     public class RelayRegistry : Registry
     {

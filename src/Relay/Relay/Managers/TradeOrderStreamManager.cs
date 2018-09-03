@@ -1,12 +1,13 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Relay.Managers.Interfaces;
 using Relay.Network_IO;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
-using Relay.Trades;
 using System;
+using Domain.Streams;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams;
+using Domain.Trades.Streams.Interfaces;
+using Relay.Processors;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 

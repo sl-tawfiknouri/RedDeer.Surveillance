@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using System;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Relay.Processors.Interfaces;
-using System;
 
-namespace Relay.Trades
+namespace Relay.Processors
 {
     /// <summary>
     /// Internal logic for the relay acting on the trades stream

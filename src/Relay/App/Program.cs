@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using Relay;
 using Relay.Configuration;
 using StructureMap;
 
-namespace RedDeer.Relay.App
+namespace RedDeer.Relay.Relay.App
 {
     public class Program
     {

@@ -1,9 +1,10 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Relay.Network_IO.Interfaces;
 using System;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Relay.Network_IO
 {

@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Relay;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Relay;
 
-namespace RedDeer.Relay.App
+namespace RedDeer.Relay.Relay.App
 {
     public class WebSocketRunner : IStartUpTaskRunner
     {

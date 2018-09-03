@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RedDeer.Relay
+namespace RedDeer.Relay.Relay.App
 {
     public interface IStartUpTaskRunner
     {

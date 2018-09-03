@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using System;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Relay.Processors.Interfaces;
-using System;
 
-namespace Relay.Equities
+namespace Relay.Processors
 {
     public class EquityProcessor : IEquityProcessor<ExchangeFrame>
     {

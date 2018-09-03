@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Trading.Frames;
+using Domain.Equity.Frames;
 
 namespace Relay.Network_IO.RelaySubscribers.Interfaces
 {

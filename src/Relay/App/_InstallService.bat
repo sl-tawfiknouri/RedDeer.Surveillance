@@ -1,1 +1,1 @@
-dotnet RedDeer.Relay.App.dll --register-service
+dotnet RedDeer.Relay.Relay.App.dll --register-service

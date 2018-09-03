@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Nest;
 using Surveillance.ElasticSearchDtos.Rules;
 
-namespace Surveillance.DataLayer.ElasticSearch.Interfaces
+namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
 {
     public interface IElasticSearchDataAccess
     {

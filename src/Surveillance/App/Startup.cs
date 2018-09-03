@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StructureMap;
 using Surveillance;
+using Surveillance.DataLayer;
 
 namespace RedDeer.Surveillance.App
 {

@@ -9,6 +9,7 @@ using DasMulli.Win32.ServiceUtils;
 using NLog;
 using StructureMap;
 using Surveillance;
+using Surveillance.DataLayer;
 
 namespace RedDeer.Surveillance.App
 {

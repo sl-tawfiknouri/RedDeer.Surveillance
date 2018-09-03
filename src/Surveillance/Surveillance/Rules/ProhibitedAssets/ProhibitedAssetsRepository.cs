@@ -1,8 +1,8 @@
-﻿using Surveillance.Rules.ProhibitedAssets.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Surveillance.Rules.ProhibitedAssets.Interfaces;
 
-namespace Surveillance.Rules.BarredAssets
+namespace Surveillance.Rules.ProhibitedAssets
 {
     /// <summary>
     /// In memory repository for prohibited assets

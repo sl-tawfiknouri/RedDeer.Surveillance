@@ -1,9 +1,9 @@
-﻿using Surveillance.DataLayer.ElasticSearch.Interfaces;
-using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
+﻿using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 
 namespace Surveillance.DataLayer.ElasticSearch.Market
 {

@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
-using Surveillance.DataLayer.ElasticSearch.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.ElasticSearchDtos.Rules;
 
-namespace Surveillance.DataLayer.ElasticSearch
+namespace Surveillance.DataLayer.ElasticSearch.DataAccess
 {
     /// <summary>
     /// Data access type; more primitive than a repository

@@ -1,12 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Domain.Trades.Orders;
+using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;
-using System;
-using Domain.Trades.Orders;
 
-namespace Surveillance.Rules.ProhibitedAssetTradingRule
+namespace Surveillance.Rules.ProhibitedAssets
 {
     /// <summary>
     /// Trading can be prohibited against certain assets

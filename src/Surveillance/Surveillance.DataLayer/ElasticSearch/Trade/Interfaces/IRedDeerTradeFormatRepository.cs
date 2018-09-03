@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Surveillance.ElasticSearchDtos.Trades;
 
-namespace Surveillance.DataLayer.Trade.Interfaces
+namespace Surveillance.DataLayer.ElasticSearch.Trade.Interfaces
 {
     public interface IRedDeerTradeFormatRepository
     {

@@ -1,12 +1,13 @@
 ﻿using StructureMap;
 using Surveillance.DataLayer.ElasticSearch;
-using Surveillance.DataLayer.ElasticSearch.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.DataAccess;
+using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Market;
 using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
-using Surveillance.DataLayer.Trade;
-using Surveillance.DataLayer.Trade.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Trade;
+using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 
-namespace Surveillance
+namespace Surveillance.DataLayer
 {
     public class DataLayerRegistry : Registry
     {

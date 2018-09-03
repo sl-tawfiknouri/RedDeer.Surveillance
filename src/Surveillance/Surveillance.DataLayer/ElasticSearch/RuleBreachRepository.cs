@@ -1,7 +1,7 @@
-﻿using Surveillance.DataLayer.ElasticSearch.Interfaces;
-using Surveillance.ElasticSearchDtos.Rules;
+﻿using Surveillance.ElasticSearchDtos.Rules;
 using System;
 using System.Threading;
+using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 
 namespace Surveillance.DataLayer.ElasticSearch
 {

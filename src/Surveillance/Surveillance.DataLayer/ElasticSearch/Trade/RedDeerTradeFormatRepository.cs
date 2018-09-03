@@ -1,11 +1,11 @@
-﻿using Surveillance.DataLayer.ElasticSearch.Interfaces;
-using Surveillance.DataLayer.Trade.Interfaces;
-using Surveillance.ElasticSearchDtos.Trades;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
+using Surveillance.ElasticSearchDtos.Trades;
 
-namespace Surveillance.DataLayer.Trade
+namespace Surveillance.DataLayer.ElasticSearch.Trade
 {
     public class RedDeerTradeFormatRepository : IRedDeerTradeFormatRepository
     {

@@ -16,7 +16,6 @@ namespace Surveillance.Trades
         private readonly decimal _cancellationRatioPercentage;
         private readonly ILogger _logger;
 
-        /// <param name="percent">between 0 and 1</param>
         public TradePosition(
             IList<TradeOrderFrame> trades,
             decimal percentageThresholdForHighCancellationRatio,

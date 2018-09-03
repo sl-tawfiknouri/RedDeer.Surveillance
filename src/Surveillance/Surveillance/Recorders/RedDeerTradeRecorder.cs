@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Trade.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders.Projectors.Interfaces;
 

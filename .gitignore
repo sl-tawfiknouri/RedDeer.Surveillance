@@ -1,4 +1,5 @@
 bin/
 obj/
 .vs/
-*.DotSettings.user
+*.user
+src/Relay/RedDeer.Relay.sln.DotSettings.user

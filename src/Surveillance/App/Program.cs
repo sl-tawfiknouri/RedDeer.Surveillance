@@ -6,9 +6,12 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
+using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
 using Surveillance;
+using Surveillance.Configuration;
+using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer;
 
 namespace RedDeer.Surveillance.App
@@ -33,6 +36,8 @@ namespace RedDeer.Surveillance.App
             try
             {
                 Container = new Container();
+                Container.Inject(typeof(INetworkConfiguration), BuildConfiguration());
+
                 Container.Configure(config =>
                 {
                     config.IncludeRegistry<DataLayerRegistry>();
@@ -50,6 +55,24 @@ namespace RedDeer.Surveillance.App
                 Logger.Error(ex);
                 Console.WriteLine($"An error ocurred: {ex.Message}");
             }
+        }
+
+        private static NetworkConfiguration BuildConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var networkConfiguration = new NetworkConfiguration
+            {
+                SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
+                SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
+
+                SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
+                SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
+            };
+
+            return networkConfiguration;
         }
 
         private static void ProcessArguments(string[] args)

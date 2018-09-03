@@ -75,10 +75,7 @@ namespace Utilities.Network_IO.Websocket_Connections
             {
                 _dict.TryGetValue(key, out List<object> listWithRemovedItem);
 
-                if (listWithRemovedItem != null)
-                {
-                    listWithRemovedItem.RemoveAll(listElement => listElement == item);
-                }
+                listWithRemovedItem?.RemoveAll(listElement => listElement == item);
             }
         }
     }

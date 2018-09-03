@@ -77,10 +77,7 @@ namespace Utilities.Network_IO.Websocket_Hosts
 
         private void _TerminateConnections()
         {
-            if (_activeHost != null)
-            {
-                _activeHost.Dispose();
-            }
+            _activeHost?.Dispose();
 
             _initiated = false;
         }

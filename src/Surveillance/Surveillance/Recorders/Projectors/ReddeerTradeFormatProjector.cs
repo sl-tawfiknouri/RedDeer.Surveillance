@@ -28,7 +28,7 @@ namespace Surveillance.Recorders.Projectors
                 Origin = _originFactory.Origin(),
                 OrderTypeId = (int)order.OrderType,
                 OrderTypeDescription = order.OrderType.ToString(),
-                MarketId = order.Market?.Id?.Id?.ToString() ?? string.Empty,
+                MarketId = order.Market?.Id?.Id ?? string.Empty,
                 MarketName = order.Market?.Name ?? string.Empty,
                 SecurityId = order.Security?.Id.Id ?? string.Empty,
                 SecurityName = order.Security?.Name ?? string.Empty,
@@ -44,7 +44,7 @@ namespace Surveillance.Recorders.Projectors
         private string GenerateDate()
         {
             var id = Guid.NewGuid().ToString();
-            id += "." + DateTime.UtcNow.ToString();
+            id += "." + DateTime.UtcNow;
 
             return id;
         }

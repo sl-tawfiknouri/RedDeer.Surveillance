@@ -29,7 +29,7 @@ namespace Surveillance.Recorders
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"An exception occured in the reddeer trade recorder {error.ToString()}");
+            _logger.LogError($"An exception occured in the reddeer trade recorder {error}");
         }
 
         public async void OnNext(TradeOrderFrame value)

@@ -55,18 +55,12 @@ namespace Surveillance.Rules.Spoofing
 
         public void OnError(Exception error)
         {
-            if (error == null)
-            {
-                return;
-            }
-
-            _logger.LogError($"An error occured in the spoofing rule stream {error.ToString()}");
+            _logger.LogError($"An error occured in the spoofing rule stream {error}");
         }
 
         public void OnNext(TradeOrderFrame value)
         {
-            if (value == null
-                || value.Security == null)
+            if (value?.Security == null)
             {
                 return;
             }
@@ -81,26 +75,21 @@ namespace Surveillance.Rules.Spoofing
                 }
                 else
                 {
-                    _tradingHistory.TryGetValue(value.Security.Id, out ITradingHistoryStack history);
+                    _tradingHistory.TryGetValue(value.Security.Id, out var history);
 
                     var now = DateTime.UtcNow;
-                    history.Add(value, now);
-                    history.ArchiveExpiredActiveItems(now);
+                    history?.Add(value, now);
+                    history?.ArchiveExpiredActiveItems(now);
                 }
 
-                _tradingHistory.TryGetValue(value.Security.Id, out ITradingHistoryStack updatedHistory);
+                _tradingHistory.TryGetValue(value.Security.Id, out var updatedHistory);
                 CheckSpoofing(updatedHistory);
             }
         }
 
         private void CheckSpoofing(ITradingHistoryStack history)
         {
-            if (history == null)
-            {
-                return;
-            }
-
-            var tradeWindow = history.ActiveTradeHistory();
+            var tradeWindow = history?.ActiveTradeHistory();
 
             if (tradeWindow == null
                 || !tradeWindow.Any())

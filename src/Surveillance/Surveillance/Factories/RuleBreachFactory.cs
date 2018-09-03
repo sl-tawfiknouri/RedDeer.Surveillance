@@ -37,7 +37,7 @@ namespace Surveillance.Factories
         private string GenerateDate()
         {
             var id = Guid.NewGuid().ToString();
-            id += "." + DateTime.UtcNow.ToString();
+            id += "." + DateTime.UtcNow;
 
             return id;
         }

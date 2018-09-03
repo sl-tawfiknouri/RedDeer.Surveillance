@@ -9,6 +9,7 @@ using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
+using Surveillance.Configuration.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Services
@@ -23,6 +24,7 @@ namespace Surveillance.Services
         private readonly IRuleManager _ruleManager;
         private readonly IRedDeerTradeRecorder _reddeerTradeRecorder;
         private readonly IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
+        private readonly INetworkConfiguration _configuration;
 
         public ReddeerTradeService(
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,
@@ -30,7 +32,8 @@ namespace Surveillance.Services
             IUnsubscriberFactory<ExchangeFrame> equityUnsubscriberFactory,
             IRuleManager ruleManager,
             IRedDeerTradeRecorder reddeerTradeRecorder,
-            IRedDeerStockExchangeRecorder reddeerStockExchangeRecorder)
+            IRedDeerStockExchangeRecorder reddeerStockExchangeRecorder,
+            INetworkConfiguration configuration)
         {
             _networkExchangeFactory = 
                 networkExchangeFactory 
@@ -48,6 +51,8 @@ namespace Surveillance.Services
             _reddeerStockExchangeRecorder = 
                 reddeerStockExchangeRecorder 
                 ?? throw new ArgumentNullException(nameof(reddeerStockExchangeRecorder));
+            _configuration = configuration
+                ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public void Initialise()
@@ -60,33 +65,28 @@ namespace Surveillance.Services
 
             var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
 
+            // T R A D E S
             _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);
-            _tradeNetworkExchange.Initialise("ws://0.0.0.0:9069");
+
+            _tradeNetworkExchange.Initialise(
+                $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
 
             // order stream only rules
             _ruleManager.RegisterTradingRules(tradeStream);           
 
+            // E Q U I T Y
             _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
-            _equityNetworkExchange.Initialise("ws://0.0.0.0:9070");
+            _equityNetworkExchange.Initialise(
+                $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
+
             // equity stream only rules
             _ruleManager.RegisterEquityRules(exchangeStream);
         }
 
-        private void HostEquityProcessingPipeline()
-        {
-        }
-
         public void Dispose()
         {
-            if (_tradeNetworkExchange != null)
-            {
-                _tradeNetworkExchange.TerminateConnections();
-            }
-
-            if (_equityNetworkExchange != null)
-            {
-                _equityNetworkExchange.TerminateConnections();
-            }
+            _tradeNetworkExchange?.TerminateConnections();
+            _equityNetworkExchange?.TerminateConnections();
         }
     }
 }

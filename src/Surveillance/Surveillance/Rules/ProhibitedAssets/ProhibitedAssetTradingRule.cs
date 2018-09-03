@@ -60,7 +60,7 @@ namespace Surveillance.Rules.ProhibitedAssets
             _logger.LogError($"ILLEGAL TRADE DETECTED: PROHIBITED ASSET {value?.Security?.Name}");
 
             var timeBreachDetected = DateTime.UtcNow;
-            var description = $"The prohibited asset trading rule detected a breach. The prohibited security that was traded was {value?.Security?.Name}. Full details {value.ToString()}";
+            var description = $"The prohibited asset trading rule detected a breach. The prohibited security that was traded was {value?.Security?.Name}. Full details {value}";
 
             var prohibitedAssetBreachDocument = _ruleBreachFactory.Build(
                 RuleBreachCategories.ProhibitedAsset,

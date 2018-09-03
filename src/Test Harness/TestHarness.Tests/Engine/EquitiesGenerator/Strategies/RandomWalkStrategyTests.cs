@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
+using Domain.Equity;
+using Domain.Equity.Frames;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies

@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Trading.Orders
+﻿namespace Domain.Trades.Orders
 {
     public enum OrderDirection
     {

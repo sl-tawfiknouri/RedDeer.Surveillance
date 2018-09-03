@@ -1,7 +1,7 @@
-﻿using Domain.Equity.Trading.Frames;
+﻿using Domain.Equity.Frames;
 using Domain.Streams;
 
-namespace Domain.Equity.Trading.Streams.Interfaces
+namespace Domain.Equity.Streams.Interfaces
 {
     public interface IStockExchangeStream : PublishingStream<ExchangeFrame>
     {

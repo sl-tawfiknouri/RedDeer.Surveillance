@@ -1,7 +1,6 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Streams;
+﻿using Domain.Streams;
 
-namespace Domain.Equity.Trading.Streams.Interfaces
+namespace Domain.Trades.Streams.Interfaces
 {
     public interface ITradeOrderStream<T> : PublishingStream<T>
     {

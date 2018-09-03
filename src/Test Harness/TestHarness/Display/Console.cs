@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Equity.Frames;
+using Domain.Trades.Orders;
 
 namespace TestHarness.Display
 {

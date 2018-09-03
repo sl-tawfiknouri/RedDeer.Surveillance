@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity.Trading.Frames;
+using Domain.Equity.Frames;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {

@@ -1,12 +1,13 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Domain.Market;
+﻿using Domain.Market;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Tests.Domain.Market;
 
 namespace Domain.Tests.Equity.Streams
 {

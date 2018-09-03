@@ -1,7 +1,7 @@
-﻿using Domain.Equity.Trading.Orders;
-using FakeItEasy;
+﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
+using Domain.Trades.Orders;
 using TestHarness.Display;
 using TestHarness.Display.Subscribers;
 

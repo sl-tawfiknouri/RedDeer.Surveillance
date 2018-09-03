@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Domain.Equity.Trading
+namespace Domain.Streams
 {
     public class Unsubscriber<T> : IDisposable
     {

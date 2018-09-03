@@ -5,6 +5,7 @@ using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 
 namespace TestHarness.Factory.TradingFactory

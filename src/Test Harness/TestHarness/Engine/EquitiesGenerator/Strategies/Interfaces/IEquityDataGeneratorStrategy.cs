@@ -1,5 +1,4 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
+﻿using Domain.Equity.Frames;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
 {

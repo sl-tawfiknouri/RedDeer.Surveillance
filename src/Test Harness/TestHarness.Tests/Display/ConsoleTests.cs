@@ -1,9 +1,9 @@
 ﻿using Domain.Equity;
-using Domain.Equity.Trading.Orders;
 using Domain.Market;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using Domain.Trades.Orders;
 
 namespace TestHarness.Tests.Display
 {
@@ -36,7 +36,7 @@ namespace TestHarness.Tests.Display
                     OrderType.Limit,
                     stock,
                     sec,
-                    new Domain.Equity.Trading.Price(20.2m),
+                    new Price(20.2m),
                     100 * vol,
                     OrderDirection.Buy,
                     OrderStatus.Fulfilled,

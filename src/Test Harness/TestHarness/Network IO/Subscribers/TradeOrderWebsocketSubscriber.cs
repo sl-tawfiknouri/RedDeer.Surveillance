@@ -1,5 +1,5 @@
-﻿using Utilities.Network_IO.Websocket_Hosts;
-using Domain.Equity.Trading.Orders;
+﻿using Domain.Trades.Orders;
+using Utilities.Network_IO.Websocket_Hosts;
 using NLog;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

@@ -1,9 +1,9 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams.Interfaces;
 
-namespace Domain.Equity.Trading
+namespace Domain.Equity.Streams
 {
     /// <summary>
     /// An observable stream of stock exchange ticks

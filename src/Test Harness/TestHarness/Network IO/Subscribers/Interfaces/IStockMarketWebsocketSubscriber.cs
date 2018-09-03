@@ -1,5 +1,5 @@
-﻿using Domain.Equity.Trading.Frames;
-using System;
+﻿using System;
+using Domain.Equity.Frames;
 
 namespace TestHarness.Network_IO.Subscribers.Interfaces
 {

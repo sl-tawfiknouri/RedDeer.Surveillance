@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
+using Domain.Equity;
+using Domain.Equity.Frames;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using MathNet.Numerics.Distributions;
 using NLog;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {

@@ -1,8 +1,7 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Frames;
+using Domain.Trades.Streams.Interfaces;
 
-namespace TestHarness.Engine.OrderGenerator.Strategies
+namespace TestHarness.Engine.OrderGenerator.Strategies.Interfaces
 {
     public interface ITradeStrategy<T>
     {

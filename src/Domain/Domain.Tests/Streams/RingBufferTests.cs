@@ -1,6 +1,6 @@
-﻿using Domain.Equity.Trading;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
+using Domain.Streams;
 
 namespace Domain.Tests.Streams
 {

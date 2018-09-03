@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Trading.Frames
+﻿namespace Domain.Equity.Frames
 {
     /// <summary>
     /// Stock market update for a security

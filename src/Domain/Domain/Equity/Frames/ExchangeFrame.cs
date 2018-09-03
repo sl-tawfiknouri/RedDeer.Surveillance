@@ -1,7 +1,7 @@
-﻿using Domain.Market;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Domain.Market;
 
-namespace Domain.Equity.Trading.Frames
+namespace Domain.Equity.Frames
 {
     /// <summary>
     /// An aggregation of security frames

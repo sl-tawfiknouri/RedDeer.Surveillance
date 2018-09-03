@@ -1,9 +1,8 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Streams;
-using FakeItEasy;
+﻿using FakeItEasy;
 using NLog;
 using NUnit.Framework;
 using System;
+using Domain.Streams;
 
 namespace Domain.Tests.Streams
 {

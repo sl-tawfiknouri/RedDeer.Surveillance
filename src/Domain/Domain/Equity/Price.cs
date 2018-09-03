@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Trading
+﻿namespace Domain.Equity
 {
     /// <summary>
     /// A typed decimal for the price of an asset

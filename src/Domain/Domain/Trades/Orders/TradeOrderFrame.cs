@@ -1,7 +1,8 @@
-﻿using Domain.Market;
-using System;
+﻿using System;
+using Domain.Equity;
+using Domain.Market;
 
-namespace Domain.Equity.Trading.Orders
+namespace Domain.Trades.Orders
 {
     /// <summary>
     /// A trade order to trade securities in a market

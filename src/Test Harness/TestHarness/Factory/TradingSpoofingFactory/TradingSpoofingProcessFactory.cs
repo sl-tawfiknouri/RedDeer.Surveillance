@@ -1,7 +1,7 @@
 ﻿using System;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 

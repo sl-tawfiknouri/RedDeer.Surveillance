@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Domain.Equity.Trading
+namespace Domain.Streams
 {
     public class RingBuffer<T> where T : class
     {

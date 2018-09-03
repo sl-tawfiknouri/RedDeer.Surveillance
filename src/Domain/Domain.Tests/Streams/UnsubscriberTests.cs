@@ -1,9 +1,9 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using FakeItEasy;
+﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
+using Domain.Equity.Frames;
+using Domain.Streams;
 
 namespace Domain.Tests.Streams
 {

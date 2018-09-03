@@ -1,5 +1,5 @@
-﻿using Domain.Equity.Trading.Orders;
-using System;
+﻿using System;
+using Domain.Trades.Orders;
 
 namespace TestHarness.Display.Subscribers
 {

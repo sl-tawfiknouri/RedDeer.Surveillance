@@ -1,7 +1,7 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using MathNet.Numerics.Distributions;
+﻿using MathNet.Numerics.Distributions;
 using System;
+using Domain.Equity;
+using Domain.Equity.Frames;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies

@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams;
-using FakeItEasy;
+﻿using FakeItEasy;
 using NLog;
 using NUnit.Framework;
 using System;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams;
+using Domain.Streams;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;

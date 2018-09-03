@@ -1,6 +1,6 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using System;
+﻿using System;
+using Domain.Equity.Frames;
+using Domain.Trades.Orders;
 using Utilities.Network_IO.Interfaces;
 
 namespace TestHarness.Display

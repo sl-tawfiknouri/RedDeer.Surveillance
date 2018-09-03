@@ -1,8 +1,9 @@
-﻿using Domain.Equity.Trading.Frames;
-using MathNet.Numerics.Distributions;
+﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Equity.Frames;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {

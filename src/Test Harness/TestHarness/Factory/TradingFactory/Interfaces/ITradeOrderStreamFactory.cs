@@ -1,5 +1,5 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using TestHarness.Display;
 
 namespace TestHarness.Factory.TradingFactory.Interfaces

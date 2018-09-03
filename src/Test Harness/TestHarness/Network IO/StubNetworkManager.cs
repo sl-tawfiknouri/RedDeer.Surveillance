@@ -1,7 +1,8 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using NLog;
+﻿using NLog;
 using System;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Network_IO

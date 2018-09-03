@@ -1,11 +1,13 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Domain.Market;
+﻿using Domain.Market;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Concurrent;
+using Domain.Equity;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Tests.Domain.Market;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams;
 
 namespace Domain.Tests.Trades.Streams
 {
@@ -71,8 +73,8 @@ namespace Domain.Tests.Trades.Streams
             var order1 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
-                new Domain.Equity.Security(
-                    new Domain.Equity.Security.SecurityId("stan"),
+                new Security(
+                    new Security.SecurityId("stan"),
                     "Standard Chartered",
                     "LSE"),
                 new Price(100),
@@ -84,8 +86,8 @@ namespace Domain.Tests.Trades.Streams
             var order2 = new TradeOrderFrame(
                 OrderType.Market,
                 exch,
-                new Domain.Equity.Security(
-                    new Domain.Equity.Security.SecurityId("stan"),
+                new Security(
+                    new Security.SecurityId("stan"),
                     "Standard Chartered",
                     "LSE"),
                 null,
@@ -97,8 +99,8 @@ namespace Domain.Tests.Trades.Streams
             var order3 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
-                new Domain.Equity.Security(
-                    new Domain.Equity.Security.SecurityId("stan"),
+                new Security(
+                    new Security.SecurityId("stan"),
                     "Standard Chartered",
                     "LSE"),
                 new Price(10),

@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.Trading
+﻿namespace Domain.Equity
 {
     /// <summary>
     /// Volume traded within parent datetime range context

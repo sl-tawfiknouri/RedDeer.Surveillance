@@ -1,9 +1,9 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Streams.Interfaces;
 
-namespace Domain.Equity.Trading
+namespace Domain.Trades.Streams
 {
     public class TradeOrderStream<T> : ITradeOrderStream<T>
     {

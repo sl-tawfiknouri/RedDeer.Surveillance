@@ -1,6 +1,7 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Frames;
+using Domain.Equity.Streams;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Streams;
 using TestHarness.Display;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

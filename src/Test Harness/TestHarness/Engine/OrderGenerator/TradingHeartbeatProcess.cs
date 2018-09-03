@@ -1,10 +1,11 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using NLog;
+﻿using NLog;
 using System;
+using Domain.Equity.Frames;
+using Domain.Trades.Orders;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
 {

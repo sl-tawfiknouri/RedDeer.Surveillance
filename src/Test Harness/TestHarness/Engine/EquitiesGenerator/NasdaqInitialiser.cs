@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Market;
+﻿using Domain.Market;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Equity;
+using Domain.Equity.Frames;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator

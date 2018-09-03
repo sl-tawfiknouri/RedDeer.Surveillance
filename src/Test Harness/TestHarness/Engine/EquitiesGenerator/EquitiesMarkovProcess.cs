@@ -1,10 +1,10 @@
 ﻿using NLog;
 using System;
 using System.Linq;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Domain.Equity.Trading.Frames;
 using TestHarness.Engine.Heartbeat.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator

@@ -1,10 +1,8 @@
 ﻿using System.Threading;
 using Microsoft.Extensions.Configuration;
 using NLog;
-using TestHarness.App;
-using TestHarness.Configuration;
 
-namespace App
+namespace TestHarness.App
 {
     public class Program
     {
@@ -18,13 +16,13 @@ namespace App
             Thread.Sleep(50);
         }
 
-        private static Configuration BuildConfiguration()
+        private static Configuration.Configuration BuildConfiguration()
         {
             var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            var networkConfiguration = new Configuration
+            var networkConfiguration = new Configuration.Configuration
             {
                 TradeWebsocketUriPort = configurationBuilder.GetValue<string>("TradeWebsocketUriPort"),
                 TradeWebsocketUriDomain = configurationBuilder.GetValue<string>("TradeWebsocketUriDomain"),

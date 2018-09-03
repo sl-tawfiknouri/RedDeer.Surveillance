@@ -19,6 +19,7 @@ using TestHarness.Factory.TradingSpoofingFactory;
 using TestHarness.Network_IO.Interfaces;
 using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
+using TestHarness.Configuration.Interfaces;
 
 namespace TestHarness.Factory
 {
@@ -27,7 +28,7 @@ namespace TestHarness.Factory
     /// </summary>
     public class AppFactory : IAppFactory
     {
-        public AppFactory()
+        public AppFactory(INetworkConfiguration networkConfiguration)
         {
             Logger = new LogFactory().GetLogger("TestHarnessLogger");
 
@@ -39,7 +40,7 @@ namespace TestHarness.Factory
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
-            NetworkManagerFactory = new NetworkManagerFactory(Console, Logger);
+            NetworkManagerFactory = new NetworkManagerFactory(Console, Logger, networkConfiguration);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);

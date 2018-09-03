@@ -62,8 +62,8 @@ namespace TestHarness.Network_IO
             }
 
             return _tradeOrderWebsocketSubscriber.Initiate(
-                _networkConfiguration.TradeDomainUriDomainSegment,
-                _networkConfiguration.TradeDomainUriPort);
+                _networkConfiguration.TradeWebsocketUriDomain,
+                _networkConfiguration.TradeWebsocketUriPort);
         }
 
         private bool _InitiateStockMarketNetworkConnections()

@@ -22,7 +22,7 @@ namespace TestHarness
 
         public Mediator(IAppFactory appFactory)
         {
-            _appFactory = appFactory ?? new AppFactory();
+            _appFactory = appFactory ?? new AppFactory(new Configuration.Configuration());
             _commandManager = _appFactory.CommandManager;
             _commandManifest = _appFactory.CommandManifest;
             _programState = _appFactory.State;

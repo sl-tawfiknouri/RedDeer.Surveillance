@@ -2,8 +2,8 @@
 {
     public interface INetworkConfiguration
     {
-        string TradeDomainUriDomainSegment { get; }
-        string TradeDomainUriPort { get; }
+        string TradeWebsocketUriDomain { get; }
+        string TradeWebsocketUriPort { get; }
 
         string StockExchangeDomainUriDomainSegment { get; }
         string StockExchangeDomainUriPort { get; }

@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System;
+using TestHarness.Configuration.Interfaces;
 using TestHarness.Display;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Network_IO;
@@ -13,24 +14,28 @@ namespace TestHarness.Factory.NetworkFactory
     {
         private IConsole _console;
         private ILogger _logger;
+        private INetworkConfiguration _networkConfiguration;
 
-        public NetworkManagerFactory(IConsole console, ILogger logger)
+        public NetworkManagerFactory(
+            IConsole console,
+            ILogger logger,
+            INetworkConfiguration networkConfiguration)
         {
             _console = console ?? throw new ArgumentNullException(nameof(console));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _networkConfiguration = networkConfiguration ?? throw new ArgumentNullException(nameof(networkConfiguration));
         }
 
         public INetworkManager CreateWebsockets()
         {
             var websocketFactory = new WebsocketConnectionFactory();
-            var configuration = new Configuration.Configuration();
             var tradeOrderSubscriberFactory = new TradeOrderWebsocketSubscriberFactory(websocketFactory, _console, _logger);
             var stockMarketSubscriberFactory = new StockMarketWebsocketSubscriberFactory(websocketFactory, _console, _logger);
 
             var networkManager = new NetworkManager(
                 tradeOrderSubscriberFactory,
                 stockMarketSubscriberFactory,
-                configuration,
+                _networkConfiguration,
                 _logger);
 
             networkManager.InitiateAllNetworkConnections();

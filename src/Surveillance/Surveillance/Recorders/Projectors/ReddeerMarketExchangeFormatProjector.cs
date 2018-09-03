@@ -1,16 +1,15 @@
-﻿using Domain.Equity.Trading.Frames;
-using Surveillance.ElasticSearchDtos.Market;
-using Surveillance.Factories;
+﻿using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Recorders.Projectors.Interfaces;
 using System;
 using System.Linq;
+using Domain.Equity.Frames;
 
 namespace Surveillance.Recorders.Projectors
 {
     public class ReddeerMarketExchangeFormatProjector : IReddeerMarketExchangeFormatProjector
     {
-        private IOriginFactory _originFactory;
+        private readonly IOriginFactory _originFactory;
 
         public ReddeerMarketExchangeFormatProjector(IOriginFactory originFactory)
         {

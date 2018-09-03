@@ -9,7 +9,7 @@ namespace Surveillance.DataLayer.ElasticSearch.Market
 {
     public class RedDeerMarketExchangeFormatRepository : IRedDeerMarketExchangeFormatRepository
     {
-        private IElasticSearchDataAccess _dataAccess;
+        private readonly IElasticSearchDataAccess _dataAccess;
 
         public RedDeerMarketExchangeFormatRepository(IElasticSearchDataAccess dataAccess)
         {

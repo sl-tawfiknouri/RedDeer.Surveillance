@@ -8,7 +8,7 @@ namespace Domain.Streams
     /// </summary>
     public class RecordingObserver<T> : IObserver<T> where T : class
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public RecordingObserver(ILogger logger, int limit)
         {

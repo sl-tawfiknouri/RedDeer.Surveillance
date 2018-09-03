@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Domain.Equity.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Spoofing.Interfaces;
 using static Domain.Equity.Security;
@@ -8,6 +7,7 @@ using Surveillance.Trades;
 using System.Collections.Concurrent;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
+using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
 using Surveillance.DataLayer.ElasticSearch;
 
@@ -20,20 +20,20 @@ namespace Surveillance.Rules.Spoofing
     /// </summary>
     public class SpoofingRule : ISpoofingRule
     {
-        private TimeSpan _spoofingWindowSize;
-        private ConcurrentDictionary<SecurityId, ITradingHistoryStack> _tradingHistory;
+        private readonly TimeSpan _spoofingWindowSize;
+        private readonly ConcurrentDictionary<SecurityId, ITradingHistoryStack> _tradingHistory;
 
-        private IRuleBreachFactory _ruleBreachFactory;
-        private IRuleBreachRepository _ruleBreachRepository;
-        private ILogger _logger;
+        private readonly IRuleBreachFactory _ruleBreachFactory;
+        private readonly IRuleBreachRepository _ruleBreachRepository;
+        private readonly ILogger _logger;
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         // (0-1) % of cancellation req
-        private const decimal _cancellationThreshold = 0.8m;
+        private const decimal CancellationThreshold = 0.8m;
 
         // volume difference between spoof and real trade
-        private const decimal _relativeSizeMultipleForSpoofExceedingReal = 2.5m; 
+        private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m; 
 
         public SpoofingRule(
             IRuleBreachFactory ruleBreachFactory,
@@ -121,8 +121,8 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            var buyPosition = new TradePosition(new List<TradeOrderFrame>(), _cancellationThreshold, _logger);
-            var sellPosition = new TradePosition(new List<TradeOrderFrame>(), _cancellationThreshold, _logger);
+            var buyPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, _logger);
+            var sellPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, _logger);
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var hasBreachedSpoofingRule = false;
@@ -152,7 +152,7 @@ namespace Surveillance.Rules.Spoofing
                 {
                     var adjustedFulfilledOrders =
                         (tradingPosition.VolumeInStatus(OrderStatus.Fulfilled)
-                        * _relativeSizeMultipleForSpoofExceedingReal);
+                        * RelativeSizeMultipleForSpoofExceedingReal);
 
                     var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
 

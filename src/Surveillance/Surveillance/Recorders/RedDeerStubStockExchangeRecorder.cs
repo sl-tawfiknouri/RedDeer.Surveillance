@@ -1,6 +1,6 @@
-﻿using Domain.Equity.Trading.Frames;
-using Surveillance.Recorders.Interfaces;
+﻿using Surveillance.Recorders.Interfaces;
 using System;
+using Domain.Equity.Frames;
 
 namespace Surveillance.Recorders
 {

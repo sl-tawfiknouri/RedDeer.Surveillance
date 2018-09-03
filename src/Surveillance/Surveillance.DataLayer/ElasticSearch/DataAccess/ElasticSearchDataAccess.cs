@@ -17,8 +17,8 @@ namespace Surveillance.DataLayer.ElasticSearch
     {
         private readonly ElasticClient _elasticClient;
 
-        private ConcurrentDictionary<string, string> _indexExistsCache;
-        private SemaphoreSlim _indexExistsCacheLock;
+        private readonly ConcurrentDictionary<string, string> _indexExistsCache;
+        private readonly SemaphoreSlim _indexExistsCacheLock;
 
         public string RuleBreachIndexName => "rule-breach";
         public string ReddeerTradeFormatIndexName => "reddeer-trade";

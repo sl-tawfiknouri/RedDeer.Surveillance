@@ -8,7 +8,7 @@ namespace Surveillance
     /// </summary>
     public class Mediator : IMediator
     {
-        private IReddeerTradeService _reddeerTradeService;
+        private readonly IReddeerTradeService _reddeerTradeService;
 
         public Mediator(
             IReddeerTradeService reddeerTradeService)

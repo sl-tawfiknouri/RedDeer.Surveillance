@@ -1,7 +1,7 @@
-﻿using Domain.Equity.Trading.Orders;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Domain.Trades.Orders;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Trades
@@ -9,10 +9,10 @@ namespace Surveillance.Trades
     public class TradingHistory : ITradingHistory
     {
         private IList<TradeOrderFrame> _active;
-        private IList<TradeOrderFrame> _history;
-        private TimeSpan _activeTradeDuration;
+        private readonly IList<TradeOrderFrame> _history;
+        private readonly TimeSpan _activeTradeDuration;
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public TradingHistory(TimeSpan activeTradeDuration)
         {

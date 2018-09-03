@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity.Trading.Orders;
+using Domain.Trades.Orders;
 
 namespace Surveillance.Trades.Interfaces
 {

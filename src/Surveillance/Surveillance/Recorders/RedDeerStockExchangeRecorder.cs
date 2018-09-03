@@ -1,17 +1,17 @@
-﻿using Domain.Equity.Trading.Frames;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders.Projectors.Interfaces;
 using System;
+using Domain.Equity.Frames;
 
 namespace Surveillance.Recorders
 {
     public class RedDeerStockExchangeRecorder : IRedDeerStockExchangeRecorder
     {
-        private IRedDeerMarketExchangeFormatRepository _repository;
-        private IReddeerMarketExchangeFormatProjector _projector;
-        private ILogger _logger;
+        private readonly IRedDeerMarketExchangeFormatRepository _repository;
+        private readonly IReddeerMarketExchangeFormatProjector _projector;
+        private readonly ILogger _logger;
 
         public RedDeerStockExchangeRecorder(
             IRedDeerMarketExchangeFormatRepository repository,

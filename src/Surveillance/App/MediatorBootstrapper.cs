@@ -7,8 +7,8 @@ namespace RedDeer.Surveillance.App
 {
     public class MediatorBootstrapper : IStartUpTaskRunner
     {
-        private IMediator _mediator;
-        private ILogger<MediatorBootstrapper> _logger;
+        private readonly IMediator _mediator;
+        private readonly ILogger<MediatorBootstrapper> _logger;
 
         public MediatorBootstrapper(
             IMediator mediator,

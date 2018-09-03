@@ -1,4 +1,4 @@
-﻿using Domain.Equity.Trading.Orders;
+﻿using Domain.Trades.Orders;
 using Surveillance.ElasticSearchDtos.Trades;
 
 namespace Surveillance.Recorders.Projectors.Interfaces

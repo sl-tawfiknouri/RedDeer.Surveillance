@@ -6,9 +6,9 @@ namespace Domain.Streams
 {
     public class RingBuffer<T> where T : class
     {
-        private int _limit;
-        private Queue<T> _queue;
-        private object _lock = new object();
+        private readonly int _limit;
+        private readonly Queue<T> _queue;
+        private readonly object _lock = new object();
 
         public RingBuffer(int limit)
         {

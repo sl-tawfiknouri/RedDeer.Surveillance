@@ -6,7 +6,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkFailoverLocalMemory : INetworkFailover
     {
-        private object _lock = new object();
+        private readonly object _lock = new object();
         private Dictionary<System.Type, List<object>> _dict;
 
         public NetworkFailoverLocalMemory()
@@ -31,16 +31,16 @@ namespace Utilities.Network_IO.Websocket_Connections
                     return;
                 }
 
-                _dict.TryGetValue(typeof(T), out List<object> _itemList);
+                _dict.TryGetValue(typeof(T), out List<object> itemList);
 
-                if (_itemList == null)
+                if (itemList == null)
                 {
-                    _itemList = new List<object>() { value };
-                    _dict.Add(typeof(T), _itemList);
+                    itemList = new List<object>() { value };
+                    _dict.Add(typeof(T), itemList);
                 }
                 else
                 {
-                    _itemList.Add(value);
+                    itemList.Add(value);
                 }
             }
         }

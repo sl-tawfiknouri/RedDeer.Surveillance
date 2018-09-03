@@ -1,8 +1,8 @@
-﻿using StructureMap;
+﻿using Domain.Equity.Streams.Interfaces;
+using Domain.Streams;
+using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Domain.Equity.Trading;
 using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
 using Utilities.Network_IO.Websocket_Hosts;

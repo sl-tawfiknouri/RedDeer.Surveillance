@@ -1,4 +1,4 @@
-﻿using Domain.Equity.Trading.Orders;
+﻿using Domain.Trades.Orders;
 
 namespace Surveillance.Trades.Interfaces
 {

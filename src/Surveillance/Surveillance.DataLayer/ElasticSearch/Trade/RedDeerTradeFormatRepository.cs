@@ -9,7 +9,7 @@ namespace Surveillance.DataLayer.Trade
 {
     public class RedDeerTradeFormatRepository : IRedDeerTradeFormatRepository
     {
-        private IElasticSearchDataAccess _dataAccess;
+        private readonly IElasticSearchDataAccess _dataAccess;
 
         public RedDeerTradeFormatRepository(IElasticSearchDataAccess dataAccess)
         {

@@ -7,13 +7,13 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkSwitch : INetworkSwitch
     {
-        private int _failoverScanFrequencyMilliseconds = 5000;
+        private readonly int _failoverScanFrequencyMilliseconds = 5000;
         private volatile bool _hasFailedOverData;
-        private Timer _timer;
+        private readonly Timer _timer;
         
-        private INetworkTrunk _trunk;
-        private INetworkFailover _failover;
-        private object _lock = new object();
+        private readonly INetworkTrunk _trunk;
+        private readonly INetworkFailover _failover;
+        private readonly object _lock = new object();
 
         private string _domain;
         private string _port;

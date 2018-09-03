@@ -1,15 +1,15 @@
-﻿using Domain.Equity.Trading;
-using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Surveillance.Network_IO;
+﻿using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
-using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Services.Interfaces;
 using System;
-using Utilities.Network_IO.Websocket_Hosts;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Services
 {
@@ -17,12 +17,12 @@ namespace Surveillance.Services
     {
         private INetworkExchange _tradeNetworkExchange;
         private INetworkExchange _equityNetworkExchange;
-        private ISurveillanceNetworkExchangeFactory _networkExchangeFactory;
-        private IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
-        private IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
-        private IRuleManager _ruleManager;
-        private IRedDeerTradeRecorder _reddeerTradeRecorder;
-        private IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
+        private readonly ISurveillanceNetworkExchangeFactory _networkExchangeFactory;
+        private readonly IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
+        private readonly IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
+        private readonly IRuleManager _ruleManager;
+        private readonly IRedDeerTradeRecorder _reddeerTradeRecorder;
+        private readonly IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
 
         public ReddeerTradeService(
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,

@@ -2,7 +2,7 @@
 
 namespace Domain.Trades.Streams.Interfaces
 {
-    public interface ITradeOrderStream<T> : PublishingStream<T>
+    public interface ITradeOrderStream<T> : IPublishingStream<T>
     {
     }
 }

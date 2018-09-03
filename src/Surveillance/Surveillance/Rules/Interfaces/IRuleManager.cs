@@ -1,5 +1,6 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
+﻿using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 
 namespace Surveillance.Rules.Interfaces
 {

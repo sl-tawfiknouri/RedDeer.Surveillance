@@ -10,12 +10,12 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkTrunk : INetworkTrunk
     {
-        private object _stateLock = new object();
+        private readonly object _stateLock = new object();
         private object _closeEventLock = new object();
 
-        private IWebsocketConnectionFactory _websocketFactory;
+        private readonly IWebsocketConnectionFactory _websocketFactory;
         private IConnectionWebsocket _activeWebsocket;
-        private IMessageWriter _messageWriter;
+        private readonly IMessageWriter _messageWriter;
         private volatile bool _initiated;
 
         private string _port;

@@ -1,4 +1,4 @@
-﻿using Domain.Equity.Trading.Frames;
+﻿using Domain.Equity.Frames;
 using Surveillance.ElasticSearchDtos.Market;
 
 namespace Surveillance.Recorders.Projectors.Interfaces

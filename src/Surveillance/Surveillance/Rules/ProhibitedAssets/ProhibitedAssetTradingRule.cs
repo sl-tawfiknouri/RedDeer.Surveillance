@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Trading.Orders;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;
 using System;
+using Domain.Trades.Orders;
 
 namespace Surveillance.Rules.ProhibitedAssetTradingRule
 {
@@ -15,10 +15,10 @@ namespace Surveillance.Rules.ProhibitedAssetTradingRule
     /// </summary>
     public class ProhibitedAssetTradingRule : IProhibitedAssetTradingRule
     {
-        private ILogger _logger;
-        private IProhibitedAssetsRepository _assetsRepository;
-        private IRuleBreachFactory _ruleBreachFactory;
-        private IRuleBreachRepository _ruleBreachRepository;
+        private readonly ILogger _logger;
+        private readonly IProhibitedAssetsRepository _assetsRepository;
+        private readonly IRuleBreachFactory _ruleBreachFactory;
+        private readonly IRuleBreachRepository _ruleBreachRepository;
 
         public ProhibitedAssetTradingRule(
             ILogger<ProhibitedAssetTradingRule> logger,

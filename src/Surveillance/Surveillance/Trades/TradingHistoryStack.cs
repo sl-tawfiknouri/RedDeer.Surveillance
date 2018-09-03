@@ -1,17 +1,17 @@
-﻿using Domain.Equity.Trading.Orders;
-using Surveillance.Trades.Interfaces;
+﻿using Surveillance.Trades.Interfaces;
 using System;
 using System.Collections.Generic;
+using Domain.Trades.Orders;
 
 namespace Surveillance.Trades
 {
     public class TradingHistoryStack : ITradingHistoryStack
     {
-        private Stack<TradeOrderFrame> _activeStack;
-        private Queue<TradeOrderFrame> _history;
+        private readonly Stack<TradeOrderFrame> _activeStack;
+        private readonly Queue<TradeOrderFrame> _history;
 
-        private object _lock = new object();
-        private TimeSpan _activeTradeDuration;
+        private readonly object _lock = new object();
+        private readonly TimeSpan _activeTradeDuration;
 
         public TradingHistoryStack(TimeSpan activeTradeDuration)
         {

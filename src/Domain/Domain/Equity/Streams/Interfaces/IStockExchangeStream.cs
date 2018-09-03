@@ -3,7 +3,7 @@ using Domain.Streams;
 
 namespace Domain.Equity.Streams.Interfaces
 {
-    public interface IStockExchangeStream : PublishingStream<ExchangeFrame>
+    public interface IStockExchangeStream : IPublishingStream<ExchangeFrame>
     {
     }
 }

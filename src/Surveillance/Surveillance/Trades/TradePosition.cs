@@ -1,9 +1,9 @@
-﻿using Domain.Equity.Trading.Orders;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Surveillance.Trades.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Trades.Orders;
 
 namespace Surveillance.Trades
 {
@@ -12,9 +12,9 @@ namespace Surveillance.Trades
     /// </summary>
     public class TradePosition : ITradePosition
     {
-        private IList<TradeOrderFrame> _trades;
-        private decimal _cancellationRatioPercentage;
-        private ILogger _logger;
+        private readonly IList<TradeOrderFrame> _trades;
+        private readonly decimal _cancellationRatioPercentage;
+        private readonly ILogger _logger;
 
         /// <param name="percent">between 0 and 1</param>
         public TradePosition(

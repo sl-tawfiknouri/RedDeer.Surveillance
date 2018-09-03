@@ -1,17 +1,17 @@
-﻿using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Surveillance.Rules.Interfaces;
+﻿using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;
-using Surveillance.Rules.ProhibitedAssetTradingRule;
 using Surveillance.Rules.Spoofing.Interfaces;
 using System;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 
 namespace Surveillance.Rules
 {
     public class RuleManager : IRuleManager
     {
-        private IProhibitedAssetTradingRule _prohibitedAssetTradingRule;
-        private ISpoofingRule _spoofingRule;
+        private readonly IProhibitedAssetTradingRule _prohibitedAssetTradingRule;
+        private readonly ISpoofingRule _spoofingRule;
 
         public RuleManager(
             IProhibitedAssetTradingRule prohibitedAssetTradingRule,

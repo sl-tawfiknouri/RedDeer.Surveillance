@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Trading.Orders;
+using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Trade.Interfaces;
 using Surveillance.Recorders.Interfaces;
@@ -9,9 +9,9 @@ namespace Surveillance.Recorders
 {
     public class RedDeerTradeRecorder : IRedDeerTradeRecorder
     {
-        private IRedDeerTradeFormatRepository _repository;
-        private IReddeerTradeFormatProjector _projector;
-        private ILogger _logger;
+        private readonly IRedDeerTradeFormatRepository _repository;
+        private readonly IReddeerTradeFormatProjector _projector;
+        private readonly ILogger _logger;
 
         public RedDeerTradeRecorder(
             IRedDeerTradeFormatRepository repository,

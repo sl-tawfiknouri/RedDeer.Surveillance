@@ -7,7 +7,7 @@ namespace Surveillance.DataLayer.ElasticSearch
 {
     public class RuleBreachRepository : IRuleBreachRepository
     {
-        private IElasticSearchDataAccess _elasticSearch;
+        private readonly IElasticSearchDataAccess _elasticSearch;
 
         public RuleBreachRepository(IElasticSearchDataAccess elasticSearch)
         {

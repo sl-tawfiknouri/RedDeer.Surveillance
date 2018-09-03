@@ -8,8 +8,8 @@ namespace Surveillance.Network_IO
 {
     public class SurveillanceNetworkExchangeFactory : ISurveillanceNetworkExchangeFactory
     {
-        private IWebsocketHostFactory _websocketHostFactory;
-        private ILogger<NetworkExchange> _logger;
+        private readonly IWebsocketHostFactory _websocketHostFactory;
+        private readonly ILogger<NetworkExchange> _logger;
 
         public SurveillanceNetworkExchangeFactory(
             IWebsocketHostFactory websocketHostFactory,

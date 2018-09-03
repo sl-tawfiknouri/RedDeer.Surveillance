@@ -7,10 +7,10 @@ namespace Utilities.Network_IO.Websocket_Hosts
 {
     public class NetworkExchange : INetworkExchange
     {
-        IWebsocketHostFactory _websocketHostFactory;
-        INetworkDuplexer _networkDuplexer;
+        readonly IWebsocketHostFactory _websocketHostFactory;
+        readonly INetworkDuplexer _networkDuplexer;
         IWebsocketHost _activeHost;
-        ILogger _logger;
+        readonly ILogger _logger;
 
         private volatile bool _initiated;
         private readonly object _stateTransition = new object();

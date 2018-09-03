@@ -1,24 +1,26 @@
-﻿using Domain.Equity.Trading.Frames;
-using Domain.Equity.Trading.Orders;
-using Domain.Equity.Trading.Streams.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Surveillance.Network_IO.Interfaces;
 using System;
+using Domain.Equity.Frames;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Trades.Orders;
+using Domain.Trades.Streams.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Network_IO
 {
     public class SurveillanceNetworkDuplexer : ISurveillanceNetworkDuplexer
     {
-        private ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
-        private IStockExchangeStream _ReddeerStockExchangeStream;
+        private readonly ITradeOrderStream<TradeOrderFrame> _reddeerTradeFormatStream;
+        private readonly IStockExchangeStream _reddeerStockExchangeStream;
 
         public SurveillanceNetworkDuplexer(
             ITradeOrderStream<TradeOrderFrame> reddeerStream,
             IStockExchangeStream stockExchangeStream)
         {
-            _ReddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
-            _ReddeerStockExchangeStream =
+            _reddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
+            _reddeerStockExchangeStream =
                 stockExchangeStream
                 ?? throw new ArgumentNullException(nameof(stockExchangeStream));
         }
@@ -54,7 +56,7 @@ namespace Surveillance.Network_IO
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<TradeOrderFrame>(message.Message, serialiserSettings);
-            _ReddeerTradeFormatStream?.Add(formattedMessage);
+            _reddeerTradeFormatStream?.Add(formattedMessage);
         }
 
         private void FixFormat(IDuplexedMessage message)
@@ -70,7 +72,7 @@ namespace Surveillance.Network_IO
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message, serialiserSettings);
-            _ReddeerStockExchangeStream?.Add(formattedMessage);
+            _reddeerStockExchangeStream?.Add(formattedMessage);
         }
     }
 }

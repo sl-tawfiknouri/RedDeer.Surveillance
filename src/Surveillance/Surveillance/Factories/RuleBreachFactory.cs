@@ -6,7 +6,7 @@ namespace Surveillance.Factories
 {
     public class RuleBreachFactory : IRuleBreachFactory
     {
-        private IOriginFactory _originFactory;
+        private readonly IOriginFactory _originFactory;
 
         public RuleBreachFactory(IOriginFactory originFactory)
         {

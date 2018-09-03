@@ -14,7 +14,7 @@ namespace RedDeer.Surveillance.App
 {
     public class Program
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private const string RunAsServiceFlag = "--run-as-service";
         private const string RunAsSystemdServiceFlag = "--systemd-service";
@@ -25,28 +25,28 @@ namespace RedDeer.Surveillance.App
         private const string ServiceDisplayName = "RedDeer Surveillance Service";
         private const string ServiceDescription = "RedDeer Surveillance Service";
 
-        private static Container _container { get; set; }
+        private static Container Container { get; set; }
 
         public static void Main(string[] args)
         {
             try
             {
-                _container = new Container();
-                _container.Configure(config =>
+                Container = new Container();
+                Container.Configure(config =>
                 {
                     config.IncludeRegistry<DataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
 
-                var startUpTaskRunner = _container.GetInstance<IStartUpTaskRunner>();
+                var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
 
                 ProcessArguments(args);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
+                Logger.Error(ex);
                 Console.WriteLine($"An error ocurred: {ex.Message}");
             }
         }
@@ -55,34 +55,34 @@ namespace RedDeer.Surveillance.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
-                _logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
+                Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemdServiceFlag))
             {
-                _logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemdServiceFlag}).");
+                Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemdServiceFlag}).");
                 RunAsSystemdService(args);
             }
             else if (args.Contains(RegisterServiceFlag))
             {
-                _logger.Info($"Register Service Flag Found ({RegisterServiceFlag}).");
+                Logger.Info($"Register Service Flag Found ({RegisterServiceFlag}).");
                 RegisterService();
             }
             else if (args.Contains(UnregisterServiceFlag))
             {
-                _logger.Info($"Unregister Service Flag Found ({UnregisterServiceFlag}).");
+                Logger.Info($"Unregister Service Flag Found ({UnregisterServiceFlag}).");
                 UnregisterService();
             }           
             else
             {
-                _logger.Info($"No Flags Found.");
+                Logger.Info($"No Flags Found.");
                 RunInteractive(args);
             }
         }
 
         private static void RunAsService(string[] args)
         {
-            var service = _container.GetInstance<Service>();
+            var service = Container.GetInstance<Service>();
             var serviceHost = new Win32ServiceHost(service);
             serviceHost.Run();
         }
@@ -92,11 +92,11 @@ namespace RedDeer.Surveillance.App
             // Register sigterm event handler. 
             var sigterm = new ManualResetEventSlim();
             AssemblyLoadContext.Default.Unloading += x => {
-                _logger.Info($"Sigterm triggered.");
+                Logger.Info($"Sigterm triggered.");
                 sigterm.Set();
             };
 
-            var service = _container.GetInstance<Service>();
+            var service = Container.GetInstance<Service>();
             service.Start(new string[0], () => { });
             sigterm.Wait();
             service.Stop();
@@ -104,7 +104,7 @@ namespace RedDeer.Surveillance.App
 
         private static void RunInteractive(string[] args)
         {
-            var service = _container.GetInstance<Service>();
+            var service = Container.GetInstance<Service>();
             service.Start(new string[0], () => { });
             Console.WriteLine("Running interactively, press enter to stop.");
             Console.ReadLine();
@@ -114,18 +114,18 @@ namespace RedDeer.Surveillance.App
         private static void RunOnConsole(Func<Container, CancellationToken, Task> asyncAction)
         {
             var cts = new CancellationTokenSource();
-            _logger.Info("Waiting on task...");
+            Logger.Info("Waiting on task...");
             var task = Task.Run(async () =>
             {
-                await asyncAction(_container, cts.Token);
-                _logger.Info("End of task");
+                await asyncAction(Container, cts.Token);
+                Logger.Info("End of task");
             });
             // uncomment to allow for cancelling task early
             /* Console.ReadLine(); 
             cts.Cancel(); /* */
-            _logger.Info("Waiting for end of task...");
+            Logger.Info("Waiting for end of task...");
             task.Wait();
-            _logger.Info("End of application");
+            Logger.Info("End of application");
         }
 
         private static void RegisterService()

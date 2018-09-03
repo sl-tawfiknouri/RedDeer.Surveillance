@@ -1,9 +1,11 @@
 ﻿using DasMulli.Win32.ServiceUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
+using System.IO;
 using System.Threading;
 
 namespace RedDeer.Relay.App
@@ -36,6 +38,11 @@ namespace RedDeer.Relay.App
                     logging.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog()
+                .ConfigureAppConfiguration((hostingContext, config) => 
+                {
+                    config.SetBasePath(Directory.GetCurrentDirectory());
+                    config.AddJsonFile("AppSettings.json", false, false);
+                })
                 .Build();
 
             // Make sure the windows service is stopped if the

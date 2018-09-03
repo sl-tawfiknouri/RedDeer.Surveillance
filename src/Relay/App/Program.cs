@@ -6,7 +6,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
+using Microsoft.Extensions.Configuration;
 using NLog;
+using Relay.Configuration;
 using StructureMap;
 
 namespace RedDeer.Relay.App
@@ -31,6 +33,9 @@ namespace RedDeer.Relay.App
             try
             {
                 _container = new Container();
+
+                _container.Inject(typeof(INetworkConfiguration), BuildConfiguration());
+
                 _container.Configure(config =>
                 {
                     config.IncludeRegistry<RelayRegistry>();
@@ -47,6 +52,23 @@ namespace RedDeer.Relay.App
                 _logger.Error(ex);
                 Console.WriteLine($"An error ocurred: {ex.Message}");
             }
+        }
+
+        private static Configuration BuildConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var networkConfiguration = new Configuration
+            {
+                RelayServiceEquityDomain = configurationBuilder.GetValue<string>("RelayServiceEquityDomain"),
+                RelayServiceEquityPort = configurationBuilder.GetValue<string>("RelayServiceEquityPort"),
+                SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
+                SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
+            };
+
+            return networkConfiguration;
         }
 
         private static void ProcessArguments(string[] args)

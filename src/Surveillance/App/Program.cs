@@ -13,6 +13,8 @@ using Surveillance;
 using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {
@@ -36,7 +38,13 @@ namespace RedDeer.Surveillance.App
             try
             {
                 Container = new Container();
-                Container.Inject(typeof(INetworkConfiguration), BuildConfiguration());
+
+                var configurationBuilder = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json", true, true)
+                    .Build();
+
+                Container.Inject(typeof(INetworkConfiguration), BuildNetworkConfiguration(configurationBuilder));
+                Container.Inject(typeof(IDatabaseConfiguration), BuildDatabaseConfiguration(configurationBuilder));
 
                 Container.Configure(config =>
                 {
@@ -57,19 +65,27 @@ namespace RedDeer.Surveillance.App
             }
         }
 
-        private static NetworkConfiguration BuildConfiguration()
+        private static INetworkConfiguration BuildNetworkConfiguration(IConfigurationRoot configurationBuilder)
         {
-            var configurationBuilder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-
-            var networkConfiguration = new NetworkConfiguration
+           var networkConfiguration = new NetworkConfiguration
             {
                 SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
                 SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
 
                 SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
                 SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
+            };
+
+            return networkConfiguration;
+        }
+
+        private static IDatabaseConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
+        {
+            var networkConfiguration = new DatabaseConfiguration
+            {
+                ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
+                ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),
+                ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort")
             };
 
             return networkConfiguration;

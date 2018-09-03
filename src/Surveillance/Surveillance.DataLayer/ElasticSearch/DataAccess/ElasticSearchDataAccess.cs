@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.ElasticSearchDtos.Rules;
 
@@ -24,9 +25,10 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
         public string ReddeerTradeFormatIndexName => "reddeer-trade";
         public string ReddeerStockExchangeFormatIndexName => "reddeer-stock-market";
 
-        public ElasticSearchDataAccess()
+        public ElasticSearchDataAccess(IDatabaseConfiguration databaseConfiguration)
         {
-            var url = "http://localhost:9200";
+            var url =
+                $"{databaseConfiguration.ElasticSearchProtocol}://{databaseConfiguration.ElasticSearchDomain}:{databaseConfiguration.ElasticSearchPort}";
             var settings = new ConnectionSettings(new Uri(url));
 
 #if DEBUG

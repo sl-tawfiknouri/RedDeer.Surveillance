@@ -16,7 +16,7 @@ namespace RedDeer.Relay.Relay.App
 {
     public class Program
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         private const string RunAsServiceFlag = "--run-as-service";
         private const string RunAsSystemdServiceFlag = "--systemd-service";
@@ -67,6 +67,11 @@ namespace RedDeer.Relay.Relay.App
                 RelayServiceEquityPort = configurationBuilder.GetValue<string>("RelayServiceEquityPort"),
                 SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
                 SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
+
+                RelayServiceTradeDomain = configurationBuilder.GetValue<string>("RelayServiceTradeDomain"),
+                RelayServiceTradePort = configurationBuilder.GetValue<string>("RelayServiceTradePort"),
+                SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
+                SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
             };
 
             return networkConfiguration;

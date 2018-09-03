@@ -16,10 +16,10 @@ namespace Relay.Network_IO.RelaySubscribers
     public class TradeRelaySubscriber : ITradeRelaySubscriber
     {
         private volatile bool _initiated;
-        private object _stateLock = new object();
-        private INetworkSwitch _networkSwitch;
-        private IDuplexMessageFactory _duplexMessageFactory;
-        private ILogger _logger;
+        private readonly object _stateLock = new object();
+        private readonly INetworkSwitch _networkSwitch;
+        private readonly IDuplexMessageFactory _duplexMessageFactory;
+        private readonly ILogger _logger;
 
         public TradeRelaySubscriber(
             INetworkSwitch networkSwitch,

@@ -8,8 +8,8 @@ namespace Relay.Processors
 {
     public class EquityProcessor : IEquityProcessor<ExchangeFrame>
     {
-        private ILogger _logger;
-        private IStockExchangeStream _exchangeStream;
+        private readonly ILogger _logger;
+        private readonly IStockExchangeStream _exchangeStream;
 
         public EquityProcessor(
             ILogger<EquityProcessor> logger,

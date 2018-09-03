@@ -6,9 +6,9 @@ namespace Relay
 {
     public class Mediator : IMediator
     {
-        private ITradeOrderStreamManager _tradeOrderStreamManager;
-        private IStockExchangeStreamManager _stockExchangeStreamManager;
-        private ILogger _logger;
+        private readonly ITradeOrderStreamManager _tradeOrderStreamManager;
+        private readonly IStockExchangeStreamManager _stockExchangeStreamManager;
+        private readonly ILogger _logger;
 
         public Mediator(
             ITradeOrderStreamManager tradeOrderStreamManager,

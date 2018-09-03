@@ -13,7 +13,7 @@ namespace Relay.Network_IO
     /// </summary>
     public class RelayTradeNetworkDuplexer : IRelayTradeNetworkDuplexer
     {
-        private ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
+        private readonly ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
 
         public RelayTradeNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
         {

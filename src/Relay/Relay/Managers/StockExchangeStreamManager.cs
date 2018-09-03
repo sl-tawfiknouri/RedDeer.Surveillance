@@ -16,13 +16,13 @@ namespace Relay.Managers
 {
     public class StockExchangeStreamManager : IStockExchangeStreamManager
     {
-        private IStockExchangeStream _stockExchangeStream;
-        private IEquityRelaySubscriber _equityRelaySubscriber;
-        private IWebsocketHostFactory _websocketHostFactory;
-        private INetworkConfiguration _networkConfiguration;
+        private readonly IStockExchangeStream _stockExchangeStream;
+        private readonly IEquityRelaySubscriber _equityRelaySubscriber;
+        private readonly IWebsocketHostFactory _websocketHostFactory;
+        private readonly INetworkConfiguration _networkConfiguration;
 
-        private ILogger<EquityProcessor> _epLogger;
-        private ILogger<NetworkExchange> _exchLogger;
+        private readonly ILogger<EquityProcessor> _epLogger;
+        private readonly ILogger<NetworkExchange> _exchangeLogger;
 
         public StockExchangeStreamManager(
             IStockExchangeStream stockExchangeStream,
@@ -30,20 +30,20 @@ namespace Relay.Managers
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
             ILogger<EquityProcessor> epLogger,
-            ILogger<NetworkExchange> exchLogger)
+            ILogger<NetworkExchange> exchangeLogger)
         {
             _stockExchangeStream = stockExchangeStream ?? throw new ArgumentNullException(nameof(stockExchangeStream));
             _equityRelaySubscriber = equityRelaySubscriber ?? throw new ArgumentNullException(nameof(equityRelaySubscriber));
             _websocketHostFactory = websocketHostFactory ?? throw new ArgumentNullException(nameof(websocketHostFactory));
             _networkConfiguration = networkConfiguration ?? throw new ArgumentNullException(nameof(networkConfiguration));
-            _epLogger = epLogger;
-            _exchLogger = exchLogger;
+            _epLogger = epLogger ?? throw new ArgumentNullException(nameof(epLogger));
+            _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
         }
 
         public void Initialise()
         {
-            var unsubFactory = new UnsubscriberFactory<ExchangeFrame>();
-            var stockExchangeStream = new StockExchangeStream(unsubFactory); // from stock processor TO relay
+            var unsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
+            var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO relay
             var equityProcessor = new EquityProcessor(_epLogger, stockExchangeStream);
             stockExchangeStream.Subscribe(_equityRelaySubscriber);
 
@@ -57,7 +57,7 @@ namespace Relay.Managers
 
             // begin hosting connection for upstream processes (i.e. test harness etc)
             var networkDuplexer = new RelayEquityNetworkDuplexer(_stockExchangeStream);
-            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchLogger);
+            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
             exchange.Initialise(
                 $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");
         }

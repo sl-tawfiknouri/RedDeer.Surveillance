@@ -7,8 +7,8 @@ namespace RedDeer.Relay.Relay.App
 {
     public class WebSocketRunner : IStartUpTaskRunner
     {
-        IMediator _mediator;
-        private ILogger _logger;
+        readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
         public WebSocketRunner(
             IMediator mediator,

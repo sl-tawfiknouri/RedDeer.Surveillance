@@ -12,8 +12,8 @@ namespace Relay.Processors
     /// </summary>
     public class TradeProcessor<T> : ITradeProcessor<T>
     {
-        private ILogger _logger;
-        private ITradeOrderStream<T> _tradeOrderStream;
+        private readonly ILogger _logger;
+        private readonly ITradeOrderStream<T> _tradeOrderStream;
 
         public TradeProcessor(
             ILogger<TradeProcessor<TradeOrderFrame>> logger,

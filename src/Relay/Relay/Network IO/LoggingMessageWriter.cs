@@ -6,7 +6,7 @@ namespace Relay.Network_IO
 {
     public class LoggingMessageWriter : IMessageWriter
     {
-        ILogger _logger;
+        readonly ILogger _logger;
 
         public LoggingMessageWriter(ILogger<LoggingMessageWriter> logger)
         {

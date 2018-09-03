@@ -10,7 +10,7 @@ namespace Relay.Network_IO
 {
     public class RelayEquityNetworkDuplexer : IRelayEquityNetworkDuplexer
     {
-        private IStockExchangeStream _RedeerStockFormatStream;
+        private readonly IStockExchangeStream _RedeerStockFormatStream;
 
         public RelayEquityNetworkDuplexer(IStockExchangeStream reddeerStockFormatStream)
         {

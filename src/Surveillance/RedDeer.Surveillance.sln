@@ -18,9 +18,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "..\Utilities\U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance", "Surveillance\Surveillance.csproj", "{A6E83797-F46D-4F77-88D8-95829B5C1F60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.DataLayer", "Surveillance.DataLayer\Surveillance.DataLayer.csproj", "{B2E42959-0C02-4C72-8DF4-637AD492ECF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.DataLayer", "Surveillance.DataLayer\Surveillance.DataLayer.csproj", "{B2E42959-0C02-4C72-8DF4-637AD492ECF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.ElasticSearchDtos", "..\Surveillance.ElasticSearchDtos\Surveillance.ElasticSearchDtos.csproj", "{C0D62F7B-1DDD-4A16-9988-FEE51F61A27C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.ElasticSearchDtos", "..\Surveillance.ElasticSearchDtos\Surveillance.ElasticSearchDtos.csproj", "{C0D62F7B-1DDD-4A16-9988-FEE51F61A27C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "..\Utilities.Tests\Utilities.Tests.csproj", "{4661D6AA-15B9-4A0E-B296-925ABE213285}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,10 @@ Global
 		{C0D62F7B-1DDD-4A16-9988-FEE51F61A27C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D62F7B-1DDD-4A16-9988-FEE51F61A27C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0D62F7B-1DDD-4A16-9988-FEE51F61A27C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

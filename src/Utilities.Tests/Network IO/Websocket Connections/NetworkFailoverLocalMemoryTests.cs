@@ -187,5 +187,39 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
 
             Assert.DoesNotThrow(() => failover.Store(input7));
         }
+
+        [Test]
+        public void HasData_ReturnsFalse_WhenNoData()
+        {
+            var failOver = new NetworkFailoverLocalMemory();
+
+            Assert.IsFalse(failOver.HasData());
+        }
+
+        [Test]
+        public void HasData_ReturnsTrue_WhenData()
+        {
+            var failOver = new NetworkFailoverLocalMemory();
+
+            failOver.Store("hello world");
+
+            Assert.IsTrue(failOver.HasData());
+        }
+
+        [Test]
+        public void HasData_ReturnsFalseThenTrueThenFalse_WhenAddingThenRemovingItem()
+        {
+            var failOver = new NetworkFailoverLocalMemory();
+
+            Assert.IsFalse(failOver.HasData());
+
+            failOver.Store("hello world");
+
+            Assert.IsTrue(failOver.HasData());
+
+            failOver.RemoveItem(typeof(string), "hello world");
+
+            Assert.IsFalse(failOver.HasData());
+        }
     }
 }

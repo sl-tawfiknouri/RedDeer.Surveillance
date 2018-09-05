@@ -11,15 +11,11 @@ namespace Utilities.Network_IO.Websocket_Connections
     public class NetworkTrunk : INetworkTrunk
     {
         private readonly object _stateLock = new object();
-        private object _closeEventLock = new object();
 
         private readonly IWebsocketConnectionFactory _websocketFactory;
         private IConnectionWebsocket _activeWebsocket;
         private readonly IMessageWriter _messageWriter;
         private volatile bool _initiated;
-
-        private string _port;
-        private string _domain;
         
         public NetworkTrunk(
             IWebsocketConnectionFactory websocketFactory,
@@ -47,9 +43,6 @@ namespace Utilities.Network_IO.Websocket_Connections
                 _messageWriter.Write("Network trunk passed null port");
                 throw new ArgumentNullException(nameof(port));
             }
-
-            _port = port;
-            _domain = domain;
 
             lock (_stateLock)
             {

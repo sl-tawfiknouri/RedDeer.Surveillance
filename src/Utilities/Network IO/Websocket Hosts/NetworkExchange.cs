@@ -34,6 +34,12 @@ namespace Utilities.Network_IO.Websocket_Hosts
         /// </summary>
         public void Initialise(string hostUrl)
         {
+            if (string.IsNullOrWhiteSpace(hostUrl))
+            {
+                _logger.LogError("NetworkExchange received null or empty host url");
+                return;
+            }
+
             lock (_stateTransition)
             {
                 if (_initiated)

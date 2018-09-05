@@ -7,11 +7,20 @@ namespace Utilities.Network_IO.Websocket_Hosts
     {
         public IDuplexedMessage Create<T>(MessageType type, T value)
         {
+            if (value == null)
+            {
+                return new DuplexedMessage
+                {
+                    Type = type,
+                    Message = string.Empty
+                };
+            }
+
             var serialiserSettings = new JsonSerializerSettings()
             {
                 DateFormatHandling = DateFormatHandling.IsoDateFormat,
             };
-
+            
             return new DuplexedMessage
             {
                 Type = type,

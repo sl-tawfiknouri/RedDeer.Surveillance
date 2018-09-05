@@ -1,4 +1,5 @@
-﻿using Utilities.Network_IO.Websocket_Hosts.Interfaces;
+﻿using System;
+using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Hosts
 {
@@ -6,8 +7,8 @@ namespace Utilities.Network_IO.Websocket_Hosts
     {
         public IWebsocketHost Build(string location)
         {
-            if (location == null)
-                location = string.Empty;
+            if (string.IsNullOrWhiteSpace(location))
+                throw new ArgumentException(nameof(location)); // need to be a valid URI
 
             return new RedDeerWebsocketHost(location);
         }

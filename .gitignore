@@ -3,3 +3,4 @@ obj/
 .vs/
 *.user
 src/Relay/RedDeer.Relay.sln.DotSettings.user
+packages/

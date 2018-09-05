@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.ElasticSearchD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "..\Utilities.Tests\Utilities.Tests.csproj", "{4661D6AA-15B9-4A0E-B296-925ABE213285}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.DataLayer.Tests", "Surveillance.DataLayer.Tests\Surveillance.DataLayer.Tests.csproj", "{0A9147B5-F9AA-4D32-978F-5527C611285D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4661D6AA-15B9-4A0E-B296-925ABE213285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A9147B5-F9AA-4D32-978F-5527C611285D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A9147B5-F9AA-4D32-978F-5527C611285D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A9147B5-F9AA-4D32-978F-5527C611285D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A9147B5-F9AA-4D32-978F-5527C611285D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

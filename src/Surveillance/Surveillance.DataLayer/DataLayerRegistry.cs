@@ -1,9 +1,10 @@
 ﻿using StructureMap;
-using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.DataLayer.ElasticSearch.DataAccess;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Market;
 using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Rules;
+using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 

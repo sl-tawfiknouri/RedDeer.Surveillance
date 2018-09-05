@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.ElasticSearch;
+using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;

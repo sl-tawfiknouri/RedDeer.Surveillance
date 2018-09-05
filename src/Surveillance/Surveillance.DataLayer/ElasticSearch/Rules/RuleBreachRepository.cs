@@ -1,9 +1,10 @@
-﻿using Surveillance.ElasticSearchDtos.Rules;
-using System;
+﻿using System;
 using System.Threading;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
+using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
+using Surveillance.ElasticSearchDtos.Rules;
 
-namespace Surveillance.DataLayer.ElasticSearch
+namespace Surveillance.DataLayer.ElasticSearch.Rules
 {
     public class RuleBreachRepository : IRuleBreachRepository
     {
@@ -23,7 +24,7 @@ namespace Surveillance.DataLayer.ElasticSearch
 
             var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(10000));
 
-            var targetIndex = _elasticSearch.GetOrCreateDateBasedIndexAsync<RuleBreachDocument>(
+            _elasticSearch.GetOrCreateDateBasedIndexAsync<RuleBreachDocument>(
                 _elasticSearch.RuleBreachIndexName,
                 DateTime.Now,
                 cts.Token);

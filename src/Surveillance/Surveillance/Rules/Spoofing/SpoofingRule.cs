@@ -9,7 +9,7 @@ using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
-using Surveillance.DataLayer.ElasticSearch;
+using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 
 namespace Surveillance.Rules.Spoofing
 {

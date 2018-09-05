@@ -1,6 +1,6 @@
 ﻿using Surveillance.ElasticSearchDtos.Rules;
 
-namespace Surveillance.DataLayer.ElasticSearch
+namespace Surveillance.DataLayer.ElasticSearch.Rules.Interfaces
 {
     public interface IRuleBreachRepository
     {

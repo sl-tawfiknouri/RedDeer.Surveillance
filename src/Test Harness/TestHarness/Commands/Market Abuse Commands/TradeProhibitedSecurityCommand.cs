@@ -6,7 +6,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 {
     public class TradeProhibitedSecurityCommand : ICommand
     {
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
 
         public TradeProhibitedSecurityCommand(IAppFactory appFactory)
         {

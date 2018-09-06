@@ -13,7 +13,7 @@ namespace TestHarness.Network_IO.Subscribers
 
         protected INetworkSwitch _networkSwitch;
         protected IDuplexMessageFactory _duplexMessageFactory;
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public BaseWebsocketSubscriber(
             INetworkSwitch networkSwitch,

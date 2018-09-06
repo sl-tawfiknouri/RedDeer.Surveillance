@@ -12,10 +12,10 @@ namespace TestHarness.Engine.OrderGenerator
     public class TradingHeartbeatProhibitedSecuritiesProcess : BaseTradingProcess, IOrderDataGenerator
     {
         private ExchangeFrame _lastFrame;
-        private IPulsatingHeartbeat _heartbeat;
+        private readonly IPulsatingHeartbeat _heartbeat;
 
         private volatile bool _initiated;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public TradingHeartbeatProhibitedSecuritiesProcess(
             IPulsatingHeartbeat heartbeat,

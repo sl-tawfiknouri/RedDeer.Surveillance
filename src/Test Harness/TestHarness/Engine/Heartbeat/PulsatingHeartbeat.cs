@@ -6,7 +6,7 @@ namespace TestHarness.Engine.Heartbeat
     public class PulsatingHeartbeat : IPulsatingHeartbeat
     {
         private ElapsedEventHandler _handler;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public PulsatingHeartbeat()
         { }

@@ -10,9 +10,9 @@ namespace TestHarness.Network_IO.Subscribers
 {
     public class TradeOrderWebsocketSubscriberFactory : ITradeOrderWebsocketSubscriberFactory
     {
-        private IWebsocketConnectionFactory _websocketFactory;
-        private IConsole _console;
-        private ILogger _logger;
+        private readonly IWebsocketConnectionFactory _websocketFactory;
+        private readonly IConsole _console;
+        private readonly ILogger _logger;
 
         public TradeOrderWebsocketSubscriberFactory(
             IWebsocketConnectionFactory websocketFactory,

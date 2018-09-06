@@ -7,11 +7,11 @@ namespace TestHarness.Engine.Heartbeat
 {
     public class IrregularHeartbeat : IHeartbeat
     {
-        private double _sd;
-        private TimeSpan _coreHeartbeat;
-        private Timer _activeTimer;
+        private readonly double _sd;
+        private readonly TimeSpan _coreHeartbeat;
+        private readonly Timer _activeTimer;
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         /// <summary>
         /// Ensure the SD is high enough we can observe the difference in the beats

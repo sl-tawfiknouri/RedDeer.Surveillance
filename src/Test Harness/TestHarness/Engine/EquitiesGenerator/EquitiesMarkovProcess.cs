@@ -22,12 +22,12 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
-        private IHeartbeat _heartBeat;
+        private readonly IHeartbeat _heartBeat;
 
         private readonly ILogger _logger;
 
-        private object _stateTransitionLock = new object();
-        private object _walkingLock = new object();
+        private readonly object _stateTransitionLock = new object();
+        private readonly object _walkingLock = new object();
 
         public EquitiesMarkovProcess(
             IExchangeSeriesInitialiser exchangeTickInitialiser,

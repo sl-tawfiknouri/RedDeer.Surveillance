@@ -19,10 +19,10 @@ namespace TestHarness.Engine.OrderGenerator
         protected ITradeOrderStream<TradeOrderFrame> _tradeStream;
         protected ITradeStrategy<TradeOrderFrame> _orderStrategy;
 
-        private object _stateTransition = new object();
+        private readonly object _stateTransition = new object();
         private volatile bool _generatorExecuting;
 
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public BaseTradingProcess(ILogger logger, ITradeStrategy<TradeOrderFrame> orderStrategy)
         {

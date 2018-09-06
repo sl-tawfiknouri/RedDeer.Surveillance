@@ -8,11 +8,11 @@ namespace TestHarness.Commands
 {
     public class DemoCommand : ICommand
     {
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
         private IEquityDataGenerator _equityProcess;
         private IOrderDataGenerator _tradingProcess;
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public DemoCommand(IAppFactory appFactory)
         {

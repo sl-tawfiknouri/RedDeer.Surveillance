@@ -9,7 +9,7 @@ namespace TestHarness.Factory.TradingSpoofingFactory
 {
     public class TradingSpoofingProcessFactory : ITradingSpoofingProcessFactory
     {
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
 
         public TradingSpoofingProcessFactory(IAppFactory appFactory)
         {

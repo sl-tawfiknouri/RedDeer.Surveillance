@@ -6,10 +6,10 @@ namespace TestHarness.Engine.Heartbeat
 {
     public class Heartbeat : IHeartbeat
     {
-        private TimeSpan _beatFrequency;
-        private Timer _activeTimer;
+        private readonly TimeSpan _beatFrequency;
+        private readonly Timer _activeTimer;
 
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         public Heartbeat(TimeSpan beatFrequency)
         {

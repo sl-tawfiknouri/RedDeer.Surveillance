@@ -12,9 +12,9 @@ namespace TestHarness.Factory.NetworkFactory
 {
     public class NetworkManagerFactory : INetworkManagerFactory
     {
-        private IConsole _console;
-        private ILogger _logger;
-        private INetworkConfiguration _networkConfiguration;
+        private readonly IConsole _console;
+        private readonly ILogger _logger;
+        private readonly INetworkConfiguration _networkConfiguration;
 
         public NetworkManagerFactory(
             IConsole console,

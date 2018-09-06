@@ -9,7 +9,7 @@ namespace TestHarness.Factory.TradingProhibitedSecurityFactory
 {
     public class TradingProhibitedSecurityProcessFactory : ITradingProhibitedSecurityProcessFactory
     {
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
 
         public TradingProhibitedSecurityProcessFactory(IAppFactory appFactory)
         {

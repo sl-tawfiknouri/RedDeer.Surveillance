@@ -5,7 +5,7 @@ namespace TestHarness.Display.Subscribers
 {
     public class ExchangeFrameDisplaySubscriber : IObserver<ExchangeFrame>
     {
-        private IConsole _console;
+        private readonly IConsole _console;
 
         public ExchangeFrameDisplaySubscriber(IConsole console)
         {

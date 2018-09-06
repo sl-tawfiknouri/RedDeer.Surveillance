@@ -11,16 +11,16 @@ namespace TestHarness.Network_IO
 {
     public class NetworkManager : INetworkManager
     {
-        private object _stateTransition = new object();
+        private readonly object _stateTransition = new object();
 
-        private INetworkConfiguration _networkConfiguration;
-        private ITradeOrderWebsocketSubscriberFactory _tradeOrderSocketSubscriberFactory;
+        private readonly INetworkConfiguration _networkConfiguration;
+        private readonly ITradeOrderWebsocketSubscriberFactory _tradeOrderSocketSubscriberFactory;
         private ITradeOrderWebsocketSubscriber _tradeOrderWebsocketSubscriber;
-        private IStockMarketWebsocketSubscriberFactory _stockMarketSocketSubscriberFactory;
+        private readonly IStockMarketWebsocketSubscriberFactory _stockMarketSocketSubscriberFactory;
         private IStockMarketWebsocketSubscriber _stockMarketWebsocketSubscriber;
         private IDisposable _tradeOrderUnsubscriber;
         private IDisposable _stockMarketUnsubscriber;
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public NetworkManager(
             ITradeOrderWebsocketSubscriberFactory tradeOrderSocketSubscriberFactory,

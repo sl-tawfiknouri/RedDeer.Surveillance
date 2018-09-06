@@ -6,7 +6,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 {
     public class TradeVolumeFixedStrategy : ITradeVolumeStrategy
     {
-        private int _fixedVolume;
+        private readonly int _fixedVolume;
 
         public TradeVolumeFixedStrategy(int fixedVolume)
         {

@@ -10,9 +10,9 @@ namespace TestHarness.Network_IO.Subscribers
 {
     public class StockMarketWebsocketSubscriberFactory : IStockMarketWebsocketSubscriberFactory
     {
-        private IWebsocketConnectionFactory _websocketFactory;
-        private IConsole _console;
-        private ILogger _logger;
+        private readonly IWebsocketConnectionFactory _websocketFactory;
+        private readonly IConsole _console;
+        private readonly ILogger _logger;
 
         public StockMarketWebsocketSubscriberFactory(
              IWebsocketConnectionFactory websocketFactory,

@@ -21,7 +21,7 @@ namespace TestHarness.Factory.TradingFactory
         ITradingFactoryVolumeStrategySelector,
         ICompleteSelector
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         // trade process selection
         private bool _heartbeatSelected;

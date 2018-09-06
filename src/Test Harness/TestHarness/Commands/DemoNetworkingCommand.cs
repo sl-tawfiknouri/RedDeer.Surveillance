@@ -9,7 +9,7 @@ namespace TestHarness.Commands
 {
     public class DemoNetworkingCommand : ICommand
     {
-        private IAppFactory _appFactory;
+        private readonly IAppFactory _appFactory;
         private IEquityDataGenerator _equityProcess;
         private IOrderDataGenerator _tradingProcess;
         private INetworkManager _networkManager;

@@ -9,7 +9,7 @@ namespace TestHarness.Network_IO
 {
     public class StubNetworkManager : INetworkManager
     {
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
         public StubNetworkManager(ILogger logger)
         {

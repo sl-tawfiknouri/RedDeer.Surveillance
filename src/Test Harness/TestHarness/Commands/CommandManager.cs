@@ -12,10 +12,10 @@ namespace TestHarness.Commands
 {
     public class CommandManager : ICommandManager
     {
-        private IReadOnlyCollection<ICommand> _commands;
-        private ICommand _unrecognisedCommand;
-        private IConsole _console;
-        private ILogger _logger;
+        private readonly IReadOnlyCollection<ICommand> _commands;
+        private readonly ICommand _unrecognisedCommand;
+        private readonly IConsole _console;
+        private readonly ILogger _logger;
 
         public CommandManager(
             IAppFactory appFactory,
@@ -60,9 +60,8 @@ namespace TestHarness.Commands
             {
                 cmd.Run(command);
             }
-
-            if (executableCommands == null
-                || !executableCommands.Any())
+            
+            if (!executableCommands.Any())
             {
                 _unrecognisedCommand.Run(command);
             }

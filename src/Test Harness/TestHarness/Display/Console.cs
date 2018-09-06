@@ -9,11 +9,11 @@ namespace TestHarness.Display
     public class Console : IConsole
     {
         private Stack<TradeOrderFrame> _tradeOrders;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
-        private int _marketFrameOffset = 6;
-        private int _tradeFrameOffset = 10;
-        private int _tradeLimitToPrint = 10;
+        private readonly int _marketFrameOffset = 6;
+        private readonly int _tradeFrameOffset = 10;
+        private readonly int _tradeLimitToPrint = 10;
 
         private long _id = 0;
 

@@ -9,7 +9,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 {
     public class TradeVolumeNormalDistributionStrategy : ITradeVolumeStrategy
     {
-        private int _sd;
+        private readonly int _sd;
 
         public TradeVolumeNormalDistributionStrategy(int sd)
         {

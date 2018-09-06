@@ -7,7 +7,7 @@ using TestHarness.Factory.Interfaces;
 namespace TestHarness.Tests.Commands
 {
     [TestFixture]
-    public class DemoTradeFileCommandTests
+    public class DemoTradeNetworkingFileCommandTests
     {
         private IAppFactory _appFactory;
 
@@ -41,7 +41,7 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_ReturnsFalse_ForNullCommand()
         {
-            var demoTradeFileCommand = new DemoTradeFileCommand(_appFactory);
+            var demoTradeFileCommand = new DemoTradeFileNetworkingCommand(_appFactory);
 
             var result = demoTradeFileCommand.Handles(null);
 
@@ -51,13 +51,13 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_ReturnsFalse_CorrectCommandWrongCsvFile()
         {
-            var demoTradeFileCommand = new DemoTradeFileCommand(_appFactory);
+            var demoTradeFileCommand = new DemoTradeFileNetworkingCommand(_appFactory);
 
-            var directory = Path.Combine(Directory.GetCurrentDirectory(), DemoTradeFileCommand.FileDirectory);
-            var file = Path.Combine(directory, "myFile2.csv");
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), DemoTradeFileNetworkingCommand.FileDirectory);
+            var file = Path.Combine(directory, "myFile2Network.csv");
             File.Create(file);
 
-            var result = demoTradeFileCommand.Handles("run demo trade file myFile3.csv");
+            var result = demoTradeFileCommand.Handles("run demo trade networking file myFile3Network.csv");
 
             Assert.IsFalse(result);
         }
@@ -65,13 +65,13 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_ReturnsTrue_CorrectCommandCsvFile()
         {
-            var demoTradeFileCommand = new DemoTradeFileCommand(_appFactory);
+            var demoTradeFileCommand = new DemoTradeFileNetworkingCommand(_appFactory);
 
             var directory = Path.Combine(Directory.GetCurrentDirectory(), DemoTradeFileCommand.FileDirectory);
-            var file = Path.Combine(directory, "anyFile.csv");
+            var file = Path.Combine(directory, "anyNetworkFile.csv");
             File.Create(file);
 
-            var result = demoTradeFileCommand.Handles("run demo trade file anyFile.csv");
+            var result = demoTradeFileCommand.Handles("run demo trade networking file anyNetworkFile.csv");
 
             Assert.IsTrue(result);
         }
@@ -79,9 +79,9 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_ReturnsFalse_NoFile()
         {
-            var demoTradeFileCommand = new DemoTradeFileCommand(_appFactory);
+            var demoTradeFileCommand = new DemoTradeFileNetworkingCommand(_appFactory);
 
-            var result = demoTradeFileCommand.Handles("run demo trade file  ");
+            var result = demoTradeFileCommand.Handles("run demo trade networking file ");
 
             Assert.IsFalse(result);
         }
@@ -89,9 +89,9 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_ReturnsFalse_NotCorrectFileType()
         {
-            var demoTradeFileCommand = new DemoTradeFileCommand(_appFactory);
+            var demoTradeFileCommand = new DemoTradeFileNetworkingCommand(_appFactory);
 
-            var result = demoTradeFileCommand.Handles("run demo trade file crazy.jpeg");
+            var result = demoTradeFileCommand.Handles("run demo trade file networking crazy.jpeg");
 
             Assert.IsFalse(result);
         }

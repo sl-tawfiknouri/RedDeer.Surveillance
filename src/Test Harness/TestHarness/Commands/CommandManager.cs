@@ -40,6 +40,7 @@ namespace TestHarness.Commands
                 new DemoCommand(appFactory),
                 new DemoNetworkingCommand(appFactory),
                 new DemoTradeFileCommand(appFactory),
+                new DemoTradeFileNetworkingCommand(appFactory),
                 new TradeProhibitedSecurityCommand(appFactory),
                 new SpoofingCommand(appFactory),
                _unrecognisedCommand,

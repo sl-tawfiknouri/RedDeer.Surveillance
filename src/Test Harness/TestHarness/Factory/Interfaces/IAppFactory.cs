@@ -45,5 +45,6 @@ namespace TestHarness.Factory.Interfaces
 
         ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
         ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
+        ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
     }
 }

@@ -22,7 +22,7 @@ namespace TestHarness.Engine.OrderGenerator
         private readonly object _stateTransition = new object();
         private volatile bool _generatorExecuting;
 
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
 
         public BaseTradingProcess(ILogger logger, ITradeStrategy<TradeOrderFrame> orderStrategy)
         {

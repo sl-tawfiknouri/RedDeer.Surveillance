@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Factory\" />
-    <Folder Include="Commands\" />
     <Folder Include="Network IO\" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using TestHarness.Commands.Interfaces;
 using TestHarness.State.Interfaces;
 
@@ -30,6 +31,7 @@ namespace TestHarness.Commands
         public void Run(string command)
         {
             _state.Executing = true;
+            SetPlayFilesDirectory();
 
             while (_state.Executing)
             {
@@ -43,6 +45,16 @@ namespace TestHarness.Commands
                 io = io.ToLowerInvariant();
 
                 _commandManager.InterpretIOCommand(io);
+            }
+        }
+
+        private static void SetPlayFilesDirectory()
+        {
+            var executingDirectory = Directory.GetCurrentDirectory();
+            var subFolder = Path.Combine(executingDirectory, DemoTradeFileCommand.FileDirectory);
+            if (!Directory.Exists(subFolder))
+            {
+                Directory.CreateDirectory(subFolder);
             }
         }
     }

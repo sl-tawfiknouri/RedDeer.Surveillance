@@ -45,6 +45,7 @@ namespace TestHarness.Factory
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
+            TradingFileRelayProcessFactory = new TradingFileRelayProcessFactory(this);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -99,5 +100,7 @@ namespace TestHarness.Factory
         public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; private set; }
 
         public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; private set; }
+
+        public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; private set; }
     }
 }

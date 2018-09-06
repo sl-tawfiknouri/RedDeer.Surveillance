@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams;
-using Domain.Streams;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;

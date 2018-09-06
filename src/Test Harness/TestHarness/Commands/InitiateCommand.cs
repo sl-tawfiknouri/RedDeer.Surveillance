@@ -33,7 +33,13 @@ namespace TestHarness.Commands
 
             while (_state.Executing)
             {
-                var io = System.Console.ReadLine();
+                var io = Console.ReadLine();
+
+                if (io == null)
+                {
+                    continue;
+                }
+
                 io = io.ToLowerInvariant();
 
                 _commandManager.InterpretIOCommand(io);

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Relay;
+using Relay.Interfaces;
 
 namespace RedDeer.Relay.Relay.App
 {

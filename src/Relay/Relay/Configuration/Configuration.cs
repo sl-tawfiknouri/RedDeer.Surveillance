@@ -1,4 +1,6 @@
-﻿namespace Relay.Configuration
+﻿using Relay.Configuration.Interfaces;
+
+namespace Relay.Configuration
 {
     public class Configuration : INetworkConfiguration
     {

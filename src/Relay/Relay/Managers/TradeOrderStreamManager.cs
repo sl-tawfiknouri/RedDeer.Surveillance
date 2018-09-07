@@ -7,7 +7,7 @@ using Domain.Streams;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
-using Relay.Configuration;
+using Relay.Configuration.Interfaces;
 using Relay.Processors;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

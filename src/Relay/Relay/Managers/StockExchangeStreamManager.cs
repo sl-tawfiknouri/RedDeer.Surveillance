@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Relay.Configuration;
 using Relay.Managers.Interfaces;
 using Relay.Network_IO;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
@@ -8,6 +7,7 @@ using Domain.Equity.Frames;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Streams;
+using Relay.Configuration.Interfaces;
 using Relay.Processors;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

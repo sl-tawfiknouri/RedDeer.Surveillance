@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using Relay;
 using Relay.Configuration;
+using Relay.Configuration.Interfaces;
 using StructureMap;
 
 namespace RedDeer.Relay.Relay.App

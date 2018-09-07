@@ -1,4 +1,4 @@
-﻿namespace Relay
+﻿namespace Relay.Interfaces
 {
     public interface IMediator
     {

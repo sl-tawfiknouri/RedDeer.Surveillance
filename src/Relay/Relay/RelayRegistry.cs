@@ -6,6 +6,7 @@ using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Relay.Interfaces;
 using Relay.Managers;
 using Relay.Managers.Interfaces;
 using Relay.Network_IO;

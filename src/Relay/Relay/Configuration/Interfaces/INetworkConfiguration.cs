@@ -1,4 +1,4 @@
-﻿namespace Relay.Configuration
+﻿namespace Relay.Configuration.Interfaces
 {
     public interface INetworkConfiguration
     {

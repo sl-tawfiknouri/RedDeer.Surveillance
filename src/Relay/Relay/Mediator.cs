@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Relay.Managers.Interfaces;
 using System;
+using Relay.Interfaces;
 
 namespace Relay
 {

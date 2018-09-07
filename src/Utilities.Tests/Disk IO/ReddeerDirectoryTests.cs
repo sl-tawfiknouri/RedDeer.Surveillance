@@ -107,5 +107,27 @@ namespace Utilities.Tests.Disk_IO
 
             Assert.Throws<ArgumentException>(() => directory.GetFiles("er?:<!'/\b\aj4jh,a", string.Empty));
         }
+
+        [Test]
+        public void Exists_ReturnsTrueWhenFolder_Exists()
+        {
+            var directory = new ReddeerDirectory();
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            var exists = directory.DirectoryExists(currentDirectory);
+
+            Assert.IsTrue(exists);
+        }
+
+        [Test]
+        public void Exists_ReturnsFalseWhenFolder_DoesNotExist()
+        {
+            var directory = new ReddeerDirectory();
+            var targetDirectory = "C:/aepjgaeijrg4j/aerjga34i91/argjag.aerg";
+
+            var exists = directory.DirectoryExists(targetDirectory);
+
+            Assert.IsFalse(exists);
+        }
     }
 }

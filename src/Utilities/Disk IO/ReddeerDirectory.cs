@@ -122,5 +122,10 @@ namespace Utilities.Disk_IO
 
             File.Move(originPath, destinationPath);
         }
+
+        public bool DirectoryExists(string path)
+        {
+            return Directory.Exists(path);
+        }
     }
 }

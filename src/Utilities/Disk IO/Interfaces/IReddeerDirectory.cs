@@ -8,5 +8,6 @@ namespace Utilities.Disk_IO.Interfaces
         bool Delete(string path);
         IReadOnlyCollection<string> GetFiles(string path, string fileMask);
         void Move(string originPath, string destinationPath);
+        bool DirectoryExists(string path);
     }
 }

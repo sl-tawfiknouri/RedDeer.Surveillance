@@ -83,6 +83,7 @@ namespace Relay.Tests.Disk_IO
         }
 
         [Test]
+        [Explicit]
         public void Initiate_SetConfigurationPath_Logs()
         {
             var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _logger);

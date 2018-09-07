@@ -120,6 +120,11 @@ namespace Relay.Disk_IO
 
         private void SetFileSystemWatch()
         {
+            if (!_reddeerDirectory.DirectoryExists(_uploadConfiguration.RelayTradeFileUploadDirectoryPath))
+            {
+                return;
+            }
+
             var fileSystemWatcher = new FileSystemWatcher(_uploadConfiguration.RelayTradeFileUploadDirectoryPath)
             {
                 NotifyFilter = NotifyFilters.LastWrite,

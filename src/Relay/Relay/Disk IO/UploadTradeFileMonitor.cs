@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Domain.Trades.Orders;
@@ -44,7 +45,7 @@ namespace Relay.Disk_IO
                 return;
             }
 
-            var archivePath = Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "Archive");
+            var archivePath = GetArchivePath();
 
             try
             {
@@ -60,21 +61,41 @@ namespace Relay.Disk_IO
 
             if (files.Any())
             {
-                _logger.LogInformation("Upload Trade File Monitor found some existing files on start up. Processing now");
-
-                foreach (var filePath in files)
-                {
-                    var fileName = Path.GetFileName(filePath);
-                    if (string.IsNullOrWhiteSpace(fileName))
-                    {
-                        continue;
-                    }
-
-                    fileName = "archived_" + fileName;
-                    var archiveFilePath = Path.Combine(archivePath, fileName);
-                    ProcessFile(filePath, archiveFilePath);
-                }
+                ProcessInitialStartupFiles(archivePath, files);
             }
+
+            SetFileSystemWatch();
+        }
+
+        private string GetArchivePath()
+        {
+            return Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "Archive");
+        }
+
+        private void DetectedFileChange(object source, FileSystemEventArgs e)
+        {
+            var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
+            ProcessFile(e.FullPath, archivePath);
+        }
+
+        private void ProcessInitialStartupFiles(string archivePath, IReadOnlyCollection<string> files)
+        {
+            _logger.LogInformation("Upload Trade File Monitor found some existing files on start up. Processing now");
+
+            foreach (var filePath in files)
+            {
+                var archiveFilePath = ArchiveFilePath(archivePath, filePath);
+                ProcessFile(filePath, archiveFilePath);
+            }
+        }
+
+        private string ArchiveFilePath(string archivePath, string filePath)
+        {
+            var fileName = Path.GetFileName(filePath);
+            fileName = "archived_" + fileName;
+            var archiveFilePath = Path.Combine(archivePath, fileName);
+
+            return archiveFilePath;
         }
 
         private void ProcessFile(string path, string archivePath)
@@ -95,6 +116,18 @@ namespace Relay.Disk_IO
 
                 _reddeerDirectory.Move(path, archivePath);
             }
+        }
+
+        private void SetFileSystemWatch()
+        {
+            var fileSystemWatcher = new FileSystemWatcher(_uploadConfiguration.RelayTradeFileUploadDirectoryPath)
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Filter = "*.csv"
+            };
+
+            fileSystemWatcher.Changed += DetectedFileChange;
+            fileSystemWatcher.EnableRaisingEvents = true;
         }
 
         public void Dispose()

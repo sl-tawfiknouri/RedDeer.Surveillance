@@ -79,5 +79,7 @@ namespace Surveillance.Rules.ProhibitedAssets
         {
             return _assetsRepository.ProhibitedEquities?.Contains(frame?.Security?.Name) ?? false;
         }
+
+        public string Version { get; } = "V1.0";
     }
 }

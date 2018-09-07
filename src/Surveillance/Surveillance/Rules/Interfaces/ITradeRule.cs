@@ -5,5 +5,6 @@ namespace Surveillance.Rules.Interfaces
 {
     public interface ITradeRule : IObserver<TradeOrderFrame>
     {
+        string Version { get; }
     }
 }

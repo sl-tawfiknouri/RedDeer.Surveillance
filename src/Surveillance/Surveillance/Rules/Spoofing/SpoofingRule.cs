@@ -192,5 +192,7 @@ namespace Surveillance.Rules.Spoofing
 
             _ruleBreachRepository.Save(spoofingBreach);
         }
+
+        public string Version { get; } = "V1.0";
     }
 }

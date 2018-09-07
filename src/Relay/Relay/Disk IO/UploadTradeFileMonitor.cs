@@ -18,6 +18,7 @@ namespace Relay.Disk_IO
         private readonly IReddeerDirectory _reddeerDirectory;
         private readonly IUploadTradeFileProcessor _fileProcessor;
         private readonly ILogger _logger;
+        private FileSystemWatcher _fileSystemWatcher;
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
@@ -125,18 +126,19 @@ namespace Relay.Disk_IO
                 return;
             }
 
-            var fileSystemWatcher = new FileSystemWatcher(_uploadConfiguration.RelayTradeFileUploadDirectoryPath)
+            _fileSystemWatcher = new FileSystemWatcher(_uploadConfiguration.RelayTradeFileUploadDirectoryPath)
             {
                 NotifyFilter = NotifyFilters.LastWrite,
                 Filter = "*.csv"
             };
 
-            fileSystemWatcher.Changed += DetectedFileChange;
-            fileSystemWatcher.EnableRaisingEvents = true;
+            _fileSystemWatcher.Changed += DetectedFileChange;
+            _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
         public void Dispose()
         {
+            _fileSystemWatcher?.Dispose();
         }
     }
 }

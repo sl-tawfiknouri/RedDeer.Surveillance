@@ -1,8 +1,11 @@
-﻿namespace Utilities.Disk_IO.Interfaces
+﻿using System.Collections.Generic;
+
+namespace Utilities.Disk_IO.Interfaces
 {
     public interface IReddeerDirectory
     {
         bool Create(string path);
         bool Delete(string path);
+        IReadOnlyCollection<string> GetFiles(string path, string fileMask);
     }
 }

@@ -79,5 +79,33 @@ namespace Utilities.Tests.Disk_IO
 
             Assert.IsFalse(Directory.Exists(path));
         }
+
+        [Test]
+        public void GetFiles_DoesNotThrow_NullPath()
+        {
+            var directory = new ReddeerDirectory();
+
+            var result = directory.GetFiles(null, null);
+
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public void GetFiles_DoesNotThrow_EmptyPath()
+        {
+            var directory = new ReddeerDirectory();
+
+            var result = directory.GetFiles(string.Empty, string.Empty);
+
+            Assert.IsEmpty(result);
+        }
+
+        [Test]
+        public void GetFiles_DoesThrowWhenArgumentHas_NonPathValue()
+        {
+            var directory = new ReddeerDirectory();
+
+            Assert.Throws<ArgumentException>(() => directory.GetFiles("er?:<!'/\b\aj4jh,a", string.Empty));
+        }
     }
 }

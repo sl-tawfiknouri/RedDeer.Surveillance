@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Utilities.Disk_IO.Interfaces;
@@ -57,6 +58,34 @@ namespace Utilities.Disk_IO
             catch
             {
                 return false;
+            }
+        }
+
+        public IReadOnlyCollection<string> GetFiles(string path, string fileMask)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return new List<string>();
+            }
+
+            var invalidCharacters = Path.GetInvalidPathChars();
+            if (path.ToCharArray().Any(pa => invalidCharacters.Contains(pa)))
+            {
+                throw new ArgumentException();
+            }
+
+            if (!Directory.Exists(path))
+            {
+                return new List<string>();
+            }
+
+            if (!string.IsNullOrWhiteSpace(fileMask))
+            {
+                return Directory.GetFiles(path, fileMask);
+            }
+            else
+            {
+                return Directory.GetFiles(path);
             }
         }
     }

@@ -88,5 +88,39 @@ namespace Utilities.Disk_IO
                 return Directory.GetFiles(path);
             }
         }
+
+        public void Move(string originPath, string destinationPath)
+        {
+            if (string.IsNullOrWhiteSpace(originPath)
+                || string.IsNullOrWhiteSpace(destinationPath))
+            {
+                return;
+            }
+
+            var invalidCharacters = Path.GetInvalidPathChars();
+            if (originPath.ToCharArray().Any(pa => invalidCharacters.Contains(pa)))
+            {
+                throw new ArgumentException();
+            }
+
+            if (destinationPath.ToCharArray().Any(pa => invalidCharacters.Contains(pa)))
+            {
+                throw new ArgumentException();
+            }
+
+            if (!File.Exists(originPath))
+            {
+                return;
+            }
+
+            if (File.Exists(destinationPath))
+            {
+                var fileName = Path.GetFileName(destinationPath);
+                var newFileName = $"{Guid.NewGuid()}-{fileName}";
+                destinationPath = destinationPath.Replace(fileName, newFileName);
+            }
+
+            File.Move(originPath, destinationPath);
+        }
     }
 }

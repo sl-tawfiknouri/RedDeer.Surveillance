@@ -44,11 +44,11 @@ namespace Relay.Disk_IO
                 return;
             }
 
+            var archivePath = Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "Archive");
+
             try
             {
                 _reddeerDirectory.Create(_uploadConfiguration.RelayTradeFileUploadDirectoryPath);
-
-                var archivePath = Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "Archive");
                 _reddeerDirectory.Create(archivePath);
             }
             catch (ArgumentException e)
@@ -64,12 +64,20 @@ namespace Relay.Disk_IO
 
                 foreach (var filePath in files)
                 {
-                    ProcessFile(filePath);
+                    var fileName = Path.GetFileName(filePath);
+                    if (string.IsNullOrWhiteSpace(fileName))
+                    {
+                        continue;
+                    }
+
+                    fileName = "archived_" + fileName;
+                    var archiveFilePath = Path.Combine(archivePath, fileName);
+                    ProcessFile(filePath, archiveFilePath);
                 }
             }
         }
 
-        private void ProcessFile(string path)
+        private void ProcessFile(string path, string archivePath)
         {
             lock (_lock)
             {
@@ -84,6 +92,8 @@ namespace Relay.Disk_IO
                 {
                     _stream.Add(item);
                 }
+
+                _reddeerDirectory.Move(path, archivePath);
             }
         }
 

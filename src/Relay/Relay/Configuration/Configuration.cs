@@ -2,7 +2,7 @@
 
 namespace Relay.Configuration
 {
-    public class Configuration : INetworkConfiguration
+    public class Configuration : INetworkConfiguration, IUploadConfiguration
     {
         public string SurveillanceServiceEquityDomain { get; set; }
         public string SurveillanceServiceEquityPort { get; set; }
@@ -13,5 +13,6 @@ namespace Relay.Configuration
         public string SurveillanceServiceTradePort { get; set; }
         public string RelayServiceTradeDomain { get; set; }
         public string RelayServiceTradePort { get; set; }
+        public string RelayTradeFileUploadDirectoryPath { get; set; }
     }
 }

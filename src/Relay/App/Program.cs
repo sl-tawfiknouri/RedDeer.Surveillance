@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
@@ -36,7 +37,9 @@ namespace RedDeer.Relay.Relay.App
             {
                 _container = new Container();
 
-                _container.Inject(typeof(INetworkConfiguration), BuildConfiguration());
+                var builtConfig = BuildConfiguration();
+                _container.Inject(typeof(INetworkConfiguration), builtConfig);
+                _container.Inject(typeof(IUploadConfiguration), builtConfig);
 
                 _container.Configure(config =>
                 {
@@ -73,6 +76,8 @@ namespace RedDeer.Relay.Relay.App
                 RelayServiceTradePort = configurationBuilder.GetValue<string>("RelayServiceTradePort"),
                 SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
                 SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
+
+                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),  configurationBuilder.GetValue<string>("RelayTradeFileUploadDirectoryPath")),
             };
 
             return networkConfiguration;

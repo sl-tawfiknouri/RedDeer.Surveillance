@@ -8,6 +8,7 @@ using Domain.Trades.Orders;
 using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
 using Relay.Configuration.Interfaces;
+using Relay.Disk_IO.Interfaces;
 using Relay.Processors;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
@@ -20,6 +21,7 @@ namespace Relay.Managers
         private readonly ITradeRelaySubscriber _tradeRelaySubscriber;
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
+        private readonly IUploadTradeFileMonitorFactory _fileMonitorFactory;
 
         private readonly ILogger<TradeProcessor<TradeOrderFrame>> _tpLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
@@ -29,6 +31,7 @@ namespace Relay.Managers
             ITradeRelaySubscriber tradeRelaySubscriber,
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
+            IUploadTradeFileMonitorFactory fileMonitorFactory,
             ILogger<TradeProcessor<TradeOrderFrame>> tpLogger,
             ILogger<NetworkExchange> exchangeLogger)
         {
@@ -39,6 +42,8 @@ namespace Relay.Managers
             _networkConfiguration =
                 networkConfiguration 
                 ?? throw new ArgumentNullException(nameof(networkConfiguration));
+
+            _fileMonitorFactory = fileMonitorFactory ?? throw new ArgumentNullException(nameof(fileMonitorFactory));
 
             _tpLogger = tpLogger ?? throw new ArgumentNullException(nameof(tpLogger));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
@@ -65,6 +70,9 @@ namespace Relay.Managers
 
             exchange.Initialise(
                 $"ws://{_networkConfiguration.RelayServiceTradeDomain}:{_networkConfiguration.RelayServiceTradePort}");
+
+            var fileMonitor = _fileMonitorFactory.Create(tradeProcessorOrderStream);
+            fileMonitor.Initiate();
         }
     }
 }

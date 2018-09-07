@@ -123,6 +123,19 @@ namespace Utilities.Disk_IO
             File.Move(originPath, destinationPath);
         }
 
+        public void DeleteFile(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        
         public bool DirectoryExists(string path)
         {
             return Directory.Exists(path);

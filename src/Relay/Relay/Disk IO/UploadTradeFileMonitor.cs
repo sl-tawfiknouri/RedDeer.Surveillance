@@ -64,7 +64,6 @@ namespace Relay.Disk_IO
             {
                 ProcessInitialStartupFiles(archivePath, files);
             }
-
             SetFileSystemWatch();
         }
 
@@ -129,7 +128,8 @@ namespace Relay.Disk_IO
             _fileSystemWatcher = new FileSystemWatcher(_uploadConfiguration.RelayTradeFileUploadDirectoryPath)
             {
                 NotifyFilter = NotifyFilters.LastWrite,
-                Filter = "*.csv"
+                Filter = "*.csv",
+                IncludeSubdirectories = false
             };
 
             _fileSystemWatcher.Changed += DetectedFileChange;

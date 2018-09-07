@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
+using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using Relay;
@@ -40,6 +41,7 @@ namespace RedDeer.Relay.Relay.App
                 var builtConfig = BuildConfiguration();
                 _container.Inject(typeof(INetworkConfiguration), builtConfig);
                 _container.Inject(typeof(IUploadConfiguration), builtConfig);
+                _container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
 
                 _container.Configure(config =>
                 {
@@ -78,6 +80,18 @@ namespace RedDeer.Relay.Relay.App
                 SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
 
                 RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),  configurationBuilder.GetValue<string>("RelayTradeFileUploadDirectoryPath")),
+
+                StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
+                MarketIdFieldName = configurationBuilder.GetValue<string>("MarketIdFieldName"),
+                MarketAbbreviationFieldName = configurationBuilder.GetValue<string>("MarketAbbreviationFieldName"),
+                MarketNameFieldName = configurationBuilder.GetValue<string>("MarketNameFieldName"),
+                SecurityIdFieldName = configurationBuilder.GetValue<string>("SecurityIdFieldName"),
+                SecurityNameFieldName = configurationBuilder.GetValue<string>("SecurityNameFieldName"),
+                OrderTypeFieldName = configurationBuilder.GetValue<string>("OrderTypeFieldName"),
+                OrderDirectionFieldName = configurationBuilder.GetValue<string>("OrderDirectionFieldName"),
+                OrderStatusFieldName = configurationBuilder.GetValue<string>("OrderStatusFieldName"),
+                VolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
+                LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName")
             };
 
             return networkConfiguration;

@@ -13,13 +13,16 @@ namespace Relay.Disk_IO
     public class UploadTradeFileProcessor : IUploadTradeFileProcessor
     {
         private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
+        private readonly ITradeOrderCsvConfig _mappingConfig;
         private readonly ILogger _logger;
 
         public UploadTradeFileProcessor(
             ITradeOrderCsvToDtoMapper csvToDtoMapper,
+            ITradeOrderCsvConfig mappingConfig,
             ILogger<UploadTradeFileProcessor> logger)
         {
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
+            _mappingConfig = mappingConfig ?? throw new ArgumentNullException(nameof(mappingConfig));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,9 +40,26 @@ namespace Relay.Disk_IO
             {
                 var csv = new CsvReader(reader);
                 csv.Configuration.HasHeaderRecord = true;
-                var csvRecords = csv.GetRecords<TradeOrderFrameCsv>().ToList();
+                csv.Configuration.MissingFieldFound = null;
 
-                foreach (var record in csvRecords)
+                var csvRecords2 = new List<TradeOrderFrameCsv>();
+
+                csv.Read();
+                csv.ReadHeader();
+
+                while (csv.Read())
+                {
+                   var record = MapToCsvDto(csv);
+
+                    if (record == null)
+                    {
+                        continue;
+                    }
+
+                    csvRecords2.Add(record);
+                }
+
+                foreach (var record in csvRecords2)
                 {
                     var mappedRecord = _csvToDtoMapper.Map(record);
                     if (mappedRecord != null)
@@ -47,6 +67,9 @@ namespace Relay.Disk_IO
                         tradeOrders.Add(mappedRecord);
                     }
                 }
+
+                csv.Dispose();
+                reader.Dispose();
             }
 
             if (_csvToDtoMapper.FailedParseTotal > 0)
@@ -62,6 +85,29 @@ namespace Relay.Disk_IO
             var sortedTradeOrders = tradeOrders.OrderBy(to => to.StatusChangedOn).ToList();
 
             return sortedTradeOrders;
+        }
+
+        private TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
+        {
+            if (rawRecord == null)
+            {
+                return null;
+            }
+
+            return new TradeOrderFrameCsv
+            {
+                StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
+                MarketId = rawRecord[_mappingConfig.MarketIdFieldName],
+                MarketAbbreviation = rawRecord[_mappingConfig.MarketAbbreviationFieldName],
+                MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
+                SecurityId = rawRecord[_mappingConfig.SecurityIdFieldName],
+                SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
+                OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
+                OrderDirection = rawRecord[_mappingConfig.OrderDirectionFieldName],
+                OrderStatus =  rawRecord[_mappingConfig.OrderStatusFieldName],
+                Volume =  rawRecord[_mappingConfig.VolumeFieldName],
+                LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
+            };
         }
     }
 }

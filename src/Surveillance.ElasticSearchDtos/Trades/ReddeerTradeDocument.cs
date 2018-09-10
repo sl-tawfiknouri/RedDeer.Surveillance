@@ -1,6 +1,8 @@
 ﻿using Nest;
 using Surveillance.ElasticSearchDtos.Interfaces;
 using System;
+using Newtonsoft.Json;
+using Surveillance.ElasticSearchDtos.JsonConverters;
 
 namespace Surveillance.ElasticSearchDtos.Trades
 {
@@ -64,7 +66,7 @@ namespace Surveillance.ElasticSearchDtos.Trades
         /// <summary>
         /// The most recent mutation to the trade data i.e. created/overwritten on...
         /// </summary>
-        [Text]
+        [JsonConverter(typeof(ElasticSearchDateTimeConverter))]
         public DateTime StatusChangedOn { get; set; }
 
         /// <summary>

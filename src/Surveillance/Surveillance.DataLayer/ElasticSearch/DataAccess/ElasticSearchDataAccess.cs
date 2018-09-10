@@ -159,10 +159,17 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             DateTime end,
             CancellationToken cancellationToken)
         {
-            var result = await _elasticClient.SearchAsync<ReddeerTradeDocument>(
-                q => q.Query(
-                    p => p.DateRange(
-                        dr => dr.GreaterThanOrEquals(start).LessThanOrEquals(end))), cancellationToken);
+            var result = _elasticClient.Search<ReddeerTradeDocument>(
+                q => q
+                    .Index("surveillance-reddeer-trade-*")
+                    .Size(int.MaxValue)
+                    .MatchAll()
+                    .Query(qu =>
+                        qu.DateRange(ra =>
+                            ra.Field(fi => fi.StatusChangedOn)
+                                .GreaterThanOrEquals(start.ToString("yyyy-MM-dd HH:mm:ss"))
+                                .LessThanOrEquals(end.ToString("yyyy-MM-dd HH:mm:ss"))
+                                .Format("yyyy-MM-dd HH:mm:ss"))));
 
             return result?.Documents ?? new List<ReddeerTradeDocument>();
         }

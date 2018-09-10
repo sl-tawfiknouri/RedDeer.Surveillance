@@ -26,8 +26,8 @@ namespace Surveillance
 
         public void Initiate()
         {
-            _reddeerTradeService.Initialise();
             _ruleScheduler.Initiate();
+            _reddeerTradeService.Initialise();
         }
 
         public void Terminate()

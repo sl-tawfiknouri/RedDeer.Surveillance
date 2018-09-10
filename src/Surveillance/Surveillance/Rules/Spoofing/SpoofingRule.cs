@@ -33,7 +33,9 @@ namespace Surveillance.Rules.Spoofing
         private const decimal CancellationThreshold = 0.8m;
 
         // volume difference between spoof and real trade
-        private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m; 
+        private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m;
+
+        public Rules Rule => Rules.Spoofing;
 
         public SpoofingRule(
             IRuleBreachFactory ruleBreachFactory,

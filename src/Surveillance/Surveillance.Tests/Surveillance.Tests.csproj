@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="4.8.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Surveillance\Surveillance.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FakeItEasy">
+      <HintPath>..\..\..\..\..\Users\ryan.trenchard\.nuget\packages\fakeiteasy\4.8.1\lib\netstandard1.6\FakeItEasy.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -32,6 +32,9 @@ namespace Surveillance.Rules.ProhibitedAssets
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
         }
 
+        public Rules Rule { get; } = Rules.ProhibitedAssets;
+        public string Version { get; } = "V1.0";
+
         public void OnCompleted()
         {
             _logger.LogInformation("Prohibited asset trading rule reached stream completion");
@@ -79,7 +82,5 @@ namespace Surveillance.Rules.ProhibitedAssets
         {
             return _assetsRepository.ProhibitedEquities?.Contains(frame?.Security?.Name) ?? false;
         }
-
-        public string Version { get; } = "V1.0";
     }
 }

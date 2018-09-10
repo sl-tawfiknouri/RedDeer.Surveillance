@@ -1,9 +1,10 @@
-﻿using Surveillance.Scheduler;
+﻿using System.Threading.Tasks;
+using Surveillance.Scheduler;
 
 namespace Surveillance.Universe.Interfaces
 {
     public interface IUniverseBuilder
     {
-        IUniverse Summon(ScheduledExecution execution);
+        Task<IUniverse> Summon(ScheduledExecution execution);
     }
 }

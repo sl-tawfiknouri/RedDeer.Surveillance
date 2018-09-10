@@ -77,7 +77,13 @@ namespace Surveillance.ElasticSearchDtos.Trades
         /// The direction of the order i.e. buy or sell
         /// </summary>
         [Keyword]
-        public string OrderDirection { get; set; }
+        public int OrderDirectionId { get; set; }
+
+        /// <summary>
+        /// The direction of the order i.e. buy or sell
+        /// </summary>
+        [Keyword]
+        public string OrderDirectionDescription { get; set; }
 
         /// <summary>
         /// The status of the order

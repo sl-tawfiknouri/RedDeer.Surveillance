@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
 using Surveillance.ElasticSearchDtos.Rules;
+using Surveillance.ElasticSearchDtos.Trades;
 
 namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
 {
@@ -20,6 +22,11 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
             DateTime timestamp,
             CancellationToken cancellationToken)
             where T : class;
+
+        Task<IReadOnlyCollection<ReddeerTradeDocument>> GetDocuments(
+            DateTime start,
+            DateTime end,
+            CancellationToken cancellationToken);
 
         string RuleBreachIndexName { get; }
         string ReddeerTradeFormatIndexName { get; }

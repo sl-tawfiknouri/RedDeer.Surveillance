@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
@@ -31,7 +32,17 @@ namespace Surveillance.DataLayer.ElasticSearch.Trade
                     cts.Token);
 
             var saveCts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+
             await _dataAccess.IndexDocumentAsync(index, document, DateTime.UtcNow, saveCts.Token);
+        }
+
+        public async Task<IReadOnlyCollection<ReddeerTradeDocument>> Get(DateTime start, DateTime end)
+        {
+            var cancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
+
+            return
+                await _dataAccess.GetDocuments(start, end, cancellationToken)
+                ?? new List<ReddeerTradeDocument>();
         }
     }
 }

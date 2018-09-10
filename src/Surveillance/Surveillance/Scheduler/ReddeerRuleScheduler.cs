@@ -3,6 +3,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe.Interfaces;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Surveillance.Scheduler
 {
@@ -42,7 +43,7 @@ namespace Surveillance.Scheduler
         /// Once a message is picked up, deserialise the scheduled execution object
         /// and run execute
         /// </summary>
-        public void Execute(ScheduledExecution execution)
+        public async Task Execute(ScheduledExecution execution)
         {
             if (execution?.Rules == null
                 || !execution.Rules.Any())
@@ -50,7 +51,7 @@ namespace Surveillance.Scheduler
                 return;
             }
 
-            var universe = _universeBuilder.Summon(execution);
+            var universe = await _universeBuilder.Summon(execution);
             var player = _universePlayerFactory.Build();
 
             SubscribeRules(execution, player);

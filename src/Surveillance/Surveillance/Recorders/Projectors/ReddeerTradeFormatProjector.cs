@@ -35,7 +35,8 @@ namespace Surveillance.Recorders.Projectors
                 Limit = order.Limit?.Value,
                 StatusChangedOn = order.StatusChangedOn,
                 Volume = order.Volume,
-                OrderDirection = order.Direction.ToString(),
+                OrderDirectionId = (int)order.Direction,
+                OrderDirectionDescription = order.Direction.ToString(),
                 OrderStatusId = (int)order.OrderStatus,
                 OrderStatusDescription = order.OrderStatus.ToString()
             };

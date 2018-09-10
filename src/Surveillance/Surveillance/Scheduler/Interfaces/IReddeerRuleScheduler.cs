@@ -1,8 +1,10 @@
-﻿namespace Surveillance.Scheduler.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Surveillance.Scheduler.Interfaces
 {
     public interface IReddeerRuleScheduler
     {
-        void Execute(ScheduledExecution execution);
+        Task Execute(ScheduledExecution execution);
         void Initiate();
         void Terminate();
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Nest;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.ElasticSearchDtos.Rules;
+using Surveillance.ElasticSearchDtos.Trades;
 
 namespace Surveillance.DataLayer.ElasticSearch.DataAccess
 {
@@ -150,6 +152,19 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             );
 
             HandleResponseErrors(indexResponse);
+        }
+
+        public async Task<IReadOnlyCollection<ReddeerTradeDocument>> GetDocuments(
+            DateTime start,
+            DateTime end,
+            CancellationToken cancellationToken)
+        {
+            var result = await _elasticClient.SearchAsync<ReddeerTradeDocument>(
+                q => q.Query(
+                    p => p.DateRange(
+                        dr => dr.GreaterThanOrEquals(start).LessThanOrEquals(end))), cancellationToken);
+
+            return result?.Documents ?? new List<ReddeerTradeDocument>();
         }
 
         public void HandleResponseErrors(IResponse response)

@@ -26,15 +26,19 @@ namespace Relay.Disk_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<TradeOrderFrame> Process(string path)
+        public UploadTradeFileProcessorResult Process(string path)
         {
             if (!File.Exists(path))
             {
                 _logger.LogError($"Upload Trade File Monitor did not find file {path}");
-                return new List<TradeOrderFrame>();
+                return 
+                    new UploadTradeFileProcessorResult(
+                        new List<TradeOrderFrame>(),
+                        new List<TradeOrderFrameCsv>());
             }
 
             var tradeOrders = new List<TradeOrderFrame>();
+            var failedTradeOrderReads = new List<TradeOrderFrameCsv>();
 
             using (var reader = File.OpenText(path))
             {
@@ -42,7 +46,7 @@ namespace Relay.Disk_IO
                 csv.Configuration.HasHeaderRecord = true;
                 csv.Configuration.MissingFieldFound = null;
 
-                var csvRecords2 = new List<TradeOrderFrameCsv>();
+                var csvRecords = new List<TradeOrderFrameCsv>();
 
                 csv.Read();
                 csv.ReadHeader();
@@ -56,15 +60,19 @@ namespace Relay.Disk_IO
                         continue;
                     }
 
-                    csvRecords2.Add(record);
+                    csvRecords.Add(record);
                 }
 
-                foreach (var record in csvRecords2)
+                foreach (var record in csvRecords)
                 {
                     var mappedRecord = _csvToDtoMapper.Map(record);
                     if (mappedRecord != null)
                     {
                         tradeOrders.Add(mappedRecord);
+                    }
+                    else
+                    {
+                        failedTradeOrderReads.Add(record);
                     }
                 }
 
@@ -77,14 +85,9 @@ namespace Relay.Disk_IO
                 _logger.LogError($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {path}");
             }
 
-            if (!tradeOrders.Any())
-            {
-                return new List<TradeOrderFrame>();
-            }
-
             var sortedTradeOrders = tradeOrders.OrderBy(to => to.StatusChangedOn).ToList();
 
-            return sortedTradeOrders;
+            return new UploadTradeFileProcessorResult(sortedTradeOrders, failedTradeOrderReads);
         }
 
         private TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
@@ -108,6 +111,52 @@ namespace Relay.Disk_IO
                 Volume =  rawRecord[_mappingConfig.VolumeFieldName],
                 LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
             };
+        }
+
+        public void WriteFailedReadsToDisk(
+            string path,
+            string originalFileName,
+            IReadOnlyCollection<TradeOrderFrameCsv> failedReads)
+        {
+            if (failedReads == null
+                || !failedReads.Any())
+            {
+                return;
+            }
+
+            var failedFileName = $"{originalFileName}-failed-read-{Guid.NewGuid()}.csv";
+            var target = Path.Combine(path, failedFileName);
+
+            using (TextWriter twriter = new StreamWriter(target))
+            {
+                var csv = new CsvWriter(twriter);
+
+                // write out headers
+                csv.WriteField(_mappingConfig.StatusChangedOnFieldName);
+                csv.WriteField(_mappingConfig.MarketIdFieldName);
+                csv.WriteField(_mappingConfig.MarketAbbreviationFieldName);
+                csv.WriteField(_mappingConfig.MarketNameFieldName);
+                csv.WriteField(_mappingConfig.SecurityIdFieldName);
+                csv.WriteField(_mappingConfig.SecurityNameFieldName);
+                csv.WriteField(_mappingConfig.OrderTypeFieldName);
+                csv.WriteField(_mappingConfig.OrderDirectionFieldName);
+                csv.WriteField(_mappingConfig.OrderStatusFieldName);
+                csv.WriteField(_mappingConfig.VolumeFieldName);
+                csv.WriteField(_mappingConfig.LimitPriceFieldName);
+
+                csv.NextRecord();
+
+                foreach (var rec in failedReads)
+                {
+                    if (rec == null)
+                    {
+                        continue;
+                    }
+
+                    csv.WriteRecord(rec);
+                    csv.NextRecord();
+                }
+            }
         }
     }
 }

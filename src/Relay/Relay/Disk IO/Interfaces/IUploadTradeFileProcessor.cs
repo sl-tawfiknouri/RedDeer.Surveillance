@@ -5,6 +5,7 @@ namespace Relay.Disk_IO.Interfaces
 {
     public interface IUploadTradeFileProcessor
     {
-        IReadOnlyCollection<TradeOrderFrame> Process(string path);
+        UploadTradeFileProcessorResult Process(string path);
+        void WriteFailedReadsToDisk(string failedReadsPath, string failedReadFileName, IReadOnlyCollection<TradeOrderFrameCsv> failedReads);
     }
 }

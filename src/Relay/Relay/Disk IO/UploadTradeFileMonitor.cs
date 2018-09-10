@@ -47,11 +47,13 @@ namespace Relay.Disk_IO
             }
 
             var archivePath = GetArchivePath();
+            var failedReadsPath = GetFailedReadsPath();
 
             try
             {
                 _reddeerDirectory.Create(_uploadConfiguration.RelayTradeFileUploadDirectoryPath);
                 _reddeerDirectory.Create(archivePath);
+                _reddeerDirectory.Create(failedReadsPath);
             }
             catch (ArgumentException e)
             {
@@ -70,6 +72,11 @@ namespace Relay.Disk_IO
         private string GetArchivePath()
         {
             return Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "Archive");
+        }
+
+        private string GetFailedReadsPath()
+        {
+            return Path.Combine(_uploadConfiguration.RelayTradeFileUploadDirectoryPath, "FailedReads");
         }
 
         private void DetectedFileChange(object source, FileSystemEventArgs e)
@@ -102,19 +109,32 @@ namespace Relay.Disk_IO
         {
             lock (_lock)
             {
-                var csvRecords = _fileProcessor.Process(path);
+                var csvReadResults = _fileProcessor.Process(path);
 
-                if (csvRecords == null)
+                if (csvReadResults == null
+                    || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                 {
                     return;
                 }
 
-                foreach (var item in csvRecords)
+                foreach (var item in csvReadResults.SuccessfulReads)
                 {
                     _stream.Add(item);
                 }
 
                 _reddeerDirectory.Move(path, archivePath);
+
+                if (!csvReadResults.UnsuccessfulReads.Any())
+                {
+                    return;
+                }
+
+                var originatingFileName = Path.GetFileNameWithoutExtension(path);
+
+                _fileProcessor.WriteFailedReadsToDisk(
+                    GetFailedReadsPath(),
+                    originatingFileName,
+                    csvReadResults.UnsuccessfulReads);
             }
         }
 

@@ -162,7 +162,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             var result = _elasticClient.Search<ReddeerTradeDocument>(
                 q => q
                     .Index("surveillance-reddeer-trade-*")
-                    .Size(int.MaxValue)
+                    .Size(10000)
                     .MatchAll()
                     .Query(qu =>
                         qu.DateRange(ra =>

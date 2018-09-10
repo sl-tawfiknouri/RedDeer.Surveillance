@@ -25,6 +25,10 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;
+using Surveillance.Scheduler;
+using Surveillance.Scheduler.Interfaces;
+using Surveillance.Universe;
+using Surveillance.Universe.Interfaces;
 
 namespace Surveillance
 {
@@ -64,6 +68,15 @@ namespace Surveillance
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
+
+            For<IReddeerRuleScheduler>().Use<ReddeerRuleScheduler>();
+            For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
+            For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
+
+            For<IUniverse>().Use<Universe.Universe>();
+            For<IUniverseBuilder>().Use<UniverseBuilder>();
+            For<IUniverseEvent>().Use<UniverseEvent>();
+            For<IUniversePlayer>().Use<UniversePlayer>();
         }
     }
 }

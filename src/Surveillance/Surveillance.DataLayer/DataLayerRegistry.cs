@@ -7,6 +7,8 @@ using Surveillance.DataLayer.ElasticSearch.Rules;
 using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
+using Surveillance.DataLayer.Projectors;
+using Surveillance.DataLayer.Projectors.Interfaces;
 
 namespace Surveillance.DataLayer
 {
@@ -18,6 +20,7 @@ namespace Surveillance.DataLayer
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRedDeerTradeFormatRepository>().Use<RedDeerTradeFormatRepository>();
             For<IRedDeerMarketExchangeFormatRepository>().Use<RedDeerMarketExchangeFormatRepository>();
+            For<IReddeerTradeFormatToReddeerTradeFrameProjector>().Use<ReddeerTradeFormatToReddeerTradeFrameProjector>();
         }
     }
 }

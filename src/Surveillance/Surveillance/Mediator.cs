@@ -1,5 +1,6 @@
 ﻿using Surveillance.Services.Interfaces;
 using System;
+using Surveillance.Scheduler.Interfaces;
 
 namespace Surveillance
 {
@@ -9,23 +10,30 @@ namespace Surveillance
     public class Mediator : IMediator
     {
         private readonly IReddeerTradeService _reddeerTradeService;
+        private readonly IReddeerRuleScheduler _ruleScheduler;
 
         public Mediator(
-            IReddeerTradeService reddeerTradeService)
+            IReddeerTradeService reddeerTradeService,
+            IReddeerRuleScheduler ruleScheduler)
         {
             _reddeerTradeService =
                 reddeerTradeService 
                 ?? throw new ArgumentNullException(nameof(reddeerTradeService));
+            _ruleScheduler =
+                ruleScheduler
+                ?? throw new ArgumentNullException(nameof(ruleScheduler));
         }
 
         public void Initiate()
         {
             _reddeerTradeService.Initialise();
+            _ruleScheduler.Initiate();
         }
 
         public void Terminate()
         {
             _reddeerTradeService.Dispose();
+            _ruleScheduler.Terminate();
         }
     }
 }

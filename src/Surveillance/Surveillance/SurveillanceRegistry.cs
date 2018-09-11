@@ -1,4 +1,6 @@
 ﻿using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Domain.Streams;
 using StructureMap;
 using NLog.Extensions.Logging;
@@ -77,6 +79,8 @@ namespace Surveillance
             For<IUniverseBuilder>().Use<UniverseBuilder>();
             For<IUniverseEvent>().Use<UniverseEvent>();
             For<IUniversePlayer>().Use<UniversePlayer>();
+
+            For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
         }
     }
 }

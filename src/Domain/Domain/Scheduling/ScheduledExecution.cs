@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Surveillance.Scheduler
+namespace Domain.Scheduling
 {
     /// <summary>
     /// DTO type for messages
@@ -11,7 +11,7 @@ namespace Surveillance.Scheduler
         /// <summary>
         /// Rule to run
         /// </summary>
-        public List<Rules.Rules> Rules { get; set; } = new List<Rules.Rules>();
+        public List<Rules> Rules { get; set; } = new List<Rules>();
 
         /// <summary>
         /// Filter to apply to the data set time series

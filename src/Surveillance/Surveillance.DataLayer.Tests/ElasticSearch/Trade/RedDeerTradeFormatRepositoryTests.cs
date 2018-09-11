@@ -5,7 +5,6 @@ using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade;
-using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.ElasticSearchDtos.Trades;
 
 namespace Surveillance.DataLayer.Tests.ElasticSearch.Trade

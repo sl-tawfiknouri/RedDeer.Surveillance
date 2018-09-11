@@ -35,7 +35,7 @@ namespace Surveillance.Rules.Spoofing
         // volume difference between spoof and real trade
         private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m;
 
-        public Rules Rule => Rules.Spoofing;
+        public Domain.Scheduling.Rules Rule => Domain.Scheduling.Rules.Spoofing;
 
         public SpoofingRule(
             IRuleBreachFactory ruleBreachFactory,

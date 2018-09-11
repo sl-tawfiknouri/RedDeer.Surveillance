@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Domain.Scheduling;
 
 namespace Surveillance.Scheduler.Interfaces
 {

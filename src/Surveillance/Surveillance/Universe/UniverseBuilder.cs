@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Domain.Scheduling;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
-using Surveillance.Scheduler;
 using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Universe

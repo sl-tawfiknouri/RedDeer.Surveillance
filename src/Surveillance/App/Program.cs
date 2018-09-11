@@ -44,7 +44,7 @@ namespace RedDeer.Surveillance.App
                     .Build();
 
                 Container.Inject(typeof(INetworkConfiguration), BuildNetworkConfiguration(configurationBuilder));
-                Container.Inject(typeof(IDatabaseConfiguration), BuildDatabaseConfiguration(configurationBuilder));
+                Container.Inject(typeof(IDataLayerConfiguration), BuildDatabaseConfiguration(configurationBuilder));
 
                 Container.Configure(config =>
                 {
@@ -79,10 +79,14 @@ namespace RedDeer.Surveillance.App
             return networkConfiguration;
         }
 
-        private static IDatabaseConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
+        private static IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
         {
-            var networkConfiguration = new DatabaseConfiguration
+            var networkConfiguration = new DataLayerConfiguration
             {
+                IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
+                AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
+                AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
+                ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
                 ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),
                 ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort")

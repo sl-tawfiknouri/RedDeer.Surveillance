@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Rules
+﻿namespace Domain.Scheduling
 {
     public enum Rules
     {

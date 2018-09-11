@@ -32,7 +32,7 @@ namespace Surveillance.Rules.ProhibitedAssets
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
         }
 
-        public Rules Rule { get; } = Rules.ProhibitedAssets;
+        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.ProhibitedAssets;
         public string Version { get; } = "V1.0";
 
         public void OnCompleted()

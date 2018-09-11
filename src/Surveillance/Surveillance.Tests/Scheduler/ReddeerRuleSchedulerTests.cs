@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.DataLayer.AwsQueue.Interfaces;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
@@ -19,6 +25,12 @@ namespace Surveillance.Tests.Scheduler
         private IUniverse _universe;
         private IUniversePlayer _universePlayer;
 
+        private IAwsQueueClient _awsQueueClient;
+        private IDataLayerConfiguration _dataLayerConfiguration;
+        private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+
+        private ILogger<ReddeerRuleScheduler> _logger;
+
         [SetUp]
         public void Setup()
         {
@@ -28,6 +40,10 @@ namespace Surveillance.Tests.Scheduler
             _spoofingRule = A.Fake<ISpoofingRule>();
             _universe = A.Fake<IUniverse>();
             _universePlayer = A.Fake<IUniversePlayer>();
+            _awsQueueClient = A.Fake<IAwsQueueClient>();
+            _dataLayerConfiguration = A.Fake<IDataLayerConfiguration>();
+            _messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
+            _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
         [Test]
@@ -35,7 +51,14 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(null, _universeBuilder, _universePlayerFactory));
+                new ReddeerRuleScheduler(
+                    null,
+                    _universeBuilder,
+                    _universePlayerFactory,
+                    _awsQueueClient,
+                    _dataLayerConfiguration,
+                    _messageBusSerialiser,
+                    _logger));
         }
 
         [Test]
@@ -43,7 +66,14 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(_spoofingRuleFactory, null, _universePlayerFactory));
+                new ReddeerRuleScheduler(
+                    _spoofingRuleFactory,
+                    null,
+                    _universePlayerFactory,
+                    _awsQueueClient,
+                    _dataLayerConfiguration,
+                    _messageBusSerialiser,
+                    _logger));
         }
 
         [Test]
@@ -51,24 +81,31 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(_spoofingRuleFactory, _universeBuilder, null));
+                new ReddeerRuleScheduler(
+                    _spoofingRuleFactory,
+                    _universeBuilder,
+                    null,
+                    _awsQueueClient,
+                    _dataLayerConfiguration,
+                    _messageBusSerialiser,
+                    _logger));
         }
 
         [Test]
-        public void Execute_DoesNotThrow_NullExecutionArgument()
+        public async Task Execute_Spoofing_CallsSpoofingRule()
         {
-            var scheduler = new ReddeerRuleScheduler(_spoofingRuleFactory, _universeBuilder, _universePlayerFactory);
+            var scheduler = new ReddeerRuleScheduler(
+                _spoofingRuleFactory,
+                _universeBuilder,
+                _universePlayerFactory,
+                _awsQueueClient,
+                _dataLayerConfiguration,
+                _messageBusSerialiser,
+                _logger);
 
-            Assert.DoesNotThrow(() => scheduler.Execute(null));
-        }
-
-        [Test]
-        public void Execute_Spoofing_CallsSpoofingRule()
-        {
-            var scheduler = new ReddeerRuleScheduler(_spoofingRuleFactory, _universeBuilder, _universePlayerFactory);
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Rules.Rules> {Rules.Rules.Spoofing},
+                Rules = new List<Domain.Scheduling.Rules> {Domain.Scheduling.Rules.Spoofing},
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };
@@ -77,7 +114,7 @@ namespace Surveillance.Tests.Scheduler
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
             A.CallTo(() => _spoofingRuleFactory.Build()).Returns(_spoofingRule);
 
-            scheduler.Execute(schedule);
+           await scheduler.Execute(schedule);
 
             A.CallTo(() => _spoofingRuleFactory.Build()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
@@ -86,12 +123,20 @@ namespace Surveillance.Tests.Scheduler
         }
 
         [Test]
-        public void Execute_Nothing_DoesNothing()
+        public async Task Execute_Nothing_DoesNothing()
         {
-            var scheduler = new ReddeerRuleScheduler(_spoofingRuleFactory, _universeBuilder, _universePlayerFactory);
+            var scheduler = new ReddeerRuleScheduler(
+                _spoofingRuleFactory,
+                _universeBuilder,
+                _universePlayerFactory,
+                _awsQueueClient,
+                _dataLayerConfiguration,
+                _messageBusSerialiser,
+                _logger);
+
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Rules.Rules> { },
+                Rules = new List<Domain.Scheduling.Rules> { },
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };
@@ -100,7 +145,7 @@ namespace Surveillance.Tests.Scheduler
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
             A.CallTo(() => _spoofingRuleFactory.Build()).Returns(_spoofingRule);
 
-            scheduler.Execute(schedule);
+            await scheduler.Execute(schedule);
 
             A.CallTo(() => _spoofingRuleFactory.Build()).MustNotHaveHappened();
             A.CallTo(() => _universePlayerFactory.Build()).MustNotHaveHappened();

@@ -72,6 +72,14 @@ namespace TestHarness.Commands
             }
 
             terminationDate = OffsetTerminationDate(terminationDate);
+
+            if (initialDate > terminationDate)
+            {
+                _console.WriteToUserFeedbackLine($"Initiation precedes Termination date. Invalid input.");
+
+                return;
+            }
+
             var allRulesList = GetAllRules();
 
             var scheduledExecution = new ScheduledExecution

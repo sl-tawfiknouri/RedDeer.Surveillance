@@ -171,5 +171,32 @@ namespace TestHarness.Tests.Commands
                         A<CancellationToken>.Ignored))
                 .MustNotHaveHappened();
         }
+
+        [Test]
+        public void Run_QueuesMessageToBus_ReturnsScreenErrorForInvalidDatesTerminationPrecedesInitiation()
+        {
+            var scheduleRule =
+                new ScheduleRuleCommand(_appFactory);
+
+            scheduleRule.Run("run schedule rule 02/02/2018 01/02/2018");
+
+            A
+                .CallTo(() =>
+                    _console.WriteToUserFeedbackLine(A<string>.Ignored))
+                .MustHaveHappenedOnceExactly();
+
+            A
+                .CallTo(() =>
+                    _serialiser.SerialiseScheduledExecution(A<ScheduledExecution>.Ignored))
+                .MustNotHaveHappened();
+
+            A
+                .CallTo(() =>
+                    _awsQueueClient.SendToQueue(
+                        A<string>.Ignored,
+                        A<string>.Ignored,
+                        A<CancellationToken>.Ignored))
+                .MustNotHaveHappened();
+        }
     }
 }

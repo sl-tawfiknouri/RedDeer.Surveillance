@@ -26,15 +26,25 @@ namespace TestHarness.Display
 
         private void InitialConfiguration()
         {
-            System.Console.Title = "Red Deer Surveillance | Test Harness";
-            System.Console.ForegroundColor = ConsoleColor.White;
-            System.Console.BackgroundColor = ConsoleColor.Black;
+            try
+            {
+                System.Console.Title = "Red Deer Surveillance | Test Harness";
+                System.Console.ForegroundColor = ConsoleColor.White;
+                System.Console.BackgroundColor = ConsoleColor.Black;
 
-            var height = Math.Min(30, System.Console.LargestWindowHeight);
-            System.Console.SetWindowSize(System.Console.LargestWindowWidth, height);
+                var height = Math.Min(30, System.Console.LargestWindowHeight);
+                height = Math.Max(height, 1);
+                var width = Math.Max(1, System.Console.LargestWindowWidth);
 
-            WriteToLine(2, "RED DEER SURVEILLANCE");
-            WriteToLine(4, "TEST HARNESS");
+                System.Console.SetWindowSize(width, height);
+
+                WriteToLine(2, "RED DEER SURVEILLANCE");
+                WriteToLine(4, "TEST HARNESS");
+            }
+            catch
+            {
+                //
+            }
         }
 
         public void OutputMarketFrame(ExchangeFrame frame)

@@ -1,5 +1,7 @@
-﻿using NLog;
+﻿using Domain.Scheduling.Interfaces;
+using NLog;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Configuration.Interfaces;
 using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
@@ -10,6 +12,7 @@ using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 using TestHarness.State.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
 namespace TestHarness.Factory.Interfaces
 {
@@ -46,5 +49,8 @@ namespace TestHarness.Factory.Interfaces
         ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
         ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
         ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
+        IAwsQueueClient AwsQueueClient { get; }
+        IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
+        INetworkConfiguration Configuration { get; }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace TestHarness.Configuration.Interfaces
+﻿using Utilities.Aws_IO.Interfaces;
+
+namespace TestHarness.Configuration.Interfaces
 {
-    public interface INetworkConfiguration
+    public interface INetworkConfiguration : IAwsConfiguration
     {
         string TradeWebsocketUriDomain { get; }
         string TradeWebsocketUriPort { get; }

@@ -1,25 +1,29 @@
-﻿using Amazon.SQS;
-using Amazon.SQS.Model;
-using System;
+﻿using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.SQS;
+using Amazon.SQS.Model;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.AwsQueue.Interfaces;
-using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.DataLayer.AwsQueue
+namespace Utilities.Aws_IO
 {
     public class AwsQueueClient : IAwsQueueClient
     {
         private readonly AmazonSQSClient _sqsClient;
-        private readonly ILogger<AwsQueueClient> _logger;
+        private readonly ILogger<AwsQueueClient> _logger; // can be null
 
         public AwsQueueClient(
-            IDataLayerConfiguration dataLayerConfiguration,
+            IAwsConfiguration awsConfiguration,
             ILogger<AwsQueueClient> logger)
         {
-            _sqsClient = dataLayerConfiguration.IsEc2Instance ?
+            if (awsConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(awsConfiguration));
+            }
+
+            _sqsClient = awsConfiguration.IsEc2Instance ?
                  new AmazonSQSClient(
                      new AmazonSQSConfig
                      {
@@ -27,27 +31,50 @@ namespace Surveillance.DataLayer.AwsQueue
                          ProxyCredentials = CredentialCache.DefaultCredentials
                      }) :
                  new AmazonSQSClient(
-                     dataLayerConfiguration.AwsAccessKey,
-                     dataLayerConfiguration.AwsSecretKey,
+                     awsConfiguration.AwsAccessKey,
+                     awsConfiguration.AwsSecretKey,
                      new AmazonSQSConfig
                      {
                          RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
                          ProxyCredentials = CredentialCache.DefaultCredentials
                      });
 
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
         }
 
-        public async Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken)
+        public async Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken, bool retry = true)
         {
-            var getQueueUrlRequest = new GetQueueUrlRequest
+            try
             {
-                QueueName = name
-            };
-            var getQueueUrlResponse = await _sqsClient.GetQueueUrlAsync(getQueueUrlRequest, cancellationToken);
-            _logger.LogInformation($"Got Queue Url (Name: {name}, Url: {getQueueUrlResponse.QueueUrl}).");
+                var getQueueUrlRequest = new GetQueueUrlRequest
+                {
+                    QueueName = name
+                };
 
-            return getQueueUrlResponse.QueueUrl;
+                var getQueueUrlResponse = await _sqsClient.GetQueueUrlAsync(getQueueUrlRequest, cancellationToken);
+                _logger?.LogInformation($"Got Queue Url (Name: {name}, Url: {getQueueUrlResponse.QueueUrl}).");
+
+                return getQueueUrlResponse.QueueUrl;
+            }
+            catch
+            {
+                if (!retry)
+                {
+                    throw;
+                }
+
+                var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+                var result = await _sqsClient.CreateQueueAsync(name, cts.Token);
+
+                if (result.HttpStatusCode != HttpStatusCode.OK)
+                {
+                    _logger?.LogError($"AwsQueueClient tried to create new queue for {name} but failed with {result.HttpStatusCode}");
+                    throw;
+                }
+
+                return await GetQueueUrlAsync(name, cancellationToken, false);
+            }
+
         }
 
         public async Task SendToQueue(string name, string message, CancellationToken cancellationToken)
@@ -61,8 +88,7 @@ namespace Surveillance.DataLayer.AwsQueue
             };
 
             var sendMessageResponse = await _sqsClient.SendMessageAsync(sendMessageRequest, cancellationToken);
-
-            _logger.LogInformation($"Sent Message To Queue (Name: {name}, Size: {message.Length}, HttpCode: {sendMessageResponse.HttpStatusCode.ToString()}).");
+            _logger?.LogInformation($"Sent Message To Queue (Name: {name}, Size: {message.Length}, HttpCode: {sendMessageResponse.HttpStatusCode.ToString()}).");
         }
 
         public async Task SubscribeToQueueAsync(string name, Func<string, string, Task> action, CancellationToken cancellationToken)
@@ -82,7 +108,7 @@ namespace Surveillance.DataLayer.AwsQueue
                     var result = await _sqsClient.ReceiveMessageAsync(receiveMessageRequest, cancellationToken);
                     foreach (var message in result.Messages)
                     {
-                        _logger.LogInformation($"Received Message (Queue: {name}, MessageId: {message.MessageId}, Size: {message.Body.Length}).");
+                        _logger?.LogInformation($"Received Message (Queue: {name}, MessageId: {message.MessageId}, Size: {message.Body.Length}).");
 
                         await action(message.MessageId, message.Body);
 
@@ -96,7 +122,7 @@ namespace Surveillance.DataLayer.AwsQueue
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.ToString());
+                    _logger?.LogError(ex.ToString());
                 }
             }
         }

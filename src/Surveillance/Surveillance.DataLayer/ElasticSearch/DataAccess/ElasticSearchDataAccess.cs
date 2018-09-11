@@ -27,10 +27,10 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
         public string ReddeerTradeFormatIndexName => "reddeer-trade";
         public string ReddeerStockExchangeFormatIndexName => "reddeer-stock-market";
 
-        public ElasticSearchDataAccess(IDataLayerConfiguration dataLayerConfiguration)
+        public ElasticSearchDataAccess(IElasticSearchConfiguration elasticSearchConfiguration)
         {
             var url =
-                $"{dataLayerConfiguration.ElasticSearchProtocol}://{dataLayerConfiguration.ElasticSearchDomain}:{dataLayerConfiguration.ElasticSearchPort}";
+                $"{elasticSearchConfiguration.ElasticSearchProtocol}://{elasticSearchConfiguration.ElasticSearchDomain}:{elasticSearchConfiguration.ElasticSearchPort}";
             var settings = new ConnectionSettings(new Uri(url));
 
 #if DEBUG

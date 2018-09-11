@@ -152,6 +152,7 @@ namespace Surveillance.Rules.Spoofing
 
                 if (hasBreachedSpoofingRule)
                 {
+
                     RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
                 }
             }

@@ -28,6 +28,10 @@ namespace TestHarness.App
                 TradeWebsocketUriDomain = configurationBuilder.GetValue<string>("TradeWebsocketUriDomain"),
                 StockExchangeDomainUriDomainSegment = configurationBuilder.GetValue<string>("StockExchangeDomainUriDomain"),
                 StockExchangeDomainUriPort = configurationBuilder.GetValue<string>("StockExchangeDomainUriPort"),
+                IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
+                AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
+                AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
+                ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
             };
 
             return networkConfiguration;

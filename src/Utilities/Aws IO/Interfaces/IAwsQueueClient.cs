@@ -2,11 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Surveillance.DataLayer.AwsQueue.Interfaces
+namespace Utilities.Aws_IO.Interfaces
 {
     public interface IAwsQueueClient
     {
-        Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken);
+        Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken, bool retry = true);
         Task SendToQueue(string name, string message, CancellationToken cancellationToken);
         Task SubscribeToQueueAsync(string name, Func<string, string, Task> action, CancellationToken cancellationToken);
     }

@@ -15,6 +15,7 @@ using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {
@@ -43,8 +44,10 @@ namespace RedDeer.Surveillance.App
                     .AddJsonFile("appsettings.json", true, true)
                     .Build();
 
+                var dbConfiguration = BuildDatabaseConfiguration(configurationBuilder);
                 Container.Inject(typeof(INetworkConfiguration), BuildNetworkConfiguration(configurationBuilder));
-                Container.Inject(typeof(IDataLayerConfiguration), BuildDatabaseConfiguration(configurationBuilder));
+                Container.Inject(typeof(IElasticSearchConfiguration), dbConfiguration);
+                Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
 
                 Container.Configure(config =>
                 {
@@ -79,9 +82,9 @@ namespace RedDeer.Surveillance.App
             return networkConfiguration;
         }
 
-        private static IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
+        private static IElasticSearchConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
         {
-            var networkConfiguration = new DataLayerConfiguration
+            var networkConfiguration = new ElasticSearchConfiguration
             {
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
                 AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),

@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.AwsQueue.Interfaces;
-using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Scheduler
 {
@@ -19,7 +18,7 @@ namespace Surveillance.Scheduler
         private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
         private readonly IAwsQueueClient _awsQueueClient;
-        private readonly IDataLayerConfiguration _dataLayerConfiguration;
+        private readonly IAwsConfiguration _awsConfiguration;
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
@@ -30,7 +29,7 @@ namespace Surveillance.Scheduler
             IUniverseBuilder universeBuilder,
             IUniversePlayerFactory universePlayerFactory,
             IAwsQueueClient awsQueueClient,
-            IDataLayerConfiguration dataLayerConfiguration,
+            IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ILogger<ReddeerRuleScheduler> logger)
         {
@@ -45,7 +44,7 @@ namespace Surveillance.Scheduler
                 ?? throw new ArgumentNullException(nameof(universePlayerFactory));
 
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
+            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -57,7 +56,7 @@ namespace Surveillance.Scheduler
             _messageBusCts = new CancellationTokenSource();
 
             _awsQueueClient.SubscribeToQueueAsync(
-                _dataLayerConfiguration.ScheduledRuleQueueName,
+                _awsConfiguration.ScheduledRuleQueueName,
                 async (s1, s2) => { await ExecuteMessage(s1, s2); },
                 _messageBusCts.Token);
         }

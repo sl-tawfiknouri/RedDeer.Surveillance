@@ -6,12 +6,11 @@ using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.DataLayer.AwsQueue.Interfaces;
-using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Universe.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Tests.Scheduler
 {
@@ -26,7 +25,7 @@ namespace Surveillance.Tests.Scheduler
         private IUniversePlayer _universePlayer;
 
         private IAwsQueueClient _awsQueueClient;
-        private IDataLayerConfiguration _dataLayerConfiguration;
+        private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
 
         private ILogger<ReddeerRuleScheduler> _logger;
@@ -41,7 +40,7 @@ namespace Surveillance.Tests.Scheduler
             _universe = A.Fake<IUniverse>();
             _universePlayer = A.Fake<IUniversePlayer>();
             _awsQueueClient = A.Fake<IAwsQueueClient>();
-            _dataLayerConfiguration = A.Fake<IDataLayerConfiguration>();
+            _awsConfiguration = A.Fake<IAwsConfiguration>();
             _messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
@@ -56,7 +55,7 @@ namespace Surveillance.Tests.Scheduler
                     _universeBuilder,
                     _universePlayerFactory,
                     _awsQueueClient,
-                    _dataLayerConfiguration,
+                    _awsConfiguration,
                     _messageBusSerialiser,
                     _logger));
         }
@@ -71,7 +70,7 @@ namespace Surveillance.Tests.Scheduler
                     null,
                     _universePlayerFactory,
                     _awsQueueClient,
-                    _dataLayerConfiguration,
+                    _awsConfiguration,
                     _messageBusSerialiser,
                     _logger));
         }
@@ -86,7 +85,7 @@ namespace Surveillance.Tests.Scheduler
                     _universeBuilder,
                     null,
                     _awsQueueClient,
-                    _dataLayerConfiguration,
+                    _awsConfiguration,
                     _messageBusSerialiser,
                     _logger));
         }
@@ -99,7 +98,7 @@ namespace Surveillance.Tests.Scheduler
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
-                _dataLayerConfiguration,
+                _awsConfiguration,
                 _messageBusSerialiser,
                 _logger);
 
@@ -130,7 +129,7 @@ namespace Surveillance.Tests.Scheduler
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
-                _dataLayerConfiguration,
+                _awsConfiguration,
                 _messageBusSerialiser,
                 _logger);
 

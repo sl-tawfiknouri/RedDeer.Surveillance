@@ -1,8 +1,9 @@
 ﻿using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.DataLayer.Configuration
 {
-    public class DataLayerConfiguration : IDataLayerConfiguration
+    public class ElasticSearchConfiguration : IElasticSearchConfiguration
     {
         public bool IsEc2Instance { get; set; }
         public string AwsAccessKey { get; set; }

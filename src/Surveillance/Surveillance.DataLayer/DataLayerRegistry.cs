@@ -1,6 +1,6 @@
 ﻿using StructureMap;
-using Surveillance.DataLayer.AwsQueue;
-using Surveillance.DataLayer.AwsQueue.Interfaces;
+using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.DataAccess;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Market;
@@ -11,6 +11,8 @@ using Surveillance.DataLayer.ElasticSearch.Trade;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors;
 using Surveillance.DataLayer.Projectors.Interfaces;
+using Utilities.Aws_IO;
+using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.DataLayer
 {

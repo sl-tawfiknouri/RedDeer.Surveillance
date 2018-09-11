@@ -43,6 +43,7 @@ namespace TestHarness.Commands
                 new DemoTradeFileNetworkingCommand(appFactory),
                 new TradeProhibitedSecurityCommand(appFactory),
                 new SpoofingCommand(appFactory),
+                new ScheduleRuleCommand(appFactory),
                _unrecognisedCommand,
             };
         }

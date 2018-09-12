@@ -63,7 +63,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"),
-                new List<SecurityFrame>());
+                new List<SecurityTick>());
 
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
 
@@ -72,12 +72,11 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                 "No securities were present on the exchange frame in the probabilistic trade strategy");
         }
 
-
         [TestCase(0)]
         [TestCase(10)]
         [TestCase(100)]
         [TestCase(1000)]
-        public void ExecuteTradeStategy_RecordsTrades_100Iterations(int frames)
+        public void ExecuteTradeStrategy_RecordsTrades_100Iterations(int frames)
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = GenerateFrame(frames);
@@ -105,20 +104,24 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             return exchFrame;
         }
 
-        private IReadOnlyCollection<SecurityFrame> GenerateSecurityFrames(int number)
+        private IReadOnlyCollection<SecurityTick> GenerateSecurityFrames(int number)
         {
-            var results = new List<SecurityFrame>();
+            var results = new List<SecurityTick>();
             for (var i = 0; i < number; i++)
             {
                 var buyPrice = Math.Round(ContinuousUniform.Sample(0.01, 30000), 2);
                 var sellPrice = buyPrice * ContinuousUniform.Sample(0.95, 1);
                 var volume = DiscreteUniform.Sample(0, 100000000);
                 
-                var frame = new SecurityFrame(
-                    new Domain.Equity.Security(
-                        new Domain.Equity.Security.SecurityId($"STAN-{i}"), "Standard Chartered", "STAN"),
-                    new Spread(new Price((decimal)buyPrice), new Price((decimal)sellPrice)),
-                    new Volume(volume));
+                var frame = new SecurityTick(
+                    new Security(
+                        new SecurityIdentifiers($"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"),
+                        "Standard Chartered"),
+                    "STA123",
+                    "STAN",
+                    new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
+                    new Volume(volume),
+                    DateTime.UtcNow);
 
                 results.Add(frame);
             }

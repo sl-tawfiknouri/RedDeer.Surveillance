@@ -10,10 +10,10 @@ namespace Domain.Equity.Frames
     {
         public ExchangeFrame(
             StockExchange exchange,
-            IReadOnlyCollection<SecurityFrame> securities)
+            IReadOnlyCollection<SecurityTick> securities)
         {
             Exchange = exchange;
-            Securities = securities ?? new List<SecurityFrame>();
+            Securities = securities ?? new List<SecurityTick>();
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Domain.Equity.Frames
         /// <summary>
         /// The securities with updated data
         /// </summary>
-        public IReadOnlyCollection<SecurityFrame> Securities { get; }
+        public IReadOnlyCollection<SecurityTick> Securities { get; }
 
         public override string ToString()
         {

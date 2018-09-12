@@ -111,9 +111,9 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private SecurityFrame TickSecurity(SecurityFrame frame)
+        private SecurityTick TickSecurity(SecurityTick tick)
         {
-            return _dataStrategy.AdvanceFrame(frame);
+            return _dataStrategy.AdvanceFrame(tick);
         }
 
         public void TerminateWalk()

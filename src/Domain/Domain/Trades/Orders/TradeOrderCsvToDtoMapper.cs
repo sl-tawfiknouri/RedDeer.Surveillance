@@ -78,7 +78,7 @@ namespace Domain.Trades.Orders
 
             var pricedLimitPrice =
                 parsedLimitPrice != null
-                    ? (Price?)new Price(parsedLimitPrice.Value)
+                    ? (Price?)new Price(parsedLimitPrice.Value, csv.Currency)
                     : null; 
 
             if (!DateTime.TryParse(csv.StatusChangedOn, out DateTime statusChangedOn))
@@ -92,7 +92,7 @@ namespace Domain.Trades.Orders
             return new TradeOrderFrame(
                 orderType,
                 new StockExchange(new Market.Market.MarketId(csv.MarketId), csv.MarketName),
-                new Security(new Security.SecurityId(csv.SecurityId), csv.SecurityName, csv.MarketAbbreviation),
+                new Security(new SecurityIdentifiers(csv.SecurityClientIdentifier, csv.SecuritySedol, csv.SecurityIsin, csv.SecurityFigi), csv.SecurityName),
                 pricedLimitPrice,
                 volume,
                 orderDirection,

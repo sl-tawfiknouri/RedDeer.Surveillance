@@ -1,24 +1,30 @@
 ﻿namespace Domain.Equity
 {
     /// <summary>
-    /// Sell / Buy
+    /// bid / ask / market clearing price
     /// </summary>
     public struct Spread
     {
-        public Spread(Price buy, Price sell)
+        public Spread(Price bid, Price ask, Price price)
         {
-            Buy = buy;
-            Sell = sell;
+            Bid = bid;
+            Ask = ask;
+            Price = price;
         }
 
         /// <summary>
         /// Last buy price
         /// </summary>
-        public Price Buy { get; }
+        public Price Bid { get; }
 
         /// <summary>
         /// Last sell price
         /// </summary>
-        public Price Sell { get; }
+        public Price Ask { get; }
+
+        /// <summary>
+        /// The price the market resolved to
+        /// </summary>
+        public Price Price { get; }
     }
 }

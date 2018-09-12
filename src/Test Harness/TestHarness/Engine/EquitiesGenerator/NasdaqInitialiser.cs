@@ -11,6 +11,8 @@ namespace TestHarness.Engine.EquitiesGenerator
 {
     public class NasdaqInitialiser : IExchangeSeriesInitialiser
     {
+        private string _nasdaqCurrency = "USD";
+
         public ExchangeFrame InitialFrame()
         {
             var exchange = new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ");
@@ -22,17 +24,29 @@ namespace TestHarness.Engine.EquitiesGenerator
             return tick;
         }
 
-        private List<SecurityFrame> ProjectToSecurities(NasdaqData[] nasdaqRaw)
+        private List<SecurityTick> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
 
             return nasdaqRaw.Select(raw =>
-                new SecurityFrame(
-                    new Domain.Equity.Security
-                        (new Domain.Equity.Security.SecurityId(raw.Symbol), raw.Symbol, raw.Symbol),
-                        new Spread(new Price(decimal.Parse(raw.Buy)), new Price(decimal.Parse(raw.Sell))),
-                        new Volume(rnd.Next(5000, 1000000))))
-                        .ToList();
+                new SecurityTick(
+                    new Security(
+                        new SecurityIdentifiers(
+                            raw.Symbol,
+                            raw.Symbol,
+                            raw.Symbol,
+                            raw.Symbol),
+                        raw.Symbol),
+                    "CFI",
+                    raw.Symbol,
+                    new Spread(
+                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency)),
+                    new Volume(rnd.Next(5000, 1000000)),
+                    DateTime.UtcNow
+                    ))
+                .ToList();
         }
 
         private class NasdaqData

@@ -64,7 +64,9 @@ namespace TestHarness.Engine.OrderGenerator
                     var prohibitedTrade = new TradeOrderFrame
                         (OrderType.Market,
                         _lastFrame.Exchange,
-                        new Security(new Security.SecurityId("Lehman Bros"), "Lehman Bros", "NASDAQ"),
+                        new Security(
+                            new SecurityIdentifiers("Lehman Bros", "LB12345", "LB123456789X", "LBro"),
+                            "Lehman Bros"),
                         null,
                         666,
                         OrderDirection.Buy,

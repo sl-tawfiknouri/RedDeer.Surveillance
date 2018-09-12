@@ -87,7 +87,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private TradeOrderFrame[] SpoofedOrder(SecurityFrame security, int remainingSpoofedOrders, int totalSpoofedOrders)
+        private TradeOrderFrame[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
         {
             if (security == null
                 || remainingSpoofedOrders <= 0)
@@ -96,8 +96,8 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
-            var limitPriceValue = security.Spread.Buy.Value * priceOffset;
-            var limitPrice = new Price(limitPriceValue);
+            var limitPriceValue = security.Spread.Bid.Value * priceOffset;
+            var limitPrice = new Price(limitPriceValue, security.Spread.Bid.Currency);
 
             var individualTradeVolumeLimit = (100 / totalSpoofedOrders);
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;
@@ -119,7 +119,7 @@ namespace TestHarness.Engine.OrderGenerator
                 .ToArray();
         }
 
-        private TradeOrderFrame CounterTrade(SecurityFrame security)
+        private TradeOrderFrame CounterTrade(SecurityTick security)
         {
             var volumeToTrade = (int)Math.Round(security.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
 

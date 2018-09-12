@@ -30,13 +30,15 @@ namespace TestHarness.Tests.Display
         private TradeOrderFrame GenerateFrame(int vol)
         {
             var stock = new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange");
-            var sec = new Security(new Security.SecurityId("STAN"), "Standard Chartered", "LSE");
+            var sec = new Security(
+                new SecurityIdentifiers("STAN", "st12345", "sta123456789", "stan"),
+                "Standard Chartered");
 
             return new TradeOrderFrame(
                     OrderType.Limit,
                     stock,
                     sec,
-                    new Price(20.2m),
+                    new Price(20.2m, "GBP"),
                     100 * vol,
                     OrderDirection.Buy,
                     OrderStatus.Fulfilled,

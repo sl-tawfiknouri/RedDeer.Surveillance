@@ -13,7 +13,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _fixedVolume = fixedVolume;
         }
 
-        public int CalculateSecuritiesToTrade(IReadOnlyCollection<SecurityFrame> frames)
+        public int CalculateSecuritiesToTrade(IReadOnlyCollection<SecurityTick> frames)
         {
             if (frames == null)
             {

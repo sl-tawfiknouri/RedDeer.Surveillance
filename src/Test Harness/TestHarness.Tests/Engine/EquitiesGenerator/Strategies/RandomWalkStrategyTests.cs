@@ -34,11 +34,14 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var security = new SecurityFrame(
-                new Domain.Equity.Security(
-                    new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),
-                    new Spread(new Price(66), new Price(65)),
-                    new Volume(200000));
+            var security = new SecurityTick(
+                new Security(
+                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT"), "Microsoft"),
+                    "MSF123",
+                    "MSFT",
+                    new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
+                    new Volume(200000),
+                DateTime.UtcNow);
 
             var result = strategy.AdvanceFrame(security);
 
@@ -57,11 +60,14 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var security = new SecurityFrame(
-                new Domain.Equity.Security(
-                    new Domain.Equity.Security.SecurityId("MSFT"), "Microsoft", "MSFT"),
-                    new Spread(new Price(66), new Price(65)),
-                    new Volume(200000));
+            var security = new SecurityTick(
+                new Security(
+                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT"), "Microsoft"),
+                    "MSF123",
+                    "MSFT",
+                    new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
+                    new Volume(200000),
+                DateTime.UtcNow);
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);
@@ -73,7 +79,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                 var printableGeneratedSecurity = JsonConvert.SerializeObject(security);
                 Console.WriteLine(printableGeneratedSecurity);
 
-                Assert.IsTrue(security.Spread.Buy.Value >= security.Spread.Sell.Value);
+                Assert.IsTrue(security.Spread.Bid.Value >= security.Spread.Ask.Value);
             }
         }
     }

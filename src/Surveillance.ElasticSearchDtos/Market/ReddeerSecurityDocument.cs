@@ -46,5 +46,8 @@ namespace Surveillance.ElasticSearchDtos.Market
 
         [JsonConverter(typeof(ElasticSearchDateTimeConverter))]
         public DateTime TimeStamp { get; set; }
+
+        [Text]
+        public decimal? MarketCap { get; set; }
     }
 }

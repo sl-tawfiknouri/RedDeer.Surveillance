@@ -63,7 +63,9 @@ namespace Surveillance.Recorders.Projectors
                     SpreadPriceCurrency = sec?.Spread.Price.Currency,
 
                     TimeStamp = sec?.TimeStamp ?? DateTime.UtcNow,
-                    Volume = sec?.Volume.Traded
+                    Volume = sec?.Volume.Traded,
+
+                    MarketCap = sec?.MarketCap
                 };
             }).ToArray();
         }

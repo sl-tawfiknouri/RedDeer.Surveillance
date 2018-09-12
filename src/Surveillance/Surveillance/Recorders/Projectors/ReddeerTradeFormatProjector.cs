@@ -32,10 +32,10 @@ namespace Surveillance.Recorders.Projectors
                 MarketName = order.Market?.Name ?? string.Empty,
                 SecurityName = order.Security?.Name ?? string.Empty,
 
-                SecurityClientIdentifier = order.Security.Identifiers.ClientIdentifier,
-                SecuritySedol = order.Security.Identifiers.Sedol,
-                SecurityIsin = order.Security.Identifiers.Isin,
-                SecurityFigi = order.Security.Identifiers.Figi,
+                SecurityClientIdentifier = order.Security?.Identifiers.ClientIdentifier,
+                SecuritySedol = order.Security?.Identifiers.Sedol,
+                SecurityIsin = order.Security?.Identifiers.Isin,
+                SecurityFigi = order.Security?.Identifiers.Figi,
 
                 Limit = order.Limit?.Value,
                 LimitCurrency = order.Limit?.Currency,

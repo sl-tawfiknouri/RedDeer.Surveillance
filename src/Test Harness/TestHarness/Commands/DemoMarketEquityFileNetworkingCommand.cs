@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
+using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -11,6 +13,8 @@ namespace TestHarness.Commands
         public static string FileDirectory = "Play Files";
 
         private readonly IAppFactory _appFactory;
+        private IEquityDataGenerator _fileProcessor;
+        private INetworkManager _networkManager;
 
         public DemoMarketEquityFileNetworkingCommand(IAppFactory appFactory)
         {
@@ -84,10 +88,47 @@ namespace TestHarness.Commands
 
         private void RunDemo(string command)
         {
+            var console = _appFactory.Console;
+            var equityStream = _appFactory.StockExchangeStreamFactory.CreateDisplayable(console);
+            var filePath = GetEquityFilePath(command);
+
+            _networkManager = _appFactory.NetworkManagerFactory.CreateWebsockets();
+            _fileProcessor = _appFactory.EquitiesFileRelayProcessFactory.Create(filePath);
+
+            // start networking processes
+            var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
+
+            if (!connectionEstablished)
+            {
+                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
+                return;
+            }
+
+            connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
+
+            if (!connectionEstablished)
+            {
+                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run demo networking.");
+                return;
+            }
+
+            _fileProcessor.InitiateWalk(equityStream);
+        }
+
+        private string GetEquityFilePath(string command)
+        {
+            var fileSegment = command.ToLower().Replace("run demo equity market file networking ", string.Empty);
+            fileSegment = fileSegment?.Trim();
+            var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
+            var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);
+
+            return playFileFullPath;
         }
 
         private void StopDemo()
         {
+            _fileProcessor?.TerminateWalk();
+            _networkManager?.TerminateAllNetworkConnections();
         }
     }
 }

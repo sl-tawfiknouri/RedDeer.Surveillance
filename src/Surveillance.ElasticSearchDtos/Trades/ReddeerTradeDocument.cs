@@ -46,10 +46,28 @@ namespace Surveillance.ElasticSearchDtos.Trades
         public string MarketName { get; set; }
 
         /// <summary>
-        /// Security identifier i.e. STAN
+        /// Security client identifier i.e. STAN or ABC12341
         /// </summary>
         [Keyword]
-        public string SecurityId { get; set; }
+        public string SecurityClientIdentifier { get; set; }
+
+        /// <summary>
+        /// Security Sedol (7 digits)
+        /// </summary>
+        [Keyword]
+        public string SecuritySedol { get; set; }
+
+        /// <summary>
+        /// Security Isin (12 digits)
+        /// </summary>
+        [Keyword]
+        public string SecurityIsin { get; set; }
+
+        /// <summary>
+        /// Security Figi
+        /// </summary>
+        [Keyword]
+        public string SecurityFigi { get; set; }
 
         /// <summary>
         /// Security name i.e. Standard Chartered
@@ -62,6 +80,9 @@ namespace Surveillance.ElasticSearchDtos.Trades
         /// </summary>
         [Text]
         public decimal? Limit { get; set; }
+
+        [Text]
+        public string LimitCurrency { get; set; }
 
         /// <summary>
         /// The most recent mutation to the trade data i.e. created/overwritten on...

@@ -56,7 +56,11 @@ namespace Surveillance.DataLayer.Tests.Projectors
                         MarketId = "LSE",
                         Id = "123112",
                         Limit = 12,
-                        SecurityId = "STAN",
+                        LimitCurrency = "GBP",
+                        SecuritySedol = "ST12345",
+                        SecurityFigi = "STAN",
+                        SecurityIsin = "STA123456789",
+                        SecurityClientIdentifier = "STAN",
                         SecurityName = "Standard Chartered",
                         OrderDirectionDescription = "Buy",
                         OrderDirectionId = 0,
@@ -82,7 +86,10 @@ namespace Surveillance.DataLayer.Tests.Projectors
             Assert.AreEqual(firstResult.Market.Name, "LSE");
             Assert.AreEqual(firstResult.StatusChangedOn, new DateTime(2018, 1, 1));
             Assert.AreEqual(firstResult.Volume, 100);
-            Assert.AreEqual(firstResult.Security.Id.Id, "STAN");
+            Assert.AreEqual(firstResult.Security.Identifiers.ClientIdentifier, "STAN");
+            Assert.AreEqual(firstResult.Security.Identifiers.Figi, "STAN");
+            Assert.AreEqual(firstResult.Security.Identifiers.Isin, "STA123456789");
+            Assert.AreEqual(firstResult.Security.Identifiers.Sedol, "ST12345");
             Assert.AreEqual(firstResult.Security.Name, "Standard Chartered");
         }
     }

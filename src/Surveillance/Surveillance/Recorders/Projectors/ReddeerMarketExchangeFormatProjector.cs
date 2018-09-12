@@ -48,10 +48,21 @@ namespace Surveillance.Recorders.Projectors
                 {
                 return new ReddeerSecurityDocument
                 {
-                    SecurityId = sec?.Security?.Id.Id ?? string.Empty,
                     SecurityName = sec?.Security?.Name ?? string.Empty,
-                    SpreadBuy = sec?.Spread.Buy.Value,
-                    SpreadSell = sec?.Spread.Sell.Value,
+
+                    SecurityClientIdentifier = sec?.Security?.Identifiers.ClientIdentifier ?? string.Empty,
+                    SecuritySedol = sec?.Security?.Identifiers.Sedol ?? string.Empty,
+                    SecurityIsin = sec?.Security?.Identifiers.Isin ?? string.Empty,
+                    SecurityFigi = sec?.Security?.Identifiers.Figi ?? string.Empty,
+
+                    SpreadBuy = sec?.Spread.Bid.Value,
+                    SpreadBuyCurrency = sec?.Spread.Bid.Currency,
+                    SpreadSell = sec?.Spread.Ask.Value,
+                    SpreadSellCurrency = sec?.Spread.Ask.Currency,
+                    SpreadPrice = sec?.Spread.Price.Value,
+                    SpreadPriceCurrency = sec?.Spread.Price.Currency,
+
+                    TimeStamp = sec?.TimeStamp ?? DateTime.UtcNow,
                     Volume = sec?.Volume.Traded
                 };
             }).ToArray();

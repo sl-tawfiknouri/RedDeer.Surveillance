@@ -30,9 +30,16 @@ namespace Surveillance.Recorders.Projectors
                 OrderTypeDescription = order.OrderType.ToString(),
                 MarketId = order.Market?.Id?.Id ?? string.Empty,
                 MarketName = order.Market?.Name ?? string.Empty,
-                SecurityId = order.Security?.Id.Id ?? string.Empty,
                 SecurityName = order.Security?.Name ?? string.Empty,
+
+                SecurityClientIdentifier = order.Security.Identifiers.ClientIdentifier,
+                SecuritySedol = order.Security.Identifiers.Sedol,
+                SecurityIsin = order.Security.Identifiers.Isin,
+                SecurityFigi = order.Security.Identifiers.Figi,
+
                 Limit = order.Limit?.Value,
+                LimitCurrency = order.Limit?.Currency,
+
                 StatusChangedOn = order.StatusChangedOn,
                 Volume = order.Volume,
                 OrderDirectionId = (int)order.Direction,

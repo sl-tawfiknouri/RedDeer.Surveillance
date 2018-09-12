@@ -7,6 +7,7 @@ using Surveillance.Trades;
 using System.Collections.Concurrent;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
+using Domain.Equity;
 using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
@@ -21,7 +22,7 @@ namespace Surveillance.Rules.Spoofing
     public class SpoofingRule : ISpoofingRule
     {
         private readonly TimeSpan _spoofingWindowSize;
-        private readonly ConcurrentDictionary<SecurityId, ITradingHistoryStack> _tradingHistory;
+        private readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> _tradingHistory;
 
         private readonly IRuleBreachFactory _ruleBreachFactory;
         private readonly IRuleBreachRepository _ruleBreachRepository;
@@ -46,7 +47,7 @@ namespace Surveillance.Rules.Spoofing
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
 
             _spoofingWindowSize = TimeSpan.FromMinutes(30);
-            _tradingHistory = new ConcurrentDictionary<SecurityId, ITradingHistoryStack>();
+            _tradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -69,22 +70,22 @@ namespace Surveillance.Rules.Spoofing
 
             lock (_lock)
             {
-                if (!_tradingHistory.ContainsKey(value.Security.Id))
+                if (!_tradingHistory.ContainsKey(value.Security.Identifiers))
                 {
                     var history = new TradingHistoryStack(_spoofingWindowSize);
                     history.Add(value, DateTime.UtcNow);
-                    _tradingHistory.TryAdd(value.Security.Id, history);
+                    _tradingHistory.TryAdd(value.Security.Identifiers, history);
                 }
                 else
                 {
-                    _tradingHistory.TryGetValue(value.Security.Id, out var history);
+                    _tradingHistory.TryGetValue(value.Security.Identifiers, out var history);
 
                     var now = DateTime.UtcNow;
                     history?.Add(value, now);
                     history?.ArchiveExpiredActiveItems(now);
                 }
 
-                _tradingHistory.TryGetValue(value.Security.Id, out var updatedHistory);
+                _tradingHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);
                 CheckSpoofing(updatedHistory);
             }
         }
@@ -179,13 +180,13 @@ namespace Surveillance.Rules.Spoofing
             TradePosition tradingPosition,
             TradePosition opposingPosition)
         {
-            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Id.Id}");
+            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Identifiers}");
 
 
             var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
 
-            var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Id.Id} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
+            var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
 
             var spoofingBreach = _ruleBreachFactory.Build(
                 ElasticSearchDtos.Rules.RuleBreachCategories.Spoofing,

@@ -54,13 +54,16 @@ namespace Surveillance.DataLayer.Projectors
 
                 var security =
                     new Security(
-                        new Security.SecurityId(document.SecurityId),
-                        document.SecurityName,
-                        document.MarketId);
+                        new SecurityIdentifiers(
+                            document.SecurityClientIdentifier,
+                            document.SecuritySedol,
+                            document.SecurityIsin,
+                            document.SecurityFigi),
+                        document.SecurityName);
 
                 var limit =
                     document.Limit != null && orderType == OrderType.Limit
-                        ? (Price?)new Price(document.Limit.Value)
+                        ? (Price?)new Price(document.Limit.Value, document.LimitCurrency)
                         : null;
 
                 var volume = document.Volume;

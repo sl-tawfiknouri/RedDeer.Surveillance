@@ -53,6 +53,7 @@ namespace TestHarness.Factory
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
+            EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -115,5 +116,7 @@ namespace TestHarness.Factory
         public IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; private set; }
 
         public INetworkConfiguration Configuration { get; private set; }
+
+        public IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; private set; }
     }
 }

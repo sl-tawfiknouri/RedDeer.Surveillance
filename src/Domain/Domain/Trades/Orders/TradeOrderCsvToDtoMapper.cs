@@ -81,7 +81,7 @@ namespace Domain.Trades.Orders
                     ? (Price?)new Price(parsedLimitPrice.Value, csv.Currency)
                     : null; 
 
-            if (!DateTime.TryParse(csv.StatusChangedOn, out DateTime statusChangedOn))
+            if (!DateTime.TryParse(csv.StatusChangedOn, out var statusChangedOn))
             {
                 FailedParseTotal += 1;
                 _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable status changed on date");

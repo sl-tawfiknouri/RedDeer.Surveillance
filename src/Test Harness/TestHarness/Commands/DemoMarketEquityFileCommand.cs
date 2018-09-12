@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
 
 namespace TestHarness.Commands
@@ -11,6 +12,7 @@ namespace TestHarness.Commands
         public static string FileDirectory = "Play Files";
 
         private readonly IAppFactory _appFactory;
+        private IEquityDataGenerator _fileProcessor;
 
         public DemoMarketEquityFileCommand(IAppFactory appFactory)
         {
@@ -83,10 +85,27 @@ namespace TestHarness.Commands
 
         private void RunDemo(string command)
         {
+            var console = _appFactory.Console;
+            var equityStream = _appFactory.StockExchangeStreamFactory.CreateDisplayable(console);
+            var filePath = GetEquityFilePath(command);
+            _fileProcessor = _appFactory.EquitiesFileRelayProcessFactory.Create(filePath);
+
+            _fileProcessor.InitiateWalk(equityStream);
+        }
+
+        private string GetEquityFilePath(string command)
+        {
+            var fileSegment = command.ToLower().Replace("run demo equity market file ", string.Empty);
+            fileSegment = fileSegment?.Trim();
+            var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
+            var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);
+
+            return playFileFullPath;
         }
 
         private void StopDemo()
         {
+            _fileProcessor?.TerminateWalk();
         }
     }
 }

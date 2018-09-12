@@ -5,6 +5,7 @@ using TestHarness.Configuration.Interfaces;
 using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
+using TestHarness.Factory.EquitiesFactory;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -52,5 +53,6 @@ namespace TestHarness.Factory.Interfaces
         IAwsQueueClient AwsQueueClient { get; }
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
         INetworkConfiguration Configuration { get; }
+        IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
     }
 }

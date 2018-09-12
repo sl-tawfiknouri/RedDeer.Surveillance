@@ -6,7 +6,10 @@
         string MarketIdFieldName { get; }
         string MarketAbbreviationFieldName { get; }
         string MarketNameFieldName { get; }
-        string SecurityIdFieldName { get; }
+        string SecurityClientIdentifierFieldName { get; }
+        string SecuritySedolFieldName { get; }
+        string SecurityIsinFieldName { get; }
+        string SecurityFigiFieldName { get; }
         string SecurityNameFieldName { get; }
         string OrderTypeFieldName { get; }
         string OrderDirectionFieldName { get; }

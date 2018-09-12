@@ -19,12 +19,16 @@ namespace Relay.Configuration
         public string MarketIdFieldName { get; set; }
         public string MarketAbbreviationFieldName { get; set; }
         public string MarketNameFieldName { get; set; }
-        public string SecurityIdFieldName { get; set; }
         public string SecurityNameFieldName { get; set; }
         public string OrderTypeFieldName { get; set; }
         public string OrderDirectionFieldName { get; set; }
         public string OrderStatusFieldName { get; set; }
         public string VolumeFieldName { get; set; }
         public string LimitPriceFieldName { get; set; }
+
+        public string SecurityClientIdentifierFieldName { get; set; }
+        public string SecuritySedolFieldName { get; set; }
+        public string SecurityIsinFieldName { get; set; }
+        public string SecurityFigiFieldName { get; set; }
     }
 }

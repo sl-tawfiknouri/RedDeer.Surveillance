@@ -85,13 +85,16 @@ namespace RedDeer.Relay.Relay.App
                 MarketIdFieldName = configurationBuilder.GetValue<string>("MarketIdFieldName"),
                 MarketAbbreviationFieldName = configurationBuilder.GetValue<string>("MarketAbbreviationFieldName"),
                 MarketNameFieldName = configurationBuilder.GetValue<string>("MarketNameFieldName"),
-                SecurityIdFieldName = configurationBuilder.GetValue<string>("SecurityIdFieldName"),
                 SecurityNameFieldName = configurationBuilder.GetValue<string>("SecurityNameFieldName"),
                 OrderTypeFieldName = configurationBuilder.GetValue<string>("OrderTypeFieldName"),
                 OrderDirectionFieldName = configurationBuilder.GetValue<string>("OrderDirectionFieldName"),
                 OrderStatusFieldName = configurationBuilder.GetValue<string>("OrderStatusFieldName"),
                 VolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
-                LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName")
+                LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName"),
+                SecurityClientIdentifierFieldName = configurationBuilder.GetValue<string>("SecurityClientIdentifierFieldName"),
+                SecuritySedolFieldName = configurationBuilder.GetValue<string>("SecuritySedolFieldName"),
+                SecurityIsinFieldName = configurationBuilder.GetValue<string>("SecurityIsinFieldName"),
+                SecurityFigiFieldName = configurationBuilder.GetValue<string>("SecurityFigiFieldName"),
             };
 
             return networkConfiguration;

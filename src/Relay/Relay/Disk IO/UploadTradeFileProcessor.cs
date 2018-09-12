@@ -103,7 +103,10 @@ namespace Relay.Disk_IO
                 MarketId = rawRecord[_mappingConfig.MarketIdFieldName],
                 MarketAbbreviation = rawRecord[_mappingConfig.MarketAbbreviationFieldName],
                 MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
-                SecurityId = rawRecord[_mappingConfig.SecurityIdFieldName],
+                SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
+                SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],
+                SecurityIsin = rawRecord[_mappingConfig.SecurityIsinFieldName],
+                SecuritySedol = rawRecord[_mappingConfig.SecuritySedolFieldName],
                 SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
                 OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
                 OrderDirection = rawRecord[_mappingConfig.OrderDirectionFieldName],
@@ -136,7 +139,10 @@ namespace Relay.Disk_IO
                 csv.WriteField(_mappingConfig.MarketIdFieldName);
                 csv.WriteField(_mappingConfig.MarketAbbreviationFieldName);
                 csv.WriteField(_mappingConfig.MarketNameFieldName);
-                csv.WriteField(_mappingConfig.SecurityIdFieldName);
+                csv.WriteField(_mappingConfig.SecurityClientIdentifierFieldName);
+                csv.WriteField(_mappingConfig.SecurityFigiFieldName);
+                csv.WriteField(_mappingConfig.SecurityIsinFieldName);
+                csv.WriteField(_mappingConfig.SecuritySedolFieldName);
                 csv.WriteField(_mappingConfig.SecurityNameFieldName);
                 csv.WriteField(_mappingConfig.OrderTypeFieldName);
                 csv.WriteField(_mappingConfig.OrderDirectionFieldName);

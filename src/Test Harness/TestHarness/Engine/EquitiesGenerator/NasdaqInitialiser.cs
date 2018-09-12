@@ -27,6 +27,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private List<SecurityTick> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
+            var volume = rnd.Next(5000, 1000000);
 
             return nasdaqRaw.Select(raw =>
                 new SecurityTick(
@@ -43,8 +44,9 @@ namespace TestHarness.Engine.EquitiesGenerator
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency)),
-                    new Volume(rnd.Next(5000, 1000000)),
-                    DateTime.UtcNow
+                    new Volume(volume),
+                    DateTime.UtcNow,
+                    decimal.Parse(raw.Buy) * volume
                     ))
                 .ToList();
         }

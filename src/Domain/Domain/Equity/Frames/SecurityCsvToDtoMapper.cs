@@ -46,6 +46,14 @@ namespace Domain.Equity.Frames
                 return null;
             }
 
+            if (!decimal.TryParse(csv.MarketCap, out var marketCap))
+            {
+                FailedParseTotal += 1;
+                _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable market cap");
+
+                return null;
+            }
+
             if (!decimal.TryParse(csv.SpreadAsk, out var spreadAsk))
             {
                 FailedParseTotal += 1;
@@ -83,7 +91,7 @@ namespace Domain.Equity.Frames
                     csv.SecurityFigi), 
                 csv.SecurityName);
 
-            return new SecurityTick(security, cfiCode, tickerSymbol, spread, new Volume(volume), timeStamp);
+            return new SecurityTick(security, cfiCode, tickerSymbol, spread, new Volume(volume), timeStamp, marketCap);
         }
     }
 }

@@ -54,6 +54,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     new Price(newSell, tick.Spread.Ask.Currency),
                     new Price(newBuy, tick.Spread.Bid.Currency));
             var newVolume = CalculateNewVolume(tick);
+            var newMarketCap = newVolume.Traded * newBuy;
 
             return
                 new SecurityTick(
@@ -62,7 +63,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     tick.TickerSymbol,
                     newSpread,
                     newVolume,
-                    DateTime.UtcNow);
+                    DateTime.UtcNow,
+                    newMarketCap);
         }
 
         private decimal CalculateNewBuyValue(SecurityTick tick)

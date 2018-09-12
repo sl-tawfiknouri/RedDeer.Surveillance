@@ -13,7 +13,8 @@ namespace Domain.Equity.Frames
             string tickerSymbol,
             Spread spread,
             Volume volume,
-            DateTime timeStamp)
+            DateTime timeStamp,
+            decimal? marketCap)
         {
             Security = security;
             CfiCode = cfiCode;
@@ -21,6 +22,7 @@ namespace Domain.Equity.Frames
             Spread = spread;
             Volume = volume;
             TimeStamp = timeStamp;
+            MarketCap = marketCap;
         }
 
         /// <summary>
@@ -40,6 +42,7 @@ namespace Domain.Equity.Frames
         /// </summary>
         public string TickerSymbol { get; }
 
+        public decimal? MarketCap { get; }
 
         /// <summary>
         /// Price spread at the tick point

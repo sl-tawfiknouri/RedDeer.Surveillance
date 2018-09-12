@@ -44,6 +44,8 @@ namespace TestHarness.Commands
                 new TradeProhibitedSecurityCommand(appFactory),
                 new SpoofingCommand(appFactory),
                 new ScheduleRuleCommand(appFactory),
+                new DemoMarketEquityFileCommand(appFactory),
+                new DemoMarketEquityFileNetworkingCommand(appFactory),
                _unrecognisedCommand,
             };
         }

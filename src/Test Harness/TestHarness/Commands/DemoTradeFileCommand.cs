@@ -56,7 +56,7 @@ namespace TestHarness.Commands
                 return false;
             }
 
-            var fileExtension = playFileFullPath.Split('.').Reverse().First();
+            var fileExtension = playFileFullPath.Split('.').Reverse().FirstOrDefault();
 
             if (string.Equals(fileExtension, "csv", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -73,16 +73,18 @@ namespace TestHarness.Commands
                 return;
             }
 
-            var hasDemoTradeFileCommandSegment = command.Contains("run demo trade file");
+            var hasDemoTradeFileCommandSegment = command.ToLower().Contains("run demo trade file");
             if (hasDemoTradeFileCommandSegment)
             {
                 RunDemo(command);
+                return;
             }
 
-            var hasStopDemoTradeFileCommandSegment = command.Contains("stop demo trade file");
+            var hasStopDemoTradeFileCommandSegment = command.ToLower().Contains("stop demo trade file");
             if (hasStopDemoTradeFileCommandSegment)
             {
                 StopDemo();
+                return;
             }
         }
 
@@ -116,7 +118,7 @@ namespace TestHarness.Commands
 
         private void SetTradingFileProcessor(string command)
         {
-            var fileSegment = command.Replace("run demo trade file ", string.Empty);
+            var fileSegment = command.ToLower().Replace("run demo trade file ", string.Empty);
             fileSegment = fileSegment?.Trim();
             var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
             var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);

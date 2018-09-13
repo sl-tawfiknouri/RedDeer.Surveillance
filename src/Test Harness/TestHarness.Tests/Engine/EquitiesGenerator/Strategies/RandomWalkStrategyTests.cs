@@ -41,7 +41,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     "MSFT",
                     new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
                     new Volume(200000),
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                3000);
 
             var result = strategy.AdvanceFrame(security);
 
@@ -67,7 +68,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     "MSFT",
                     new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
                     new Volume(200000),
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                3000);
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);

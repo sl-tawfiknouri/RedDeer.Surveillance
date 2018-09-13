@@ -121,7 +121,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                     "STAN",
                     new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
                     new Volume(volume),
-                    DateTime.UtcNow);
+                    DateTime.UtcNow,
+                    3000);
 
                 results.Add(frame);
             }

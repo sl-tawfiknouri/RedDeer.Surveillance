@@ -1,7 +1,6 @@
 ﻿using FakeItEasy;
 using NLog;
 using NUnit.Framework;
-using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
 
 namespace TestHarness.Tests
@@ -9,14 +8,12 @@ namespace TestHarness.Tests
     [TestFixture]
     public class MediatorTests
     {
-        private IEquityDataGenerator _equityDataGenerator;
         private IAppFactory _appFactory;
         private ILogger _logger;
 
         [SetUp]
         public void Setup()
         {
-            _equityDataGenerator = A.Fake<IEquityDataGenerator>();
             _appFactory = A.Fake<IAppFactory>();
             _logger = A.Fake<ILogger>();
 

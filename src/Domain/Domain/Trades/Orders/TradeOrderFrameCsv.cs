@@ -7,7 +7,6 @@
     {
         public string StatusChangedOn { get; set; }
         public string MarketId { get; set; }
-        public string MarketAbbreviation { get; set; }
         public string MarketName { get; set; }
         public string SecurityClientIdentifier { get; set; }
         public string SecuritySedol { get; set; }

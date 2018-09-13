@@ -60,7 +60,6 @@ namespace Relay.Disk_IO.TradeFile
             {
                 StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
                 MarketId = rawRecord[_mappingConfig.MarketIdFieldName],
-                MarketAbbreviation = rawRecord[_mappingConfig.MarketAbbreviationFieldName],
                 MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
                 SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
                 SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],

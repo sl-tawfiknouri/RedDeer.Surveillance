@@ -91,8 +91,16 @@ namespace Domain.Trades.Orders
 
             return new TradeOrderFrame(
                 orderType,
-                new StockExchange(new Market.Market.MarketId(csv.MarketId), csv.MarketName),
-                new Security(new SecurityIdentifiers(csv.SecurityClientIdentifier, csv.SecuritySedol, csv.SecurityIsin, csv.SecurityFigi), csv.SecurityName),
+                new StockExchange(
+                    new Market.Market.MarketId(csv.MarketId),
+                    csv.MarketName),
+                new Security(
+                    new SecurityIdentifiers(
+                        csv.SecurityClientIdentifier,
+                        csv.SecuritySedol,
+                        csv.SecurityIsin,
+                        csv.SecurityFigi),
+                    csv.SecurityName),
                 pricedLimitPrice,
                 volume,
                 orderDirection,

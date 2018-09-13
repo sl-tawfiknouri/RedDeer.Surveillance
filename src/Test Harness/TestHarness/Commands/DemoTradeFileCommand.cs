@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
@@ -40,7 +41,7 @@ namespace TestHarness.Commands
                 return false;
             }
 
-            var fileSegment = command.Replace("run demo trade file ", string.Empty);
+            var fileSegment = Regex.Replace(command, "run demo trade file ", string.Empty, RegexOptions.IgnoreCase);
             fileSegment = fileSegment?.Trim();
 
             if (string.IsNullOrWhiteSpace(fileSegment))
@@ -118,7 +119,7 @@ namespace TestHarness.Commands
 
         private void SetTradingFileProcessor(string command)
         {
-            var fileSegment = command.ToLower().Replace("run demo trade file ", string.Empty);
+            var fileSegment = Regex.Replace(command, "run demo trade file ", string.Empty, RegexOptions.IgnoreCase);
             fileSegment = fileSegment?.Trim();
             var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
             var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);

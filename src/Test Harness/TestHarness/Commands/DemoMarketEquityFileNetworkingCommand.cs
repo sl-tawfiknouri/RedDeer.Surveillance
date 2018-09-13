@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
@@ -38,7 +39,7 @@ namespace TestHarness.Commands
                 return false;
             }
 
-            var fileSegment = command.ToLower().Replace("run demo equity market file networking ", string.Empty);
+            var fileSegment = Regex.Replace(command, "run demo equity market file networking ", string.Empty, RegexOptions.IgnoreCase);
             fileSegment = fileSegment?.Trim();
 
             if (string.IsNullOrWhiteSpace(fileSegment))
@@ -117,7 +118,7 @@ namespace TestHarness.Commands
 
         private string GetEquityFilePath(string command)
         {
-            var fileSegment = command.ToLower().Replace("run demo equity market file networking ", string.Empty);
+            var fileSegment = Regex.Replace(command, "run demo equity market file networking ", string.Empty, RegexOptions.IgnoreCase);
             fileSegment = fileSegment?.Trim();
             var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
             var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);

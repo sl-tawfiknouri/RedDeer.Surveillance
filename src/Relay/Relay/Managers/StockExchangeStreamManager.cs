@@ -8,6 +8,7 @@ using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Streams;
 using Relay.Configuration.Interfaces;
+using Relay.Disk_IO.EquityFile.Interfaces;
 using Relay.Processors;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
@@ -20,6 +21,7 @@ namespace Relay.Managers
         private readonly IEquityRelaySubscriber _equityRelaySubscriber;
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
+        private readonly IUploadEquityFileMonitorFactory _equityFileMonitorFactory;
 
         private readonly ILogger<EquityProcessor> _epLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
@@ -29,6 +31,7 @@ namespace Relay.Managers
             IEquityRelaySubscriber equityRelaySubscriber,
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
+            IUploadEquityFileMonitorFactory equityFileMonitorFactory,
             ILogger<EquityProcessor> epLogger,
             ILogger<NetworkExchange> exchangeLogger)
         {
@@ -38,6 +41,9 @@ namespace Relay.Managers
             _networkConfiguration = networkConfiguration ?? throw new ArgumentNullException(nameof(networkConfiguration));
             _epLogger = epLogger ?? throw new ArgumentNullException(nameof(epLogger));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
+            _equityFileMonitorFactory =
+                equityFileMonitorFactory
+                ?? throw new ArgumentNullException(nameof(equityFileMonitorFactory));
         }
 
         public void Initialise()
@@ -60,6 +66,10 @@ namespace Relay.Managers
             var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
             exchange.Initialise(
                 $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");
+
+            // set up trading file monitor and wire it into the stream
+            var fileMonitor = _equityFileMonitorFactory.Build(stockExchangeStream);
+            fileMonitor.Initiate();
         }
     }
 }

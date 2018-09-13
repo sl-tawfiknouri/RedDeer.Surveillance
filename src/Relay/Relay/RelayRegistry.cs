@@ -1,4 +1,5 @@
 ﻿using Domain.Equity.Frames;
+using Domain.Equity.Frames.Interfaces;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Streams;
@@ -8,8 +9,11 @@ using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using Relay.Disk_IO;
+using Relay.Disk_IO.EquityFile;
+using Relay.Disk_IO.EquityFile.Interfaces;
 using Relay.Disk_IO.Interfaces;
+using Relay.Disk_IO.TradeFile;
+using Relay.Disk_IO.TradeFile.Interfaces;
 using Relay.Interfaces;
 using Relay.Managers;
 using Relay.Managers.Interfaces;
@@ -68,11 +72,17 @@ namespace Relay
             For<IWebsocketHost>().Use<RedDeerWebsocketHost>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
-            For<IUploadTradeFileMonitor>().Use<UploadTradeFileMonitor>();
             For<IReddeerDirectory>().Use<ReddeerDirectory>();
+
             For<IUploadTradeFileProcessor>().Use<UploadTradeFileProcessor>();
             For<ITradeOrderCsvToDtoMapper>().Use<TradeOrderCsvToDtoMapper>();
+            For<IUploadTradeFileMonitor>().Use<UploadTradeFileMonitor>();
             For<IUploadTradeFileMonitorFactory>().Use<UploadTradeFileMonitorFactory>();
+
+            For<IUploadEquityFileProcessor>().Use<UploadEquityFileProcessor>();
+            For<ISecurityCsvToDtoMapper>().Use<SecurityCsvToDtoMapper>();
+            For<IUploadEquityFileMonitor>().Use<UploadEquityFileMonitor>();
+            For<IUploadEquityFileMonitorFactory>().Use<UploadEquityFileMonitorFactory>();
         }
     }
 }

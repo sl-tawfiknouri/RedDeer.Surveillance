@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
+using Domain.Equity.Frames.Interfaces;
 using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
@@ -42,6 +43,7 @@ namespace RedDeer.Relay.Relay.App
                 _container.Inject(typeof(INetworkConfiguration), builtConfig);
                 _container.Inject(typeof(IUploadConfiguration), builtConfig);
                 _container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
+                _container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
 
                 _container.Configure(config =>
                 {
@@ -80,6 +82,8 @@ namespace RedDeer.Relay.Relay.App
                 SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
 
                 RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),  configurationBuilder.GetValue<string>("RelayTradeFileUploadDirectoryPath")),
+                RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
+                    configurationBuilder.GetValue<string>("RelayEquityFileUploadDirectoryPath")),
 
                 StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
                 MarketIdFieldName = configurationBuilder.GetValue<string>("MarketIdFieldName"),
@@ -95,6 +99,24 @@ namespace RedDeer.Relay.Relay.App
                 SecuritySedolFieldName = configurationBuilder.GetValue<string>("SecuritySedolFieldName"),
                 SecurityIsinFieldName = configurationBuilder.GetValue<string>("SecurityIsinFieldName"),
                 SecurityFigiFieldName = configurationBuilder.GetValue<string>("SecurityFigiFieldName"),
+
+
+                SecurityTickTimestampFieldName = configurationBuilder.GetValue<string>("SecurityTickTimestampFieldName"),
+                SecurityTickMarketIdentifierCodeFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketIdentifierCodeFieldName"),
+                SecurityTickMarketNameFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketNameFieldName"),
+                SecurityTickClientIdentifierFieldName = configurationBuilder.GetValue<string>("SecurityTickClientIdentifierFieldName"),
+                SecurityTickSedolFieldName = configurationBuilder.GetValue<string>("SecurityTickSedolFieldName"),
+                SecurityTickIsinFieldName = configurationBuilder.GetValue<string>("SecurityTickIsinFieldName"),
+                SecurityTickFigiFieldName = configurationBuilder.GetValue<string>("SecurityTickFigiFieldName"),
+                SecurityTickCfiFieldName = configurationBuilder.GetValue<string>("SecurityTickCifiFieldName"),
+                SecurityTickTickerSymbolFieldName = configurationBuilder.GetValue<string>("SecurityTickTickerSymbolFieldName"),
+                SecurityTickSecurityNameFieldName  = configurationBuilder.GetValue<string>("SecurityTickSecurityNameFieldName"),
+                SecurityTickSpreadAskFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadAskFieldName"),
+                SecurityTickSpreadBidFieldName  = configurationBuilder.GetValue<string>("SecurityTickSpreadBidFieldName"),
+                SecurityTickSpreadPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadPriceFieldName"),
+                SecurityTickVolumeTradedFieldName = configurationBuilder.GetValue<string>("SecurityTickVolumeTradedFieldName"),
+                SecurityTickMarketCapFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketCapFieldName"),
+                SecurityTickSpreadCurrencyFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadCurrencyFieldName"),
             };
 
             return networkConfiguration;

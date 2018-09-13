@@ -5,8 +5,8 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Relay.Configuration.Interfaces;
-using Relay.Disk_IO;
-using Relay.Disk_IO.Interfaces;
+using Relay.Disk_IO.TradeFile;
+using Relay.Disk_IO.TradeFile.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace Relay.Tests.Disk_IO

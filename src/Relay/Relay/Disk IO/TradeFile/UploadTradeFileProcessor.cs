@@ -6,91 +6,50 @@ using CsvHelper;
 using Domain.Trades.Orders;
 using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Disk_IO.Interfaces;
+using Relay.Disk_IO.TradeFile.Interfaces;
 
-namespace Relay.Disk_IO
+namespace Relay.Disk_IO.TradeFile
 {
-    public class UploadTradeFileProcessor : IUploadTradeFileProcessor
+    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeOrderFrameCsv, TradeOrderFrame>, IUploadTradeFileProcessor
     {
         private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
         private readonly ITradeOrderCsvConfig _mappingConfig;
-        private readonly ILogger _logger;
 
         public UploadTradeFileProcessor(
             ITradeOrderCsvToDtoMapper csvToDtoMapper,
             ITradeOrderCsvConfig mappingConfig,
             ILogger<UploadTradeFileProcessor> logger)
+            : base(logger, "Upload Trade File Processor")
         {
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
             _mappingConfig = mappingConfig ?? throw new ArgumentNullException(nameof(mappingConfig));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public UploadTradeFileProcessorResult Process(string path)
+        protected override void MapRecord(
+            TradeOrderFrameCsv record,
+            List<TradeOrderFrame> tradeOrders,
+            List<TradeOrderFrameCsv> failedTradeOrderReads)
         {
-            if (!File.Exists(path))
+            var mappedRecord = _csvToDtoMapper.Map(record);
+            if (mappedRecord != null)
             {
-                _logger.LogError($"Upload Trade File Monitor did not find file {path}");
-                return 
-                    new UploadTradeFileProcessorResult(
-                        new List<TradeOrderFrame>(),
-                        new List<TradeOrderFrameCsv>());
+                tradeOrders.Add(mappedRecord);
             }
-
-            var tradeOrders = new List<TradeOrderFrame>();
-            var failedTradeOrderReads = new List<TradeOrderFrameCsv>();
-
-            using (var reader = File.OpenText(path))
+            else
             {
-                var csv = new CsvReader(reader);
-                csv.Configuration.HasHeaderRecord = true;
-                csv.Configuration.MissingFieldFound = null;
-
-                var csvRecords = new List<TradeOrderFrameCsv>();
-
-                csv.Read();
-                csv.ReadHeader();
-
-                while (csv.Read())
-                {
-                   var record = MapToCsvDto(csv);
-
-                    if (record == null)
-                    {
-                        continue;
-                    }
-
-                    csvRecords.Add(record);
-                }
-
-                foreach (var record in csvRecords)
-                {
-                    var mappedRecord = _csvToDtoMapper.Map(record);
-                    if (mappedRecord != null)
-                    {
-                        tradeOrders.Add(mappedRecord);
-                    }
-                    else
-                    {
-                        failedTradeOrderReads.Add(record);
-                    }
-                }
-
-                csv.Dispose();
-                reader.Dispose();
+                failedTradeOrderReads.Add(record);
             }
+        }
 
+        protected override void CheckAndLogFailedParsesFromDtoMapper()
+        {
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                _logger.LogError($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {path}");
+                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file");
             }
-
-            var sortedTradeOrders = tradeOrders.OrderBy(to => to.StatusChangedOn).ToList();
-
-            return new UploadTradeFileProcessorResult(sortedTradeOrders, failedTradeOrderReads);
         }
 
-        private TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
+        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
         {
             if (rawRecord == null)
             {
@@ -110,16 +69,13 @@ namespace Relay.Disk_IO
                 SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
                 OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
                 OrderDirection = rawRecord[_mappingConfig.OrderDirectionFieldName],
-                OrderStatus =  rawRecord[_mappingConfig.OrderStatusFieldName],
-                Volume =  rawRecord[_mappingConfig.VolumeFieldName],
+                OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
+                Volume = rawRecord[_mappingConfig.VolumeFieldName],
                 LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
             };
         }
 
-        public void WriteFailedReadsToDisk(
-            string path,
-            string originalFileName,
-            IReadOnlyCollection<TradeOrderFrameCsv> failedReads)
+        public void WriteFailedReadsToDisk(string failedReadsPath, string failedReadFileName, IReadOnlyCollection<TradeOrderFrameCsv> failedReads)
         {
             if (failedReads == null
                 || !failedReads.Any())
@@ -127,8 +83,8 @@ namespace Relay.Disk_IO
                 return;
             }
 
-            var failedFileName = $"{originalFileName}-failed-read-{Guid.NewGuid()}.csv";
-            var target = Path.Combine(path, failedFileName);
+            var failedFileName = $"{failedReadFileName}-failed-read-{Guid.NewGuid()}.csv";
+            var target = Path.Combine(failedReadsPath, failedFileName);
 
             using (TextWriter twriter = new StreamWriter(target))
             {

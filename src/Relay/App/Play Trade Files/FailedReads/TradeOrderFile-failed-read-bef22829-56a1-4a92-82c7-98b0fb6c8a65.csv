@@ -1,0 +1,2 @@
+StatusChangedOn,MarketId,MarketAbbreviation,MarketName,SecurityId,SecurityName,OrderType,OrderDirection,OrderStatus,Volume,LimitPrice
+10/09/2018,LSE,LSE,London Stock Exchange,STAN,Standard Chartered,Long Order,Buy,Cancelled,1,

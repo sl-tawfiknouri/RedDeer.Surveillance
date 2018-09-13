@@ -14,7 +14,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
         {
             var projector = new ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector();
 
-            var result = projector.Project(null);
+            var result = projector.Project((ReddeerMarketDocument)null);
 
             Assert.IsNull(result);
         }

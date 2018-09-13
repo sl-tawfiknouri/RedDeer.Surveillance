@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using FakeItEasy;
 using NUnit.Framework;
 using TestHarness.Commands;
@@ -15,6 +16,17 @@ namespace TestHarness.Tests.Commands
         public void Setup()
         {
             _appFactory = A.Fake<IAppFactory>();
+        }
+
+        [OneTimeSetUp]
+        public void Setup_OneTime()
+        {
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), DemoMarketEquityFileCommand.FileDirectory);
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
         }
 
         [Test]

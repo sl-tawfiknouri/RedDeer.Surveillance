@@ -9,7 +9,7 @@ namespace TestHarness.Commands
 {
     public class DemoMarketEquityFileCommand : ICommand
     {
-        public static string FileDirectory = "Play Files";
+        public static string FileDirectory = "Play Market Files";
 
         private readonly IAppFactory _appFactory;
         private IEquityDataGenerator _fileProcessor;

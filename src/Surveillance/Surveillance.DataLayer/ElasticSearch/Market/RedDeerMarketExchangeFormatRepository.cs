@@ -1,6 +1,7 @@
 ﻿using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
@@ -31,7 +32,17 @@ namespace Surveillance.DataLayer.ElasticSearch.Market
                     cts.Token);
 
             var saveCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
             await _dataAccess.IndexDocumentAsync(index, document, DateTime.UtcNow, saveCts.Token);
+        }
+
+        public async Task<IReadOnlyCollection<ReddeerMarketDocument>> Get(DateTime start, DateTime end)
+        {
+            var cancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
+
+            return
+                await _dataAccess.GetMarketDocuments(start, end, cancellationToken)
+                ?? new List<ReddeerMarketDocument>();
         }
     }
 }

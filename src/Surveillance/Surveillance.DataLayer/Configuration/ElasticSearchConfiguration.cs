@@ -1,5 +1,4 @@
 ﻿using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.DataLayer.Configuration
 {

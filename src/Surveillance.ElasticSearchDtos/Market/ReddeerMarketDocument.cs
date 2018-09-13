@@ -1,6 +1,8 @@
 ﻿using Nest;
 using Surveillance.ElasticSearchDtos.Interfaces;
 using System;
+using Newtonsoft.Json;
+using Surveillance.ElasticSearchDtos.JsonConverters;
 
 namespace Surveillance.ElasticSearchDtos.Market
 {
@@ -34,7 +36,7 @@ namespace Surveillance.ElasticSearchDtos.Market
         /// <summary>
         /// The time point the market update relates to
         /// </summary>
-        [Text]
+        [JsonConverter(typeof(ElasticSearchDateTimeConverter))]
         public DateTime DateTime { get; set; }
 
         /// <summary>

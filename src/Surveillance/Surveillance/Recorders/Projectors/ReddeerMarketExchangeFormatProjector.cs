@@ -29,10 +29,9 @@ namespace Surveillance.Recorders.Projectors
                 Origin = _originFactory.Origin(),
                 MarketId = frame.Exchange?.Id?.Id ?? string.Empty,
                 MarketName = frame.Exchange?.Name ?? string.Empty,
-                DateTime = DateTime.UtcNow,
+                DateTime = frame.Securities?.FirstOrDefault()?.TimeStamp ?? DateTime.UtcNow,
                 Securities = MapSecuritiesToDocument(frame)
             };
-
         }
 
         private ReddeerSecurityDocument[] MapSecuritiesToDocument(ExchangeFrame frame)
@@ -44,9 +43,7 @@ namespace Surveillance.Recorders.Projectors
 
             return frame
                 .Securities
-                .Select(sec =>
-                {
-                return new ReddeerSecurityDocument
+                .Select(sec => new ReddeerSecurityDocument
                 {
                     SecurityName = sec?.Security?.Name ?? string.Empty,
 
@@ -66,8 +63,7 @@ namespace Surveillance.Recorders.Projectors
                     Volume = sec?.Volume.Traded,
 
                     MarketCap = sec?.MarketCap
-                };
-            }).ToArray();
+                }).ToArray();
         }
 
         private string GenerateDate()

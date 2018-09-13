@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
+using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.ElasticSearchDtos.Trades;
 
@@ -24,6 +25,11 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
             where T : class;
 
         Task<IReadOnlyCollection<ReddeerTradeDocument>> GetDocuments(
+            DateTime start,
+            DateTime end,
+            CancellationToken cancellationToken);
+
+        Task<IReadOnlyCollection<ReddeerMarketDocument>> GetMarketDocuments(
             DateTime start,
             DateTime end,
             CancellationToken cancellationToken);

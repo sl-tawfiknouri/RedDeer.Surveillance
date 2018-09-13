@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Spoofing.Interfaces;
-using static Domain.Equity.Security;
 using Surveillance.Trades;
 using System.Collections.Concurrent;
 using Surveillance.Trades.Interfaces;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Nest;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
+using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.ElasticSearchDtos.Trades;
 
@@ -68,7 +69,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             var indexName = $"surveillance-{name.ToLower()}-{dateTime.ToString("yyyy-MM-dd")}";
             if (!_indexExistsCache.ContainsKey(indexName))
             {
-                await _indexExistsCacheLock.WaitAsync();
+                await _indexExistsCacheLock.WaitAsync(cancellationToken);
                 try
                 {
                     if (!_indexExistsCache.ContainsKey(indexName))
@@ -172,6 +173,26 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
                                 .Format("yyyy-MM-dd HH:mm:ss"))));
 
             return result?.Documents ?? new List<ReddeerTradeDocument>();
+        }
+
+        public async Task<IReadOnlyCollection<ReddeerMarketDocument>> GetMarketDocuments(
+            DateTime start,
+            DateTime end,
+            CancellationToken cancellationToken)
+        {
+            var result = _elasticClient.Search<ReddeerMarketDocument>(
+                q => q
+                    .Index("surveillance-reddeer-stock-market*")
+                    .Size(10000)
+                    .MatchAll()
+                    .Query(qu =>
+                        qu.DateRange(ra =>
+                            ra.Field(fi => fi.DateTime)
+                                .GreaterThanOrEquals(start.ToString("yyyy-MM-dd HH:mm:ss"))
+                                .LessThanOrEquals(end.ToString("yyyy-MM-dd HH:mm:ss"))
+                                .Format("yyyy-MM-dd HH:mm:ss"))));
+
+            return result?.Documents ?? new List<ReddeerMarketDocument>();
         }
 
         public void HandleResponseErrors(IResponse response)

@@ -5,6 +5,10 @@ namespace Domain.Equity.Frames
 {
     /// <summary>
     /// An aggregation of security frames
+    /// This represents a specific point in time
+    /// All child security dates are considered cannon at the same point in time
+    /// If you have security data spanning multiple points in time they need
+    /// to be split into multiple frames
     /// </summary>
     public class ExchangeFrame
     {

@@ -52,6 +52,9 @@ namespace Surveillance.Recorders.Projectors
                     SecurityIsin = sec?.Security?.Identifiers.Isin ?? string.Empty,
                     SecurityFigi = sec?.Security?.Identifiers.Figi ?? string.Empty,
 
+                    SecurityCfi = sec?.CfiCode,
+                    TickerSymbol = sec?.TickerSymbol,
+
                     SpreadBuy = sec?.Spread.Bid.Value,
                     SpreadBuyCurrency = sec?.Spread.Bid.Currency,
                     SpreadSell = sec?.Spread.Ask.Value,

@@ -70,7 +70,7 @@ namespace Surveillance.DataLayer.Projectors
             var spread = ParseSpread(doc);
             var volume = new Volume(doc.Volume.GetValueOrDefault(0));
 
-            return new SecurityTick(security, null, null, spread, volume, doc.TimeStamp, doc.MarketCap);
+            return new SecurityTick(security, doc.SecurityCfi, doc.TickerSymbol, spread, volume, doc.TimeStamp, doc.MarketCap);
         }
 
         private Security ParseEsSecurity(ReddeerSecurityDocument doc)

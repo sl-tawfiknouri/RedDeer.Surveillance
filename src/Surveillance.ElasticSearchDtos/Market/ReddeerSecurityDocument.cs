@@ -49,5 +49,11 @@ namespace Surveillance.ElasticSearchDtos.Market
 
         [Text]
         public decimal? MarketCap { get; set; }
+
+        [Text]
+        public string SecurityCfi { get; set; }
+
+        [Text]
+        public string TickerSymbol { get; set; }
     }
 }

@@ -29,6 +29,8 @@ namespace Utilities.Tests.Disk_IO
         }
 
         [Test]
+        [Explicit]
+        [Ignore("Windows only test")]
         public void Create_DoesThrowWhenArgumentHas_NonPathValue()
         {
             var directory = new ReddeerDirectory();
@@ -57,6 +59,8 @@ namespace Utilities.Tests.Disk_IO
         }
 
         [Test]
+        [Explicit]
+        [Ignore("Windows only test")]
         public void Delete_DoesThrowWhenArgumentHas_NonPathValue()
         {
             var directory = new ReddeerDirectory();
@@ -101,6 +105,8 @@ namespace Utilities.Tests.Disk_IO
         }
 
         [Test]
+        [Explicit]
+        [Ignore("Windows only test")]
         public void GetFiles_DoesThrowWhenArgumentHas_NonPathValue()
         {
             var directory = new ReddeerDirectory();

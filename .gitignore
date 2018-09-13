@@ -4,5 +4,5 @@ obj/
 *.user
 src/Relay/RedDeer.Relay.sln.DotSettings.user
 packages/
-Play Equity Files/
-Play Trade Files/
+src/Relay/App/Play Equity Files/
+src/Relay/App/Play Trade Files/

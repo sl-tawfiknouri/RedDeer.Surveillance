@@ -28,16 +28,6 @@ namespace TestHarness.Tests.Commands
             }
         }
 
-        [OneTimeTearDown]
-        public void Teardown()
-        {
-            var directory = Path.Combine(Directory.GetCurrentDirectory(), DemoTradeFileCommand.FileDirectory);
-            if (Directory.Exists(directory))
-            {
-                Directory.Delete(directory, true);
-            }
-        }
-
         [Test]
         public void Handles_ReturnsFalse_ForNullCommand()
         {

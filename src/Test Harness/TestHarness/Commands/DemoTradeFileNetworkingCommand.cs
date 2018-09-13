@@ -29,15 +29,13 @@ namespace TestHarness.Commands
                 return false;
             }
 
-            command = command.ToLowerInvariant();
-
-            var hasStopDemoTradeFileCommandSegment = command.Contains("stop demo trade networking file");
+            var hasStopDemoTradeFileCommandSegment = command.ToLowerInvariant().Contains("stop demo trade networking file");
             if (hasStopDemoTradeFileCommandSegment)
             {
                 return true;
             }
 
-            var hasDemoTradeFileCommandSegment = command.Contains("run demo trade networking file");
+            var hasDemoTradeFileCommandSegment = command.ToLowerInvariant().Contains("run demo trade networking file");
             if (!hasDemoTradeFileCommandSegment)
             {
                 return false;

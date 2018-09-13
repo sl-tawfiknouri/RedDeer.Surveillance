@@ -64,7 +64,7 @@ namespace Surveillance
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
 
             For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
-            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
+            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
             For<IReddeerMarketExchangeFormatProjector>().Use<ReddeerMarketExchangeFormatProjector>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();

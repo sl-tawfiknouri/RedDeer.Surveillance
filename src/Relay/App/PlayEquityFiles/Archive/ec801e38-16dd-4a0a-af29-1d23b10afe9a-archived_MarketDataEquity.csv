@@ -1,0 +1,6 @@
+Timestamp,MarketIdentifierCode,MarketName,SecurityClientIdentifier,SecuritySedol,SecurityIsin,SecurityFigi,SecurityCfi,TickerSymbol,SecurityName,SpreadAsk,SpreadBid,SpreadPrice,VolumeTraded,MarketCap,SpreadCurrency
+12/09/2018,XLON,London Stock Exchange,,B1V9NW5,GB00B1V9NW54,,EV,HFG,Hilton Food,990,982,990,228123,766870000,GBP
+12/09/2018,XLON,London Stock Exchange,,B43G057,GB00B43G0577,,EVSE,PMO,Premier Oil,120.3,120.2,119.9,6162476,934130000,GBP
+12/09/2018,XLON,London Stock Exchange,Sirius Corp,B0DG3H2,GB00B0DG3H29,,,SXX,Sirius Minerals,27,26.92,26.84,33834326,1203670000,GBP
+12/09/2018,XLON,London Stock Exchange,,665045,GB0006650450,,,OXIG,Oxford Instruments,999,988,989,18042,539900000,GBP
+12/09/2018,XLON,London Stock Exchange,,B1RMWL0,SG9999003735,,,XPP,XP Power Limited,2990,2910,3000,8354,550120000,GBX

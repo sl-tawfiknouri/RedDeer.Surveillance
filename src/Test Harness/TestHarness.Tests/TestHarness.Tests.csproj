@@ -22,13 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Play Market Files\MarketDataEquity.csv">
+    <None Update="PlayMarketFiles\MarketDataEquity.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Play Trade Files\TradeOrderFileTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Play Trade Files\TradeOrderFileTest1.csv">
+    <None Update="PlayTradeFiles\TradeOrderFileTest1.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

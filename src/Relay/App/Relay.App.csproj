@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Play Equity Files\" />
+    <Folder Include="PlayEquityFiles\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

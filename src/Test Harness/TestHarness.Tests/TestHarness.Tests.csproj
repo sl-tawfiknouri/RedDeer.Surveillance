@@ -21,4 +21,16 @@
     <Folder Include="Network IO\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Play Files\MarketDataEquity.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Play Files\TradeOrderFileTest.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Play Files\TradeOrderFileTest1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

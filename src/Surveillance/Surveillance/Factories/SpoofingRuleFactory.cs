@@ -11,21 +11,24 @@ namespace Surveillance.Factories
     {
         private readonly IRuleBreachFactory _ruleBreachFactory;
         private readonly IRuleBreachRepository _ruleBreachRepository;
+        private readonly ISpoofingRuleMessageSender _ruleMessageSender;
         private readonly ILogger<SpoofingRule> _logger;
 
         public SpoofingRuleFactory(
             IRuleBreachFactory ruleBreachFactory,
             IRuleBreachRepository ruleBreachRepository,
-            ILogger<SpoofingRule> logger)
+            ILogger<SpoofingRule> logger,
+            ISpoofingRuleMessageSender ruleMessageSender)
         {
             _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _ruleMessageSender = ruleMessageSender ?? throw new ArgumentNullException(nameof(ruleMessageSender));
         }
 
         public ISpoofingRule Build()
         {
-            return new SpoofingRule(_ruleBreachFactory, _ruleBreachRepository, _logger);
+            return new SpoofingRule(_ruleBreachFactory, _ruleBreachRepository, _ruleMessageSender, _logger);
         }
     }
 }

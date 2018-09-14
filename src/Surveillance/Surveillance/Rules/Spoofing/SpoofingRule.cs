@@ -10,6 +10,7 @@ using Domain.Equity;
 using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
+using OrderStatus = Domain.Trades.Orders.OrderStatus;
 
 namespace Surveillance.Rules.Spoofing
 {
@@ -25,6 +26,7 @@ namespace Surveillance.Rules.Spoofing
 
         private readonly IRuleBreachFactory _ruleBreachFactory;
         private readonly IRuleBreachRepository _ruleBreachRepository;
+        private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ILogger _logger;
 
         private readonly object _lock = new object();
@@ -40,11 +42,12 @@ namespace Surveillance.Rules.Spoofing
         public SpoofingRule(
             IRuleBreachFactory ruleBreachFactory,
             IRuleBreachRepository ruleBreachRepository,
+            ISpoofingRuleMessageSender spoofingRuleMessageSender,
             ILogger<SpoofingRule> logger)
         {
             _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
-
+            _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
             _spoofingWindowSize = TimeSpan.FromMinutes(30);
             _tradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -170,7 +173,7 @@ namespace Surveillance.Rules.Spoofing
                     break;
                 default:
                     _logger.LogError("Spoofing rule not considering an out of range order direction");
-                    throw new ArgumentOutOfRangeException("Order direction");
+                    throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
 
@@ -180,7 +183,6 @@ namespace Surveillance.Rules.Spoofing
             TradePosition opposingPosition)
         {
             _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Identifiers}");
-
 
             var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
@@ -194,6 +196,7 @@ namespace Surveillance.Rules.Spoofing
                 description);
 
             _ruleBreachRepository.Save(spoofingBreach);
+            _spoofingRuleMessageSender.Send(mostRecentTrade, tradingPosition, opposingPosition);
         }
 
         public string Version { get; } = "V1.0";

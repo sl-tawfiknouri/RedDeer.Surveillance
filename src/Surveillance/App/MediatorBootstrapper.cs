@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Surveillance;
 using System;
 using System.Threading.Tasks;
 using Surveillance.Interfaces;

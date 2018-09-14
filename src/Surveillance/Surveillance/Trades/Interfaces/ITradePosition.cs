@@ -1,9 +1,11 @@
-﻿using Domain.Trades.Orders;
+﻿using System.Collections.Generic;
+using Domain.Trades.Orders;
 
 namespace Surveillance.Trades.Interfaces
 {
     public interface ITradePosition
     {
+        IList<TradeOrderFrame> Get();
         void Add(TradeOrderFrame item);
         bool HighCancellationRatioByTradeQuantity();
         bool HighCancellationRatioByTradeSize();

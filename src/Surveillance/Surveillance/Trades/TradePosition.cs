@@ -26,6 +26,11 @@ namespace Surveillance.Trades
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public IList<TradeOrderFrame> Get()
+        {
+            return new List<TradeOrderFrame>(_trades);
+        }
+
         public void Add(TradeOrderFrame item)
         {
             _trades.Add(item);

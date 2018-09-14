@@ -88,6 +88,7 @@ namespace Surveillance
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
+            For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
         }
     }
 }

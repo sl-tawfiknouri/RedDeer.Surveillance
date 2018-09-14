@@ -28,7 +28,7 @@ namespace Surveillance.Rules.Spoofing
             var volumeInPosition = tradingPosition.VolumeInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
 
-            var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
+            var description = $"Spoofing Rule Breach. Traded {mostRecentTrade.Security?.Name} ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
 
             var caseDataItem = CaseDataItem(description);
             var caseLogsInTradingPosition = CaseLogsInTradingPosition(tradingPosition);
@@ -109,7 +109,7 @@ namespace Surveillance.Rules.Spoofing
                     ? $" with limit of {tof.Limit?.Value}({tof.Limit?.Currency})"
                     : string.Empty;
 
-            return $"{preamble} {tof.Market?.Id} ({tof.Market?.Name}) {tof.Security?.Name} ({tof.Security?.Identifiers.ToString()}) was traded  {tof.Direction} with order type {tof.OrderType}{limitSection} and volume {tof.Volume} order status last changed on{tof.StatusChangedOn}";
+            return $"{preamble} {tof.Market?.Id.Id} ({tof.Market?.Name}) {tof.Security?.Name} ({tof.Security?.Identifiers.ToString()}) was traded  {tof.Direction} with order type {tof.OrderType}{limitSection} and volume {tof.Volume} order status last changed on {tof.StatusChangedOn}";
         }
     }
 }

@@ -17,10 +17,10 @@ namespace TestHarness.Configuration
         public string StockExchangeDomainUriDomainSegment { get; set; }
         public string StockExchangeDomainUriPort { get; set; }
         public string ScheduledRuleQueueName {get; set;}
+        public string CaseMessageQueueName { get; set; }
 
         public bool IsEc2Instance { get; set; }
         public string AwsAccessKey { get; set; }
         public string AwsSecretKey { get; set; }
-
     }
 }

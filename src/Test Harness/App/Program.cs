@@ -32,6 +32,7 @@ namespace TestHarness.App
                 AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
                 AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
+                CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
             };
 
             return networkConfiguration;

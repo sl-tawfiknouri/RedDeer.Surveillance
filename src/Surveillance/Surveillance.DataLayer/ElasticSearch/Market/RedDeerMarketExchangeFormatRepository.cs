@@ -24,14 +24,14 @@ namespace Surveillance.DataLayer.ElasticSearch.Market
                 return;
             }
 
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+            var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
             var index = await
                 _dataAccess.GetOrCreateDateBasedIndexAsync<ReddeerMarketDocument>(
                     _dataAccess.ReddeerStockExchangeFormatIndexName,
                     DateTime.UtcNow,
                     cts.Token);
 
-            var saveCts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var saveCts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
 
             await _dataAccess.IndexDocumentAsync(index, document, DateTime.UtcNow, saveCts.Token);
         }

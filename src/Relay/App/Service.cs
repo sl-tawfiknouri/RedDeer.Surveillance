@@ -38,11 +38,6 @@ namespace RedDeer.Relay.Relay.App
                     logging.SetMinimumLevel(LogLevel.Trace);
                 })
                 .UseNLog()
-                .ConfigureAppConfiguration((hostingContext, config) => 
-                {
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("AppSettings.json", false, false);
-                })
                 .Build();
 
             // Make sure the windows service is stopped if the

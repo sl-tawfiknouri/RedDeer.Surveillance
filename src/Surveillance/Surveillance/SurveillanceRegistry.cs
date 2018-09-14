@@ -2,6 +2,8 @@
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Domain.Streams;
+using MessageBusDtos.Surveillance;
+using MessageBusDtos.Surveillance.Interfaces;
 using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
@@ -16,6 +18,9 @@ using Surveillance.Network_IO.Interfaces;
 using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Interfaces;
+using Surveillance.MessageBus_IO;
+using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
 using Surveillance.Recorders.Projectors;
@@ -81,6 +86,8 @@ namespace Surveillance
             For<IUniversePlayer>().Use<UniversePlayer>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+            For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
+            For<ICaseMessageSender>().Use<CaseMessageSender>();
         }
     }
 }

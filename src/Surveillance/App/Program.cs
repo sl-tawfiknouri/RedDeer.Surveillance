@@ -90,6 +90,7 @@ namespace RedDeer.Surveillance.App
                 AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
                 AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
+                CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
                 ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
                 ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),
                 ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort")

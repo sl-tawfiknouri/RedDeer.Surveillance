@@ -2,6 +2,7 @@
 using Surveillance;
 using System;
 using System.Threading.Tasks;
+using Surveillance.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {

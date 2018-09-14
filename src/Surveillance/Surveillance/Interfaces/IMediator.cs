@@ -1,4 +1,4 @@
-﻿namespace Surveillance
+﻿namespace Surveillance.Interfaces
 {
     public interface IMediator
     {

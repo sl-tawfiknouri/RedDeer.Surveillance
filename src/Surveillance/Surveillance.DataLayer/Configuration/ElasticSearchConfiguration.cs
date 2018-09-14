@@ -11,5 +11,6 @@ namespace Surveillance.DataLayer.Configuration
         public string ElasticSearchDomain { get; set; }
         public string ElasticSearchPort { get; set; }
         public string ElasticSearchProtocol { get; set; }
+        public string CaseMessageQueueName { get; set; }
     }
 }

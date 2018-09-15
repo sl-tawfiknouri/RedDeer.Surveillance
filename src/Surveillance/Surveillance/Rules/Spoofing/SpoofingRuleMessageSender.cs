@@ -28,7 +28,7 @@ namespace Surveillance.Rules.Spoofing
             var volumeInPosition = tradingPosition.VolumeInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
 
-            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Direction.ToString()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
+            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.ToString()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
 
             var caseDataItem = CaseDataItem(description, mostRecentTrade, tradingPosition, opposingPosition);
             var caseLogsInTradingPosition = CaseLogsInTradingPosition(tradingPosition);
@@ -121,7 +121,7 @@ namespace Surveillance.Rules.Spoofing
                     ? $" with limit of {tof.Limit?.Value}({tof.Limit?.Currency})"
                     : string.Empty;
 
-            return $"{preamble} {tof.Market?.Id.Id} ({tof.Market?.Name}) {tof.Security?.Name} ({tof.Security?.Identifiers.ToString()}) was traded  {tof.Direction} with order type {tof.OrderType}{limitSection} and volume {tof.Volume} order status last changed on {tof.StatusChangedOn}";
+            return $"{preamble} {tof.Market?.Id.Id} ({tof.Market?.Name}) {tof.Security?.Name} ({tof.Security?.Identifiers.ToString()}) was traded  {tof.Position} with order type {tof.OrderType}{limitSection} and volume {tof.Volume} order status last changed on {tof.StatusChangedOn}";
         }
     }
 }

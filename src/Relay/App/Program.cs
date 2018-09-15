@@ -69,57 +69,7 @@ namespace RedDeer.Relay.Relay.App
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            var networkConfiguration = new Configuration
-            {
-                RelayServiceEquityDomain = configurationBuilder.GetValue<string>("RelayServiceEquityDomain"),
-                RelayServiceEquityPort = configurationBuilder.GetValue<string>("RelayServiceEquityPort"),
-                SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
-                SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
-
-                RelayServiceTradeDomain = configurationBuilder.GetValue<string>("RelayServiceTradeDomain"),
-                RelayServiceTradePort = configurationBuilder.GetValue<string>("RelayServiceTradePort"),
-                SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
-                SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
-
-                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),  configurationBuilder.GetValue<string>("RelayTradeFileUploadDirectoryPath")),
-                RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
-                    configurationBuilder.GetValue<string>("RelayEquityFileUploadDirectoryPath")),
-
-                StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
-                MarketIdFieldName = configurationBuilder.GetValue<string>("MarketIdFieldName"),
-                MarketAbbreviationFieldName = configurationBuilder.GetValue<string>("MarketAbbreviationFieldName"),
-                MarketNameFieldName = configurationBuilder.GetValue<string>("MarketNameFieldName"),
-                SecurityNameFieldName = configurationBuilder.GetValue<string>("SecurityNameFieldName"),
-                OrderTypeFieldName = configurationBuilder.GetValue<string>("OrderTypeFieldName"),
-                OrderDirectionFieldName = configurationBuilder.GetValue<string>("OrderDirectionFieldName"),
-                OrderStatusFieldName = configurationBuilder.GetValue<string>("OrderStatusFieldName"),
-                VolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
-                LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName"),
-                SecurityClientIdentifierFieldName = configurationBuilder.GetValue<string>("SecurityClientIdentifierFieldName"),
-                SecuritySedolFieldName = configurationBuilder.GetValue<string>("SecuritySedolFieldName"),
-                SecurityIsinFieldName = configurationBuilder.GetValue<string>("SecurityIsinFieldName"),
-                SecurityFigiFieldName = configurationBuilder.GetValue<string>("SecurityFigiFieldName"),
-
-
-                SecurityTickTimestampFieldName = configurationBuilder.GetValue<string>("SecurityTickTimestampFieldName"),
-                SecurityTickMarketIdentifierCodeFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketIdentifierCodeFieldName"),
-                SecurityTickMarketNameFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketNameFieldName"),
-                SecurityTickClientIdentifierFieldName = configurationBuilder.GetValue<string>("SecurityTickClientIdentifierFieldName"),
-                SecurityTickSedolFieldName = configurationBuilder.GetValue<string>("SecurityTickSedolFieldName"),
-                SecurityTickIsinFieldName = configurationBuilder.GetValue<string>("SecurityTickIsinFieldName"),
-                SecurityTickFigiFieldName = configurationBuilder.GetValue<string>("SecurityTickFigiFieldName"),
-                SecurityTickCfiFieldName = configurationBuilder.GetValue<string>("SecurityTickCifiFieldName"),
-                SecurityTickTickerSymbolFieldName = configurationBuilder.GetValue<string>("SecurityTickTickerSymbolFieldName"),
-                SecurityTickSecurityNameFieldName  = configurationBuilder.GetValue<string>("SecurityTickSecurityNameFieldName"),
-                SecurityTickSpreadAskFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadAskFieldName"),
-                SecurityTickSpreadBidFieldName  = configurationBuilder.GetValue<string>("SecurityTickSpreadBidFieldName"),
-                SecurityTickSpreadPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadPriceFieldName"),
-                SecurityTickVolumeTradedFieldName = configurationBuilder.GetValue<string>("SecurityTickVolumeTradedFieldName"),
-                SecurityTickMarketCapFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketCapFieldName"),
-                SecurityTickSpreadCurrencyFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadCurrencyFieldName"),
-            };
-
-            return networkConfiguration;
+            return ConfigBuilder.ConfigBuilder.Build(configurationBuilder);
         }
 
         private static void ProcessArguments(string[] args)

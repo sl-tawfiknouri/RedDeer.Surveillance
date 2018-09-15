@@ -102,7 +102,7 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.Direction == tradeWindow.First().Direction))
+            if (tradeWindow.All(trades => trades.Position == tradeWindow.First().Position))
             {
                 return;
             }
@@ -132,12 +132,12 @@ namespace Surveillance.Rules.Spoofing
                 AddToPositions(buyPosition, sellPosition, nextTrade);
 
                 var tradingPosition =
-                    mostRecentTrade.Direction == OrderDirection.Buy
+                    mostRecentTrade.Position == OrderPosition.BuyLong
                     ? buyPosition
                     : sellPosition;
 
                 var opposingPosition =
-                    mostRecentTrade.Direction == OrderDirection.Buy
+                    mostRecentTrade.Position == OrderPosition.BuyLong
                     ? sellPosition
                     : buyPosition;
 
@@ -163,12 +163,12 @@ namespace Surveillance.Rules.Spoofing
 
         private void AddToPositions(TradePosition buyPosition, TradePosition sellPosition, TradeOrderFrame nextTrade)
         {
-            switch (nextTrade.Direction)
+            switch (nextTrade.Position)
             {
-                case OrderDirection.Buy:
+                case OrderPosition.BuyLong:
                     buyPosition.Add(nextTrade);
                     break;
-                case OrderDirection.Sell:
+                case OrderPosition.SellLong:
                     sellPosition.Add(nextTrade);
                     break;
                 default:
@@ -187,7 +187,7 @@ namespace Surveillance.Rules.Spoofing
             var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
 
-            var description = $"Traded ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
+            var description = $"Traded ({mostRecentTrade.Position.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
 
             var spoofingBreach = _ruleBreachFactory.Build(
                 ElasticSearchDtos.Rules.RuleBreachCategories.Spoofing,

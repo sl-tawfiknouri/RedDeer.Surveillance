@@ -109,12 +109,17 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 return null;
             }
 
-            var direction = CalculateTradeDirection();
+            var position = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
-            var limit = CalculateLimit(tick, direction, orderType);
+            var limit = CalculateLimit(tick, position, orderType);
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
-            var orderDate = DateTime.UtcNow;
+            var orderStatusLastChanged = DateTime.UtcNow;
+            var orderSubmittedOn = orderStatusLastChanged.AddMilliseconds(-300);
+            var traderId = GenerateIdString();
+            var traderClientId = GenerateProbabilisticIdString();
+            var partyBrokerId = GenerateIdString();
+            var counterpartyBrokerId = GenerateIdString();
 
             return new TradeOrderFrame(
                 orderType,
@@ -122,9 +127,31 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tick.Security,
                 limit,
                 volume,
-                direction,
+                position,
                 orderStatus,
-                orderDate);
+                orderStatusLastChanged,
+                orderSubmittedOn,
+                traderId,
+                traderClientId,
+                partyBrokerId,
+                counterpartyBrokerId);
+        }
+
+        private string GenerateIdString()
+        {
+            return DiscreteUniform.Sample(1, 999999).ToString();
+        }
+
+        private string GenerateProbabilisticIdString()
+        {
+            var generateId = DiscreteUniform.Sample(0, 1) == 0;
+
+            if (generateId)
+            {
+                return string.Empty;
+            }
+
+            return GenerateIdString();
         }
 
         private OrderStatus CalculateOrderStatus()
@@ -135,10 +162,10 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return orderStatus;
         }
 
-        private OrderDirection CalculateTradeDirection()
+        private OrderPosition CalculateTradeDirection()
         {
             var buyOrSellSample = DiscreteUniform.Sample(0, 1);
-            var buyOrSell = (OrderDirection)buyOrSellSample;
+            var buyOrSell = (OrderPosition)buyOrSellSample;
 
             return buyOrSell;
         }
@@ -152,21 +179,21 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private Price? CalculateLimit(SecurityTick tick, OrderDirection buyOrSell, OrderType tradeOrderType)
+        private Price? CalculateLimit(SecurityTick tick, OrderPosition buyOrSell, OrderType tradeOrderType)
         {
             if (tradeOrderType != OrderType.Limit)
             {
                 return null;
             }
 
-            if (buyOrSell == OrderDirection.Buy)
+            if (buyOrSell == OrderPosition.BuyLong)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
                 return new Price(adjustedPrice, tick.Spread.Bid.Currency);
             }
-            else if (buyOrSell == OrderDirection.Sell)
+            else if (buyOrSell == OrderPosition.BuyLong)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));

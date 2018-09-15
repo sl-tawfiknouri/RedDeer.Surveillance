@@ -38,22 +38,31 @@ namespace Relay.Disk_IO.EquityFile
                 Timestamp = rawRecord[_csvConfig.SecurityTickTimestampFieldName],
                 MarketIdentifierCode = rawRecord[_csvConfig.SecurityTickMarketIdentifierCodeFieldName],
                 MarketName = rawRecord[_csvConfig.SecurityTickMarketNameFieldName],
+
+                SecurityName = rawRecord[_csvConfig.SecurityTickSecurityNameFieldName],
+                SecurityCurrency = rawRecord[_csvConfig.SecurityTickCurrencyFieldName],
+
                 SecurityClientIdentifier = rawRecord[_csvConfig.SecurityTickClientIdentifierFieldName],
                 SecuritySedol = rawRecord[_csvConfig.SecurityTickSedolFieldName],
                 SecurityIsin =  rawRecord[_csvConfig.SecurityTickIsinFieldName],
                 SecurityFigi = rawRecord[_csvConfig.SecurityTickFigiFieldName],
+                SecurityExchangeSymbol = rawRecord[_csvConfig.SecurityTickExchangeSymbolFieldName],
+                SecurityCusip = rawRecord[_csvConfig.SecurityTickCusipFieldName],
+
                 SecurityCfi = rawRecord[_csvConfig.SecurityTickCfiFieldName],
 
-                TickerSymbol = rawRecord[_csvConfig.SecurityTickTickerSymbolFieldName],
-                SecurityName = rawRecord[_csvConfig.SecurityTickSecurityNameFieldName],
                 SpreadAsk = rawRecord[_csvConfig.SecurityTickSpreadAskFieldName],
                 SpreadBid = rawRecord[_csvConfig.SecurityTickSpreadBidFieldName],
                 SpreadPrice = rawRecord[_csvConfig.SecurityTickSpreadPriceFieldName],
 
-                SpreadCurrency = rawRecord[_csvConfig.SecurityTickSpreadCurrencyFieldName],
-                VolumeTraded = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
-                MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName]
+                OpenPrice = rawRecord[_csvConfig.SecurityTickOpenPriceFieldName],
+                ClosePrice = rawRecord[_csvConfig.SecurityTickClosePriceFieldName],
+                HighPrice = rawRecord[_csvConfig.SecurityTickHighPriceFieldName],
+                LowPrice = rawRecord[_csvConfig.SecurityTickLowPriceFieldName],
 
+                VolumeTraded = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
+                ListedSecurities = rawRecord[_csvConfig.SecurityTickListedSecuritiesFieldName],
+                MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName]
             };
         }
 
@@ -117,19 +126,28 @@ namespace Relay.Disk_IO.EquityFile
                 csv.WriteField(_csvConfig.SecurityTickTimestampFieldName);
                 csv.WriteField(_csvConfig.SecurityTickMarketIdentifierCodeFieldName);
                 csv.WriteField(_csvConfig.SecurityTickMarketNameFieldName);
+
                 csv.WriteField(_csvConfig.SecurityTickClientIdentifierFieldName);
                 csv.WriteField(_csvConfig.SecurityTickSedolFieldName);
                 csv.WriteField(_csvConfig.SecurityTickIsinFieldName);
                 csv.WriteField(_csvConfig.SecurityTickFigiFieldName);
+                csv.WriteField(_csvConfig.SecurityTickCusipFieldName);
+                csv.WriteField(_csvConfig.SecurityTickExchangeSymbolFieldName);
+
                 csv.WriteField(_csvConfig.SecurityTickCfiFieldName);
-                csv.WriteField(_csvConfig.SecurityTickTickerSymbolFieldName);
                 csv.WriteField(_csvConfig.SecurityTickSecurityNameFieldName);
                 csv.WriteField(_csvConfig.SecurityTickSpreadAskFieldName);
                 csv.WriteField(_csvConfig.SecurityTickSpreadBidFieldName);
                 csv.WriteField(_csvConfig.SecurityTickSpreadPriceFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSpreadCurrencyFieldName);
+                csv.WriteField(_csvConfig.SecurityTickCurrencyFieldName);
                 csv.WriteField(_csvConfig.SecurityTickVolumeTradedFieldName);
                 csv.WriteField(_csvConfig.SecurityTickMarketCapFieldName);
+
+                csv.WriteField(_csvConfig.SecurityTickListedSecuritiesFieldName);
+                csv.WriteField(_csvConfig.SecurityTickOpenPriceFieldName);
+                csv.WriteField(_csvConfig.SecurityTickClosePriceFieldName);
+                csv.WriteField(_csvConfig.SecurityTickHighPriceFieldName);
+                csv.WriteField(_csvConfig.SecurityTickLowPriceFieldName);
 
                 csv.NextRecord();
 

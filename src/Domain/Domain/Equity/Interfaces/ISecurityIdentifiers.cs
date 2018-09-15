@@ -6,5 +6,7 @@
         string Figi { get; }
         string Isin { get; }
         string Sedol { get; }
+        string Cusip { get; }
+        string ExchangeSymbol { get; }
     }
 }

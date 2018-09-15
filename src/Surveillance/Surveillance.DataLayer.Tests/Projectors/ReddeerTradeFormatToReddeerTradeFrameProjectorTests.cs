@@ -63,7 +63,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
                         SecurityClientIdentifier = "STAN",
                         SecurityName = "Standard Chartered",
                         OrderDirectionDescription = "Buy",
-                        OrderDirectionId = 0,
+                        OrderPositionId = 0,
                         OrderStatusDescription = "Cancelled",
                         OrderStatusId = 1,
                         OrderTypeId = 2,

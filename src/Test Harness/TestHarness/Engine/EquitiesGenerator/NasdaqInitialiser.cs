@@ -36,18 +36,24 @@ namespace TestHarness.Engine.EquitiesGenerator
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,
+                            raw.Symbol,
+                            raw.Symbol,
                             raw.Symbol),
-                        raw.Symbol),
-                    "CFI",
-                    raw.Symbol,
-                    new Spread(
+                        raw.Symbol,
+                        "CFI"),
+                     new Spread(
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency)),
                     new Volume(volume),
                     DateTime.UtcNow,
-                    decimal.Parse(raw.Buy) * volume
-                    ))
+                    decimal.Parse(raw.Buy) * volume,
+                    new IntradayPrices(
+                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                        new Price(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
+                        new Price(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
+                    volume * 3))
                 .ToList();
         }
 

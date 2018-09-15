@@ -28,24 +28,38 @@ namespace Surveillance.Recorders.Projectors
                 Origin = _originFactory.Origin(),
                 OrderTypeId = (int)order.OrderType,
                 OrderTypeDescription = order.OrderType.ToString(),
+
                 MarketId = order.Market?.Id?.Id ?? string.Empty,
                 MarketName = order.Market?.Name ?? string.Empty,
-                SecurityName = order.Security?.Name ?? string.Empty,
 
                 SecurityClientIdentifier = order.Security?.Identifiers.ClientIdentifier,
                 SecuritySedol = order.Security?.Identifiers.Sedol,
                 SecurityIsin = order.Security?.Identifiers.Isin,
                 SecurityFigi = order.Security?.Identifiers.Figi,
+                SecurityCusip = order.Security?.Identifiers.Cusip,
+                SecurityExchangeSymbol = order.Security?.Identifiers.ExchangeSymbol,
+
+                SecurityName = order.Security?.Name ?? string.Empty,
+                SecurityCfi = order.Security?.Cfi,
 
                 Limit = order.Limit?.Value,
                 LimitCurrency = order.Limit?.Currency,
 
                 StatusChangedOn = order.StatusChangedOn,
+                TradeSubmittedOn = order.TradeSubmittedOn,
+
                 Volume = order.Volume,
-                OrderDirectionId = (int)order.Direction,
-                OrderDirectionDescription = order.Direction.ToString(),
+                
+                OrderPositionId = (int)order.Position,
+                OrderPositionDescription = order.Position.ToString(),
+
                 OrderStatusId = (int)order.OrderStatus,
-                OrderStatusDescription = order.OrderStatus.ToString()
+                OrderStatusDescription = order.OrderStatus.ToString(),
+
+                TraderId = order.TraderId,
+                TradeClientAttributionId = order.TradeClientAttributionId,
+                PartyBrokerId = order.PartyBrokerId,
+                CounterPartyBrokerId = order.CounterPartyBrokerId
             };
         }
 

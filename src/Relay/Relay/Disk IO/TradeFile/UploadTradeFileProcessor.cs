@@ -61,16 +61,29 @@ namespace Relay.Disk_IO.TradeFile
                 StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
                 MarketId = rawRecord[_mappingConfig.MarketIdFieldName],
                 MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
+
                 SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
                 SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],
                 SecurityIsin = rawRecord[_mappingConfig.SecurityIsinFieldName],
                 SecuritySedol = rawRecord[_mappingConfig.SecuritySedolFieldName],
+                SecurityCusip = rawRecord[_mappingConfig.SecurityCusipFieldName],
+                SecurityExchangeSymbol = rawRecord[_mappingConfig.SecurityExchangeSymbolFieldName],
+
                 SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
+                SecurityCfi = rawRecord[_mappingConfig.SecurityCfiFieldName],
+
                 OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
-                OrderDirection = rawRecord[_mappingConfig.OrderDirectionFieldName],
+                OrderPosition = rawRecord[_mappingConfig.OrderPositionFieldName],
                 OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
                 Volume = rawRecord[_mappingConfig.VolumeFieldName],
                 LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
+
+                TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
+                TraderId = rawRecord[_mappingConfig.TraderIdFieldName],
+                TraderClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
+                PartyBrokerId = rawRecord[_mappingConfig.PartyBrokerIdFieldName],
+                CounterPartyBrokerId = rawRecord[_mappingConfig.CounterPartyBrokerIdFieldName],
+                Currency = rawRecord[_mappingConfig.CurrencyFieldName]
             };
         }
 
@@ -92,18 +105,31 @@ namespace Relay.Disk_IO.TradeFile
                 // write out headers
                 csv.WriteField(_mappingConfig.StatusChangedOnFieldName);
                 csv.WriteField(_mappingConfig.MarketIdFieldName);
-                csv.WriteField(_mappingConfig.MarketAbbreviationFieldName);
                 csv.WriteField(_mappingConfig.MarketNameFieldName);
+
                 csv.WriteField(_mappingConfig.SecurityClientIdentifierFieldName);
                 csv.WriteField(_mappingConfig.SecurityFigiFieldName);
                 csv.WriteField(_mappingConfig.SecurityIsinFieldName);
                 csv.WriteField(_mappingConfig.SecuritySedolFieldName);
+                csv.WriteField(_mappingConfig.SecurityCusipFieldName);
+                csv.WriteField(_mappingConfig.SecurityExchangeSymbolFieldName);
+
+
                 csv.WriteField(_mappingConfig.SecurityNameFieldName);
+                csv.WriteField(_mappingConfig.SecurityCfiFieldName);
+
                 csv.WriteField(_mappingConfig.OrderTypeFieldName);
-                csv.WriteField(_mappingConfig.OrderDirectionFieldName);
+                csv.WriteField(_mappingConfig.OrderPositionFieldName);
                 csv.WriteField(_mappingConfig.OrderStatusFieldName);
                 csv.WriteField(_mappingConfig.VolumeFieldName);
                 csv.WriteField(_mappingConfig.LimitPriceFieldName);
+
+                csv.WriteField(_mappingConfig.TraderIdFieldName);
+                csv.WriteField(_mappingConfig.CurrencyFieldName);
+                csv.WriteField(_mappingConfig.PartyBrokerIdFieldName);
+                csv.WriteField(_mappingConfig.CounterPartyBrokerIdFieldName);
+                csv.WriteField(_mappingConfig.TradeSubmittedOnFieldName);
+                csv.WriteField(_mappingConfig.TraderClientAttributionIdFieldName);
 
                 csv.NextRecord();
 

@@ -103,15 +103,23 @@ namespace TestHarness.Engine.OrderGenerator
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;
             var volume = (int)(security.Volume.Traded * volumeTarget);
 
+            var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
+            var tradePlacedOn = statusChangedOn;
+
             var spoofedTrade = new TradeOrderFrame
                 (OrderType.Limit,
                 _lastFrame.Exchange,
                 security?.Security,
                 limitPrice,
                 volume,
-                OrderDirection.Buy,
+                OrderPosition.BuyLong,
                 OrderStatus.Cancelled,
-                DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders));
+                statusChangedOn,
+                tradePlacedOn,
+                "Spoofing-Trader",
+                "",
+                "Broker-1",
+                "Broker-2");
 
             return 
                 new[] { spoofedTrade }
@@ -122,6 +130,8 @@ namespace TestHarness.Engine.OrderGenerator
         private TradeOrderFrame CounterTrade(SecurityTick security)
         {
             var volumeToTrade = (int)Math.Round(security.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
+            var statusChangedOn = DateTime.UtcNow;
+            var tradePlacedOn = statusChangedOn;
 
             return new TradeOrderFrame(
                 OrderType.Market,
@@ -129,9 +139,14 @@ namespace TestHarness.Engine.OrderGenerator
                 security?.Security,
                 null,
                 volumeToTrade,
-                OrderDirection.Sell,
+                OrderPosition.SellLong,
                 OrderStatus.Fulfilled,
-                DateTime.UtcNow);
+                statusChangedOn,
+                tradePlacedOn,
+                "Spoofing-Trader",
+                "",
+                "Broker-1",
+                "Broker-2");
         }
     }
 }

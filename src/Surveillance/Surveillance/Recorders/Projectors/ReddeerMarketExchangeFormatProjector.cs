@@ -51,9 +51,10 @@ namespace Surveillance.Recorders.Projectors
                     SecuritySedol = sec?.Security?.Identifiers.Sedol ?? string.Empty,
                     SecurityIsin = sec?.Security?.Identifiers.Isin ?? string.Empty,
                     SecurityFigi = sec?.Security?.Identifiers.Figi ?? string.Empty,
+                    SecurityCusip = sec?.Security?.Identifiers.Cusip ?? string.Empty,
+                    SecurityExchangeSymbol = sec?.Security.Identifiers.ExchangeSymbol,
 
-                    SecurityCfi = sec?.CfiCode,
-                    TickerSymbol = sec?.TickerSymbol,
+                    SecurityCfi = sec?.Security.Cfi,
 
                     SpreadBuy = sec?.Spread.Bid.Value,
                     SpreadBuyCurrency = sec?.Spread.Bid.Currency,
@@ -62,9 +63,14 @@ namespace Surveillance.Recorders.Projectors
                     SpreadPrice = sec?.Spread.Price.Value,
                     SpreadPriceCurrency = sec?.Spread.Price.Currency,
 
-                    TimeStamp = sec?.TimeStamp ?? DateTime.UtcNow,
-                    Volume = sec?.Volume.Traded,
+                    OpenPrice = sec?.IntradayPrices?.Open?.Value,
+                    ClosePrice = sec?.IntradayPrices?.Close?.Value,
+                    HighPrice = sec?.IntradayPrices?.High?.Value,
+                    LowPrice = sec?.IntradayPrices?.Low?.Value,
 
+                    Volume = sec?.Volume.Traded,
+                    ListedSecurities = sec?.ListedSecurities,
+                    TimeStamp = sec?.TimeStamp ?? DateTime.UtcNow,
                     MarketCap = sec?.MarketCap
                 }).ToArray();
         }

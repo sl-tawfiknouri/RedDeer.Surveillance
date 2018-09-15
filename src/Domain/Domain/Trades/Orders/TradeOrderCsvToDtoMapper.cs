@@ -30,10 +30,10 @@ namespace Domain.Trades.Orders
                 return null;
             }
 
-            if (!Enum.TryParse(csv.OrderDirection, out OrderDirection orderDirection))
+            if (!Enum.TryParse(csv.OrderPosition, out OrderPosition orderPosition))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable order direction");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order position {orderPosition}");
 
                 return null;
             }
@@ -41,7 +41,7 @@ namespace Domain.Trades.Orders
             if (!Enum.TryParse(csv.OrderType, out OrderType orderType))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable order type");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order type {orderType}");
 
                 return null;
             }
@@ -49,7 +49,7 @@ namespace Domain.Trades.Orders
             if (!Enum.TryParse(csv.OrderStatus, out OrderStatus orderStatus))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable order status");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order status {orderStatus}");
 
                 return null;
             }
@@ -57,7 +57,7 @@ namespace Domain.Trades.Orders
             if (!int.TryParse(csv.Volume, out var volume))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable volume");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable volume {volume}");
 
                 return null;
             }
@@ -66,7 +66,7 @@ namespace Domain.Trades.Orders
                 && orderType == OrderType.Limit)
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable limit price on a limit order");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable limit price on a limit order {limitPrice}");
 
                 return null;
             }
@@ -84,7 +84,15 @@ namespace Domain.Trades.Orders
             if (!DateTime.TryParse(csv.StatusChangedOn, out var statusChangedOn))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse trade order frame csv due to being passed an unparseable status changed on date");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable status changed on date {statusChangedOn}");
+
+                return null;
+            }
+
+            if (!DateTime.TryParse(csv.TradeSubmittedOn, out var tradeSubmittedOn))
+            {
+                FailedParseTotal += 1;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable trade submitted on date {tradeSubmittedOn}");
 
                 return null;
             }
@@ -99,13 +107,21 @@ namespace Domain.Trades.Orders
                         csv.SecurityClientIdentifier,
                         csv.SecuritySedol,
                         csv.SecurityIsin,
-                        csv.SecurityFigi),
-                    csv.SecurityName),
+                        csv.SecurityFigi,
+                        csv.SecurityCusip,
+                        csv.SecurityExchangeSymbol),
+                    csv.SecurityName,
+                    csv.SecurityCfi),
                 pricedLimitPrice,
                 volume,
-                orderDirection,
+                orderPosition,
                 orderStatus,
-                statusChangedOn);
+                statusChangedOn,
+                tradeSubmittedOn,
+                csv.TraderId,
+                csv.TraderClientAttributionId,
+                csv.PartyBrokerId,
+                csv.CounterPartyBrokerId);
         }
     }
 }

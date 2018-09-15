@@ -9,20 +9,20 @@ namespace Domain.Equity.Frames
     {
         public SecurityTick(
             Security security,
-            string cfiCode,
-            string tickerSymbol,
             Spread spread,
             Volume volume,
             DateTime timeStamp,
-            decimal? marketCap)
+            decimal? marketCap,
+            IntradayPrices intradayPrices,
+            int? listedSecurities)
         {
             Security = security;
-            CfiCode = cfiCode;
-            TickerSymbol = tickerSymbol;
             Spread = spread;
             Volume = volume;
             TimeStamp = timeStamp;
             MarketCap = marketCap;
+            IntradayPrices = intradayPrices;
+            ListedSecurities = listedSecurities;
         }
 
         /// <summary>
@@ -31,23 +31,21 @@ namespace Domain.Equity.Frames
         public Security Security { get; }
 
         /// <summary>
-        /// Classification of Financial Instruments codes (norm ISO 10962:2015)
-        /// This describes an asset in terms such as BOND|EQUITY VOTING STOCK
-        /// https://en.wikipedia.org/wiki/ISO_10962
+        /// Valuation of the security
         /// </summary>
-        public string CfiCode { get; }
-
-        /// <summary>
-        /// Ticker symbol for describing the security
-        /// </summary>
-        public string TickerSymbol { get; }
-
         public decimal? MarketCap { get; }
 
         /// <summary>
         /// Price spread at the tick point
         /// </summary>
         public Spread Spread { get; }
+
+        public IntradayPrices IntradayPrices { get; }
+
+        /// <summary>
+        /// The number of listed securities on the exchange
+        /// </summary>
+        public int? ListedSecurities { get; }
 
         /// <summary>
         /// The volume of the security traded since the last tick

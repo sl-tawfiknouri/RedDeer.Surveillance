@@ -58,8 +58,11 @@ namespace Surveillance.DataLayer.Projectors
                             document.SecurityClientIdentifier,
                             document.SecuritySedol,
                             document.SecurityIsin,
-                            document.SecurityFigi),
-                        document.SecurityName);
+                            document.SecurityFigi,
+                            document.SecurityCusip,
+                            document.SecurityExchangeSymbol),
+                        document.SecurityName,
+                        document.SecurityCfi);
 
                 var limit =
                     document.Limit != null && orderType == OrderType.Limit
@@ -67,9 +70,14 @@ namespace Surveillance.DataLayer.Projectors
                         : null;
 
                 var volume = document.Volume;
-                var orderDirection = (OrderDirection)document.OrderDirectionId;
+                var orderPosition = (OrderPosition)document.OrderPositionId;
                 var orderStatus = (OrderStatus)document.OrderStatusId;
-                var date = document.StatusChangedOn;
+                var changesOnDate = document.StatusChangedOn;
+                var submittedOnDate = document.TradeSubmittedOn;
+                var traderId = document.TraderId;
+                var traderAttributableClientId = document.TradeClientAttributionId;
+                var partyBrokerId = document.PartyBrokerId;
+                var counterPartyBrokerId = document.CounterPartyBrokerId;
 
                 var frame =
                     new TradeOrderFrame(
@@ -78,9 +86,14 @@ namespace Surveillance.DataLayer.Projectors
                         security,
                         limit,
                         volume,
-                        orderDirection,
+                        orderPosition,
                         orderStatus,
-                        date);
+                        changesOnDate,
+                        submittedOnDate,
+                        traderId,
+                        traderAttributableClientId,
+                        partyBrokerId,
+                        counterPartyBrokerId);
 
                 return frame;
             }

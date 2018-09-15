@@ -20,6 +20,15 @@ namespace Surveillance.ElasticSearchDtos.Market
         [Keyword]
         public string SecurityFigi { get; set; }
 
+        [Keyword]
+        public string SecurityCusip { get; set; }
+
+        [Keyword]
+        public string SecurityExchangeSymbol { get; set; }
+
+        [Text]
+        public string SecurityCfi { get; set; }
+
         [Text]
         public string SecurityName { get; set; }
 
@@ -42,18 +51,30 @@ namespace Surveillance.ElasticSearchDtos.Market
         public string SpreadPriceCurrency { get; set; }
 
         [Text]
+        public decimal? OpenPrice { get; set; }
+
+        [Text]
+        public decimal? ClosePrice { get; set; }
+
+        [Text]
+        public decimal? HighPrice { get; set; }
+
+        [Text]
+        public decimal? LowPrice { get; set; }
+
+        [Text]
         public int? Volume { get; set; }
 
+        [Text]
+        public int? ListedSecurities { get; set; }
+
+        /// <summary>
+        /// Time the data was considered cannon
+        /// </summary>
         [JsonConverter(typeof(ElasticSearchDateTimeConverter))]
         public DateTime TimeStamp { get; set; }
 
         [Text]
         public decimal? MarketCap { get; set; }
-
-        [Text]
-        public string SecurityCfi { get; set; }
-
-        [Text]
-        public string TickerSymbol { get; set; }
     }
 }

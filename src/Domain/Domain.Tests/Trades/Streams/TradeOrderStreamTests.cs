@@ -78,7 +78,7 @@ namespace Domain.Tests.Trades.Streams
                     "Standard Chartered"),
                 new Price(100, "GBX"),
                 1000,
-                OrderDirection.Buy,
+                OrderPosition.Buy,
                 OrderStatus.Placed,
                 orderDates);
 
@@ -90,7 +90,7 @@ namespace Domain.Tests.Trades.Streams
                     "Standard Chartered"),
                 null,
                 10,
-                OrderDirection.Sell,
+                OrderPosition.Sell,
                 OrderStatus.Fulfilled,
                 orderDates);
 
@@ -102,7 +102,7 @@ namespace Domain.Tests.Trades.Streams
                     "Standard Chartered"),
                 new Price(10, "GBX"),
                 1000,
-                OrderDirection.Sell,
+                OrderPosition.Sell,
                 OrderStatus.Cancelled,
                 orderDates);
 

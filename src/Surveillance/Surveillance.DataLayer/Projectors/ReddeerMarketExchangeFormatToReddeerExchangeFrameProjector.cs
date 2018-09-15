@@ -69,8 +69,48 @@ namespace Surveillance.DataLayer.Projectors
             var security = ParseEsSecurity(doc);
             var spread = ParseSpread(doc);
             var volume = new Volume(doc.Volume.GetValueOrDefault(0));
+            var intradayPrices = IntradayPrices(doc);
 
-            return new SecurityTick(security, doc.SecurityCfi, doc.TickerSymbol, spread, volume, doc.TimeStamp, doc.MarketCap);
+            return new SecurityTick(
+                security,
+                spread,
+                volume,
+                doc.TimeStamp,
+                doc.MarketCap,
+                intradayPrices,
+                doc.ListedSecurities);
+        }
+
+        private IntradayPrices IntradayPrices(ReddeerSecurityDocument doc)
+        {
+            var openPrice =
+                doc.OpenPrice != null
+                ? (Price?)new Price(doc.OpenPrice.Value, doc.SpreadPriceCurrency)
+                : null;
+
+            var closePrice =
+                doc.ClosePrice != null
+                ? (Price?)new Price(doc.ClosePrice.Value, doc.SpreadPriceCurrency)
+                : null;
+
+            var highPrice =
+                doc.HighPrice != null
+                ? (Price?)new Price(doc.HighPrice.Value, doc.SpreadPriceCurrency)
+                : null;
+
+            var lowPrice =
+                doc.LowPrice != null
+                ? (Price?)new Price(doc.LowPrice.Value, doc.SpreadPriceCurrency)
+                : null;
+
+            var intradayPrices =
+                new IntradayPrices(
+                    openPrice,
+                    closePrice,
+                    highPrice,
+                    lowPrice);
+
+            return intradayPrices;
         }
 
         private Security ParseEsSecurity(ReddeerSecurityDocument doc)
@@ -80,9 +120,11 @@ namespace Surveillance.DataLayer.Projectors
                     doc.SecurityClientIdentifier,
                     doc.SecuritySedol,
                     doc.SecurityIsin,
-                    doc.SecurityFigi);
+                    doc.SecurityFigi,
+                    doc.SecurityCusip,
+                    doc.SecurityExchangeSymbol);
 
-            return new Security(securityIdentifiers, doc.SecurityName);
+            return new Security(securityIdentifiers, doc.SecurityName, doc.SecurityCfi);
         }
 
         private Spread ParseSpread(ReddeerSecurityDocument doc)

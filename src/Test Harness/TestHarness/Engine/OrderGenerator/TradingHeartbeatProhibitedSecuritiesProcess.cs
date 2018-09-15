@@ -61,17 +61,25 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 if (_lastFrame != null)
                 {
+                    var submittedOn = DateTime.UtcNow.AddMilliseconds(-300);
+
                     var prohibitedTrade = new TradeOrderFrame
                         (OrderType.Market,
                         _lastFrame.Exchange,
                         new Security(
-                            new SecurityIdentifiers("Lehman Bros", "LB12345", "LB123456789X", "LBro"),
-                            "Lehman Bros"),
+                            new SecurityIdentifiers("Lehman Bros", "LB12345", "LB123456789X", "LBro", "123456LB", "LEHM"),
+                            "Lehman Bros",
+                            "CFI"),
                         null,
                         666,
-                        OrderDirection.Buy,
+                        OrderPosition.BuyLong,
                         OrderStatus.Placed,
-                        DateTime.UtcNow);
+                        DateTime.UtcNow,
+                        submittedOn,
+                        "TRADER-1",
+                        "",
+                        "BROKER-1",
+                        "BROKER-2");
 
                     _tradeStream.Add(prohibitedTrade);
                 }

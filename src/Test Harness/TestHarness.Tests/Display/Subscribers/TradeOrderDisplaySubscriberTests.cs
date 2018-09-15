@@ -48,7 +48,7 @@ namespace TestHarness.Tests.Display.Subscribers
                     null,
                     null,
                     10,
-                    OrderDirection.Buy,
+                    OrderPosition.Buy,
                     OrderStatus.Cancelled,
                     DateTime.Now);
 

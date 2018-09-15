@@ -4,6 +4,7 @@
     {
         Placed,
         Cancelled,
+        PartialFulfilled,
         Fulfilled
     }
 }

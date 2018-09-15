@@ -69,11 +69,23 @@ namespace Surveillance.ElasticSearchDtos.Trades
         [Keyword]
         public string SecurityFigi { get; set; }
 
+        [Keyword]
+        public string SecurityCusip { get; set; }
+
+        [Keyword]
+        public string SecurityExchangeSymbol { get; set; }
+
         /// <summary>
         /// Security name i.e. Standard Chartered
         /// </summary>
         [Keyword]
         public string SecurityName { get; set; }
+
+        /// <summary>
+        /// Asset type of the security as a Classification of Financial Instruments code
+        /// </summary>
+        [Keyword]
+        public string SecurityCfi { get; set; }
 
         /// <summary>
         /// Price limit if it is a limit order
@@ -91,22 +103,28 @@ namespace Surveillance.ElasticSearchDtos.Trades
         public DateTime StatusChangedOn { get; set; }
 
         /// <summary>
+        /// The datetime for the initial trade submission to the order book
+        /// </summary>
+        [JsonConverter(typeof(ElasticSearchDateTimeConverter))]
+        public DateTime TradeSubmittedOn { get; set; }
+
+        /// <summary>
         /// The quantity metric for the traded security
         /// </summary>
         [Keyword]
         public int Volume { get; set; }
 
         /// <summary>
-        /// The direction of the order i.e. buy or sell
+        /// The position of the order i.e. buy or sell
         /// </summary>
         [Keyword]
-        public int OrderDirectionId { get; set; }
+        public int OrderPositionId { get; set; }
 
         /// <summary>
-        /// The direction of the order i.e. buy or sell
+        /// The position of the order i.e. buy or sell
         /// </summary>
-        [Keyword]
-        public string OrderDirectionDescription { get; set; }
+        [Text]
+        public string OrderPositionDescription { get; set; }
 
         /// <summary>
         /// The status of the order
@@ -119,5 +137,29 @@ namespace Surveillance.ElasticSearchDtos.Trades
         /// </summary>
         [Text]
         public string OrderStatusDescription { get; set; }
+
+        /// <summary>
+        /// An identifier provided by the client to identify their traders
+        /// </summary>
+        [Keyword]
+        public string TraderId { get; set; }
+
+        /// <summary>
+        /// An identifier provided by the client to identify the investors the traders are executing for
+        /// </summary>
+        [Keyword]
+        public string TradeClientAttributionId { get; set; }
+
+        /// <summary>
+        /// The broker for the client
+        /// </summary>
+        [Text]
+        public string PartyBrokerId { get; set; }
+
+        /// <summary>
+        /// The broker at the other side of the trade
+        /// </summary>
+        [Text]
+        public string CounterPartyBrokerId { get; set; }
     }
 }

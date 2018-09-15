@@ -9,18 +9,24 @@ namespace Domain.Equity
             string clientIdentifier,
             string sedol,
             string isin,
-            string figi)
+            string figi,
+            string cusip,
+            string exchangeSymbol)
         {
             ClientIdentifier = clientIdentifier ?? string.Empty;
             Sedol = sedol ?? string.Empty;
             Isin = isin ?? string.Empty;
             Figi = figi ?? string.Empty;
+            Cusip = cusip ?? string.Empty;
+            ExchangeSymbol = exchangeSymbol ?? string.Empty;
         }
 
         public string ClientIdentifier { get; }
         public string Sedol { get; }
         public string Isin { get; }
         public string Figi { get; }
+        public string Cusip { get; }
+        public string ExchangeSymbol { get; }
 
         public override int GetHashCode()
         {
@@ -64,7 +70,7 @@ namespace Domain.Equity
 
         public override string ToString()
         {
-            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi}";
+            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol}";
         }
     }
 }

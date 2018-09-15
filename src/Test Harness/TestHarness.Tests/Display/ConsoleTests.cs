@@ -40,7 +40,7 @@ namespace TestHarness.Tests.Display
                     sec,
                     new Price(20.2m, "GBP"),
                     100 * vol,
-                    OrderDirection.Buy,
+                    OrderPosition.Buy,
                     OrderStatus.Fulfilled,
                     DateTime.Now);
         }

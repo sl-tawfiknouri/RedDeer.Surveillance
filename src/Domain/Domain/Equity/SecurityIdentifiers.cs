@@ -64,7 +64,7 @@ namespace Domain.Equity
 
         public override string ToString()
         {
-            return $"ClientIdentifier: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi}";
+            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi}";
         }
     }
 }

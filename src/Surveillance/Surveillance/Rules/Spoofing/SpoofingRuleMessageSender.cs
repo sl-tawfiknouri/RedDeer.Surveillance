@@ -28,9 +28,9 @@ namespace Surveillance.Rules.Spoofing
             var volumeInPosition = tradingPosition.VolumeInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
 
-            var description = $"Spoofing Rule Breach. Traded {mostRecentTrade.Security?.Name} ({mostRecentTrade.Direction.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
+            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Direction.ToString()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
 
-            var caseDataItem = CaseDataItem(description);
+            var caseDataItem = CaseDataItem(description, mostRecentTrade, tradingPosition, opposingPosition);
             var caseLogsInTradingPosition = CaseLogsInTradingPosition(tradingPosition);
             var caseLogsAgainstTradingPosition = CaseLogsAgainstTradingPosition(opposingPosition);
             caseLogsInTradingPosition.AddRange(caseLogsAgainstTradingPosition);
@@ -44,15 +44,27 @@ namespace Surveillance.Rules.Spoofing
             _caseMessageSender.Send(caseMessage);
         }
 
-        private static ComplianceCaseDataItem CaseDataItem(string description)
+        private static ComplianceCaseDataItem CaseDataItem(
+            string description,
+            TradeOrderFrame mostRecentTrade,
+            TradePosition tradingPosition,
+            TradePosition opposingPosition)
         {
+            var earliestTp = tradingPosition.Get()?.Min(tp => tp.StatusChangedOn);
+            var earliestOp = opposingPosition.Get()?.Min(op => op.StatusChangedOn);
+
+            var from = earliestTp < earliestOp ? earliestTp : earliestOp;
+            
             return new ComplianceCaseDataItem
             {
                 Title = "Automated Spoofing Rule Breach Detected",
                 Description = description ?? string.Empty,
                 Source = ComplianceCaseSource.SurveillanceRule,
                 Status = ComplianceCaseStatus.BreachDetected,
-                ReportedOn = DateTime.Now
+                ReportedOn = DateTime.Now,
+                Venue = mostRecentTrade.Market?.Name,
+                StartOfPeriodUnderInvestigation = from.GetValueOrDefault(mostRecentTrade.StatusChangedOn),
+                EndOfPeriodUnderInvestigation = mostRecentTrade.StatusChangedOn
             };
         }
 
@@ -101,7 +113,7 @@ namespace Surveillance.Rules.Spoofing
 
             var preamble =
                 executedPosition
-                    ? "Final trading position:"
+                    ? "Executed trading position:"
                     : "Spoofed trading position:";
 
             var limitSection =

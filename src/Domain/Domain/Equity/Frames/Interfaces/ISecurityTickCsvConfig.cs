@@ -11,9 +11,9 @@
         string SecurityTickIsinFieldName { get; set; }
         string SecurityTickFigiFieldName { get; set; }
         string SecurityTickCusipFieldName { get; set; }
+        string SecurityTickExchangeSymbolFieldName { get; set; }
 
         string SecurityTickCfiFieldName { get; set; }
-        string SecurityTickExchangeSymbolFieldName { get; set; }
         string SecurityTickSecurityNameFieldName { get; set; }
         string SecurityTickSpreadAskFieldName { get; set; }
         string SecurityTickSpreadBidFieldName { get; set; }

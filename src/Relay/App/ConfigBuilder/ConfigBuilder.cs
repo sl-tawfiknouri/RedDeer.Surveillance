@@ -63,7 +63,7 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 SecurityTickSedolFieldName = configurationBuilder.GetValue<string>("SecurityTickSedolFieldName"),
                 SecurityTickIsinFieldName = configurationBuilder.GetValue<string>("SecurityTickIsinFieldName"),
                 SecurityTickFigiFieldName = configurationBuilder.GetValue<string>("SecurityTickFigiFieldName"),
-                SecurityTickExchangeSymbolFieldName = configurationBuilder.GetValue<string>("SecurityTickTickerSymbolFieldName"),
+                SecurityTickExchangeSymbolFieldName = configurationBuilder.GetValue<string>("SecurityTickExchangeSymbolFieldName"),
                 SecurityTickCusipFieldName = configurationBuilder.GetValue<string>("SecurityTickCusipFieldName"),
 
                 SecurityTickCfiFieldName = configurationBuilder.GetValue<string>("SecurityTickCifiFieldName"),
@@ -73,8 +73,9 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 SecurityTickSpreadPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadPriceFieldName"),
 
                 SecurityTickVolumeTradedFieldName = configurationBuilder.GetValue<string>("SecurityTickVolumeTradedFieldName"),
+                SecurityTickCurrencyFieldName = configurationBuilder.GetValue<string>("SecurityTickSecurityCurrencyFieldName"),
                 SecurityTickMarketCapFieldName = configurationBuilder.GetValue<string>("SecurityTickMarketCapFieldName"),
-                SecurityTickCurrencyFieldName = configurationBuilder.GetValue<string>("SecurityTickSpreadCurrencyFieldName"),
+                SecurityTickListedSecuritiesFieldName = configurationBuilder.GetValue<string>("SecurityTickListedSecuritiesFieldName"),
 
                 SecurityTickOpenPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickOpenPriceFieldName"),
                 SecurityTickClosePriceFieldName = configurationBuilder.GetValue<string>("SecurityTickClosePriceFieldName"),

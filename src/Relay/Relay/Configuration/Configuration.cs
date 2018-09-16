@@ -57,21 +57,22 @@ namespace Relay.Configuration
         public string SecurityTickMarketIdentifierCodeFieldName { get; set; }
         public string SecurityTickMarketNameFieldName { get; set; }
 
+        public string SecurityTickSecurityNameFieldName { get; set; }
+        public string SecurityTickCurrencyFieldName { get; set; }
+
         public string SecurityTickClientIdentifierFieldName { get; set; }
         public string SecurityTickSedolFieldName { get; set; }
         public string SecurityTickIsinFieldName { get; set; }
         public string SecurityTickFigiFieldName { get; set; }
+        public string SecurityTickExchangeSymbolFieldName { get; set; }
         public string SecurityTickCusipFieldName { get; set; }
 
         public string SecurityTickCfiFieldName { get; set; }
-        public string SecurityTickExchangeSymbolFieldName { get; set; }
-        public string SecurityTickSecurityNameFieldName { get; set; }
         public string SecurityTickSpreadAskFieldName { get; set; }
         public string SecurityTickSpreadBidFieldName { get; set; }
         public string SecurityTickSpreadPriceFieldName { get; set; }
         public string SecurityTickVolumeTradedFieldName { get; set; }
         public string SecurityTickMarketCapFieldName { get; set; }
-        public string SecurityTickCurrencyFieldName { get; set; }
         public string SecurityTickListedSecuritiesFieldName { get; set; }
 
         public string SecurityTickOpenPriceFieldName { get; set; }

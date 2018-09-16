@@ -27,7 +27,7 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 // TRADE CONFIG
                 OrderTypeFieldName = configurationBuilder.GetValue<string>("OrderTypeFieldName"),
 
-                MarketIdFieldName = configurationBuilder.GetValue<string>("MarketIdFieldName"),
+                MarketIdentifierCodeFieldName = configurationBuilder.GetValue<string>("MarketIdentifierCodeFieldName"),
                 MarketNameFieldName = configurationBuilder.GetValue<string>("MarketNameFieldName"),
 
                 SecurityNameFieldName = configurationBuilder.GetValue<string>("SecurityNameFieldName"),
@@ -41,10 +41,10 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 SecurityExchangeSymbolFieldName = configurationBuilder.GetValue<string>("SecurityExchangeSymbolFieldName"),
 
                 LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName"),
-                TradeSubmittedOnFieldName = configurationBuilder.GetValue<string>("TradeSubmittedOnFieldName"),
+                TradeSubmittedOnFieldName = configurationBuilder.GetValue<string>("SecurityTradeSubmittedOnFieldName"),
                 StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
                 VolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
-                OrderPositionFieldName = configurationBuilder.GetValue<string>("OrderDirectionFieldName"),
+                OrderPositionFieldName = configurationBuilder.GetValue<string>("OrderPositionFieldName"),
 
                 TraderIdFieldName = configurationBuilder.GetValue<string>("TraderIdFieldName"),
                 TraderClientAttributionIdFieldName = configurationBuilder.GetValue<string>("TraderClientAttributionIdFieldName"),

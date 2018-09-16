@@ -22,7 +22,7 @@ namespace Relay.Configuration
         public string OrderTypeFieldName { get; set; }
 
 
-        public string MarketIdFieldName { get; set; }
+        public string MarketIdentifierCodeFieldName { get; set; }
         public string MarketNameFieldName { get; set; }
 
 

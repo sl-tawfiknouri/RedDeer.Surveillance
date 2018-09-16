@@ -59,7 +59,7 @@ namespace Relay.Disk_IO.TradeFile
             return new TradeOrderFrameCsv
             {
                 StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
-                MarketId = rawRecord[_mappingConfig.MarketIdFieldName],
+                MarketId = rawRecord[_mappingConfig.MarketIdentifierCodeFieldName],
                 MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
 
                 SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
@@ -104,7 +104,7 @@ namespace Relay.Disk_IO.TradeFile
 
                 // write out headers
                 csv.WriteField(_mappingConfig.StatusChangedOnFieldName);
-                csv.WriteField(_mappingConfig.MarketIdFieldName);
+                csv.WriteField(_mappingConfig.MarketIdentifierCodeFieldName);
                 csv.WriteField(_mappingConfig.MarketNameFieldName);
 
                 csv.WriteField(_mappingConfig.SecurityClientIdentifierFieldName);

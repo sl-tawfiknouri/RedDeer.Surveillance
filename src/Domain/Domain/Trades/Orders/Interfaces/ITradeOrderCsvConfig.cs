@@ -5,7 +5,7 @@
         string OrderTypeFieldName { get; set; }
 
 
-        string MarketIdFieldName { get; set; }
+        string MarketIdentifierCodeFieldName { get; set; }
         string MarketNameFieldName { get; set; }
 
 

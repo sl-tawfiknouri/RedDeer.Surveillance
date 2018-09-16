@@ -100,7 +100,7 @@ namespace Domain.Trades.Orders
             return new TradeOrderFrame(
                 orderType,
                 new StockExchange(
-                    new Market.Market.MarketId(csv.MarketId),
+                    new Market.Market.MarketId(csv.MarketIdentifierCode),
                     csv.MarketName),
                 new Security(
                     new SecurityIdentifiers(
@@ -119,7 +119,7 @@ namespace Domain.Trades.Orders
                 statusChangedOn,
                 tradeSubmittedOn,
                 csv.TraderId,
-                csv.TraderClientAttributionId,
+                csv.ClientAttributionId,
                 csv.PartyBrokerId,
                 csv.CounterPartyBrokerId);
         }

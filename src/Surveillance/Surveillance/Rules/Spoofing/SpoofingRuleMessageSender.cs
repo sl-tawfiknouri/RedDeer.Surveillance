@@ -8,6 +8,7 @@ using RedDeer.Contracts.Enums;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
+using Utilities.Extensions;
 
 namespace Surveillance.Rules.Spoofing
 {
@@ -28,7 +29,7 @@ namespace Surveillance.Rules.Spoofing
             var volumeInPosition = tradingPosition.VolumeInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
             var volumeSpoofed = opposingPosition.VolumeNotInStatus(Domain.Trades.Orders.OrderStatus.Fulfilled);
 
-            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.ToString()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
+            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.GetDescription()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
 
             var caseDataItem = CaseDataItem(description, mostRecentTrade, tradingPosition, opposingPosition);
             var caseLogsInTradingPosition = CaseLogsInTradingPosition(tradingPosition);

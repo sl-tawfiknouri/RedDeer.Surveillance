@@ -27,7 +27,7 @@ namespace Domain.Equity.Frames
                 return null;
             }
 
-            if (!int.TryParse(csv.VolumeTraded, out var volume))
+            if (!int.TryParse(csv.Volume, out var volume))
             {
                 FailedParseTotal += 1;
                 _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable volume");
@@ -54,31 +54,31 @@ namespace Domain.Equity.Frames
             }
 
             decimal spreadAsk = 0;
-            if (!string.IsNullOrWhiteSpace(csv.SpreadAsk)
-                && !decimal.TryParse(csv.SpreadAsk, out spreadAsk))
+            if (!string.IsNullOrWhiteSpace(csv.Ask)
+                && !decimal.TryParse(csv.Ask, out spreadAsk))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread ask price {csv.SpreadAsk}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread ask price {csv.Ask}");
 
                 return null;
             }
 
             decimal spreadBid = 0;
-            if (!string.IsNullOrWhiteSpace(csv.SpreadBid)
-                && !decimal.TryParse(csv.SpreadBid, out spreadBid))
+            if (!string.IsNullOrWhiteSpace(csv.Bid)
+                && !decimal.TryParse(csv.Bid, out spreadBid))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread bid price {csv.SpreadBid}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread bid price {csv.Bid}");
 
                 return null;
             }
 
             decimal spreadPrice = 0;
-            if (!string.IsNullOrWhiteSpace(csv.SpreadPrice)
-                && !decimal.TryParse(csv.SpreadPrice, out spreadPrice))
+            if (!string.IsNullOrWhiteSpace(csv.Price)
+                && !decimal.TryParse(csv.Price, out spreadPrice))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread price {csv.SpreadPrice}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread price {csv.Price}");
 
                 return null;
             }
@@ -94,41 +94,41 @@ namespace Domain.Equity.Frames
             }
 
             decimal open = 0;
-            if (!string.IsNullOrWhiteSpace(csv.OpenPrice)
-                && !decimal.TryParse(csv.OpenPrice, out open))
+            if (!string.IsNullOrWhiteSpace(csv.Open)
+                && !decimal.TryParse(csv.Open, out open))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse open price due to being passed an unparseable price {csv.OpenPrice}");
+                _logger?.LogError($"Failed to parse open price due to being passed an unparseable price {csv.Open}");
 
                 return null;
             }
 
             decimal close = 0;
-            if (!string.IsNullOrWhiteSpace(csv.ClosePrice)
-                && !decimal.TryParse(csv.ClosePrice, out close))
+            if (!string.IsNullOrWhiteSpace(csv.Close)
+                && !decimal.TryParse(csv.Close, out close))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse close price due to being passed an unparseable price {csv.ClosePrice}");
+                _logger?.LogError($"Failed to parse close price due to being passed an unparseable price {csv.Close}");
 
                 return null;
             }
 
             decimal high = 0;
-            if (!string.IsNullOrWhiteSpace(csv.HighPrice)
-                && !decimal.TryParse(csv.HighPrice, out high))
+            if (!string.IsNullOrWhiteSpace(csv.High)
+                && !decimal.TryParse(csv.High, out high))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse high price due to being passed an unparseable price {csv.HighPrice}");
+                _logger?.LogError($"Failed to parse high price due to being passed an unparseable price {csv.High}");
 
                 return null;
             }
 
             decimal low = 0;
-            if (!string.IsNullOrWhiteSpace(csv.LowPrice)
-                && !decimal.TryParse(csv.LowPrice, out low))
+            if (!string.IsNullOrWhiteSpace(csv.Low)
+                && !decimal.TryParse(csv.Low, out low))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse low price due to being passed an unparseable price {csv.LowPrice}");
+                _logger?.LogError($"Failed to parse low price due to being passed an unparseable price {csv.Low}");
 
                 return null;
             }
@@ -145,13 +145,13 @@ namespace Domain.Equity.Frames
             return new Security(
                 new SecurityIdentifiers(
                     csv.SecurityClientIdentifier,
-                    csv.SecuritySedol,
-                    csv.SecurityIsin,
-                    csv.SecurityFigi,
-                    csv.SecurityCusip,
-                    csv.SecurityExchangeSymbol),
+                    csv.Sedol,
+                    csv.Isin,
+                    csv.Figi,
+                    csv.Cusip,
+                    csv.ExchangeSymbol),
                 csv.SecurityName,
-                csv.SecurityCfi);
+                csv.Cfi);
         }
 
         private Spread BuildSpread(
@@ -161,9 +161,9 @@ namespace Domain.Equity.Frames
             decimal spreadPrice)
         {
             return new Spread(
-                new Price(spreadAsk, csv.SecurityCurrency),
-                new Price(spreadBid, csv.SecurityCurrency),
-                new Price(spreadPrice, csv.SecurityCurrency));
+                new Price(spreadAsk, csv.Currency),
+                new Price(spreadBid, csv.Currency),
+                new Price(spreadPrice, csv.Currency));
         }
 
         private IntradayPrices BuildIntradayPrices(
@@ -175,22 +175,22 @@ namespace Domain.Equity.Frames
         {
             var openPrice =
                 open != 0
-                ? (Price?)new Price(open, csv.SecurityCurrency)
+                ? (Price?)new Price(open, csv.Currency)
                 : null;
 
             var closePrice =
                 close != 0
-                ? (Price?)new Price(close, csv.SecurityCurrency)
+                ? (Price?)new Price(close, csv.Currency)
                 : null;
 
             var highPrice =
                 high != 0
-                ? (Price?)new Price(high, csv.SecurityCurrency)
+                ? (Price?)new Price(high, csv.Currency)
                 : null;
 
             var lowPrice =
                 low != 0
-                ? (Price?)new Price(low, csv.SecurityCurrency)
+                ? (Price?)new Price(low, csv.Currency)
                 : null;
 
             var intradayPrices = new IntradayPrices(

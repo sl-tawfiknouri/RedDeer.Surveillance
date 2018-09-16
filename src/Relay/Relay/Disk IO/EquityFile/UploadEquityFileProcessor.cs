@@ -40,27 +40,27 @@ namespace Relay.Disk_IO.EquityFile
                 MarketName = rawRecord[_csvConfig.SecurityTickMarketNameFieldName],
 
                 SecurityName = rawRecord[_csvConfig.SecurityTickSecurityNameFieldName],
-                SecurityCurrency = rawRecord[_csvConfig.SecurityTickCurrencyFieldName],
+                Currency = rawRecord[_csvConfig.SecurityTickCurrencyFieldName],
 
                 SecurityClientIdentifier = rawRecord[_csvConfig.SecurityTickClientIdentifierFieldName],
-                SecuritySedol = rawRecord[_csvConfig.SecurityTickSedolFieldName],
-                SecurityIsin =  rawRecord[_csvConfig.SecurityTickIsinFieldName],
-                SecurityFigi = rawRecord[_csvConfig.SecurityTickFigiFieldName],
-                SecurityExchangeSymbol = rawRecord[_csvConfig.SecurityTickExchangeSymbolFieldName],
-                SecurityCusip = rawRecord[_csvConfig.SecurityTickCusipFieldName],
+                Sedol = rawRecord[_csvConfig.SecurityTickSedolFieldName],
+                Isin =  rawRecord[_csvConfig.SecurityTickIsinFieldName],
+                Figi = rawRecord[_csvConfig.SecurityTickFigiFieldName],
+                ExchangeSymbol = rawRecord[_csvConfig.SecurityTickExchangeSymbolFieldName],
+                Cusip = rawRecord[_csvConfig.SecurityTickCusipFieldName],
 
-                SecurityCfi = rawRecord[_csvConfig.SecurityTickCfiFieldName],
+                Cfi = rawRecord[_csvConfig.SecurityTickCfiFieldName],
 
-                SpreadAsk = rawRecord[_csvConfig.SecurityTickSpreadAskFieldName],
-                SpreadBid = rawRecord[_csvConfig.SecurityTickSpreadBidFieldName],
-                SpreadPrice = rawRecord[_csvConfig.SecurityTickSpreadPriceFieldName],
+                Ask = rawRecord[_csvConfig.SecurityTickSpreadAskFieldName],
+                Bid = rawRecord[_csvConfig.SecurityTickSpreadBidFieldName],
+                Price = rawRecord[_csvConfig.SecurityTickSpreadPriceFieldName],
 
-                OpenPrice = rawRecord[_csvConfig.SecurityTickOpenPriceFieldName],
-                ClosePrice = rawRecord[_csvConfig.SecurityTickClosePriceFieldName],
-                HighPrice = rawRecord[_csvConfig.SecurityTickHighPriceFieldName],
-                LowPrice = rawRecord[_csvConfig.SecurityTickLowPriceFieldName],
+                Open = rawRecord[_csvConfig.SecurityTickOpenPriceFieldName],
+                Close = rawRecord[_csvConfig.SecurityTickClosePriceFieldName],
+                High = rawRecord[_csvConfig.SecurityTickHighPriceFieldName],
+                Low = rawRecord[_csvConfig.SecurityTickLowPriceFieldName],
 
-                VolumeTraded = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
+                Volume = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
                 ListedSecurities = rawRecord[_csvConfig.SecurityTickListedSecuritiesFieldName],
                 MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName]
             };

@@ -8,26 +8,26 @@
 
 
         public string SecurityName { get; set; }
-        public string SecurityCurrency { get; set; }
+        public string Currency { get; set; }
 
         public string SecurityClientIdentifier { get; set; }
-        public string SecuritySedol { get; set; }
-        public string SecurityIsin { get; set; }
-        public string SecurityFigi { get; set; }
-        public string SecurityCfi { get; set; }
-        public string SecurityExchangeSymbol { get; set; }
-        public string SecurityCusip { get; set; }
+        public string Sedol { get; set; }
+        public string Isin { get; set; }
+        public string Figi { get; set; }
+        public string Cfi { get; set; }
+        public string ExchangeSymbol { get; set; }
+        public string Cusip { get; set; }
 
-        public string SpreadAsk { get; set; }
-        public string SpreadBid { get; set; }
-        public string SpreadPrice { get; set; }
+        public string Ask { get; set; }
+        public string Bid { get; set; }
+        public string Price { get; set; }
 
-        public string OpenPrice { get; set; }
-        public string ClosePrice { get; set; }
-        public string HighPrice { get; set; }
-        public string LowPrice { get; set; }
+        public string Open { get; set; }
+        public string Close { get; set; }
+        public string High { get; set; }
+        public string Low { get; set; }
 
-        public string VolumeTraded { get; set; }
+        public string Volume { get; set; }
         public string ListedSecurities { get; set; }
         public string MarketCap { get; set; }
     }

@@ -24,7 +24,13 @@
     <None Update="Play Trade Files\TradeOrderFileTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PlayTradeFiles\TradeOrderFileTest.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PlayTradeFiles\TradeOrderFileTest1.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PlayTradeFiles\TradeOrderFileTestSpoof.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -59,7 +59,7 @@ namespace Relay.Disk_IO.TradeFile
             return new TradeOrderFrameCsv
             {
                 StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
-                MarketId = rawRecord[_mappingConfig.MarketIdentifierCodeFieldName],
+                MarketIdentifierCode = rawRecord[_mappingConfig.MarketIdentifierCodeFieldName],
                 MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
 
                 SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
@@ -80,7 +80,7 @@ namespace Relay.Disk_IO.TradeFile
 
                 TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
                 TraderId = rawRecord[_mappingConfig.TraderIdFieldName],
-                TraderClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
+                ClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
                 PartyBrokerId = rawRecord[_mappingConfig.PartyBrokerIdFieldName],
                 CounterPartyBrokerId = rawRecord[_mappingConfig.CounterPartyBrokerIdFieldName],
                 Currency = rawRecord[_mappingConfig.CurrencyFieldName]

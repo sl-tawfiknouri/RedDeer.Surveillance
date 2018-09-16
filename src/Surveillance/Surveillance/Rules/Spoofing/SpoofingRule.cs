@@ -75,16 +75,15 @@ namespace Surveillance.Rules.Spoofing
                 if (!_tradingHistory.ContainsKey(value.Security.Identifiers))
                 {
                     var history = new TradingHistoryStack(_spoofingWindowSize);
-                    history.Add(value, DateTime.UtcNow);
+                    history.Add(value, value.StatusChangedOn);
                     _tradingHistory.TryAdd(value.Security.Identifiers, history);
                 }
                 else
                 {
                     _tradingHistory.TryGetValue(value.Security.Identifiers, out var history);
 
-                    var now = DateTime.UtcNow;
-                    history?.Add(value, now);
-                    history?.ArchiveExpiredActiveItems(now);
+                    history?.Add(value, value.StatusChangedOn);
+                    history?.ArchiveExpiredActiveItems(value.StatusChangedOn);
                 }
 
                 _tradingHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);

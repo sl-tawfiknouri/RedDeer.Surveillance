@@ -48,9 +48,14 @@ namespace TestHarness.Tests.Display.Subscribers
                     null,
                     null,
                     10,
-                    OrderPosition.Buy,
+                    OrderPosition.BuyLong,
                     OrderStatus.Cancelled,
-                    DateTime.Now);
+                    DateTime.Now,
+                    DateTime.Now,
+                    "trader-id",
+                    "trader-client-id",
+                    "party-broker",
+                    "counterparty-broker");
 
             tradeOrderSubscriber.OnNext(tradeOrderFrame);
 

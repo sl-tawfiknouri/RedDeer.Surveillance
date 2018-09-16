@@ -56,6 +56,31 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             var newVolume = CalculateNewVolume(tick);
             var newMarketCap = newVolume.Traded * newBuy;
 
+            var newIntraday = BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency);
+
+            return
+                new SecurityTick(
+                    tick.Security,
+                    newSpread,
+                    newVolume,
+                    DateTime.UtcNow,
+                    newMarketCap,
+                    newIntraday,
+                    tick.ListedSecurities);
+        }
+
+        private IntradayPrices BuildIntraday(SecurityTick tick, decimal newBuy, string currency)
+        {
+            if (tick.IntradayPrices == null)
+            {
+                return
+                    new IntradayPrices(
+                        new Price(newBuy, currency),
+                        new Price(newBuy, currency),
+                        new Price(newBuy, currency),
+                        new Price(newBuy, currency));
+            }
+
             var adjustedHigh =
                 tick.IntradayPrices.High.Value.Value < newBuy
                 ? new Price(newBuy, tick.IntradayPrices.High.Value.Currency)
@@ -73,15 +98,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     adjustedHigh,
                     adjustedLow);
 
-            return
-                new SecurityTick(
-                    tick.Security,
-                    newSpread,
-                    newVolume,
-                    DateTime.UtcNow,
-                    newMarketCap,
-                    newIntraday,
-                    tick.ListedSecurities);
+            return newIntraday;
         }
 
         private decimal CalculateNewBuyValue(SecurityTick tick)

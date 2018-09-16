@@ -36,13 +36,13 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var security = new SecurityTick(
                 new Security(
-                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT"), "Microsoft"),
-                    "MSF123",
-                    "MSFT",
+                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT"), "Microsoft", "CFI"),
                     new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
                     new Volume(200000),
                 DateTime.UtcNow,
-                3000);
+                3000,
+                null,
+                100);
 
             var result = strategy.AdvanceFrame(security);
 
@@ -63,14 +63,14 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var security = new SecurityTick(
                 new Security(
-                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT"), "Microsoft"),
-                    "MSF123",
-                    "MSFT",
+                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT"), "Microsoft", "CFI"),
                     new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
                     new Volume(200000),
                 DateTime.UtcNow,
-                3000);
-
+                3000,
+                null,
+                100);
+            
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);
 

@@ -31,8 +31,9 @@ namespace TestHarness.Tests.Display
         {
             var stock = new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange");
             var sec = new Security(
-                new SecurityIdentifiers("STAN", "st12345", "sta123456789", "stan"),
-                "Standard Chartered");
+                new SecurityIdentifiers("STAN", "st12345", "sta123456789", "stan", "sta12345", "stan"),
+                "Standard Chartered",
+                "CFI");
 
             return new TradeOrderFrame(
                     OrderType.Limit,
@@ -40,9 +41,14 @@ namespace TestHarness.Tests.Display
                     sec,
                     new Price(20.2m, "GBP"),
                     100 * vol,
-                    OrderPosition.Buy,
+                    OrderPosition.BuyLong,
                     OrderStatus.Fulfilled,
-                    DateTime.Now);
+                    DateTime.Now,
+                    DateTime.Now,
+                    "trader-1",
+                    "",
+                    "party-broker",
+                    "counterparty-broker");
         }
     }
 }

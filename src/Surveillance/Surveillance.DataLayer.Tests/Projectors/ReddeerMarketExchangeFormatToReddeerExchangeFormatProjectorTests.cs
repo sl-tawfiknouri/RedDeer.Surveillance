@@ -72,8 +72,8 @@ namespace Surveillance.DataLayer.Tests.Projectors
             var firstSecurity = result.Securities.First();
 
             Assert.AreEqual(400000m, firstSecurity.MarketCap);
-            Assert.AreEqual(null, firstSecurity.TickerSymbol);
-            Assert.AreEqual(null, firstSecurity.CfiCode);
+            Assert.AreEqual(string.Empty, firstSecurity.Security.Identifiers.ExchangeSymbol);
+            Assert.AreEqual(string.Empty, firstSecurity.Security.Cfi);
             Assert.AreEqual(20000m, firstSecurity.Volume.Traded);
             Assert.AreEqual(DateTime.Parse("01/12/2018"), firstSecurity.TimeStamp);
 

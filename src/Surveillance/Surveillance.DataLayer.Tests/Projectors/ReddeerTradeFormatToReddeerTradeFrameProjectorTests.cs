@@ -62,7 +62,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
                         SecurityIsin = "STA123456789",
                         SecurityClientIdentifier = "STAN",
                         SecurityName = "Standard Chartered",
-                        OrderDirectionDescription = "Buy",
+                        OrderPositionDescription = "BuyLong",
                         OrderPositionId = 0,
                         OrderStatusDescription = "Cancelled",
                         OrderStatusId = 1,
@@ -79,7 +79,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
             Assert.AreEqual(result.Count, 1);
             Assert.IsNotNull(firstResult.Limit);
             Assert.AreEqual(firstResult.Limit.Value.Value, 12);
-            Assert.AreEqual(firstResult.Direction, OrderDirection.Buy);
+            Assert.AreEqual(firstResult.Position, OrderPosition.BuyLong);
             Assert.AreEqual(firstResult.OrderStatus, OrderStatus.Cancelled);
             Assert.AreEqual(firstResult.OrderType, OrderType.Limit);
             Assert.AreEqual(firstResult.Market.Id.Id, "LSE");

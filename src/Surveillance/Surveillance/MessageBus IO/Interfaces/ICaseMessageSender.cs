@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using MessageBusDtos.Surveillance;
+using Contracts.SurveillanceService;
 
 namespace Surveillance.MessageBus_IO.Interfaces
 {

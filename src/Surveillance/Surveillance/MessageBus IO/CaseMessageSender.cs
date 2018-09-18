@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MessageBusDtos.Surveillance;
-using MessageBusDtos.Surveillance.Interfaces;
+using Contracts.SurveillanceService;
+using Contracts.SurveillanceService.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBus_IO.Interfaces;
 using Utilities.Aws_IO.Interfaces;

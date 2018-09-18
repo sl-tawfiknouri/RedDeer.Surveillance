@@ -1,9 +1,9 @@
-﻿using Domain.Equity.Streams.Interfaces;
+﻿using Contracts.SurveillanceService;
+using Contracts.SurveillanceService.Interfaces;
+using Domain.Equity.Streams.Interfaces;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Domain.Streams;
-using MessageBusDtos.Surveillance;
-using MessageBusDtos.Surveillance.Interfaces;
 using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;

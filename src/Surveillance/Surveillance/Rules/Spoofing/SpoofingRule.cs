@@ -118,27 +118,29 @@ namespace Surveillance.Rules.Spoofing
             var sellPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, _logger);
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
+            var tradingPosition =
+                mostRecentTrade.Position == OrderPosition.BuyLong
+                ? buyPosition
+                : sellPosition;
+
+            var opposingPosition =
+                mostRecentTrade.Position == OrderPosition.BuyLong
+                ? sellPosition
+                : buyPosition;
+
             var hasBreachedSpoofingRule = false;
-            while (!hasBreachedSpoofingRule)
+            var hasTradesInWindow = tradeWindow.Any();
+            while (hasTradesInWindow)
             {
                 if (!tradeWindow.Any())
                 {
+                    hasTradesInWindow = false;
                     break;
                 }
 
                 var nextTrade = tradeWindow.Pop();
 
                 AddToPositions(buyPosition, sellPosition, nextTrade);
-
-                var tradingPosition =
-                    mostRecentTrade.Position == OrderPosition.BuyLong
-                    ? buyPosition
-                    : sellPosition;
-
-                var opposingPosition =
-                    mostRecentTrade.Position == OrderPosition.BuyLong
-                    ? sellPosition
-                    : buyPosition;
 
                 if (opposingPosition.HighCancellationRatioByTradeSize()
                     || opposingPosition.HighCancellationRatioByTradeQuantity())
@@ -149,14 +151,13 @@ namespace Surveillance.Rules.Spoofing
 
                     var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
 
-                    hasBreachedSpoofingRule = adjustedFulfilledOrders <= opposedOrders;
+                    hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
                 }
+            }
 
-                if (hasBreachedSpoofingRule)
-                {
-
-                    RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
-                }
+            if (hasBreachedSpoofingRule)
+            {
+                RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace Domain.Market
+﻿namespace Domain.Market.Interfaces
 {
     public interface IMarket
     {

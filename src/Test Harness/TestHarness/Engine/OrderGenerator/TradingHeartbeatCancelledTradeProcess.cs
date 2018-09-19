@@ -14,7 +14,7 @@ namespace TestHarness.Engine.OrderGenerator
 {
     /// <summary>
     /// Generate a bunch of cancelled trades that are either
-    /// over 1 million in value or over 80% cancelled
+    /// over 1 million in value or over 50% cancelled
     /// </summary>
     public class TradingHeartbeatCancelledTradeProcess : BaseTradingProcess, IOrderDataGenerator
     {

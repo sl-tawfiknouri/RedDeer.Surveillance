@@ -22,6 +22,8 @@ using TestHarness.Network_IO.Interfaces;
 using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
+using TestHarness.Factory.TradeCancelledFactory;
+using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
@@ -51,10 +53,12 @@ namespace TestHarness.Factory
             TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
             TradingFileRelayProcessFactory = new TradingFileRelayProcessFactory(this);
+            TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
+            EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
+
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
-            EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -113,6 +117,8 @@ namespace TestHarness.Factory
         public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; private set; }
 
         public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; private set; }
+
+        public ITradingCancelledFactory TradingCancelledOrdersFactory { get; private set; }
 
         public IAwsQueueClient AwsQueueClient { get; private set; }
 

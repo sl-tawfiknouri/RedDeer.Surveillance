@@ -84,6 +84,10 @@ namespace TestHarness.Commands
                 .TradingSpoofingFactory
                 .Create();
 
+            var cancelledTradeProcess = _appFactory
+                .TradingCancelledOrdersFactory
+                .Create();
+
             // start updating equity data
             _equityProcess.InitiateWalk(equityStream);
 
@@ -93,19 +97,13 @@ namespace TestHarness.Commands
             // start ad hoc heartbeat driven commands
             prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
             spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
+            cancelledTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
         private void StopDemo()
         {
-            if (_tradingProcess != null)
-            {
-                _tradingProcess.TerminateTrading();
-            }
-
-            if (_equityProcess != null)
-            {
-                _equityProcess.TerminateWalk();
-            }
+            _tradingProcess?.TerminateTrading();
+            _equityProcess?.TerminateWalk();
         }
     }
 }

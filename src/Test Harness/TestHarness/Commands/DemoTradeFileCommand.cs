@@ -105,6 +105,10 @@ namespace TestHarness.Commands
                 .TradingSpoofingFactory
                 .Create();
 
+            var cancelledTradeProcess = _appFactory
+                .TradingCancelledOrdersFactory
+                .Create();
+
             var equityStream = _appFactory.StockExchangeStreamFactory.Create();
 
             // start updating trading data
@@ -113,6 +117,7 @@ namespace TestHarness.Commands
             // start ad hoc heartbeat driven commands
             prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
             spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
+            cancelledTradeProcess.InitiateTrading(equityStream, tradeStream);
         }
 
         private void SetTradingFileProcessor(string command)

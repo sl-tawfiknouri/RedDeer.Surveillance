@@ -60,7 +60,19 @@ namespace Surveillance.Rules.Cancelled_Orders
                     _logger);
 
             tradingPosition.Add(mostRecentTrade);
+            var hasBreachedRule = CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
 
+            if (hasBreachedRule)
+            {
+                // so..lets use the case message sender but we want to build our own description
+            }
+        }
+
+        private bool CheckPositionForCancellations(
+            Stack<TradeOrderFrame> tradeWindow,
+            TradeOrderFrame mostRecentTrade,
+            TradePosition tradingPosition)
+        {
             var hasBreachedRule = false;
             var hasTradesInWindow = tradeWindow.Any();
 
@@ -99,9 +111,7 @@ namespace Surveillance.Rules.Cancelled_Orders
                 }
             }
 
-            if (hasBreachedRule)
-            {
-            }
+            return hasBreachedRule;
         }
     }
 }

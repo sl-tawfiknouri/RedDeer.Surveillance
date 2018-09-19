@@ -83,6 +83,21 @@ namespace Surveillance.Rules.Spoofing
                 ? buyPosition
                 : sellPosition;
 
+            var hasBreachedSpoofingRule = CheckPositionForSpoofs(tradeWindow, buyPosition, sellPosition, tradingPosition, opposingPosition);
+
+            if (hasBreachedSpoofingRule)
+            {
+                RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
+            }
+        }
+
+        private bool CheckPositionForSpoofs(
+            Stack<TradeOrderFrame> tradeWindow,
+            TradePosition buyPosition,
+            TradePosition sellPosition,
+            TradePosition tradingPosition,
+            TradePosition opposingPosition)
+        {
             var hasBreachedSpoofingRule = false;
             var hasTradesInWindow = tradeWindow.Any();
 
@@ -114,10 +129,7 @@ namespace Surveillance.Rules.Spoofing
                 hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
             }
 
-            if (hasBreachedSpoofingRule)
-            {
-                RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
-            }
+            return hasBreachedSpoofingRule;
         }
 
         private void AddToPositions(TradePosition buyPosition, TradePosition sellPosition, TradeOrderFrame nextTrade)

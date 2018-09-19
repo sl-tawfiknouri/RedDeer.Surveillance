@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
+using Surveillance.Rule_Parameters.Interfaces;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
 
 namespace Surveillance.Rules.Spoofing
@@ -19,27 +20,25 @@ namespace Surveillance.Rules.Spoofing
     /// </summary>
     public class SpoofingRule : BaseTradeRule, ISpoofingRule
     {
+        private readonly ISpoofingRuleParameters _parameters;
         private readonly IRuleBreachFactory _ruleBreachFactory;
         private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ILogger _logger;
 
-        // (0-1) % of cancellation req
-        private const decimal CancellationThreshold = 0.8m;
-        // volume difference between spoof and real trade
-        private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m;
-
         public SpoofingRule(
+            ISpoofingRuleParameters parameters,
             IRuleBreachFactory ruleBreachFactory,
             IRuleBreachRepository ruleBreachRepository,
             ISpoofingRuleMessageSender spoofingRuleMessageSender,
             ILogger<SpoofingRule> logger)
             : base(
-                TimeSpan.FromMinutes(30),
+                parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.Spoofing,
                 "V1.0",
                 logger)
         {
+            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
@@ -69,8 +68,20 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            var buyPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, CancellationThreshold, _logger);
-            var sellPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, CancellationThreshold, _logger);
+            var buyPosition =
+                new TradePosition(
+                    new List<TradeOrderFrame>(),
+                    _parameters.CancellationThreshold,
+                    _parameters.CancellationThreshold,
+                    _logger);
+
+            var sellPosition =
+                new TradePosition(
+                    new List<TradeOrderFrame>(),
+                    _parameters.CancellationThreshold,
+                    _parameters.CancellationThreshold,
+                    _logger);
+
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
@@ -123,7 +134,7 @@ namespace Surveillance.Rules.Spoofing
 
                 var adjustedFulfilledOrders =
                     (tradingPosition.VolumeInStatus(OrderStatus.Fulfilled)
-                     * RelativeSizeMultipleForSpoofExceedingReal);
+                     * _parameters.RelativeSizeMultipleForSpoofExceedingReal);
 
                 var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
                 hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;

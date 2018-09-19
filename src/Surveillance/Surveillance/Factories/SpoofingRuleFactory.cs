@@ -4,6 +4,7 @@ using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.Spoofing.Interfaces;
+using Surveillance.Rule_Parameters;
 
 namespace Surveillance.Factories
 {
@@ -28,7 +29,12 @@ namespace Surveillance.Factories
 
         public ISpoofingRule Build()
         {
-            return new SpoofingRule(_ruleBreachFactory, _ruleBreachRepository, _ruleMessageSender, _logger);
+            return new SpoofingRule(
+                new SpoofingRuleParameters(),
+                _ruleBreachFactory,
+                _ruleBreachRepository,
+                _ruleMessageSender,
+                _logger);
         }
     }
 }

@@ -5,5 +5,6 @@
         Unknown,
         Spoofing,
         ProhibitedAsset,
+        HighCancellationRatio,
     }
 }

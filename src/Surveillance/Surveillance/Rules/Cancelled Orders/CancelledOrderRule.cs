@@ -26,7 +26,7 @@ namespace Surveillance.Rules.Cancelled_Orders
             string version,
             ILogger<CancelledOrderRule> logger) 
             : base(
-                TimeSpan.FromMinutes(30),
+                parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                 rule,
                 version,
                 logger)

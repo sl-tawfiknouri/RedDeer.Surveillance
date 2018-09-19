@@ -41,6 +41,7 @@ namespace TestHarness.Factory
             CommandManifest = new CommandManifest();
             ProhibitedSecurityHeartbeat = new PulsatingHeartbeat(); // singleton
             SpoofedTradeHeartbeat = new PulsatingHeartbeat(); // singleton
+            CancelTradeHeartbeat = new PulsatingHeartbeat(); // singleton
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
@@ -93,6 +94,8 @@ namespace TestHarness.Factory
         public IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; private set; }
 
         public IPulsatingHeartbeat SpoofedTradeHeartbeat { get; private set; }
+
+        public IPulsatingHeartbeat CancelTradeHeartbeat { get; private set; }
 
         // new factories
         public IEquitiesProcessFactory EquitiesProcessFactory { get; private set; } 

@@ -5,7 +5,6 @@ using TestHarness.Configuration.Interfaces;
 using TestHarness.Display;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Factory.EquitiesFactory;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -36,6 +35,8 @@ namespace TestHarness.Factory.Interfaces
         IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; }
 
         IPulsatingHeartbeat SpoofedTradeHeartbeat { get; }
+
+        IPulsatingHeartbeat CancelTradeHeartbeat { get; }
 
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 

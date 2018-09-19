@@ -7,26 +7,26 @@ using Domain.Trades.Orders;
 using MathNet.Numerics.Distributions;
 using NLog;
 using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
 {
     /// <summary>
     /// Generate a bunch of cancelled trades that are either
-    /// over 1 million in value or over 50% cancelled
+    /// over 1 million in value or over 50% cancelled by either trade number or volume
     /// </summary>
-    public class TradingHeartbeatCancelledTradeProcess : BaseTradingProcess, IOrderDataGenerator
+    public class TradingHeartbeatCancelledTradeProcess : BaseTradingProcess
     {
         private readonly IPulsatingHeartbeat _heartbeat;
         private readonly object _lock = new object();
         private volatile bool _initiated;
         private ExchangeFrame _lastFrame;
 
-        private int valueOfCancelledTradeRatioThreshold = 200000;
-        private int valueOfCancelledTradeThreshold = 1000000;
-        private int valueOfSingularCancelledTradeThreshold = 5000000;
-        private decimal cancellationThresholdPercentage = 0.5m;
+        private decimal cancellationOfPositionVolumeThresholdPercentage = 0.6m; // % of position cancelled aggregated over all trades in a given direction
+        private decimal cancellationOfOrdersSubmittedThresholdPercentage = 0.5m; // of total orders
+        private int valueOfCancelledTradeRatioThreshold = 200000; // currency value for ratio cancellations
+        private int valueOfCancelledTradeThreshold = 1000000; // currency value, aggregate over many trades
+        private int valueOfSingularCancelledTradeThreshold = 5000000; // currency value
 
         public TradingHeartbeatCancelledTradeProcess(
             ILogger logger,
@@ -79,7 +79,7 @@ namespace TestHarness.Engine.OrderGenerator
                 var selectSecurityToCancelTradesFor = DiscreteUniform.Sample(0, _lastFrame.Securities.Count - 1);
                 var cancellationSecurity = _lastFrame.Securities.Skip(selectSecurityToCancelTradesFor).FirstOrDefault();
                 var cancellationOrderTotal = DiscreteUniform.Sample(1, 20);
-                var cancellationOrderTactic = DiscreteUniform.Sample(0, 2);
+                var cancellationOrderTactic = DiscreteUniform.Sample(0, 3);
 
                 var orders = new TradeOrderFrame[0];
                 switch (cancellationOrderTactic)
@@ -92,6 +92,9 @@ namespace TestHarness.Engine.OrderGenerator
                         break;
                     case 2:
                         orders = CancellationOrdersByRatio(cancellationSecurity, cancellationOrderTotal);
+                        break;
+                    case 3:
+                        orders = CancellationOrdersByPercentOfVolume(cancellationSecurity, cancellationOrderTotal);
                         break;
                 }
 
@@ -138,7 +141,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return new TradeOrderFrame[0];
             }
 
-            var ordersToCancel = Math.Min((int)(totalOrders * cancellationThresholdPercentage) + 1, totalOrders);
+            var ordersToCancel = Math.Min((int)(totalOrders * cancellationOfOrdersSubmittedThresholdPercentage) + 1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
             var minimumPerOrderValue = (int)((decimal)valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
 
@@ -153,6 +156,36 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 var fulfilledOrderValue = DiscreteUniform.Sample(0, minimumPerOrderValue);
                 orders.Add(OrderForValue(OrderStatus.Placed, fulfilledOrderValue, security, _lastFrame.Exchange));
+            }
+
+            return orders.ToArray();
+        }
+
+        private TradeOrderFrame[] CancellationOrdersByPercentOfVolume(SecurityTick security, int totalOrders)
+        {
+            if (totalOrders == 0
+                || security == null)
+            {
+                return new TradeOrderFrame[0];
+            }
+
+            var cancelledOrderPositionSize = 10000000;
+            var ordersToCancel = 1;
+            var ordersToFulfill = totalOrders - ordersToCancel;
+            var minimumPerOrderValue = cancelledOrderPositionSize * cancellationOfPositionVolumeThresholdPercentage;
+            var remainingOrderValue = cancelledOrderPositionSize * (1 - cancellationOfPositionVolumeThresholdPercentage);
+            var remainingOrderValuePerOrder = (int)((decimal)remainingOrderValue * ((decimal)(1m / ordersToFulfill)) + 1);
+
+            var orders = new List<TradeOrderFrame>();
+
+            for (var x = 0; x < ordersToCancel; x++)
+            {
+                orders.Add(OrderForValue(OrderStatus.Cancelled, minimumPerOrderValue, security, _lastFrame.Exchange));
+            }
+
+            for (var x = 0; x < ordersToFulfill; x++)
+            {
+                orders.Add(OrderForValue(OrderStatus.Placed, remainingOrderValuePerOrder, security, _lastFrame.Exchange));
             }
 
             return orders.ToArray();

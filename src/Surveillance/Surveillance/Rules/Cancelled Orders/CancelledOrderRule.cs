@@ -26,7 +26,7 @@ namespace Surveillance.Rules.Cancelled_Orders
 
         protected override void RunRule(ITradingHistoryStack history)
         {
-            // not implemented yet
+               
         }
     }
 }

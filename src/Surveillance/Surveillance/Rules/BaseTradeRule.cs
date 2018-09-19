@@ -68,7 +68,11 @@ namespace Surveillance.Rules
                 RunRule(updatedHistory);
             }
         }
-
+        
+        /// <summary>
+        /// Run the rule with a trading history within the time window for that security
+        /// </summary>
+        /// <param name="history"></param>
         protected abstract void RunRule(ITradingHistoryStack history);
 
         public Domain.Scheduling.Rules Rule { get; }

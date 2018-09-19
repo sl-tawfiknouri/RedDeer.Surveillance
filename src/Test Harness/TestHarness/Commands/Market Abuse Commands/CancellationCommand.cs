@@ -25,7 +25,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
         public void Run(string command)
         {
-            _appFactory.CancelTradeHeartbeat?.Throb();
+            _appFactory.CancelTradeHeartbeat?.Pulse();
         }
     }
 }

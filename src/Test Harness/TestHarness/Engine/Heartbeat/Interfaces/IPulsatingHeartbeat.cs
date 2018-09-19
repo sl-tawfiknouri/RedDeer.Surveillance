@@ -2,6 +2,6 @@
 {
     public interface IPulsatingHeartbeat : IHeartbeat
     {
-        void Throb();
+        void Pulse();
     }
 }

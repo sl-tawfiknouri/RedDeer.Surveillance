@@ -11,7 +11,7 @@ namespace TestHarness.Engine.Heartbeat
         public PulsatingHeartbeat()
         { }
 
-        public void Throb()
+        public void Pulse()
         {
             lock (_lock)
             {

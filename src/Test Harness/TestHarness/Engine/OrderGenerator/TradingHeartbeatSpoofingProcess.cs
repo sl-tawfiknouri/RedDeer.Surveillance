@@ -65,25 +65,27 @@ namespace TestHarness.Engine.OrderGenerator
         {
             lock (_lock)
             {
-                if (_lastFrame != null 
-                    && _lastFrame.Securities?.Count > 0)
+                if (_lastFrame == null
+                    || !_lastFrame.Securities.Any())
                 {
-                    var selectSecurityToSpoof = DiscreteUniform.Sample(0, _lastFrame.Securities.Count() - 1);
-                    var spoofSecurity = _lastFrame.Securities.Skip(selectSecurityToSpoof).FirstOrDefault();
-
-                    // limited to six as recursion > 8 deep tends to get tough on the stack and raise the risk of a SO error
-                    // if you want to increase this beyond 20 update spoofed order code for volume as well.
-                    var spoofSize = DiscreteUniform.Sample(1, 6);
-                    var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.StatusChangedOn);
-                    var counterTrade = CounterTrade(spoofSecurity);
-
-                    foreach (var item in spoofedOrders)
-                    {
-                        _tradeStream.Add(item);
-                    }
-
-                    _tradeStream.Add(counterTrade);
+                    return;
                 }
+
+                var selectSecurityToSpoof = DiscreteUniform.Sample(0, _lastFrame.Securities.Count - 1);
+                var spoofSecurity = _lastFrame.Securities.Skip(selectSecurityToSpoof).FirstOrDefault();
+
+                // limited to six as recursion > 8 deep tends to get tough on the stack and raise the risk of a SO error
+                // if you want to increase this beyond 20 update spoofed order code for volume as well.
+                var spoofSize = DiscreteUniform.Sample(1, 6);
+                var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.StatusChangedOn);
+                var counterTrade = CounterTrade(spoofSecurity);
+
+                foreach (var item in spoofedOrders)
+                {
+                    _tradeStream.Add(item);
+                }
+
+                _tradeStream.Add(counterTrade);
             }
         }
 

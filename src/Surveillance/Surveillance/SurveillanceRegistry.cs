@@ -19,6 +19,8 @@ using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Interfaces;
+using Surveillance.Mappers;
+using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
@@ -89,6 +91,8 @@ namespace Surveillance
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
+
+            For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
         }
     }
 }

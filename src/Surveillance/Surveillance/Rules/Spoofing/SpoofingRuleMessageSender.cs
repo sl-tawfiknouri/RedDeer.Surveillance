@@ -5,7 +5,7 @@ using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.ComplianceCase;
 using Contracts.SurveillanceService.ComplianceCaseLog;
 using Domain.Trades.Orders;
-using RedDeer.Contracts.SurveillanceService.TradeOrder;
+using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
@@ -16,10 +16,14 @@ namespace Surveillance.Rules.Spoofing
     public class SpoofingRuleMessageSender : ISpoofingRuleMessageSender
     {
         private readonly ICaseMessageSender _caseMessageSender;
+        private readonly ITradeOrderDataItemDtoMapper _dtoMapper;
 
-        public SpoofingRuleMessageSender(ICaseMessageSender caseMessageSender)
+        public SpoofingRuleMessageSender(
+            ICaseMessageSender caseMessageSender,
+            ITradeOrderDataItemDtoMapper dtoMapper)
         {
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
+            _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
         }
 
         public void Send(
@@ -79,49 +83,17 @@ namespace Surveillance.Rules.Spoofing
             }
 
             return tradingPosition
-                    .Get()
-                    .Select(tp =>
-                        new ComplianceCaseLogDataItemDto
-                        {
-                            Type = ComplianceCaseLogType.Unset,
-                            Notes = ProjectCaseLog(executedPosition, tp),
-                            UnderlyingOrder = Map(tp)
-                        })
-                    .ToList();
+                .Get()
+                .Select(tp =>
+                    new ComplianceCaseLogDataItemDto
+                    {
+                        Type = ComplianceCaseLogType.Unset,
+                        Notes = ProjectCaseLog(executedPosition, tp),
+                        UnderlyingOrder = _dtoMapper.Map(tp)
+                    })
+                .ToList();
         }
 
-        private TradeOrderDataItemDto Map(TradeOrderFrame frame)
-        {
-            if (frame == null)
-            {
-                return null;
-            }
-
-            return new TradeOrderDataItemDto
-            {
-                OrderType = (TradeOrderType)frame.OrderType,
-                MarketIdentifierCode = frame.Market?.Id?.Id,
-                MarketName = frame.Market?.Name,
-                SecurityName = frame.Security?.Name,
-                SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier,
-                SecuritySedol = frame.Security?.Identifiers.Sedol,
-                SecurityIsin = frame.Security?.Identifiers.Isin,
-                SecurityFigi = frame.Security?.Identifiers.Figi,
-                SecurityCusip = frame.Security?.Identifiers.Cusip,
-                SecurityExchangeSymbol = frame.Security?.Identifiers.ExchangeSymbol,
-                SecurityCfi = frame.Security?.Cfi,
-                LimitPrice = frame.Limit?.Value,
-                TradeSubmittedOn = frame.TradeSubmittedOn,
-                StatusChangedOn = frame.StatusChangedOn,
-                Volume = frame.Volume,
-                OrderPosition = (TradeOrderPosition)frame.Position,
-                OrderStatus = (TradeOrderStatus)frame.OrderStatus,
-                TraderId = frame.TraderId,
-                ClientAttributionId = frame.TradeClientAttributionId,
-                PartyBrokerId = frame.PartyBrokerId,
-                CounterPartyBrokerId = frame.CounterPartyBrokerId
-            };
-        }
 
         private string ProjectCaseLog(bool executedPosition, TradeOrderFrame tof)
         {

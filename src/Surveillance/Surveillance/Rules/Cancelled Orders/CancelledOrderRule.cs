@@ -13,7 +13,8 @@ namespace Surveillance.Rules.Cancelled_Orders
     /// <summary>
     /// This rule looks at unusual order cancellation from several angles.
     /// We consider rules that are cancelled by value i.e. 1 order over 1 million gbp
-    /// Order cancellation ratios 
+    /// Order cancellation ratios by % of trade orders that were cancelled
+    /// Order cancellation ratios by % of position volume that was cancelled
     /// </summary>
     public class CancelledOrderRule : BaseTradeRule, ICancelledOrderRule
     {
@@ -64,7 +65,7 @@ namespace Surveillance.Rules.Cancelled_Orders
 
             if (hasBreachedRule)
             {
-                // so..lets use the case message sender but we want to build our own description
+                RecordRuleBreach();
             }
         }
 
@@ -112,6 +113,11 @@ namespace Surveillance.Rules.Cancelled_Orders
             }
 
             return hasBreachedRule;
+        }
+
+        private void RecordRuleBreach()
+        {
+
         }
     }
 }

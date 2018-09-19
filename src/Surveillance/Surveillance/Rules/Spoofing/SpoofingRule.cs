@@ -3,10 +3,8 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
-using System.Collections.Concurrent;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
-using Domain.Equity;
 using Domain.Trades.Orders;
 using Surveillance.Factories.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
@@ -19,79 +17,36 @@ namespace Surveillance.Rules.Spoofing
     /// I think it will have problems with (placed) -> (cancelled) state transition
     /// And also the order that orders arrive in may cause issues...we're assuming our orders are arriving in last status changed order and that that order does not change
     /// </summary>
-    public class SpoofingRule : ISpoofingRule
+    public class SpoofingRule : BaseTradeRule, ISpoofingRule
     {
-        private readonly TimeSpan _spoofingWindowSize;
-        private readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> _tradingHistory;
-
         private readonly IRuleBreachFactory _ruleBreachFactory;
         private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ILogger _logger;
 
-        private readonly object _lock = new object();
-
         // (0-1) % of cancellation req
         private const decimal CancellationThreshold = 0.8m;
-
         // volume difference between spoof and real trade
         private const decimal RelativeSizeMultipleForSpoofExceedingReal = 2.5m;
-
-        public Domain.Scheduling.Rules Rule => Domain.Scheduling.Rules.Spoofing;
 
         public SpoofingRule(
             IRuleBreachFactory ruleBreachFactory,
             IRuleBreachRepository ruleBreachRepository,
             ISpoofingRuleMessageSender spoofingRuleMessageSender,
             ILogger<SpoofingRule> logger)
+            : base(
+                TimeSpan.FromMinutes(30),
+                Domain.Scheduling.Rules.Spoofing,
+                "V1.0",
+                logger)
         {
             _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
-            _spoofingWindowSize = TimeSpan.FromMinutes(30);
-            _tradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void OnCompleted()
-        {
-            _logger.LogInformation("Spoofing rule stream completed.");
-        }
-
-        public void OnError(Exception error)
-        {
-            _logger.LogError($"An error occured in the spoofing rule stream {error}");
-        }
-
-        public void OnNext(TradeOrderFrame value)
-        {
-            if (value?.Security == null)
-            {
-                return;
-            }
-
-            lock (_lock)
-            {
-                if (!_tradingHistory.ContainsKey(value.Security.Identifiers))
-                {
-                    var history = new TradingHistoryStack(_spoofingWindowSize);
-                    history.Add(value, value.StatusChangedOn);
-                    _tradingHistory.TryAdd(value.Security.Identifiers, history);
-                }
-                else
-                {
-                    _tradingHistory.TryGetValue(value.Security.Identifiers, out var history);
-
-                    history?.Add(value, value.StatusChangedOn);
-                    history?.ArchiveExpiredActiveItems(value.StatusChangedOn);
-                }
-
-                _tradingHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);
-                CheckSpoofing(updatedHistory);
-            }
-        }
-
-        private void CheckSpoofing(ITradingHistoryStack history)
+        protected override void RunRule(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -130,10 +85,13 @@ namespace Surveillance.Rules.Spoofing
 
             var hasBreachedSpoofingRule = false;
             var hasTradesInWindow = tradeWindow.Any();
+
+            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
             while (hasTradesInWindow)
             {
                 if (!tradeWindow.Any())
                 {
+                    // ReSharper disable once RedundantAssignment
                     hasTradesInWindow = false;
                     break;
                 }
@@ -142,17 +100,18 @@ namespace Surveillance.Rules.Spoofing
 
                 AddToPositions(buyPosition, sellPosition, nextTrade);
 
-                if (opposingPosition.HighCancellationRatioByTradeSize()
-                    || opposingPosition.HighCancellationRatioByTradeQuantity())
+                if (!opposingPosition.HighCancellationRatioByTradeSize() &&
+                    !opposingPosition.HighCancellationRatioByTradeQuantity())
                 {
-                    var adjustedFulfilledOrders =
-                        (tradingPosition.VolumeInStatus(OrderStatus.Fulfilled)
-                        * RelativeSizeMultipleForSpoofExceedingReal);
-
-                    var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
-
-                    hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
+                    continue;
                 }
+
+                var adjustedFulfilledOrders =
+                    (tradingPosition.VolumeInStatus(OrderStatus.Fulfilled)
+                     * RelativeSizeMultipleForSpoofExceedingReal);
+
+                var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
+                hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
             }
 
             if (hasBreachedSpoofingRule)
@@ -198,7 +157,5 @@ namespace Surveillance.Rules.Spoofing
             _ruleBreachRepository.Save(spoofingBreach);
             _spoofingRuleMessageSender.Send(mostRecentTrade, tradingPosition, opposingPosition);
         }
-
-        public string Version { get; } = "V1.0";
     }
 }

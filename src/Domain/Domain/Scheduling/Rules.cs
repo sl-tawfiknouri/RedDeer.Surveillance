@@ -4,5 +4,6 @@
     {
         Spoofing,
         ProhibitedAssets,
+        CancelledOrders,
     }
 }

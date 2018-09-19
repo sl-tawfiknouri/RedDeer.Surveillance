@@ -13,16 +13,19 @@ namespace Surveillance.Trades
     public class TradePosition : ITradePosition
     {
         private readonly IList<TradeOrderFrame> _trades;
-        private readonly decimal _cancellationRatioPercentage;
+        private readonly decimal? _cancellationRatioPercentagePosition;
+        private readonly decimal? _cancellationRatioPercentageOrderCount;
         private readonly ILogger _logger;
 
         public TradePosition(
             IList<TradeOrderFrame> trades,
-            decimal percentageThresholdForHighCancellationRatio,
+            decimal? cancellationRatioPercentagePosition,
+            decimal? cancellationRatioPercentageOrderCount,
             ILogger logger)
         {
             _trades = trades?.Where(trad => trad != null).ToList() ?? new List<TradeOrderFrame>();
-            _cancellationRatioPercentage = percentageThresholdForHighCancellationRatio;
+            _cancellationRatioPercentagePosition = cancellationRatioPercentagePosition;
+            _cancellationRatioPercentageOrderCount = cancellationRatioPercentageOrderCount;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -36,8 +39,13 @@ namespace Surveillance.Trades
             _trades.Add(item);
         }
 
-        public bool HighCancellationRatioByTradeQuantity()
+        public bool HighCancellationRatioByTradeCount()
         {
+            if (_cancellationRatioPercentageOrderCount == null)
+            {
+                return false;
+            }
+
             var cancelled = _trades.Count(trad => trad.OrderStatus == OrderStatus.Cancelled);
             var total = _trades.Count();
 
@@ -49,11 +57,16 @@ namespace Surveillance.Trades
 
             var byTradeCancellationRatio = (cancelled / (decimal)total);
 
-            return byTradeCancellationRatio >= _cancellationRatioPercentage;
+            return byTradeCancellationRatio >= _cancellationRatioPercentageOrderCount;
         }
 
-        public bool HighCancellationRatioByTradeSize()
+        public bool HighCancellationRatioByPositionSize()
         {
+            if (_cancellationRatioPercentagePosition == null)
+            {
+                return false;
+            }
+
             var cancelledOrders =
                 _trades
                 .Where(trad => trad != null && trad.OrderStatus == OrderStatus.Cancelled)
@@ -91,12 +104,12 @@ namespace Surveillance.Trades
             var cancelledOrderVolumeRatio =
                 cancelledOrderVolume / (decimal)(cancelledOrderVolume + nonCancelledOrderVolume);
 
-            return cancelledOrderVolumeRatio >= _cancellationRatioPercentage;
+            return cancelledOrderVolumeRatio >= _cancellationRatioPercentagePosition;
         }
 
         public int TotalVolume()
         {
-            return _trades.Sum(trad => trad != null ? trad.Volume : 0);
+            return _trades.Sum(trad => trad?.Volume ?? 0);
         }
 
         public int VolumeInStatus(OrderStatus status)

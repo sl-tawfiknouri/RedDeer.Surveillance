@@ -7,8 +7,8 @@ namespace Surveillance.Trades.Interfaces
     {
         IList<TradeOrderFrame> Get();
         void Add(TradeOrderFrame item);
-        bool HighCancellationRatioByTradeQuantity();
-        bool HighCancellationRatioByTradeSize();
+        bool HighCancellationRatioByTradeCount();
+        bool HighCancellationRatioByPositionSize();
         int TotalVolume();
         int VolumeInStatus(OrderStatus status);
         int VolumeNotInStatus(OrderStatus status);

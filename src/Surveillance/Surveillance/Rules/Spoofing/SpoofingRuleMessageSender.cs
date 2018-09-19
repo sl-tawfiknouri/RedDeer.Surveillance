@@ -33,8 +33,8 @@ namespace Surveillance.Rules.Spoofing
             var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.GetDescription()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
 
             var caseDataItem = CaseDataItem(description, mostRecentTrade, tradingPosition, opposingPosition);
-            var caseLogsInTradingPosition = CaseLogsInTradingPosition(tradingPosition);
-            var caseLogsAgainstTradingPosition = CaseLogsAgainstTradingPosition(opposingPosition);
+            var caseLogsInTradingPosition = CaseLogsInPosition(tradingPosition, true);
+            var caseLogsAgainstTradingPosition = CaseLogsInPosition(opposingPosition, false);
             caseLogsInTradingPosition.AddRange(caseLogsAgainstTradingPosition);
 
             var caseMessage = new CaseMessage
@@ -71,7 +71,7 @@ namespace Surveillance.Rules.Spoofing
             };
         }
 
-        private List<ComplianceCaseLogDataItemDto> CaseLogsInTradingPosition(TradePosition tradingPosition)
+        private List<ComplianceCaseLogDataItemDto> CaseLogsInPosition(TradePosition tradingPosition, bool executedPosition)
         {
             if (tradingPosition == null)
             {
@@ -84,7 +84,7 @@ namespace Surveillance.Rules.Spoofing
                         new ComplianceCaseLogDataItemDto
                         {
                             Type = ComplianceCaseLogType.Unset,
-                            Notes = ProjectCaseLog(true, tp),
+                            Notes = ProjectCaseLog(executedPosition, tp),
                             UnderlyingOrder = Map(tp)
                         })
                     .ToList();
@@ -109,7 +109,7 @@ namespace Surveillance.Rules.Spoofing
                 SecurityFigi = frame.Security?.Identifiers.Figi,
                 SecurityCusip = frame.Security?.Identifiers.Cusip,
                 SecurityExchangeSymbol = frame.Security?.Identifiers.ExchangeSymbol,
-                SecurityCfi = frame.Security.Cfi,
+                SecurityCfi = frame.Security?.Cfi,
                 LimitPrice = frame.Limit?.Value,
                 TradeSubmittedOn = frame.TradeSubmittedOn,
                 StatusChangedOn = frame.StatusChangedOn,
@@ -121,25 +121,6 @@ namespace Surveillance.Rules.Spoofing
                 PartyBrokerId = frame.PartyBrokerId,
                 CounterPartyBrokerId = frame.CounterPartyBrokerId
             };
-        }
-
-        private List<ComplianceCaseLogDataItemDto> CaseLogsAgainstTradingPosition(TradePosition opposingPosition)
-        {
-            if (opposingPosition == null)
-            {
-                return new List<ComplianceCaseLogDataItemDto>();
-            }
-
-            return opposingPosition
-                .Get()
-                .Select(tp =>
-                    new ComplianceCaseLogDataItemDto
-                    {
-                        Type = ComplianceCaseLogType.Unset,
-                        Notes = ProjectCaseLog(false, tp),
-                        UnderlyingOrder = Map(tp)
-                    })
-                .ToList();
         }
 
         private string ProjectCaseLog(bool executedPosition, TradeOrderFrame tof)

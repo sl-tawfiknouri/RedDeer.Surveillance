@@ -69,8 +69,8 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            var buyPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, _logger);
-            var sellPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, _logger);
+            var buyPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, CancellationThreshold, _logger);
+            var sellPosition = new TradePosition(new List<TradeOrderFrame>(), CancellationThreshold, CancellationThreshold, _logger);
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
@@ -79,9 +79,9 @@ namespace Surveillance.Rules.Spoofing
                 : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.Position == OrderPosition.BuyLong
-                ? sellPosition
-                : buyPosition;
+                mostRecentTrade.Position == OrderPosition.SellLong
+                ? buyPosition
+                : sellPosition;
 
             var hasBreachedSpoofingRule = false;
             var hasTradesInWindow = tradeWindow.Any();
@@ -100,8 +100,8 @@ namespace Surveillance.Rules.Spoofing
 
                 AddToPositions(buyPosition, sellPosition, nextTrade);
 
-                if (!opposingPosition.HighCancellationRatioByTradeSize() &&
-                    !opposingPosition.HighCancellationRatioByTradeQuantity())
+                if (!opposingPosition.HighCancellationRatioByPositionSize() &&
+                    !opposingPosition.HighCancellationRatioByTradeCount())
                 {
                     continue;
                 }
@@ -129,6 +129,10 @@ namespace Surveillance.Rules.Spoofing
                     break;
                 case OrderPosition.SellLong:
                     sellPosition.Add(nextTrade);
+                    break;
+                case OrderPosition.BuyShort:
+                    break;
+                case OrderPosition.SellShort:
                     break;
                 default:
                     _logger.LogError("Spoofing rule not considering an out of range order direction");

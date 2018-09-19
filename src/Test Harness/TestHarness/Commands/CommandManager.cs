@@ -46,6 +46,7 @@ namespace TestHarness.Commands
                 new ScheduleRuleCommand(appFactory),
                 new DemoMarketEquityFileCommand(appFactory),
                 new DemoMarketEquityFileNetworkingCommand(appFactory),
+                new CancellationCommand(appFactory),
                _unrecognisedCommand,
             };
         }

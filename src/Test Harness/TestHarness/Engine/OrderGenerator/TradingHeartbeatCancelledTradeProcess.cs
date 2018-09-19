@@ -112,7 +112,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var ordersToCancel = DiscreteUniform.Sample(1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
-            var minimumPerOrderValue = valueOfCancelledTradeThreshold * (1 / ordersToCancel);
+            var minimumPerOrderValue = (int)((decimal)valueOfCancelledTradeThreshold * ((decimal)(1m / ordersToCancel)) + 1);
 
             var orders = new List<TradeOrderFrame>();
 
@@ -140,7 +140,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var ordersToCancel = Math.Min((int)(totalOrders * cancellationThresholdPercentage) + 1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
-            var minimumPerOrderValue = valueOfCancelledTradeRatioThreshold * (1 / ordersToCancel);
+            var minimumPerOrderValue = (int)((decimal)valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
 
             var orders = new List<TradeOrderFrame>();
 

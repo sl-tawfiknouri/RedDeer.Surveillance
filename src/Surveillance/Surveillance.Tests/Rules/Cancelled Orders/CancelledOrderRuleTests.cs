@@ -65,9 +65,19 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
                 TradeFrame(OrderStatus.Fulfilled),
                 TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 10);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20);
 
             var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
 
@@ -82,7 +92,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
-                .MustHaveHappenedANumberOfTimesMatching(x => x == 8);
+                .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
         [Test]

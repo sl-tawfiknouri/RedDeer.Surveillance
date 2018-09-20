@@ -18,12 +18,12 @@ namespace Surveillance.Rules.Cancelled_Orders
     /// </summary>
     public class CancelledOrderRule : BaseTradeRule, ICancelledOrderRule
     {
-        private readonly ICancelledOrderMessageSender _messageSender;
+        private readonly ICancelledOrderPositionDeDuplicator _deduplicatingMessageSender;
         private readonly ICancelledOrderRuleParameters _parameters;
         private readonly ILogger _logger;
 
         public CancelledOrderRule(
-            ICancelledOrderMessageSender messageSender,
+            ICancelledOrderPositionDeDuplicator deduplicatingMessageSender,
             ICancelledOrderRuleParameters parameters,
             ILogger<CancelledOrderRule> logger) 
             : base(
@@ -32,7 +32,10 @@ namespace Surveillance.Rules.Cancelled_Orders
                 "V1.0",
                 logger)
         {
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _deduplicatingMessageSender =
+                deduplicatingMessageSender
+                ?? throw new ArgumentNullException(nameof(deduplicatingMessageSender));
+
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -61,7 +64,15 @@ namespace Surveillance.Rules.Cancelled_Orders
 
             if (ruleBreach.HasBreachedRule())
             {
-                _messageSender.Send(tradingPosition, ruleBreach, _parameters);
+                var message =
+                    new CancelledOrderMessageSenderParameters(mostRecentTrade.Security.Identifiers)
+                    {
+                        TradePosition = tradingPosition,
+                        Parameters = _parameters,
+                        RuleBreach = ruleBreach
+                    };
+
+                _deduplicatingMessageSender.Send(message);
             }
         }
 

@@ -25,14 +25,7 @@ namespace Surveillance.Rules.Cancelled_Orders
 
         public override bool Equals(object obj)
         {
-            if (!(obj is CancelledOrderMessageSenderParameters))
-            {
-                return false;
-            }
-
-            var castObj = obj as CancelledOrderMessageSenderParameters;
-
-            if (castObj == null)
+            if (!(obj is CancelledOrderMessageSenderParameters castObj))
             {
                 return false;
             }

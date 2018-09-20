@@ -101,6 +101,7 @@ namespace Surveillance
             For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
+            For<ICancelledOrderPositionDeDuplicator>().Use<CancelledOrderPositionDeDuplicator>();
         }
     }
 }

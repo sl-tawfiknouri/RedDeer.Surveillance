@@ -17,14 +17,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
     [TestFixture]
     public class CancelledOrderRuleTests
     {
-        private ICancelledOrderMessageSender _messageSender;
+        private ICancelledOrderPositionDeDuplicator _dedupeMessageSender;
         private ICancelledOrderRuleParameters _parameters;
         private ILogger<CancelledOrderRule> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _messageSender = A.Fake<ICancelledOrderMessageSender>();
+            _dedupeMessageSender = A.Fake<ICancelledOrderPositionDeDuplicator>();
             _parameters = A.Fake<ICancelledOrderRuleParameters>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
         }
@@ -40,14 +40,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Constructor_ConsidersNullParameters_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_messageSender, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_dedupeMessageSender, null, _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_messageSender, _parameters, null));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_dedupeMessageSender, _parameters, null));
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20);
 
-            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+            var orderRule = new CancelledOrderRule(_dedupeMessageSender, parameters, _logger);
 
             foreach (var order in cancelledOrdersByTradeSize)
             {
@@ -87,11 +87,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() =>
-                    _messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                .CallTo(() => _dedupeMessageSender.Send(A<CancelledOrderMessageSenderParameters>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -124,7 +120,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null);
 
-            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+            var orderRule = new CancelledOrderRule(_dedupeMessageSender, parameters, _logger);
 
             foreach (var order in cancelledOrdersByTradeSize)
             {
@@ -132,11 +128,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() =>
-                    _messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                .CallTo(() => _dedupeMessageSender.Send(A<CancelledOrderMessageSenderParameters>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -162,7 +154,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10);
 
-            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+            var orderRule = new CancelledOrderRule(_dedupeMessageSender, parameters, _logger);
 
             foreach (var order in cancelledOrdersByTradeSize)
             {
@@ -170,11 +162,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() =>
-                    _messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                .CallTo(() => _dedupeMessageSender.Send(A<CancelledOrderMessageSenderParameters>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -200,7 +188,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10);
 
-            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+            var orderRule = new CancelledOrderRule(_dedupeMessageSender, parameters, _logger);
 
             foreach (var order in cancelledOrdersByTradeSize)
             {
@@ -208,11 +196,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() =>
-                    _messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                .CallTo(() => _dedupeMessageSender.Send(A<CancelledOrderMessageSenderParameters>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 8);
         }
 
@@ -235,7 +219,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10);
 
-            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+            var orderRule = new CancelledOrderRule(_dedupeMessageSender, parameters, _logger);
 
             foreach (var order in cancelledOrdersByTradeSize)
             {
@@ -243,11 +227,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() =>
-                    _messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                .CallTo(() => _dedupeMessageSender.Send(A<CancelledOrderMessageSenderParameters>.Ignored))
                 .MustNotHaveHappened();
         }
 

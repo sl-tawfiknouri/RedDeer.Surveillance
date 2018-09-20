@@ -12,7 +12,7 @@ namespace Surveillance.Rules.Cancelled_Orders
     /// This deduplicator works in memory meaning alerts can be lost if shut down of service follows too soon during processing
     /// the loss is only possible if the lead on the frame being processed is less than the delay period
     /// </summary>
-    public class CancelledOrderPositionDeDuplicator
+    public class CancelledOrderPositionDeDuplicator : ICancelledOrderPositionDeDuplicator
     {
         private readonly ICancelledOrderMessageSender _messageSender;
         private const int DefaultDedupeDelaySeconds = 5;

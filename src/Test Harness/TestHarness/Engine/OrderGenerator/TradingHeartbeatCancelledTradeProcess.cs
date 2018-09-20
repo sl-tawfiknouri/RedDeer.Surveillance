@@ -22,8 +22,8 @@ namespace TestHarness.Engine.OrderGenerator
         private volatile bool _initiated;
         private ExchangeFrame _lastFrame;
 
-        private decimal cancellationOfPositionVolumeThresholdPercentage = 0.6m; // % of position cancelled aggregated over all trades in a given direction
-        private decimal cancellationOfOrdersSubmittedThresholdPercentage = 0.5m; // of total orders
+        private decimal cancellationOfPositionVolumeThresholdPercentage = 0.8m; // % of position cancelled aggregated over all trades in a given direction
+        private decimal cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
         private int valueOfCancelledTradeRatioThreshold = 200000; // currency value for ratio cancellations
         private int valueOfCancelledTradeThreshold = 1000000; // currency value, aggregate over many trades
         private int valueOfSingularCancelledTradeThreshold = 5000000; // currency value

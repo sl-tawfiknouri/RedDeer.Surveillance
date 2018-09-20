@@ -8,6 +8,10 @@ using Surveillance.Rules.Cancelled_Orders.Interfaces;
 
 namespace Surveillance.Rules.Cancelled_Orders
 {
+    /// <summary>
+    /// This deduplicator works in memory meaning alerts can be lost if shut down of service follows too soon during processing
+    /// the loss is only possible if the lead on the frame being processed is less than the delay period
+    /// </summary>
     public class CancelledOrderPositionDeDuplicator
     {
         private readonly ICancelledOrderMessageSender _messageSender;
@@ -127,6 +131,7 @@ namespace Surveillance.Rules.Cancelled_Orders
                 foreach (var item in paramsToSend)
                 {
                     _Send(item.Parameters);
+                    item.Timer.Dispose();
                     identifiersForTimer.Value.Remove(item);
                 }
             }

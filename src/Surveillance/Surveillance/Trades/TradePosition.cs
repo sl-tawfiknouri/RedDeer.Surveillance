@@ -46,18 +46,25 @@ namespace Surveillance.Trades
                 return false;
             }
 
+            var byTradeCancellationRatio = CancellationRatioByTradeCount();
+
+            return byTradeCancellationRatio >= _cancellationRatioPercentageOrderCount;
+        }
+
+        public decimal CancellationRatioByTradeCount()
+        {
             var cancelled = _trades.Count(trad => trad.OrderStatus == OrderStatus.Cancelled);
-            var total = _trades.Count();
+            var total = _trades.Count;
 
             if (cancelled == 0
                 || total == 0)
             {
-                return false;
+                return 0;
             }
 
             var byTradeCancellationRatio = (cancelled / (decimal)total);
 
-            return byTradeCancellationRatio >= _cancellationRatioPercentageOrderCount;
+            return byTradeCancellationRatio;
         }
 
         public bool HighCancellationRatioByPositionSize()
@@ -67,19 +74,26 @@ namespace Surveillance.Trades
                 return false;
             }
 
+            var cancelledOrderVolumeRatio = CancellationRatioByPositionSize();
+
+            return cancelledOrderVolumeRatio >= _cancellationRatioPercentagePosition;
+        }
+
+        public decimal CancellationRatioByPositionSize()
+        {
             var cancelledOrders =
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus == OrderStatus.Cancelled)
-                .ToList();
+                    .Where(trad => trad != null && trad.OrderStatus == OrderStatus.Cancelled)
+                    .ToList();
 
             var nonCancelledOrders =
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus != OrderStatus.Cancelled)
-                .ToList();
+                    .Where(trad => trad != null && trad.OrderStatus != OrderStatus.Cancelled)
+                    .ToList();
 
             if (cancelledOrders.Count == 0)
             {
-                return false;
+                return 0;
             }
 
             var cancelledOrderVolume = cancelledOrders.Sum(co => co.Volume);
@@ -89,22 +103,23 @@ namespace Surveillance.Trades
                 || nonCancelledOrderVolume < 0)
             {
                 _logger.LogError("Negative values for order volume in position. Check data integrity");
+                return 0;
             }
 
             if (cancelledOrderVolume == 0)
             {
-                return false;
+                return 0;
             }
 
             if (nonCancelledOrderVolume == 0)
             {
-                return true;
+                return 0;
             }
 
             var cancelledOrderVolumeRatio =
                 cancelledOrderVolume / (decimal)(cancelledOrderVolume + nonCancelledOrderVolume);
 
-            return cancelledOrderVolumeRatio >= _cancellationRatioPercentagePosition;
+            return cancelledOrderVolumeRatio;
         }
 
         public int TotalVolume()

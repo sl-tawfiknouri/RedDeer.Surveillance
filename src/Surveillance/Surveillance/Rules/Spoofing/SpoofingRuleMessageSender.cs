@@ -31,12 +31,7 @@ namespace Surveillance.Rules.Spoofing
             TradePosition tradingPosition,
             TradePosition opposingPosition)
         {
-            var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
-            var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
-
-            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.GetDescription()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
-
-            var caseDataItem = CaseDataItem(description, mostRecentTrade, tradingPosition, opposingPosition);
+            var caseDataItem = CaseDataItem(mostRecentTrade, tradingPosition, opposingPosition);
             var caseLogsInTradingPosition = CaseLogsInPosition(tradingPosition, true);
             var caseLogsAgainstTradingPosition = CaseLogsInPosition(opposingPosition, false);
             caseLogsInTradingPosition.AddRange(caseLogsAgainstTradingPosition);
@@ -50,15 +45,18 @@ namespace Surveillance.Rules.Spoofing
             _caseMessageSender.Send(caseMessage);
         }
 
-        private static ComplianceCaseDataItemDto CaseDataItem(
-            string description,
+        private ComplianceCaseDataItemDto CaseDataItem(
             TradeOrderFrame mostRecentTrade,
             TradePosition tradingPosition,
             TradePosition opposingPosition)
         {
+            var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
+            var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
+
+            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.GetDescription()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
+
             var earliestTp = tradingPosition.Get()?.Min(tp => tp.StatusChangedOn);
             var earliestOp = opposingPosition.Get()?.Min(op => op.StatusChangedOn);
-
             var from = earliestTp < earliestOp ? earliestTp : earliestOp;
             
             return new ComplianceCaseDataItemDto
@@ -93,7 +91,6 @@ namespace Surveillance.Rules.Spoofing
                     })
                 .ToList();
         }
-
 
         private string ProjectCaseLog(bool executedPosition, TradeOrderFrame tof)
         {

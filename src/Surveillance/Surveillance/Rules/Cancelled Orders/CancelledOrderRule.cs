@@ -18,20 +18,21 @@ namespace Surveillance.Rules.Cancelled_Orders
     /// </summary>
     public class CancelledOrderRule : BaseTradeRule, ICancelledOrderRule
     {
+        private readonly ICancelledOrderMessageSender _messageSender;
         private readonly ICancelledOrderRuleParameters _parameters;
         private readonly ILogger _logger;
 
         public CancelledOrderRule(
+            ICancelledOrderMessageSender messageSender,
             ICancelledOrderRuleParameters parameters,
-            Domain.Scheduling.Rules rule,
-            string version,
             ILogger<CancelledOrderRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                rule,
-                version,
+                Domain.Scheduling.Rules.CancelledOrders,
+                "V1.0",
                 logger)
         {
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -61,20 +62,24 @@ namespace Surveillance.Rules.Cancelled_Orders
                     _logger);
 
             tradingPosition.Add(mostRecentTrade);
-            var hasBreachedRule = CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
+            var ruleBreach = CheckPositionForCancellations(tradeWindow, mostRecentTrade, tradingPosition);
 
-            if (hasBreachedRule)
+            if (ruleBreach.HasBreachedRule())
             {
-                RecordRuleBreach();
+                _messageSender.Send(tradingPosition, ruleBreach, _parameters);
             }
         }
 
-        private bool CheckPositionForCancellations(
+        private ICancelledOrderRuleBreach CheckPositionForCancellations(
             Stack<TradeOrderFrame> tradeWindow,
             TradeOrderFrame mostRecentTrade,
             TradePosition tradingPosition)
         {
-            var hasBreachedRule = false;
+            var hasBreachedRuleByOrderCount = false;
+            var hasBreachedRuleByPositionSize = false;
+            var cancellationRatioByOrderCount = 0m;
+            var cancellationRatioByPositionSize = 0m;
+
             var hasTradesInWindow = tradeWindow.Any();
 
             // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
@@ -93,6 +98,8 @@ namespace Surveillance.Rules.Cancelled_Orders
                     continue;
                 }
 
+                tradingPosition.Add(nextTrade);
+
                 if (_parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
                     || _parameters.MaximumNumberOfTradesToApplyRuleTo < tradingPosition.Get().Count)
                 {
@@ -102,22 +109,25 @@ namespace Surveillance.Rules.Cancelled_Orders
                 if (_parameters.CancelledOrderCountPercentageThreshold != null
                     && tradingPosition.HighCancellationRatioByTradeCount())
                 {
-                    hasBreachedRule = true;
+                    hasBreachedRuleByOrderCount = true;
+                    cancellationRatioByOrderCount = tradingPosition.CancellationRatioByTradeCount();
                 }
 
                 if (_parameters.CancelledOrderPercentagePositionThreshold != null
                     && tradingPosition.HighCancellationRatioByPositionSize())
                 {
-                    hasBreachedRule = true;
+                    hasBreachedRuleByPositionSize = true;
+                    cancellationRatioByPositionSize = tradingPosition.CancellationRatioByPositionSize();
                 }
             }
 
-            return hasBreachedRule;
-        }
-
-        private void RecordRuleBreach()
-        {
-
+            return new CancelledOrderRuleBreach
+            {
+                ExceededPercentagePositionCancellations = hasBreachedRuleByPositionSize,
+                ExceededPercentageTradeCountCancellations = hasBreachedRuleByOrderCount,
+                PercentagePositionCancelled = cancellationRatioByPositionSize,
+                PercentageTradeCountCancelled = cancellationRatioByOrderCount
+            };
         }
     }
 }

@@ -27,6 +27,8 @@ using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
 using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
+using Surveillance.Rules.Cancelled_Orders;
+using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.ProhibitedAssets;
 using Surveillance.Trades;
@@ -34,6 +36,8 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.ProhibitedAssets.Interfaces;
+using Surveillance.Rule_Parameters;
+using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe;
@@ -93,6 +97,10 @@ namespace Surveillance
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
             For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
+            For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
+            For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
+            For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
+            For<ICancelledOrderRule>().Use<CancelledOrderRule>();
         }
     }
 }

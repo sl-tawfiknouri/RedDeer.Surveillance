@@ -78,13 +78,14 @@ namespace TestHarness.Engine.OrderGenerator
 
                 var selectSecurityToCancelTradesFor = DiscreteUniform.Sample(0, _lastFrame.Securities.Count - 1);
                 var cancellationSecurity = _lastFrame.Securities.Skip(selectSecurityToCancelTradesFor).FirstOrDefault();
-                var cancellationOrderTotal = DiscreteUniform.Sample(1, 20);
-                var cancellationOrderTactic = DiscreteUniform.Sample(0, 3);
+                var cancellationOrderTotal = DiscreteUniform.Sample(3, 20);
+                var cancellationOrderTactic = DiscreteUniform.Sample(1, 3);
 
                 var orders = new TradeOrderFrame[0];
                 switch (cancellationOrderTactic)
                 {
                     case 0:
+                        // cannot be hit due to discrete uniform spread as we're not currently coding for detecting it on the surv service
                         orders = SingularCancelledOrder(cancellationSecurity, _lastFrame.Exchange);
                         break;
                     case 1:

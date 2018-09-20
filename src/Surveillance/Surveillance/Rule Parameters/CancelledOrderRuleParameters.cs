@@ -5,6 +5,15 @@ namespace Surveillance.Rule_Parameters
 {
     public class CancelledOrderRuleParameters : ICancelledOrderRuleParameters
     {
+        public CancelledOrderRuleParameters()
+        {
+            WindowSize = TimeSpan.FromMinutes(30);
+            CancelledOrderPercentagePositionThreshold = 0.6m;
+            CancelledOrderCountPercentageThreshold = 0.8m;
+            MinimumNumberOfTradesToApplyRuleTo = 3;
+            MaximumNumberOfTradesToApplyRuleTo = 10;
+        }
+
         public CancelledOrderRuleParameters(
             TimeSpan windowSize,
             decimal? cancelledOrderPositionPercentageThreshold,

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using FakeItEasy;
 using NUnit.Framework;
 using TestHarness.Commands;

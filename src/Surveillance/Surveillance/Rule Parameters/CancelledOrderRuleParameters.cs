@@ -11,7 +11,7 @@ namespace Surveillance.Rule_Parameters
             CancelledOrderPercentagePositionThreshold = 0.8m;
             CancelledOrderCountPercentageThreshold = 0.8m;
             MinimumNumberOfTradesToApplyRuleTo = 3;
-            MaximumNumberOfTradesToApplyRuleTo = 10;
+            MaximumNumberOfTradesToApplyRuleTo = 50;
         }
 
         public CancelledOrderRuleParameters(

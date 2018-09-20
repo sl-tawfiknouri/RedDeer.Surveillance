@@ -378,6 +378,64 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 2);
         }
 
+        [Test]
+        public void Send_ConsidersSubsetPositionArrivingAfterToBeDuplicate()
+        {
+            var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
+
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+
+            var tradeFrame1 = TradeFrame();
+            var tradeFrame2 = TradeFrame();
+            var tradeFrame3 = TradeFrame();
+            var tradeFrame4 = TradeFrame();
+            var tradeFrame5 = TradeFrame();
+
+            var tradePositionAlertOne =
+                new TradePosition(
+                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
+                    null,
+                    null,
+                    _logger);
+
+            var tradePositionAlertTwo =
+                new TradePosition(
+                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
+                    null,
+                    null,
+                    _logger);
+
+            var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
+            { TradePosition = tradePositionAlertOne };
+
+            var parameters2 = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
+            { TradePosition = tradePositionAlertTwo };
+
+            deduplicator.Send(parameters);
+            deduplicator.Send(parameters);
+            deduplicator.Send(parameters2);
+            deduplicator.Send(parameters2);
+            deduplicator.Send(parameters2);
+            deduplicator.Send(parameters);
+            deduplicator.Send(parameters);
+            deduplicator.Send(parameters2);
+            deduplicator.Send(parameters2);
+            deduplicator.Send(parameters2);
+
+            var exitLoopAt = DateTime.UtcNow.AddSeconds(3);
+
+            while (DateTime.UtcNow < exitLoopAt)
+            {
+            }
+
+            A.CallTo(() =>
+                    _messageSender.Send(
+                        A<ITradePosition>.Ignored,
+                        A<ICancelledOrderRuleBreach>.Ignored,
+                        A<ICancelledOrderRuleParameters>.Ignored))
+                .MustHaveHappenedTwiceExactly();
+        }
+
         private TradeOrderFrame TradeFrame()
         {
             return new TradeOrderFrame(

@@ -31,6 +31,7 @@ namespace RedDeer.Surveillance.App
             container.Inject(typeof(INetworkConfiguration), BuildNetworkConfiguration(configurationBuilder));
             container.Inject(typeof(IElasticSearchConfiguration), dbConfiguration);
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
+            container.Inject(typeof(IRuleConfiguration), BuildRuleConfiguration(configurationBuilder));
 
             container.Configure(config =>
             {
@@ -87,6 +88,16 @@ namespace RedDeer.Surveillance.App
             };
 
             return networkConfiguration;
+        }
+
+        private static IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
+        {
+            var ruleConfiguration = new RuleConfiguration
+            {
+                CancelledOrderDeduplicationDelaySeconds = configurationBuilder.GetValue<int?>("CancelledOrderDeduplicationDelaySeconds")
+            };
+
+            return ruleConfiguration;
         }
     }
 }

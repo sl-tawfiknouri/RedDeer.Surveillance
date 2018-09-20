@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Equity;
+using Domain.Trades.Orders;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Tests.Rules.Cancelled_Orders
@@ -16,12 +20,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
     {
         private IRuleConfiguration _ruleConfiguration;
         private ICancelledOrderMessageSender _messageSender;
+        private ILogger _logger;
 
         [SetUp]
         public void Setup()
         {
             _ruleConfiguration = A.Fake<IRuleConfiguration>();
             _messageSender = A.Fake<ICancelledOrderMessageSender>();
+            _logger = A.Fake<ILogger>();
         }
 
         [Test]
@@ -42,10 +48,11 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Send_ForwardsMessageToMessageSender()
         {
             var ruleConfiguration = new RuleConfiguration {CancelledOrderDeduplicationDelaySeconds = 1};
-
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var parameters = new CancelledOrderMessageSenderParameters(identifiers);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
+
             deduplicator.Send(parameters);
 
             var exitLoopAt = DateTime.UtcNow.AddSeconds(3);
@@ -69,7 +76,9 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var parameters = new CancelledOrderMessageSenderParameters(identifiers);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
+
             deduplicator.Send(parameters);
             deduplicator.Send(parameters);
 
@@ -94,7 +103,8 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var parameters = new CancelledOrderMessageSenderParameters(identifiers);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
             deduplicator.Send(parameters);
@@ -128,7 +138,8 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var parameters = new CancelledOrderMessageSenderParameters(identifiers);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
             deduplicator.Send(parameters);
@@ -164,5 +175,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                         A<ICancelledOrderRuleParameters>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
+
+
     }
 }

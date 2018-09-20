@@ -142,5 +142,19 @@ namespace Surveillance.Trades
                 .Where(trad => trad != null && trad.OrderStatus != status)
                 .Sum(trad => trad.Volume);
         }
+
+        /// <summary>
+        /// Check if the current position (this) is a subset of the provided (arg) position
+        /// uses BY REFERENCE for comparision
+        /// </summary>
+        public bool PositionIsSubsetOf(ITradePosition position)
+        {
+            if (position == null)
+            {
+                return false;
+            }
+
+            return !_trades.Except(position.Get()).Any();
+        }
     }
 }

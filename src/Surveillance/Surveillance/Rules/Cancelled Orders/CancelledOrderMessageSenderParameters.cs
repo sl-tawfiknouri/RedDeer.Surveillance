@@ -13,7 +13,6 @@ namespace Surveillance.Rules.Cancelled_Orders
         }
 
         public ISecurityIdentifiers Identifiers { get; }
-
         public ITradePosition TradePosition { get; set; }
         public ICancelledOrderRuleBreach RuleBreach { get; set; }
         public ICancelledOrderRuleParameters Parameters { get; set; }

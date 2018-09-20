@@ -16,5 +16,7 @@ namespace Surveillance.Trades.Interfaces
         int TotalVolume();
         int VolumeInStatus(OrderStatus status);
         int VolumeNotInStatus(OrderStatus status);
+
+        bool PositionIsSubsetOf(ITradePosition position);
     }
 }

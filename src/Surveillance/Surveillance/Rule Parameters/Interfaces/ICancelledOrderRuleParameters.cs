@@ -8,6 +8,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
         decimal? CancelledOrderPercentagePositionThreshold { get; }
         decimal? CancelledOrderCountPercentageThreshold { get; }
         int MinimumNumberOfTradesToApplyRuleTo { get; }
-        int MaximumNumberOfTradesToApplyRuleTo { get; }
+        int? MaximumNumberOfTradesToApplyRuleTo { get; }
     }
 }

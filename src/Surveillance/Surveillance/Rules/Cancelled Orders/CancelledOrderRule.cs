@@ -96,7 +96,8 @@ namespace Surveillance.Rules.Cancelled_Orders
                 tradingPosition.Add(nextTrade);
 
                 if (_parameters.MinimumNumberOfTradesToApplyRuleTo > tradingPosition.Get().Count
-                    || _parameters.MaximumNumberOfTradesToApplyRuleTo < tradingPosition.Get().Count)
+                    || (_parameters.MaximumNumberOfTradesToApplyRuleTo.HasValue
+                        && _parameters.MaximumNumberOfTradesToApplyRuleTo.Value < tradingPosition.Get().Count))
                 {
                     continue;
                 }

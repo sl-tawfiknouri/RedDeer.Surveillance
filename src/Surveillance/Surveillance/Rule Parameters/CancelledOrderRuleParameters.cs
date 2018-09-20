@@ -19,7 +19,7 @@ namespace Surveillance.Rule_Parameters
             decimal? cancelledOrderPositionPercentageThreshold,
             decimal? cancelledOrderCountPercentageThreshold,
             int minimumNumberOfTradesToApplyRuleTo,
-            int maximumNumberOfTradesToApplyRuleTo)
+            int? maximumNumberOfTradesToApplyRuleTo)
         {
             WindowSize = windowSize;
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
@@ -32,6 +32,6 @@ namespace Surveillance.Rule_Parameters
         public decimal? CancelledOrderPercentagePositionThreshold { get; }
         public decimal? CancelledOrderCountPercentageThreshold { get; }
         public int MinimumNumberOfTradesToApplyRuleTo { get; }
-        public int MaximumNumberOfTradesToApplyRuleTo { get; }
+        public int? MaximumNumberOfTradesToApplyRuleTo { get; }
     }
 }

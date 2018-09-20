@@ -96,6 +96,51 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        public void OnNext_SendsExpectedMessage_ForTradeCountRuleBreach_WithNoMax()
+        {
+            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            {
+                TradeFrame(OrderStatus.Cancelled),
+                TradeFrame(OrderStatus.Cancelled),
+                TradeFrame(OrderStatus.Cancelled),
+                TradeFrame(OrderStatus.Cancelled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+                TradeFrame(OrderStatus.Fulfilled),
+            };
+
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null);
+
+            var orderRule = new CancelledOrderRule(_messageSender, parameters, _logger);
+
+            foreach (var order in cancelledOrdersByTradeSize)
+            {
+                orderRule.OnNext(order);
+            }
+
+            A
+                .CallTo(() =>
+                    _messageSender.Send(
+                        A<ITradePosition>.Ignored,
+                        A<ICancelledOrderRuleBreach>.Ignored,
+                        A<ICancelledOrderRuleParameters>.Ignored))
+                .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
+        }
+
+        [Test]
         public void OnNext_DoesNotSendsMessage_ForNoTradeCountRuleBreach()
         {
             var trade = TradeFrame(OrderStatus.Cancelled);

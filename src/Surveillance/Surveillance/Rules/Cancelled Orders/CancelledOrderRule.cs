@@ -47,18 +47,13 @@ namespace Surveillance.Rules.Cancelled_Orders
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.Position == tradeWindow.First().Position))
-            {
-                return;
-            }
-
             var mostRecentTrade = tradeWindow.Pop();
 
             var tradingPosition =
                 new TradePosition(
                     new List<TradeOrderFrame>(),
-                    _parameters.CancelledOrderCountPercentageThreshold,
                     _parameters.CancelledOrderPercentagePositionThreshold,
+                    _parameters.CancelledOrderCountPercentageThreshold,
                     _logger);
 
             tradingPosition.Add(mostRecentTrade);

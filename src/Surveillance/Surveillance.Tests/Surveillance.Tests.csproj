@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Surveillance\Surveillance.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Rules\Cancelled Orders\" />
-  </ItemGroup>
-
 </Project>

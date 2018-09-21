@@ -21,7 +21,7 @@ namespace Surveillance.Universe
         }
 
         /// <summary>
-        /// We should do some work on initial set up to help prevent bugs
+        /// Initial set up to help prevent bugs
         /// In this case allow users to assume that trades are historically ordered
         /// </summary>
         private void Setup()

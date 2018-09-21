@@ -82,6 +82,17 @@ namespace Domain.Trades.Orders
         public int Volume { get; set; }
 
         /// <summary>
+        /// Not currently being set but is being used by high profit rule as a place holder.
+        /// This is the price the trade was executed at
+        /// </summary>
+        public decimal? ExecutedPrice { get; set; } = 2;
+
+        /// <summary>
+        /// The currency for the executed price
+        /// </summary>
+        public string OrderCurrency { get; set; }
+
+        /// <summary>
         /// Buy or Sell
         /// </summary>
         public OrderPosition Position { get; set; }

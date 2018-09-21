@@ -92,14 +92,14 @@ namespace Surveillance.Universe
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, execution.TimeSeriesTermination.DateTime, execution);
 
-            var intraHistoryEvents = new List<IUniverseEvent>();
-            intraHistoryEvents.AddRange(tradeEvents);
-            intraHistoryEvents.AddRange(exchangeEvents);
-            var orderedIntraHistory = intraHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
+            var intraUniversalHistoryEvents = new List<IUniverseEvent>();
+            intraUniversalHistoryEvents.AddRange(tradeEvents);
+            intraUniversalHistoryEvents.AddRange(exchangeEvents);
+            var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
 
             var universeEvents = new List<IUniverseEvent>();
             universeEvents.Add(genesis);
-            universeEvents.AddRange(orderedIntraHistory);
+            universeEvents.AddRange(orderedIntraUniversalHistory);
             universeEvents.Add(eschaton);
 
             return universeEvents;

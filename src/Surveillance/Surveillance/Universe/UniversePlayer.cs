@@ -19,9 +19,13 @@ namespace Surveillance.Universe
         private readonly IUnsubscriberFactory<ExchangeFrame> _exchangeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>> _exchangeObservers;
 
+        private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
+        private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
+
         public UniversePlayer(
             IUnsubscriberFactory<TradeOrderFrame> tradeUnsubscriberFactory,
-            IUnsubscriberFactory<ExchangeFrame> exchangeUnsubscriberFactory)
+            IUnsubscriberFactory<ExchangeFrame> exchangeUnsubscriberFactory,
+            IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory)
         {
             _tradeObservers = new ConcurrentDictionary<IObserver<TradeOrderFrame>, IObserver<TradeOrderFrame>>();
             _tradeUnsubscriberFactory =
@@ -32,6 +36,11 @@ namespace Surveillance.Universe
             _exchangeUnsubscriberFactory =
                 exchangeUnsubscriberFactory
                 ?? throw new ArgumentNullException(nameof(exchangeUnsubscriberFactory));
+
+            _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
+            _universeUnsubscriberFactory =
+                universeUnsubscriberFactory
+                ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
         }
 
         public void Play(IUniverse universe)
@@ -44,6 +53,7 @@ namespace Surveillance.Universe
 
             PlayTradesOnly(universe);
             PlayExchangeOnly(universe);
+            PlayUniverse(universe);
         }
 
         private void PlayTradesOnly(IUniverse universe)
@@ -80,6 +90,23 @@ namespace Surveillance.Universe
             }
         }
 
+        private void PlayUniverse(IUniverse universe)
+        {
+            if (_universeObservers == null
+                || !_universeObservers.Any())
+            {
+                return;
+            }
+
+            foreach (var item in universe.UniverseEvents)
+            {
+                foreach (var obs in _universeObservers)
+                {
+                    obs.Value?.OnNext(item);
+                }
+            }
+        }
+
         /// <summary>
         /// Subscribe to the trades only
         /// </summary>
@@ -108,12 +135,30 @@ namespace Surveillance.Universe
                 throw new ArgumentNullException(nameof(observer));
             }
 
-            if (_exchangeObservers.ContainsKey(observer))
+            if (!_exchangeObservers.ContainsKey(observer))
             {
                 _exchangeObservers.TryAdd(observer, observer);
             }
 
             return _exchangeUnsubscriberFactory.Create(_exchangeObservers, observer);
+        }
+
+        /// <summary>
+        /// Subscribe to the universe
+        /// </summary>
+        public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
+        {
+            if (observer == null)
+            {
+                throw new ArgumentNullException(nameof(observer));
+            }
+
+            if (!_universeObservers.ContainsKey(observer))
+            {
+                _universeObservers.TryAdd(observer, observer);
+            }
+
+            return _universeUnsubscriberFactory.Create(_universeObservers, observer);
         }
     }
 }

@@ -12,23 +12,32 @@ namespace Surveillance.Factories
     {
         private readonly IUnsubscriberFactory<TradeOrderFrame> _tradeFrameUnsubscriberFactory;
         private readonly IUnsubscriberFactory<ExchangeFrame> _exchangeFrameUnsubscriberFactory;
+        private readonly IUnsubscriberFactory<IUniverseEvent> _universeEventUnsubscriberFactory;
 
         public UniversePlayerFactory(
-            IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
-            IUnsubscriberFactory<ExchangeFrame> exchangeFactory)
+            IUnsubscriberFactory<TradeOrderFrame> tradeUnsubscriberFactory,
+            IUnsubscriberFactory<ExchangeFrame> exchangeUnsubscriberFactory,
+            IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory)
         {
             _tradeFrameUnsubscriberFactory =
-                unsubscriberFactory
-                ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+                tradeUnsubscriberFactory
+                ?? throw new ArgumentNullException(nameof(tradeUnsubscriberFactory));
 
             _exchangeFrameUnsubscriberFactory =
-                exchangeFactory
-                ?? throw new ArgumentNullException(nameof(exchangeFactory));
+                exchangeUnsubscriberFactory
+                ?? throw new ArgumentNullException(nameof(exchangeUnsubscriberFactory));
+
+            _universeEventUnsubscriberFactory =
+                universeUnsubscriberFactory
+                ?? throw new ArgumentNullException(nameof(universeUnsubscriberFactory));
         }
 
         public IUniversePlayer Build()
         {
-            return new UniversePlayer(_tradeFrameUnsubscriberFactory, _exchangeFrameUnsubscriberFactory);
+            return new UniversePlayer(
+                _tradeFrameUnsubscriberFactory,
+                _exchangeFrameUnsubscriberFactory,
+                _universeEventUnsubscriberFactory);
         }
     }
 }

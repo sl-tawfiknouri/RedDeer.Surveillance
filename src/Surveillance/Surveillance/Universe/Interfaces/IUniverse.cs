@@ -8,5 +8,6 @@ namespace Surveillance.Universe.Interfaces
     {
         IReadOnlyCollection<TradeOrderFrame> Trades { get; }
         IReadOnlyCollection<ExchangeFrame> MarketEquityData { get; }
+        IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; }
     }
 }

@@ -10,10 +10,12 @@ namespace Surveillance.Universe
     {
         public Universe(
             IReadOnlyCollection<TradeOrderFrame> trades,
-            IReadOnlyCollection<ExchangeFrame> marketEquityData)
+            IReadOnlyCollection<ExchangeFrame> marketEquityData,
+            IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
             Trades = trades ?? new List<TradeOrderFrame>();
             MarketEquityData = marketEquityData ?? new List<ExchangeFrame>();
+            UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
 
             Setup();
         }
@@ -26,10 +28,13 @@ namespace Surveillance.Universe
         {
             Trades = Trades.OrderBy(tra => tra.StatusChangedOn).ToList();
             MarketEquityData = MarketEquityData.OrderBy(med => med.Securities.FirstOrDefault()?.TimeStamp).ToList();
+            UniverseEvents = UniverseEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
         public IReadOnlyCollection<TradeOrderFrame> Trades { get; private set; }
 
         public IReadOnlyCollection<ExchangeFrame> MarketEquityData { get; private set; }
+
+        public IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; private set; }
     }
 }

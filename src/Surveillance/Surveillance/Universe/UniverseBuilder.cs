@@ -41,13 +41,14 @@ namespace Surveillance.Universe
         {
             if (execution == null)
             {
-                return new Universe(null, null);
+                return new Universe(null, null, null);
             }
 
             var projectedTrades = await TradeDataFetch(execution);
             var exchangeFrames = await MarketEquityDataFetch(execution);
+            var universe = await UniverseEvents(execution);
 
-            return new Universe(projectedTrades, exchangeFrames);
+            return new Universe(projectedTrades, exchangeFrames, universe);
         }
 
         private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetch(ScheduledExecution execution)
@@ -70,6 +71,12 @@ namespace Surveillance.Universe
             var projectedEquityData = _equityMarketProjector.Project(equities);
 
             return projectedEquityData;
+        }
+
+        private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(ScheduledExecution execution)
+        {
+            //todo implement me
+            return new IUniverseEvent[0];
         }
     }
 }

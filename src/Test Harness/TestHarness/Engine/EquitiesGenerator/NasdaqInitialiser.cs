@@ -19,7 +19,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(_initialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
-            var tick = new ExchangeFrame(exchange, securities);
+            var tick = new ExchangeFrame(exchange, DateTime.UtcNow, securities);
 
             return tick;
         }

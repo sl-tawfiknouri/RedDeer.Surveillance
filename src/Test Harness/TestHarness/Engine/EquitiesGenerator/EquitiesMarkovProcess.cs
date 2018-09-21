@@ -102,7 +102,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                     .Select(TickSecurity)
                     .ToArray();
 
-                var tickTock = new ExchangeFrame(_activeFrame.Exchange, tockedSecurities);
+                var tickTock = new ExchangeFrame(_activeFrame.Exchange, DateTime.UtcNow, tockedSecurities);
                 _activeFrame = tickTock;
 
                 _stream.Add(tickTock);

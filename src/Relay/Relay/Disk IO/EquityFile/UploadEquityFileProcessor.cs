@@ -80,6 +80,7 @@ namespace Relay.Disk_IO.EquityFile
                 exchange = 
                     new ExchangeFrame(
                         new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName),
+                        mappedRecord?.TimeStamp ?? DateTime.UtcNow,
                         new List<SecurityTick>());
             }
 
@@ -88,7 +89,7 @@ namespace Relay.Disk_IO.EquityFile
                 var newSecurities = new List<SecurityTick>(exchange.Securities) {mappedRecord};
                 // for market items our top level item itself is the aggregation so it can hold metadata
                 tradeOrders.RemoveAll(i => true);
-                tradeOrders.Add(new ExchangeFrame(exchange.Exchange, newSecurities));
+                tradeOrders.Add(new ExchangeFrame(exchange.Exchange, mappedRecord.TimeStamp, newSecurities));
             }
             else
             {

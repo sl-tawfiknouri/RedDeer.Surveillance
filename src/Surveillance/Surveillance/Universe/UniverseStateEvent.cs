@@ -6,8 +6,10 @@
     /// </summary>
     public enum UniverseStateEvent
     {
+        Genesis, // The, or at least a - beginning of the universe
+        Eschaton, // The end of the universe
         Unknown, // A tree fell in a forest with no observers
-        TradeReddeer, // a trade happened (in reddeer format)
-        StockTickReddeer, // a stock tick happened (in reddeer format)
+        TradeReddeer, // A trade happened (in reddeer format)
+        StockTickReddeer, // A stock tick happened (in reddeer format)
     }
 }

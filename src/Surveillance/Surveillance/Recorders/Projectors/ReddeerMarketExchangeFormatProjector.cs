@@ -29,7 +29,7 @@ namespace Surveillance.Recorders.Projectors
                 Origin = _originFactory.Origin(),
                 MarketId = frame.Exchange?.Id?.Id ?? string.Empty,
                 MarketName = frame.Exchange?.Name ?? string.Empty,
-                DateTime = frame.Securities?.FirstOrDefault()?.TimeStamp ?? DateTime.UtcNow,
+                DateTime = frame.TimeStamp,
                 Securities = MapSecuritiesToDocument(frame)
             };
         }

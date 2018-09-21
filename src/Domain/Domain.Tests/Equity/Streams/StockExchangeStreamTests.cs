@@ -76,9 +76,9 @@ namespace Domain.Tests.Equity.Streams
             var obs1 = A.Fake<IObserver<ExchangeFrame>>();
             var obs2 = A.Fake<IObserver<ExchangeFrame>>();
             var exch = new StockExchange(new MarketId("id"), "LSE");
-            var tick1 = new ExchangeFrame(exch, new List<SecurityTick>());
-            var tick2 = new ExchangeFrame(exch, new List<SecurityTick>());
-            var tick3 = new ExchangeFrame(exch, new List<SecurityTick>());
+            var tick1 = new ExchangeFrame(exch, DateTime.UtcNow, new List<SecurityTick>());
+            var tick2 = new ExchangeFrame(exch, DateTime.UtcNow, new List<SecurityTick>());
+            var tick3 = new ExchangeFrame(exch, DateTime.UtcNow, new List<SecurityTick>());
 
             stream.Subscribe(obs1);
             stream.Subscribe(obs2);

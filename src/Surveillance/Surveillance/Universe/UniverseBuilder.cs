@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.Equity.Frames;
 using Domain.Scheduling;
@@ -46,7 +47,7 @@ namespace Surveillance.Universe
 
             var projectedTrades = await TradeDataFetch(execution);
             var exchangeFrames = await MarketEquityDataFetch(execution);
-            var universe = await UniverseEvents(execution);
+            var universe = UniverseEvents(execution, projectedTrades, exchangeFrames);
 
             return new Universe(projectedTrades, exchangeFrames, universe);
         }
@@ -59,7 +60,7 @@ namespace Surveillance.Universe
 
             var projectedTrades = _documentProjector.Project(trades);
 
-            return projectedTrades;
+            return projectedTrades ?? new List<TradeOrderFrame>();
         }
 
         private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetch(ScheduledExecution execution)
@@ -70,13 +71,38 @@ namespace Surveillance.Universe
 
             var projectedEquityData = _equityMarketProjector.Project(equities);
 
-            return projectedEquityData;
+            return projectedEquityData ?? new List<ExchangeFrame>();
         }
 
-        private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(ScheduledExecution execution)
+        private IReadOnlyCollection<IUniverseEvent> UniverseEvents(
+            ScheduledExecution execution,
+            IReadOnlyCollection<TradeOrderFrame> trades,
+            IReadOnlyCollection<ExchangeFrame> exchangeFrames)
         {
-            //todo implement me
-            return new IUniverseEvent[0];
+            var tradeEvents = 
+                trades
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, (object) tr))
+                    .ToArray();
+
+            var exchangeEvents =
+                exchangeFrames
+                    .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.TimeStamp, (object) exch))
+                    .ToArray();
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, execution.TimeSeriesTermination.DateTime, execution);
+
+            var intraHistoryEvents = new List<IUniverseEvent>();
+            intraHistoryEvents.AddRange(tradeEvents);
+            intraHistoryEvents.AddRange(exchangeEvents);
+            var orderedIntraHistory = intraHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
+
+            var universeEvents = new List<IUniverseEvent>();
+            universeEvents.Add(genesis);
+            universeEvents.AddRange(orderedIntraHistory);
+            universeEvents.Add(eschaton);
+
+            return universeEvents;
         }
     }
 }

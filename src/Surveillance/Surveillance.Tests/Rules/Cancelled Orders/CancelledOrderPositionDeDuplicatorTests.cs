@@ -19,16 +19,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
     [TestFixture]
     public class CancelledOrderPositionDeDuplicatorTests
     {
-        private IRuleConfiguration _ruleConfiguration;
-        private ICancelledOrderMessageSender _messageSender;
-        private ILogger _logger;
+       private IRuleConfiguration _ruleConfiguration;
+       private ICancelledOrderMessageSender _messageSender;
 
         [SetUp]
         public void Setup()
         {
             _ruleConfiguration = A.Fake<IRuleConfiguration>();
             _messageSender = A.Fake<ICancelledOrderMessageSender>();
-            _logger = A.Fake<ILogger>();
         }
 
         [Test]
@@ -46,24 +44,27 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_ForwardsMessageToMessageSender()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();           
             var ruleConfiguration = new RuleConfiguration {CancelledOrderDeduplicationDelaySeconds = 1};
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
 
-            var exitLoopAt = DateTime.UtcNow.AddSeconds(3);
+            var exitLoopAt = DateTime.UtcNow.AddSeconds(2);
 
             while (DateTime.UtcNow < exitLoopAt)
             {
             }
 
             A.CallTo(() =>
-                _messageSender.Send(
+                    messageSender.Send(
                     A<ITradePosition>.Ignored,
                     A<ICancelledOrderRuleBreach>.Ignored,
                     A<ICancelledOrderRuleParameters>.Ignored))
@@ -71,26 +72,28 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_DiscardsInitialMessageIfFollowUpWithDuplicateWithinTimePeriod()
         {
-            var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 5 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
+            var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
             deduplicator.Send(parameters);
 
-            var exitLoopAt = DateTime.UtcNow.AddSeconds(8);
+            var exitLoopAt = DateTime.UtcNow.AddSeconds(3);
 
             while (DateTime.UtcNow < exitLoopAt)
             {
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -98,13 +101,15 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_DiscardsOlderMessagesIfFollowUpWithManyDuplicatesWithinTimePeriod()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -125,7 +130,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -133,13 +138,15 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_DiscardsOlderMessagesIfFollowUpWithManyDuplicatesWithinTwoTimePeriods()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, _logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -170,7 +177,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -178,11 +185,13 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_ConsidersTwoNonIntersectingPositions_InTheSameSecurityAsSeparateMessages()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
 
             var tradeFrame1 = TradeFrame();
             var tradeFrame2 = TradeFrame();
@@ -195,14 +204,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                     new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3},
                     null, 
                     null,
-                    _logger);
+                    logger);
 
             var tradePositionAlertTwo =
                 new TradePosition(
                     new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
                 { TradePosition = tradePositionAlertOne };
@@ -228,7 +237,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -236,11 +245,13 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_ConsidersTwoNonIntersectingPositions_InTheSameSecurityAsSeparateMessages_ResendsBothWithDelay()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
 
             var tradeFrame1 = TradeFrame();
             var tradeFrame2 = TradeFrame();
@@ -253,14 +264,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                     new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var tradePositionAlertTwo =
                 new TradePosition(
                     new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };
@@ -303,7 +314,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -311,11 +322,13 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_ConsidersTwoNonIntersectingPositionsAndTwoIntersectingPositionsForTotalOfThreePositions_InTheSameSecurityAsTwoSeparateMessages()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
 
             var tradeFrame1 = TradeFrame();
             var tradeFrame2 = TradeFrame();
@@ -328,21 +341,21 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                     new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var tradePositionAlertTwo =
                 new TradePosition(
                     new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame4 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var tradePositionAlertThree =
                 new TradePosition(
                     new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame4, tradeFrame5 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };
@@ -371,7 +384,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))
@@ -379,11 +392,13 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         }
 
         [Test]
+        [Parallelizable]
         public void Send_ConsidersSubsetPositionArrivingAfterToBeDuplicate()
         {
+            var messageSender = A.Fake<ICancelledOrderMessageSender>();
+            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
-
-            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, _messageSender);
+            var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
 
             var tradeFrame1 = TradeFrame();
             var tradeFrame2 = TradeFrame();
@@ -396,14 +411,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                     new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var tradePositionAlertTwo =
                 new TradePosition(
                     new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
                     null,
                     null,
-                    _logger);
+                    logger);
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };
@@ -429,7 +444,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    _messageSender.Send(
+                    messageSender.Send(
                         A<ITradePosition>.Ignored,
                         A<ICancelledOrderRuleBreach>.Ignored,
                         A<ICancelledOrderRuleParameters>.Ignored))

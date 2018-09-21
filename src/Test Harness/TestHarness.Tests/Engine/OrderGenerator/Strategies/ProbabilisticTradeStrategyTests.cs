@@ -51,6 +51,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"), 
+                DateTime.UtcNow,
                 null);
 
             Assert.Throws<ArgumentNullException>(() => tradeStrategy.ExecuteTradeStrategy(frame, null));
@@ -63,6 +64,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frame = new ExchangeFrame(
                 new StockExchange(
                     new Market.MarketId("LSE"), "London Stock Exchange"),
+                DateTime.UtcNow,
                 new List<SecurityTick>());
 
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
@@ -99,6 +101,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frames = GenerateSecurityFrames(securityFrames);
             var exchFrame = new ExchangeFrame(
                 new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange"),
+                DateTime.UtcNow,
                 frames);
 
             return exchFrame;

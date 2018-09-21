@@ -41,7 +41,7 @@ namespace TestHarness.Tests.Display.Subscribers
         public void OnNext_PassesFrame_ToConsole()
         {
             var subscriber = new ExchangeFrameDisplaySubscriber(_console);
-            var frame = new ExchangeFrame(null, null);
+            var frame = new ExchangeFrame(null, DateTime.UtcNow, null);
 
             subscriber.OnNext(frame);
 

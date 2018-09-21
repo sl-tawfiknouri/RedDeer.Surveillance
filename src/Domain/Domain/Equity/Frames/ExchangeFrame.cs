@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Domain.Market;
 
 namespace Domain.Equity.Frames
@@ -14,9 +15,11 @@ namespace Domain.Equity.Frames
     {
         public ExchangeFrame(
             StockExchange exchange,
+            DateTime timeStamp,
             IReadOnlyCollection<SecurityTick> securities)
         {
             Exchange = exchange;
+            TimeStamp = timeStamp;
             Securities = securities ?? new List<SecurityTick>();
         }
 
@@ -29,6 +32,8 @@ namespace Domain.Equity.Frames
         /// The securities with updated data
         /// </summary>
         public IReadOnlyCollection<SecurityTick> Securities { get; }
+
+        public DateTime TimeStamp { get; }
 
         public override string ToString()
         {

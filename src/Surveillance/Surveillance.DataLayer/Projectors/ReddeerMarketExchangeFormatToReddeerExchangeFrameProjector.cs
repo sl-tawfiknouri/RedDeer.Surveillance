@@ -30,7 +30,7 @@ namespace Surveillance.DataLayer.Projectors
             var exchange = ParseStockExchange(document);
             var securities = ParseSecurities(document);
 
-            return new ExchangeFrame(exchange, securities);
+            return new ExchangeFrame(exchange, document.DateTime, securities);
         }
 
         private StockExchange ParseStockExchange(ReddeerMarketDocument document)

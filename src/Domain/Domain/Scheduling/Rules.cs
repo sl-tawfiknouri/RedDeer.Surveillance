@@ -6,5 +6,6 @@
         ProhibitedAssets,
         CancelledOrders,
         HighProfits,
+        MarkingTheClose,
     }
 }

@@ -32,6 +32,8 @@ using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rules.High_Profits;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Rules.Interfaces;
+using Surveillance.Rules.Marking_The_Close;
+using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Rules.ProhibitedAssets;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -115,6 +117,8 @@ namespace Surveillance
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
+
+            For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
         }
     }
 }

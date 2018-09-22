@@ -54,9 +54,11 @@ namespace Surveillance.Universe.MarketEvents
 
                 var closingOnFirstDay = new DateTime(start.Year, start.Month, start.Day);
                 closingOnFirstDay = closingOnFirstDay.AddSeconds(marketClosureSeconds);
+                
+                var initialDayMarketHours = new MarketOpenClose(market.MarketId, openingOnFirstDay, closingOnFirstDay);
+                AddInitialOpen(start, end, universeEvents, initialDayMarketHours, openingOnFirstDay);
+                AddInitialClose(start, end, universeEvents, initialDayMarketHours, closingOnFirstDay);
 
-                AddInitialOpen(start, end, universeEvents, market, openingOnFirstDay);
-                AddInitialClose(start, end, universeEvents, market, closingOnFirstDay);
                 AddConcludingOpenAndClose(start, end, universeEvents, market, marketOpeningSeconds, marketClosureSeconds);
 
                 var intraPeriodEvents = AddIntraMarketEvents(start, end, openingOnFirstDay, closingOnFirstDay, market);
@@ -110,16 +112,32 @@ namespace Surveillance.Universe.MarketEvents
             var openingOnLastDay = new DateTime(end.Year, end.Month, end.Day);
             openingOnLastDay = openingOnLastDay.AddSeconds(marketOpensInSecondsFromMidnight);
 
-            var finalOpen = AddBoundaryMarketEvent(start, end, market, openingOnLastDay, UniverseStateEvent.StockMarketOpen);
+            var closingOnLastDay = new DateTime(end.Year, end.Month, end.Day);
+            closingOnLastDay = closingOnLastDay.AddSeconds(marketClosureInSecondsFromMidnight);
+
+            var closingDayMarketHours = new MarketOpenClose(market.MarketId, openingOnLastDay, closingOnLastDay);
+
+            var finalOpen =
+                AddBoundaryMarketEvent(
+                    start,
+                    end,
+                    closingDayMarketHours,
+                    openingOnLastDay,
+                    UniverseStateEvent.StockMarketOpen);
+
             if (finalOpen != null)
             {
                 universeEvents.Add(finalOpen);
             }
 
-            var closingOnLastDay = new DateTime(end.Year, end.Month, end.Day);
-            closingOnLastDay = closingOnLastDay.AddSeconds(marketClosureInSecondsFromMidnight);
+            var finalClose =
+                AddBoundaryMarketEvent(
+                    start,
+                    end,
+                    closingDayMarketHours,
+                    closingOnLastDay, 
+                    UniverseStateEvent.StockMarketClose);
 
-            var finalClose = AddBoundaryMarketEvent(start, end, market, closingOnLastDay, UniverseStateEvent.StockMarketClose);
             if (finalClose != null)
             {
                 universeEvents.Add(finalClose);
@@ -159,9 +177,10 @@ namespace Surveillance.Universe.MarketEvents
             {
                 var open = initialOpening.AddDays(x);
                 var close = initialClosure.AddDays(x);
-                
-                var openingEvent = new UniverseEvent(UniverseStateEvent.StockMarketOpen, open, openClose);
-                var closingEvent = new UniverseEvent(UniverseStateEvent.StockMarketClose, close, openClose);
+                var marketHoursOnDay = new MarketOpenClose(openClose.MarketId, open, close);
+
+                var openingEvent = new UniverseEvent(UniverseStateEvent.StockMarketOpen, open, marketHoursOnDay);
+                var closingEvent = new UniverseEvent(UniverseStateEvent.StockMarketClose, close, marketHoursOnDay);
 
                 universeEvents.Add(openingEvent);
                 universeEvents.Add(closingEvent);

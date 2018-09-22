@@ -32,8 +32,8 @@ namespace Surveillance.Rules.High_Profits
 
         public void Send(IHighProfitRuleBreach ruleBreach)
         {
-            if (ruleBreach?.Trades == null
-                || ruleBreach?.Trades.Count < 2)
+            if (ruleBreach?.Trades?.Get() == null
+                || ruleBreach?.Trades?.Get().Count < 2)
             {
                 return;
             }
@@ -41,7 +41,7 @@ namespace Surveillance.Rules.High_Profits
             var caseMessage = new CaseMessage
             {
                 Case = CaseDataItem(ruleBreach),
-                CaseLogs = CaseLogsInPosition(ruleBreach.Trades)
+                CaseLogs = CaseLogsInPosition(ruleBreach.Trades?.Get())
             };
 
             try
@@ -56,9 +56,9 @@ namespace Surveillance.Rules.High_Profits
 
         private ComplianceCaseDataItemDto CaseDataItem(IHighProfitRuleBreach ruleBreach)
         {
-            var oldestPosition = ruleBreach.Trades.Min(tr => tr.StatusChangedOn);
-            var latestPosition = ruleBreach.Trades.Max(tr => tr.StatusChangedOn);
-            var venue = ruleBreach.Trades?.FirstOrDefault()?.Market?.Name;
+            var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.StatusChangedOn);
+            var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.StatusChangedOn);
+            var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
 
             var description = BuildDescription(ruleBreach);
 
@@ -71,8 +71,8 @@ namespace Surveillance.Rules.High_Profits
                 Type = ComplianceCaseType.Unset,
                 ReportedOn = DateTime.Now,
                 Venue = venue,
-                StartOfPeriodUnderInvestigation = oldestPosition,
-                EndOfPeriodUnderInvestigation = latestPosition,
+                StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.Now),
+                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now),
             };
         }
 
@@ -97,13 +97,13 @@ namespace Surveillance.Rules.High_Profits
 
             var highAbsoluteProfitSection =
                 ruleBreach.HasAbsoluteProfitBreach
-                    ? $" There was a high profit of {ruleBreach.AbsoluteProfits} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured absolute profit level of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
+                    ? $" There was a high profit of {ruleBreach.AbsoluteProfits} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
                     : string.Empty;
 
             return $"High profit rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}).{highRelativeProfitSection}{highAbsoluteProfitSection}";
         }
 
-        private ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IReadOnlyCollection<TradeOrderFrame> orders)
+        private ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<TradeOrderFrame> orders)
         {
             if (orders == null
                 || !orders.Any())

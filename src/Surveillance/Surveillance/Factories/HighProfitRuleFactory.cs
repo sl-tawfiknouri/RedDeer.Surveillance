@@ -9,11 +9,11 @@ namespace Surveillance.Factories
 {
     public class HighProfitRuleFactory : IHighProfitRuleFactory
     {
-        private readonly IHighProfitMessageSender _messageSender;
+        private readonly IHighProfitRuleCachedMessageSender _messageSender;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
-            IHighProfitMessageSender messageSender,
+            IHighProfitRuleCachedMessageSender messageSender,
             ILogger<HighProfitsRule> logger)
         {
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));

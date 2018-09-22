@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using Domain.Equity;
 using Domain.Equity.Frames;
-using Domain.Market;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
@@ -164,12 +163,16 @@ namespace Surveillance.Rules
             EndOfUniverse();
         }
 
-        protected void RunRuleForAllTradingHistories()
+        protected void RunRuleForAllTradingHistories(DateTime? currentTimeInUniverse = null)
         {
             lock (_lock)
             {
                 foreach (var history in TradingHistory)
                 {
+                    if (currentTimeInUniverse != null)
+                    {
+                        history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
+                    }
                     RunRule(history.Value);
                 }
             }

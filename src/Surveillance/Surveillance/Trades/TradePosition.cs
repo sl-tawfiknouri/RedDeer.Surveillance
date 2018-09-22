@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Surveillance.Trades.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
@@ -26,7 +25,7 @@ namespace Surveillance.Trades
             _trades = trades?.Where(trad => trad != null).ToList() ?? new List<TradeOrderFrame>();
             _cancellationRatioPercentagePosition = cancellationRatioPercentagePosition;
             _cancellationRatioPercentageOrderCount = cancellationRatioPercentageOrderCount;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
         }
 
         public IList<TradeOrderFrame> Get()
@@ -102,7 +101,7 @@ namespace Surveillance.Trades
             if (cancelledOrderVolume < 0
                 || nonCancelledOrderVolume < 0)
             {
-                _logger.LogError("Negative values for order volume in position. Check data integrity");
+                _logger?.LogError("Negative values for order volume in position. Check data integrity");
                 return 0;
             }
 

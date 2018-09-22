@@ -3,6 +3,8 @@ using Surveillance.Rule_Parameters.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Trades;
+using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.High_Profits
 {
@@ -16,7 +18,7 @@ namespace Surveillance.Rules.High_Profits
             Security security,
             bool hasAbsoluteProfitBreach,
             bool hasRelativeProfitBreach,
-            IReadOnlyCollection<TradeOrderFrame> trades)
+            ITradePosition trades)
         {
             Parameters = parameters;
             AbsoluteProfits = absoluteProfits;
@@ -25,7 +27,7 @@ namespace Surveillance.Rules.High_Profits
             Security = security;
             HasAbsoluteProfitBreach = hasAbsoluteProfitBreach;
             HasRelativeProfitBreach = hasRelativeProfitBreach;
-            Trades = trades ?? new List<TradeOrderFrame>();
+            Trades = trades ?? new TradePosition(new List<TradeOrderFrame>(), null, null, null);
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -35,6 +37,6 @@ namespace Surveillance.Rules.High_Profits
         public string AbsoluteProfitCurrency { get; }
         public decimal? RelativeProfits { get; }
         public Security Security { get; }
-        public IReadOnlyCollection<TradeOrderFrame> Trades { get; }
+        public ITradePosition Trades { get; }
     }
 }

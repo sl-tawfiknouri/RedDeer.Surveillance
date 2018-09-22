@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Trades.Orders;
+﻿using Domain.Equity;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.High_Profits.Interfaces
 {
@@ -14,6 +13,6 @@ namespace Surveillance.Rules.High_Profits.Interfaces
         string AbsoluteProfitCurrency { get; }
         decimal? RelativeProfits { get; }
         Security Security { get; }
-        IReadOnlyCollection<TradeOrderFrame> Trades { get; }
+        ITradePosition Trades { get; }
     }
 }

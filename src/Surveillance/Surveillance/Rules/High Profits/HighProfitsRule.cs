@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Stub;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 // ReSharper disable AssignNullToNotNullAttribute
 
@@ -18,13 +18,13 @@ namespace Surveillance.Rules.High_Profits
     public class HighProfitsRule : BaseUniverseRule, IHighProfitRule
     {
         private readonly ILogger<HighProfitsRule> _logger;
-        private readonly IHighProfitMessageSender _sender;
+        private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
 
         private bool _marketOpened = true; // assume the market has opened initially
 
         public HighProfitsRule(
-            IHighProfitMessageSender sender,
+            IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ILogger<HighProfitsRule> logger) 
             : base(
@@ -71,6 +71,7 @@ namespace Surveillance.Rules.High_Profits
 
                 _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
 
+                var position = new TradePosition(activeTrades.ToList(), null, null, null);
                 var breach =
                     new HighProfitRuleBreach(
                         _parameters,
@@ -80,7 +81,7 @@ namespace Surveillance.Rules.High_Profits
                         security,
                         hasHighProfitAbsolute,
                         hasHighProfitPercentage,
-                        activeTrades);
+                        position);
 
                 _sender.Send(breach);
             }
@@ -241,7 +242,7 @@ namespace Surveillance.Rules.High_Profits
         {
             _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
 
-            RunRuleForAllTradingHistories();
+            RunRuleForAllTradingHistories(exchange.MarketClose);
             _marketOpened = false;
         }
 
@@ -252,6 +253,8 @@ namespace Surveillance.Rules.High_Profits
             {
                 RunRuleForAllTradingHistories();
             }
+
+            _sender.Flush();
         }
     }
 }

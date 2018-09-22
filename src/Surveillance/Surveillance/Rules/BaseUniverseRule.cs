@@ -6,6 +6,7 @@ using Domain.Market;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Stub;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -139,7 +140,7 @@ namespace Surveillance.Rules
 
         private void MarketOpened(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is StockExchange value))
+            if (!(universeEvent.UnderlyingEvent is MarketOpenClose value))
             {
                 return;
             }
@@ -149,7 +150,7 @@ namespace Surveillance.Rules
 
         private void MarketClosed(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is StockExchange value))
+            if (!(universeEvent.UnderlyingEvent is MarketOpenClose value))
             {
                 return;
             }
@@ -178,11 +179,10 @@ namespace Surveillance.Rules
         /// Run the rule with a trading history within the time window for that security
         /// </summary>
         protected abstract void RunRule(ITradingHistoryStack history);
+
         protected abstract void Genesis();
-        protected abstract void MarketOpen(StockExchange exchange);
-
-        protected abstract void MarketClose(StockExchange exchange);
-
+        protected abstract void MarketOpen(MarketOpenClose exchange);
+        protected abstract void MarketClose(MarketOpenClose exchange);
         protected abstract void EndOfUniverse();
 
         public Domain.Scheduling.Rules Rule { get; }

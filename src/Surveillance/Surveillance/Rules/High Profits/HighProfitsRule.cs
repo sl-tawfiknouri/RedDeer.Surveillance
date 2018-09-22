@@ -4,6 +4,7 @@ using System.Linq;
 using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Stub;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -230,15 +231,15 @@ namespace Surveillance.Rules.High_Profits
             _logger.LogDebug("Universe Genesis occurred in the High Profit Rule");
         }
 
-        protected override void MarketOpen(StockExchange exchange)
+        protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading Opened for exchange {exchange.Name} in the High Profit Rule");
+            _logger.LogDebug($"Trading Opened for exchange {exchange.MarketId} in the High Profit Rule");
             _marketOpened = true;
         }
 
-        protected override void MarketClose(StockExchange exchange)
+        protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading closed for exchange {exchange.Name} in the High Profit Rule. Running market closure virtual profits check.");
+            _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
 
             RunRuleForAllTradingHistories();
             _marketOpened = false;

@@ -10,9 +10,7 @@ namespace Surveillance.DataLayer.Stub
         private readonly List<MarketOpenClose> _stubMarketData =
             new List<MarketOpenClose>
             {
-                new MarketOpenClose("XLON", new DateTime(2000, 1, 1, 9, 0, 0), new DateTime(2000, 1, 1, 16, 0, 0)),
-                new MarketOpenClose("LSE", new DateTime(2000, 1, 1, 9, 0, 0), new DateTime(2000, 1, 1, 16, 0, 0)),
-                new MarketOpenClose("NASDAQ", new DateTime(2000, 1, 1, 8, 0, 0), new DateTime(2000, 1, 1, 17, 0, 0)),
+                new MarketOpenClose("XLON", new DateTime(2000, 1, 1, 9, 0, 0), new DateTime(2000, 1, 1, 16, 0, 0))
             };
 
         public IReadOnlyCollection<MarketOpenClose> GetAll()

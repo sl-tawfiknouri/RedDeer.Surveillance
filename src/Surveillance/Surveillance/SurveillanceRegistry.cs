@@ -44,6 +44,8 @@ using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.MarketEvents;
+using Surveillance.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance
 {
@@ -92,6 +94,7 @@ namespace Surveillance
             For<IUniverseBuilder>().Use<UniverseBuilder>();
             For<IUniverseEvent>().Use<UniverseEvent>();
             For<IUniversePlayer>().Use<UniversePlayer>();
+            For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
@@ -111,6 +114,7 @@ namespace Surveillance
             For<IHighProfitRuleFactory>().Use<HighProfitRuleFactory>();
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
+
         }
     }
 }

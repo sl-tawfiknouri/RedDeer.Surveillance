@@ -22,13 +22,6 @@ namespace Surveillance.Tests.Trades
         }
 
         [Test]
-        public void Constructor_NullLoggerArgument_ThrowsException()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new TradePosition(new List<TradeOrderFrame>(), 1m, 0m, null));
-        }
-
-        [Test]
         public void CancellationRatioByTradeCount_ReturnsExpected()
         {
             var tof = new List<TradeOrderFrame>

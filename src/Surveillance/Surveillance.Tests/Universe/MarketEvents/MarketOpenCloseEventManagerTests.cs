@@ -129,6 +129,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var manager = new MarketOpenCloseEventManager(_repository);
             var earlyStart = new DateTime(2000, 1, 1, 7, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 2, 12, 0, 0);
+            var closeMarket = new MarketOpenClose(_marketOpenClose.MarketId, _marketOpenClose.MarketOpen.AddDays(1), _marketOpenClose.MarketClose.AddDays(1));
 
             var results = manager.AllOpenCloseEvents(earlyStart, earlyEnd);
             var firstResult = results.FirstOrDefault();
@@ -150,7 +151,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
             Assert.IsNotNull(thirdResult);
             Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 9, 0, 0));
             Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketOpen);
-            Assert.AreEqual(thirdResult.UnderlyingEvent, _marketOpenClose);
+            Assert.AreEqual(thirdResult.UnderlyingEvent, closeMarket);
         }
 
         [Test]
@@ -159,6 +160,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var manager = new MarketOpenCloseEventManager(_repository);
             var earlyStart = new DateTime(2000, 1, 1, 12, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 2, 20, 0, 0);
+            var closeMarket = new MarketOpenClose(_marketOpenClose.MarketId, _marketOpenClose.MarketOpen.AddDays(1), _marketOpenClose.MarketClose.AddDays(1));
 
             var results = manager.AllOpenCloseEvents(earlyStart, earlyEnd);
             var firstResult = results.FirstOrDefault();
@@ -175,12 +177,12 @@ namespace Surveillance.Tests.Universe.MarketEvents
             Assert.IsNotNull(secondResult);
             Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 2, 9, 0, 0));
             Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketOpen);
-            Assert.AreEqual(secondResult.UnderlyingEvent, _marketOpenClose);
+            Assert.AreEqual(secondResult.UnderlyingEvent, closeMarket);
 
             Assert.IsNotNull(thirdResult);
             Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 17, 0, 0));
             Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketClose);
-            Assert.AreEqual(thirdResult.UnderlyingEvent, _marketOpenClose);
+            Assert.AreEqual(thirdResult.UnderlyingEvent, closeMarket);
         }
 
         [Test]

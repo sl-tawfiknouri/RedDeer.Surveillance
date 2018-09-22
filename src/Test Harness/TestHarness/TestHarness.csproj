@@ -36,6 +36,9 @@
     <None Update="PlayTradeFiles\TradeOrderFileTestCancel2.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PlayTradeFiles\TradeOrderFileTestHighProfits.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PlayTradeFiles\TradeOrderFileTestSpoof.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

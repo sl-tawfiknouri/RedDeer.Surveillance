@@ -144,7 +144,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            TradingOpen(value);
+            MarketOpen(value);
         }
 
         private void MarketClosed(IUniverseEvent universeEvent)
@@ -154,7 +154,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            TradingClose(value);
+            MarketClose(value);
         }
 
         private void Eschaton()
@@ -163,15 +163,25 @@ namespace Surveillance.Rules
             EndOfUniverse();
         }
 
+        protected void RunRuleForAllTradingHistories()
+        {
+            lock (_lock)
+            {
+                foreach (var history in TradingHistory)
+                {
+                    RunRule(history.Value);
+                }
+            }
+        }
 
         /// <summary>
         /// Run the rule with a trading history within the time window for that security
         /// </summary>
         protected abstract void RunRule(ITradingHistoryStack history);
         protected abstract void Genesis();
-        protected abstract void TradingOpen(StockExchange exchange);
+        protected abstract void MarketOpen(StockExchange exchange);
 
-        protected abstract void TradingClose(StockExchange exchange);
+        protected abstract void MarketClose(StockExchange exchange);
 
         protected abstract void EndOfUniverse();
 

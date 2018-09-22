@@ -44,6 +44,11 @@ namespace Domain.Trades.Orders
             {
                 throw new ArgumentException(nameof(orderType));
             }
+
+            if (Position == OrderPosition.SellLong)
+            {
+                ExecutedPrice = 3;
+            }
         }
 
         /// <summary>

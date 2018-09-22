@@ -65,6 +65,16 @@ namespace Domain.Equity
                 return true;
             }
 
+            if (string.Equals(Cusip, otherId.Cusip, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (string.Equals(ExchangeSymbol, otherId.ExchangeSymbol, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true; // risk across multiple exchange data sets that have intersecting symbol lists
+            }
+
             return false;
         }
 

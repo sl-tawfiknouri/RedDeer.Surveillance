@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades.Interfaces;
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace Surveillance.Rules.High_Profits
 {
@@ -19,12 +20,14 @@ namespace Surveillance.Rules.High_Profits
         private readonly IHighProfitMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
 
+        private bool _marketOpened = true; // assume the market has opened initially
+
         public HighProfitsRule(
             IHighProfitMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ILogger<HighProfitsRule> logger) 
             : base(
-                parameters.WindowSize,
+                parameters?.WindowSize ?? TimeSpan.FromHours(8),
                 Domain.Scheduling.Rules.HighProfits,
                 "V1.0",
                 "High Profit Rule",
@@ -57,51 +60,25 @@ namespace Surveillance.Rules.High_Profits
             var absoluteProfit = revenue - cost;
             var profitRatio = (revenue / cost) - 1;
 
-            if (HasHighProfitAbsolute(absoluteProfit)
-                && HasHighProfitPercentage(profitRatio))
-            {
-                // raise alert
-                var breach =
-                    new HighProfitRuleBreach(
-                        _parameters,
-                        absoluteProfit,
-                        _parameters.HighProfitAbsoluteThresholdCurrency,
-                        profitRatio,
-                        null,
-                        true,
-                        true,
-                        activeTrades);
+            var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit);
+            var hasHighProfitPercentage = HasHighProfitPercentage(profitRatio);
 
-                _sender.Send(breach);
-            }
-            else if (HasHighProfitPercentage(profitRatio))
+            if (hasHighProfitAbsolute
+                || hasHighProfitPercentage)
             {
-                // raise alert
-                var breach =
-                    new HighProfitRuleBreach(
-                        _parameters,
-                        absoluteProfit,
-                        _parameters.HighProfitAbsoluteThresholdCurrency,
-                        profitRatio,
-                        null,
-                        true,
-                        false,
-                        activeTrades);
+                var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
 
-                _sender.Send(breach);
-            }
-            else if (HasHighProfitAbsolute(absoluteProfit))
-            {
-                // raise alert
+                _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
+
                 var breach =
                     new HighProfitRuleBreach(
                         _parameters,
                         absoluteProfit,
                         _parameters.HighProfitAbsoluteThresholdCurrency,
                         profitRatio,
-                        null,
-                        false,
-                        true,
+                        security,
+                        hasHighProfitAbsolute,
+                        hasHighProfitPercentage,
                         activeTrades);
 
                 _sender.Send(breach);
@@ -150,27 +127,12 @@ namespace Surveillance.Rules.High_Profits
             {
                 return 0;
             }
-            // TODO take into account carry over positions from the last day as well
-            // we might have revenues that are nuts; were only interested in intraday positions
-            var realisedRevenue =
-                activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.SellLong)
-                    .Select(afto => afto.Volume * afto.ExecutedPrice)
-                    .Sum();
 
-            var totalPurchaseVolume =
-                activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.BuyLong)
-                    .Select(afto => afto.Volume)
-                    .Sum();
+            var realisedRevenue = CalculateRealisedRevenue(activeFulfilledTradeOrders);
+            var totalPurchaseVolume = CalculateTotalPurchaseVolume(activeFulfilledTradeOrders);
+            var totalSaleVolume = CalculateTotalSalesVolume(activeFulfilledTradeOrders);
 
-            var totalSaleVolume =
-                activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.SellLong)
-                    .Select(afto => afto.Volume)
-                    .Sum();
-
-            var sizeOfVirtualPosition = totalSaleVolume - totalPurchaseVolume;
+            var sizeOfVirtualPosition = totalPurchaseVolume - totalSaleVolume;
             if (sizeOfVirtualPosition <= 0)
             {
                 return realisedRevenue.GetValueOrDefault(0);
@@ -184,23 +146,83 @@ namespace Surveillance.Rules.High_Profits
 
             var securityTick =
                 LatestExchangeFrame
-                    .Securities
-                    .FirstOrDefault(sec => Equals(sec.Security.Identifiers, security.Identifiers));
+                    ?.Securities
+                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, security.Identifiers));
+
+            if (securityTick == null)
+            {
+                return CalculateInferredVirtualProfit(activeFulfilledTradeOrders, realisedRevenue, sizeOfVirtualPosition);
+            }
 
             var virtualRevenue = securityTick?.Spread.Price.Value * sizeOfVirtualPosition;
 
             return realisedRevenue.GetValueOrDefault(0) + virtualRevenue.GetValueOrDefault(0);
         }
 
-        protected override void TradingOpen(StockExchange exchange)
+        private decimal? CalculateRealisedRevenue
+            (IList<TradeOrderFrame> activeFulfilledTradeOrders)
         {
-            _logger.LogDebug($"Trading Opened for exchange {exchange.Name} in the High Profit Rule");
+            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            {
+                return 0;
+            }
+
+            return activeFulfilledTradeOrders
+                    .Where(afto => afto.Position == OrderPosition.SellLong)
+                    .Select(afto => afto.Volume * afto.ExecutedPrice)
+                    .Sum();
         }
 
-        protected override void TradingClose(StockExchange exchange)
+        private int CalculateTotalPurchaseVolume(
+            IList<TradeOrderFrame> activeFulfilledTradeOrders)
         {
-            // TODO check closing profits for all positions && raise alerts if necessary
-            _logger.LogDebug($"Trading closed for exchange {exchange.Name} in the High Profit Rule");
+            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            {
+                return 0;
+            }
+
+            return activeFulfilledTradeOrders
+                .Where(afto => afto.Position == OrderPosition.BuyLong)
+                .Select(afto => afto.Volume)
+                .Sum();
+        }
+
+        private int CalculateTotalSalesVolume(
+            IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        {
+            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            {
+                return 0;
+            }
+
+            return activeFulfilledTradeOrders
+                .Where(afto => afto.Position == OrderPosition.SellLong)
+                .Select(afto => afto.Volume)
+                .Sum();
+        }
+
+        private decimal CalculateInferredVirtualProfit(
+            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            decimal? realisedRevenue,
+            int sizeOfVirtualPosition)
+        {
+            _logger.LogInformation(
+                $"High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
+
+            var mostRecentTrade =
+                activeFulfilledTradeOrders
+                    .Where(afto => afto.ExecutedPrice != null)
+                    .OrderByDescending(afto => afto.StatusChangedOn)
+                    .FirstOrDefault();
+
+            if (mostRecentTrade == null)
+            {
+                return realisedRevenue.GetValueOrDefault(0);
+            }
+
+            var inferredVirtualProfits = mostRecentTrade.ExecutedPrice.GetValueOrDefault(0) * sizeOfVirtualPosition;
+
+            return realisedRevenue.GetValueOrDefault(0) + inferredVirtualProfits;
         }
 
         protected override void Genesis()
@@ -208,10 +230,27 @@ namespace Surveillance.Rules.High_Profits
             _logger.LogDebug("Universe Genesis occurred in the High Profit Rule");
         }
 
+        protected override void MarketOpen(StockExchange exchange)
+        {
+            _logger.LogDebug($"Trading Opened for exchange {exchange.Name} in the High Profit Rule");
+            _marketOpened = true;
+        }
+
+        protected override void MarketClose(StockExchange exchange)
+        {
+            _logger.LogDebug($"Trading closed for exchange {exchange.Name} in the High Profit Rule. Running market closure virtual profits check.");
+
+            RunRuleForAllTradingHistories();
+            _marketOpened = false;
+        }
+
         protected override void EndOfUniverse()
         {
-            // TODO check all profits one last time IF trading has opened without being closed
             _logger.LogDebug("Universe Eschaton occurred in the High Profit Rule");
+            if (_marketOpened)
+            {
+                RunRuleForAllTradingHistories();
+            }
         }
     }
 }

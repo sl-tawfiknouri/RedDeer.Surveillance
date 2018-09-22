@@ -94,21 +94,23 @@ namespace Surveillance
             For<IUniversePlayer>().Use<UniversePlayer>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+            For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
+
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
+
+            For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
-            For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
             For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
             For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
-            For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderPositionDeDuplicator>().Use<CancelledOrderPositionDeDuplicator>();
+            For<ICancelledOrderRuleFactory>().Use<CancelledOrderRuleFactory>();
 
+            For<IHighProfitRuleFactory>().Use<HighProfitRuleFactory>();
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
-
-
         }
     }
 }

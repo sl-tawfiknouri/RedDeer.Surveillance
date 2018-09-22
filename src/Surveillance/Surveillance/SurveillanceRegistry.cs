@@ -29,6 +29,8 @@ using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
 using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.High_Profits;
+using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.ProhibitedAssets;
 using Surveillance.Trades;
@@ -102,6 +104,11 @@ namespace Surveillance
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderPositionDeDuplicator>().Use<CancelledOrderPositionDeDuplicator>();
+
+            For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
+            For<IHighProfitRule>().Use<HighProfitsRule>();
+
+
         }
     }
 }

@@ -15,6 +15,8 @@ namespace Surveillance.Scheduler
     public class ReddeerRuleScheduler : IReddeerRuleScheduler
     {
         private readonly ISpoofingRuleFactory _spoofingRuleFactory;
+        private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
+        private readonly IHighProfitRuleFactory _highProfitRuleFactory;
         private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -26,6 +28,8 @@ namespace Surveillance.Scheduler
 
         public ReddeerRuleScheduler(
             ISpoofingRuleFactory spoofingRuleFactory,
+            ICancelledOrderRuleFactory cancelledOrderRuleFactory,
+            IHighProfitRuleFactory highProfitRuleFactory,
             IUniverseBuilder universeBuilder,
             IUniversePlayerFactory universePlayerFactory,
             IAwsQueueClient awsQueueClient,
@@ -36,6 +40,12 @@ namespace Surveillance.Scheduler
             _spoofingRuleFactory = 
                 spoofingRuleFactory
                 ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
+            _cancelledOrderRuleFactory =
+                cancelledOrderRuleFactory
+                ?? throw new ArgumentNullException(nameof(cancelledOrderRuleFactory));
+            _highProfitRuleFactory =
+                highProfitRuleFactory
+                ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
 
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
@@ -114,6 +124,18 @@ namespace Surveillance.Scheduler
             {
                 var spoofingRule = _spoofingRuleFactory.Build();
                 player.Subscribe(spoofingRule);
+            }
+
+            if (execution.Rules.Contains(Domain.Scheduling.Rules.CancelledOrders))
+            {
+                var cancelledOrderRule = _cancelledOrderRuleFactory.Build();
+                player.Subscribe(cancelledOrderRule);
+            }
+
+            if (execution.Rules.Contains(Domain.Scheduling.Rules.HighProfits))
+            {
+                var highProfitsRule = _highProfitRuleFactory.Build();
+                player.Subscribe(highProfitsRule);
             }
         }
     }

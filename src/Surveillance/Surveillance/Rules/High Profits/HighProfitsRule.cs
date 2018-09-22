@@ -5,6 +5,7 @@ using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.High_Profits
@@ -12,12 +13,14 @@ namespace Surveillance.Rules.High_Profits
     /// <summary>
     /// Calculate the profits from the trade
     /// </summary>
-    public class HighProfitsRule : BaseUniverseRule
+    public class HighProfitsRule : BaseUniverseRule, IHighProfitRule
     {
         private readonly ILogger<HighProfitsRule> _logger;
+        private readonly IHighProfitMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
 
         public HighProfitsRule(
+            IHighProfitMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ILogger<HighProfitsRule> logger) 
             : base(
@@ -27,6 +30,7 @@ namespace Surveillance.Rules.High_Profits
                 "High Profit Rule",
                 logger)
         {
+            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -67,6 +71,8 @@ namespace Surveillance.Rules.High_Profits
                         true,
                         true,
                         activeTrades);
+
+                _sender.Send(breach);
             }
             else if (HasHighProfitPercentage(profitRatio))
             {
@@ -81,6 +87,8 @@ namespace Surveillance.Rules.High_Profits
                         true,
                         false,
                         activeTrades);
+
+                _sender.Send(breach);
             }
             else if (HasHighProfitAbsolute(absoluteProfit))
             {
@@ -95,6 +103,8 @@ namespace Surveillance.Rules.High_Profits
                         false,
                         true,
                         activeTrades);
+
+                _sender.Send(breach);
             }
         }
 

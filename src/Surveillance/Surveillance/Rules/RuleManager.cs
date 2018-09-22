@@ -9,6 +9,10 @@ using Surveillance.Rules.Cancelled_Orders.Interfaces;
 
 namespace Surveillance.Rules
 {
+    /// <summary>
+    /// A manager for injecting LIVE analysis rules
+    /// Scheduled rules are handled in the rule scheduler
+    /// </summary>
     public class RuleManager : IRuleManager
     {
         private readonly IProhibitedAssetTradingRule _prohibitedAssetTradingRule;

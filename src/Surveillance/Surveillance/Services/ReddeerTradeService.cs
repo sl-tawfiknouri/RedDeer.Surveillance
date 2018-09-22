@@ -71,7 +71,7 @@ namespace Surveillance.Services
             _tradeNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
 
-            // order stream only rules
+            // LIVE order stream only rules - process in real time
             _ruleManager.RegisterTradingRules(tradeStream);           
 
             // E Q U I T Y
@@ -79,7 +79,7 @@ namespace Surveillance.Services
             _equityNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
 
-            // equity stream only rules
+            // LIVE equity stream only rules - process in real time
             _ruleManager.RegisterEquityRules(exchangeStream);
         }
 

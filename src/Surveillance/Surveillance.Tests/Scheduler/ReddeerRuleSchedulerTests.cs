@@ -18,6 +18,8 @@ namespace Surveillance.Tests.Scheduler
     public class ReddeerRuleSchedulerTests
     {
         private ISpoofingRuleFactory _spoofingRuleFactory;
+        private ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
+        private IHighProfitRuleFactory _highProfitRuleFactory;
         private IUniverseBuilder _universeBuilder;
         private IUniversePlayerFactory _universePlayerFactory;
         private ISpoofingRule _spoofingRule;
@@ -34,6 +36,8 @@ namespace Surveillance.Tests.Scheduler
         public void Setup()
         {
             _spoofingRuleFactory = A.Fake<ISpoofingRuleFactory>();
+            _cancelledOrderRuleFactory = A.Fake<ICancelledOrderRuleFactory>();
+            _highProfitRuleFactory = A.Fake<IHighProfitRuleFactory>();
             _universeBuilder = A.Fake<IUniverseBuilder>();
             _universePlayerFactory = A.Fake<IUniversePlayerFactory>();
             _spoofingRule = A.Fake<ISpoofingRule>();
@@ -52,6 +56,8 @@ namespace Surveillance.Tests.Scheduler
                 // ReSharper disable once ObjectCreationAsStatement
                 new ReddeerRuleScheduler(
                     null,
+                    _cancelledOrderRuleFactory,
+                    _highProfitRuleFactory,
                     _universeBuilder,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -67,6 +73,8 @@ namespace Surveillance.Tests.Scheduler
                 // ReSharper disable once ObjectCreationAsStatement
                 new ReddeerRuleScheduler(
                     _spoofingRuleFactory,
+                    _cancelledOrderRuleFactory,
+                    _highProfitRuleFactory,
                     null,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -82,6 +90,8 @@ namespace Surveillance.Tests.Scheduler
                 // ReSharper disable once ObjectCreationAsStatement
                 new ReddeerRuleScheduler(
                     _spoofingRuleFactory,
+                    _cancelledOrderRuleFactory,
+                    _highProfitRuleFactory,
                     _universeBuilder,
                     null,
                     _awsQueueClient,
@@ -95,6 +105,8 @@ namespace Surveillance.Tests.Scheduler
         {
             var scheduler = new ReddeerRuleScheduler(
                 _spoofingRuleFactory,
+                _cancelledOrderRuleFactory,
+                _highProfitRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
@@ -126,6 +138,8 @@ namespace Surveillance.Tests.Scheduler
         {
             var scheduler = new ReddeerRuleScheduler(
                 _spoofingRuleFactory,
+                _cancelledOrderRuleFactory,
+                _highProfitRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
@@ -150,6 +164,5 @@ namespace Surveillance.Tests.Scheduler
             A.CallTo(() => _universePlayerFactory.Build()).MustNotHaveHappened();
             A.CallTo(() => _universePlayer.Subscribe(_spoofingRule)).MustNotHaveHappened();
         }
-
     }
 }

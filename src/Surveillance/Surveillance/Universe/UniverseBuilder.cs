@@ -9,6 +9,7 @@ using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance.Universe
 {
@@ -22,17 +23,20 @@ namespace Surveillance.Universe
 
         private readonly IRedDeerMarketExchangeFormatRepository _equityMarketRepository;
         private readonly IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector _equityMarketProjector;
+        private readonly IMarketOpenCloseEventManager _marketManager;
 
         public UniverseBuilder(
             IRedDeerTradeFormatRepository tradeRepository,
             IReddeerTradeFormatToReddeerTradeFrameProjector documentProjector,
             IRedDeerMarketExchangeFormatRepository equityMarketRepository,
-            IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector equityMarketProjector)
+            IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector equityMarketProjector,
+            IMarketOpenCloseEventManager marketManager)
         {
             _tradeRepository = tradeRepository ?? throw new ArgumentNullException(nameof(tradeRepository));
             _documentProjector = documentProjector ?? throw new ArgumentNullException(nameof(documentProjector));
             _equityMarketRepository = equityMarketRepository ?? throw new ArgumentNullException(nameof(equityMarketRepository));
             _equityMarketProjector = equityMarketProjector ?? throw new ArgumentNullException(nameof(equityMarketProjector));
+            _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
         }
 
         /// <summary>
@@ -89,12 +93,19 @@ namespace Surveillance.Universe
                     .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.TimeStamp, (object) exch))
                     .ToArray();
 
+            var marketEvents =
+                _marketManager
+                    .AllOpenCloseEvents(
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, execution.TimeSeriesTermination.DateTime, execution);
 
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeEvents);
             intraUniversalHistoryEvents.AddRange(exchangeEvents);
+            intraUniversalHistoryEvents.AddRange(marketEvents);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
 
             var universeEvents = new List<IUniverseEvent>();

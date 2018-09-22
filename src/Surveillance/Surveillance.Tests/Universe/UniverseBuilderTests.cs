@@ -5,6 +5,7 @@ using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
 using Surveillance.Universe;
+using Surveillance.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance.Tests.Universe
 {
@@ -17,6 +18,8 @@ namespace Surveillance.Tests.Universe
         private IRedDeerMarketExchangeFormatRepository _equityMarketRepository;
         private IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector _equityMarketProjector;
 
+        private IMarketOpenCloseEventManager _marketManager;
+
         [SetUp]
         public void Setup()
         {
@@ -24,26 +27,45 @@ namespace Surveillance.Tests.Universe
             _documentProjector = A.Fake<IReddeerTradeFormatToReddeerTradeFrameProjector>();
             _equityMarketRepository = A.Fake<IRedDeerMarketExchangeFormatRepository>();
             _equityMarketProjector = A.Fake<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
+            _marketManager = A.Fake<IMarketOpenCloseEventManager>();
         }
 
         [Test]
         public void Constructor_NullTradeRepository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseBuilder(null, _documentProjector, _equityMarketRepository, _equityMarketProjector));
+            Assert.Throws<ArgumentNullException>(() =>
+                new UniverseBuilder(
+                    null,
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
+                    _marketManager));
         }
 
         [Test]
         public void Constructor_NullProjector_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseBuilder(_tradeRepository, null, _equityMarketRepository, _equityMarketProjector));
+            Assert.Throws<ArgumentNullException>(() =>
+                new UniverseBuilder(
+                    _tradeRepository,
+                    null, 
+                    _equityMarketRepository,
+                    _equityMarketProjector,
+                    _marketManager));
         }
 
         [Test]
         public void Summon_DoesNot_ReturnNull()
         {
-            var builder = new UniverseBuilder(_tradeRepository, _documentProjector, _equityMarketRepository, _equityMarketProjector);
+            var builder =
+                new UniverseBuilder(
+                    _tradeRepository,
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
+                    _marketManager);
 
             var result = builder.Summon(null);
 

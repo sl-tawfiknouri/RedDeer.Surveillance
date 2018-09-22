@@ -162,7 +162,7 @@ namespace Surveillance.Rules.High_Profits
         private decimal? CalculateRealisedRevenue
             (IList<TradeOrderFrame> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
                 return 0;
             }
@@ -176,7 +176,7 @@ namespace Surveillance.Rules.High_Profits
         private int CalculateTotalPurchaseVolume(
             IList<TradeOrderFrame> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
                 return 0;
             }
@@ -190,7 +190,7 @@ namespace Surveillance.Rules.High_Profits
         private int CalculateTotalSalesVolume(
             IList<TradeOrderFrame> activeFulfilledTradeOrders)
         {
-            if (!activeFulfilledTradeOrders?.Any() ?? false)
+            if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
                 return 0;
             }

@@ -26,11 +26,10 @@ namespace Surveillance.DataLayer
             For<IRedDeerMarketExchangeFormatRepository>().Use<RedDeerMarketExchangeFormatRepository>();
             For<IReddeerTradeFormatToReddeerTradeFrameProjector>().Use<ReddeerTradeFormatToReddeerTradeFrameProjector>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
+            For<IMarketOpenCloseRepository>().Use<MarketOpenCloseRepository>();
 
             For<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>()
                 .Use<ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
-
-            For<IMarketOpenCloseRepository>().Use<MarketOpenCloseRepository>();
         }
     }
 }

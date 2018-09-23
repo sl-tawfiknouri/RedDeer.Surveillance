@@ -66,24 +66,7 @@ namespace Utilities.Network_IO.Websocket_Connections
                         continue;
                     }
 
-                    foreach (var dataPoint in item.Value)
-                    {
-                        if (dataPoint == null)
-                        {
-                            continue;
-                        }
-
-                        var success = AddWithoutFailOver(dataPoint);
-
-                        if (success)
-                        {
-                            itemsToRemove.Add(new Tuple<Type, object>(item.Key, dataPoint));
-                        }
-                        else
-                        {
-                            failedToResend = true;
-                        }
-                    }
+                    failedToResend = AttemptReSend(itemsToRemove, failedToResend, item);
                 }
 
                 foreach (var item in itemsToRemove)
@@ -94,12 +77,38 @@ namespace Utilities.Network_IO.Websocket_Connections
                 if (failedToResend)
                 {
                     var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMilliseconds(3000));
-
                     _trunk.Initiate(_domain, _port, cts.Token);
                 }
 
                 _hasFailedOverData = failedToResend;
             }
+        }
+
+        private bool AttemptReSend(
+            List<Tuple<Type, object>> itemsToRemove,
+            bool failedToResend,
+            KeyValuePair<Type, List<object>> item)
+        {
+            foreach (var dataPoint in item.Value)
+            {
+                if (dataPoint == null)
+                {
+                    continue;
+                }
+
+                var success = AddWithoutFailOver(dataPoint);
+
+                if (success)
+                {
+                    itemsToRemove.Add(new Tuple<Type, object>(item.Key, dataPoint));
+                }
+                else
+                {
+                    failedToResend = true;
+                }
+            }
+
+            return failedToResend;
         }
 
         /// <summary>
@@ -123,17 +132,24 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 if (sendToFailOver)
                 {
-                    _failOver.Store(value);
-
-                    if (!_hasFailedOverData)
-                    {
-                        _hasFailedOverData = true;
-                        InitiateFailOverMonitorProcess();
-                    }
+                    _SendToFailOver(value);
                 }
 
                 return sendToFailOver;
             }
+        }
+
+        private void _SendToFailOver<T>(T value)
+        {
+            _failOver.Store(value);
+
+            if (_hasFailedOverData)
+            {
+                return;
+            }
+
+            _hasFailedOverData = true;
+            InitiateFailOverMonitorProcess();
         }
 
         private bool AddWithoutFailOver<T>(T value)

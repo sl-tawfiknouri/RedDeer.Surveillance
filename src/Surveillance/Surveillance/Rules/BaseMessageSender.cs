@@ -77,7 +77,8 @@ namespace Surveillance.Rules
                 ReportedOn = DateTime.Now,
                 Venue = venue,
                 StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.Now),
-                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now)
+                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now),
+                AssetType = ruleBreach.Security.Cfi
             };
         }
 

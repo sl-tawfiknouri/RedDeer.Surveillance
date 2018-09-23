@@ -22,7 +22,7 @@ namespace Surveillance.Rules.Cancelled_Orders
             ICancelledOrderRuleParameters parameters,
             ICancelledOrderRuleCachedMessageSender cachedMessageSender,
             ILogger<CancelledOrderRule> logger)
-            : base(parameters?.WindowSize ?? TimeSpan.FromMinutes(60), Domain.Scheduling.Rules.CancelledOrders, Versioner.Version(2, 0), "Cancelled Order Rule(2)", logger)
+            : base(parameters?.WindowSize ?? TimeSpan.FromMinutes(60), Domain.Scheduling.Rules.CancelledOrders, Versioner.Version(2, 0), "Cancelled Order Rule", logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));

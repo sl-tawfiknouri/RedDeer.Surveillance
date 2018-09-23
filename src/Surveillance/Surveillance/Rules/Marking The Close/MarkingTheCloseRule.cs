@@ -26,7 +26,7 @@ namespace Surveillance.Rules.Marking_The_Close
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.MarkingTheClose,
-                "V1.0",
+                Versioner.Version(1, 0),
                 "Marking The Close",
                 logger)
         {

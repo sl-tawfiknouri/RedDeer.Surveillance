@@ -30,7 +30,7 @@ namespace Surveillance.Rules.High_Profits
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
                 Domain.Scheduling.Rules.HighProfits,
-                "V1.0",
+                Versioner.Version(1, 0),
                 "High Profit Rule",
                 logger)
         {

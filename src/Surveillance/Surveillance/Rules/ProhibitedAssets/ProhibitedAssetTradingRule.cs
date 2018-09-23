@@ -33,7 +33,7 @@ namespace Surveillance.Rules.ProhibitedAssets
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.ProhibitedAssets;
-        public string Version { get; } = "V1.0";
+        public string Version { get; } = Versioner.Version(1, 0);
 
         public void OnCompleted()
         {

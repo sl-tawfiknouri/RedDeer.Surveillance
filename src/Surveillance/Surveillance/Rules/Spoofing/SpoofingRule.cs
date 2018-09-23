@@ -35,7 +35,7 @@ namespace Surveillance.Rules.Spoofing
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.Spoofing,
-                "V1.0",
+                Versioner.Version(1, 0),
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

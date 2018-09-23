@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using WebSocket4Net;
+// ReSharper disable UnusedMember.Global
 
 namespace Utilities.Network_IO.Websocket_Connections.Interfaces
 {

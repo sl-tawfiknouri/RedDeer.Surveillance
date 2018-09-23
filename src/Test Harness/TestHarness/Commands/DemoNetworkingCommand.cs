@@ -14,8 +14,6 @@ namespace TestHarness.Commands
         private IOrderDataGenerator _tradingProcess;
         private INetworkManager _networkManager;
 
-        private object _lock = new object();
-
         public DemoNetworkingCommand(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? throw new ArgumentNullException(nameof(appFactory));

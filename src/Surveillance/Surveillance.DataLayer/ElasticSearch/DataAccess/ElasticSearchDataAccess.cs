@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nest;
@@ -195,18 +194,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
         }
 
         public void HandleResponseErrors(IResponse response)
-        {
-#if DEBUG
-
-            var requestJson = response.ApiCall?.RequestBodyInBytes != null ?
-                Encoding.UTF8.GetString(response.ApiCall.RequestBodyInBytes) :
-                null;
-
-            var responseJson = response.ApiCall?.ResponseBodyInBytes != null ?
-                Encoding.UTF8.GetString(response.ApiCall.ResponseBodyInBytes) :
-                null;
-#endif
-
+        { 
             var error = response.ServerError?.Error;
 
             if (error != null)

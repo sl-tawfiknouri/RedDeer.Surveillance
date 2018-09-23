@@ -1,7 +1,6 @@
 ﻿using System;
 using NLog;
 using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
 using Domain.Equity;
@@ -15,7 +14,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// Fairly basic spoofing process
     /// for generating very vanilla spoofing type trades
     /// </summary>
-    public class TradingHeartbeatSpoofingProcess : BaseTradingProcess, IOrderDataGenerator
+    public class TradingHeartbeatSpoofingProcess : BaseTradingProcess
     {
         private ExchangeFrame _lastFrame;
         private readonly IPulsatingHeartbeat _heartbeat;

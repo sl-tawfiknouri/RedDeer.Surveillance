@@ -1,4 +1,5 @@
-﻿namespace TestHarness.Factory.TradingFactory.Interfaces
+﻿// ReSharper disable UnusedMember.Global
+namespace TestHarness.Factory.TradingFactory.Interfaces
 {
     public interface ITradingFactoryVolumeStrategySelector
     {

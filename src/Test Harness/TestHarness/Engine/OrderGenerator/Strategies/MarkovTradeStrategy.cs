@@ -26,6 +26,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _tradeVolumeStratey = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
         }
 
+        // ReSharper disable once UnusedMember.Global
         public MarkovTradeStrategy(
             ILogger logger,
             double? limitStandardDeviation,

@@ -1,8 +1,9 @@
-﻿namespace Relay.Disk_IO.Interfaces
+﻿using System;
+
+namespace Relay.Disk_IO.Interfaces
 {
-    public interface IBaseUploadFileMonitor
+    public interface IBaseUploadFileMonitor : IDisposable
     {
         void Initiate();
-        void Dispose();
     }
 }

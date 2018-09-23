@@ -1,8 +1,9 @@
-﻿namespace Relay.Disk_IO.EquityFile.Interfaces
+﻿using System;
+
+namespace Relay.Disk_IO.EquityFile.Interfaces
 {
-    public interface IUploadEquityFileMonitor
+    public interface IUploadEquityFileMonitor : IDisposable
     {
         void Initiate();
-        void Dispose();
     }
 }

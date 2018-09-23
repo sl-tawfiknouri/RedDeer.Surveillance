@@ -1,6 +1,7 @@
 ﻿using Domain.Trades.Orders;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Trades.Interfaces;
+// ReSharper disable UnusedMember.Global
 
 namespace Surveillance.Rules.Spoofing.Interfaces
 {

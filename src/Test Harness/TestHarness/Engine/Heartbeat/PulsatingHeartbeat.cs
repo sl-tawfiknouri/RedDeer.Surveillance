@@ -8,9 +8,6 @@ namespace TestHarness.Engine.Heartbeat
         private ElapsedEventHandler _handler;
         private readonly object _lock = new object();
 
-        public PulsatingHeartbeat()
-        { }
-
         public void Pulse()
         {
             lock (_lock)

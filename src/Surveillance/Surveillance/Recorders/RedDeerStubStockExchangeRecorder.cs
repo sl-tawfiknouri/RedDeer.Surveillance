@@ -4,6 +4,7 @@ using Domain.Equity.Frames;
 
 namespace Surveillance.Recorders
 {
+    // ReSharper disable once UnusedMember.Global
     public class RedDeerStubStockExchangeRecorder : IRedDeerStockExchangeRecorder
     {
         public void OnCompleted()

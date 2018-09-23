@@ -7,6 +7,5 @@ namespace Surveillance.DataLayer.Projectors.Interfaces
     public interface IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector
     {
         IReadOnlyCollection<ExchangeFrame> Project(IReadOnlyCollection<ReddeerMarketDocument> documents);
-        ExchangeFrame Project(ReddeerMarketDocument document);
     }
 }

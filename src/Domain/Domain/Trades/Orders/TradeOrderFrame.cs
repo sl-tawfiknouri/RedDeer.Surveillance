@@ -95,6 +95,7 @@ namespace Domain.Trades.Orders
         /// <summary>
         /// The currency for the executed price
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public string OrderCurrency { get; set; }
 
         /// <summary>

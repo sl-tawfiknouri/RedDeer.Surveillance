@@ -6,6 +6,7 @@ using Nest;
 using Surveillance.ElasticSearchDtos.Market;
 using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.ElasticSearchDtos.Trades;
+// ReSharper disable UnusedMember.Global
 
 namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
 {

@@ -57,7 +57,7 @@ namespace Relay
             For<IMessageWriter>().Use<LoggingMessageWriter>();
 
             For<INetworkTrunk>().Use<NetworkTrunk>();
-            For<INetworkFailover>().Use<NetworkFailoverLocalMemory>();
+            For<INetworkFailOver>().Use<NetworkFailOverLocalMemory>();
             For<INetworkSwitch>().Use<NetworkSwitch>();
 
             For<INetworkExchange>().Use<NetworkExchange>();

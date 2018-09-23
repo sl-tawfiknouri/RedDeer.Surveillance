@@ -10,8 +10,8 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Store_StoresValue_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
-            var obj = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
+            var obj = new NetworkFailOverLocalMemory();
 
             Assert.DoesNotThrow(() => failOver.Store(obj));
         }
@@ -19,11 +19,11 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Store_StoresMultipleValueOfSameType_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
-            var obj1 = new NetworkFailoverLocalMemory();
-            var obj2 = new NetworkFailoverLocalMemory();
-            var obj3 = new NetworkFailoverLocalMemory();
-            var obj4 = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
+            var obj1 = new NetworkFailOverLocalMemory();
+            var obj2 = new NetworkFailOverLocalMemory();
+            var obj3 = new NetworkFailOverLocalMemory();
+            var obj4 = new NetworkFailOverLocalMemory();
 
             Assert.DoesNotThrow(() => failOver.Store(obj1));
             Assert.DoesNotThrow(() => failOver.Store(obj2));
@@ -34,9 +34,9 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Store_StoresMultipleValueOfDifferentType_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
-            var obj0 = new NetworkFailoverLocalMemory();
-            var obj1 = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
+            var obj0 = new NetworkFailOverLocalMemory();
+            var obj1 = new NetworkFailOverLocalMemory();
             var obj2 = "test";
             var obj3 = 1;
             var obj4 = 12m;
@@ -53,7 +53,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Retrieve_RetrievesNoValues_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             var result = failOver.Retrieve();
 
@@ -64,15 +64,15 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Retrieve_RetrievesSingularValues_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
-            var input = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
+            var input = new NetworkFailOverLocalMemory();
 
             failOver.Store(input);
             var result = failOver.Retrieve();
 
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
-            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailoverLocalMemory));
+            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailOverLocalMemory));
             Assert.IsTrue(result.ToList().First().Value.Contains(input));
             Assert.AreEqual(result.ToList().First().Value.Count, 1);
         }
@@ -80,11 +80,11 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Retrieve_RetrievesMultipleValuesOfSingularType_Uneventfully()
         {
-            var failOver = new NetworkFailoverLocalMemory();
-            var input1 = new NetworkFailoverLocalMemory();
-            var input2 = new NetworkFailoverLocalMemory();
-            var input3 = new NetworkFailoverLocalMemory();
-            var input4 = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
+            var input1 = new NetworkFailOverLocalMemory();
+            var input2 = new NetworkFailOverLocalMemory();
+            var input3 = new NetworkFailOverLocalMemory();
+            var input4 = new NetworkFailOverLocalMemory();
 
             failOver.Store(input1);
             failOver.Store(input2);
@@ -95,7 +95,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
             Assert.AreEqual(result.ToList().Count, 1);
-            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailoverLocalMemory));
+            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailOverLocalMemory));
             Assert.IsTrue(result.ToList().First().Value.Contains(input1));
             Assert.IsTrue(result.ToList().First().Value.Contains(input2));
             Assert.IsTrue(result.ToList().First().Value.Contains(input3));
@@ -106,10 +106,10 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Retrieve_RetrievesMultipleValuesOfMultipleTypes_Uneventfully()
         {
-            var failover = new NetworkFailoverLocalMemory();
+            var failover = new NetworkFailOverLocalMemory();
 
-            var input1 = new NetworkFailoverLocalMemory();
-            var input2 = new NetworkFailoverLocalMemory();
+            var input1 = new NetworkFailOverLocalMemory();
+            var input2 = new NetworkFailOverLocalMemory();
             var input3 = "test-1";
             var input4 = "test-2";
             var input5 = new NetworkFailOverLocalMemoryTests();
@@ -126,7 +126,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
             Assert.AreEqual(result.ToList().Count, 3);
-            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailoverLocalMemory));
+            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailOverLocalMemory));
             Assert.AreEqual(result.ToList().Skip(1).First().Key, typeof(string));
             Assert.AreEqual(result.ToList().Skip(2).First().Key, typeof(NetworkFailOverLocalMemoryTests));
             Assert.IsTrue(result.ToList().First().Value.Contains(input1));
@@ -144,10 +144,10 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void RetrieveAndRemove_RetrievesMultipleValuesOfMultipleTypes_Uneventfully()
         {
-            var failover = new NetworkFailoverLocalMemory();
+            var failover = new NetworkFailOverLocalMemory();
 
-            var input1 = new NetworkFailoverLocalMemory();
-            var input2 = new NetworkFailoverLocalMemory();
+            var input1 = new NetworkFailOverLocalMemory();
+            var input2 = new NetworkFailOverLocalMemory();
             var input3 = "test-1";
             var input4 = "test-2";
             var input5 = new NetworkFailOverLocalMemoryTests();
@@ -164,7 +164,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
             Assert.AreEqual(result.ToList().Count, 3);
-            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailoverLocalMemory));
+            Assert.AreEqual(result.ToList().First().Key, typeof(NetworkFailOverLocalMemory));
             Assert.AreEqual(result.ToList().Skip(1).First().Key, typeof(string));
             Assert.AreEqual(result.ToList().Skip(2).First().Key, typeof(NetworkFailOverLocalMemoryTests));
             Assert.IsTrue(result.ToList().First().Value.Contains(input1));
@@ -183,7 +183,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             Assert.IsNotNull(result2);
             Assert.IsEmpty(result2);
 
-            var input7 = new NetworkFailoverLocalMemory();
+            var input7 = new NetworkFailOverLocalMemory();
 
             Assert.DoesNotThrow(() => failover.Store(input7));
         }
@@ -191,7 +191,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void HasData_ReturnsFalse_WhenNoData()
         {
-            var failOver = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             Assert.IsFalse(failOver.HasData());
         }
@@ -199,7 +199,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void HasData_ReturnsTrue_WhenData()
         {
-            var failOver = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             failOver.Store("hello world");
 
@@ -209,7 +209,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void HasData_ReturnsFalseThenTrueThenFalse_WhenAddingThenRemovingItem()
         {
-            var failOver = new NetworkFailoverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             Assert.IsFalse(failOver.HasData());
 

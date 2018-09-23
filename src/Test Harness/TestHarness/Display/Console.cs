@@ -14,7 +14,7 @@ namespace TestHarness.Display
         private readonly int _tradeFrameOffset = 10;
         private readonly int _tradeLimitToPrint = 10;
 
-        private long _id = 0;
+        private long _id;
 
         public Console()
         {

@@ -7,6 +7,7 @@ namespace Surveillance.Universe.MarketEvents.Interfaces
     public interface IMarketOpenCloseEventManager
     {
         IReadOnlyCollection<IUniverseEvent> AllOpenCloseEvents(DateTime start, DateTime end);
+        // ReSharper disable once UnusedMember.Global
         IReadOnlyCollection<IUniverseEvent> OpenCloseEvents(IReadOnlyCollection<string> marketIds, DateTime start, DateTime end);
     }
 }

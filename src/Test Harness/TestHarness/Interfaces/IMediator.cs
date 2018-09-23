@@ -1,4 +1,5 @@
-﻿namespace TestHarness.Interfaces
+﻿// ReSharper disable UnusedMember.Global
+namespace TestHarness.Interfaces
 {
     public interface IMediator
     {

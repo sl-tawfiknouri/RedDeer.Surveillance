@@ -4,12 +4,12 @@ using Utilities.Network_IO.Websocket_Connections.Interfaces;
 
 namespace Utilities.Network_IO.Websocket_Connections
 {
-    public class NetworkFailoverLocalMemory : INetworkFailover
+    public class NetworkFailOverLocalMemory : INetworkFailOver
     {
         private readonly object _lock = new object();
         private Dictionary<System.Type, List<object>> _dict;
 
-        public NetworkFailoverLocalMemory()
+        public NetworkFailOverLocalMemory()
         {
             _dict = new Dictionary<System.Type, List<object>>();
         }

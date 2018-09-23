@@ -1,4 +1,5 @@
 ﻿using TestHarness.Commands.Interfaces;
+// ReSharper disable UnusedMember.Global
 
 namespace TestHarness.Commands
 {

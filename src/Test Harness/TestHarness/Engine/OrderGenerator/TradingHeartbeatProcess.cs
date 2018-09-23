@@ -3,7 +3,6 @@ using System;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using TestHarness.Engine.Heartbeat.Interfaces;
-using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -11,7 +10,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// <summary>
     /// Equity update driven trading process
     /// </summary>
-    public class TradingHeatbeatDrivenProcess : BaseTradingProcess, IOrderDataGenerator
+    public class TradingHeatbeatDrivenProcess : BaseTradingProcess
     {
         private ExchangeFrame _lastFrame;
         private readonly IHeartbeat _heartbeat;

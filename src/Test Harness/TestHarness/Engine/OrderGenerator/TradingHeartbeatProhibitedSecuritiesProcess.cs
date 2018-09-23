@@ -4,12 +4,11 @@ using TestHarness.Engine.Heartbeat.Interfaces;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
-using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
 {
-    public class TradingHeartbeatProhibitedSecuritiesProcess : BaseTradingProcess, IOrderDataGenerator
+    public class TradingHeartbeatProhibitedSecuritiesProcess : BaseTradingProcess
     {
         private ExchangeFrame _lastFrame;
         private readonly IPulsatingHeartbeat _heartbeat;

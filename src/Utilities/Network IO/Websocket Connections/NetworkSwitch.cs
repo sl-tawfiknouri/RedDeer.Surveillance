@@ -12,7 +12,7 @@ namespace Utilities.Network_IO.Websocket_Connections
         private readonly Timer _timer;
         
         private readonly INetworkTrunk _trunk;
-        private readonly INetworkFailover _failover;
+        private readonly INetworkFailOver _failOver;
         private readonly object _lock = new object();
 
         private string _domain;
@@ -20,20 +20,20 @@ namespace Utilities.Network_IO.Websocket_Connections
 
         public bool Active { get; private set; }
 
-        public NetworkSwitch(INetworkTrunk trunk, INetworkFailover failover)
+        public NetworkSwitch(INetworkTrunk trunk, INetworkFailOver failOver)
         {
             _trunk = trunk ?? throw new ArgumentNullException(nameof(trunk));
-            _failover = failover ?? throw new ArgumentNullException(nameof(failover));
+            _failOver = failOver ?? throw new ArgumentNullException(nameof(failOver));
             _timer = new Timer();
         }
 
         public NetworkSwitch(
             INetworkTrunk trunk,
-            INetworkFailover failover,
+            INetworkFailOver failOver,
             int failoverScanFrequencyInMilliseconds)
         {
             _trunk = trunk ?? throw new ArgumentNullException(nameof(trunk));
-            _failover = failover ?? throw new ArgumentNullException(nameof(failover));
+            _failOver = failOver ?? throw new ArgumentNullException(nameof(failOver));
             _failoverScanFrequencyMilliseconds = failoverScanFrequencyInMilliseconds;
 
             _timer = new Timer();
@@ -59,7 +59,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 var failedToResend = false;
 
-                foreach (var item in _failover.Retrieve())
+                foreach (var item in _failOver.Retrieve())
                 {
                     if (item.Value == null)
                     {
@@ -88,7 +88,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 foreach (var item in itemsToRemove)
                 {
-                    _failover.RemoveItem(item.Item1, item.Item2);
+                    _failOver.RemoveItem(item.Item1, item.Item2);
                 }
 
                 if (failedToResend)
@@ -123,7 +123,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 if (sendToFailover)
                 {
-                    _failover.Store(value);
+                    _failOver.Store(value);
 
                     if (!_hasFailedOverData)
                     {

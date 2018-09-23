@@ -61,11 +61,6 @@ namespace Surveillance.Network_IO
             _reddeerTradeFormatStream?.Add(formattedMessage);
         }
 
-        private void FixFormat(IDuplexedMessage message)
-        {
-
-        }
-
         private void ReddeerStockFormat(IDuplexedMessage message)
         {
             var serialiserSettings = new JsonSerializerSettings()

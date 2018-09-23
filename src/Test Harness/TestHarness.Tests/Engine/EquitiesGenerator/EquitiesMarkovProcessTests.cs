@@ -35,7 +35,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_ThrowsExceptionFor_NullStream()
         {
             var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, _strategy, _heartbeat, _logger);
-            var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
 
             Assert.Throws<ArgumentNullException>(() => randomWalk.InitiateWalk(null));
         }
@@ -45,7 +44,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _heartbeat, _logger);
-            var freq = new Heartbeat(TimeSpan.FromDays(1));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 10);
             stream.Subscribe(observer);
@@ -65,7 +63,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _heartbeat, _logger);
-            var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);
             stream.Subscribe(observer);
@@ -92,7 +89,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _heartbeat, _logger);
-            var freq = new Heartbeat(TimeSpan.FromMilliseconds(500));
             var stream = new StockExchangeStream(new UnsubscriberFactory<ExchangeFrame>());
             var observer = new RecordingObserver<ExchangeFrame>(_logger, 5);
             stream.Subscribe(observer);

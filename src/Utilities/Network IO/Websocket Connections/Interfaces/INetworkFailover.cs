@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+// ReSharper disable UnusedMember.Global
 
 namespace Utilities.Network_IO.Websocket_Connections.Interfaces
 {
-    public interface INetworkFailover
+    public interface INetworkFailOver
     {
         bool HasData();
         void Store<T>(T value);

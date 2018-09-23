@@ -68,6 +68,7 @@ namespace TestHarness.Network_IO.Subscribers
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
         public abstract void OnNext(T value);
     }
 }

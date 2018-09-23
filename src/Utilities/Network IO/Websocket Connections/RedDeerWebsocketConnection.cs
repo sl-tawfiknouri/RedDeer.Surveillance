@@ -8,6 +8,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class RedDeerWebsocketConnection : WebSocket, IConnectionWebsocket
     {
+        // ReSharper disable once UnusedMember.Global
         public RedDeerWebsocketConnection(
             string uri,
             string subProtocol,

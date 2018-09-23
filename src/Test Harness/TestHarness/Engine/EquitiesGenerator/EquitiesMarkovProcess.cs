@@ -11,7 +11,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 {
     /// <summary>
     /// Apply a random walk to securities in your stream
-    /// Not multithread safe, only use with transitory life style
+    /// Not multi thread safe, only use with transitory life style
     /// </summary>
     public class EquitiesMarkovProcess : IEquityDataGenerator
     {

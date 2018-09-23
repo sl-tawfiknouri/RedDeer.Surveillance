@@ -66,7 +66,9 @@ namespace TestHarness.Engine.OrderGenerator
                         (OrderType.Market,
                         _lastFrame.Exchange,
                         new Security(
+                            // ReSharper disable StringLiteralTypo
                             new SecurityIdentifiers("Lehman Bros", "LB12345", "LB123456789X", "LBro", "123456LB", "LEHM"),
+                            // ReSharper restore StringLiteralTypo
                             "Lehman Bros",
                             "CFI"),
                         null,

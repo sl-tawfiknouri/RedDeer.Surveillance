@@ -56,12 +56,12 @@ namespace Relay.Managers
             var tradeProcessor = new TradeProcessor<TradeOrderFrame>(_tpLogger, tradeProcessorOrderStream);
             tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
 
-            // hook the relay subscriber to begin comms with the outgoing network stream
+            // hook the relay subscriber to begin communications with the outgoing network stream
             _tradeRelaySubscriber.Initiate(
                 _networkConfiguration.SurveillanceServiceTradeDomain,
                 _networkConfiguration.SurveillanceServiceTradePort);
 
-            // hook the trade processor to receieve the incoming network stream
+            // hook the trade processor to receive the incoming network stream
             _tradeOrderStream.Subscribe(tradeProcessor);
 
             // begin hosting connection for downstream processes (i.e. surveillance service)

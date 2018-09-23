@@ -14,11 +14,7 @@ namespace Surveillance.Rules.ProhibitedAssets
             ProhibitedEquities = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
             {
                 "Lehman Bros",
-                "Northern Rock",
                 "Bear Stearns",
-                "HBOS",
-                "Lloyds TSB",
-                "RBS"
             };
         }
 

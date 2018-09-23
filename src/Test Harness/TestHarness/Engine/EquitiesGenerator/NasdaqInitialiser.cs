@@ -64,7 +64,6 @@ namespace TestHarness.Engine.EquitiesGenerator
             public string Buy { get; set; }
             public string Sell { get; set; }
         }
-        // ReSharper Restore All
 
         private static readonly string InitialNasdaqDataJson = @"
         [
@@ -15615,5 +15614,6 @@ namespace TestHarness.Engine.EquitiesGenerator
           }
         ]
                 ";
+        // ReSharper Restore All
     }
 }

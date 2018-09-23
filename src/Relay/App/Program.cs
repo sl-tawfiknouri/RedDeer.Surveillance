@@ -22,9 +22,9 @@ namespace RedDeer.Relay.Relay.App
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private const string RunAsServiceFlag = "--run-as-service";
-        private const string RunAsSystemdServiceFlag = "--systemd-service";
+        private const string RunAsSystemServiceFlag = "--systemd-service";
         private const string RegisterServiceFlag = "--register-service";
-        private const string UnregisterServiceFlag = "--unregister-service";
+        private const string UnRegisterServiceFlag = "--unregister-service";
 
         internal const string ServiceName = "RedDeer.RelayService";
         private const string ServiceDisplayName = "RedDeer Relay Service";
@@ -58,7 +58,7 @@ namespace RedDeer.Relay.Relay.App
             catch (Exception ex)
             {
                 Logger.Error(ex);
-                Console.WriteLine($"An error ocurred: {ex.Message}");
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
 
@@ -78,9 +78,9 @@ namespace RedDeer.Relay.Relay.App
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
-            else if (args.Contains(RunAsSystemdServiceFlag))
+            else if (args.Contains(RunAsSystemServiceFlag))
             {
-                Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemdServiceFlag}).");
+                Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
             else if (args.Contains(RegisterServiceFlag))
@@ -88,10 +88,10 @@ namespace RedDeer.Relay.Relay.App
                 Logger.Info($"Register Service Flag Found ({RegisterServiceFlag}).");
                 RegisterService();
             }
-            else if (args.Contains(UnregisterServiceFlag))
+            else if (args.Contains(UnRegisterServiceFlag))
             {
-                Logger.Info($"Unregister Service Flag Found ({UnregisterServiceFlag}).");
-                UnregisterService();
+                Logger.Info($"Unregister Service Flag Found ({UnRegisterServiceFlag}).");
+                UnRegisterService();
             }           
             else
             {
@@ -169,7 +169,7 @@ namespace RedDeer.Relay.Relay.App
             Console.WriteLine($@"Successfully registered and started service ""{ServiceDisplayName}"" (""{ServiceDescription}"")");
         }
 
-        private static void UnregisterService()
+        private static void UnRegisterService()
         {
             new Win32ServiceManager()
                 .DeleteService(ServiceName);

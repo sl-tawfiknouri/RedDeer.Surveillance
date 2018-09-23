@@ -106,7 +106,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Retrieve_RetrievesMultipleValuesOfMultipleTypes_Uneventfully()
         {
-            var failover = new NetworkFailOverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             var input1 = new NetworkFailOverLocalMemory();
             var input2 = new NetworkFailOverLocalMemory();
@@ -115,13 +115,13 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             var input5 = new NetworkFailOverLocalMemoryTests();
             var input6 = new NetworkFailOverLocalMemoryTests();
 
-            failover.Store(input1);
-            failover.Store(input2);
-            failover.Store(input3);
-            failover.Store(input4);
-            failover.Store(input5);
-            failover.Store(input6);
-            var result = failover.Retrieve();
+            failOver.Store(input1);
+            failOver.Store(input2);
+            failOver.Store(input3);
+            failOver.Store(input4);
+            failOver.Store(input5);
+            failOver.Store(input6);
+            var result = failOver.Retrieve();
 
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
@@ -144,7 +144,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void RetrieveAndRemove_RetrievesMultipleValuesOfMultipleTypes_Uneventfully()
         {
-            var failover = new NetworkFailOverLocalMemory();
+            var failOver = new NetworkFailOverLocalMemory();
 
             var input1 = new NetworkFailOverLocalMemory();
             var input2 = new NetworkFailOverLocalMemory();
@@ -153,13 +153,13 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             var input5 = new NetworkFailOverLocalMemoryTests();
             var input6 = new NetworkFailOverLocalMemoryTests();
 
-            failover.Store(input1);
-            failover.Store(input2);
-            failover.Store(input3);
-            failover.Store(input4);
-            failover.Store(input5);
-            failover.Store(input6);
-            var result = failover.RetrieveAndRemove();
+            failOver.Store(input1);
+            failOver.Store(input2);
+            failOver.Store(input3);
+            failOver.Store(input4);
+            failOver.Store(input5);
+            failOver.Store(input6);
+            var result = failOver.RetrieveAndRemove();
 
             Assert.IsNotNull(result);
             Assert.IsNotEmpty(result);
@@ -178,14 +178,14 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
             Assert.AreEqual(result.ToList().Skip(1).First().Value.Count, 2);
             Assert.AreEqual(result.ToList().Skip(2).First().Value.Count, 2);
 
-            var result2 = failover.Retrieve();
+            var result2 = failOver.Retrieve();
 
             Assert.IsNotNull(result2);
             Assert.IsEmpty(result2);
 
             var input7 = new NetworkFailOverLocalMemory();
 
-            Assert.DoesNotThrow(() => failover.Store(input7));
+            Assert.DoesNotThrow(() => failOver.Store(input7));
         }
 
         [Test]

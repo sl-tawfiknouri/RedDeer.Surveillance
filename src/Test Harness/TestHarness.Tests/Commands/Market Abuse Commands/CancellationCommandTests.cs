@@ -49,6 +49,7 @@ namespace TestHarness.Tests.Commands.Market_Abuse_Commands
         {
             var command = new CancellationCommand(_appFactory);
 
+            // ReSharper disable once StringLiteralTypo
             var result = command.Handles("RuN CanCelleD tRaDe");
 
             Assert.IsTrue(result);

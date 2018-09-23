@@ -2,6 +2,7 @@
 using System.IO;
 using NUnit.Framework;
 using Utilities.Disk_IO;
+// ReSharper disable StringLiteralTypo
 
 namespace Utilities.Tests.Disk_IO
 {

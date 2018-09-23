@@ -45,7 +45,7 @@ namespace Surveillance.Trades
             lock (_lock)
             {
                 var initialActiveStackCount = _activeStack.Count;
-                var counterpartyStack = new Stack<TradeOrderFrame>();
+                var counterPartyStack = new Stack<TradeOrderFrame>();
 
                 while (initialActiveStackCount > 0)
                 {
@@ -56,20 +56,20 @@ namespace Surveillance.Trades
                     }
                     else
                     {
-                        counterpartyStack.Push(poppedItem);
+                        counterPartyStack.Push(poppedItem);
                     }
 
                     initialActiveStackCount--;
                 }
 
-                var counterpartyStackCount = counterpartyStack.Count;
+                var counterPartyStackCount = counterPartyStack.Count;
 
-                while (counterpartyStackCount > 0)
+                while (counterPartyStackCount > 0)
                 {
-                    var replayItem = counterpartyStack.Pop();
+                    var replayItem = counterPartyStack.Pop();
                     _activeStack.Push(replayItem);
 
-                    counterpartyStackCount--;
+                    counterPartyStackCount--;
                 }
             }
         }

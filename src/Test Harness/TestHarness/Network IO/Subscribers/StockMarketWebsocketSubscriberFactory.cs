@@ -27,8 +27,8 @@ namespace TestHarness.Network_IO.Subscribers
         public IStockMarketWebsocketSubscriber Build()
         {
             var networkTrunk = new NetworkTrunk(_websocketFactory, _console);
-            var networkFailover = new NetworkFailOverLocalMemory();
-            var networkSwitch = new NetworkSwitch(networkTrunk, networkFailover);
+            var networkFailOver = new NetworkFailOverLocalMemory();
+            var networkSwitch = new NetworkSwitch(networkTrunk, networkFailOver);
             var networkDuplexer = new DuplexMessageFactory();
 
             return new StockMarketWebsocketSubscriber(networkSwitch, networkDuplexer, _logger);

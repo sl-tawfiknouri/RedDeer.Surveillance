@@ -13,7 +13,7 @@ namespace TestHarness.Commands
     public class CommandManager : ICommandManager
     {
         private readonly IReadOnlyCollection<ICommand> _commands;
-        private readonly ICommand _unrecognisedCommand;
+        private readonly ICommand _unRecognisedCommand;
         private readonly IConsole _console;
         private readonly ILogger _logger;
 
@@ -23,7 +23,7 @@ namespace TestHarness.Commands
             ILogger logger,
             IConsole console)
         {
-            _unrecognisedCommand = new UnrecognisedCommand();
+            _unRecognisedCommand = new UnRecognisedCommand();
             _console = console ?? throw new ArgumentNullException(nameof(console));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -47,7 +47,7 @@ namespace TestHarness.Commands
                 new DemoMarketEquityFileCommand(appFactory),
                 new DemoMarketEquityFileNetworkingCommand(appFactory),
                 new CancellationCommand(appFactory),
-               _unrecognisedCommand,
+               _unRecognisedCommand,
             };
         }
 
@@ -69,7 +69,7 @@ namespace TestHarness.Commands
             
             if (!executableCommands.Any())
             {
-                _unrecognisedCommand.Run(command);
+                _unRecognisedCommand.Run(command);
             }
         }
     }

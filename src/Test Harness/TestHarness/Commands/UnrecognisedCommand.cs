@@ -2,7 +2,7 @@
 
 namespace TestHarness.Commands
 {
-    public class UnrecognisedCommand : ICommand
+    public class UnRecognisedCommand : ICommand
     {
         public bool Handles(string command)
         {

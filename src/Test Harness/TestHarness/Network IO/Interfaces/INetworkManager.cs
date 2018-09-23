@@ -11,8 +11,8 @@ namespace TestHarness.Network_IO.Interfaces
         bool InitiateAllNetworkConnections();
         void TerminateAllNetworkConnections();
         bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream);
-        void DetatchTradeOrderSubscriber();
+        void DetachTradeOrderSubscriber();
         bool AttachStockExchangeSubscriberToStream(IStockExchangeStream exchangeStream);
-        void DetatchStockExchangeSubscriber();
+        void DetachStockExchangeSubscriber();
     }
 }

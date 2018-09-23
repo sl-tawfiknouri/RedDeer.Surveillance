@@ -73,9 +73,9 @@ namespace Domain.Tests.Trades.Streams
             var obs2 = A.Fake<IObserver<TradeOrderFrame>>();
             var exch = new StockExchange(new MarketId("id"), "LSE");
             var orderDates = DateTime.Now;
-            var traderId = "Trader Joe";
-            var partyBrokerId = "Broker-1";
-            var counterpartyBrokerId = "Broker-2";
+            const string traderId = "Trader Joe";
+            const string partyBrokerId = "Broker-1";
+            const string counterPartyBrokerId = "Broker-2";
 
             var order1 = new TradeOrderFrame(
                 OrderType.Limit,
@@ -93,7 +93,7 @@ namespace Domain.Tests.Trades.Streams
                 traderId,
                 string.Empty,
                 partyBrokerId,
-                counterpartyBrokerId);
+                counterPartyBrokerId);
 
             var order2 = new TradeOrderFrame(
                 OrderType.Market,
@@ -111,7 +111,7 @@ namespace Domain.Tests.Trades.Streams
                 traderId,
                 string.Empty,
                 partyBrokerId,
-                counterpartyBrokerId);
+                counterPartyBrokerId);
 
             var order3 = new TradeOrderFrame(
                 OrderType.Limit,
@@ -129,7 +129,7 @@ namespace Domain.Tests.Trades.Streams
                 traderId,
                 string.Empty,
                 partyBrokerId,
-                counterpartyBrokerId);
+                counterPartyBrokerId);
 
 
             stream.Subscribe(obs1);

@@ -59,6 +59,7 @@ namespace TestHarness.Tests.Commands
         {
             var command = new InitiateCommand(_programState, _commandManager);
 
+            // ReSharper disable once StringLiteralTypo
             var result = command.Handles("ajrah");
 
             Assert.IsFalse(result);

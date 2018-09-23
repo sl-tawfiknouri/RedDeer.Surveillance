@@ -85,7 +85,7 @@ namespace TestHarness.Engine.OrderGenerator
                 switch (cancellationOrderTactic)
                 {
                     case 0:
-                        // cannot be hit due to discrete uniform spread as we're not currently coding for detecting it on the surv service
+                        // cannot be hit due to discrete uniform spread as we're not currently coding for detecting it on the surveillance service
                         orders = SingularCancelledOrder(cancellationSecurity, _lastFrame.Exchange);
                         break;
                     case 1:

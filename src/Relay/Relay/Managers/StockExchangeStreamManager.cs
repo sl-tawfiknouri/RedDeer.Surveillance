@@ -53,7 +53,7 @@ namespace Relay.Managers
             var equityProcessor = new EquityProcessor(_epLogger, stockExchangeStream);
             stockExchangeStream.Subscribe(_equityRelaySubscriber);
 
-            //Initiate communication with downstream process (surv service)
+            //Initiate communication with downstream process (surveillance service)
             _equityRelaySubscriber.Initiate(
                 _networkConfiguration.SurveillanceServiceEquityDomain,
                 _networkConfiguration.SurveillanceServiceEquityPort);

@@ -4,14 +4,14 @@ using TestHarness.Commands;
 namespace TestHarness.Tests.Commands
 {
     [TestFixture]
-    public class UnrecognisedCommandTests
+    public class UnRecognisedCommandTests
     {
         [Test]
         public void Handles_Null_Command()
         {
-            var unrecognisedCommand = new UnrecognisedCommand();
+            var unRecognisedCommand = new UnRecognisedCommand();
 
-            var result = unrecognisedCommand.Handles(null);
+            var result = unRecognisedCommand.Handles(null);
 
             Assert.IsTrue(result);
         }
@@ -19,9 +19,9 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_Empty_Command()
         {
-            var unrecognisedCommand = new UnrecognisedCommand();
+            var unRecognisedCommand = new UnRecognisedCommand();
 
-            var result = unrecognisedCommand.Handles(string.Empty);
+            var result = unRecognisedCommand.Handles(string.Empty);
 
             Assert.IsTrue(result);
         }
@@ -29,9 +29,9 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Handles_DoesNotHandle_NonEmptyCommand()
         {
-            var unrecognisedCommand = new UnrecognisedCommand();
+            var unRecognisedCommand = new UnRecognisedCommand();
 
-            var result = unrecognisedCommand.Handles("a");
+            var result = unRecognisedCommand.Handles("a");
 
             Assert.IsFalse(result);
         }

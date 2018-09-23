@@ -123,9 +123,9 @@ namespace TestHarness.Network_IO
         }
 
         /// <summary>
-        /// Detatch the trade order stream by calling the unsubscriber for the websocket connections
+        /// Detach the trade order stream by calling the unsubscriber for the websocket connections
         /// </summary>
-        public void DetatchTradeOrderSubscriber()
+        public void DetachTradeOrderSubscriber()
         {
             lock (_stateTransition)
             {
@@ -165,9 +165,9 @@ namespace TestHarness.Network_IO
         }
 
         /// <summary>
-        /// Detatch the stock exchange stream by calling the unsubscriber for the websocket connections
+        /// Detach the stock exchange stream by calling the unsubscriber for the websocket connections
         /// </summary>
-        public void DetatchStockExchangeSubscriber()
+        public void DetachStockExchangeSubscriber()
         {
             lock (_stateTransition)
             {

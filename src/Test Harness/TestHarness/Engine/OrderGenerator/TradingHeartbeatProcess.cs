@@ -10,7 +10,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// <summary>
     /// Equity update driven trading process
     /// </summary>
-    public class TradingHeatbeatDrivenProcess : BaseTradingProcess
+    public class TradingHeartBeatDrivenProcess : BaseTradingProcess
     {
         private ExchangeFrame _lastFrame;
         private readonly IHeartbeat _heartbeat;
@@ -18,7 +18,7 @@ namespace TestHarness.Engine.OrderGenerator
         private volatile bool _initiated;
         private readonly object _lock = new object();
 
-        public TradingHeatbeatDrivenProcess(
+        public TradingHeartBeatDrivenProcess(
             ILogger logger,
             ITradeStrategy<TradeOrderFrame> orderStrategy,
             IHeartbeat heartbeat) 

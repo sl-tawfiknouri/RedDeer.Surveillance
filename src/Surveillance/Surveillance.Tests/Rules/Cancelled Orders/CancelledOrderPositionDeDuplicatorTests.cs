@@ -229,7 +229,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
         [Test]
         [Parallelizable]
-        public void Send_ConsidersTwoNonIntersectingPositions_InTheSameSecurityAsSeparateMessages_ResendsBothWithDelay()
+        public void Send_ConsidersTwoNonIntersectingPositions_InTheSameSecurityAsSeparateMessages_ReSendsBothWithDelay()
         {
             var messageSender = A.Fake<ICancelledOrderMessageSender>();
             var logger = A.Fake<ILogger>();

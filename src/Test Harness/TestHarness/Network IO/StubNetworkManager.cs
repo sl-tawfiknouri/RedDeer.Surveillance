@@ -28,14 +28,14 @@ namespace TestHarness.Network_IO
             return true;
         }
 
-        public void DetatchStockExchangeSubscriber()
+        public void DetachStockExchangeSubscriber()
         {
-            _logger.Info("Stub Network Manager. Detatch stock exchange subscriber called.");
+            _logger.Info("Stub Network Manager. Detach stock exchange subscriber called.");
         }
 
-        public void DetatchTradeOrderSubscriber()
+        public void DetachTradeOrderSubscriber()
         {
-            _logger.Info("Stub Network Manager. Detatch trade order subscriber called.");
+            _logger.Info("Stub Network Manager. Detach trade order subscriber called.");
         }
 
         public bool InitiateAllNetworkConnections()

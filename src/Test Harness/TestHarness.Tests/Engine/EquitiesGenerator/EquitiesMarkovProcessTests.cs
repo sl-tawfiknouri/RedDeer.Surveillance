@@ -59,7 +59,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         }
 
         [Test]
-        public void InitiateWalk_GeneratesSubequentTicks_AsExpected()
+        public void InitiateWalk_GeneratesSubsequentTicks_AsExpected()
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _heartbeat, _logger);

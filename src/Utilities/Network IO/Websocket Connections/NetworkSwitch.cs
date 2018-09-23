@@ -7,7 +7,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 {
     public class NetworkSwitch : INetworkSwitch
     {
-        private readonly int _failoverScanFrequencyMilliseconds = 5000;
+        private readonly int _failOverScanFrequencyMilliseconds = 5000;
         private volatile bool _hasFailedOverData;
         private readonly Timer _timer;
         
@@ -30,28 +30,28 @@ namespace Utilities.Network_IO.Websocket_Connections
         public NetworkSwitch(
             INetworkTrunk trunk,
             INetworkFailOver failOver,
-            int failoverScanFrequencyInMilliseconds)
+            int failOverScanFrequencyInMilliseconds)
         {
             _trunk = trunk ?? throw new ArgumentNullException(nameof(trunk));
             _failOver = failOver ?? throw new ArgumentNullException(nameof(failOver));
-            _failoverScanFrequencyMilliseconds = failoverScanFrequencyInMilliseconds;
+            _failOverScanFrequencyMilliseconds = failOverScanFrequencyInMilliseconds;
 
             _timer = new Timer();
         }
 
-        private void InitiateFailoverMonitorProcess()
+        private void InitiateFailOverMonitorProcess()
         {
             _timer.AutoReset = true;
-            _timer.Elapsed += MonitorFailover;
+            _timer.Elapsed += MonitorFailOver;
             _timer.Interval = 
                 TimeSpan
-                .FromMilliseconds(_failoverScanFrequencyMilliseconds)
+                .FromMilliseconds(_failOverScanFrequencyMilliseconds)
                 .TotalMilliseconds;
 
             _timer.Enabled = true;
         }
 
-        public void MonitorFailover(object sender, ElapsedEventArgs e)
+        public void MonitorFailOver(object sender, ElapsedEventArgs e)
         {
             lock (_lock)
             {
@@ -73,7 +73,7 @@ namespace Utilities.Network_IO.Websocket_Connections
                             continue;
                         }
 
-                        var success = AddWithoutFailover(dataPoint);
+                        var success = AddWithoutFailOver(dataPoint);
 
                         if (success)
                         {
@@ -114,29 +114,29 @@ namespace Utilities.Network_IO.Websocket_Connections
                     return false;
                 }
 
-                var sendToFailover = !_trunk.Active;
+                var sendToFailOver = !_trunk.Active;
 
-                if (!sendToFailover)
+                if (!sendToFailOver)
                 {
-                    sendToFailover = !_trunk.Send(value);
+                    sendToFailOver = !_trunk.Send(value);
                 }
 
-                if (sendToFailover)
+                if (sendToFailOver)
                 {
                     _failOver.Store(value);
 
                     if (!_hasFailedOverData)
                     {
                         _hasFailedOverData = true;
-                        InitiateFailoverMonitorProcess();
+                        InitiateFailOverMonitorProcess();
                     }
                 }
 
-                return sendToFailover;
+                return sendToFailOver;
             }
         }
 
-        private bool AddWithoutFailover<T>(T value)
+        private bool AddWithoutFailOver<T>(T value)
         {
             if (value == null
                 || !_trunk.Active)

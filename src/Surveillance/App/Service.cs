@@ -67,7 +67,7 @@ namespace RedDeer.Surveillance.App
             _webHost.Dispose();
             _cts.Cancel();
 
-            _logger.LogInformation("Service Stopp.");
+            _logger.LogInformation("Service Stop.");
         }
     }
 }

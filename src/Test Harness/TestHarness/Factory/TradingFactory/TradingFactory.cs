@@ -88,7 +88,7 @@ namespace TestHarness.Factory.TradingFactory
             if (_heartbeatSelected)
             {
                 var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
-                return new TradingHeatbeatDrivenProcess(_logger, strategy, _heartbeat);
+                return new TradingHeartBeatDrivenProcess(_logger, strategy, _heartbeat);
             }
 
             if (_marketUpdateSelected)

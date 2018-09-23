@@ -14,7 +14,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
     public class MarkovTradeStrategy : ITradeStrategy<TradeOrderFrame>
     {
         private readonly ILogger _logger;
-        private readonly ITradeVolumeStrategy _tradeVolumeStratey;
+        private readonly ITradeVolumeStrategy _tradeVolumeStrategy;
 
         private readonly double _limitStandardDeviation = 4;
 
@@ -23,7 +23,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             ITradeVolumeStrategy volumeStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tradeVolumeStratey = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
+            _tradeVolumeStrategy = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -33,7 +33,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             ITradeVolumeStrategy volumeStrategy)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tradeVolumeStratey = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
+            _tradeVolumeStrategy = volumeStrategy ?? throw new ArgumentNullException(nameof(volumeStrategy));
 
             if (limitStandardDeviation != null && limitStandardDeviation >= 0)
                 _limitStandardDeviation = limitStandardDeviation.Value;
@@ -61,7 +61,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             }
 
             var tradableSecurities = frame.Securities.Where(sec => sec != null).ToList();
-            var numberOfTradeOrders = _tradeVolumeStratey.CalculateSecuritiesToTrade(tradableSecurities);
+            var numberOfTradeOrders = _tradeVolumeStrategy.CalculateSecuritiesToTrade(tradableSecurities);
 
             if (numberOfTradeOrders <= 0)
             {
@@ -118,7 +118,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
             var partyBrokerId = GenerateIdString();
-            var counterpartyBrokerId = GenerateIdString();
+            var counterPartyBrokerId = GenerateIdString();
 
             return new TradeOrderFrame(
                 orderType,
@@ -133,7 +133,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 traderId,
                 traderClientId,
                 partyBrokerId,
-                counterpartyBrokerId);
+                counterPartyBrokerId);
         }
 
         private string GenerateIdString()

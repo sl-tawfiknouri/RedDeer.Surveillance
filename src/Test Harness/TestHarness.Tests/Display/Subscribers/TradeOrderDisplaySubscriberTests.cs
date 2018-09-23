@@ -56,7 +56,7 @@ namespace TestHarness.Tests.Display.Subscribers
                     "trader-id",
                     "trader-client-id",
                     "party-broker",
-                    "counterparty-broker");
+                    "counterParty-broker");
 
             tradeOrderSubscriber.OnNext(tradeOrderFrame);
 

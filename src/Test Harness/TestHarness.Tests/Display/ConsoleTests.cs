@@ -48,7 +48,7 @@ namespace TestHarness.Tests.Display
                     "trader-1",
                     "",
                     "party-broker",
-                    "counterparty-broker");
+                    "counterParty-broker");
         }
     }
 }

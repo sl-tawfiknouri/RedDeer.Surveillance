@@ -49,12 +49,9 @@ namespace Surveillance.Universe.MarketEvents
                 var marketOpeningSeconds = market.MarketOpen.TimeOfDay.TotalSeconds;
                 var marketClosureSeconds = market.MarketClose.TimeOfDay.TotalSeconds;
 
-                var openingOnFirstDay = new DateTime(start.Year, start.Month, start.Day);
-                openingOnFirstDay = openingOnFirstDay.AddSeconds(marketOpeningSeconds);
+                var openingOnFirstDay = SetMarketEventTime(start, marketOpeningSeconds);
+                var closingOnFirstDay = SetMarketEventTime(start, marketClosureSeconds);
 
-                var closingOnFirstDay = new DateTime(start.Year, start.Month, start.Day);
-                closingOnFirstDay = closingOnFirstDay.AddSeconds(marketClosureSeconds);
-                
                 var initialDayMarketHours = new MarketOpenClose(market.MarketId, openingOnFirstDay, closingOnFirstDay);
                 AddInitialOpen(start, end, universeEvents, initialDayMarketHours, openingOnFirstDay);
                 AddInitialClose(start, end, universeEvents, initialDayMarketHours, closingOnFirstDay);
@@ -68,6 +65,14 @@ namespace Surveillance.Universe.MarketEvents
             return universeEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
+        private DateTime SetMarketEventTime(DateTime start, double marketEventSeconds)
+        {
+            var marketEvent = new DateTime(start.Year, start.Month, start.Day);
+            marketEvent = marketEvent.AddSeconds(marketEventSeconds);
+
+            return marketEvent;
+        }
+
         private void AddInitialOpen(
             DateTime start,
             DateTime end,
@@ -76,6 +81,7 @@ namespace Surveillance.Universe.MarketEvents
             DateTime openingOnFirstDay)
         {
             var initialOpen = AddBoundaryMarketEvent(start, end, market, openingOnFirstDay, UniverseStateEvent.StockMarketOpen);
+
             if (initialOpen != null)
             {
                 universeEvents.Add(initialOpen);
@@ -90,6 +96,7 @@ namespace Surveillance.Universe.MarketEvents
             DateTime closingOnFirstDay)
         {
             var initialClose = AddBoundaryMarketEvent(start, end, market, closingOnFirstDay, UniverseStateEvent.StockMarketClose);
+
             if (initialClose != null)
             {
                 universeEvents.Add(initialClose);
@@ -117,27 +124,13 @@ namespace Surveillance.Universe.MarketEvents
 
             var closingDayMarketHours = new MarketOpenClose(market.MarketId, openingOnLastDay, closingOnLastDay);
 
-            var finalOpen =
-                AddBoundaryMarketEvent(
-                    start,
-                    end,
-                    closingDayMarketHours,
-                    openingOnLastDay,
-                    UniverseStateEvent.StockMarketOpen);
-
+            var finalOpen = AddBoundaryMarketEvent(start, end, closingDayMarketHours, openingOnLastDay, UniverseStateEvent.StockMarketOpen);
             if (finalOpen != null)
             {
                 universeEvents.Add(finalOpen);
             }
 
-            var finalClose =
-                AddBoundaryMarketEvent(
-                    start,
-                    end,
-                    closingDayMarketHours,
-                    closingOnLastDay, 
-                    UniverseStateEvent.StockMarketClose);
-
+            var finalClose = AddBoundaryMarketEvent(start, end, closingDayMarketHours, closingOnLastDay, UniverseStateEvent.StockMarketClose);
             if (finalClose != null)
             {
                 universeEvents.Add(finalClose);
@@ -151,10 +144,12 @@ namespace Surveillance.Universe.MarketEvents
             DateTime boundaryEventTime,
             UniverseStateEvent boundaryType)
         {
-            if (boundaryEventTime <= start || boundaryEventTime >= end)
+            if (boundaryEventTime <= start
+                || boundaryEventTime >= end)
             {
                 return null;
             }
+
             var boundaryEvent = new UniverseEvent(boundaryType, boundaryEventTime, market);
 
             return boundaryEvent;

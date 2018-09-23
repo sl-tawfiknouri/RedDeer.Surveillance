@@ -4,7 +4,6 @@ using NLog;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
-using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory;
@@ -18,7 +17,6 @@ using TestHarness.State.Interfaces;
 using TestHarness.State;
 using TestHarness.Factory.TradingProhibitedSecurityFactory;
 using TestHarness.Factory.TradingSpoofingFactory;
-using TestHarness.Network_IO.Interfaces;
 using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
@@ -67,16 +65,6 @@ namespace TestHarness.Factory
         /// Ctor is used to construct this
         /// </summary>
         public ILogger Logger { get; }
-
-        /// <summary>
-        /// Build is used to construct this
-        /// </summary>
-        public INetworkManager NetworkManager { get; private set; }
-
-        /// <summary>
-        /// Build is used to construct this
-        /// </summary>
-        public IEquityDataGenerator EquityDataGenerator { get; private set; }
 
         /// <summary>
         /// Ctor is used to construct this

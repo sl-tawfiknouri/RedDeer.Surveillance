@@ -32,7 +32,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                _logger.Error($"Equities File Relay Process did not find file because the path was empty or null");
+                _logger.Error("Equities File Relay Process did not find file because the path was empty or null");
                 return;
             }
 

@@ -23,6 +23,7 @@ namespace TestHarness.Tests
         [Test]
         public void Constructor_DoesNotConsiderNullFactory_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.DoesNotThrow(() => new Mediator(null));
         }
 

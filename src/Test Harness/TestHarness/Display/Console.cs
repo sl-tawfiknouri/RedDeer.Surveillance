@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 
@@ -60,7 +59,7 @@ namespace TestHarness.Display
                 }
 
                 WriteToLine(_marketFrameOffset, "*****************************");
-                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({DateTime.Now}). {frame.ToString()}");
+                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({DateTime.Now}). {frame}");
                 WriteToLine(_marketFrameOffset + 2, "*****************************");
             }
         }
@@ -82,11 +81,11 @@ namespace TestHarness.Display
                 var newStack = new Stack<TradeOrderFrame>();
                 _tradeOrders.Push(frame);
 
-                var loopSize = _tradeOrders.Count();
+                var loopSize = _tradeOrders.Count;
                 for (var x = 1; x <= loopSize; x++)
                 {
                     var order = _tradeOrders.Pop();
-                    WriteToLine(_tradeFrameOffset + x, $"Trade. {order.ToString()}");
+                    WriteToLine(_tradeFrameOffset + x, $"Trade. {order}");
 
                     if (x < _tradeLimitToPrint)
                     {
@@ -95,7 +94,7 @@ namespace TestHarness.Display
                 }
 
                 var reversedStack = new Stack<TradeOrderFrame>();
-                var reverseLoopSize = newStack.Count();
+                var reverseLoopSize = newStack.Count;
                 for (var x = 1; x <= reverseLoopSize; x++)
                 {
                     reversedStack.Push(newStack.Pop());
@@ -117,7 +116,7 @@ namespace TestHarness.Display
                     return;
                 }
 
-                WriteToLine(0, $"Exception. {e.ToString()}.{e.InnerException.ToString()}");
+                WriteToLine(0, $"Exception. {e.Message}");
             }
         }
 

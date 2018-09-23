@@ -156,7 +156,7 @@ namespace Surveillance.Tests.Scheduler
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules> { },
+                Rules = new List<Domain.Scheduling.Rules>(),
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };

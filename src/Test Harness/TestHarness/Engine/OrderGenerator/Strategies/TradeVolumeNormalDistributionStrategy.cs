@@ -1,7 +1,6 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Domain.Equity.Frames;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -27,7 +26,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
         private int TradingMean(IReadOnlyCollection<SecurityTick> frames)
         {
-            var rawCount = frames.Count();
+            var rawCount = frames.Count;
 
             if (rawCount <= 0)
             {

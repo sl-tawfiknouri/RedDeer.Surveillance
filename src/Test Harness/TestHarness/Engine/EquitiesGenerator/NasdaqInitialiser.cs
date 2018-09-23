@@ -57,12 +57,14 @@ namespace TestHarness.Engine.EquitiesGenerator
                 .ToList();
         }
 
+        // ReSharper Disable All 
         private class NasdaqData
         {
             public string Symbol { get; set; }
             public string Buy { get; set; }
             public string Sell { get; set; }
         }
+        // ReSharper Restore All
 
         private static readonly string InitialNasdaqDataJson = @"
         [

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Contracts.SurveillanceService.ComplianceCaseLog;
-using Domain.Trades.Orders;
+﻿using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;

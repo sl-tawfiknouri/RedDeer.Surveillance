@@ -6,6 +6,7 @@ using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace TestHarness.Engine.OrderGenerator
 {
@@ -72,12 +73,6 @@ namespace TestHarness.Engine.OrderGenerator
 
         public void OnError(Exception error)
         {
-            if (error == null)
-            {
-                Logger.Log(LogLevel.Error, "Order data generator receieved a null exception OnError");
-                return;
-            }
-
             Logger.Log(LogLevel.Error, error);
         }
 

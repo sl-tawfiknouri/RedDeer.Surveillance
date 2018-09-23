@@ -16,6 +16,7 @@ using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
+// ReSharper disable UnusedParameter.Local
 
 namespace RedDeer.Surveillance.App
 {
@@ -120,7 +121,7 @@ namespace RedDeer.Surveillance.App
             else if (args.Contains(RunAsSystemdServiceFlag))
             {
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemdServiceFlag}).");
-                RunAsSystemdService(args);
+                RunAsSystemService(args);
             }
             else if (args.Contains(RegisterServiceFlag))
             {
@@ -134,7 +135,7 @@ namespace RedDeer.Surveillance.App
             }           
             else
             {
-                Logger.Info($"No Flags Found.");
+                Logger.Info("No Flags Found.");
                 RunInteractive(args);
             }
         }
@@ -146,12 +147,12 @@ namespace RedDeer.Surveillance.App
             serviceHost.Run();
         }
 
-        private static void RunAsSystemdService(string[] args)
+        private static void RunAsSystemService(string[] args)
         {
             // Register sigterm event handler. 
             var sigterm = new ManualResetEventSlim();
             AssemblyLoadContext.Default.Unloading += x => {
-                Logger.Info($"Sigterm triggered.");
+                Logger.Info("Sigterm triggered.");
                 sigterm.Set();
             };
 

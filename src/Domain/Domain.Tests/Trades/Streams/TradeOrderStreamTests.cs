@@ -36,7 +36,9 @@ namespace Domain.Tests.Trades.Streams
         {
             var tradeOrderStream = new TradeOrderStream<TradeOrderFrame>(_factory);
 
+            // ReSharper Disable All 
             Assert.Throws<ArgumentNullException>(() => tradeOrderStream.Subscribe(null));
+            // ReSharper Restore All
         }
 
         [Test]

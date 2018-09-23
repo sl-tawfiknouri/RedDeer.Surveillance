@@ -86,17 +86,13 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
                         var createIndexResponse = await _elasticClient.CreateIndexAsync(indexName, i => i
                             .InitializeUsing(new IndexState
                             {
-                                Settings = new IndexSettings
-                                {
-                                    //NumberOfReplicas = 1,
-                                    //NumberOfShards = 2
-                                }
+                                Settings = new IndexSettings()
                             })
                             .Mappings(ms => ms
                                 .Map<T>(m => m
                                     .AutoMap()
                                 )
-                            ), cancellationToken: cancellationToken);
+                            ), cancellationToken);
                         HandleResponseErrors(createIndexResponse);
                     }
 
@@ -226,7 +222,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
 
             if (response.IsValid == false)
             {
-                throw new Exception($"ElasticSearch: Invalid Response.");
+                throw new Exception("ElasticSearch: Invalid Response.");
             }
         }
     }

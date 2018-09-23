@@ -21,6 +21,7 @@ namespace TestHarness.Tests.Display.Subscribers
         [Test]
         public void Constructor_ConsidersNullConsole_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new TradeOrderFrameDisplaySubscriber(null));
         }
 

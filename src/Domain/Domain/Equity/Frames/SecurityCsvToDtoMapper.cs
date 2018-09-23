@@ -8,6 +8,7 @@ namespace Domain.Equity.Frames
     {
         private readonly ILogger<SecurityCsvToDtoMapper> _logger;
 
+        // ReSharper disable once UnusedMember.Global
         public SecurityCsvToDtoMapper()
         { }
 

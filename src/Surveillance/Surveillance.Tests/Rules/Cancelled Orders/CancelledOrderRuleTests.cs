@@ -10,7 +10,6 @@ using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
-using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Tests.Rules.Cancelled_Orders
 {

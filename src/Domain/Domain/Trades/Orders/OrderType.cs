@@ -1,4 +1,5 @@
-﻿namespace Domain.Trades.Orders
+﻿// ReSharper disable UnusedMember.Global
+namespace Domain.Trades.Orders
 {
     public enum OrderType
     {

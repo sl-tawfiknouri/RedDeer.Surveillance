@@ -37,12 +37,14 @@ namespace TestHarness.Tests.Engine.OrderGenerator
         [Test]
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new TradingMarketUpdateDrivenProcess(null, _tradeStrategy));
         }
 
         [Test]
         public void Constructor_ConsidersNullStrategy_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new TradingMarketUpdateDrivenProcess(_logger, null));
         }
 

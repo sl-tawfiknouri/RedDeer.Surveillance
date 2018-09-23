@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Surveillance.Configuration.Interfaces
+﻿namespace Surveillance.Configuration.Interfaces
 {
     public interface IRuleConfiguration
     {

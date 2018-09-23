@@ -1,4 +1,5 @@
-﻿namespace Domain.Equity.Interfaces
+﻿// ReSharper disable UnusedMember.Global
+namespace Domain.Equity.Interfaces
 {
     public interface ISecurityIdentifiers
     {

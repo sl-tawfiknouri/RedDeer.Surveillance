@@ -17,6 +17,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         [TestCase(-0.0001)]
         public void Constructor_ConsidersOutOfRangeMaxSpread_ToBeOutOfRange(decimal maxSpread)
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentOutOfRangeException>(() => new MarkovEquityStrategy(0, 1, maxSpread));
         }
 

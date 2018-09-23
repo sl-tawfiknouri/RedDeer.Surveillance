@@ -43,8 +43,10 @@ namespace Surveillance.Network_IO
                 case MessageType.RedderStockFormat:
                     ReddeerStockFormat(message);
                     break;
-                default:
+                case MessageType.Unknown:
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

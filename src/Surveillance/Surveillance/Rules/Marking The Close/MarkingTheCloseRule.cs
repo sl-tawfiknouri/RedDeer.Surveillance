@@ -54,7 +54,7 @@ namespace Surveillance.Rules.Marking_The_Close
 
             var tradedSecurity = LatestExchangeFrame
                  ?.Securities
-                 ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities?.FirstOrDefault()?.Security.Identifiers));
+                 ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities.FirstOrDefault()?.Security.Identifiers));
 
             if (tradedSecurity == null)
             {
@@ -120,7 +120,9 @@ namespace Surveillance.Rules.Marking_The_Close
             return hasBuyDailyVolumeBreach
                 && volumeTradedBuy > 0
                 && tradedSecurity.DailyVolume.Traded > 0
-                    ? (decimal?)((decimal)volumeTradedBuy / (decimal)tradedSecurity.DailyVolume.Traded)
+                // ReSharper disable RedundantCast
+                ? (decimal?)((decimal)volumeTradedBuy / (decimal)tradedSecurity.DailyVolume.Traded)
+                // ReSharper restore RedundantCast
                     : null;
         }
 
@@ -129,13 +131,15 @@ namespace Surveillance.Rules.Marking_The_Close
             return hasSellDailyVolumeBreach
                    && volumeTradedSell > 0
                    && tradedSecurity.DailyVolume.Traded > 0
+                // ReSharper disable RedundantCast
                 ? (decimal?)((decimal)volumeTradedSell / (decimal)tradedSecurity.DailyVolume.Traded)
+                // ReSharper restore RedundantCast
                 : null;
         }
 
         protected override void Genesis()
         {
-            _logger.LogDebug($"Genesis occurred in the Marking The Close Rule");
+            _logger.LogDebug("Genesis occurred in the Marking The Close Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -155,7 +159,7 @@ namespace Surveillance.Rules.Marking_The_Close
 
         protected override void EndOfUniverse()
         {
-            _logger.LogDebug($"Eschaton occured in Marking The Close Rule");
+            _logger.LogDebug("Eschaton occured in Marking The Close Rule");
         }
     }
 }

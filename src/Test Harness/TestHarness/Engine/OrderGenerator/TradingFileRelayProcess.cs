@@ -30,7 +30,7 @@ namespace TestHarness.Engine.OrderGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                Logger.Error($"Trading File Relay Process did not find file because the path was empty or null");
+                Logger.Error("Trading File Relay Process did not find file because the path was empty or null");
                 return;
             }
 

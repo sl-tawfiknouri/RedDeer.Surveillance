@@ -111,7 +111,7 @@ namespace TestHarness.Engine.OrderGenerator
             var spoofedTrade = new TradeOrderFrame
                 (OrderType.Limit,
                 _lastFrame.Exchange,
-                security?.Security,
+                security.Security,
                 limitPrice,
                 volume,
                 OrderPosition.BuyLong,
@@ -138,7 +138,7 @@ namespace TestHarness.Engine.OrderGenerator
             return new TradeOrderFrame(
                 OrderType.Market,
                 _lastFrame.Exchange,
-                security?.Security,
+                security.Security,
                 null,
                 volumeToTrade,
                 OrderPosition.SellLong,

@@ -85,12 +85,12 @@ namespace Surveillance.Universe
         {
             var tradeEvents = 
                 trades
-                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, (object) tr))
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, tr))
                     .ToArray();
 
             var exchangeEvents =
                 exchangeFrames
-                    .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.TimeStamp, (object) exch))
+                    .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.TimeStamp, exch))
                     .ToArray();
 
             var marketEvents =

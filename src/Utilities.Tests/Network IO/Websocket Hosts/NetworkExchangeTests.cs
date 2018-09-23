@@ -28,18 +28,21 @@ namespace Utilities.Tests.Network_IO.Websocket_Hosts
         [Test]
         public void Constructor_NullWebsocketHostFactory_ThrowsException()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new NetworkExchange(null, _networkDuplexer, _logger));
         }
 
         [Test]
         public void Constructor_NullNetworkDuplexer_ThrowsException()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new NetworkExchange(_hostFactory, null, _logger));
         }
 
         [Test]
         public void Constructor_NullLogger_ThrowsException()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new NetworkExchange(_hostFactory, _networkDuplexer, null));
         }
 

@@ -23,7 +23,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Hosts
 
             var factory = new DuplexMessageFactory();
 
-            var msg = factory.Create<string>(MessageType.ReddeerTradeFormat, "test");
+            var msg = factory.Create(MessageType.ReddeerTradeFormat, "test");
 
             Assert.AreEqual(msg.Message, expectedResult);
             Assert.AreEqual(msg.Type, MessageType.ReddeerTradeFormat);

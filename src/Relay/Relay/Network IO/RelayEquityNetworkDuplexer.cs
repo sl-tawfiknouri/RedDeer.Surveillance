@@ -10,11 +10,11 @@ namespace Relay.Network_IO
 {
     public class RelayEquityNetworkDuplexer : IRelayEquityNetworkDuplexer
     {
-        private readonly IStockExchangeStream _redeerStockFormatStream;
+        private readonly IStockExchangeStream _redDeerStockFormatStream;
 
         public RelayEquityNetworkDuplexer(IStockExchangeStream reddeerStockFormatStream)
         {
-            _redeerStockFormatStream = 
+            _redDeerStockFormatStream = 
                 reddeerStockFormatStream 
                 ?? throw new ArgumentNullException(nameof(reddeerStockFormatStream));
         }
@@ -32,8 +32,14 @@ namespace Relay.Network_IO
                 case MessageType.RedderStockFormat:
                     ReddeerStockExchangeFormat(message);
                     break;
-                default:
+                case MessageType.Unknown:
                     break;
+                case MessageType.ReddeerTradeFormat:
+                    break;
+                case MessageType.FixTradeFormat:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -45,7 +51,7 @@ namespace Relay.Network_IO
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message, serialiserSettings);
-            _redeerStockFormatStream?.Add(formattedMessage);
+            _redDeerStockFormatStream?.Add(formattedMessage);
         }
     }
 }

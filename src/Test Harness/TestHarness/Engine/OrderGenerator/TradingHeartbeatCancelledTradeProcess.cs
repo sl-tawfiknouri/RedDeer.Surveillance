@@ -116,7 +116,9 @@ namespace TestHarness.Engine.OrderGenerator
 
             var ordersToCancel = DiscreteUniform.Sample(1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
+            // ReSharper disable RedundantCast
             var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeThreshold * ((decimal)(1m / ordersToCancel)) + 1);
+            // ReSharper restore RedundantCast
 
             var orders = new List<TradeOrderFrame>();
 
@@ -144,7 +146,9 @@ namespace TestHarness.Engine.OrderGenerator
 
             var ordersToCancel = Math.Min((int)(totalOrders * _cancellationOfOrdersSubmittedThresholdPercentage) + 1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
+            // ReSharper disable RedundantCast
             var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
+            // ReSharper restore RedundantCast
 
             var orders = new List<TradeOrderFrame>();
 
@@ -175,7 +179,9 @@ namespace TestHarness.Engine.OrderGenerator
             var ordersToFulfill = totalOrders - ordersToCancel;
             var minimumPerOrderValue = cancelledOrderPositionSize * _cancellationOfPositionVolumeThresholdPercentage;
             var remainingOrderValue = cancelledOrderPositionSize * (1 - _cancellationOfPositionVolumeThresholdPercentage);
+            // ReSharper disable RedundantCast
             var remainingOrderValuePerOrder = (int)((decimal)remainingOrderValue * ((decimal)(1m / ordersToFulfill)) + 1);
+            // ReSharper restore RedundantCast
 
             var orders = new List<TradeOrderFrame>();
 

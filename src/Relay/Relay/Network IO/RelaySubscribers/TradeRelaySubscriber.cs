@@ -58,7 +58,7 @@ namespace Relay.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
-                _logger.LogInformation($"Trade Relay Subscriber underlying stream completed.");
+                _logger.LogInformation("Trade Relay Subscriber underlying stream completed.");
 
                 _initiated = false;
                 _networkSwitch.Terminate();

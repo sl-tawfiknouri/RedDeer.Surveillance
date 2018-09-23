@@ -71,7 +71,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private IntradayPrices BuildIntraday(SecurityTick tick, decimal newBuy, string currency)
         {
-            if (tick.IntradayPrices == null)
+            if (tick.IntradayPrices?.High == null
+                || tick.IntradayPrices?.Low == null)
             {
                 return
                     new IntradayPrices(

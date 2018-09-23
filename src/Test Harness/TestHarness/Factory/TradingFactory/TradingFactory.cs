@@ -97,7 +97,7 @@ namespace TestHarness.Factory.TradingFactory
                 return new TradingMarketUpdateDrivenProcess(_logger, strategy);
             }
 
-            throw new ArgumentOutOfRangeException("Something went wrong in the trading factory");
+            throw new ArgumentOutOfRangeException(nameof(_marketUpdateSelected));
         }
     }
 }

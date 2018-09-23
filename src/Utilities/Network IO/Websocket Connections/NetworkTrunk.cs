@@ -67,9 +67,9 @@ namespace Utilities.Network_IO.Websocket_Connections
         {
             _activeWebsocket = _websocketFactory.Build(connectionString);
 
-            _activeWebsocket.Opened += new EventHandler(Open_Event);
-            _activeWebsocket.Error += new EventHandler<ErrorEventArgs>(Error_Event);
-            _activeWebsocket.Closed += new EventHandler(Closed_Event);
+            _activeWebsocket.Opened += Open_Event;
+            _activeWebsocket.Error += Error_Event;
+            _activeWebsocket.Closed += Closed_Event;
         }
 
         private void Open_Event(object sender, EventArgs e)
@@ -94,7 +94,7 @@ namespace Utilities.Network_IO.Websocket_Connections
             {
                 _activeWebsocket.Open();
 
-                _messageWriter.Write($"Network trunk connecting to web socket...");
+                _messageWriter.Write("Network trunk connecting to web socket...");
                 while (_activeWebsocket.State == WebSocketState.Connecting)
                 {
                     if (token.IsCancellationRequested)
@@ -105,7 +105,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 
                 if (token.IsCancellationRequested)
                 {
-                    _messageWriter.Write($"Network trunk connection attempt timed out. Closing web socket...");
+                    _messageWriter.Write("Network trunk connection attempt timed out. Closing web socket...");
 
                     _activeWebsocket.Close();
                 }
@@ -115,8 +115,8 @@ namespace Utilities.Network_IO.Websocket_Connections
                 Active = connectionEstablished;
 
                 _messageWriter.Write(connectionEstablished
-                    ? $"Network trunk connection established"
-                    : $"Network trunk connection failed to establish");
+                    ? "Network trunk connection established"
+                    : "Network trunk connection failed to establish");
 
                 return Active;
             }

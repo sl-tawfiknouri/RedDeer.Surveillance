@@ -54,7 +54,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (StateLock)
             {
-                _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber underlying stream completed.");
+                _logger.Log(LogLevel.Info, "Trade Order Websocket Subscriber underlying stream completed.");
 
                 NetworkSwitch.Terminate();
             }

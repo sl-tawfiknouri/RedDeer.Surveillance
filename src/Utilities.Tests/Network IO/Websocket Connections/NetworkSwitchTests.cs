@@ -23,17 +23,19 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         public void Constructor_ConsidersNullTrunkArgument_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new NetworkSwitch(null, _networkFailover));
         }
 
         [Test]
         public void Constructor_ConsidersNullFailOverArgument_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new NetworkSwitch(_networkTrunk, null));
         }
 
         [Test]
-        public void Add_AddNullValue_DoesNotCallFailoverOrTrunk()
+        public void Add_AddNullValue_DoesNotCallFailOverOrTrunk()
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
 
@@ -44,7 +46,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         }
 
         [Test]
-        public void Add_AddValue_DoesCallFailoverOnlyIfNotActive()
+        public void Add_AddValue_DoesCallFailOverOnlyIfNotActive()
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
             
@@ -55,7 +57,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         }
 
         [Test]
-        public void Add_AddValue_DoesNotCallFailoverIfActiveAndSent()
+        public void Add_AddValue_DoesNotCallFailOverIfActiveAndSent()
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
             A.CallTo(() => _networkTrunk.Active).Returns(true);
@@ -68,7 +70,7 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         }
 
         [Test]
-        public void Add_AddValue_FailoverIfActiveTrunkButFailsToSend()
+        public void Add_AddValue_FailOverIfActiveTrunkButFailsToSend()
         {
             var networkSwitch = new NetworkSwitch(_networkTrunk, _networkFailover);
             A.CallTo(() => _networkTrunk.Active).Returns(true);
@@ -82,10 +84,10 @@ namespace Utilities.Tests.Network_IO.Websocket_Connections
         [Test]
         [Explicit]
         [Description("Manually verify this; fake framework doesn't work for verifying a complex test")]
-        public void Add_WithoutActiveWebsocket_CauseFailover()
+        public void Add_WithoutActiveWebsocket_CauseFailOver()
         {
-            var failover = new NetworkFailoverLocalMemory();
-            var networkSwitch = new NetworkSwitch(_networkTrunk, failover, 1);
+            var failOver = new NetworkFailoverLocalMemory();
+            var networkSwitch = new NetworkSwitch(_networkTrunk, failOver, 1);
 
             networkSwitch.Send("test");
 

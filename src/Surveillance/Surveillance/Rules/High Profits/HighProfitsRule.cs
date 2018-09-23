@@ -140,7 +140,7 @@ namespace Surveillance.Rules.High_Profits
                 return realisedRevenue.GetValueOrDefault(0);
             }
 
-            var security = activeFulfilledTradeOrders?.FirstOrDefault()?.Security;
+            var security = activeFulfilledTradeOrders.FirstOrDefault()?.Security;
             if (security == null)
             {
                 return realisedRevenue.GetValueOrDefault(0);
@@ -156,9 +156,9 @@ namespace Surveillance.Rules.High_Profits
                 return CalculateInferredVirtualProfit(activeFulfilledTradeOrders, realisedRevenue, sizeOfVirtualPosition);
             }
 
-            var virtualRevenue = securityTick?.Spread.Price.Value * sizeOfVirtualPosition;
+            var virtualRevenue = securityTick.Spread.Price.Value * sizeOfVirtualPosition;
 
-            return realisedRevenue.GetValueOrDefault(0) + virtualRevenue.GetValueOrDefault(0);
+            return realisedRevenue.GetValueOrDefault(0) + virtualRevenue;
         }
 
         private decimal? CalculateRealisedRevenue
@@ -209,7 +209,7 @@ namespace Surveillance.Rules.High_Profits
             int sizeOfVirtualPosition)
         {
             _logger.LogInformation(
-                $"High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
+                "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
 
             var mostRecentTrade =
                 activeFulfilledTradeOrders

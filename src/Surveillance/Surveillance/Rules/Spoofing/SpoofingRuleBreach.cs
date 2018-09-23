@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Trades.Orders;
@@ -25,14 +24,8 @@ namespace Surveillance.Rules.Spoofing
             var totalTrades = fulfilledTradePosition.Get().ToList();
             totalTrades.AddRange(cancelledTradePosition.Get());
             Trades = new TradePosition(totalTrades, null, null, null);
-
-            TradesInFulfilledPosition =
-                fulfilledTradePosition
-                ?? new TradePosition(new List<TradeOrderFrame>(), null, null, null);
-
-            CancelledTrades =
-                cancelledTradePosition
-                ?? new TradePosition(new List<TradeOrderFrame>(), null, null, null);
+            TradesInFulfilledPosition = fulfilledTradePosition;
+            CancelledTrades = cancelledTradePosition;
         }
 
         public TimeSpan Window { get; }

@@ -75,7 +75,7 @@ namespace TestHarness.Commands
 
             if (initialDate > terminationDate)
             {
-                _console.WriteToUserFeedbackLine($"Initiation precedes Termination date. Invalid input.");
+                _console.WriteToUserFeedbackLine("Initiation precedes Termination date. Invalid input.");
 
                 return;
             }

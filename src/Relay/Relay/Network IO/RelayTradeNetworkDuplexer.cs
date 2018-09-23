@@ -9,7 +9,7 @@ using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 namespace Relay.Network_IO
 {
     /// <summary>
-    /// deserialises incoming duplexed messages and forwards them onto subscribing streams
+    /// Deserialises incoming duplexed messages and forwards them onto subscribing streams
     /// </summary>
     public class RelayTradeNetworkDuplexer : IRelayTradeNetworkDuplexer
     {
@@ -36,8 +36,12 @@ namespace Relay.Network_IO
                 case MessageType.FixTradeFormat:
                     FixFormat(message);
                     break;
-                default:
+                case MessageType.Unknown:
                     break;
+                case MessageType.RedderStockFormat:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

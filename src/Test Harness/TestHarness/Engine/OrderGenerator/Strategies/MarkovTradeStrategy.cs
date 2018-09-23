@@ -69,8 +69,6 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             }
 
             GenerateAndSubmitTrades(frame, tradeOrders, numberOfTradeOrders);
-
-            return;
         }
 
         private void GenerateAndSubmitTrades(

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using DasMulli.Win32.ServiceUtils;
 using Domain.Equity.Frames.Interfaces;
 using Domain.Trades.Orders.Interfaces;
@@ -14,6 +13,7 @@ using Relay;
 using Relay.Configuration;
 using Relay.Configuration.Interfaces;
 using StructureMap;
+// ReSharper disable UnusedParameter.Local
 
 namespace RedDeer.Relay.Relay.App
 {
@@ -81,7 +81,7 @@ namespace RedDeer.Relay.Relay.App
             else if (args.Contains(RunAsSystemdServiceFlag))
             {
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemdServiceFlag}).");
-                RunAsSystemdService(args);
+                RunAsSystemService(args);
             }
             else if (args.Contains(RegisterServiceFlag))
             {
@@ -95,7 +95,7 @@ namespace RedDeer.Relay.Relay.App
             }           
             else
             {
-                Logger.Info($"No Flags Found.");
+                Logger.Info("No Flags Found.");
                 RunInteractive(args);
             }
         }
@@ -107,12 +107,12 @@ namespace RedDeer.Relay.Relay.App
             serviceHost.Run();
         }
 
-        private static void RunAsSystemdService(string[] args)
+        private static void RunAsSystemService(string[] args)
         {
             // Register sigterm event handler. 
             var sigterm = new ManualResetEventSlim();
             AssemblyLoadContext.Default.Unloading += x => {
-                Logger.Info($"Sigterm triggered.");
+                Logger.Info("Sigterm triggered.");
                 sigterm.Set();
             };
 
@@ -129,23 +129,6 @@ namespace RedDeer.Relay.Relay.App
             Console.WriteLine("Running interactively, press enter to stop.");
             Console.ReadLine();
             service.Stop();
-        }
-
-        private static void RunOnConsole(Func<Container, CancellationToken, Task> asyncAction)
-        {
-            var cts = new CancellationTokenSource();
-            Logger.Info("Waiting on task...");
-            var task = Task.Run(async () =>
-            {
-                await asyncAction(Container, cts.Token);
-                Logger.Info("End of task");
-            }, cts.Token);
-            // uncomment to allow for cancelling task early
-            /* Console.ReadLine(); 
-            cts.Cancel(); /* */
-            Logger.Info("Waiting for end of task...");
-            task.Wait(cts.Token);
-            Logger.Info("End of application");
         }
 
         private static void RegisterService()

@@ -42,7 +42,7 @@ namespace TestHarness.Commands
             }
 
             var fileSegment = Regex.Replace(command, "run demo trade networking file ", string.Empty, RegexOptions.IgnoreCase);
-            fileSegment = fileSegment?.Trim();
+            fileSegment = fileSegment.Trim();
 
             if (string.IsNullOrWhiteSpace(fileSegment))
             {
@@ -153,7 +153,7 @@ namespace TestHarness.Commands
         private void SetTradingFileProcessor(string command)
         {
             var fileSegment = Regex.Replace(command, "run demo trade networking file ", string.Empty, RegexOptions.IgnoreCase);
-            fileSegment = fileSegment?.Trim();
+            fileSegment = fileSegment.Trim();
             var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
             var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);
 

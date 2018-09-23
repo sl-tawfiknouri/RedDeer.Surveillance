@@ -1,5 +1,4 @@
-﻿using System;
-using Surveillance.Configuration.Interfaces;
+﻿using Surveillance.Configuration.Interfaces;
 
 namespace Surveillance.Configuration
 {

@@ -13,6 +13,7 @@ namespace Domain.Trades.Orders
         public TradeOrderCsvToDtoMapper()
         { }
 
+        // ReSharper disable once UnusedMember.Global
         public TradeOrderCsvToDtoMapper(ILogger<TradeOrderCsvToDtoMapper> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

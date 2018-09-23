@@ -107,10 +107,10 @@ namespace Surveillance
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
-            For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
+            For<ICancelledOrderCachedMessageSender>().Use<CancelledOrderCachedMessageSender>();
             For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
-            For<ICancelledOrderPositionDeDuplicator>().Use<CancelledOrderPositionDeDuplicator>();
+            For<ICancelledOrderRuleCachedMessageSender>().Use<CancelledOrderRuleCachedMessageSender>();
             For<ICancelledOrderRuleFactory>().Use<CancelledOrderRuleFactory>();
 
             For<IHighProfitRuleFactory>().Use<HighProfitRuleFactory>();

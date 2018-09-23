@@ -9,14 +9,14 @@ namespace Surveillance.Factories
 {
     public class CancelledOrderRuleFactory : ICancelledOrderRuleFactory
     {
-        private readonly ICancelledOrderPositionDeDuplicator _deduplicator;
+        private readonly ICancelledOrderRuleCachedMessageSender _messageSender;
         private readonly ILogger<CancelledOrderRule> _logger;
 
         public CancelledOrderRuleFactory(
-            ICancelledOrderPositionDeDuplicator deduplicator,
+            ICancelledOrderRuleCachedMessageSender messageSender,
             ILogger<CancelledOrderRule> logger)
         {
-            _deduplicator = deduplicator ?? throw new ArgumentNullException(nameof(deduplicator));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -24,7 +24,7 @@ namespace Surveillance.Factories
         {
             var parameters = new CancelledOrderRuleParameters();
 
-            return new CancelledOrderRule(_deduplicator, parameters, _logger);
+            return new CancelledOrderRule(parameters, _messageSender, _logger);
         }
     }
 }

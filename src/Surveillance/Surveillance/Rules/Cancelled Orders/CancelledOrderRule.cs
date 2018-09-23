@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Stub;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades;
@@ -10,33 +11,21 @@ using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.Cancelled_Orders
 {
-    /// <summary>
-    /// This rule looks at unusual order cancellation from several angles.
-    /// We consider rules that are cancelled by value i.e. 1 order over 1 million gbp
-    /// Order cancellation ratios by % of trade orders that were cancelled
-    /// Order cancellation ratios by % of position volume that was cancelled
-    /// </summary>
-    public class CancelledOrderRule : BaseTradeRule, ICancelledOrderRule
+    public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
-        private readonly ICancelledOrderPositionDeDuplicator _deduplicatingMessageSender;
         private readonly ICancelledOrderRuleParameters _parameters;
+        private readonly ICancelledOrderRuleCachedMessageSender _cachedMessageSender;
+
         private readonly ILogger _logger;
-
+        
         public CancelledOrderRule(
-            ICancelledOrderPositionDeDuplicator deduplicatingMessageSender,
             ICancelledOrderRuleParameters parameters,
-            ILogger<CancelledOrderRule> logger) 
-            : base(
-                parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                Domain.Scheduling.Rules.CancelledOrders,
-                "V1.0",
-                logger)
+            ICancelledOrderRuleCachedMessageSender cachedMessageSender,
+            ILogger<CancelledOrderRule> logger)
+            : base(parameters?.WindowSize ?? TimeSpan.FromMinutes(60), Domain.Scheduling.Rules.CancelledOrders, Versioner.Version(2, 0), "Cancelled Order Rule(2)", logger)
         {
-            _deduplicatingMessageSender =
-                deduplicatingMessageSender
-                ?? throw new ArgumentNullException(nameof(deduplicatingMessageSender));
-
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -64,15 +53,7 @@ namespace Surveillance.Rules.Cancelled_Orders
 
             if (ruleBreach.HasBreachedRule())
             {
-                var message =
-                    new CancelledOrderMessageSenderParameters(mostRecentTrade.Security.Identifiers)
-                    {
-                        TradePosition = tradingPosition,
-                        Parameters = _parameters,
-                        RuleBreach = ruleBreach
-                    };
-
-                _deduplicatingMessageSender.Send(message);
+                _cachedMessageSender.Send(ruleBreach);
             }
         }
 
@@ -135,6 +116,28 @@ namespace Surveillance.Rules.Cancelled_Orders
                 cancellationRatioByPositionSize,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount);
+        }
+
+        protected override void Genesis()
+        {
+            _logger.LogDebug("Universe Genesis occurred in the Cancelled Order Rule");
+        }
+
+        protected override void MarketOpen(MarketOpenClose exchange)
+        {
+            _logger.LogDebug($"Trading Opened for exchange {exchange.MarketId} in the Cancelled Order Rule");
+        }
+
+        protected override void MarketClose(MarketOpenClose exchange)
+        {
+            _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the Cancelled Order Rule.");
+        }
+
+        protected override void EndOfUniverse()
+        {
+            _logger.LogDebug("Universe Eschaton occurred in the Cancelled Order Rule");
+
+            _cachedMessageSender.Flush();
         }
     }
 }

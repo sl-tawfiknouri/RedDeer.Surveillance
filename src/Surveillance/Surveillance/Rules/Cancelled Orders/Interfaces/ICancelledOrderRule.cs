@@ -2,7 +2,6 @@
 
 namespace Surveillance.Rules.Cancelled_Orders.Interfaces
 {
-    public interface ICancelledOrderRule : ITradeRule
-    {
-    }
+    public interface ICancelledOrderRule : IUniverseRule
+    { }
 }

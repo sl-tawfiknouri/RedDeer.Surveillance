@@ -17,7 +17,6 @@ namespace Surveillance.Rules
     {
         private readonly IProhibitedAssetTradingRule _prohibitedAssetTradingRule;
         private readonly ISpoofingRule _spoofingRule;
-        private readonly ICancelledOrderRule _cancelRule;
 
         public RuleManager(
             IProhibitedAssetTradingRule prohibitedAssetTradingRule,
@@ -29,16 +28,12 @@ namespace Surveillance.Rules
 
             _spoofingRule = spoofingRule
                 ?? throw new ArgumentNullException(nameof(spoofingRule));
-
-            _cancelRule = cancelRule
-                ?? throw new ArgumentNullException(nameof(cancelRule));
         }
 
         public void RegisterTradingRules(ITradeOrderStream<TradeOrderFrame> stream)
         {
             RegisterProhibitedAssetRule(stream);
             RegisterSpoofingRule(stream);
-            RegisterCancelledOrderRule(stream);
         }
 
         public void RegisterEquityRules(IStockExchangeStream stream)
@@ -53,11 +48,6 @@ namespace Surveillance.Rules
         private void RegisterSpoofingRule(ITradeOrderStream<TradeOrderFrame> stream)
         {
             stream?.Subscribe(_spoofingRule);
-        }
-
-        private void RegisterCancelledOrderRule(ITradeOrderStream<TradeOrderFrame> stream)
-        {
-            stream?.Subscribe(_cancelRule);
         }
     }
 }

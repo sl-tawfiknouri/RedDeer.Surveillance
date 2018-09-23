@@ -6,10 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StructureMap;
 using Surveillance;
-using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
@@ -27,11 +25,11 @@ namespace RedDeer.Surveillance.App
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            var dbConfiguration = BuildDatabaseConfiguration(configurationBuilder);
-            container.Inject(typeof(INetworkConfiguration), BuildNetworkConfiguration(configurationBuilder));
+            var dbConfiguration = Configuration.Configuration.BuildDatabaseConfiguration(configurationBuilder);
+            container.Inject(typeof(INetworkConfiguration), Configuration.Configuration.BuildNetworkConfiguration(configurationBuilder));
             container.Inject(typeof(IElasticSearchConfiguration), dbConfiguration);
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
-            container.Inject(typeof(IRuleConfiguration), BuildRuleConfiguration(configurationBuilder));
+            container.Inject(typeof(IRuleConfiguration), Configuration.Configuration.BuildRuleConfiguration(configurationBuilder));
 
             container.Configure(config =>
             {
@@ -57,47 +55,6 @@ namespace RedDeer.Surveillance.App
             {
                 await context.Response.WriteAsync("Red Deer Surveillance Service App");
             });
-        }
-
-        private static INetworkConfiguration BuildNetworkConfiguration(IConfigurationRoot configurationBuilder)
-        {
-            var networkConfiguration = new NetworkConfiguration
-            {
-                SurveillanceServiceEquityDomain = configurationBuilder.GetValue<string>("SurveillanceServiceEquityDomain"),
-                SurveillanceServiceEquityPort = configurationBuilder.GetValue<string>("SurveillanceServiceEquityPort"),
-
-                SurveillanceServiceTradeDomain = configurationBuilder.GetValue<string>("SurveillanceServiceTradeDomain"),
-                SurveillanceServiceTradePort = configurationBuilder.GetValue<string>("SurveillanceServiceTradePort"),
-            };
-
-            return networkConfiguration;
-        }
-
-        private static IElasticSearchConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
-        {
-            var networkConfiguration = new ElasticSearchConfiguration
-            {
-                IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
-                AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
-                AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
-                ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
-                CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
-                ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
-                ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),
-                ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort")
-            };
-
-            return networkConfiguration;
-        }
-
-        private static IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
-        {
-            var ruleConfiguration = new RuleConfiguration
-            {
-                CancelledOrderDeduplicationDelaySeconds = configurationBuilder.GetValue<int?>("CancelledOrderDeduplicationDelaySeconds")
-            };
-
-            return ruleConfiguration;
         }
     }
 }

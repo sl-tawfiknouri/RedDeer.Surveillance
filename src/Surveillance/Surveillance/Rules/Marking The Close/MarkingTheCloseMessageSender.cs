@@ -51,17 +51,30 @@ namespace Surveillance.Rules.Marking_The_Close
                     2,
                     MidpointRounding.AwayFromZero);
 
-            var dailyBuyVolumeMark =
-                ruleBreach.HasBuyDailyVolumeBreach
-                ? $" Daily volume threshold of {dailyVolumePercentageSetByUser}% was exceeded on buy orders by {dailyBuyVolumePercentage}% of daily volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close."
-                : string.Empty;
-
-            var dailySellVolumeMark =
-                ruleBreach.HasSellDailyVolumeBreach
-                ? $" Daily volume threshold of {dailyVolumePercentageSetByUser}% was exceeded on sell orders by {dailySellVolumePercentage}% of daily volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close."
-                : string.Empty;
+            var dailyBuyVolumeMark = BuyVolumeDescription(ruleBreach, dailyVolumePercentageSetByUser, dailyBuyVolumePercentage);
+            var dailySellVolumeMark = SellVolumeDescription(ruleBreach, dailyVolumePercentageSetByUser, dailySellVolumePercentage);
 
             return $"Marking the close rule breach detected for {ruleBreach.Security} ({ruleBreach.Security.Identifiers}) traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. {dailyBuyVolumeMark}{dailySellVolumeMark}";
+        }
+
+        private string BuyVolumeDescription(
+            IMarkingTheCloseBreach ruleBreach,
+            decimal dailyVolumePercentageSetByUser,
+            decimal dailyBuyVolumePercentage)
+        {
+            return ruleBreach.HasBuyDailyVolumeBreach
+                ? $" Daily volume threshold of {dailyVolumePercentageSetByUser}% was exceeded on buy orders by {dailyBuyVolumePercentage}% of daily volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close."
+                : string.Empty;
+        }
+
+        private string SellVolumeDescription(
+            IMarkingTheCloseBreach ruleBreach,
+            decimal dailyVolumePercentageSetByUser,
+            decimal dailySellVolumePercentage)
+        {
+            return ruleBreach.HasSellDailyVolumeBreach
+                ? $" Daily volume threshold of {dailyVolumePercentageSetByUser}% was exceeded on sell orders by {dailySellVolumePercentage}% of daily volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close."
+                : string.Empty;
         }
     }
 }

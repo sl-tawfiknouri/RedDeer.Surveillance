@@ -67,24 +67,34 @@ namespace Surveillance.Rules.High_Profits
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
-                var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
-
-                _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
-
-                var position = new TradePosition(activeTrades.ToList());
-                var breach =
-                    new HighProfitRuleBreach(
-                        _parameters,
-                        absoluteProfit,
-                        _parameters.HighProfitAbsoluteThresholdCurrency,
-                        profitRatio,
-                        security,
-                        hasHighProfitAbsolute,
-                        hasHighProfitPercentage,
-                        position);
-
-                _sender.Send(breach);
+                WriteAlertToMessageSender(activeTrades, absoluteProfit, profitRatio, hasHighProfitAbsolute, hasHighProfitPercentage);
             }
+        }
+
+        private void WriteAlertToMessageSender(
+            Stack<TradeOrderFrame> activeTrades,
+            decimal absoluteProfit,
+            decimal profitRatio,
+            bool hasHighProfitAbsolute,
+            bool hasHighProfitPercentage)
+        {
+            var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
+
+            _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
+
+            var position = new TradePosition(activeTrades.ToList());
+            var breach =
+                new HighProfitRuleBreach(
+                    _parameters,
+                    absoluteProfit,
+                    _parameters.HighProfitAbsoluteThresholdCurrency,
+                    profitRatio,
+                    security,
+                    hasHighProfitAbsolute,
+                    hasHighProfitPercentage,
+                    position);
+
+            _sender.Send(breach);
         }
 
         private bool HasHighProfitPercentage(decimal profitRatio)

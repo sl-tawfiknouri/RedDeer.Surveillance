@@ -36,16 +36,27 @@ namespace Surveillance.Rules.High_Profits
                     MidpointRounding.AwayFromZero);
 
             var highRelativeProfitSection =
-                ruleBreach.HasRelativeProfitBreach
-                    ? $" There was a high profit ratio of {highRelativeProfitAsPercentage}% which exceeded the configured high profit ratio percentage threshold of {highRelativeProfitAsPercentageSetByUser}%."
-                    : string.Empty;
-
-            var highAbsoluteProfitSection =
-                ruleBreach.HasAbsoluteProfitBreach
-                    ? $" There was a high profit of {ruleBreach.AbsoluteProfits} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
-                    : string.Empty;
+                HighRelativeProfitText(ruleBreach, highRelativeProfitAsPercentage, highRelativeProfitAsPercentageSetByUser);
+            var highAbsoluteProfitSection = HighAbsoluteProfitText(ruleBreach);
 
             return $"High profit rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}).{highRelativeProfitSection}{highAbsoluteProfitSection}";
+        }
+
+        private string HighRelativeProfitText(
+            IHighProfitRuleBreach ruleBreach,
+            decimal highRelativeProfitAsPercentage,
+            decimal highRelativeProfitAsPercentageSetByUser)
+        {
+            return ruleBreach.HasRelativeProfitBreach
+                    ? $" There was a high profit ratio of {highRelativeProfitAsPercentage}% which exceeded the configured high profit ratio percentage threshold of {highRelativeProfitAsPercentageSetByUser}%."
+                    : string.Empty;
+        }
+
+        private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach)
+        {
+            return ruleBreach.HasAbsoluteProfitBreach
+                ? $" There was a high profit of {ruleBreach.AbsoluteProfits} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
+                : string.Empty;
         }
     }
 }

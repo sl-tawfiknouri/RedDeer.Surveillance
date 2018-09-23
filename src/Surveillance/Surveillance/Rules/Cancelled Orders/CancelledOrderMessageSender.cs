@@ -1,104 +1,38 @@
 ﻿using System;
 using System.Linq;
-using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.ComplianceCase;
-using Contracts.SurveillanceService.ComplianceCaseLog;
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
-using Surveillance.Trades.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.Cancelled_Orders
 {
-    public class CancelledOrderMessageSender : ICancelledOrderMessageSender
+    public class CancelledOrderMessageSender : BaseMessageSender, ICancelledOrderMessageSender
     {
-        private readonly ICaseMessageSender _sender;
-        private readonly ITradeOrderDataItemDtoMapper _dtoMapper;
-        private readonly ILogger _logger;
-
         public CancelledOrderMessageSender(
-            ICaseMessageSender sender,
             ITradeOrderDataItemDtoMapper dtoMapper,
-            ILogger<CancelledOrderMessageSender> logger)
-        {
-            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
-            _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+            ILogger<CancelledOrderMessageSender> logger,
+            ICaseMessageSender caseMessageSender)
+            : base(
+                dtoMapper,
+                "Automated Cancellation Ratio Rule Breach Detected",
+                "Cancelled Order Message Sender",
+                logger,
+                caseMessageSender)
+        { }
 
-        public void Send(
-            ITradePosition tradePosition,
-            ICancelledOrderRuleBreach ruleBreach,
-            ICancelledOrderRuleParameters parameters)
+        public void Send(ICancelledOrderRuleBreach ruleBreach)
         {
-            if (tradePosition == null
-                || ruleBreach == null)
+            if (ruleBreach?.Trades == null
+                || !ruleBreach.Trades.Get().Any())
             {
                 return;
             }
 
-            var caseMessage = new CaseMessage
-            {
-                Case = CaseDataItem(tradePosition, ruleBreach, parameters),
-                CaseLogs = CaseLogsInPosition(tradePosition)
-            };
-
-            try
-            {
-                _sender.Send(caseMessage);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"Error occured in cancelled order message sender {e.Message}");
-            }
-        }
-
-        private ComplianceCaseDataItemDto CaseDataItem(
-            ITradePosition tradingPosition,
-            ICancelledOrderRuleBreach ruleBreach,
-            ICancelledOrderRuleParameters parameters)
-        {
-            var anyOrder = tradingPosition.Get().FirstOrDefault();
-            var mostRecentTp = tradingPosition.Get()?.Max(tp => tp.StatusChangedOn);
-            var oldestTp = tradingPosition.Get()?.Min(tp => tp.TradeSubmittedOn);
-            var venue = anyOrder?.Market?.Name ?? string.Empty;
-            var description = BuildDescription(parameters, ruleBreach, anyOrder);
-
-            return new ComplianceCaseDataItemDto
-            {
-                Title = "Automated Cancellation Ratio Rule Breach Detected",
-                Description = description,
-                Source = ComplianceCaseSource.SurveillanceRule,
-                Status = ComplianceCaseStatus.Unset,
-                Type = ComplianceCaseType.Unset,
-                ReportedOn = DateTime.Now,
-                Venue = venue,
-                StartOfPeriodUnderInvestigation = oldestTp.GetValueOrDefault(),
-                EndOfPeriodUnderInvestigation = mostRecentTp.GetValueOrDefault(),
-            };
-        }
-
-        private ComplianceCaseLogDataItemDto[] CaseLogsInPosition(ITradePosition tradingPosition)
-        {
-            if (tradingPosition == null
-                || !tradingPosition.Get().Any())
-            {
-                return new ComplianceCaseLogDataItemDto[0];
-            }
-
-            return tradingPosition
-                .Get()
-                .Select(tp =>
-                    new ComplianceCaseLogDataItemDto
-                    {
-                        Type = ComplianceCaseLogType.Unset,
-                        Notes = string.Empty,
-                        UnderlyingOrder = _dtoMapper.Map(tp)
-                    })
-                .ToArray();
+            var description = BuildDescription(ruleBreach.Parameters, ruleBreach, ruleBreach.Trades.Get().FirstOrDefault());
+            Send(ruleBreach, description);
         }
 
         private string BuildDescription(

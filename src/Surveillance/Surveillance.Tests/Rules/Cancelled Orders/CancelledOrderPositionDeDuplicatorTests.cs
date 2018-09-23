@@ -64,10 +64,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                    A<ITradePosition>.Ignored,
-                    A<ICancelledOrderRuleBreach>.Ignored,
-                    A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -93,10 +90,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -130,10 +124,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -177,10 +168,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
 
@@ -237,10 +225,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
 
@@ -314,10 +299,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 4);
         }
 
@@ -384,10 +366,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 2);
         }
 
@@ -444,10 +423,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A.CallTo(() =>
-                    messageSender.Send(
-                        A<ITradePosition>.Ignored,
-                        A<ICancelledOrderRuleBreach>.Ignored,
-                        A<ICancelledOrderRuleParameters>.Ignored))
+                    messageSender.Send(A<ICancelledOrderRuleBreach>.Ignored))
                 .MustHaveHappenedTwiceExactly();
         }
 

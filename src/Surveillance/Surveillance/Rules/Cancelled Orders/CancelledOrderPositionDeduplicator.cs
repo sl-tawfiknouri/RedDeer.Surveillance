@@ -144,7 +144,7 @@ namespace Surveillance.Rules.Cancelled_Orders
                 return;
             }
 
-            _messageSender.Send(parameters.TradePosition, parameters.RuleBreach, parameters.Parameters);
+            _messageSender.Send(parameters.RuleBreach);
         }
 
         private class TimerParameterPair

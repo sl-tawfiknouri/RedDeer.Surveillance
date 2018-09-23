@@ -1,11 +1,16 @@
-﻿namespace Surveillance.Rules.Cancelled_Orders.Interfaces
+﻿using Surveillance.Rules.Interfaces;
+using Surveillance.Rule_Parameters.Interfaces;
+
+namespace Surveillance.Rules.Cancelled_Orders.Interfaces
 {
-    public interface ICancelledOrderRuleBreach
+    public interface ICancelledOrderRuleBreach : IRuleBreach
     {
+        ICancelledOrderRuleParameters Parameters { get; }
+
         bool HasBreachedRule();
-        bool ExceededPercentagePositionCancellations { get; set; }
-        decimal? PercentagePositionCancelled { get; set; }
-        bool ExceededPercentageTradeCountCancellations { get; set; }
-        decimal? PercentageTradeCountCancelled { get; set; }
+        bool ExceededPercentagePositionCancellations { get; }
+        decimal? PercentagePositionCancelled { get; }
+        bool ExceededPercentageTradeCountCancellations { get; }
+        decimal? PercentageTradeCountCancelled { get; }
     }
 }

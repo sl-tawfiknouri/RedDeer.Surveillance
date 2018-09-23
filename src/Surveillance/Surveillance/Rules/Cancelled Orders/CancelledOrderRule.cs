@@ -128,13 +128,13 @@ namespace Surveillance.Rules.Cancelled_Orders
                 }
             }
 
-            return new CancelledOrderRuleBreach
-            {
-                ExceededPercentagePositionCancellations = hasBreachedRuleByPositionSize,
-                ExceededPercentageTradeCountCancellations = hasBreachedRuleByOrderCount,
-                PercentagePositionCancelled = cancellationRatioByPositionSize,
-                PercentageTradeCountCancelled = cancellationRatioByOrderCount
-            };
+            return new CancelledOrderRuleBreach(
+                _parameters,
+                tradingPosition,
+                tradingPosition?.Get()?.FirstOrDefault()?.Security, hasBreachedRuleByPositionSize,
+                cancellationRatioByPositionSize,
+                hasBreachedRuleByOrderCount,
+                cancellationRatioByOrderCount);
         }
     }
 }

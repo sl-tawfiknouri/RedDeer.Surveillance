@@ -5,6 +5,7 @@ using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Commands.Market_Abuse_Commands;
 using TestHarness.Display;
+using TestHarness.Display.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.State.Interfaces;
 

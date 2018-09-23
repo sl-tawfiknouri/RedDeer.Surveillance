@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
+using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display
 {

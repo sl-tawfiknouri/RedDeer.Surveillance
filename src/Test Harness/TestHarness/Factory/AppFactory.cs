@@ -20,6 +20,7 @@ using TestHarness.Factory.TradingSpoofingFactory;
 using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
+using TestHarness.Display.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using Utilities.Aws_IO;

@@ -80,24 +80,8 @@ namespace TestHarness.Engine.OrderGenerator
                 var cancellationSecurity = _lastFrame.Securities.Skip(selectSecurityToCancelTradesFor).FirstOrDefault();
                 var cancellationOrderTotal = DiscreteUniform.Sample(3, 20);
                 var cancellationOrderTactic = DiscreteUniform.Sample(1, 3);
-
                 var orders = new TradeOrderFrame[0];
-                switch (cancellationOrderTactic)
-                {
-                    case 0:
-                        // cannot be hit due to discrete uniform spread as we're not currently coding for detecting it on the surveillance service
-                        orders = SingularCancelledOrder(cancellationSecurity, _lastFrame.Exchange);
-                        break;
-                    case 1:
-                        orders = CancellationOrdersByValue(cancellationSecurity, cancellationOrderTotal);
-                        break;
-                    case 2:
-                        orders = CancellationOrdersByRatio(cancellationSecurity, cancellationOrderTotal);
-                        break;
-                    case 3:
-                        orders = CancellationOrdersByPercentOfVolume(cancellationSecurity, cancellationOrderTotal);
-                        break;
-                }
+                orders = SetCancellationOrder(cancellationSecurity, cancellationOrderTotal, cancellationOrderTactic, orders);
 
                 foreach (var item in orders)
                 {
@@ -105,7 +89,29 @@ namespace TestHarness.Engine.OrderGenerator
                 }
             }
         }
-        
+
+        private TradeOrderFrame[] SetCancellationOrder(SecurityTick cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, TradeOrderFrame[] orders)
+        {
+            switch (cancellationOrderTactic)
+            {
+                case 0:
+                    // cannot be hit due to discrete uniform spread as we're not currently coding for detecting it on the surveillance service
+                    orders = SingularCancelledOrder(cancellationSecurity, _lastFrame.Exchange);
+                    break;
+                case 1:
+                    orders = CancellationOrdersByValue(cancellationSecurity, cancellationOrderTotal);
+                    break;
+                case 2:
+                    orders = CancellationOrdersByRatio(cancellationSecurity, cancellationOrderTotal);
+                    break;
+                case 3:
+                    orders = CancellationOrdersByPercentOfVolume(cancellationSecurity, cancellationOrderTotal);
+                    break;
+            }
+
+            return orders;
+        }
+
         private TradeOrderFrame[] CancellationOrdersByValue(SecurityTick security, int totalOrders)
         {
             if (totalOrders == 0

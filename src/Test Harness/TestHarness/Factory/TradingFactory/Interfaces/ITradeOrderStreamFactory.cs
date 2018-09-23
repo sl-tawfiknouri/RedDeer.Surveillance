@@ -1,6 +1,7 @@
 ﻿using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using TestHarness.Display;
+using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Factory.TradingFactory.Interfaces
 {

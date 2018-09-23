@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity.Frames;
+using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers
 {

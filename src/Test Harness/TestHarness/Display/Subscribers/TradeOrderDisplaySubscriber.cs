@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Trades.Orders;
+using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers
 {

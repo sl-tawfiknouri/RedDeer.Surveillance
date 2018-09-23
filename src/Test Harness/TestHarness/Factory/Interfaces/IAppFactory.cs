@@ -3,6 +3,7 @@ using NLog;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display;
+using TestHarness.Display.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;

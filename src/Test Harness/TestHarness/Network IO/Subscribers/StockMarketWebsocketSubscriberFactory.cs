@@ -1,6 +1,7 @@
 ﻿using NLog;
 using System;
 using TestHarness.Display;
+using TestHarness.Display.Interfaces;
 using TestHarness.Network_IO.Subscribers.Interfaces;
 using Utilities.Network_IO.Websocket_Connections;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;

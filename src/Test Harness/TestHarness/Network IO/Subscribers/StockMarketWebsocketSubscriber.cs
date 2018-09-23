@@ -17,8 +17,8 @@ namespace TestHarness.Network_IO.Subscribers
 
         public override void OnNext(ExchangeFrame value)
         {
-            var duplexedMessage = _duplexMessageFactory.Create(MessageType.RedderStockFormat, value);
-            _networkSwitch.Send(duplexedMessage);
+            var duplexedMessage = DuplexMessageFactory.Create(MessageType.RedderStockFormat, value);
+            NetworkSwitch.Send(duplexedMessage);
         }
     }
 }

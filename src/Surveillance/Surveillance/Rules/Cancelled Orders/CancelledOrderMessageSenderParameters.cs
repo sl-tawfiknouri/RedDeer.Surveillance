@@ -30,7 +30,7 @@ namespace Surveillance.Rules.Cancelled_Orders
                 return false;
             }
 
-            return Equals(this.Identifiers, castObj.Identifiers);
+            return Equals(Identifiers, castObj.Identifiers);
         }
     }
 }

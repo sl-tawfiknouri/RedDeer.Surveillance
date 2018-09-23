@@ -131,20 +131,11 @@ namespace TestHarness.Commands
 
         private void Stop()
         {
-            if (_networkManager != null)
-            {
-                _networkManager.TerminateAllNetworkConnections();
-            }
+            _networkManager?.TerminateAllNetworkConnections();
 
-            if (_tradingProcess != null)
-            {
-                _tradingProcess.TerminateTrading();
-            }
+            _tradingProcess?.TerminateTrading();
 
-            if (_equityProcess != null)
-            {
-                _equityProcess.TerminateWalk();
-            }
+            _equityProcess?.TerminateWalk();
         }
     }
 }

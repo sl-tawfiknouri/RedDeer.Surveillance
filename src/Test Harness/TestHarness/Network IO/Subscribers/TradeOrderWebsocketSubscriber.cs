@@ -18,10 +18,10 @@ namespace TestHarness.Network_IO.Subscribers
 
         public override void OnNext(TradeOrderFrame value)
         {
-            lock (_stateLock)
+            lock (StateLock)
             {
-                var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
-                _networkSwitch.Send(duplexedMessage);
+                var duplexedMessage = DuplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
+                NetworkSwitch.Send(duplexedMessage);
             }
         }
     }

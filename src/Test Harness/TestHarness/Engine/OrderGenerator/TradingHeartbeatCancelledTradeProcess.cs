@@ -22,11 +22,11 @@ namespace TestHarness.Engine.OrderGenerator
         private volatile bool _initiated;
         private ExchangeFrame _lastFrame;
 
-        private decimal cancellationOfPositionVolumeThresholdPercentage = 0.8m; // % of position cancelled aggregated over all trades in a given direction
-        private decimal cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
-        private int valueOfCancelledTradeRatioThreshold = 200000; // currency value for ratio cancellations
-        private int valueOfCancelledTradeThreshold = 1000000; // currency value, aggregate over many trades
-        private int valueOfSingularCancelledTradeThreshold = 5000000; // currency value
+        private decimal _cancellationOfPositionVolumeThresholdPercentage = 0.8m; // % of position cancelled aggregated over all trades in a given direction
+        private decimal _cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
+        private int _valueOfCancelledTradeRatioThreshold = 200000; // currency value for ratio cancellations
+        private int _valueOfCancelledTradeThreshold = 1000000; // currency value, aggregate over many trades
+        private int _valueOfSingularCancelledTradeThreshold = 5000000; // currency value
 
         public TradingHeartbeatCancelledTradeProcess(
             ILogger logger,
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.OrderGenerator
 
                 foreach (var item in orders)
                 {
-                    _tradeStream.Add(item);
+                    TradeStream.Add(item);
                 }
             }
         }
@@ -116,7 +116,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var ordersToCancel = DiscreteUniform.Sample(1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
-            var minimumPerOrderValue = (int)((decimal)valueOfCancelledTradeThreshold * ((decimal)(1m / ordersToCancel)) + 1);
+            var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeThreshold * ((decimal)(1m / ordersToCancel)) + 1);
 
             var orders = new List<TradeOrderFrame>();
 
@@ -142,9 +142,9 @@ namespace TestHarness.Engine.OrderGenerator
                 return new TradeOrderFrame[0];
             }
 
-            var ordersToCancel = Math.Min((int)(totalOrders * cancellationOfOrdersSubmittedThresholdPercentage) + 1, totalOrders);
+            var ordersToCancel = Math.Min((int)(totalOrders * _cancellationOfOrdersSubmittedThresholdPercentage) + 1, totalOrders);
             var ordersToFulfill = totalOrders - ordersToCancel;
-            var minimumPerOrderValue = (int)((decimal)valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
+            var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
 
             var orders = new List<TradeOrderFrame>();
 
@@ -173,8 +173,8 @@ namespace TestHarness.Engine.OrderGenerator
             var cancelledOrderPositionSize = 10000000;
             var ordersToCancel = 1;
             var ordersToFulfill = totalOrders - ordersToCancel;
-            var minimumPerOrderValue = cancelledOrderPositionSize * cancellationOfPositionVolumeThresholdPercentage;
-            var remainingOrderValue = cancelledOrderPositionSize * (1 - cancellationOfPositionVolumeThresholdPercentage);
+            var minimumPerOrderValue = cancelledOrderPositionSize * _cancellationOfPositionVolumeThresholdPercentage;
+            var remainingOrderValue = cancelledOrderPositionSize * (1 - _cancellationOfPositionVolumeThresholdPercentage);
             var remainingOrderValuePerOrder = (int)((decimal)remainingOrderValue * ((decimal)(1m / ordersToFulfill)) + 1);
 
             var orders = new List<TradeOrderFrame>();
@@ -194,7 +194,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private TradeOrderFrame[] SingularCancelledOrder(SecurityTick security, StockExchange exchange)
         {
-            var cancelledTradeOrderValue = DiscreteUniform.Sample(valueOfSingularCancelledTradeThreshold, 10000000);
+            var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
 
             return new[] { order };

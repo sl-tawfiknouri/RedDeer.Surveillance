@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace Domain.Streams
 {
@@ -22,7 +23,7 @@ namespace Domain.Streams
 
         }
 
-        public int Count { get { return _queue.Count(); } }
+        public int Count => _queue.Count;
 
         public void Add(T item)
         {

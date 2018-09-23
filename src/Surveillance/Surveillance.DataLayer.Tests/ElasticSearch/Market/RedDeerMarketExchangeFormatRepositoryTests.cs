@@ -23,6 +23,7 @@ namespace Surveillance.DataLayer.Tests.ElasticSearch.Market
         [Test]
         public void Constructor_ConsidersNullDataAccess_ToBeExceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new RedDeerMarketExchangeFormatRepository(null));
         }
 

@@ -22,8 +22,7 @@ namespace TestHarness.Engine.Heartbeat
 
             _sd = sd;
 
-            _activeTimer = new Timer();
-            _activeTimer.Interval = heartbeat.TotalMilliseconds;
+            _activeTimer = new Timer {Interval = heartbeat.TotalMilliseconds};
             _activeTimer.Elapsed += PaceMaker;
             _activeTimer.AutoReset = false;
         }

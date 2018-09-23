@@ -16,7 +16,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         public ExchangeFrame InitialFrame()
         {
             var exchange = new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ");
-            var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(_initialNasdaqDataJson);
+            var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
             var tick = new ExchangeFrame(exchange, DateTime.UtcNow, securities);
@@ -64,7 +64,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             public string Sell { get; set; }
         }
 
-        private static readonly string _initialNasdaqDataJson = @"
+        private static readonly string InitialNasdaqDataJson = @"
         [
           {
             'Symbol': 'AABA',

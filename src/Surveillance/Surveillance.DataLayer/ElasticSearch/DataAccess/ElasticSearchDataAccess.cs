@@ -66,43 +66,46 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             CancellationToken cancellationToken)
             where T : class
         {
-            var indexName = $"surveillance-{name.ToLower()}-{dateTime.ToString("yyyy-MM-dd")}";
-            if (!_indexExistsCache.ContainsKey(indexName))
+            var indexName = $"surveillance-{name.ToLower()}-{dateTime:yyyy-MM-dd}";
+
+            if (_indexExistsCache.ContainsKey(indexName))
             {
-                await _indexExistsCacheLock.WaitAsync(cancellationToken);
-                try
+                return indexName;
+            }
+
+            await _indexExistsCacheLock.WaitAsync(cancellationToken);
+            try
+            {
+                if (!_indexExistsCache.ContainsKey(indexName))
                 {
-                    if (!_indexExistsCache.ContainsKey(indexName))
+                    var existsResponse = await _elasticClient.IndexExistsAsync(indexName, cancellationToken: cancellationToken);
+                    HandleResponseErrors(existsResponse);
+
+                    if (existsResponse.Exists == false)
                     {
-                        var existsResponse = await _elasticClient.IndexExistsAsync(indexName, cancellationToken: cancellationToken);
-                        HandleResponseErrors(existsResponse);
-
-                        if (existsResponse.Exists == false)
-                        {
-                            var createIndexResponse = await _elasticClient.CreateIndexAsync(indexName, i => i
-                                .InitializeUsing(new IndexState
+                        var createIndexResponse = await _elasticClient.CreateIndexAsync(indexName, i => i
+                            .InitializeUsing(new IndexState
+                            {
+                                Settings = new IndexSettings
                                 {
-                                    Settings = new IndexSettings
-                                    {
-                                        //NumberOfReplicas = 1,
-                                        //NumberOfShards = 2
-                                    }
-                                })
-                                .Mappings(ms => ms
-                                    .Map<T>(m => m
-                                        .AutoMap()
-                                    )
-                                ), cancellationToken: cancellationToken);
-                            HandleResponseErrors(createIndexResponse);
-                        }
-
-                        _indexExistsCache[indexName] = indexName;
+                                    //NumberOfReplicas = 1,
+                                    //NumberOfShards = 2
+                                }
+                            })
+                            .Mappings(ms => ms
+                                .Map<T>(m => m
+                                    .AutoMap()
+                                )
+                            ), cancellationToken: cancellationToken);
+                        HandleResponseErrors(createIndexResponse);
                     }
+
+                    _indexExistsCache[indexName] = indexName;
                 }
-                finally
-                {
-                    _indexExistsCacheLock.Release();
-                }
+            }
+            finally
+            {
+                _indexExistsCacheLock.Release();
             }
 
             return indexName;
@@ -160,7 +163,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             DateTime end,
             CancellationToken cancellationToken)
         {
-            var result = _elasticClient.Search<ReddeerTradeDocument>(
+            var result = await _elasticClient.SearchAsync<ReddeerTradeDocument>(
                 q => q
                     .Index("surveillance-reddeer-trade-*")
                     .Size(10000)
@@ -170,7 +173,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
                             ra.Field(fi => fi.StatusChangedOn)
                                 .GreaterThanOrEquals(start.ToString("yyyy-MM-dd HH:mm:ss"))
                                 .LessThanOrEquals(end.ToString("yyyy-MM-dd HH:mm:ss"))
-                                .Format("yyyy-MM-dd HH:mm:ss"))));
+                                .Format("yyyy-MM-dd HH:mm:ss"))), cancellationToken);
 
             return result?.Documents ?? new List<ReddeerTradeDocument>();
         }
@@ -180,7 +183,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             DateTime end,
             CancellationToken cancellationToken)
         {
-            var result = _elasticClient.Search<ReddeerMarketDocument>(
+            var result = await _elasticClient.SearchAsync<ReddeerMarketDocument>(
                 q => q
                     .Index("surveillance-reddeer-stock-market*")
                     .Size(10000)
@@ -190,7 +193,7 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
                             ra.Field(fi => fi.DateTime)
                                 .GreaterThanOrEquals(start.ToString("yyyy-MM-dd HH:mm:ss"))
                                 .LessThanOrEquals(end.ToString("yyyy-MM-dd HH:mm:ss"))
-                                .Format("yyyy-MM-dd HH:mm:ss"))));
+                                .Format("yyyy-MM-dd HH:mm:ss"))), cancellationToken);
 
             return result?.Documents ?? new List<ReddeerMarketDocument>();
         }

@@ -89,10 +89,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
                 if (!_walkInitiated)
                 {
-                    if (_heartBeat != null)
-                    {
-                        _heartBeat.Stop();
-                    }
+                    _heartBeat?.Stop();
                     _tickLocked = false;
                     return;
                 }

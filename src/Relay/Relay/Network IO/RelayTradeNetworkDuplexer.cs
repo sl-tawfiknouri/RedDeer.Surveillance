@@ -13,11 +13,11 @@ namespace Relay.Network_IO
     /// </summary>
     public class RelayTradeNetworkDuplexer : IRelayTradeNetworkDuplexer
     {
-        private readonly ITradeOrderStream<TradeOrderFrame> _ReddeerTradeFormatStream;
+        private readonly ITradeOrderStream<TradeOrderFrame> _reddeerTradeFormatStream;
 
         public RelayTradeNetworkDuplexer(ITradeOrderStream<TradeOrderFrame> reddeerStream)
         {
-            _ReddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
+            _reddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
         }
 
         public void Transmit(IDuplexedMessage message)
@@ -49,7 +49,7 @@ namespace Relay.Network_IO
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<TradeOrderFrame>(message.Message, serialiserSettings);
-            _ReddeerTradeFormatStream?.Add(formattedMessage);
+            _reddeerTradeFormatStream?.Add(formattedMessage);
         }
 
         private void FixFormat(IDuplexedMessage message)

@@ -23,6 +23,7 @@ namespace Surveillance.DataLayer.Tests.ElasticSearch.Trade
         [Test]
         public void Constructor_NullDataAccessItem_ThrowsException()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new RedDeerTradeFormatRepository(null));
         }
 

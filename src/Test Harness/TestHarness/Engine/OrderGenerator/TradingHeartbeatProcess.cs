@@ -63,7 +63,7 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 if (_lastFrame != null)
                 {
-                    _orderStrategy.ExecuteTradeStrategy(_lastFrame, _tradeStream);
+                    OrderStrategy.ExecuteTradeStrategy(_lastFrame, TradeStream);
                 }
             }
         }

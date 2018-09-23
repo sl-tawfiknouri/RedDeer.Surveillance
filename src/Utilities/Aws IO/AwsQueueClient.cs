@@ -117,7 +117,7 @@ namespace Utilities.Aws_IO
                             QueueUrl = queueUrl,
                             ReceiptHandle = message.ReceiptHandle
                         };
-                        await _sqsClient.DeleteMessageAsync(deleteMessageRequest);
+                        await _sqsClient.DeleteMessageAsync(deleteMessageRequest, cancellationToken);
                     }
                 }
                 catch (Exception ex)

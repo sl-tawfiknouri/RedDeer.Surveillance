@@ -51,7 +51,7 @@ namespace TestHarness.Commands
             };
         }
 
-        public void InterpretIOCommand(string command)
+        public void InterpretIoCommand(string command)
         {
             _logger.Info($"Command Manager receieved command: {command}");
 

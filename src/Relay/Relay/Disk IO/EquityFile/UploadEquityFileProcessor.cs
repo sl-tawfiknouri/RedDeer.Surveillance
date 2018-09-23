@@ -73,16 +73,12 @@ namespace Relay.Disk_IO.EquityFile
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
 
-            var exchange = tradeOrders.FirstOrDefault();
-
-            if (exchange == null)
-            {
-                exchange = 
-                    new ExchangeFrame(
-                        new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName),
-                        mappedRecord?.TimeStamp ?? DateTime.UtcNow,
-                        new List<SecurityTick>());
-            }
+            var exchange =
+                tradeOrders.FirstOrDefault()
+                ?? new ExchangeFrame(
+                    new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName),
+                    mappedRecord?.TimeStamp ?? DateTime.UtcNow,
+                    new List<SecurityTick>());
 
             if (mappedRecord != null)
             {

@@ -3,12 +3,14 @@ using System.Linq;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Trades.Interfaces;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace Surveillance.Trades
 {
     public class TradingHistory : ITradingHistory
     {
         private IList<TradeOrderFrame> _active;
+        // ReSharper disable once CollectionNeverQueried.Local
         private readonly IList<TradeOrderFrame> _history;
         private readonly TimeSpan _activeTradeDuration;
 

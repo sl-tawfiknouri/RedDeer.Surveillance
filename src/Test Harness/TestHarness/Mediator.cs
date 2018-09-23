@@ -34,7 +34,7 @@ namespace TestHarness
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
 
-                _commandManager.InterpretIOCommand(_commandManifest.Initiate);
+                _commandManager.InterpretIoCommand(_commandManifest.Initiate);
             }
         }
 
@@ -45,7 +45,7 @@ namespace TestHarness
         {
             lock (_lock)
             {
-                _commandManager.InterpretIOCommand(command);
+                _commandManager.InterpretIoCommand(command);
             }
         }
 
@@ -58,7 +58,7 @@ namespace TestHarness
             {
                 _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating");
 
-                _commandManager.InterpretIOCommand(_commandManifest.Quit);
+                _commandManager.InterpretIoCommand(_commandManifest.Quit);
             }
         }
     }

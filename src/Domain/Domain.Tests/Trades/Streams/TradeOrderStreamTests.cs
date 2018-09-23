@@ -27,6 +27,7 @@ namespace Domain.Tests.Trades.Streams
         [Test]
         public void Constructor_ThrowsExceptionForNull_UnsubscriberFactory()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new TradeOrderStream<TradeOrderFrame>(null));
         }
 

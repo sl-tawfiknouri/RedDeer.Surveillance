@@ -8,20 +8,20 @@ namespace TestHarness.Network_IO.Subscribers
 {
     public abstract class BaseWebsocketSubscriber<T>
     {
-        protected object _stateLock = new object();
-        private const int _timeoutSeconds = 15;
+        protected object StateLock = new object();
+        private const int TimeoutSeconds = 15;
 
-        protected INetworkSwitch _networkSwitch;
-        protected IDuplexMessageFactory _duplexMessageFactory;
+        protected INetworkSwitch NetworkSwitch;
+        protected IDuplexMessageFactory DuplexMessageFactory;
         private readonly ILogger _logger;
 
-        public BaseWebsocketSubscriber(
+        protected BaseWebsocketSubscriber(
             INetworkSwitch networkSwitch,
             IDuplexMessageFactory factory,
             ILogger logger)
         {
-            _networkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
-            _duplexMessageFactory = factory ?? throw new ArgumentNullException(nameof(factory));
+            NetworkSwitch = networkSwitch ?? throw new ArgumentNullException(nameof(networkSwitch));
+            DuplexMessageFactory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -30,33 +30,33 @@ namespace TestHarness.Network_IO.Subscribers
         /// </summary>
         public bool Initiate(string domain, string port)
         {
-            lock (_stateLock)
+            lock (StateLock)
             {
                 _logger.Log(
                     LogLevel.Info,
-                    $"Initiating trade order websocket subscriber with {_timeoutSeconds} second timeout");
+                    $"Initiating trade order websocket subscriber with {TimeoutSeconds} second timeout");
 
                 // allow a 10 second one off attempt to connect
-                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_timeoutSeconds));
-                return _networkSwitch.Initiate(domain, port, cts.Token);
+                var cts = new CancellationTokenSource(TimeSpan.FromSeconds(TimeoutSeconds));
+                return NetworkSwitch.Initiate(domain, port, cts.Token);
             }
         }
 
         public void Terminate()
         {
-            lock (_stateLock)
+            lock (StateLock)
             {
-                _networkSwitch.Terminate();
+                NetworkSwitch.Terminate();
             }
         }
 
         public void OnCompleted()
         {
-            lock (_stateLock)
+            lock (StateLock)
             {
                 _logger.Log(LogLevel.Info, $"Trade Order Websocket Subscriber underlying stream completed.");
 
-                _networkSwitch.Terminate();
+                NetworkSwitch.Terminate();
             }
         }
 

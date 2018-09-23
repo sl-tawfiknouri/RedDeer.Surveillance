@@ -83,7 +83,7 @@ namespace Domain.Equity.Frames
                 return null;
             }
 
-            int listedSecurities = 0;
+            var listedSecurities = 0;
             if (!string.IsNullOrWhiteSpace(csv.ListedSecurities)
                 && !int.TryParse(csv.ListedSecurities, out listedSecurities))
             {

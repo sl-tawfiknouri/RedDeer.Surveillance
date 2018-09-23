@@ -20,6 +20,7 @@ namespace TestHarness.Tests.Commands.Market_Abuse_Commands
         [Test]
         public void Constructor_ThrowsExceptionOnNull_AppFactory()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new CancellationCommand(null));
         }
 

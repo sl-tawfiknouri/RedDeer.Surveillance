@@ -7,7 +7,7 @@ namespace Domain.Market
     /// </summary>
     public abstract class Market : IMarket
     {
-        public Market(MarketId id, string name)
+        protected Market(MarketId id, string name)
         {
             Id = id;
             Name = name ?? string.Empty;

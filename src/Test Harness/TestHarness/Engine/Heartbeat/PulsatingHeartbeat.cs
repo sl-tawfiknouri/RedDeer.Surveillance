@@ -15,10 +15,7 @@ namespace TestHarness.Engine.Heartbeat
         {
             lock (_lock)
             {
-                if (_handler != null)
-                {
-                    _handler.Invoke(this, null);
-                }
+                _handler?.Invoke(this, null);
             }
         }
 

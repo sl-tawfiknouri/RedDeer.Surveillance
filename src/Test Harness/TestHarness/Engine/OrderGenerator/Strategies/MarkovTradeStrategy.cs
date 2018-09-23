@@ -53,14 +53,14 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             }
 
             if (frame.Securities == null
-                || !frame.Securities.Any(sec => sec != null))
+                || frame.Securities.All(sec => sec == null))
             {
                 _logger.Log(LogLevel.Info, "No securities were present on the exchange frame in the markov trade strategy");
                 return;
             }
 
-            var tradeableSecurities = frame.Securities.Where(sec => sec != null).ToList();
-            int numberOfTradeOrders = _tradeVolumeStratey.CalculateSecuritiesToTrade(tradeableSecurities);
+            var tradableSecurities = frame.Securities.Where(sec => sec != null).ToList();
+            var numberOfTradeOrders = _tradeVolumeStratey.CalculateSecuritiesToTrade(tradableSecurities);
 
             if (numberOfTradeOrders <= 0)
             {

@@ -81,51 +81,51 @@ namespace TestHarness.Factory
         /// <summary>
         /// Ctor is used to construct this
         /// </summary>
-        public ICommandManager CommandManager { get; private set; }
+        public ICommandManager CommandManager { get; }
 
         /// <summary>
         /// Ctor is used to construct this
         /// </summary>
-        public ICommandManifest CommandManifest { get; private set; }
+        public ICommandManifest CommandManifest { get; }
 
         /// <summary>
         /// Ctor is used to construct this
         /// </summary>
-        public IProgramState State { get; private set; }
+        public IProgramState State { get; }
 
-        public IConsole Console { get; private set; }
+        public IConsole Console { get; }
         
-        public IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; private set; }
+        public IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; }
 
-        public IPulsatingHeartbeat SpoofedTradeHeartbeat { get; private set; }
+        public IPulsatingHeartbeat SpoofedTradeHeartbeat { get; }
 
-        public IPulsatingHeartbeat CancelTradeHeartbeat { get; private set; }
+        public IPulsatingHeartbeat CancelTradeHeartbeat { get; }
 
         // new factories
-        public IEquitiesProcessFactory EquitiesProcessFactory { get; private set; } 
+        public IEquitiesProcessFactory EquitiesProcessFactory { get; } 
 
-        public IStockExchangeStreamFactory StockExchangeStreamFactory { get; private set; }
+        public IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
-        public INetworkManagerFactory NetworkManagerFactory { get; private set; } 
+        public INetworkManagerFactory NetworkManagerFactory { get; } 
 
-        public ITradingFactory TradingFactory { get; private set; }
+        public ITradingFactory TradingFactory { get; }
 
-        public ITradeOrderStreamFactory TradeOrderStreamFactory { get; private set; }
+        public ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
 
-        public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; private set; }
+        public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
 
-        public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; private set; }
+        public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
 
-        public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; private set; }
+        public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
 
-        public ITradingCancelledFactory TradingCancelledOrdersFactory { get; private set; }
+        public ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
 
-        public IAwsQueueClient AwsQueueClient { get; private set; }
+        public IAwsQueueClient AwsQueueClient { get; }
 
-        public IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; private set; }
+        public IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
 
-        public INetworkConfiguration Configuration { get; private set; }
+        public INetworkConfiguration Configuration { get; }
 
-        public IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; private set; }
+        public IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
     }
 }

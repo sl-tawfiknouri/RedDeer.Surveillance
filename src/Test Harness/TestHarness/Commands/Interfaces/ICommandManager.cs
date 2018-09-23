@@ -2,6 +2,6 @@
 {
     public interface ICommandManager
     {
-        void InterpretIOCommand(string command);
+        void InterpretIoCommand(string command);
     }
 }

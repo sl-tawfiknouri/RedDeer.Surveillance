@@ -21,8 +21,8 @@ namespace Domain.Tests.Streams
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber<ExchangeFrame>(dict, obs3);
-            unsub.Dispose();
+            var unsubscriber = new Unsubscriber<ExchangeFrame>(dict, obs3);
+            unsubscriber.Dispose();
 
             Assert.AreEqual(2, dict.Count);
             Assert.True(dict.ContainsKey(obs1));
@@ -40,9 +40,9 @@ namespace Domain.Tests.Streams
             dict.TryAdd(obs2, obs2);
             dict.TryAdd(obs3, obs3);
 
-            var unsub = new Unsubscriber<ExchangeFrame>(dict, obs3);
+            var unsubscriber = new Unsubscriber<ExchangeFrame>(dict, obs3);
             dict.TryRemove(obs3, out obs3);
-            unsub.Dispose();
+            unsubscriber.Dispose();
 
             Assert.AreEqual(2, dict.Count);
             Assert.True(dict.ContainsKey(obs1));
@@ -54,9 +54,9 @@ namespace Domain.Tests.Streams
         {
             var obs1 = A.Fake<IObserver<ExchangeFrame>>();
            
-            var unsub = new Unsubscriber<ExchangeFrame>(null, obs1);
+            var unsubscriber = new Unsubscriber<ExchangeFrame>(null, obs1);
 
-            Assert.DoesNotThrow(() => unsub.Dispose());
+            Assert.DoesNotThrow(() => unsubscriber.Dispose());
         }
 
         [Test]
@@ -64,6 +64,7 @@ namespace Domain.Tests.Streams
         {
             var dict = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
 
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Unsubscriber<ExchangeFrame>(dict, null));
         }
     }

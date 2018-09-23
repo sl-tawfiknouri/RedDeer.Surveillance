@@ -15,19 +15,19 @@ namespace TestHarness.Engine.OrderGenerator
     public abstract class BaseTradingProcess : IOrderDataGenerator
     {
         private IDisposable _unsubscriber;
-        protected IStockExchangeStream _stockStream;
-        protected ITradeOrderStream<TradeOrderFrame> _tradeStream;
-        protected ITradeStrategy<TradeOrderFrame> _orderStrategy;
+        protected IStockExchangeStream StockStream;
+        protected ITradeOrderStream<TradeOrderFrame> TradeStream;
+        protected ITradeStrategy<TradeOrderFrame> OrderStrategy;
 
         private readonly object _stateTransition = new object();
         private volatile bool _generatorExecuting;
 
-        protected readonly ILogger _logger;
+        protected readonly ILogger Logger;
 
-        public BaseTradingProcess(ILogger logger, ITradeStrategy<TradeOrderFrame> orderStrategy)
+        protected BaseTradingProcess(ILogger logger, ITradeStrategy<TradeOrderFrame> orderStrategy)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _orderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            OrderStrategy = orderStrategy ?? throw new ArgumentNullException(nameof(orderStrategy));
         }
 
         public void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream<TradeOrderFrame> tradeStream)
@@ -36,25 +36,25 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 if (stockStream == null)
                 {
-                    _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null stock stream");
+                    Logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null stock stream");
                     return;
                 }
 
                 if (tradeStream == null)
                 {
-                    _logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null trade stream");
+                    Logger.Log(LogLevel.Error, "Initiation attempt in order data generator with null trade stream");
                     return;
                 }
 
                 if (_generatorExecuting)
                 {
-                    _logger.Log(LogLevel.Warn, "Initiating new trading with predecessor active");
+                    Logger.Log(LogLevel.Warn, "Initiating new trading with predecessor active");
                     _TerminateTrading();
                 }
 
-                _logger.Log(LogLevel.Info, "Order data generator initiated with new stock stream");
-                _stockStream = stockStream;
-                _tradeStream = tradeStream;
+                Logger.Log(LogLevel.Info, "Order data generator initiated with new stock stream");
+                StockStream = stockStream;
+                TradeStream = tradeStream;
                 _unsubscriber = stockStream.Subscribe(this);
                 _generatorExecuting = true;
 
@@ -66,19 +66,19 @@ namespace TestHarness.Engine.OrderGenerator
 
         public void OnCompleted()
         {
-            _logger.Log(LogLevel.Info, "Order data generator received completed message from stock stream. Terminating order data generation");
-            this.TerminateTrading();
+            Logger.Log(LogLevel.Info, "Order data generator received completed message from stock stream. Terminating order data generation");
+            TerminateTrading();
         }
 
         public void OnError(Exception error)
         {
             if (error == null)
             {
-                _logger.Log(LogLevel.Error, "Order data generator receieved a null exception OnError");
+                Logger.Log(LogLevel.Error, "Order data generator receieved a null exception OnError");
                 return;
             }
 
-            _logger.Log(LogLevel.Error, error);
+            Logger.Log(LogLevel.Error, error);
         }
 
         public abstract void OnNext(ExchangeFrame value);
@@ -99,15 +99,12 @@ namespace TestHarness.Engine.OrderGenerator
         /// </summary>
         private void _TerminateTrading()
         {
-            _logger.Log(LogLevel.Info, "Order data generator terminating trading");
+            Logger.Log(LogLevel.Info, "Order data generator terminating trading");
 
-            if (_unsubscriber != null)
-            {
-                _unsubscriber.Dispose();
-            }
+            _unsubscriber?.Dispose();
 
-            _stockStream = null;
-            _tradeStream = null;
+            StockStream = null;
+            TradeStream = null;
             _generatorExecuting = false;
 
             _TerminateTradingStrategy();

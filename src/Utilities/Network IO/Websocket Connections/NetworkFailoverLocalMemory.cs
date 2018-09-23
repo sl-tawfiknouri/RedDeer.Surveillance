@@ -31,7 +31,7 @@ namespace Utilities.Network_IO.Websocket_Connections
                     return;
                 }
 
-                _dict.TryGetValue(typeof(T), out List<object> itemList);
+                _dict.TryGetValue(typeof(T), out var itemList);
 
                 if (itemList == null)
                 {
@@ -73,7 +73,7 @@ namespace Utilities.Network_IO.Websocket_Connections
 
             lock (_lock)
             {
-                _dict.TryGetValue(key, out List<object> listWithRemovedItem);
+                _dict.TryGetValue(key, out var listWithRemovedItem);
 
                 listWithRemovedItem?.RemoveAll(listElement => listElement == item);
             }

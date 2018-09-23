@@ -44,7 +44,7 @@ namespace TestHarness.Commands
 
                 io = io.ToLowerInvariant();
 
-                _commandManager.InterpretIOCommand(io);
+                _commandManager.InterpretIoCommand(io);
             }
         }
 

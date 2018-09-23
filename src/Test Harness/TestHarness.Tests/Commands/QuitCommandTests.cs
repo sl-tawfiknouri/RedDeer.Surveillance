@@ -11,6 +11,7 @@ namespace TestHarness.Tests.Commands
         [Test]
         public void Constructor_NullProgramState_Exceptional()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QuitCommand(null));
         }
 
@@ -48,7 +49,7 @@ namespace TestHarness.Tests.Commands
         }
 
         [Test]
-        public void Handles_HandlesquitCommand_UpperCase()
+        public void Handles_HandlesQuitCommand_UpperCase()
         {
             var state = new ProgramState { Executing = true };
             var command = new QuitCommand(state);

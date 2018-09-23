@@ -81,7 +81,7 @@ namespace TestHarness.Engine.OrderGenerator
                         "BROKER-1",
                         "BROKER-2");
 
-                    _tradeStream.Add(prohibitedTrade);
+                    TradeStream.Add(prohibitedTrade);
                 }
             }
         }

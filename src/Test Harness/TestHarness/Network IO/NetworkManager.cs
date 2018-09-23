@@ -87,15 +87,9 @@ namespace TestHarness.Network_IO
             {
                 _logger.Log(LogLevel.Info, "Network Manager terminating network connections");
 
-                if (_tradeOrderWebsocketSubscriber != null)
-                {
-                    _tradeOrderWebsocketSubscriber.Terminate();
-                }
+                _tradeOrderWebsocketSubscriber?.Terminate();
 
-                if (_stockMarketWebsocketSubscriber != null)
-                {
-                    _stockMarketWebsocketSubscriber.Terminate();
-                }
+                _stockMarketWebsocketSubscriber?.Terminate();
             }
         }
 
@@ -137,10 +131,7 @@ namespace TestHarness.Network_IO
             {
                 _logger.Log(LogLevel.Info, "Network Manager detatching trade order subscriber from stream");
 
-                if (_tradeOrderUnsubscriber != null)
-                {
-                    _tradeOrderUnsubscriber.Dispose();
-                }
+                _tradeOrderUnsubscriber?.Dispose();
             }
         }
 
@@ -182,10 +173,7 @@ namespace TestHarness.Network_IO
             {
                 _logger.Log(LogLevel.Info, "Network Manager detatching stock exchange subscriber from stream");
 
-                if (_stockMarketUnsubscriber != null)
-                {
-                    _stockMarketUnsubscriber.Dispose();
-                }
+                _stockMarketUnsubscriber?.Dispose();
             }
         }
     }

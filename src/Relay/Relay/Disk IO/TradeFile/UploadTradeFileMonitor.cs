@@ -53,7 +53,7 @@ namespace Relay.Disk_IO.TradeFile
                     _stream.Add(item);
                 }
 
-                _reddeerDirectory.Move(path, archivePath);
+                ReddeerDirectory.Move(path, archivePath);
 
                 if (!csvReadResults.UnsuccessfulReads.Any())
                 {

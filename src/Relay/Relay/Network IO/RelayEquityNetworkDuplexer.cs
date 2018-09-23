@@ -10,11 +10,11 @@ namespace Relay.Network_IO
 {
     public class RelayEquityNetworkDuplexer : IRelayEquityNetworkDuplexer
     {
-        private readonly IStockExchangeStream _RedeerStockFormatStream;
+        private readonly IStockExchangeStream _redeerStockFormatStream;
 
         public RelayEquityNetworkDuplexer(IStockExchangeStream reddeerStockFormatStream)
         {
-            _RedeerStockFormatStream = 
+            _redeerStockFormatStream = 
                 reddeerStockFormatStream 
                 ?? throw new ArgumentNullException(nameof(reddeerStockFormatStream));
         }
@@ -45,7 +45,7 @@ namespace Relay.Network_IO
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<ExchangeFrame>(message.Message, serialiserSettings);
-            _RedeerStockFormatStream?.Add(formattedMessage);
+            _redeerStockFormatStream?.Add(formattedMessage);
         }
     }
 }

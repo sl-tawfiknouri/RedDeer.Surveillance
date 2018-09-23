@@ -20,6 +20,7 @@ namespace Domain.Tests.Streams
         [Test]
         public void Constructor_NullILogger_ThrowsException()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new RecordingObserver<string>(null, 1));
         }
 

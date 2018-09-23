@@ -45,8 +45,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 return null;
             }
 
-            decimal newBuy = CalculateNewBuyValue(tick);
-            decimal newSell = CalculateNewSellValue(tick, newBuy);
+            var newBuy = CalculateNewBuyValue(tick);
+            var newSell = CalculateNewSellValue(tick, newBuy);
 
             var newSpread =
                 new Spread(

@@ -13,6 +13,7 @@ namespace Domain.Tests.Streams
         [TestCase(-9999)]
         public void Ctor_ThrowsOutOfRangeFor_BadLimits(int limit)
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentOutOfRangeException>(() => new RingBuffer<string>(limit));
         }
 

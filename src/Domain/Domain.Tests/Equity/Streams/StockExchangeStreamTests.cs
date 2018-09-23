@@ -25,6 +25,7 @@ namespace Domain.Tests.Equity.Streams
         [Test]
         public void Subscribe_WithNullFactory_ThrowsArgumentNull()
         {
+            // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new StockExchangeStream(null));
         }
 

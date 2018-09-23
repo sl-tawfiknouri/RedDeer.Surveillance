@@ -71,7 +71,7 @@ namespace Domain.Trades.Orders
                 return null;
             }
 
-            decimal? parsedLimitPrice =
+            var parsedLimitPrice =
                 orderType == OrderType.Limit
                     ? (decimal?)limitPrice
                     : null;

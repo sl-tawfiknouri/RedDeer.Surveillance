@@ -178,12 +178,12 @@ namespace RedDeer.Surveillance.App
             {
                 await asyncAction(Container, cts.Token);
                 Logger.Info("End of task");
-            });
+            }, cts.Token);
             // uncomment to allow for cancelling task early
             /* Console.ReadLine(); 
             cts.Cancel(); /* */
             Logger.Info("Waiting for end of task...");
-            task.Wait();
+            task.Wait(cts.Token);
             Logger.Info("End of application");
         }
 

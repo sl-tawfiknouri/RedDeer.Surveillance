@@ -10,8 +10,8 @@ namespace Relay.Disk_IO
 {
     public abstract class BaseUploadFileMonitor : IBaseUploadFileMonitor
     {
-        protected readonly IReddeerDirectory _reddeerDirectory;
-        protected readonly ILogger _logger;
+        protected readonly IReddeerDirectory ReddeerDirectory;
+        protected readonly ILogger Logger;
         private FileSystemWatcher _fileSystemWatcher;
         private readonly string _uploadFileMonitorName;
 
@@ -20,8 +20,8 @@ namespace Relay.Disk_IO
             ILogger logger,
             string uploadFileMonitorName)
         {
-            _reddeerDirectory = directory ?? throw new ArgumentNullException(nameof(directory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            ReddeerDirectory = directory ?? throw new ArgumentNullException(nameof(directory));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _uploadFileMonitorName = uploadFileMonitorName ?? throw new ArgumentNullException(nameof(uploadFileMonitorName));
         }
 
@@ -32,7 +32,7 @@ namespace Relay.Disk_IO
         {
             if (string.IsNullOrWhiteSpace(UploadDirectoryPath()))
             {
-                _logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} - no path in upload directory. Will not monitor unspecified upload folder path");
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} - no path in upload directory. Will not monitor unspecified upload folder path");
                 return;
             }
 
@@ -41,16 +41,16 @@ namespace Relay.Disk_IO
 
             try
             {
-                _reddeerDirectory.Create(UploadDirectoryPath());
-                _reddeerDirectory.Create(archivePath);
-                _reddeerDirectory.Create(failedReadsPath);
+                ReddeerDirectory.Create(UploadDirectoryPath());
+                ReddeerDirectory.Create(archivePath);
+                ReddeerDirectory.Create(failedReadsPath);
             }
             catch (ArgumentException e)
             {
-                _logger.LogError($"Argument exception in {_uploadFileMonitorName} {UploadDirectoryPath()} {e.Message}");
+                Logger.LogError($"Argument exception in {_uploadFileMonitorName} {UploadDirectoryPath()} {e.Message}");
             }
 
-            var files = _reddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
+            var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
 
             if (files.Any())
             {
@@ -79,7 +79,7 @@ namespace Relay.Disk_IO
 
         private void ProcessInitialStartupFiles(string archivePath, IReadOnlyCollection<string> files)
         {
-            _logger.LogInformation($"{_uploadFileMonitorName} found some existing files on start up. Processing now");
+            Logger.LogInformation($"{_uploadFileMonitorName} found some existing files on start up. Processing now");
 
             foreach (var filePath in files)
             {
@@ -101,7 +101,7 @@ namespace Relay.Disk_IO
 
         private void SetFileSystemWatch()
         {
-            if (!_reddeerDirectory.DirectoryExists(UploadDirectoryPath()))
+            if (!ReddeerDirectory.DirectoryExists(UploadDirectoryPath()))
             {
                 return;
             }

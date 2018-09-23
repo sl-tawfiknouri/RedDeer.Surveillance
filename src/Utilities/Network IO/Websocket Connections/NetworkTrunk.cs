@@ -97,31 +97,26 @@ namespace Utilities.Network_IO.Websocket_Connections
                 _messageWriter.Write($"Network trunk connecting to web socket...");
                 while (_activeWebsocket.State == WebSocketState.Connecting)
                 {
-                    if (token != null && token.IsCancellationRequested)
+                    if (token.IsCancellationRequested)
                     {
                         break;
                     }
-                };
+                }
 
-                if (token != null && token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                 {
                     _messageWriter.Write($"Network trunk connection attempt timed out. Closing web socket...");
 
                     _activeWebsocket.Close();
                 }
 
-                var connectionEstablished = token == null || !token.IsCancellationRequested;
+                var connectionEstablished = !token.IsCancellationRequested;
 
                 Active = connectionEstablished;
 
-                if (connectionEstablished)
-                {
-                    _messageWriter.Write($"Network trunk connection established");
-                }
-                else
-                {
-                    _messageWriter.Write($"Network trunk connection failed to establish");
-                }
+                _messageWriter.Write(connectionEstablished
+                    ? $"Network trunk connection established"
+                    : $"Network trunk connection failed to establish");
 
                 return Active;
             }

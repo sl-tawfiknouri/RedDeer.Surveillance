@@ -82,10 +82,10 @@ namespace TestHarness.Engine.OrderGenerator
 
                 foreach (var item in spoofedOrders)
                 {
-                    _tradeStream.Add(item);
+                    TradeStream.Add(item);
                 }
 
-                _tradeStream.Add(counterTrade);
+                TradeStream.Add(counterTrade);
             }
         }
 

@@ -67,24 +67,23 @@ namespace Relay.Network_IO.RelaySubscribers
 
         public void OnError(Exception error)
         {
-            if (error != null)
-            {
-                _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
+            _logger.LogError("Trade Relay Subscriber was passed an error from its source stream", error);
 
-                _initiated = false;
-                _networkSwitch.Terminate();
-            }
+            _initiated = false;
+            _networkSwitch.Terminate();
         }
 
         public void OnNext(TradeOrderFrame value)
         {
             lock (_stateLock)
             {
-                if (_initiated)
+                if (!_initiated)
                 {
-                    var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
-                    _networkSwitch.Send(duplexedMessage);
-                };
+                    return;
+                }
+
+                var duplexedMessage = _duplexMessageFactory.Create(MessageType.ReddeerTradeFormat, value);
+                _networkSwitch.Send(duplexedMessage);
             }
         }
     }

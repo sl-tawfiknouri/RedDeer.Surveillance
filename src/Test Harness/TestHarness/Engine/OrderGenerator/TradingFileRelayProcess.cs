@@ -30,13 +30,13 @@ namespace TestHarness.Engine.OrderGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                _logger.Error($"Trading File Relay Process did not find file because the path was empty or null");
+                Logger.Error($"Trading File Relay Process did not find file because the path was empty or null");
                 return;
             }
 
             if (!File.Exists(_filePath))
             {
-                _logger.Error($"Trading File Relay Process did not find file {_filePath}");
+                Logger.Error($"Trading File Relay Process did not find file {_filePath}");
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                _logger.Error($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
+                Logger.Error($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
             }
 
             if (!tradeOrders.Any())
@@ -72,7 +72,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             foreach (var item in sortedTradeOrders)
             {
-                _tradeStream.Add(item);
+                TradeStream.Add(item);
             }
         }
 

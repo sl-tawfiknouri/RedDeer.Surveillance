@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Timers;
 using TestHarness.Engine.Heartbeat.Interfaces;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace TestHarness.Engine.Heartbeat
 {
     public class Heartbeat : IHeartbeat
     {
-        private readonly TimeSpan _beatFrequency;
         private readonly Timer _activeTimer;
 
         private readonly object _lock = new object();
 
         public Heartbeat(TimeSpan beatFrequency)
         {
-            _beatFrequency = beatFrequency;
-
-            _activeTimer = new Timer();
-            _activeTimer.Interval = _beatFrequency.TotalMilliseconds;
-            _activeTimer.AutoReset = true;
+            _activeTimer = new Timer
+            {
+                Interval = beatFrequency.TotalMilliseconds,
+                AutoReset = true
+            };
         }
 
         public void OnBeat(ElapsedEventHandler handler)

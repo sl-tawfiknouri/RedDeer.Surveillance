@@ -108,8 +108,7 @@ namespace Surveillance.Universe
             intraUniversalHistoryEvents.AddRange(marketEvents);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
 
-            var universeEvents = new List<IUniverseEvent>();
-            universeEvents.Add(genesis);
+            var universeEvents = new List<IUniverseEvent> {genesis};
             universeEvents.AddRange(orderedIntraUniversalHistory);
             universeEvents.Add(eschaton);
 

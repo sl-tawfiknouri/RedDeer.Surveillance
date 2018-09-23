@@ -80,8 +80,8 @@ namespace Surveillance
             For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
 
-            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
-            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
+            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
+            For<IRedDeerStockExchangeRecorder>().Use<RedDeerStockExchangeRecorder>();
             For<IReddeerMarketExchangeFormatProjector>().Use<ReddeerMarketExchangeFormatProjector>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
@@ -119,6 +119,8 @@ namespace Surveillance
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
+            For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
+            For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
         }
     }
 }

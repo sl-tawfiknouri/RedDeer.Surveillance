@@ -23,6 +23,9 @@ namespace Domain.Equity.Frames
             MarketCap = marketCap;
             IntradayPrices = intradayPrices;
             ListedSecurities = listedSecurities;
+
+            //TODO add this to our data files and map it in
+            DailyVolume = Volume;
         }
 
         /// <summary>
@@ -51,6 +54,11 @@ namespace Domain.Equity.Frames
         /// The volume of the security traded since the last tick
         /// </summary>
         public Volume Volume { get; }
+
+        /// <summary>
+        /// The daily volume traded of the security on the exchange
+        /// </summary>
+        public Volume DailyVolume { get; }
 
         /// <summary>
         /// The time point at which the data was canonical

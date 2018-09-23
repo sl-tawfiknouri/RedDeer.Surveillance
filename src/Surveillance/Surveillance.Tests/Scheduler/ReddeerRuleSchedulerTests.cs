@@ -20,6 +20,7 @@ namespace Surveillance.Tests.Scheduler
         private ISpoofingRuleFactory _spoofingRuleFactory;
         private ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private IHighProfitRuleFactory _highProfitRuleFactory;
+        private IMarkingTheCloseRuleFactory _markingTheCloseRuleFactory;
         private IUniverseBuilder _universeBuilder;
         private IUniversePlayerFactory _universePlayerFactory;
         private ISpoofingRule _spoofingRule;
@@ -38,6 +39,7 @@ namespace Surveillance.Tests.Scheduler
             _spoofingRuleFactory = A.Fake<ISpoofingRuleFactory>();
             _cancelledOrderRuleFactory = A.Fake<ICancelledOrderRuleFactory>();
             _highProfitRuleFactory = A.Fake<IHighProfitRuleFactory>();
+            _markingTheCloseRuleFactory = A.Fake<IMarkingTheCloseRuleFactory>();
             _universeBuilder = A.Fake<IUniverseBuilder>();
             _universePlayerFactory = A.Fake<IUniversePlayerFactory>();
             _spoofingRule = A.Fake<ISpoofingRule>();
@@ -58,6 +60,7 @@ namespace Surveillance.Tests.Scheduler
                     null,
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
+                    _markingTheCloseRuleFactory,
                     _universeBuilder,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -75,6 +78,7 @@ namespace Surveillance.Tests.Scheduler
                     _spoofingRuleFactory,
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
+                    _markingTheCloseRuleFactory,
                     null,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -92,6 +96,7 @@ namespace Surveillance.Tests.Scheduler
                     _spoofingRuleFactory,
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
+                    _markingTheCloseRuleFactory,
                     _universeBuilder,
                     null,
                     _awsQueueClient,
@@ -107,6 +112,7 @@ namespace Surveillance.Tests.Scheduler
                 _spoofingRuleFactory,
                 _cancelledOrderRuleFactory,
                 _highProfitRuleFactory,
+                _markingTheCloseRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
@@ -140,6 +146,7 @@ namespace Surveillance.Tests.Scheduler
                 _spoofingRuleFactory,
                 _cancelledOrderRuleFactory,
                 _highProfitRuleFactory,
+                _markingTheCloseRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,

@@ -1,0 +1,31 @@
+TradeSubmittedOn,StatusChangedOn,MarketIdentifierCode,MarketName,SecurityExchangeSymbol,SecurityClientIdentifier,SecuritySedol,SecurityIsin,SecurityFigi,SecurityCusip,SecurityName,SecurityCfi,OrderType,OrderPosition,OrderStatus,Volume,LimitPrice,Currency,TraderId,ClientAttributionId,PartyBrokerId,CounterPartyBrokerId
+01/09/2018 15:55,01/09/2018 15:55,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:55,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:55,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:55,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:55,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:59,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:59,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:59,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:59,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+01/09/2018 15:55,01/09/2018 15:59,XLON,London Stock Exchange,STAN,STAN,ST12345,STAN12345678,STANFIGI,STANCUSIP,Standard Chartered,ESNTPB,Market,BuyLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:55,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:55,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:55,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:55,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:55,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:59,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:59,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:59,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:59,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:55,02/09/2018 15:59,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,1,1
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,
+02/09/2018 15:15,02/09/2018 15:15,XLON,London Stock Exchange,HSBC,HSBC,HSBC123,HSBC12345678,HSBCFIGI,HSBCCUSIP,Hongkong and Shanghai Banking Corporation,ESNTPB,Market,SellLong,Fulfilled,10000,,GBP,1,,,

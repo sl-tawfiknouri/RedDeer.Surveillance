@@ -1,4 +1,5 @@
-﻿using Domain.Equity;
+﻿using System;
+using Domain.Equity;
 using Surveillance.Rule_Parameters.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
@@ -20,6 +21,7 @@ namespace Surveillance.Rules.High_Profits
             bool hasRelativeProfitBreach,
             ITradePosition trades)
         {
+            Window = parameters.WindowSize;
             Parameters = parameters;
             AbsoluteProfits = absoluteProfits;
             AbsoluteProfitCurrency = absoluteProfitCurrency;
@@ -37,6 +39,7 @@ namespace Surveillance.Rules.High_Profits
         public string AbsoluteProfitCurrency { get; }
         public decimal? RelativeProfits { get; }
         public Security Security { get; }
+        public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
     }
 }

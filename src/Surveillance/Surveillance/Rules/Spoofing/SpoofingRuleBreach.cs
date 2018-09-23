@@ -23,7 +23,7 @@ namespace Surveillance.Rules.Spoofing
 
             var totalTrades = fulfilledTradePosition.Get().ToList();
             totalTrades.AddRange(cancelledTradePosition.Get());
-            Trades = new TradePosition(totalTrades, null, null, null);
+            Trades = new TradePosition(totalTrades);
             TradesInFulfilledPosition = fulfilledTradePosition;
             CancelledTrades = cancelledTradePosition;
         }

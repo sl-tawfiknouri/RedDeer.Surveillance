@@ -33,7 +33,7 @@ namespace Surveillance.Tests.Trades
                 TradeFrame(OrderStatus.Fulfilled)
             };
 
-            var tradePosition = new TradePosition(tof, null, 0.3m, _logger);
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
 
             var result = tradePosition.CancellationRatioByTradeCount();
 
@@ -52,7 +52,7 @@ namespace Surveillance.Tests.Trades
                 TradeFrame(OrderStatus.Fulfilled)
             };
 
-            var tradePosition = new TradePosition(tof, null, 0.3m, _logger);
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
 
             var result = tradePosition.HighCancellationRatioByTradeCount();
 
@@ -71,7 +71,7 @@ namespace Surveillance.Tests.Trades
                 TradeFrame(OrderStatus.Fulfilled)
             };
 
-            var tradePosition = new TradePosition(tof, null, 0.3m, _logger);
+            var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
 
             var result = tradePosition.HighCancellationRatioByTradeCount();
 
@@ -93,7 +93,7 @@ namespace Surveillance.Tests.Trades
                 TradeFrame(OrderStatus.Fulfilled)
             };
 
-            var tradePosition = new TradePosition(tof, 0.8m, null, _logger);
+            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
 
             var result = tradePosition.HighCancellationRatioByPositionSize();
 
@@ -115,13 +115,12 @@ namespace Surveillance.Tests.Trades
                 TradeFrame(OrderStatus.Fulfilled)
             };
 
-            var tradePosition = new TradePosition(tof, 0.8m, null, _logger);
+            var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
 
             var result = tradePosition.HighCancellationRatioByPositionSize();
 
             Assert.AreEqual(result, false);
         }
-
 
         private TradeOrderFrame TradeFrame(OrderStatus status)
         {

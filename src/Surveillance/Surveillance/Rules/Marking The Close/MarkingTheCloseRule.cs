@@ -99,7 +99,7 @@ namespace Surveillance.Rules.Marking_The_Close
             if (hasSellDailyVolumeBreach
                 || hasBuyDailyVolumeBreach)
             {
-                var position = new TradePosition(securities.ToList(), null, null, null);
+                var position = new TradePosition(securities.ToList());
                 var breach = new MarkingTheCloseBreach(
                     _parameters.Window,
                     tradedSecurity.Security,

@@ -46,11 +46,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Send_ForwardsMessageToMessageSender()
         {
             var messageSender = A.Fake<ICancelledOrderMessageSender>();
-            var logger = A.Fake<ILogger>();           
             var ruleConfiguration = new RuleConfiguration {CancelledOrderDeduplicationDelaySeconds = 1};
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>());
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -71,11 +70,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Send_DiscardsInitialMessageIfFollowUpWithDuplicateWithinTimePeriod()
         {
             var messageSender = A.Fake<ICancelledOrderMessageSender>();
-            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>());
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -97,11 +95,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Send_DiscardsOlderMessagesIfFollowUpWithManyDuplicatesWithinTimePeriod()
         {
             var messageSender = A.Fake<ICancelledOrderMessageSender>();
-            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>());
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -131,11 +128,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Send_DiscardsOlderMessagesIfFollowUpWithManyDuplicatesWithinTwoTimePeriods()
         {
             var messageSender = A.Fake<ICancelledOrderMessageSender>();
-            var logger = A.Fake<ILogger>();
             var ruleConfiguration = new RuleConfiguration { CancelledOrderDeduplicationDelaySeconds = 2 };
             var deduplicator = new CancelledOrderPositionDeDuplicator(ruleConfiguration, messageSender);
             var identifiers = new SecurityIdentifiers("client-1", "sedol-1", "isin-1", "figi-1", "cusip-1", "XCH");
-            var tradePosition = new TradePosition(new List<TradeOrderFrame>(), null, null, logger);
+            var tradePosition = new TradePosition(new List<TradeOrderFrame>());
             var parameters = new CancelledOrderMessageSenderParameters(identifiers) { TradePosition = tradePosition };
 
             deduplicator.Send(parameters);
@@ -186,18 +182,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             var tradeFrame5 = TradeFrame();
 
             var tradePositionAlertOne =
-                new TradePosition(
-                    new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3},
-                    null, 
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3});
 
             var tradePositionAlertTwo =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 });
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
                 { TradePosition = tradePositionAlertOne };
@@ -243,18 +231,11 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             var tradeFrame5 = TradeFrame();
 
             var tradePositionAlertOne =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3});
 
             var tradePositionAlertTwo =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame>
+                    {tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5});
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };
@@ -317,26 +298,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             var tradeFrame5 = TradeFrame();
 
             var tradePositionAlertOne =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3});
 
             var tradePositionAlertTwo =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame4 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame4});
 
             var tradePositionAlertThree =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame2, tradeFrame3, tradeFrame4, tradeFrame5 },
-                    null,
-                    null,
-                    logger);
-
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame2, tradeFrame3, tradeFrame4, tradeFrame5});
+            
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };
 
@@ -384,18 +353,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             var tradeFrame5 = TradeFrame();
 
             var tradePositionAlertOne =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3});
 
             var tradePositionAlertTwo =
-                new TradePosition(
-                    new List<TradeOrderFrame> { tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5 },
-                    null,
-                    null,
-                    logger);
+                new TradePosition(new List<TradeOrderFrame> {tradeFrame1, tradeFrame2, tradeFrame3, tradeFrame3, tradeFrame4, tradeFrame5});
 
             var parameters = new CancelledOrderMessageSenderParameters(tradeFrame1.Security.Identifiers)
             { TradePosition = tradePositionAlertOne };

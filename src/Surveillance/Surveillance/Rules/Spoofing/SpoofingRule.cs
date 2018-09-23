@@ -69,14 +69,14 @@ namespace Surveillance.Rules.Spoofing
             }
 
             var buyPosition =
-                new TradePosition(
+                new TradePositionCancellations(
                     new List<TradeOrderFrame>(),
                     _parameters.CancellationThreshold,
                     _parameters.CancellationThreshold,
                     _logger);
 
             var sellPosition =
-                new TradePosition(
+                new TradePositionCancellations(
                     new List<TradeOrderFrame>(),
                     _parameters.CancellationThreshold,
                     _parameters.CancellationThreshold,
@@ -104,10 +104,10 @@ namespace Surveillance.Rules.Spoofing
 
         private bool CheckPositionForSpoofs(
             Stack<TradeOrderFrame> tradeWindow,
-            TradePosition buyPosition,
-            TradePosition sellPosition,
-            TradePosition tradingPosition,
-            TradePosition opposingPosition)
+            ITradePositionCancellations buyPosition,
+            ITradePositionCancellations sellPosition,
+            ITradePositionCancellations tradingPosition,
+            ITradePositionCancellations opposingPosition)
         {
             var hasBreachedSpoofingRule = false;
             var hasTradesInWindow = tradeWindow.Any();
@@ -143,7 +143,7 @@ namespace Surveillance.Rules.Spoofing
             return hasBreachedSpoofingRule;
         }
 
-        private void AddToPositions(TradePosition buyPosition, TradePosition sellPosition, TradeOrderFrame nextTrade)
+        private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, TradeOrderFrame nextTrade)
         {
             switch (nextTrade.Position)
             {
@@ -165,8 +165,8 @@ namespace Surveillance.Rules.Spoofing
 
         private void RecordRuleBreach(
             TradeOrderFrame mostRecentTrade,
-            TradePosition tradingPosition,
-            TradePosition opposingPosition)
+            ITradePosition tradingPosition,
+            ITradePosition opposingPosition)
         {
             _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Identifiers}");
 

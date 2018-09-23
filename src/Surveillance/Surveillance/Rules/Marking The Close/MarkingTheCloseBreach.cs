@@ -26,7 +26,7 @@ namespace Surveillance.Rules.Marking_The_Close
             Security = security ?? throw new ArgumentNullException(nameof(security));
 
             MarketClose = marketClose ?? throw new ArgumentNullException(nameof(marketClose));
-            Trades = tradingPosition ?? new TradePosition(new List<TradeOrderFrame>(), null, null, null);
+            Trades = tradingPosition ?? new TradePosition(new List<TradeOrderFrame>());
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
             HasSellDailyVolumeBreach = hasSellDailyVolumeBreach;

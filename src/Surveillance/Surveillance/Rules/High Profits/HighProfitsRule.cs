@@ -71,7 +71,7 @@ namespace Surveillance.Rules.High_Profits
 
                 _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
 
-                var position = new TradePosition(activeTrades.ToList(), null, null, null);
+                var position = new TradePosition(activeTrades.ToList());
                 var breach =
                     new HighProfitRuleBreach(
                         _parameters,

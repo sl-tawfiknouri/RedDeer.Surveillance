@@ -53,7 +53,7 @@ namespace Surveillance.Rules.Cancelled_Orders
             var mostRecentTrade = tradeWindow.Pop();
 
             var tradingPosition =
-                new TradePosition(
+                new TradePositionCancellations(
                     new List<TradeOrderFrame>(),
                     _parameters.CancelledOrderPercentagePositionThreshold,
                     _parameters.CancelledOrderCountPercentageThreshold,
@@ -79,7 +79,7 @@ namespace Surveillance.Rules.Cancelled_Orders
         private ICancelledOrderRuleBreach CheckPositionForCancellations(
             Stack<TradeOrderFrame> tradeWindow,
             TradeOrderFrame mostRecentTrade,
-            TradePosition tradingPosition)
+            ITradePositionCancellations tradingPosition)
         {
             var hasBreachedRuleByOrderCount = false;
             var hasBreachedRuleByPositionSize = false;

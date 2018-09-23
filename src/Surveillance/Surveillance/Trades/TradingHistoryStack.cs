@@ -82,11 +82,11 @@ namespace Surveillance.Trades
         {
             lock (_lock)
             {
-                var copyStack = new Stack<TradeOrderFrame>(_activeStack);
-                var copyStacker = new Stack<TradeOrderFrame>(copyStack);
+                var tradeStackCopy = new Stack<TradeOrderFrame>(_activeStack);
+                var reverseCopyOfTradeStack = new Stack<TradeOrderFrame>(tradeStackCopy);
 
-                // copy stack reverses the order..
-                return copyStacker;
+                // copy twice in order to restore initial order of elements
+                return reverseCopyOfTradeStack;
             }
         }
     }

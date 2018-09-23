@@ -29,7 +29,7 @@ namespace Surveillance.Rules.High_Profits
             Security = security;
             HasAbsoluteProfitBreach = hasAbsoluteProfitBreach;
             HasRelativeProfitBreach = hasRelativeProfitBreach;
-            Trades = trades ?? new TradePosition(new List<TradeOrderFrame>(), null, null, null);
+            Trades = trades ?? new TradePosition(new List<TradeOrderFrame>());
         }
 
         public IHighProfitsRuleParameters Parameters { get; }

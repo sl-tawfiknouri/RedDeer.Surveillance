@@ -36,16 +36,6 @@ namespace Domain.Tests.Streams
         }
 
         [Test]
-        public void OnError_LogsNullErrorMessage_WithSpecialText()
-        {
-            var observer = new RecordingObserver<string>(_logger, 1);
-
-            observer.OnError(null);
-
-            A.CallTo(() => _logger.Log(LogLevel.Error, "A null exception was passed to the recording observer")).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
         public void Ctor_SetsIsCompletedFlagTo_False()
         {
             var observer = new RecordingObserver<string>(_logger, 1);

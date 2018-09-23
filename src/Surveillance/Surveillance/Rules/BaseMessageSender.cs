@@ -37,8 +37,7 @@ namespace Surveillance.Rules
 
         protected void Send(IRuleBreach ruleBreach, string description)
         {
-            if (ruleBreach?.Trades?.Get() == null
-                || ruleBreach?.Trades?.Get().Count < 2)
+            if (ruleBreach?.Trades?.Get() == null)
             {
                 return;
             }
@@ -82,7 +81,7 @@ namespace Surveillance.Rules
             };
         }
 
-        protected ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<TradeOrderFrame> orders)
+        protected virtual ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<TradeOrderFrame> orders)
         {
             if (orders == null
                 || !orders.Any())

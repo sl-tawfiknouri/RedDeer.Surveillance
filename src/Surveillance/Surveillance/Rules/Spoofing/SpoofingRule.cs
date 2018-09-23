@@ -181,8 +181,16 @@ namespace Surveillance.Rules.Spoofing
                 mostRecentTrade.StatusChangedOn,
                 description);
 
+            var ruleBreach =
+                new SpoofingRuleBreach(
+                    _parameters.WindowSize,
+                    tradingPosition,
+                    opposingPosition,
+                    mostRecentTrade.Security, 
+                    mostRecentTrade);
+
             _ruleBreachRepository.Save(spoofingBreach);
-            _spoofingRuleMessageSender.Send(mostRecentTrade, tradingPosition, opposingPosition);
+            _spoofingRuleMessageSender.Send(ruleBreach);
         }
     }
 }

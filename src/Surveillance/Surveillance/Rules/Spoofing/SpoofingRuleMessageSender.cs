@@ -1,115 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.ComplianceCase;
 using Contracts.SurveillanceService.ComplianceCaseLog;
 using Domain.Trades.Orders;
+using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
-using Surveillance.Trades;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.Spoofing
 {
-    public class SpoofingRuleMessageSender : ISpoofingRuleMessageSender
+    public class SpoofingRuleMessageSender : BaseMessageSender, ISpoofingRuleMessageSender
     {
-        private readonly ICaseMessageSender _caseMessageSender;
-        private readonly ITradeOrderDataItemDtoMapper _dtoMapper;
 
         public SpoofingRuleMessageSender(
-            ICaseMessageSender caseMessageSender,
-            ITradeOrderDataItemDtoMapper dtoMapper)
-        {
-            _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
-            _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
-        }
+            ITradeOrderDataItemDtoMapper dtoMapper,
+            ILogger<SpoofingRuleMessageSender> logger,
+            ICaseMessageSender caseMessageSender) 
+            : base(
+                dtoMapper,
+                "Automated Spoofing Rule Breach Detected",
+                "Spoofing Rule Message Sender",
+                logger,
+                caseMessageSender)
+        { }
 
-        public void Send(
-            TradeOrderFrame mostRecentTrade,
-            TradePosition tradingPosition,
-            TradePosition opposingPosition)
+        public void Send(ISpoofingRuleBreach ruleBreach)
         {
-            var caseDataItem = CaseDataItem(mostRecentTrade, tradingPosition, opposingPosition);
-            var caseLogsInTradingPosition = CaseLogsInPosition(tradingPosition, true);
-            var caseLogsAgainstTradingPosition = CaseLogsInPosition(opposingPosition, false);
-            caseLogsInTradingPosition.AddRange(caseLogsAgainstTradingPosition);
-
-            var caseMessage = new CaseMessage
+            if (ruleBreach == null)
             {
-                Case = caseDataItem,
-                CaseLogs = caseLogsInTradingPosition.ToArray()
-            };
-
-            _caseMessageSender.Send(caseMessage);
-        }
-
-        private ComplianceCaseDataItemDto CaseDataItem(
-            TradeOrderFrame mostRecentTrade,
-            TradePosition tradingPosition,
-            TradePosition opposingPosition)
-        {
-            var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
-            var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
-
-            var description = $"Spoofing Rule Breach. Traded ({mostRecentTrade.Position.GetDescription()}) security {mostRecentTrade.Security?.Name} ({mostRecentTrade.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be potential spoofing.";
-
-            var earliestTp = tradingPosition.Get()?.Min(tp => tp.StatusChangedOn);
-            var earliestOp = opposingPosition.Get()?.Min(op => op.StatusChangedOn);
-            var from = earliestTp < earliestOp ? earliestTp : earliestOp;
-            
-            return new ComplianceCaseDataItemDto
-            {
-                Title = "Automated Spoofing Rule Breach Detected",
-                Description = description ?? string.Empty,
-                Source = ComplianceCaseSource.SurveillanceRule,
-                Status = ComplianceCaseStatus.Unset,
-                Type = ComplianceCaseType.Unset,
-                ReportedOn = DateTime.Now,
-                Venue = mostRecentTrade.Market?.Name,
-                StartOfPeriodUnderInvestigation = from.GetValueOrDefault(mostRecentTrade.StatusChangedOn),
-                EndOfPeriodUnderInvestigation = mostRecentTrade.StatusChangedOn
-            };
-        }
-
-        private List<ComplianceCaseLogDataItemDto> CaseLogsInPosition(TradePosition tradingPosition, bool executedPosition)
-        {
-            if (tradingPosition == null)
-            {
-                return new List<ComplianceCaseLogDataItemDto>();
+                return;
             }
 
-            return tradingPosition
-                .Get()
-                .Select(tp =>
-                    new ComplianceCaseLogDataItemDto
-                    {
-                        Type = ComplianceCaseLogType.Unset,
-                        Notes = ProjectCaseLog(executedPosition, tp),
-                        UnderlyingOrder = _dtoMapper.Map(tp)
-                    })
-                .ToList();
+            var description = BuildDescription(ruleBreach);
+            Send(ruleBreach, description);
         }
 
-        private string ProjectCaseLog(bool executedPosition, TradeOrderFrame tof)
+        private string BuildDescription(ISpoofingRuleBreach ruleBreach)
         {
-            if (tof == null)
-            {
-                return string.Empty;
-            }
+            var volumeInPosition = ruleBreach.Trades.VolumeInStatus(OrderStatus.Fulfilled);
+            var volumeSpoofed = ruleBreach.CancelledTrades.VolumeNotInStatus(OrderStatus.Fulfilled);
 
-            var preamble =
-                executedPosition
-                    ? "Executed trading position:"
-                    : "Spoofed trading position:";
+            var description = $"Spoofing Rule Breach. Traded ({ruleBreach.MostRecentTrade.Position.GetDescription()}) security {ruleBreach.Security?.Name} ({ruleBreach.Security?.Identifiers}) with a fulfilled trade volume of {volumeInPosition} and a cancelled trade volume of {volumeSpoofed}. The cancelled volume was traded in the opposite position to the most recent fulfilled trade and is therefore considered to be supporting evidence of spoofing.";
 
-            var limitSection =
-                tof.OrderType == OrderType.Limit
-                    ? $" with limit of {tof.Limit?.Value}({tof.Limit?.Currency})"
-                    : string.Empty;
-
-            return $"{preamble} {tof.Market?.Id.Id} ({tof.Market?.Name}) {tof.Security?.Name} ({tof.Security?.Identifiers.ToString()}) was traded  {tof.Position.GetDescription()} with order type {tof.OrderType}{limitSection} and volume {tof.Volume} order status last changed on {tof.StatusChangedOn}";
+            return description;
         }
     }
 }

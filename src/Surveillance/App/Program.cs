@@ -7,6 +7,7 @@ using System.Threading;
 using DasMulli.Win32.ServiceUtils;
 using Microsoft.Extensions.Configuration;
 using NLog;
+using RedDeer.Surveillance.App.Interfaces;
 using StructureMap;
 using Surveillance;
 using Surveillance.Configuration.Interfaces;

@@ -1,5 +1,6 @@
 ﻿using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using RedDeer.Surveillance.App.Interfaces;
 using StructureMap;
 
 namespace RedDeer.Surveillance.App

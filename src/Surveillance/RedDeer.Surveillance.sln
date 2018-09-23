@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "..\Utili
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.DataLayer.Tests", "Surveillance.DataLayer.Tests\Surveillance.DataLayer.Tests.csproj", "{0A9147B5-F9AA-4D32-978F-5527C611285D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Tests", "Surveillance.Tests\Surveillance.Tests.csproj", "{63BB3747-6B06-4A29-973B-1A4B73B52D57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Tests", "Surveillance.Tests\Surveillance.Tests.csproj", "{63BB3747-6B06-4A29-973B-1A4B73B52D57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RedDeer.Surveillance.App
+namespace RedDeer.Surveillance.App.Interfaces
 {
     public interface IStartUpTaskRunner
     {

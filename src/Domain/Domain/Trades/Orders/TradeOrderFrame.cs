@@ -15,39 +15,46 @@ namespace Domain.Trades.Orders
             StockExchange market,
             Security security,
             Price? limit,
-            int volume,
+            Price? executedPrice,
+            int fulfilledVolume,
+            int orderedVolume,
             OrderPosition position,
             OrderStatus orderStatus,
             DateTime statusChangedOn,
             DateTime tradeSubmittedOn,
             string traderId,
             string tradeClientAttributionId,
+            string accountId,
+            string dealerInstructions,
             string partyBrokerId,
-            string counterPartyBrokerId)
+            string counterPartyBrokerId,
+            string tradeRationale,
+            string tradeStrategy)
         {
             OrderType = orderType;
             Market = market;
             Security = security;
             Limit = limit;
-            Volume = volume;
+            ExecutedPrice = executedPrice;
+            FulfilledVolume = fulfilledVolume;
+            OrderedVolume = orderedVolume;
             Position = position;
             OrderStatus = orderStatus;
             StatusChangedOn = statusChangedOn;
             TradeSubmittedOn = tradeSubmittedOn;
             TraderId = traderId ?? string.Empty;
             TradeClientAttributionId = tradeClientAttributionId ?? string.Empty;
+            AccountId = accountId ?? string.Empty;
+            DealerInstructions = dealerInstructions ?? string.Empty;
             PartyBrokerId = partyBrokerId ?? string.Empty;
             CounterPartyBrokerId = counterPartyBrokerId ?? string.Empty;
+            TradeRationale = tradeRationale ?? string.Empty;
+            TradeStrategy = tradeStrategy ?? string.Empty;
 
             if (orderType == OrderType.Limit
                 && limit == null)
             {
                 throw new ArgumentException(nameof(orderType));
-            }
-
-            if (Position == OrderPosition.SellLong)
-            {
-                ExecutedPrice = 3;
             }
         }
 
@@ -82,15 +89,19 @@ namespace Domain.Trades.Orders
         public DateTime StatusChangedOn { get; set; }
 
         /// <summary>
-        /// The amount to trade
+        /// The amount that was requested to trade
         /// </summary>
-        public int Volume { get; set; }
+        public int OrderedVolume { get; set; }
 
         /// <summary>
-        /// Not currently being set but is being used by high profit rule as a place holder.
-        /// This is the price the trade was executed at
+        /// The amount that was traded
         /// </summary>
-        public decimal? ExecutedPrice { get; set; } = 2;
+        public int FulfilledVolume { get; set; }
+        
+        /// <summary>
+        /// This is the price the trade was executed at; if several prices use the weighted average
+        /// </summary>
+        public Price? ExecutedPrice { get; set; }
 
         /// <summary>
         /// The currency for the executed price
@@ -119,6 +130,11 @@ namespace Domain.Trades.Orders
         public string TradeClientAttributionId { get; set; }
 
         /// <summary>
+        /// The client account traded for
+        /// </summary>
+        public string AccountId { get; set; }
+
+        /// <summary>
         /// The broker submitting the trade to the market
         /// </summary>
         public string PartyBrokerId { get; set; }
@@ -128,9 +144,24 @@ namespace Domain.Trades.Orders
         /// </summary>
         public string CounterPartyBrokerId { get; set; }
 
+        /// <summary>
+        /// The instruction notes passed to the dealer
+        /// </summary>
+        public string DealerInstructions { get; set; }
+
+        /// <summary>
+        /// The traders rationalisation for the trade
+        /// </summary>
+        public string TradeRationale { get; set; }
+
+        /// <summary>
+        /// The strategy behind the trade
+        /// </summary>
+        public string TradeStrategy { get; set; }
+
         public override string ToString()
         {
-            return $"Market({Market.Id.Id}) Time({StatusChangedOn.ToLongTimeString()}) Security({Security.Identifiers}) Direction({Position}) Order({OrderType}) Volume({Volume}) Limit({Limit?.Value}) Status({OrderStatus}) Trader({TraderId}) SubmittedOn({TradeSubmittedOn.ToLongTimeString()})";
+            return $"Market({Market.Id.Id}) Time({StatusChangedOn.ToLongTimeString()}) Security({Security.Identifiers}) Direction({Position}) Order({OrderType}) Volume({FulfilledVolume}) Limit({Limit?.Value}) Status({OrderStatus}) Trader({TraderId}) SubmittedOn({TradeSubmittedOn.ToLongTimeString()})";
         }
     }
 }

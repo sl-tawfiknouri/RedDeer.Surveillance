@@ -166,7 +166,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var x = 0; x < ordersToFulfill; x++)
             {
                 var fulfilledOrderValue = DiscreteUniform.Sample(0, minimumPerOrderValue);
-                orders.Add(OrderForValue(OrderStatus.Placed, fulfilledOrderValue, security, _lastFrame.Exchange));
+                orders.Add(OrderForValue(OrderStatus.Booked, fulfilledOrderValue, security, _lastFrame.Exchange));
             }
 
             return orders.ToArray();
@@ -198,7 +198,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             for (var x = 0; x < ordersToFulfill; x++)
             {
-                orders.Add(OrderForValue(OrderStatus.Placed, remainingOrderValuePerOrder, security, _lastFrame.Exchange));
+                orders.Add(OrderForValue(OrderStatus.Booked, remainingOrderValuePerOrder, security, _lastFrame.Exchange));
             }
 
             return orders.ToArray();
@@ -223,6 +223,8 @@ namespace TestHarness.Engine.OrderGenerator
                     exchange,
                     security.Security,
                     null,
+                    security.Spread.Price,
+                    volume,
                     volume,
                     orderPosition,
                     status,
@@ -230,8 +232,12 @@ namespace TestHarness.Engine.OrderGenerator
                     DateTime.UtcNow,
                     "Trader-1",
                     string.Empty,
+                    string.Empty,
+                    "Deal quickly",
                     "Broker-1",
-                    "Broker-2");
+                    "Broker-2",
+                    "Trading to use price advantage from spoof",
+                    "Spoofing");
 
             return order;
         }

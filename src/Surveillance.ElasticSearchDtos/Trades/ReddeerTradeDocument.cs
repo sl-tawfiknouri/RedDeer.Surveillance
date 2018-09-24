@@ -109,10 +109,16 @@ namespace Surveillance.ElasticSearchDtos.Trades
         public DateTime TradeSubmittedOn { get; set; }
 
         /// <summary>
-        /// The quantity metric for the traded security
+        /// The quantity metric for the fulfilled volume traded. Represents what was actually traded
         /// </summary>
         [Keyword]
-        public int Volume { get; set; }
+        public int FulfilledVolume { get; set; }
+
+        /// <summary>
+        /// The quantity metric for the ordered volume traded. Represents what the trader initially requested from the dealing desk
+        /// </summary>
+        [Keyword]
+        public int OrderedVolume { get; set; }
 
         /// <summary>
         /// The position of the order i.e. buy or sell
@@ -161,5 +167,53 @@ namespace Surveillance.ElasticSearchDtos.Trades
         /// </summary>
         [Text]
         public string CounterPartyBrokerId { get; set; }
+        
+        /// <summary>
+        /// The LEI (legal entity identifier) for the security 
+        /// </summary>
+        [Keyword]
+        public string SecurityLei { get; set; }
+        
+        /// <summary>
+        /// Bloomberg ticker for the security
+        /// </summary>
+        [Keyword]
+        public string SecurityBloombergTicker { get; set; }
+
+        /// <summary>
+        /// The identifier for the organisation that issued the security such as a HSBC identifier
+        /// </summary>
+        [Keyword]
+        public string SecurityIssuerIdentifier { get; set; }
+
+        /// <summary>
+        /// The price the trade was executed at
+        /// </summary>
+        [Text]
+        public decimal? ExecutedPrice { get; set; }
+
+        /// <summary>
+        /// An identifier for the account being traded on behalf of
+        /// </summary>
+        [Text]
+        public string AccountId { get; set; }
+
+        /// <summary>
+        /// Trader instructions to the dealer
+        /// </summary>
+        [Text]
+        public string DealerInstructions { get; set; }
+
+        /// <summary>
+        /// The rationalisation of the trade
+        /// </summary>
+        [Text]
+        public string TradeRationale { get; set; }
+
+        /// <summary>
+        /// The trading strategy being employed, take profits, buy long, buy short, sell short, sell long etc
+        /// </summary>
+        [Text]
+        public string TradeStrategy { get; set; }
     }
 }

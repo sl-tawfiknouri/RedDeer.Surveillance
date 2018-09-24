@@ -1,6 +1,7 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
+using Domain.Equity;
 using Domain.Trades.Orders;
 using TestHarness.Display;
 using TestHarness.Display.Interfaces;
@@ -49,15 +50,21 @@ namespace TestHarness.Tests.Display.Subscribers
                     null,
                     null,
                     null,
+                    new Price(10, "GBX"), 
                     10,
-                    OrderPosition.BuyLong,
+                    10,
+                    OrderPosition.Buy,
                     OrderStatus.Cancelled,
                     DateTime.Now,
                     DateTime.Now,
                     "trader-id",
                     "trader-client-id",
+                    "account-id",
+                    "dealer-instruction",
                     "party-broker",
-                    "counterParty-broker");
+                    "counterParty-broker",
+                    "trader rationale",
+                    "trade strategy");
 
             tradeOrderSubscriber.OnNext(tradeOrderFrame);
 

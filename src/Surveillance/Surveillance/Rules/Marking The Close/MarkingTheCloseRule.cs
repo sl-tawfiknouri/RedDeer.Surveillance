@@ -80,13 +80,13 @@ namespace Surveillance.Rules.Marking_The_Close
 
             var volumeTradedBuy =
                 securities
-                    .Where(sec => sec.Position == OrderPosition.BuyLong)
-                    .Sum(sec => sec.Volume);
+                    .Where(sec => sec.Position == OrderPosition.Buy)
+                    .Sum(sec => sec.FulfilledVolume);
 
             var volumeTradedSell =
                 securities
-                    .Where(sec => sec.Position == OrderPosition.SellLong)
-                    .Sum(sec => sec.Volume);
+                    .Where(sec => sec.Position == OrderPosition.Sell)
+                    .Sum(sec => sec.FulfilledVolume);
 
             var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 

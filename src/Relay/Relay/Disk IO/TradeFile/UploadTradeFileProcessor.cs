@@ -75,7 +75,7 @@ namespace Relay.Disk_IO.TradeFile
                 OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
                 OrderPosition = rawRecord[_mappingConfig.OrderPositionFieldName],
                 OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
-                Volume = rawRecord[_mappingConfig.VolumeFieldName],
+                FulfilledVolume = rawRecord[_mappingConfig.FulfilledVolumeFieldName],
                 LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
 
                 TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
@@ -121,7 +121,7 @@ namespace Relay.Disk_IO.TradeFile
                 csv.WriteField(_mappingConfig.OrderTypeFieldName);
                 csv.WriteField(_mappingConfig.OrderPositionFieldName);
                 csv.WriteField(_mappingConfig.OrderStatusFieldName);
-                csv.WriteField(_mappingConfig.VolumeFieldName);
+                csv.WriteField(_mappingConfig.FulfilledVolumeFieldName);
                 csv.WriteField(_mappingConfig.LimitPriceFieldName);
 
                 csv.WriteField(_mappingConfig.TraderIdFieldName);

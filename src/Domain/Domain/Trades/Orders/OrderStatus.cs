@@ -2,9 +2,12 @@
 {
     public enum OrderStatus
     {
-        Placed,
+        Booked,
         Cancelled,
         PartialFulfilled,
-        Fulfilled
+        Fulfilled,
+        CallAmended,
+        Rejected,
+        CancelledPostBooking,
     }
 }

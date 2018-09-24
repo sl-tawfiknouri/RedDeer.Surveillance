@@ -38,9 +38,12 @@ namespace TestHarness.Engine.EquitiesGenerator
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,
+                            raw.Symbol,
+                            raw.Symbol,
                             raw.Symbol),
                         raw.Symbol,
-                        "CFI"),
+                        "CFI",
+                        raw.Symbol),
                      new Spread(
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),

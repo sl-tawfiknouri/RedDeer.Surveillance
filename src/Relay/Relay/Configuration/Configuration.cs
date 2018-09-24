@@ -39,7 +39,7 @@ namespace Relay.Configuration
         public string LimitPriceFieldName { get; set; }
         public string TradeSubmittedOnFieldName { get; set; }
         public string StatusChangedOnFieldName { get; set; }
-        public string VolumeFieldName { get; set; }
+        public string FulfilledVolumeFieldName { get; set; }
         public string OrderPositionFieldName { get; set; }
 
         public string TraderIdFieldName { get; set; }

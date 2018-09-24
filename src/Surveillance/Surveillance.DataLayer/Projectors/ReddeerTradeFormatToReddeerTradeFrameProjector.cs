@@ -52,32 +52,47 @@ namespace Surveillance.DataLayer.Projectors
                         new Market.MarketId(document.MarketId),
                         document.MarketName);
 
+                var securityIdentifiers = new SecurityIdentifiers(
+                    document.SecurityClientIdentifier,
+                    document.SecuritySedol,
+                    document.SecurityIsin,
+                    document.SecurityFigi,
+                    document.SecurityCusip,
+                    document.SecurityExchangeSymbol,
+                    document.SecurityLei,
+                    document.SecurityBloombergTicker);
+
                 var security =
                     new Security(
-                        new SecurityIdentifiers(
-                            document.SecurityClientIdentifier,
-                            document.SecuritySedol,
-                            document.SecurityIsin,
-                            document.SecurityFigi,
-                            document.SecurityCusip,
-                            document.SecurityExchangeSymbol),
+                        securityIdentifiers,
                         document.SecurityName,
-                        document.SecurityCfi);
+                        document.SecurityCfi,
+                        document.SecurityIssuerIdentifier);
 
                 var limit =
                     document.Limit != null && orderType == OrderType.Limit
                         ? (Price?)new Price(document.Limit.Value, document.LimitCurrency)
                         : null;
 
-                var volume = document.Volume;
+                var executedPrice =
+                    document.ExecutedPrice != null
+                        ? (Price?) new Price(document.ExecutedPrice.Value, document.LimitCurrency)
+                        : null;
+
+                var fulfilledVolume = document.FulfilledVolume;
+                var orderedVolume = document.OrderedVolume;
                 var orderPosition = (OrderPosition)document.OrderPositionId;
                 var orderStatus = (OrderStatus)document.OrderStatusId;
                 var changesOnDate = document.StatusChangedOn;
                 var submittedOnDate = document.TradeSubmittedOn;
                 var traderId = document.TraderId;
                 var traderAttributableClientId = document.TradeClientAttributionId;
+                var accountId = document.AccountId;
+                var dealerInstructions = document.DealerInstructions;
                 var partyBrokerId = document.PartyBrokerId;
                 var counterPartyBrokerId = document.CounterPartyBrokerId;
+                var tradeRationale = document.TradeRationale;
+                var tradeStrategy = document.TradeStrategy;
 
                 var frame =
                     new TradeOrderFrame(
@@ -85,15 +100,21 @@ namespace Surveillance.DataLayer.Projectors
                         stockExchange,
                         security,
                         limit,
-                        volume,
+                        executedPrice,
+                        fulfilledVolume,
+                        orderedVolume,
                         orderPosition,
                         orderStatus,
                         changesOnDate,
                         submittedOnDate,
                         traderId,
                         traderAttributableClientId,
+                        accountId,
+                        dealerInstructions,
                         partyBrokerId,
-                        counterPartyBrokerId);
+                        counterPartyBrokerId,
+                        tradeRationale,
+                        tradeStrategy);
 
                 return frame;
             }

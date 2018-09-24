@@ -55,10 +55,18 @@ namespace Domain.Trades.Orders
                 return null;
             }
 
-            if (!int.TryParse(csv.Volume, out var volume))
+            if (!int.TryParse(csv.FulfilledVolume, out var fulfilledVolume))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable volume {volume}");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable fulfilled volume {fulfilledVolume}");
+
+                return null;
+            }
+
+            if (!int.TryParse(csv.OrderedVolume, out var orderedVolume))
+            {
+                FailedParseTotal += 1;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable ordered volume {orderedVolume}");
 
                 return null;
             }
@@ -80,7 +88,23 @@ namespace Domain.Trades.Orders
             var pricedLimitPrice =
                 parsedLimitPrice != null
                     ? (Price?)new Price(parsedLimitPrice.Value, csv.Currency)
-                    : null; 
+                    : null;
+
+            // ReSharper disable once InlineOutVariableDeclaration
+            decimal executedPrice = 0;
+            if (!string.IsNullOrWhiteSpace(csv.ExecutedPrice)
+                && !decimal.TryParse(csv.ExecutedPrice, out executedPrice))
+            {
+                FailedParseTotal += 1;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable executed price {executedPrice}");
+
+                return null;
+            }
+
+            var pricedExecutedPrice =
+                !string.IsNullOrWhiteSpace(csv.ExecutedPrice)
+                    ? (Price?)new Price(executedPrice, csv.Currency)
+                    : null;
 
             if (!DateTime.TryParse(csv.StatusChangedOn, out var statusChangedOn))
             {
@@ -98,31 +122,46 @@ namespace Domain.Trades.Orders
                 return null;
             }
 
+            var market = new StockExchange(new Market.Market.MarketId(csv.MarketIdentifierCode), csv.MarketName);
+
+            var securityIdentifiers =
+                new SecurityIdentifiers(
+                    csv.SecurityClientIdentifier,
+                    csv.SecuritySedol,
+                    csv.SecurityIsin,
+                    csv.SecurityFigi,
+                    csv.SecurityCusip,
+                    csv.SecurityExchangeSymbol,
+                    csv.SecurityLei,
+                    csv.BloombergTicker);
+
+            var security =
+                new Security(
+                    securityIdentifiers,
+                    csv.SecurityName,
+                    csv.SecurityCfi,
+                    csv.SecurityIssuerIdentifier);
+
             return new TradeOrderFrame(
                 orderType,
-                new StockExchange(
-                    new Market.Market.MarketId(csv.MarketIdentifierCode),
-                    csv.MarketName),
-                new Security(
-                    new SecurityIdentifiers(
-                        csv.SecurityClientIdentifier,
-                        csv.SecuritySedol,
-                        csv.SecurityIsin,
-                        csv.SecurityFigi,
-                        csv.SecurityCusip,
-                        csv.SecurityExchangeSymbol),
-                    csv.SecurityName,
-                    csv.SecurityCfi),
+                market,
+                security,
                 pricedLimitPrice,
-                volume,
+                pricedExecutedPrice,
+                fulfilledVolume,
+                orderedVolume,
                 orderPosition,
                 orderStatus,
                 statusChangedOn,
                 tradeSubmittedOn,
                 csv.TraderId,
                 csv.ClientAttributionId,
+                csv.AccountId,
+                csv.DealerInstructions,
                 csv.PartyBrokerId,
-                csv.CounterPartyBrokerId);
+                csv.CounterPartyBrokerId,
+                csv.TradeRationale,
+                csv.TradeStrategy);
         }
     }
 }

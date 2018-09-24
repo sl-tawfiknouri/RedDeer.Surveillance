@@ -60,29 +60,50 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 if (_lastFrame != null)
                 {
+                    // ReSharper disable StringLiteralTypo
                     var submittedOn = DateTime.UtcNow.AddMilliseconds(-300);
+
+                    var securityIdentifiers =
+                        new SecurityIdentifiers(
+                            "Lehman Bros",
+                            "LB12345",
+                            "LB123456789X",
+                            "LBro",
+                            "123456LB",
+                            "LEHM",
+                            "LEHM",
+                            "LEHM");
+
+                    var security = new Security(
+                        securityIdentifiers,
+                        "Lehman Bros",
+                        "CFI",
+                        "Lehman Bros");
 
                     var prohibitedTrade = new TradeOrderFrame
                         (OrderType.Market,
                         _lastFrame.Exchange,
-                        new Security(
-                            // ReSharper disable StringLiteralTypo
-                            new SecurityIdentifiers("Lehman Bros", "LB12345", "LB123456789X", "LBro", "123456LB", "LEHM"),
-                            // ReSharper restore StringLiteralTypo
-                            "Lehman Bros",
-                            "CFI"),
+                        security,
                         null,
+                        new Price(50, "GBP"), 
                         666,
-                        OrderPosition.BuyLong,
-                        OrderStatus.Placed,
+                        666,
+                        OrderPosition.Buy,
+                        OrderStatus.Booked,
                         DateTime.UtcNow,
                         submittedOn,
                         "TRADER-1",
-                        "",
+                        "TRADER-1-CLIENT-1",
+                        "ACCOUNT-12345",
+                        "BUY ASAP",
                         "BROKER-1",
-                        "BROKER-2");
+                        "BROKER-2",
+                        "Lehman Bros looks like good value for money",
+                        "Buy Long");
 
                     TradeStream.Add(prohibitedTrade);
+
+                    // ReSharper restore StringLiteralTypo
                 }
             }
         }

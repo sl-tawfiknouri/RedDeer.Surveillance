@@ -48,7 +48,7 @@ namespace Surveillance.Recorders.Projectors
                 StatusChangedOn = order.StatusChangedOn,
                 TradeSubmittedOn = order.TradeSubmittedOn,
 
-                Volume = order.Volume,
+                FulfilledVolume = order.FulfilledVolume,
                 
                 OrderPositionId = (int)order.Position,
                 OrderPositionDescription = order.Position.ToString(),

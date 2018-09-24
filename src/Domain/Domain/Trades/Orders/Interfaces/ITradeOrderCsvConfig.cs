@@ -22,7 +22,7 @@
         string LimitPriceFieldName { get; set; }
         string TradeSubmittedOnFieldName { get; set; }
         string StatusChangedOnFieldName { get; set; }
-        string VolumeFieldName { get; set; }
+        string FulfilledVolumeFieldName { get; set; }
         string OrderPositionFieldName { get; set; }
 
         string TraderIdFieldName { get; set; }

@@ -119,8 +119,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                 
                 var frame = new SecurityTick(
                     new Security(
-                        new SecurityIdentifiers($"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"),
-                        "Standard Chartered", "CFI"),
+                        new SecurityIdentifiers($"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"),
+                        "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"),
                     new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
                     new Volume(volume),
                     DateTime.UtcNow,

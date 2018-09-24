@@ -30,25 +30,43 @@ namespace TestHarness.Tests.Display
         private TradeOrderFrame GenerateFrame(int vol)
         {
             var stock = new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange");
+            var securityIdentifiers =
+                new SecurityIdentifiers(
+                    "STAN",
+                    "st12345",
+                    "sta123456789",
+                    "stan",
+                    "sta12345",
+                    "stan",
+                    "stan lei",
+                    "stan");
+
             var sec = new Security(
-                new SecurityIdentifiers("STAN", "st12345", "sta123456789", "stan", "sta12345", "stan"),
+                securityIdentifiers,
                 "Standard Chartered",
-                "CFI");
+                "CFI",
+                "Standard Chartered Bank");
 
             return new TradeOrderFrame(
                     OrderType.Limit,
                     stock,
                     sec,
                     new Price(20.2m, "GBP"),
+                    new Price(20.2m, "GBP"),
                     100 * vol,
-                    OrderPosition.BuyLong,
+                    100 * vol,
+                    OrderPosition.Buy,
                     OrderStatus.Fulfilled,
                     DateTime.Now,
                     DateTime.Now,
                     "trader-1",
                     "",
+                    "account-1",
+                    "test",
                     "party-broker",
-                    "counterParty-broker");
+                    "counterParty-broker",
+                    "none",
+                    "unknown");
         }
     }
 }

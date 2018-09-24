@@ -11,7 +11,9 @@ namespace Domain.Equity
             string isin,
             string figi,
             string cusip,
-            string exchangeSymbol)
+            string exchangeSymbol,
+            string lei,
+            string bloombergTicker)
         {
             ClientIdentifier = clientIdentifier ?? string.Empty;
             Sedol = sedol ?? string.Empty;
@@ -19,6 +21,8 @@ namespace Domain.Equity
             Figi = figi ?? string.Empty;
             Cusip = cusip ?? string.Empty;
             ExchangeSymbol = exchangeSymbol ?? string.Empty;
+            Lei = lei ?? string.Empty;
+            BloombergTicker = bloombergTicker ?? string.Empty;
         }
 
         public string ClientIdentifier { get; }
@@ -27,6 +31,8 @@ namespace Domain.Equity
         public string Figi { get; }
         public string Cusip { get; }
         public string ExchangeSymbol { get; }
+        public string Lei { get; }
+        public string BloombergTicker { get; }
 
         public override int GetHashCode()
         {
@@ -75,12 +81,22 @@ namespace Domain.Equity
                 return true; // risk across multiple exchange data sets that have intersecting symbol lists
             }
 
+            if (string.Equals(Lei, otherId.Lei, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
+            if (string.Equals(BloombergTicker, otherId.BloombergTicker, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+
             return false;
         }
 
         public override string ToString()
         {
-            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol}";
+            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol} | Lei {Lei} | Bloomberg Ticker {BloombergTicker}";
         }
     }
 }

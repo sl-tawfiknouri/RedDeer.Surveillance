@@ -5,6 +5,7 @@ namespace Domain.Trades.Orders
     {
         Unknown,
         Market,
-        Limit
+        Limit,
+        StopLoss
     }
 }

@@ -9,15 +9,17 @@
         public Security(
             SecurityIdentifiers identifiers,
             string name,
-            string cfi)
+            string cfi,
+            string issuerIdentifier)
         {
             Identifiers = identifiers;
             Name = name ?? string.Empty;
             Cfi = cfi ?? string.Empty;
+            IssuerIdentifier = issuerIdentifier ?? string.Empty;
         }
 
         /// <summary>
-        /// Exchange Symbol | CUSIP | FIGI | ISIN | SEDOL | Client Identifier
+        /// Exchange Symbol | CUSIP | FIGI | ISIN | SEDOL | Client Identifier | LEI | Bloomberg Ticker
         /// </summary>
         public SecurityIdentifiers Identifiers { get; }
 
@@ -32,5 +34,10 @@
         /// https://en.wikipedia.org/wiki/ISO_10962
         /// </summary>
         public string Cfi { get; }
+
+        /// <summary>
+        /// An identifier for the organisation issuing this security.
+        /// </summary>
+        public string IssuerIdentifier { get; }
     }
 }

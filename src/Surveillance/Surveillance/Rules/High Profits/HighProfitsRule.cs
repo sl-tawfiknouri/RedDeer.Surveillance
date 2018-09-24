@@ -122,11 +122,11 @@ namespace Surveillance.Rules.High_Profits
 
             var purchaseOrders =
                 activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.BuyLong)
-                    .Select(afto => afto.Volume * afto.ExecutedPrice)
+                    .Where(afto => afto.Position == OrderPosition.Buy)
+                    .Select(afto => afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0)
                     .Sum();
 
-            return purchaseOrders.GetValueOrDefault(0);
+            return purchaseOrders;
         }
 
         /// <summary>
@@ -180,8 +180,8 @@ namespace Surveillance.Rules.High_Profits
             }
 
             return activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.SellLong)
-                    .Select(afto => afto.Volume * afto.ExecutedPrice)
+                    .Where(afto => afto.Position == OrderPosition.Sell)
+                    .Select(afto => afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0)
                     .Sum();
         }
 
@@ -194,8 +194,8 @@ namespace Surveillance.Rules.High_Profits
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.BuyLong)
-                .Select(afto => afto.Volume)
+                .Where(afto => afto.Position == OrderPosition.Buy)
+                .Select(afto => afto.FulfilledVolume)
                 .Sum();
         }
 
@@ -208,8 +208,8 @@ namespace Surveillance.Rules.High_Profits
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.SellLong)
-                .Select(afto => afto.Volume)
+                .Where(afto => afto.Position == OrderPosition.Sell)
+                .Select(afto => afto.FulfilledVolume)
                 .Sum();
         }
 
@@ -232,7 +232,7 @@ namespace Surveillance.Rules.High_Profits
                 return realisedRevenue.GetValueOrDefault(0);
             }
 
-            var inferredVirtualProfits = mostRecentTrade.ExecutedPrice.GetValueOrDefault(0) * sizeOfVirtualPosition;
+            var inferredVirtualProfits = mostRecentTrade.ExecutedPrice?.Value * sizeOfVirtualPosition ?? 0;
 
             return realisedRevenue.GetValueOrDefault(0) + inferredVirtualProfits;
         }

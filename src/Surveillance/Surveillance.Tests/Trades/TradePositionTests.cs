@@ -82,7 +82,7 @@ namespace Surveillance.Tests.Trades
         public void CancellationRatioByPositionSizeIsHigh_ReturnsExpected()
         {
             var bigPosition = TradeFrame(OrderStatus.Cancelled);
-            bigPosition.Volume = bigPosition.Volume * 100;
+            bigPosition.FulfilledVolume = bigPosition.FulfilledVolume * 100;
 
             var tof = new List<TradeOrderFrame>
             {
@@ -104,7 +104,7 @@ namespace Surveillance.Tests.Trades
         public void CancellationRatioByPositionSizeNotHigh_ReturnsExpected()
         {
             var bigPosition = TradeFrame(OrderStatus.Fulfilled);
-            bigPosition.Volume = bigPosition.Volume * 100;
+            bigPosition.FulfilledVolume = bigPosition.FulfilledVolume * 100;
 
             var tof = new List<TradeOrderFrame>
             {
@@ -124,23 +124,36 @@ namespace Surveillance.Tests.Trades
 
         private TradeOrderFrame TradeFrame(OrderStatus status)
         {
+            var securityIdentifiers =
+                new SecurityIdentifiers("client id", "1234567", "12345678912", "figi", "cusip", "test", "test lei", "ticker");
+
+            var security =
+                new Security(
+                    securityIdentifiers,
+                    "Test Security",
+                    "CFI",
+                    "Issuer Identifier");
+
             return new TradeOrderFrame(
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
-                new Security(
-                    new SecurityIdentifiers("client id", "1234567", "12345678912", "figi", "cusip", "test"),
-                    "Test Security",
-                    "CFI"),
+                security,
                 null,
+                new Price(1000, "GBP"), 
                 1000,
-                OrderPosition.BuyLong,
+                1000,
+                OrderPosition.Buy,
                 status,
                 DateTime.Now,
                 DateTime.Now,
                 "trader-1",
                 "client-attribution-id",
+                "account-1",
+                "Buy!",
                 "party-broker",
-                "counter party");
+                "counter party",
+                "Good day to buy",
+                "None");
         }
     }
 }

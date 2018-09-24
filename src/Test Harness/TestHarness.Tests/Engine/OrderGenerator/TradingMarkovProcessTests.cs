@@ -149,7 +149,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
             orderDataGenerator.OnError(null);
 
             A
-                .CallTo(() => _logger.Log(LogLevel.Error, "Order data generator receieved a null exception OnError"))
+                .CallTo(() => _logger.Log(LogLevel.Error, (Exception)null))
                 .MustHaveHappenedOnceExactly();
         }
 

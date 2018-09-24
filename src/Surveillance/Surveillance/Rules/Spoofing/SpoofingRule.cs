@@ -85,12 +85,12 @@ namespace Surveillance.Rules.Spoofing
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.Position == OrderPosition.BuyLong
+                mostRecentTrade.Position == OrderPosition.Buy
                 ? buyPosition
                 : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.Position == OrderPosition.SellLong
+                mostRecentTrade.Position == OrderPosition.Sell
                 ? buyPosition
                 : sellPosition;
 
@@ -147,15 +147,11 @@ namespace Surveillance.Rules.Spoofing
         {
             switch (nextTrade.Position)
             {
-                case OrderPosition.BuyLong:
+                case OrderPosition.Buy:
                     buyPosition.Add(nextTrade);
                     break;
-                case OrderPosition.SellLong:
+                case OrderPosition.Sell:
                     sellPosition.Add(nextTrade);
-                    break;
-                case OrderPosition.BuyShort:
-                    break;
-                case OrderPosition.SellShort:
                     break;
                 default:
                     _logger.LogError("Spoofing rule not considering an out of range order direction");

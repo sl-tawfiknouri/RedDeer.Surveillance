@@ -92,8 +92,8 @@ namespace Surveillance.Trades
                 return 0;
             }
 
-            var cancelledOrderVolume = cancelledOrders.Sum(co => co.Volume);
-            var nonCancelledOrderVolume = nonCancelledOrders.Sum(co => co.Volume);
+            var cancelledOrderVolume = cancelledOrders.Sum(co => co.FulfilledVolume);
+            var nonCancelledOrderVolume = nonCancelledOrders.Sum(co => co.FulfilledVolume);
 
             if (cancelledOrderVolume < 0
                 || nonCancelledOrderVolume < 0)
@@ -120,7 +120,7 @@ namespace Surveillance.Trades
 
         public int TotalVolume()
         {
-            return _trades.Sum(trad => trad?.Volume ?? 0);
+            return _trades.Sum(trad => trad?.FulfilledVolume ?? 0);
         }
 
         public int VolumeInStatus(OrderStatus status)
@@ -128,7 +128,7 @@ namespace Surveillance.Trades
             return
                 _trades
                 .Where(trad => trad != null && trad.OrderStatus == status)
-                .Sum(trad => trad.Volume);
+                .Sum(trad => trad.FulfilledVolume);
         }
 
         public int VolumeNotInStatus(OrderStatus status)
@@ -136,7 +136,7 @@ namespace Surveillance.Trades
             return
                 _trades
                 .Where(trad => trad != null && trad.OrderStatus != status)
-                .Sum(trad => trad.Volume);
+                .Sum(trad => trad.FulfilledVolume);
         }
 
         /// <summary>

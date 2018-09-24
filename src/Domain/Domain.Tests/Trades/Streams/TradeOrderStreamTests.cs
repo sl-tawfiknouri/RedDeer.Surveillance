@@ -75,62 +75,81 @@ namespace Domain.Tests.Trades.Streams
             var orderDates = DateTime.Now;
             const string traderId = "Trader Joe";
             const string partyBrokerId = "Broker-1";
+            const string accountId = "Account-1";
+            const string dealerInstruction = "Trade ASAP";
+            const string tradeRationale = "Market is not pricing well";
+            const string tradeStrategy = "Unknown";
             const string counterPartyBrokerId = "Broker-2";
+            var securityIdentifiers = new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+
+            var security = new Security(
+                securityIdentifiers,
+                "Standard Chartered",
+                "CFI",
+                "Standard Chartered Bank");
 
             var order1 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
-                new Security(
-                    new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan"),
-                    "Standard Chartered",
-                    "CFI"),
+                security,
+                new Price(100, "GBX"),
                 new Price(100, "GBX"),
                 1000,
-                OrderPosition.BuyLong,
-                OrderStatus.Placed,
+                1000,
+                OrderPosition.Buy,
+                OrderStatus.Booked,
                 orderDates,
                 orderDates,
                 traderId,
                 string.Empty,
+                accountId,
+                dealerInstruction,
                 partyBrokerId,
-                counterPartyBrokerId);
+                counterPartyBrokerId,
+                tradeRationale,
+                tradeStrategy);
 
             var order2 = new TradeOrderFrame(
                 OrderType.Market,
                 exch,
-                new Security(
-                    new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan"),
-                    "Standard Chartered",
-                    "CFI"),
+                security,
                 null,
+                new Price(100, "GBX"),
                 10,
-                OrderPosition.SellLong,
+                10,
+                OrderPosition.Sell,
                 OrderStatus.Fulfilled,
                 orderDates,
                 orderDates,
                 traderId,
                 string.Empty,
+                accountId,
+                dealerInstruction,
                 partyBrokerId,
-                counterPartyBrokerId);
+                counterPartyBrokerId,
+                tradeRationale,
+                tradeStrategy);
 
             var order3 = new TradeOrderFrame(
                 OrderType.Limit,
                 exch,
-                new Security(
-                    new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan"),
-                    "Standard Chartered",
-                    "CFI"),
+                security,
+                new Price(10, "GBX"),
                 new Price(10, "GBX"),
                 1000,
-                OrderPosition.SellLong,
+                1000,
+                OrderPosition.Sell,
                 OrderStatus.Cancelled,
                 orderDates,
                 orderDates,
                 traderId,
                 string.Empty,
+                accountId,
+                dealerInstruction,
                 partyBrokerId,
-                counterPartyBrokerId);
-
+                counterPartyBrokerId,
+                tradeRationale,
+                tradeStrategy);
 
             stream.Subscribe(obs1);
             stream.Subscribe(obs2);

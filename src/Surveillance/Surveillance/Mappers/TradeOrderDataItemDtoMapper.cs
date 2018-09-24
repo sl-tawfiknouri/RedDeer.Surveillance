@@ -29,7 +29,7 @@ namespace Surveillance.Mappers
                 LimitPrice = frame.Limit?.Value,
                 TradeSubmittedOn = frame.TradeSubmittedOn,
                 StatusChangedOn = frame.StatusChangedOn,
-                Volume = frame.Volume,
+                Volume = frame.FulfilledVolume,
                 OrderPosition = (TradeOrderPosition)frame.Position,
                 OrderStatus = (TradeOrderStatus)frame.OrderStatus,
                 TraderId = frame.TraderId,

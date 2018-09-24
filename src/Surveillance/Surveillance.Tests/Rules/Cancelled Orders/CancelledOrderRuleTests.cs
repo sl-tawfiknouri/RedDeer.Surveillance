@@ -147,7 +147,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void OnNext_DoesNotSendsMessage_ForNoTradeCountRuleBreach()
         {
             var trade = TradeFrame(OrderStatus.Cancelled);
-            trade.Volume = trade.Volume * 100;
+            trade.FulfilledVolume = trade.FulfilledVolume * 100;
 
             var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
             {
@@ -185,7 +185,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void OnNext_SendsExpectedMessage_ForPositionSizeRuleBreach()
         {
             var trade = TradeFrame(OrderStatus.Cancelled);
-            trade.Volume = trade.Volume * 100;
+            trade.FulfilledVolume = trade.FulfilledVolume * 100;
 
             var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
             {
@@ -256,23 +256,43 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
         private TradeOrderFrame TradeFrame(OrderStatus status)
         {
+            var securityIdentifiers =
+                new SecurityIdentifiers(
+                    "client id",
+                    "1234567",
+                    "12345678912",
+                    "figi", 
+                    "cusip",
+                    "test",
+                    "testLei",
+                    "tick");
+
+            var security = new Security(
+                securityIdentifiers,
+                "Test Security",
+                "CFI",
+                "Issuer-Identifier");
+
             return new TradeOrderFrame(
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
-                new Security(
-                    new SecurityIdentifiers("client id", "1234567", "12345678912", "figi", "cusip", "test"),
-                    "Test Security",
-                    "CFI"),
+                security,
                 null,
+                new Price(1000, "GBP"), 
                 1000,
-                OrderPosition.BuyLong,
+                1000,
+                OrderPosition.Buy,
                 status,
                 DateTime.Now,
                 DateTime.Now,
                 "trader-1",
                 "client-attribution-id",
+                "account-1",
+                "dealer-instructions",
                 "party-broker",
-                "counter party");
+                "counter party",
+                "trade rationale",
+                "good strategy");
         }
     }
 }

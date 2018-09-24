@@ -150,9 +150,12 @@ namespace Domain.Equity.Frames
                     csv.Isin,
                     csv.Figi,
                     csv.Cusip,
-                    csv.ExchangeSymbol),
+                    csv.ExchangeSymbol,
+                    csv.Lei,
+                    csv.BloombergTicker),
                 csv.SecurityName,
-                csv.Cfi);
+                csv.Cfi,
+                csv.IssuerIdentifier);
         }
 
         private Spread BuildSpread(

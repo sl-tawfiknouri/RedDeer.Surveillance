@@ -112,15 +112,21 @@ namespace TestHarness.Engine.OrderGenerator
                 _lastFrame.Exchange,
                 security.Security,
                 limitPrice,
+                limitPrice,
                 volume,
-                OrderPosition.BuyLong,
+                volume,
+                OrderPosition.Buy,
                 OrderStatus.Cancelled,
                 statusChangedOn,
                 tradePlacedOn,
                 "Spoofing-Trader",
-                "",
+                string.Empty,
+                "Account-1",
+                "Buy",
                 "Broker-1",
-                "Broker-2");
+                "Broker-2",
+                "Spoofing limit buys",
+                "Spoofing");
 
             return 
                 new[] { spoofedTrade }
@@ -139,15 +145,21 @@ namespace TestHarness.Engine.OrderGenerator
                 _lastFrame.Exchange,
                 security.Security,
                 null,
+                security.Spread.Price,
                 volumeToTrade,
-                OrderPosition.SellLong,
+                volumeToTrade,
+                OrderPosition.Sell,
                 OrderStatus.Fulfilled,
                 statusChangedOn,
                 tradePlacedOn,
                 "Spoofing-Trader",
-                "",
+                string.Empty,
+                "Account-1",
+                "Sell",
                 "Broker-1",
-                "Broker-2");
+                "Broker-2",
+                "Spoofing counter trade",
+                "Spoofing");
         }
     }
 }

@@ -122,9 +122,11 @@ namespace Surveillance.DataLayer.Projectors
                     doc.SecurityIsin,
                     doc.SecurityFigi,
                     doc.SecurityCusip,
-                    doc.SecurityExchangeSymbol);
+                    doc.SecurityExchangeSymbol,
+                    doc.SecurityLei,
+                    doc.SecurityBloombergTicker);
 
-            return new Security(securityIdentifiers, doc.SecurityName, doc.SecurityCfi);
+            return new Security(securityIdentifiers, doc.SecurityName, doc.SecurityCfi, doc.IssuerIdentifier);
         }
 
         private Spread ParseSpread(ReddeerSecurityDocument doc)

@@ -35,17 +35,21 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var security = new SecurityTick(
-                new Security(
-                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT"), "Microsoft", "CFI"),
-                    new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
-                    new Volume(200000),
-                DateTime.UtcNow,
-                3000,
-                null,
-                100);
+            var identifiers = new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
+            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
 
-            var result = strategy.AdvanceFrame(security);
+            var tick =
+                new SecurityTick(
+                    security,
+                    spread,
+                    new Volume(200000),
+                    DateTime.UtcNow,
+                    3000,
+                    null,
+                    100);
+
+            var result = strategy.AdvanceFrame(tick);
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             var printableGeneratedSecurity = JsonConvert.SerializeObject(result);
@@ -62,27 +66,31 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var security = new SecurityTick(
-                new Security(
-                    new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT"), "Microsoft", "CFI"),
-                    new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP")),
+            var identifiers = new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
+            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
+
+            var tick =
+                new SecurityTick(
+                    security,
+                    spread,
                     new Volume(200000),
-                DateTime.UtcNow,
-                3000,
-                null,
-                100);
-            
+                    DateTime.UtcNow,
+                    3000,
+                    null,
+                    100);
+
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);
 
             for(var i = 0; i < 99; i++)
             {
-                security = strategy.AdvanceFrame(security);
+                tick = strategy.AdvanceFrame(tick);
 
                 var printableGeneratedSecurity = JsonConvert.SerializeObject(security);
                 Console.WriteLine(printableGeneratedSecurity);
 
-                Assert.IsTrue(security.Spread.Bid.Value >= security.Spread.Ask.Value);
+                Assert.IsTrue(tick.Spread.Bid.Value >= tick.Spread.Ask.Value);
             }
         }
     }

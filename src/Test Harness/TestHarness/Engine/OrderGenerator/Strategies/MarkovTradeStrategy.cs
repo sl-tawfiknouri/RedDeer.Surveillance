@@ -111,20 +111,27 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var position = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
             var limit = CalculateLimit(tick, position, orderType);
+            var executedPrice = tick.Spread.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = DateTime.UtcNow;
             var orderSubmittedOn = orderStatusLastChanged.AddMilliseconds(-300);
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
+            var accountId = GenerateProbabilisticIdString();
+            var dealerInstructions = string.Empty;
             var partyBrokerId = GenerateIdString();
             var counterPartyBrokerId = GenerateIdString();
+            const string tradeRationale = "The security looked like good value";
+            const string tradeStrategy = "Taking profits";
 
             return new TradeOrderFrame(
                 orderType,
                 exchFrame.Exchange,
                 tick.Security,
                 limit,
+                executedPrice,
+                volume,
                 volume,
                 position,
                 orderStatus,
@@ -132,8 +139,12 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 orderSubmittedOn,
                 traderId,
                 traderClientId,
+                accountId,
+                dealerInstructions,
                 partyBrokerId,
-                counterPartyBrokerId);
+                counterPartyBrokerId,
+                tradeRationale,
+                tradeStrategy);
         }
 
         private string GenerateIdString()
@@ -185,14 +196,14 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 return null;
             }
 
-            if (buyOrSell == OrderPosition.BuyLong)
+            if (buyOrSell == OrderPosition.Buy)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
                 return new Price(adjustedPrice, tick.Spread.Bid.Currency);
             }
-            else if (buyOrSell == OrderPosition.BuyLong)
+            else if (buyOrSell == OrderPosition.Sell)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));

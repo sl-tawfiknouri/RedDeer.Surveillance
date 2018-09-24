@@ -43,7 +43,7 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName"),
                 TradeSubmittedOnFieldName = configurationBuilder.GetValue<string>("SecurityTradeSubmittedOnFieldName"),
                 StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
-                VolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
+                FulfilledVolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
                 OrderPositionFieldName = configurationBuilder.GetValue<string>("OrderPositionFieldName"),
 
                 TraderIdFieldName = configurationBuilder.GetValue<string>("TraderIdFieldName"),

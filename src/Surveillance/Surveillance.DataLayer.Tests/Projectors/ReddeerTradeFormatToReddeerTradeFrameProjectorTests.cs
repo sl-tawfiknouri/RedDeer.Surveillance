@@ -68,7 +68,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
                         OrderStatusId = 1,
                         OrderTypeId = 2,
                         OrderTypeDescription = "Limit",
-                        Volume = 100,
+                        FulfilledVolume = 100,
                         StatusChangedOn = new DateTime(2018, 1, 1)
                     }
                 };
@@ -79,13 +79,13 @@ namespace Surveillance.DataLayer.Tests.Projectors
             Assert.AreEqual(result.Count, 1);
             Assert.IsNotNull(firstResult.Limit);
             Assert.AreEqual(firstResult.Limit.Value.Value, 12);
-            Assert.AreEqual(firstResult.Position, OrderPosition.BuyLong);
+            Assert.AreEqual(firstResult.Position, OrderPosition.Buy);
             Assert.AreEqual(firstResult.OrderStatus, OrderStatus.Cancelled);
             Assert.AreEqual(firstResult.OrderType, OrderType.Limit);
             Assert.AreEqual(firstResult.Market.Id.Id, "LSE");
             Assert.AreEqual(firstResult.Market.Name, "LSE");
             Assert.AreEqual(firstResult.StatusChangedOn, new DateTime(2018, 1, 1));
-            Assert.AreEqual(firstResult.Volume, 100);
+            Assert.AreEqual(firstResult.FulfilledVolume, 100);
             Assert.AreEqual(firstResult.Security.Identifiers.ClientIdentifier, "STAN");
             Assert.AreEqual(firstResult.Security.Identifiers.Figi, "STAN");
             Assert.AreEqual(firstResult.Security.Identifiers.Isin, "STA123456789");

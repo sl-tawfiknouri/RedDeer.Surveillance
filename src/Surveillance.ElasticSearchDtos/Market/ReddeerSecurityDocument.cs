@@ -62,6 +62,9 @@ namespace Surveillance.ElasticSearchDtos.Market
         [Text]
         public decimal? LowPrice { get; set; }
 
+        /// <summary>
+        /// Tick volume - not daily
+        /// </summary>
         [Text]
         public int? Volume { get; set; }
 
@@ -86,5 +89,8 @@ namespace Surveillance.ElasticSearchDtos.Market
 
         [Text]
         public string IssuerIdentifier { get; set; }
+
+        [Text]
+        public int? DailyVolume { get; set; }
     }
 }

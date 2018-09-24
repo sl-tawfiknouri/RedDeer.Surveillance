@@ -62,7 +62,12 @@ namespace Relay.Disk_IO.EquityFile
 
                 Volume = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
                 ListedSecurities = rawRecord[_csvConfig.SecurityTickListedSecuritiesFieldName],
-                MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName]
+                MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName],
+
+                IssuerIdentifier = rawRecord[_csvConfig.SecurityIssuerIdentifierFieldName],
+                Lei = rawRecord[_csvConfig.SecurityLeiFieldName],
+                BloombergTicker = rawRecord[_csvConfig.SecurityBloombergTicker],
+                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName]
             };
         }
 
@@ -145,6 +150,11 @@ namespace Relay.Disk_IO.EquityFile
                 csv.WriteField(_csvConfig.SecurityTickClosePriceFieldName);
                 csv.WriteField(_csvConfig.SecurityTickHighPriceFieldName);
                 csv.WriteField(_csvConfig.SecurityTickLowPriceFieldName);
+
+                csv.WriteField(_csvConfig.SecurityIssuerIdentifierFieldName);
+                csv.WriteField(_csvConfig.SecurityLeiFieldName);
+                csv.WriteField(_csvConfig.SecurityBloombergTicker);
+                csv.WriteField(_csvConfig.SecurityDailyVolumeFieldName);
 
                 csv.NextRecord();
 

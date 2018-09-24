@@ -71,7 +71,13 @@ namespace Surveillance.Recorders.Projectors
                     Volume = sec?.Volume.Traded,
                     ListedSecurities = sec?.ListedSecurities,
                     TimeStamp = sec?.TimeStamp ?? DateTime.UtcNow,
-                    MarketCap = sec?.MarketCap
+                    MarketCap = sec?.MarketCap,
+
+                    IssuerIdentifier = sec?.Security?.IssuerIdentifier,
+                    SecurityLei = sec?.Security?.Identifiers.Lei,
+                    SecurityBloombergTicker = sec?.Security?.Identifiers.BloombergTicker,
+                    DailyVolume = sec?.DailyVolume.Traded,
+
                 }).ToArray();
         }
 

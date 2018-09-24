@@ -27,5 +27,10 @@
         string SecurityTickClosePriceFieldName { get; set; }
         string SecurityTickHighPriceFieldName { get; set; }
         string SecurityTickLowPriceFieldName { get; set; }
+
+        string SecurityIssuerIdentifierFieldName { get; set; }
+        string SecurityLeiFieldName { get; set; }
+        string SecurityBloombergTicker { get; set; }
+        string SecurityDailyVolumeFieldName { get; set; }
     }
 }

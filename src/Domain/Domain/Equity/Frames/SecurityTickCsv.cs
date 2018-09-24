@@ -31,6 +31,8 @@
         public string Close { get; set; }
         public string High { get; set; }
         public string Low { get; set; }
+        public string DailyVolume { get; set; }
+
 
         public string Volume { get; set; }
         public string ListedSecurities { get; set; }

@@ -44,6 +44,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     security,
                     spread,
                     new Volume(200000),
+                    new Volume(200000),
                     DateTime.UtcNow,
                     3000,
                     null,
@@ -74,6 +75,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                 new SecurityTick(
                     security,
                     spread,
+                    new Volume(200000),
                     new Volume(200000),
                     DateTime.UtcNow,
                     3000,

@@ -123,6 +123,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                         "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"),
                     new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
                     new Volume(volume),
+                    new Volume(volume),
                     DateTime.UtcNow,
                     3000,
                     null,

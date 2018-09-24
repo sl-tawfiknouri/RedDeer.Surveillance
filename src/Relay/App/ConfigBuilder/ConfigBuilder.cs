@@ -81,6 +81,11 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 SecurityTickClosePriceFieldName = configurationBuilder.GetValue<string>("SecurityTickClosePriceFieldName"),
                 SecurityTickHighPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickHighPriceFieldName"),
                 SecurityTickLowPriceFieldName = configurationBuilder.GetValue<string>("SecurityTickLowPriceFieldName"),
+
+                SecurityIssuerIdentifierFieldName = configurationBuilder.GetValue<string>("SecurityIssuerIdentifierFieldName"),
+                SecurityLeiFieldName = configurationBuilder.GetValue<string>("SecurityLeiFieldName"),
+                SecurityBloombergTicker = configurationBuilder.GetValue<string>("SecurityBloombergTicker"),
+                SecurityDailyVolumeFieldName = configurationBuilder.GetValue<string>("SecurityDailyVolumeFieldName")
             };
 
             return networkConfiguration;

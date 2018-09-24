@@ -69,12 +69,14 @@ namespace Surveillance.DataLayer.Projectors
             var security = ParseEsSecurity(doc);
             var spread = ParseSpread(doc);
             var volume = new Volume(doc.Volume.GetValueOrDefault(0));
+            var dailyVolume = new Volume(doc.DailyVolume.GetValueOrDefault(0));
             var intradayPrices = IntradayPrices(doc);
 
             return new SecurityTick(
                 security,
                 spread,
                 volume,
+                dailyVolume,
                 doc.TimeStamp,
                 doc.MarketCap,
                 intradayPrices,

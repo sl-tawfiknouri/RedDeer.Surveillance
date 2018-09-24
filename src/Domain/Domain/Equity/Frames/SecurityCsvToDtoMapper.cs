@@ -36,6 +36,12 @@ namespace Domain.Equity.Frames
                 return null;
             }
 
+            if (!int.TryParse(csv.DailyVolume, out var dailyVolume))
+            {
+                FailedParseTotal += 1;
+                _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable daily volume");
+            }
+
             if (!DateTime.TryParse(csv.Timestamp, out var timeStamp))
             {
                 FailedParseTotal += 1;
@@ -138,7 +144,15 @@ namespace Domain.Equity.Frames
             var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice);
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
 
-            return new SecurityTick(security, spread, new Volume(volume), timeStamp, marketCap, intradayPrices, listedSecurities);
+            return new SecurityTick(
+                security,
+                spread,
+                new Volume(volume),
+                new Volume(dailyVolume),
+                timeStamp,
+                marketCap,
+                intradayPrices,
+                listedSecurities);
         }
 
         private Security BuildSecurity(SecurityTickCsv csv)

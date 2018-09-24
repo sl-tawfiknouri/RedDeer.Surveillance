@@ -63,6 +63,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     tick.Security,
                     newSpread,
                     newVolume,
+                    tick.DailyVolume,
                     DateTime.UtcNow,
                     newMarketCap,
                     newIntraday,

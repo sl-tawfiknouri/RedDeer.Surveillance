@@ -79,5 +79,9 @@ namespace Relay.Configuration
         public string SecurityTickClosePriceFieldName { get; set; }
         public string SecurityTickHighPriceFieldName { get; set; }
         public string SecurityTickLowPriceFieldName { get; set; }
+        public string SecurityIssuerIdentifierFieldName { get; set; }
+        public string SecurityLeiFieldName { get; set; }
+        public string SecurityBloombergTicker { get; set; }
+        public string SecurityDailyVolumeFieldName { get; set; }
     }
 }

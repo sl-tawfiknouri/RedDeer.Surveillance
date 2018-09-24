@@ -11,6 +11,7 @@ namespace Domain.Equity.Frames
             Security security,
             Spread spread,
             Volume volume,
+            Volume dailyVolume,
             DateTime timeStamp,
             decimal? marketCap,
             IntradayPrices intradayPrices,
@@ -23,9 +24,7 @@ namespace Domain.Equity.Frames
             MarketCap = marketCap;
             IntradayPrices = intradayPrices;
             ListedSecurities = listedSecurities;
-
-            //TODO add this to our data files and map it in
-            DailyVolume = Volume;
+            DailyVolume = dailyVolume;
         }
 
         /// <summary>

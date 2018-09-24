@@ -49,6 +49,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                         new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Buy), _nasdaqCurrency)),
                     new Volume(volume),
+                    new Volume(volume),
                     DateTime.UtcNow,
                     decimal.Parse(raw.Buy) * volume,
                     new IntradayPrices(

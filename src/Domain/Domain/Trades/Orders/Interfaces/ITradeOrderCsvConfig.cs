@@ -32,5 +32,15 @@
 
         string OrderStatusFieldName { get; set; }
         string CurrencyFieldName { get; set; }
+
+        string SecurityLei { get; set; }
+        string SecurityBloombergTickerFieldName { get; set; }
+        string ExecutedPriceFieldName { get; set; }
+        string OrderedVolumeFieldName { get; set; }
+        string AccountIdFieldName { get; set; }
+        string DealerInstructionsFieldName { get; set; }
+        string TradeRationaleFieldName { get; set; }
+        string TradeStrategyFieldName { get; set;}
+        string SecurityIssuerIdentifier { get; set; }
     }
 }

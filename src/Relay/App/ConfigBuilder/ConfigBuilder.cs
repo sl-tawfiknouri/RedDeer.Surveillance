@@ -43,7 +43,7 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                 LimitPriceFieldName = configurationBuilder.GetValue<string>("LimitPriceFieldName"),
                 TradeSubmittedOnFieldName = configurationBuilder.GetValue<string>("SecurityTradeSubmittedOnFieldName"),
                 StatusChangedOnFieldName = configurationBuilder.GetValue<string>("StatusChangedOnFieldName"),
-                FulfilledVolumeFieldName = configurationBuilder.GetValue<string>("VolumeFieldName"),
+                FulfilledVolumeFieldName = configurationBuilder.GetValue<string>("FulfilledVolumeFieldName"),
                 OrderPositionFieldName = configurationBuilder.GetValue<string>("OrderPositionFieldName"),
 
                 TraderIdFieldName = configurationBuilder.GetValue<string>("TraderIdFieldName"),
@@ -53,6 +53,17 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
 
                 OrderStatusFieldName = configurationBuilder.GetValue<string>("OrderStatusFieldName"),
                 CurrencyFieldName = configurationBuilder.GetValue<string>("CurrencyFieldName"),
+
+                SecurityLei = configurationBuilder.GetValue<string>("SecurityLei"),
+                SecurityBloombergTickerFieldName = configurationBuilder.GetValue<string>("SecurityBloombergTickerFieldName"),
+                ExecutedPriceFieldName = configurationBuilder.GetValue<string>("ExecutedPriceFieldName"),
+                OrderedVolumeFieldName = configurationBuilder.GetValue<string>("OrderedVolumeFieldName"),
+                AccountIdFieldName = configurationBuilder.GetValue<string>("AccountIdFieldName"),
+                DealerInstructionsFieldName = configurationBuilder.GetValue<string>("DealerInstructionsFieldName"),
+                TradeRationaleFieldName = configurationBuilder.GetValue<string>("TradeRationaleFieldName"),
+                TradeStrategyFieldName = configurationBuilder.GetValue<string>("TradeStrategyFieldName"),
+                SecurityIssuerIdentifier = configurationBuilder.GetValue<string>("SecurityIssuerIdentifier"),
+
 
                 // TICK CONFIG
                 SecurityTickTimestampFieldName = configurationBuilder.GetValue<string>("SecurityTickTimestampFieldName"),

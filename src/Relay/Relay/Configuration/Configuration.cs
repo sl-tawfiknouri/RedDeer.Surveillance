@@ -50,6 +50,16 @@ namespace Relay.Configuration
         public string OrderStatusFieldName { get; set; }
         public string CurrencyFieldName { get; set; }
 
+        public string SecurityBloombergTickerFieldName { get; set; }
+        public string ExecutedPriceFieldName { get; set; }
+        public string OrderedVolumeFieldName { get; set; }
+        public string AccountIdFieldName { get; set; }
+        public string DealerInstructionsFieldName { get; set; }
+        public string TradeRationaleFieldName { get; set; }
+        public string TradeStrategyFieldName { get; set; }
+        public string SecurityLei { get; set; }
+        public string SecurityIssuerIdentifier { get; set; }
+
 
 
         // Security TICK config

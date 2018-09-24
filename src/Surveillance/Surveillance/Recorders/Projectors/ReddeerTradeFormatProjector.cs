@@ -59,7 +59,17 @@ namespace Surveillance.Recorders.Projectors
                 TraderId = order.TraderId,
                 TradeClientAttributionId = order.TradeClientAttributionId,
                 PartyBrokerId = order.PartyBrokerId,
-                CounterPartyBrokerId = order.CounterPartyBrokerId
+                CounterPartyBrokerId = order.CounterPartyBrokerId,
+
+                SecurityIssuerIdentifier = order.Security?.IssuerIdentifier,
+                SecurityLei = order.Security?.Identifiers.Lei,
+                SecurityBloombergTicker = order.Security?.Identifiers.BloombergTicker,
+                ExecutedPrice = order.ExecutedPrice?.Value,
+                OrderedVolume = order.OrderedVolume,
+                AccountId = order.AccountId,
+                DealerInstructions = order.DealerInstructions,
+                TradeRationale = order.TradeRationale,
+                TradeStrategy = order.TradeStrategy
             };
         }
 

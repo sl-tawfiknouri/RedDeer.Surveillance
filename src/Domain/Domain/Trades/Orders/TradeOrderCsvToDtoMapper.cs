@@ -87,7 +87,7 @@ namespace Domain.Trades.Orders
 
             var pricedLimitPrice =
                 parsedLimitPrice != null
-                    ? (Price?)new Price(parsedLimitPrice.Value, csv.Currency)
+                    ? (Price?)new Price(parsedLimitPrice.Value, csv.OrderCurrency)
                     : null;
 
             // ReSharper disable once InlineOutVariableDeclaration
@@ -103,7 +103,7 @@ namespace Domain.Trades.Orders
 
             var pricedExecutedPrice =
                 !string.IsNullOrWhiteSpace(csv.ExecutedPrice)
-                    ? (Price?)new Price(executedPrice, csv.Currency)
+                    ? (Price?)new Price(executedPrice, csv.OrderCurrency)
                     : null;
 
             if (!DateTime.TryParse(csv.StatusChangedOn, out var statusChangedOn))
@@ -133,7 +133,7 @@ namespace Domain.Trades.Orders
                     csv.SecurityCusip,
                     csv.SecurityExchangeSymbol,
                     csv.SecurityLei,
-                    csv.BloombergTicker);
+                    csv.SecurityBloombergTicker);
 
             var security =
                 new Security(

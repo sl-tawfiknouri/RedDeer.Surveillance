@@ -24,7 +24,7 @@
         public string SecurityCusip { get; set; }
         public string SecurityLei { get; set; }
         public string SecurityExchangeSymbol { get; set; }
-        public string BloombergTicker { get; set; }
+        public string SecurityBloombergTicker { get; set; }
        
 
         public string LimitPrice { get; set; }
@@ -55,6 +55,6 @@
 
 
         public string OrderStatus { get; set; }
-        public string Currency { get; set; }
+        public string OrderCurrency { get; set; }
     }
 }

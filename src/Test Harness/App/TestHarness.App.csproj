@@ -1,4 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
+  </PropertyGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -39,5 +43,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Condition="'$(Configuration)'=='Release'" Name="SetupReleaseFolder" AfterTargets="AfterPublish">
+    <ItemGroup>
+      <FilesToDelete Include="$(PublishDir)../*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <Move SourceFiles="$(PublishDir)appspec.yml" DestinationFolder="$(PublishDir).." />
+    <RemoveDir Directories="$(PublishDir)DeploymentScripts" />
+  </Target>
 
 </Project>

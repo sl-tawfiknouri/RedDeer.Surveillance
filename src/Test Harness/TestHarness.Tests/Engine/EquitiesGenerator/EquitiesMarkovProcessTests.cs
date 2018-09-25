@@ -86,6 +86,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         }
 
         [Test]
+        [Explicit]
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _heartbeat, _logger);

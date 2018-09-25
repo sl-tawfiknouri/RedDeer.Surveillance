@@ -85,8 +85,17 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
 
             var stockExchange = new StockExchange(new Market.MarketId(mic), marketName);
-            var exchange = new ExchangeFrame(stockExchange, securities.First().TimeStamp, securities);
-            stream.Add(exchange);
+
+            var frames = securities
+                .GroupBy(sec => sec.TimeStamp)
+                .Select(secGroup => new ExchangeFrame(stockExchange, secGroup.Key, secGroup.ToList()))
+                .OrderBy(frame => frame.TimeStamp)
+                .ToList();
+
+            foreach (var frame in frames)
+            {
+                stream.Add(frame);
+            }
         }
 
         public void TerminateWalk()

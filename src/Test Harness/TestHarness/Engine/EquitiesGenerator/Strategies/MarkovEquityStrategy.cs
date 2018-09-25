@@ -67,7 +67,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     DateTime.UtcNow,
                     newMarketCap,
                     newIntraday,
-                    tick.ListedSecurities);
+                    tick.ListedSecurities,
+                    tick.Market);
         }
 
         private IntradayPrices BuildIntraday(SecurityTick tick, decimal newBuy, string currency)

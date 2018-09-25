@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity.Frames.Interfaces;
+using Domain.Market;
 using Microsoft.Extensions.Logging;
 
 namespace Domain.Equity.Frames
@@ -143,6 +144,7 @@ namespace Domain.Equity.Frames
             var security = BuildSecurity(csv);
             var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice);
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
+            var market = new StockExchange(new Market.Market.MarketId(csv.MarketIdentifierCode), csv.MarketName);
 
             return new SecurityTick(
                 security,
@@ -152,7 +154,8 @@ namespace Domain.Equity.Frames
                 timeStamp,
                 marketCap,
                 intradayPrices,
-                listedSecurities);
+                listedSecurities,
+                market);
         }
 
         private Security BuildSecurity(SecurityTickCsv csv)

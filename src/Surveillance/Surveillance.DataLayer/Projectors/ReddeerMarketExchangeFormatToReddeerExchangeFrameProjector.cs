@@ -3,6 +3,7 @@ using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Market;
+using Domain.Market.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;
 
@@ -28,7 +29,7 @@ namespace Surveillance.DataLayer.Projectors
             }
 
             var exchange = ParseStockExchange(document);
-            var securities = ParseSecurities(document);
+            var securities = ParseSecurities(document, exchange);
 
             return new ExchangeFrame(exchange, document.DateTime, securities);
         }
@@ -41,7 +42,7 @@ namespace Surveillance.DataLayer.Projectors
             return new StockExchange(new Market.MarketId(exchangeId), exchangeMic);
         }
 
-        private IReadOnlyCollection<SecurityTick> ParseSecurities(ReddeerMarketDocument document)
+        private IReadOnlyCollection<SecurityTick> ParseSecurities(ReddeerMarketDocument document, IMarket exchange)
         {
             if (document.Securities == null
                 || !document.Securities.Any())
@@ -52,14 +53,14 @@ namespace Surveillance.DataLayer.Projectors
             var securities =
                 document
                     .Securities
-                    .Select(ParseSecurity)
+                    .Select(i => ParseSecurity(i, exchange))
                     .Where(sec => sec != null)
                     .ToList();
 
             return securities;
         }
 
-        private SecurityTick ParseSecurity(ReddeerSecurityDocument doc)
+        private SecurityTick ParseSecurity(ReddeerSecurityDocument doc, IMarket exchange)
         {
             if (doc == null)
             {
@@ -71,7 +72,7 @@ namespace Surveillance.DataLayer.Projectors
             var volume = new Volume(doc.Volume.GetValueOrDefault(0));
             var dailyVolume = new Volume(doc.DailyVolume.GetValueOrDefault(0));
             var intradayPrices = IntradayPrices(doc);
-
+            
             return new SecurityTick(
                 security,
                 spread,
@@ -80,7 +81,8 @@ namespace Surveillance.DataLayer.Projectors
                 doc.TimeStamp,
                 doc.MarketCap,
                 intradayPrices,
-                doc.ListedSecurities);
+                doc.ListedSecurities,
+                exchange);
         }
 
         private IntradayPrices IntradayPrices(ReddeerSecurityDocument doc)

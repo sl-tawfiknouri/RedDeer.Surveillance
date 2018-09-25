@@ -57,7 +57,8 @@ namespace TestHarness.Engine.EquitiesGenerator
                         new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
                         new Price(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
-                    volume * 3))
+                    volume * 3,
+                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ")))
                 .ToList();
         }
 

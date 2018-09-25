@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Market.Interfaces;
 
 namespace Domain.Equity.Frames
 {
@@ -15,7 +16,8 @@ namespace Domain.Equity.Frames
             DateTime timeStamp,
             decimal? marketCap,
             IntradayPrices intradayPrices,
-            int? listedSecurities)
+            int? listedSecurities,
+            IMarket market)
         {
             Security = security;
             Spread = spread;
@@ -24,6 +26,7 @@ namespace Domain.Equity.Frames
             MarketCap = marketCap;
             IntradayPrices = intradayPrices;
             ListedSecurities = listedSecurities;
+            Market = market;
             DailyVolume = dailyVolume;
         }
 
@@ -45,7 +48,7 @@ namespace Domain.Equity.Frames
         public IntradayPrices IntradayPrices { get; }
 
         /// <summary>
-        /// The number of listed securities on the exchange
+        /// The number of the listed security on the exchange
         /// </summary>
         public int? ListedSecurities { get; }
 
@@ -63,5 +66,10 @@ namespace Domain.Equity.Frames
         /// The time point at which the data was canonical
         /// </summary>
         public DateTime TimeStamp { get; }
+
+        /// <summary>
+        /// The market the security is traded on
+        /// </summary>
+        public IMarket Market { get; }
     }
 }

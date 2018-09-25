@@ -44,8 +44,6 @@ namespace TestHarness.Engine.EquitiesGenerator
 
             var securities = new List<SecurityTick>();
 
-            var mic = string.Empty;
-            var marketName = string.Empty;
 
             using (var reader = File.OpenText(_filePath))
             {
@@ -56,16 +54,6 @@ namespace TestHarness.Engine.EquitiesGenerator
 
                 foreach (var record in csvRecords)
                 {
-                    if (string.IsNullOrWhiteSpace(mic))
-                    {
-                        mic = record.MarketIdentifierCode;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(marketName))
-                    {
-                        marketName = record.MarketName;
-                    }
-
                     var mappedRecord = _securityMapper.Map(record);
                     if (mappedRecord != null)
                     {
@@ -84,18 +72,35 @@ namespace TestHarness.Engine.EquitiesGenerator
                 return;
             }
 
-            var stockExchange = new StockExchange(new Market.MarketId(mic), marketName);
-
-            var frames = securities
-                .GroupBy(sec => sec.TimeStamp)
-                .Select(secGroup => new ExchangeFrame(stockExchange, secGroup.Key, secGroup.ToList()))
-                .OrderBy(frame => frame.TimeStamp)
-                .ToList();
+            var frames = ExtractDateBasedExchangeFramesOverMarkets(securities);
 
             foreach (var frame in frames)
             {
                 stream.Add(frame);
             }
+        }
+
+        private IList<ExchangeFrame> ExtractDateBasedExchangeFramesOverMarkets(IReadOnlyCollection<SecurityTick> securities)
+        {
+            if (securities == null
+                || !securities.Any())
+            {
+                return new List<ExchangeFrame>();
+            }
+
+            return securities
+                .GroupBy(sec => sec.Market.Id.Id)
+                .Select(groupedExchange => groupedExchange.GroupBy(gb => gb.TimeStamp))
+                .SelectMany(io =>
+                    io.Select(iio =>
+                        new ExchangeFrame(
+                            new StockExchange(
+                                iio.FirstOrDefault()?.Market.Id,
+                                iio.FirstOrDefault()?.Market.Name),
+                        iio.Key,
+                        iio.ToList())))
+                .OrderBy(io => io.TimeStamp)
+                .ToList();
         }
 
         public void TerminateWalk()

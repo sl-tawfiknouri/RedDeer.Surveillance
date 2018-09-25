@@ -127,7 +127,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                     DateTime.UtcNow,
                     3000,
                     null,
-                    1000);
+                    1000,
+                    new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"));
 
                 results.Add(frame);
             }

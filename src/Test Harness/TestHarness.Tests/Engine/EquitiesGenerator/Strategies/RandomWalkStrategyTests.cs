@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Market;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
@@ -48,7 +49,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     DateTime.UtcNow,
                     3000,
                     null,
-                    100);
+                    100,
+                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
 
             var result = strategy.AdvanceFrame(tick);
 
@@ -80,7 +82,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     DateTime.UtcNow,
                     3000,
                     null,
-                    100);
+                    100,
+                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);

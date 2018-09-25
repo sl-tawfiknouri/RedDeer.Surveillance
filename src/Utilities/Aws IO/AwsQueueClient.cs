@@ -23,21 +23,12 @@ namespace Utilities.Aws_IO
                 throw new ArgumentNullException(nameof(awsConfiguration));
             }
 
-            _sqsClient = awsConfiguration.IsEc2Instance ?
-                 new AmazonSQSClient(
-                     new AmazonSQSConfig
-                     {
-                         RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                         ProxyCredentials = CredentialCache.DefaultCredentials
-                     }) :
-                 new AmazonSQSClient(
-                     awsConfiguration.AwsAccessKey,
-                     awsConfiguration.AwsSecretKey,
-                     new AmazonSQSConfig
-                     {
-                         RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                         ProxyCredentials = CredentialCache.DefaultCredentials
-                     });
+            _sqsClient = new AmazonSQSClient(
+                new AmazonSQSConfig
+                {
+                    RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                    ProxyCredentials = CredentialCache.DefaultCredentials
+                });
 
             _logger = logger;
         }

@@ -27,8 +27,6 @@ namespace RedDeer.Surveillance.App.Configuration
             var networkConfiguration = new ElasticSearchConfiguration
             {
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
-                AwsSecretKey = configurationBuilder.GetValue<string>("AwsSecretKey"),
-                AwsAccessKey = configurationBuilder.GetValue<string>("AwsAccessKey"),
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
                 ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),

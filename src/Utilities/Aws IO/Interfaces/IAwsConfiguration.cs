@@ -3,8 +3,6 @@
     public interface IAwsConfiguration
     {
         bool IsEc2Instance { get; }
-        string AwsAccessKey { get; }
-        string AwsSecretKey { get; }
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
     }

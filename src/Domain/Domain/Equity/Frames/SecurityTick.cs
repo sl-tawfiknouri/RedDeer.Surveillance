@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Market.Interfaces;
+using Domain.Market;
 
 namespace Domain.Equity.Frames
 {
@@ -17,7 +17,7 @@ namespace Domain.Equity.Frames
             decimal? marketCap,
             IntradayPrices intradayPrices,
             int? listedSecurities,
-            IMarket market)
+            StockExchange market)
         {
             Security = security;
             Spread = spread;
@@ -70,6 +70,6 @@ namespace Domain.Equity.Frames
         /// <summary>
         /// The market the security is traded on
         /// </summary>
-        public IMarket Market { get; }
+        public StockExchange Market { get; }
     }
 }

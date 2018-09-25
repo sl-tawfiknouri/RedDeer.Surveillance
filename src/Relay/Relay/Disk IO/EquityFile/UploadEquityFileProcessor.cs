@@ -78,23 +78,32 @@ namespace Relay.Disk_IO.EquityFile
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
 
-            var exchange =
-                tradeOrders.FirstOrDefault()
-                ?? new ExchangeFrame(
-                    new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName),
-                    mappedRecord?.TimeStamp ?? DateTime.UtcNow,
-                    new List<SecurityTick>());
-
-            if (mappedRecord != null)
+            if (mappedRecord == null)
             {
-                var newSecurities = new List<SecurityTick>(exchange.Securities) {mappedRecord};
-                // for market items our top level item itself is the aggregation so it can hold metadata
-                tradeOrders.RemoveAll(i => true);
-                tradeOrders.Add(new ExchangeFrame(exchange.Exchange, mappedRecord.TimeStamp, newSecurities));
+                failedTradeOrderReads.Add(record);
+                return;
+            }
+
+            var matchingExchange = tradeOrders
+                .Where(to => to.Exchange?.Id?.Id == mappedRecord?.Market?.Id.Id)
+                .Where(to => to.TimeStamp == mappedRecord.TimeStamp)
+                .ToList();
+
+            if (matchingExchange.Any())
+            {
+                foreach (var match in matchingExchange)
+                {
+                    var newSecurities = new List<SecurityTick>(match.Securities) {mappedRecord};
+                    var newExch = new ExchangeFrame(match.Exchange, match.TimeStamp, newSecurities);
+                    tradeOrders.Remove(match);
+                    tradeOrders.Add(newExch);
+                }
             }
             else
             {
-                failedTradeOrderReads.Add(record);
+                var exchange = new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName);
+                var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
+                tradeOrders.Add(exchangeFrame);
             }
         }
 

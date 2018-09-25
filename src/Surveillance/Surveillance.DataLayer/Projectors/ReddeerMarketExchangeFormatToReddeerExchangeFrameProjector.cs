@@ -3,7 +3,6 @@ using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Market;
-using Domain.Market.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;
 
@@ -42,7 +41,7 @@ namespace Surveillance.DataLayer.Projectors
             return new StockExchange(new Market.MarketId(exchangeId), exchangeMic);
         }
 
-        private IReadOnlyCollection<SecurityTick> ParseSecurities(ReddeerMarketDocument document, IMarket exchange)
+        private IReadOnlyCollection<SecurityTick> ParseSecurities(ReddeerMarketDocument document, StockExchange exchange)
         {
             if (document.Securities == null
                 || !document.Securities.Any())
@@ -60,7 +59,7 @@ namespace Surveillance.DataLayer.Projectors
             return securities;
         }
 
-        private SecurityTick ParseSecurity(ReddeerSecurityDocument doc, IMarket exchange)
+        private SecurityTick ParseSecurity(ReddeerSecurityDocument doc, StockExchange exchange)
         {
             if (doc == null)
             {

@@ -47,7 +47,9 @@ namespace Relay.Disk_IO.EquityFile
                     return;
                 }
 
-                foreach (var item in csvReadResults.SuccessfulReads)
+                var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
+
+                foreach (var item in orderedSuccessfulReads)
                 {
                     _stream.Add(item);
                 }

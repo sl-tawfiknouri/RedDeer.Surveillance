@@ -1,7 +1,7 @@
 ﻿using System;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 
-namespace Surveillance.Rules.Marking_The_Close
+namespace Surveillance.Rule_Parameters
 {
     public class MarkingTheCloseParameters : IMarkingTheCloseParameters
     {

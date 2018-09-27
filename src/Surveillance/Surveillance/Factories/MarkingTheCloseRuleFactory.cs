@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Rule_Parameters;
 using Surveillance.Rules.Marking_The_Close;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 

@@ -1,5 +1,4 @@
 ﻿using Surveillance.Rules.Interfaces;
-using Surveillance.Rules.ProhibitedAssets.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using System;
 using Domain.Equity.Streams.Interfaces;
@@ -15,16 +14,12 @@ namespace Surveillance.Rules
     /// </summary>
     public class RuleManager : IRuleManager
     {
-        private readonly IProhibitedAssetTradingRule _prohibitedAssetTradingRule;
         private readonly ISpoofingRule _spoofingRule;
 
         public RuleManager(
-            IProhibitedAssetTradingRule prohibitedAssetTradingRule,
             ISpoofingRule spoofingRule,
             ICancelledOrderRule cancelRule)
         {
-            _prohibitedAssetTradingRule = prohibitedAssetTradingRule 
-                ?? throw new ArgumentNullException(nameof(prohibitedAssetTradingRule));
 
             _spoofingRule = spoofingRule
                 ?? throw new ArgumentNullException(nameof(spoofingRule));
@@ -32,17 +27,11 @@ namespace Surveillance.Rules
 
         public void RegisterTradingRules(ITradeOrderStream<TradeOrderFrame> stream)
         {
-            RegisterProhibitedAssetRule(stream);
             RegisterSpoofingRule(stream);
         }
 
         public void RegisterEquityRules(IStockExchangeStream stream)
         {
-        }
-
-        private void RegisterProhibitedAssetRule(ITradeOrderStream<TradeOrderFrame> stream)
-        {
-            stream?.Subscribe(_prohibitedAssetTradingRule);
         }
 
         private void RegisterSpoofingRule(ITradeOrderStream<TradeOrderFrame> stream)

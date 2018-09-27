@@ -7,7 +7,6 @@ using Nest;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;
-using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.ElasticSearchDtos.Trades;
 
 namespace Surveillance.DataLayer.ElasticSearch.DataAccess
@@ -124,29 +123,6 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess
             var indexResponse = await _elasticClient.IndexAsync(
                 indexableDocument,
                 i => i.Index(indexName),
-                cancellationToken: cancellationToken
-            );
-
-            HandleResponseErrors(indexResponse);
-        }
-
-        public async Task IndexRuleBreachAsync(RuleBreachDocument ruleBreachDocument, CancellationToken cancellationToken)
-        {
-            if (ruleBreachDocument == null)
-            {
-                return;
-            }
-
-            var document = ruleBreachDocument;
-
-            var index = await GetOrCreateDateBasedIndexAsync<RuleBreachDocument>(
-                RuleBreachIndexName,
-                ruleBreachDocument.BreachRaisedOn,
-                cancellationToken);
-
-            var indexResponse = await _elasticClient.IndexAsync(
-                document,
-                i => i.Index(index),
                 cancellationToken: cancellationToken
             );
 

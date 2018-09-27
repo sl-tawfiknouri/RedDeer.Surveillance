@@ -5,8 +5,6 @@ using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Market;
 using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
-using Surveillance.DataLayer.ElasticSearch.Rules;
-using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors;
@@ -23,7 +21,6 @@ namespace Surveillance.DataLayer
         public DataLayerRegistry()
         {
             For<IElasticSearchDataAccess>().Use<ElasticSearchDataAccess>();
-            For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRedDeerTradeFormatRepository>().Use<RedDeerTradeFormatRepository>();
             For<IRedDeerMarketExchangeFormatRepository>().Use<RedDeerMarketExchangeFormatRepository>();
             For<IReddeerTradeFormatToReddeerTradeFrameProjector>().Use<ReddeerTradeFormatToReddeerTradeFrameProjector>();

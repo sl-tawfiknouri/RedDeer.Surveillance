@@ -6,8 +6,6 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
-using Surveillance.Factories.Interfaces;
-using Surveillance.DataLayer.ElasticSearch.Rules.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
 
@@ -21,15 +19,11 @@ namespace Surveillance.Rules.Spoofing
     public class SpoofingRule : BaseTradeRule, ISpoofingRule
     {
         private readonly ISpoofingRuleParameters _parameters;
-        private readonly IRuleBreachFactory _ruleBreachFactory;
-        private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ILogger _logger;
 
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
-            IRuleBreachFactory ruleBreachFactory,
-            IRuleBreachRepository ruleBreachRepository,
             ISpoofingRuleMessageSender spoofingRuleMessageSender,
             ILogger<SpoofingRule> logger)
             : base(
@@ -39,8 +33,6 @@ namespace Surveillance.Rules.Spoofing
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _ruleBreachFactory = ruleBreachFactory ?? throw new ArgumentNullException(nameof(ruleBreachFactory));
-            _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -171,12 +163,6 @@ namespace Surveillance.Rules.Spoofing
 
             var description = $"Traded ({mostRecentTrade.Position.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
 
-            var spoofingBreach = _ruleBreachFactory.Build(
-                ElasticSearchDtos.Rules.RuleBreachCategories.Spoofing,
-                mostRecentTrade.StatusChangedOn,
-                mostRecentTrade.StatusChangedOn,
-                description);
-
             var ruleBreach =
                 new SpoofingRuleBreach(
                     _parameters.WindowSize,
@@ -185,7 +171,6 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade.Security, 
                     mostRecentTrade);
 
-            _ruleBreachRepository.Save(spoofingBreach);
             _spoofingRuleMessageSender.Send(ruleBreach);
         }
     }

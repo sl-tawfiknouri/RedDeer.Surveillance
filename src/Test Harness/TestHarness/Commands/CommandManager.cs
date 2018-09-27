@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Commands.Market_Abuse_Commands;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.State.Interfaces;
@@ -42,7 +41,6 @@ namespace TestHarness.Commands
                 new DemoNetworkingCommand(appFactory),
                 new DemoTradeFileCommand(appFactory),
                 new DemoTradeFileNetworkingCommand(appFactory),
-                new TradeProhibitedSecurityCommand(appFactory),
                 new SpoofingCommand(appFactory),
                 new ScheduleRuleCommand(appFactory),
                 new DemoMarketEquityFileCommand(appFactory),

@@ -96,10 +96,6 @@ namespace TestHarness.Commands
                     .TradeOrderStreamFactory
                     .CreateDisplayable(console);
 
-            var prohibitedTradeProcess = _appFactory
-                .TradingProhibitedSecurityFactory
-                .Create();
-
             var spoofingTradeProcess = _appFactory
                 .TradingSpoofingFactory
                 .Create();
@@ -114,7 +110,6 @@ namespace TestHarness.Commands
             _tradeFileProcessor.InitiateTrading(equityStream, tradeStream);
 
             // start ad hoc heartbeat driven commands
-            prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
             spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
             cancelledTradeProcess.InitiateTrading(equityStream, tradeStream);
         }

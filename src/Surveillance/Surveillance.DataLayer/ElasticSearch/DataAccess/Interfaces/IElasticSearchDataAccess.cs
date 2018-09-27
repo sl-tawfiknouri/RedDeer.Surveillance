@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nest;
 using Surveillance.ElasticSearchDtos.Market;
-using Surveillance.ElasticSearchDtos.Rules;
 using Surveillance.ElasticSearchDtos.Trades;
 // ReSharper disable UnusedMember.Global
 
@@ -38,7 +37,6 @@ namespace Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces
         string RuleBreachIndexName { get; }
         string ReddeerTradeFormatIndexName { get; }
         string ReddeerStockExchangeFormatIndexName { get; }
-        Task IndexRuleBreachAsync(RuleBreachDocument document, CancellationToken cancellationToken);
         Task DeleteIndexesAsync(string name, CancellationToken cancellationToken);
         void HandleResponseErrors(IResponse response);
     }

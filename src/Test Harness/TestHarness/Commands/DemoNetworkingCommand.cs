@@ -74,10 +74,6 @@ namespace TestHarness.Commands
                 .TradingFixedVolume(3)
                 .Finish();
 
-            var prohibitedTradeProcess = _appFactory
-                .TradingProhibitedSecurityFactory
-                .Create();
-
             var spoofingTradeProcess = _appFactory
                 .TradingSpoofingFactory
                 .Create();
@@ -121,8 +117,6 @@ namespace TestHarness.Commands
 
             // start updating trading data
             _tradingProcess.InitiateTrading(equityStream, tradeStream);
-
-            prohibitedTradeProcess.InitiateTrading(equityStream, tradeStream);
             spoofingTradeProcess.InitiateTrading(equityStream, tradeStream);
             cancelledTradeProcess.InitiateTrading(equityStream, tradeStream);
         }

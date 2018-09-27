@@ -34,12 +34,10 @@ using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.Marking_The_Close;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
-using Surveillance.Rules.ProhibitedAssets;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
-using Surveillance.Rules.ProhibitedAssets.Interfaces;
 using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
@@ -61,11 +59,7 @@ namespace Surveillance
 
             For<IMediator>().Use<Mediator>();
             For<IRuleManager>().Use<RuleManager>();
-            For<IRuleBreachFactory>().Use<RuleBreachFactory>();
             For<IOriginFactory>().Use<OriginFactory>();
-
-            For<IProhibitedAssetsRepository>().Use<ProhibitedAssetsRepository>();
-            For<IProhibitedAssetTradingRule>().Use<ProhibitedAssetTradingRule>();
             For<ISpoofingRule>().Use<SpoofingRule>();
 
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();

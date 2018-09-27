@@ -2,14 +2,12 @@
 using NLog;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
-using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.State.Interfaces;
 using Utilities.Aws_IO.Interfaces;
@@ -43,8 +41,6 @@ namespace TestHarness.Factory.Interfaces
         ITradingFactory TradingFactory { get; }
 
         ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
-
-        ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
         ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
         ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
         ITradingCancelledFactory TradingCancelledOrdersFactory { get; }

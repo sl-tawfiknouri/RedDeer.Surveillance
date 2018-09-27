@@ -15,9 +15,7 @@ using TestHarness.Factory.TradingFactory;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.State.Interfaces;
 using TestHarness.State;
-using TestHarness.Factory.TradingProhibitedSecurityFactory;
 using TestHarness.Factory.TradingSpoofingFactory;
-using TestHarness.Factory.TradingProhibitedSecurityFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
@@ -49,7 +47,6 @@ namespace TestHarness.Factory
             NetworkManagerFactory = new NetworkManagerFactory(Console, Logger, networkConfiguration);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
-            TradingProhibitedSecurityFactory = new TradingProhibitedSecurityProcessFactory(this);
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
             TradingFileRelayProcessFactory = new TradingFileRelayProcessFactory(this);
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
@@ -100,8 +97,6 @@ namespace TestHarness.Factory
         public ITradingFactory TradingFactory { get; }
 
         public ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
-
-        public ITradingProhibitedSecurityProcessFactory TradingProhibitedSecurityFactory { get; }
 
         public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
 

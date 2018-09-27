@@ -10,7 +10,6 @@ namespace TestHarness.Commands.Interfaces
         string StopDemo { get; }
         string RunDemoWithNetworking { get; }
         string StopDemoWithNetworking { get; }
-        string BuyProhibitedSecurity { get; }
         string RunSpoofedTrade { get; }
     }
 }

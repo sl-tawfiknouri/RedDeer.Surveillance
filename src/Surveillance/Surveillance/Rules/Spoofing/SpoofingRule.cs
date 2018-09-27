@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Rule_Parameters.Interfaces;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
+using Surveillance.DataLayer.Stub;
 
 namespace Surveillance.Rules.Spoofing
 {
@@ -16,7 +17,7 @@ namespace Surveillance.Rules.Spoofing
     /// I think it will have problems with (placed) -> (cancelled) state transition
     /// And also the order that orders arrive in may cause issues...we're assuming our orders are arriving in last status changed order and that that order does not change
     /// </summary>
-    public class SpoofingRule : BaseTradeRule, ISpoofingRule
+    public class SpoofingRule : BaseUniverseRule, ISpoofingRule
     {
         private readonly ISpoofingRuleParameters _parameters;
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
@@ -25,12 +26,13 @@ namespace Surveillance.Rules.Spoofing
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
             ISpoofingRuleMessageSender spoofingRuleMessageSender,
-            ILogger<SpoofingRule> logger)
+            ILogger logger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                Domain.Scheduling.Rules.Spoofing,
-                Versioner.Version(1, 0),
-                logger)
+                  parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
+                  Domain.Scheduling.Rules.Spoofing,
+                  Versioner.Version(1,0),
+                  "Spoofing Rule",
+                  logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
@@ -172,6 +174,26 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade);
 
             _spoofingRuleMessageSender.Send(ruleBreach);
+        }
+
+        protected override void Genesis()
+        {
+            _logger.LogDebug("Genesis occurred in the Spoofing Rule");
+        }
+
+        protected override void MarketOpen(MarketOpenClose exchange)
+        {
+            _logger.LogDebug($"Market Open ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketOpen}");
+        }
+
+        protected override void MarketClose(MarketOpenClose exchange)
+        {
+            _logger.LogDebug($"Market Close ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketClose}");
+        }
+
+        protected override void EndOfUniverse()
+        {
+            _logger.LogDebug("Eschaton occured in Spoofing Rule");
         }
     }
 }

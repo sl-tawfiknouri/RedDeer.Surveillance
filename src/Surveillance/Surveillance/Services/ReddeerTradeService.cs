@@ -1,7 +1,6 @@
 ﻿using Surveillance.Network_IO;
 using Surveillance.Network_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
-using Surveillance.Rules.Interfaces;
 using Surveillance.Services.Interfaces;
 using System;
 using Domain.Equity.Frames;
@@ -21,7 +20,6 @@ namespace Surveillance.Services
         private readonly ISurveillanceNetworkExchangeFactory _networkExchangeFactory;
         private readonly IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
         private readonly IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
-        private readonly IRuleManager _ruleManager;
         private readonly IRedDeerTradeRecorder _reddeerTradeRecorder;
         private readonly IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
         private readonly INetworkConfiguration _configuration;
@@ -30,7 +28,6 @@ namespace Surveillance.Services
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,
             IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
             IUnsubscriberFactory<ExchangeFrame> equityUnsubscriberFactory,
-            IRuleManager ruleManager,
             IRedDeerTradeRecorder reddeerTradeRecorder,
             IRedDeerStockExchangeRecorder reddeerStockExchangeRecorder,
             INetworkConfiguration configuration)
@@ -44,7 +41,6 @@ namespace Surveillance.Services
             _equityUnsubscriberFactory = 
                 equityUnsubscriberFactory 
                 ?? throw new ArgumentNullException(nameof(equityUnsubscriberFactory));
-            _ruleManager = ruleManager ?? throw new ArgumentNullException(nameof(ruleManager));
             _reddeerTradeRecorder = 
                 reddeerTradeRecorder 
                 ?? throw new ArgumentNullException(nameof(reddeerTradeRecorder));
@@ -71,16 +67,10 @@ namespace Surveillance.Services
             _tradeNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
 
-            // LIVE order stream only rules - process in real time
-            _ruleManager.RegisterTradingRules(tradeStream);           
-
             // E Q U I T Y
             _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
             _equityNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
-
-            // LIVE equity stream only rules - process in real time
-            _ruleManager.RegisterEquityRules(exchangeStream);
         }
 
         public void Dispose()

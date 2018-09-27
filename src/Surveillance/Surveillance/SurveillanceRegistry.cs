@@ -58,7 +58,6 @@ namespace Surveillance
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
-            For<IRuleManager>().Use<RuleManager>();
             For<IOriginFactory>().Use<OriginFactory>();
             For<ISpoofingRule>().Use<SpoofingRule>();
 

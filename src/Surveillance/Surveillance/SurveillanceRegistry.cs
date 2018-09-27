@@ -91,6 +91,7 @@ namespace Surveillance
             For<IUniversePlayer>().Use<UniversePlayer>();
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 
+            For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
 

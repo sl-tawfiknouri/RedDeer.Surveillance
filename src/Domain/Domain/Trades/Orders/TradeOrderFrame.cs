@@ -163,5 +163,11 @@ namespace Domain.Trades.Orders
         {
             return $"Market({Market.Id.Id}) Time({StatusChangedOn.ToLongTimeString()}) Security({Security.Identifiers}) Direction({Position}) Order({OrderType}) Volume({FulfilledVolume}) Limit({Limit?.Value}) Status({OrderStatus}) Trader({TraderId}) SubmittedOn({TradeSubmittedOn.ToLongTimeString()})";
         }
+
+        public bool IsInputBatch { get; set; }
+
+        public int BatchSize { get; set; }
+
+        public string InputBatchId { get; set; }
     }
 }

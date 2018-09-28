@@ -48,8 +48,14 @@ namespace Relay.Disk_IO.TradeFile
                     return;
                 }
 
+                var uploadGuid = Guid.NewGuid().ToString();
+                                
                 foreach (var item in csvReadResults.SuccessfulReads)
                 {
+                    item.IsInputBatch = true;
+                    item.InputBatchId = uploadGuid;
+                    item.BatchSize = csvReadResults.SuccessfulReads.Count;
+
                     _stream.Add(item);
                 }
 

@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
 using Utilities.Network_IO.Websocket_Hosts;
-using Surveillance.Rules;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Surveillance.Network_IO;
@@ -31,7 +30,6 @@ using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rules.High_Profits;
 using Surveillance.Rules.High_Profits.Interfaces;
-using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.Marking_The_Close;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Trades;
@@ -67,7 +65,9 @@ namespace Surveillance
 
             For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
-            For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
+            //For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
+            For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorderAutoSchedule>();
+            For<IRedDeerTradeRecorderAutoSchedule>().Use<RedDeerTradeRecorderAutoSchedule>();
             For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
 
             For<ITradingHistory>().Use<TradingHistory>();

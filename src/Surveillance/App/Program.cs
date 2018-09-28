@@ -45,7 +45,7 @@ namespace RedDeer.Surveillance.App
 
                 var dbConfiguration = Configuration.Configuration.BuildDatabaseConfiguration(configurationBuilder);
                 Container.Inject(typeof(INetworkConfiguration), Configuration.Configuration.BuildNetworkConfiguration(configurationBuilder));
-                Container.Inject(typeof(IElasticSearchConfiguration), dbConfiguration);
+                Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
                 Container.Inject(typeof(IRuleConfiguration), Configuration.Configuration.BuildRuleConfiguration(configurationBuilder));
 

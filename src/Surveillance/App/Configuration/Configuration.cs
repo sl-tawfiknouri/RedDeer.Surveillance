@@ -22,16 +22,18 @@ namespace RedDeer.Surveillance.App.Configuration
             return networkConfiguration;
         }
 
-        public static IElasticSearchConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
+        public static IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
         {
-            var networkConfiguration = new ElasticSearchConfiguration
+            var networkConfiguration = new DataLayerConfiguration
             {
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
                 ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
                 ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),
-                ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort")
+                ElasticSearchPort = configurationBuilder.GetValue<string>("ElasticSearchPort"),
+                ClientServiceUrl = configurationBuilder.GetValue<string>("ClientServiceUrl"),
+                SurveillanceUserApiAccessToken = configurationBuilder.GetValue<string>("SurveillanceUserApiAccessToken")
             };
 
             return networkConfiguration;

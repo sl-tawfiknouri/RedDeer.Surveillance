@@ -2,15 +2,15 @@
 
 namespace Surveillance.DataLayer.Configuration
 {
-    public class ElasticSearchConfiguration : IElasticSearchConfiguration
+    public class DataLayerConfiguration : IDataLayerConfiguration
     {
         public bool IsEc2Instance { get; set; }
-        public string AwsAccessKey { get; set; }
-        public string AwsSecretKey { get; set; }
         public string ScheduledRuleQueueName { get; set; }
         public string ElasticSearchDomain { get; set; }
         public string ElasticSearchPort { get; set; }
         public string ElasticSearchProtocol { get; set; }
         public string CaseMessageQueueName { get; set; }
+        public string SurveillanceUserApiAccessToken { get; set; }
+        public string ClientServiceUrl { get; set; }
     }
 }

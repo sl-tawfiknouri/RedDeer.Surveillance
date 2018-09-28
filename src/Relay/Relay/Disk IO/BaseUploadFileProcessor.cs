@@ -35,36 +35,43 @@ namespace Relay.Disk_IO
             var tradeOrders = new List<TFrame>();
             var failedTradeOrderReads = new List<TCsv>();
 
-            using (var reader = File.OpenText(path))
+            try
             {
-                var csv = new CsvReader(reader);
-                csv.Configuration.HasHeaderRecord = true;
-                csv.Configuration.MissingFieldFound = null;
-
-                var csvRecords = new List<TCsv>();
-
-                csv.Read();
-                csv.ReadHeader();
-
-                while (csv.Read())
+                using (var reader = File.OpenText(path))
                 {
-                    var record = MapToCsvDto(csv);
+                    var csv = new CsvReader(reader);
+                    csv.Configuration.HasHeaderRecord = true;
+                    csv.Configuration.MissingFieldFound = null;
 
-                    if (record == null)
+                    var csvRecords = new List<TCsv>();
+
+                    csv.Read();
+                    csv.ReadHeader();
+
+                    while (csv.Read())
                     {
-                        continue;
+                        var record = MapToCsvDto(csv);
+
+                        if (record == null)
+                        {
+                            continue;
+                        }
+
+                        csvRecords.Add(record);
                     }
 
-                    csvRecords.Add(record);
-                }
+                    foreach (var record in csvRecords)
+                    {
+                        MapRecord(record, tradeOrders, failedTradeOrderReads);
+                    }
 
-                foreach (var record in csvRecords)
-                {
-                    MapRecord(record, tradeOrders, failedTradeOrderReads);
+                    csv.Dispose();
+                    reader.Dispose();
                 }
-
-                csv.Dispose();
-                reader.Dispose();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.Message);
             }
 
             CheckAndLogFailedParsesFromDtoMapper();

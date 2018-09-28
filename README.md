@@ -1,12 +1,20 @@
 # Surveillance
-Surveillance analysis components
+
+==================== Surveillance analysis components ====================
 
 To build set up surveillance then relay then test harness.
 
 Data stream runs from (upstream -> downstream) test harness; relay; surveillance service.
 
-Both web socket client services (test harness and relay) have automated recovery and failover web socket connections which write to local memory when the downstream service they write to is not available.
+==================== A W S ====================
 
-This will resync once the downstream service comes online provided that the upstream service has not been shut down whilst buffering to local memory.
+If you're unable to access AWS queues and are not on EC2 you will be in need of a credentials file. For a windows machine the file needs to be in a default location, one of which is 'C:\Users\your.username\.aws\credentials'. A credentials file consists of profiles which are defined by closed square brackets then followed by two lines of text. Below is an example of a plain text credentials files with two profiles. Paste in the relevant access and secret keys.
 
-This means we are now able to start/stop the services in any order and the wider surveillance system will sort itself out. :)
+[development]
+aws_access_key_id =
+aws_secret_access_key =
+[default]
+aws_access_key_id =
+aws_secret_access_key =
+
+==================== END ====================

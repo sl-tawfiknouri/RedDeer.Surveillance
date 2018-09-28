@@ -41,7 +41,8 @@ namespace RedDeer.Surveillance.App.Configuration
         {
             var ruleConfiguration = new RuleConfiguration
             {
-                CancelledOrderDeduplicationDelaySeconds = configurationBuilder.GetValue<int?>("CancelledOrderDeduplicationDelaySeconds")
+                CancelledOrderDeduplicationDelaySeconds = configurationBuilder.GetValue<int?>("CancelledOrderDeduplicationDelaySeconds"),
+                AutoScheduleRules = configurationBuilder.GetValue<bool?>("AutoScheduleRules")
             };
 
             return ruleConfiguration;

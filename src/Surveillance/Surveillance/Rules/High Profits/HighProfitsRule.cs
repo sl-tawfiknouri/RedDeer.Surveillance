@@ -121,8 +121,11 @@ namespace Surveillance.Rules.High_Profits
                        && _parameters.HighProfitAbsoluteThreshold.Value <= profit;
             }
 
+            var exchRateTask = _exchangeRateApiRepository.Get(UniverseDateTime, UniverseDateTime);
+            exchRateTask.Wait();
+            var exchRate = exchRateTask.Result;
 
-
+            
 
             return false;
         }

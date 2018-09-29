@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,7 +23,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<ExchangeRateDto>> Get(DateTime commencement, DateTime termination)
+        public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(DateTime commencement, DateTime termination)
         {
             var httpClient = BuildHttpClient();
 
@@ -41,20 +42,28 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
                 {
                     _logger.LogWarning($"Unsuccessful exchange rate api repository GET request. {response?.StatusCode}");
 
-                    return new ExchangeRateDto[0];
+                    return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var deserialisedResponse = JsonConvert.DeserializeObject<ExchangeRateDto[]>(jsonResponse);
 
-                return deserialisedResponse ?? new ExchangeRateDto[0];
+                if (deserialisedResponse == null
+                    || !deserialisedResponse.Any())
+                {
+                    return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
+                }
+
+                var result = deserialisedResponse.GroupBy(dr => dr.DateTime).ToDictionary(i => i.Key, i => i.ToList() as IReadOnlyCollection<ExchangeRateDto>);
+
+                return result;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
             }
 
-            return new ExchangeRateDto[0];
+            return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
         }
     }
 }

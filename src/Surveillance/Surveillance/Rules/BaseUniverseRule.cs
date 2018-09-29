@@ -26,6 +26,7 @@ namespace Surveillance.Rules
 
         protected ExchangeFrame LatestExchangeFrame;
         protected ScheduledExecution Schedule;
+        protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
 
         protected BaseUniverseRule(
@@ -81,7 +82,7 @@ namespace Surveillance.Rules
                         MarketClosed(value);
                         break;
                     case UniverseStateEvent.Eschaton:
-                        Eschaton();
+                        Eschaton(value);
                         break;
                     case UniverseStateEvent.Unknown:
                         _logger.LogWarning($"Universe rule {_name} received an unknown event");
@@ -98,6 +99,7 @@ namespace Surveillance.Rules
             }
 
             Schedule = value;
+            UniverseDateTime = universeEvent.EventTime;
             Genesis();
         }
 
@@ -109,6 +111,7 @@ namespace Surveillance.Rules
             }
 
             LatestExchangeFrame = value;
+            UniverseDateTime = universeEvent.EventTime;
         }
 
         private void Trade(IUniverseEvent universeEvent)
@@ -117,6 +120,8 @@ namespace Surveillance.Rules
             {
                 return;
             }
+
+            UniverseDateTime = universeEvent.EventTime;
 
             if (!TradingHistory.ContainsKey(value.Security.Identifiers))
             {
@@ -144,6 +149,7 @@ namespace Surveillance.Rules
                 return;
             }
 
+            UniverseDateTime = universeEvent.EventTime;
             MarketOpen(value);
         }
 
@@ -154,11 +160,13 @@ namespace Surveillance.Rules
                 return;
             }
 
+            UniverseDateTime = universeEvent.EventTime;
             MarketClose(value);
         }
 
-        private void Eschaton()
+        private void Eschaton(IUniverseEvent universeEvent)
         {
+            UniverseDateTime = universeEvent.EventTime;
             HasReachedEndOfUniverse = true;
             EndOfUniverse();
         }

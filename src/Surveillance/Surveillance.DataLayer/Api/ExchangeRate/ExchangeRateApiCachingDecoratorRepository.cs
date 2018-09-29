@@ -22,7 +22,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             _expiry = TimeSpan.FromDays(1).Add(TimeSpan.FromHours(1));
         }
 
-        public async Task<IReadOnlyCollection<ExchangeRateDto>> Get(
+        public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(
             DateTime commencement,
             DateTime termination)
         {
@@ -34,7 +34,13 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
                 if (_cache.ContainsKey(dateRange))
                 {
                     _cache.TryGetValue(dateRange, out var cachedRates);
-                    return cachedRates?.Dtos ?? new ExchangeRateDto[0];
+
+                    if (cachedRates == null)
+                    {
+                        return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
+                    }
+
+                    return cachedRates.Dtos;
                 }
                 
                 var resultTask = _apiRepository.Get(commencement, termination);
@@ -60,7 +66,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 
         private class CachedRates
         {
-            public IReadOnlyCollection<ExchangeRateDto> Dtos { get; set; }
+            public IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>> Dtos { get; set; }
             public DateTime Expiry { get; set; }
         }
 

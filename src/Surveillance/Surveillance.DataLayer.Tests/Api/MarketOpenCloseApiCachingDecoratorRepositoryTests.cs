@@ -4,7 +4,8 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Api;
-using Surveillance.DataLayer.Api.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Api
 {

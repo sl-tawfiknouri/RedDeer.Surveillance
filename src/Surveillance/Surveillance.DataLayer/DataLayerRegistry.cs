@@ -1,6 +1,7 @@
 ﻿using StructureMap;
 using Surveillance.DataLayer.Api;
-using Surveillance.DataLayer.Api.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.DataLayer.ElasticSearch.DataAccess;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;

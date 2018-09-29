@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Surveillance.DataLayer.Api.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Stub;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents.Interfaces;

@@ -1,16 +1,16 @@
 ﻿using System;
-using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Surveillance.DataLayer.Api.Interfaces;
-using System.Net;
+using RedDeer.Contracts.SurveillanceService.Api.Markets;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 
-namespace Surveillance.DataLayer.Api
+namespace Surveillance.DataLayer.Api.MarketOpenClose
 {
     public class MarketOpenCloseApiRepository : IMarketOpenCloseApiRepository
     {

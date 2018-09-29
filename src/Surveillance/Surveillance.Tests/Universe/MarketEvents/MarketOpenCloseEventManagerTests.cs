@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Stub;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 
-namespace Surveillance.DataLayer.Api
+namespace Surveillance.DataLayer.Api.MarketOpenClose
 {
     public class MarketOpenCloseApiCachingDecoratorRepository : IMarketOpenCloseApiCachingDecoratorRepository
     {

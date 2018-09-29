@@ -11,9 +11,9 @@ namespace Surveillance.Universe.MarketEvents
 {
     public class MarketOpenCloseEventManager : IMarketOpenCloseEventManager
     {
-        private readonly IMarketOpenCloseApiRepository _marketOpenCloseRepository;
+        private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketOpenCloseRepository;
 
-        public MarketOpenCloseEventManager(IMarketOpenCloseApiRepository marketOpenCloseRepository)
+        public MarketOpenCloseEventManager(IMarketOpenCloseApiCachingDecoratorRepository marketOpenCloseRepository)
         {
             _marketOpenCloseRepository =
                 marketOpenCloseRepository

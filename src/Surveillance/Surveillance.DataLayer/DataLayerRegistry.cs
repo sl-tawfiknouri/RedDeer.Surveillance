@@ -29,7 +29,9 @@ namespace Surveillance.DataLayer
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IMarketOpenCloseRepository>().Use<MarketOpenCloseRepository>();
             For<IMarketIndexNameBuilder>().Use<MarketIndexNameBuilder>();
+
             For<IMarketOpenCloseApiRepository>().Use<MarketOpenCloseApiRepository>();
+            For<IMarketOpenCloseApiCachingDecoratorRepository>().Use<MarketOpenCloseApiCachingDecoratorRepository>();
 
             For<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>()
                 .Use<ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades;
@@ -10,7 +11,6 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 // ReSharper disable AssignNullToNotNullAttribute
-
 namespace Surveillance.Rules.High_Profits
 {
     /// <summary>
@@ -19,12 +19,14 @@ namespace Surveillance.Rules.High_Profits
     public class HighProfitsRule : BaseUniverseRule, IHighProfitRule
     {
         private readonly ILogger<HighProfitsRule> _logger;
+        private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
         private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
 
         private bool _marketOpened = true; // assume the market has opened initially
 
         public HighProfitsRule(
+            IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ILogger<HighProfitsRule> logger) 
@@ -35,6 +37,7 @@ namespace Surveillance.Rules.High_Profits
                 "High Profit Rule",
                 logger)
         {
+            _exchangeRateApiRepository = exchangeRateApiRepository ?? throw new ArgumentNullException(nameof(exchangeRateApiRepository));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -62,7 +65,13 @@ namespace Surveillance.Rules.High_Profits
             var absoluteProfit = revenue - cost;
             var profitRatio = (revenue / cost) - 1;
 
-            var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit);
+            var tradingCurrency =
+                activeTrades
+                    .FirstOrDefault(i => !string.IsNullOrWhiteSpace(i.OrderCurrency))
+                    ?.OrderCurrency 
+                ?? string.Empty;
+
+            var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit, tradingCurrency);
             var hasHighProfitPercentage = HasHighProfitPercentage(profitRatio);
 
             if (hasHighProfitAbsolute
@@ -104,10 +113,18 @@ namespace Surveillance.Rules.High_Profits
                && _parameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
-        private bool HasHighProfitAbsolute(decimal profit)
+        private bool HasHighProfitAbsolute(decimal profit, string tradeCurrency)
         {
-            return _parameters.HighProfitAbsoluteThreshold.HasValue
-               && _parameters.HighProfitAbsoluteThreshold.Value <= profit;
+            if (string.Equals(_parameters.HighProfitAbsoluteThresholdCurrency, tradeCurrency))
+            {
+                return _parameters.HighProfitAbsoluteThreshold.HasValue
+                       && _parameters.HighProfitAbsoluteThreshold.Value <= profit;
+            }
+
+
+
+
+            return false;
         }
 
         /// <summary>

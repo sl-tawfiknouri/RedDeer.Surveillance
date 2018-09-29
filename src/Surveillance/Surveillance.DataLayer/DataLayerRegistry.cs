@@ -1,4 +1,6 @@
 ﻿using StructureMap;
+using Surveillance.DataLayer.Api.ExchangeRate;
+using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter;
@@ -33,7 +35,10 @@ namespace Surveillance.DataLayer
             For<IMarketOpenCloseApiCachingDecoratorRepository>().Use<MarketOpenCloseApiCachingDecoratorRepository>();
 
             For<IRuleParameterApiRepository>().Use<RuleParameterApiRepository>();
-            
+
+            For<IExchangeRateApiRepository>().Use<ExchangeRateApiRepository>();
+            For<IExchangeRateApiCachingDecoratorRepository>().Use<ExchangeRateApiCachingDecoratorRepository>();
+
             For<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>()
                 .Use<ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
         }

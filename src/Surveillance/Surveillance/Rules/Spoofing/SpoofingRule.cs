@@ -155,11 +155,6 @@ namespace Surveillance.Rules.Spoofing
         {
             _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Identifiers}");
 
-            var volumeInPosition = tradingPosition.VolumeInStatus(OrderStatus.Fulfilled);
-            var volumeSpoofed = opposingPosition.VolumeNotInStatus(OrderStatus.Fulfilled);
-
-            var description = $"Traded ({mostRecentTrade.Position.ToString()}) {mostRecentTrade.Security?.Identifiers} with a fulfilled volume of {volumeInPosition} and a cancelled volume of {volumeSpoofed} in other trading direction preceding the most recent fulfilled trade.";
-
             var ruleBreach =
                 new SpoofingRuleBreach(
                     _parameters.WindowSize,

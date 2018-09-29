@@ -5,12 +5,16 @@ namespace Surveillance.Rule_Parameters
 {
     public class HighProfitsRuleParameters : IHighProfitsRuleParameters
     {
-        public HighProfitsRuleParameters()
+        public HighProfitsRuleParameters(
+            TimeSpan windowSize,
+            decimal? highProfitPercentageThreshold,
+            decimal? highProfitAbsoluteThreshold,
+            string highProfitAbsoluteThresholdCurrency)
         {
-            WindowSize = TimeSpan.FromHours(5);
-            HighProfitPercentageThreshold = 0.2m;
-            HighProfitAbsoluteThreshold = 10000;
-            HighProfitAbsoluteThresholdCurrency = "GBP";
+            WindowSize = windowSize;
+            HighProfitPercentageThreshold = highProfitPercentageThreshold;
+            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
+            HighProfitAbsoluteThresholdCurrency = highProfitAbsoluteThresholdCurrency ?? string.Empty;
         }
 
         public TimeSpan WindowSize { get; }

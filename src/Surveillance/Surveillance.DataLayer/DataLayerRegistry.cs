@@ -1,7 +1,8 @@
 ﻿using StructureMap;
-using Surveillance.DataLayer.Api;
 using Surveillance.DataLayer.Api.MarketOpenClose;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
+using Surveillance.DataLayer.Api.RuleParameter;
+using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.ElasticSearch;
 using Surveillance.DataLayer.ElasticSearch.DataAccess;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
@@ -34,6 +35,8 @@ namespace Surveillance.DataLayer
             For<IMarketOpenCloseApiRepository>().Use<MarketOpenCloseApiRepository>();
             For<IMarketOpenCloseApiCachingDecoratorRepository>().Use<MarketOpenCloseApiCachingDecoratorRepository>();
 
+            For<IRuleParameterApiRepository>().Use<RuleParameterApiRepository>();
+            
             For<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>()
                 .Use<ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
         }

@@ -3,11 +3,10 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.DataLayer.Api;
 using Surveillance.DataLayer.Api.MarketOpenClose;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 
-namespace Surveillance.DataLayer.Tests.Api
+namespace Surveillance.DataLayer.Tests.Api.MarketOpenClose
 {
     [TestFixture]
     public class MarketOpenCloseApiCachingDecoratorRepositoryTests

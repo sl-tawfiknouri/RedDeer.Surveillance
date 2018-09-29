@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Rule_Parameters;
 using Surveillance.Rules.Marking_The_Close;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 
@@ -20,12 +19,9 @@ namespace Surveillance.Factories
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         }
 
-        public IMarkingTheCloseRule Build()
+        public IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters)
         {
-            var parameters = new MarkingTheCloseParameters();
-            var rule = new MarkingTheCloseRule(parameters, _messageSender, _logger);
-
-            return rule;
+            return new MarkingTheCloseRule(parameters, _messageSender, _logger);
         }
     }
 }

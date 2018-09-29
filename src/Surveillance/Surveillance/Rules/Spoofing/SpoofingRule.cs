@@ -12,11 +12,6 @@ using Surveillance.DataLayer.Stub;
 
 namespace Surveillance.Rules.Spoofing
 {
-    /// <summary>
-    /// This is a very basic spoofing implementation and is to serve as a guide to the real spoofing rule implementation
-    /// I think it will have problems with (placed) -> (cancelled) state transition
-    /// And also the order that orders arrive in may cause issues...we're assuming our orders are arriving in last status changed order and that that order does not change
-    /// </summary>
     public class SpoofingRule : BaseUniverseRule, ISpoofingRule
     {
         private readonly ISpoofingRuleParameters _parameters;

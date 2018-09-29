@@ -5,11 +5,14 @@ namespace Surveillance.Rule_Parameters
 {
     public class SpoofingRuleParameters : ISpoofingRuleParameters
     {
-        public SpoofingRuleParameters()
+        public SpoofingRuleParameters(
+            TimeSpan windowSize,
+            decimal cancellationThreshold,
+            decimal relativeSizeMultipleForSpoofingExceedingReal)
         {
-            CancellationThreshold = 0.8m;
-            RelativeSizeMultipleForSpoofExceedingReal = 2.5m;
-            WindowSize = TimeSpan.FromMinutes(30);
+            WindowSize = windowSize;
+            CancellationThreshold = cancellationThreshold;
+            RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
         }
 
         public TimeSpan WindowSize { get; }

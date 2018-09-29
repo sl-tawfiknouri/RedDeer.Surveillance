@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 
-namespace Surveillance.DataLayer.Api.MarketOpenClose
+namespace Surveillance.DataLayer.Api.RuleParameter
 {
-    public class MarketOpenCloseApiRepository : BaseApiRepository, IMarketOpenCloseApiRepository
+    public class RuleParameterApiRepository : BaseApiRepository, IRuleParameterApiRepository
     {
-        private const string Route = "api/markets/get/v1";
+        private const string Route = "api/surveillanceruleparameter/get/v1";
         private readonly ILogger _logger;
 
-        public MarketOpenCloseApiRepository(
+        public RuleParameterApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
-            ILogger<MarketOpenCloseApiRepository> logger) 
+            ILogger<RuleParameterApiRepository> logger) 
             : base(dataLayerConfiguration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<ExchangeDto>> Get()
+        public async Task<RuleParameterDto> Get()
         {
             var httpClient = BuildHttpClient();
 
@@ -33,22 +32,22 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
                 if (response == null
                     || !response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning($"Unsuccessful market open close api repository GET request. {response?.StatusCode}");
+                    _logger.LogWarning($"Unsuccessful rule parameter api repository GET request. {response?.StatusCode}");
 
-                    return new ExchangeDto[0];
+                    return new RuleParameterDto();
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<ExchangeDto[]>(jsonResponse);
+                var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
 
-                return deserialisedResponse ?? new ExchangeDto[0];
+                return deserialisedResponse ?? new RuleParameterDto();
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
             }
 
-            return new ExchangeDto[0];
+            return new RuleParameterDto();
         }
     }
 }

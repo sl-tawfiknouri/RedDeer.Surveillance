@@ -5,12 +5,16 @@ namespace Surveillance.Rule_Parameters
 {
     public class MarkingTheCloseParameters : IMarkingTheCloseParameters
     {
-        public MarkingTheCloseParameters()
+        public MarkingTheCloseParameters(
+            TimeSpan window,
+            decimal? percentageThresholdDailyVolume,
+            decimal? percentageThresholdWindowVolume,
+            decimal? percentThresholdOffTouch)
         {
-            Window = TimeSpan.FromMinutes(30);
-            PercentageThresholdDailyVolume = 0.01m;
-            PercentageThresholdWindowVolume = 0.05m;
-            PercentThresholdOffTouch = 0.02m;
+            Window = window;
+            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            PercentThresholdOffTouch = percentThresholdOffTouch;
         }
 
         public TimeSpan Window { get; }

@@ -4,6 +4,6 @@ namespace Surveillance.Factories.Interfaces
 {
     public interface IMarkingTheCloseRuleFactory
     {
-        IMarkingTheCloseRule Build();
+        IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters);
     }
 }

@@ -115,6 +115,8 @@ namespace Surveillance
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
             For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
+
+            For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
         }
     }
 }

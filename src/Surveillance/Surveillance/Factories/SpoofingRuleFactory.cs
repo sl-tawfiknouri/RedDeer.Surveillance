@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.Spoofing.Interfaces;
-using Surveillance.Rule_Parameters;
+using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -20,10 +20,10 @@ namespace Surveillance.Factories
             _ruleMessageSender = ruleMessageSender ?? throw new ArgumentNullException(nameof(ruleMessageSender));
         }
 
-        public ISpoofingRule Build()
+        public ISpoofingRule Build(ISpoofingRuleParameters spoofingParameters)
         {
             return new SpoofingRule(
-                new SpoofingRuleParameters(),
+                spoofingParameters,
                 _ruleMessageSender,
                 _logger);
         }

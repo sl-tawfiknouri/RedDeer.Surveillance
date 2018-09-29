@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
-using Surveillance.Rule_Parameters;
+using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -20,10 +20,8 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ICancelledOrderRule Build()
+        public ICancelledOrderRule Build(ICancelledOrderRuleParameters parameters)
         {
-            var parameters = new CancelledOrderRuleParameters();
-
             return new CancelledOrderRule(parameters, _messageSender, _logger);
         }
     }

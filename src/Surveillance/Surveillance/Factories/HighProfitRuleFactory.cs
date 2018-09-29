@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.High_Profits;
 using Surveillance.Rules.High_Profits.Interfaces;
-using Surveillance.Rule_Parameters;
+using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -20,10 +20,8 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IHighProfitRule Build()
+        public IHighProfitRule Build(IHighProfitsRuleParameters parameters)
         {
-            var parameters = new HighProfitsRuleParameters();
-
             return new HighProfitsRule(_messageSender, parameters, _logger);
         }
     }

@@ -40,7 +40,7 @@ namespace Surveillance.DataLayer.Stub
 
         public override string ToString()
         {
-            return $"Market({MarketId}) Open({MarketOpen.ToShortTimeString()}) Close({MarketOpen.ToShortTimeString()})";
+            return $"Market({MarketId}) Open({MarketOpen.ToShortTimeString()}) Close({MarketClose.ToShortTimeString()})";
         }
     }
 }

@@ -35,13 +35,16 @@ namespace Surveillance.Universe.MarketEvents
         {
             var universeEvents = new List<IUniverseEvent>();
 
+            start = start.ToUniversalTime();
+            end = end.ToUniversalTime();
+
             foreach (var market in markets)
             {
                 var marketOpeningSeconds = market.MarketOpenTime.TotalSeconds;
                 var marketClosureSeconds = market.MarketCloseTime.TotalSeconds;
 
-                var openingOnFirstDay = SetMarketEventTime(start, marketOpeningSeconds);
-                var closingOnFirstDay = SetMarketEventTime(start, marketClosureSeconds);
+                var openingOnFirstDay = SetMarketEventTime(market, start, marketOpeningSeconds);
+                var closingOnFirstDay = SetMarketEventTime(market, start, marketClosureSeconds);
 
                 var initialDayMarketHours = new MarketOpenClose(market.Code, openingOnFirstDay, closingOnFirstDay);
                 AddInitialOpen(start, end, universeEvents, initialDayMarketHours, openingOnFirstDay, market);
@@ -56,12 +59,12 @@ namespace Surveillance.Universe.MarketEvents
             return universeEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
-        private DateTime SetMarketEventTime(DateTime start, double marketEventSeconds)
+        private DateTime SetMarketEventTime(ExchangeMarket exchangeMarket, DateTime start, double marketEventSeconds)
         {
-            var marketEvent = new DateTime(start.Year, start.Month, start.Day);
+            var marketEvent = exchangeMarket.DateTime(start.ToUniversalTime());
             marketEvent = marketEvent.AddSeconds(marketEventSeconds);
 
-            return marketEvent;
+            return marketEvent.ToUniversalTime().DateTime;
         }
 
         private void AddInitialOpen(
@@ -108,23 +111,25 @@ namespace Surveillance.Universe.MarketEvents
             {
                 return;
             }
-
-            var openingOnLastDay = new DateTime(end.Year, end.Month, end.Day);
+            
+            var openingOnLastDay = market.DateTime(end);
             openingOnLastDay = openingOnLastDay.AddSeconds(marketOpensInSecondsFromMidnight);
+            var openingOnLastDayUniversal = openingOnLastDay.ToUniversalTime().DateTime;
 
-            var closingOnLastDay = new DateTime(end.Year, end.Month, end.Day);
+            var closingOnLastDay = market.DateTime(end);
             closingOnLastDay = closingOnLastDay.AddSeconds(marketClosureInSecondsFromMidnight);
+            var closingOnLastDayUniversal = closingOnLastDay.ToUniversalTime().DateTime;
 
-            var closingDayMarketHours = new MarketOpenClose(market.Code, openingOnLastDay, closingOnLastDay);
+            var closingDayMarketHours = new MarketOpenClose(market.Code, openingOnLastDayUniversal, closingOnLastDayUniversal);
 
-            var finalOpen = AddBoundaryMarketEvent(start, end, closingDayMarketHours, openingOnLastDay, UniverseStateEvent.StockMarketOpen);
-            if (finalOpen != null && market.IsOpenOnDay(openingOnLastDay))
+            var finalOpen = AddBoundaryMarketEvent(start, end, closingDayMarketHours, openingOnLastDayUniversal, UniverseStateEvent.StockMarketOpen);
+            if (finalOpen != null && market.IsOpenOnDay(openingOnLastDay.DateTime))
             {
                 universeEvents.Add(finalOpen);
             }
 
-            var finalClose = AddBoundaryMarketEvent(start, end, closingDayMarketHours, closingOnLastDay, UniverseStateEvent.StockMarketClose);
-            if (finalClose != null && market.IsOpenOnDay(closingOnLastDay))
+            var finalClose = AddBoundaryMarketEvent(start, end, closingDayMarketHours, closingOnLastDayUniversal, UniverseStateEvent.StockMarketClose);
+            if (finalClose != null && market.IsOpenOnDay(closingOnLastDay.DateTime))
             {
                 universeEvents.Add(finalClose);
             }
@@ -166,8 +171,9 @@ namespace Surveillance.Universe.MarketEvents
                 var open = initialOpening.AddDays(x);
                 var close = initialClosure.AddDays(x);
                 var marketHoursOnDay = new MarketOpenClose(openClose.Code, open, close);
+                var localTime = TimeZoneInfo.ConvertTimeFromUtc(open, openClose.TimeZone);
 
-                if (openClose.IsOpenOnDay(open))
+                if (openClose.IsOpenOnDay(localTime))
                 {
                     var openingEvent = new UniverseEvent(UniverseStateEvent.StockMarketOpen, open, marketHoursOnDay);
                     var closingEvent = new UniverseEvent(UniverseStateEvent.StockMarketClose, close, marketHoursOnDay);

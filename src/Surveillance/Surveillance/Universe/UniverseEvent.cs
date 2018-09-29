@@ -18,7 +18,7 @@ namespace Surveillance.Universe
         public UniverseStateEvent StateChange { get; }
 
         /// <summary>
-        /// The point in time the event happened at
+        /// The point in time the event happened at in UTC time only
         /// </summary>
         public DateTime EventTime { get; }
 

@@ -15,6 +15,7 @@ namespace Surveillance.Universe.MarketEvents
         public string Code => _dto.Code;
         public TimeSpan MarketOpenTime => _dto.MarketOpenTime;
         public TimeSpan MarketCloseTime => _dto.MarketCloseTime;
+        public TimeZoneInfo TimeZone => TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
 
         public bool IsOpenOnDay(DateTime dateTime)
         {
@@ -22,8 +23,6 @@ namespace Surveillance.Universe.MarketEvents
             {
                 return false;
             }
-
-            // check if it's in the holidays?
 
             if (_dto.Holidays != null
                 && _dto.Holidays.Any()
@@ -51,6 +50,19 @@ namespace Surveillance.Universe.MarketEvents
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Get the offset for the exchange on a given utc date calibrated to 00:00 hours
+        /// </summary>
+        public DateTimeOffset DateTime(DateTime offsetRelativeTo)
+        {
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
+            var offset = timeZoneInfo.GetUtcOffset(offsetRelativeTo);
+            var baseDate = new DateTime(offsetRelativeTo.Year, offsetRelativeTo.Month, offsetRelativeTo.Day);
+            var offsetTime = new DateTimeOffset(baseDate, offset);
+
+            return offsetTime;
         }
     }
 }

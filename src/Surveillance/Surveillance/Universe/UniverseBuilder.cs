@@ -51,7 +51,7 @@ namespace Surveillance.Universe
 
             var projectedTrades = await TradeDataFetch(execution);
             var exchangeFrames = await MarketEquityDataFetch(execution);
-            var universe = UniverseEvents(execution, projectedTrades, exchangeFrames);
+            var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
 
             return new Universe(projectedTrades, exchangeFrames, universe);
         }
@@ -78,7 +78,7 @@ namespace Surveillance.Universe
             return projectedEquityData ?? new List<ExchangeFrame>();
         }
 
-        private IReadOnlyCollection<IUniverseEvent> UniverseEvents(
+        private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<TradeOrderFrame> trades,
             IReadOnlyCollection<ExchangeFrame> exchangeFrames)
@@ -94,7 +94,7 @@ namespace Surveillance.Universe
                     .ToArray();
 
             var marketEvents =
-                _marketManager
+                await _marketManager
                     .AllOpenCloseEvents(
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime);

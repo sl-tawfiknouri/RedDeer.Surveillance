@@ -2,7 +2,6 @@
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Streams;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

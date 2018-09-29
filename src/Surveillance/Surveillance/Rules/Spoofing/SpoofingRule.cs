@@ -7,8 +7,8 @@ using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.Universe.MarketEvents;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
-using Surveillance.DataLayer.Stub;
 
 namespace Surveillance.Rules.Spoofing
 {

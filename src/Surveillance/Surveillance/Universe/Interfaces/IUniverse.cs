@@ -7,7 +7,6 @@ namespace Surveillance.Universe.Interfaces
     public interface IUniverse
     {
         IReadOnlyCollection<TradeOrderFrame> Trades { get; }
-        IReadOnlyCollection<ExchangeFrame> MarketEquityData { get; }
         IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; }
     }
 }

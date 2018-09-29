@@ -40,7 +40,7 @@ namespace Surveillance.DataLayer.Tests.Api.MarketOpenClose
         {
             var repository = new MarketOpenCloseApiCachingDecoratorRepository(_repository, _logger);
 
-            var result = await repository.Get();
+            await repository.Get();
 
             A.CallTo(() => _repository.Get()).MustHaveHappenedOnceExactly();
         }
@@ -50,7 +50,7 @@ namespace Surveillance.DataLayer.Tests.Api.MarketOpenClose
         {
             var repository = new MarketOpenCloseApiCachingDecoratorRepository(_repository, _logger);
 
-            var result = await repository.Get();
+            await repository.Get();
             await repository.Get();
             await repository.Get();
 

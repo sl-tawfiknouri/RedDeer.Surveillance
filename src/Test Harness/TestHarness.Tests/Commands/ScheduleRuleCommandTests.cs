@@ -5,7 +5,6 @@ using FakeItEasy;
 using NUnit.Framework;
 using TestHarness.Commands;
 using TestHarness.Configuration.Interfaces;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.Interfaces;
 using Utilities.Aws_IO.Interfaces;

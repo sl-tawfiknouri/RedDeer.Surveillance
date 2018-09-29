@@ -61,7 +61,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             Console.WriteLine(printableGeneratedSecurity);
 
             Assert.AreEqual(result.Security.Name, "Microsoft");
-            Assert.IsFalse(ReferenceEquals(security, result));
         }
 
         [Test]

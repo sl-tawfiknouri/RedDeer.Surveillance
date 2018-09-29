@@ -31,7 +31,7 @@ namespace Surveillance.DataLayer.Tests.ElasticSearch.Market
         }
 
         [Test]
-        public void Constructor_ConsidersNullMarketIndexNamer_ToBeExceptional()
+        public void Constructor_ConsidersNullMarketIndexNameBuilder_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new RedDeerMarketExchangeFormatRepository(_dataAccess, null));

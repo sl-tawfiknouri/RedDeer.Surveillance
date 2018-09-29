@@ -2,7 +2,6 @@
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.TradingFactory.Interfaces;

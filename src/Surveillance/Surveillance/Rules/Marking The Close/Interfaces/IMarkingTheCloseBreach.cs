@@ -1,5 +1,5 @@
-﻿using Surveillance.DataLayer.Stub;
-using Surveillance.Rules.Interfaces;
+﻿using Surveillance.Rules.Interfaces;
+using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.Marking_The_Close.Interfaces
 {

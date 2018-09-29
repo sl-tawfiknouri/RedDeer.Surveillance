@@ -1,7 +1,6 @@
 ﻿using NLog;
 using System;
 using TestHarness.Configuration.Interfaces;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Network_IO;

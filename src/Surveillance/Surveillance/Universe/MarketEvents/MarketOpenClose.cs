@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surveillance.DataLayer.Stub
+namespace Surveillance.Universe.MarketEvents
 {
     public class MarketOpenClose
     {

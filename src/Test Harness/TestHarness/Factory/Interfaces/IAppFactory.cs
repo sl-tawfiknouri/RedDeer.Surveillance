@@ -26,8 +26,6 @@ namespace TestHarness.Factory.Interfaces
 
         IConsole Console { get; }
 
-        IPulsatingHeartbeat ProhibitedSecurityHeartbeat { get; }
-
         IPulsatingHeartbeat SpoofedTradeHeartbeat { get; }
 
         IPulsatingHeartbeat CancelTradeHeartbeat { get; }

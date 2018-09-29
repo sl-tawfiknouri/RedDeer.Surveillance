@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
 using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Universe
@@ -17,8 +15,6 @@ namespace Surveillance.Universe
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
         public UniversePlayer(
-            IUnsubscriberFactory<TradeOrderFrame> tradeUnsubscriberFactory,
-            IUnsubscriberFactory<ExchangeFrame> exchangeUnsubscriberFactory,
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory)
         {
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();

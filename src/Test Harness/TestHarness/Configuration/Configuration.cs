@@ -13,7 +13,5 @@ namespace TestHarness.Configuration
         public string CaseMessageQueueName { get; set; }
 
         public bool IsEc2Instance { get; set; }
-        public string AwsAccessKey { get; set; }
-        public string AwsSecretKey { get; set; }
     }
 }

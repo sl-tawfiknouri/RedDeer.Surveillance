@@ -35,7 +35,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
                 return _cachedMarketData;
             }
 
-            _logger.LogDebug($"Fetching market open/close data in the cached repository");
+            _logger.LogDebug("Fetching market open/close data in the cached repository");
             _cachedMarketData = await _decoratedRepository.Get();
             _cacheExpiry = DateTime.Now.Add(_cacheLength);
 

@@ -3,7 +3,6 @@ using NUnit.Framework;
 using System;
 using Domain.Equity;
 using Domain.Trades.Orders;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 

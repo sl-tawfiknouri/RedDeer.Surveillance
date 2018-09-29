@@ -18,7 +18,7 @@ namespace Surveillance.Recorders
         private readonly IReddeerTradeFormatProjector _projector;
         private readonly IRuleConfiguration _configuration;
         private readonly ILogger _logger;
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         private readonly IDictionary<string, SchedulePair> _batchTracker;
 

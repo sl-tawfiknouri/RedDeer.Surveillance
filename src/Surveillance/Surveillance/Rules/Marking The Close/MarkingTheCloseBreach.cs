@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Trades.Orders;
-using Surveillance.DataLayer.Stub;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.Marking_The_Close
 {

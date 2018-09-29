@@ -4,10 +4,10 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Stub;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.Marking_The_Close
 {

@@ -5,7 +5,6 @@ using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.Interfaces;
 using Utilities.Aws_IO.Interfaces;

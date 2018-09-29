@@ -2,7 +2,6 @@
 {
     public interface IAwsConfiguration
     {
-        bool IsEc2Instance { get; }
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
     }

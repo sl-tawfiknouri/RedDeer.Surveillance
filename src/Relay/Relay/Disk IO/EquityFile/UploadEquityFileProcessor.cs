@@ -85,7 +85,7 @@ namespace Relay.Disk_IO.EquityFile
             }
 
             var matchingExchange = tradeOrders
-                .Where(to => to.Exchange?.Id?.Id == mappedRecord?.Market?.Id.Id)
+                .Where(to => to.Exchange?.Id?.Id == mappedRecord.Market?.Id.Id)
                 .Where(to => to.TimeStamp == mappedRecord.TimeStamp)
                 .ToList();
 

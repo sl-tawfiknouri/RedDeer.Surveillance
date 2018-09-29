@@ -13,8 +13,6 @@ using Surveillance.DataLayer.ElasticSearch.Trade;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors;
 using Surveillance.DataLayer.Projectors.Interfaces;
-using Surveillance.DataLayer.Stub;
-using Surveillance.DataLayer.Stub.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
@@ -29,7 +27,6 @@ namespace Surveillance.DataLayer
             For<IRedDeerMarketExchangeFormatRepository>().Use<RedDeerMarketExchangeFormatRepository>();
             For<IReddeerTradeFormatToReddeerTradeFrameProjector>().Use<ReddeerTradeFormatToReddeerTradeFrameProjector>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
-            For<IMarketOpenCloseRepository>().Use<MarketOpenCloseRepository>();
             For<IMarketIndexNameBuilder>().Use<MarketIndexNameBuilder>();
 
             For<IMarketOpenCloseApiRepository>().Use<MarketOpenCloseApiRepository>();

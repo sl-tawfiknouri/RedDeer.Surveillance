@@ -5,12 +5,12 @@ using Domain.Equity.Frames;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Stub;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules
 {

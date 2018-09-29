@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Equity.Frames;
 using Surveillance.DataLayer.ElasticSearch.DataAccess.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Interfaces;
 using Surveillance.ElasticSearchDtos.Market;

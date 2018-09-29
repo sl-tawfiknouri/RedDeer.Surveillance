@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Stub;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.MarketEvents;
+
 // ReSharper disable AssignNullToNotNullAttribute
 
 namespace Surveillance.Rules.High_Profits

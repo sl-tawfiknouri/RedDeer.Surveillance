@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using Domain.Equity.Frames;
-using TestHarness.Display;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 

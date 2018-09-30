@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Market;
 using Domain.Trades.Orders;
 
 namespace Surveillance.Trades.Interfaces
@@ -9,5 +10,6 @@ namespace Surveillance.Trades.Interfaces
         Stack<TradeOrderFrame> ActiveTradeHistory();
         void Add(TradeOrderFrame frame, DateTime currentTime);
         void ArchiveExpiredActiveItems(DateTime currentTime);
+        StockExchange Exchange();
     }
 }

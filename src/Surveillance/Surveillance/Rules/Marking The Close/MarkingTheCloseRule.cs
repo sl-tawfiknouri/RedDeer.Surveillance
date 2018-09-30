@@ -153,7 +153,7 @@ namespace Surveillance.Rules.Marking_The_Close
 
             _processingMarketClose = true;
             _latestMarketClosure = exchange;
-            RunRuleForAllTradingHistories(exchange?.MarketClose);
+            RunRuleForAllTradingHistoriesInMarket(exchange, exchange?.MarketClose);
             _processingMarketClose = false;
         }
 

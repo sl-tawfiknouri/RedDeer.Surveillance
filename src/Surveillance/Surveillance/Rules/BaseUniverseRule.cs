@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Scheduling;
@@ -176,6 +177,35 @@ namespace Surveillance.Rules
             lock (_lock)
             {
                 foreach (var history in TradingHistory)
+                {
+                    if (currentTimeInUniverse != null)
+                    {
+                        history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
+                    }
+                    RunRule(history.Value);
+                }
+            }
+        }
+
+        protected void RunRuleForAllTradingHistoriesInMarket(MarketOpenClose closeOpen, DateTime? currentTimeInUniverse = null)
+        {
+            lock (_lock)
+            {
+                if (closeOpen == null)
+                {
+                    return;
+                }
+
+                var filteredTradingHistories =
+                    TradingHistory
+                        .Where(th =>
+                            string.Equals(
+                                th.Value?.Exchange()?.Id.Id,
+                                closeOpen.MarketId,
+                                StringComparison.InvariantCultureIgnoreCase))
+                        .ToList();
+
+                foreach (var history in filteredTradingHistories)
                 {
                     if (currentTimeInUniverse != null)
                     {

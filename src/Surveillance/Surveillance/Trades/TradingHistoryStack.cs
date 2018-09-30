@@ -1,6 +1,8 @@
 ﻿using Surveillance.Trades.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Domain.Market;
 using Domain.Trades.Orders;
 
 namespace Surveillance.Trades
@@ -9,6 +11,7 @@ namespace Surveillance.Trades
     {
         private readonly Stack<TradeOrderFrame> _activeStack;
         private readonly Queue<TradeOrderFrame> _history;
+        private StockExchange _market;
 
         private readonly object _lock = new object();
         private readonly TimeSpan _activeTradeDuration;
@@ -88,6 +91,20 @@ namespace Surveillance.Trades
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;
             }
+        }
+
+        public StockExchange Exchange()
+        {
+            if (_market != null)
+            {
+                return _market;
+            }
+            
+            // ReSharper disable once InconsistentlySynchronizedField
+            _market = _activeStack?.Peek()?.Market
+                ?? _history?.FirstOrDefault()?.Market;
+
+            return _market;
         }
     }
 }

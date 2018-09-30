@@ -344,7 +344,7 @@ namespace Surveillance.Rules.High_Profits
         {
             _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
 
-            RunRuleForAllTradingHistories(exchange.MarketClose);
+            RunRuleForAllTradingHistoriesInMarket(exchange, UniverseDateTime);
             _marketOpened = false;
         }
 

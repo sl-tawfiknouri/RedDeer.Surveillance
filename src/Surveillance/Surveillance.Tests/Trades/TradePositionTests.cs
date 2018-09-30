@@ -153,7 +153,9 @@ namespace Surveillance.Tests.Trades
                 "party-broker",
                 "counter party",
                 "Good day to buy",
-                "None");
+                "None",
+                "GBX");
+
         }
     }
 }

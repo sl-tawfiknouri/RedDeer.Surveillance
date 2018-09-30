@@ -66,7 +66,8 @@ namespace TestHarness.Tests.Display
                     "party-broker",
                     "counterParty-broker",
                     "none",
-                    "unknown");
+                    "unknown",
+                    "GBX");
         }
     }
 }

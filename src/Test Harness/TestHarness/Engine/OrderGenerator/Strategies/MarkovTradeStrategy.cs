@@ -124,6 +124,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var counterPartyBrokerId = GenerateIdString();
             const string tradeRationale = "The security looked like good value";
             const string tradeStrategy = "Taking profits";
+            const string orderCurrency = "GBP";
 
             return new TradeOrderFrame(
                 orderType,
@@ -144,7 +145,8 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 partyBrokerId,
                 counterPartyBrokerId,
                 tradeRationale,
-                tradeStrategy);
+                tradeStrategy,
+                orderCurrency);
         }
 
         private string GenerateIdString()

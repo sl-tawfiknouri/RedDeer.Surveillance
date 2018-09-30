@@ -7,6 +7,8 @@ using Domain.Streams;
 using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using Surveillance.Currency;
+using Surveillance.Currency.Interfaces;
 using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
 using Utilities.Network_IO.Websocket_Hosts;
@@ -117,6 +119,7 @@ namespace Surveillance
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
+            For<ICurrencyConverter>().Use<CurrencyConverter>();
         }
     }
 }

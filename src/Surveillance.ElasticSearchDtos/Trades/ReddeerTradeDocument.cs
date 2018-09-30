@@ -145,6 +145,12 @@ namespace Surveillance.ElasticSearchDtos.Trades
         public string OrderStatusDescription { get; set; }
 
         /// <summary>
+        /// The currency for the order i.e. USD / GBP / CNY
+        /// </summary>
+        [Text]
+        public string OrderCurrency { get; set; }
+
+        /// <summary>
         /// An identifier provided by the client to identify their traders
         /// </summary>
         [Keyword]

@@ -237,7 +237,8 @@ namespace TestHarness.Engine.OrderGenerator
                     "Broker-1",
                     "Broker-2",
                     "Trading to use price advantage from spoof",
-                    "Spoofing");
+                    "Spoofing",
+                    "GBP");
 
             return order;
         }

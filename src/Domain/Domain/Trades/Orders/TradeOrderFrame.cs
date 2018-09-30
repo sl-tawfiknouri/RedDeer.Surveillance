@@ -29,7 +29,8 @@ namespace Domain.Trades.Orders
             string partyBrokerId,
             string counterPartyBrokerId,
             string tradeRationale,
-            string tradeStrategy)
+            string tradeStrategy,
+            string orderCurrency)
         {
             OrderType = orderType;
             Market = market;
@@ -50,6 +51,7 @@ namespace Domain.Trades.Orders
             CounterPartyBrokerId = counterPartyBrokerId ?? string.Empty;
             TradeRationale = tradeRationale ?? string.Empty;
             TradeStrategy = tradeStrategy ?? string.Empty;
+            OrderCurrency = orderCurrency ?? string.Empty;
 
             if (orderType == OrderType.Limit
                 && limit == null)
@@ -106,7 +108,6 @@ namespace Domain.Trades.Orders
         /// <summary>
         /// The currency for the executed price
         /// </summary>
-        // ReSharper disable once UnusedMember.Global
         public string OrderCurrency { get; set; }
 
         /// <summary>

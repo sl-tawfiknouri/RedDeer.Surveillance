@@ -278,7 +278,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
                 security,
                 null,
-                new Price(1000, "GBP"), 
+                new Price(1000, "GBP"),
                 1000,
                 1000,
                 OrderPosition.Buy,
@@ -292,7 +292,8 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 "party-broker",
                 "counter party",
                 "trade rationale",
-                "good strategy");
+                "good strategy",
+                "GBX");
         }
     }
 }

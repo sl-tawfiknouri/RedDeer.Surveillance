@@ -161,7 +161,8 @@ namespace Domain.Trades.Orders
                 csv.PartyBrokerId,
                 csv.CounterPartyBrokerId,
                 csv.TradeRationale,
-                csv.TradeStrategy);
+                csv.TradeStrategy,
+                csv.OrderCurrency);
         }
     }
 }

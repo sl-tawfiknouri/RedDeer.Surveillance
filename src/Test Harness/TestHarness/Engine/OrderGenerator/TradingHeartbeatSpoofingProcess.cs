@@ -126,7 +126,8 @@ namespace TestHarness.Engine.OrderGenerator
                 "Broker-1",
                 "Broker-2",
                 "Spoofing limit buys",
-                "Spoofing");
+                "Spoofing",
+                "GBP");
 
             return 
                 new[] { spoofedTrade }
@@ -159,7 +160,8 @@ namespace TestHarness.Engine.OrderGenerator
                 "Broker-1",
                 "Broker-2",
                 "Spoofing counter trade",
-                "Spoofing");
+                "Spoofing",
+                "GBP");
         }
     }
 }

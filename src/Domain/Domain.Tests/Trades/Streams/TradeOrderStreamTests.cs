@@ -107,7 +107,8 @@ namespace Domain.Tests.Trades.Streams
                 partyBrokerId,
                 counterPartyBrokerId,
                 tradeRationale,
-                tradeStrategy);
+                tradeStrategy,
+                "GBX");
 
             var order2 = new TradeOrderFrame(
                 OrderType.Market,
@@ -128,7 +129,8 @@ namespace Domain.Tests.Trades.Streams
                 partyBrokerId,
                 counterPartyBrokerId,
                 tradeRationale,
-                tradeStrategy);
+                tradeStrategy,
+                "GBX");
 
             var order3 = new TradeOrderFrame(
                 OrderType.Limit,
@@ -149,7 +151,8 @@ namespace Domain.Tests.Trades.Streams
                 partyBrokerId,
                 counterPartyBrokerId,
                 tradeRationale,
-                tradeStrategy);
+                tradeStrategy,
+                "GBX");
 
             stream.Subscribe(obs1);
             stream.Subscribe(obs2);

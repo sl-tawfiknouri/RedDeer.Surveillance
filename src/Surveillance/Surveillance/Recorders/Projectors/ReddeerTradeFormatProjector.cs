@@ -55,6 +55,7 @@ namespace Surveillance.Recorders.Projectors
 
                 OrderStatusId = (int)order.OrderStatus,
                 OrderStatusDescription = order.OrderStatus.ToString(),
+                OrderCurrency = order.OrderCurrency,
 
                 TraderId = order.TraderId,
                 TradeClientAttributionId = order.TradeClientAttributionId,

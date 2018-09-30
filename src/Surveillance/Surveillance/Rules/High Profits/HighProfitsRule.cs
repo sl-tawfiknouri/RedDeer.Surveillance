@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.Currency.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Trades;
@@ -19,14 +21,14 @@ namespace Surveillance.Rules.High_Profits
     public class HighProfitsRule : BaseUniverseRule, IHighProfitRule
     {
         private readonly ILogger<HighProfitsRule> _logger;
-        private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
+        private readonly ICurrencyConverter _currencyConverter;
         private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
 
         private bool _marketOpened = true; // assume the market has opened initially
 
         public HighProfitsRule(
-            IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
+            ICurrencyConverter currencyConverter,
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ILogger<HighProfitsRule> logger) 
@@ -37,7 +39,7 @@ namespace Surveillance.Rules.High_Profits
                 "High Profit Rule",
                 logger)
         {
-            _exchangeRateApiRepository = exchangeRateApiRepository ?? throw new ArgumentNullException(nameof(exchangeRateApiRepository));
+            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -53,31 +55,45 @@ namespace Surveillance.Rules.High_Profits
                     || at.OrderStatus == OrderStatus.Fulfilled)
                 .ToList();
 
-            var cost = CalculateCostOfPosition(liveTrades);
-            var revenue = CalculateRevenueOfPosition(liveTrades);
+            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitAbsoluteThresholdCurrency);
 
-            if (revenue <= 0
-                || cost <= 0)
+            var costTask = CalculateCostOfPosition(liveTrades, targetCurrency);
+            var revenueTask = CalculateRevenueOfPosition(liveTrades, targetCurrency);
+
+            costTask.Wait();
+            revenueTask.Wait();
+
+            var cost = costTask.Result;
+            var revenue = revenueTask.Result;
+
+            if (revenue == null)
             {
                 return;
             }
 
-            var absoluteProfit = revenue - cost;
-            var profitRatio = (revenue / cost) - 1;
+            if (cost == null)
+            {
+                _logger.LogError("High profits rule - something went horribly wrong. We have calculable revenues but not costs");
+                return;
+            }
 
-            var tradingCurrency =
-                activeTrades
-                    .FirstOrDefault(i => !string.IsNullOrWhiteSpace(i.OrderCurrency))
-                    ?.OrderCurrency 
-                ?? string.Empty;
+            if (revenue.Value.Value <= 0
+                || cost.Value.Value <= 0)
+            {
+                _logger.LogDebug($"High profit rules had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
+                return;
+            }
 
-            var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit, tradingCurrency);
+            var absoluteProfit = revenue.Value - cost.Value;
+            var profitRatio = (revenue.Value.Value / cost.Value.Value) - 1;
+
+            var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit);
             var hasHighProfitPercentage = HasHighProfitPercentage(profitRatio);
 
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
-                WriteAlertToMessageSender(activeTrades, absoluteProfit, profitRatio, hasHighProfitAbsolute, hasHighProfitPercentage);
+                WriteAlertToMessageSender(activeTrades, absoluteProfit.Value, profitRatio, hasHighProfitAbsolute, hasHighProfitPercentage);
             }
         }
 
@@ -113,68 +129,77 @@ namespace Surveillance.Rules.High_Profits
                && _parameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
-        private bool HasHighProfitAbsolute(decimal profit, string tradeCurrency)
+        private bool HasHighProfitAbsolute(CurrencyAmount absoluteProfits)
         {
-            if (string.Equals(_parameters.HighProfitAbsoluteThresholdCurrency, tradeCurrency))
+            if (_parameters.HighProfitAbsoluteThreshold == null)
             {
-                return _parameters.HighProfitAbsoluteThreshold.HasValue
-                       && _parameters.HighProfitAbsoluteThreshold.Value <= profit;
+                return false;
             }
 
-            var exchRateTask = _exchangeRateApiRepository.Get(UniverseDateTime, UniverseDateTime);
-            exchRateTask.Wait();
-            var exchRate = exchRateTask.Result;
+            if (!string.Equals(
+                _parameters.HighProfitAbsoluteThresholdCurrency,
+                absoluteProfits.Currency.Value,
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new InvalidOperationException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
+            }
 
-            
-
-            return false;
+            return absoluteProfits.Value >= _parameters.HighProfitAbsoluteThreshold;
         }
 
         /// <summary>
         /// Sum the total buy in for the position
         /// </summary>
-        private decimal CalculateCostOfPosition(IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private async Task<CurrencyAmount?> CalculateCostOfPosition(
+            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            Domain.Finance.Currency targetCurrency)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
-                return 0;
+                return null;
             }
 
             var purchaseOrders =
                 activeFulfilledTradeOrders
                     .Where(afto => afto.Position == OrderPosition.Buy)
-                    .Select(afto => afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0)
-                    .Sum();
+                    .Select(afto => new CurrencyAmount(afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0, afto.OrderCurrency))
+                    .ToList();
 
-            return purchaseOrders;
+            var adjustedToCurrencyPurchaseOrders = await _currencyConverter.Convert(purchaseOrders, targetCurrency, UniverseDateTime);
+
+            return adjustedToCurrencyPurchaseOrders;
         }
 
         /// <summary>
         /// Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
-        private decimal CalculateRevenueOfPosition(IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private async Task<CurrencyAmount?> CalculateRevenueOfPosition(
+            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            Domain.Finance.Currency targetCurrency)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
-                return 0;
+                return null;
             }
 
-            var realisedRevenue = CalculateRealisedRevenue(activeFulfilledTradeOrders);
+            var realisedRevenue = await CalculateRealisedRevenue(activeFulfilledTradeOrders, targetCurrency);
             var totalPurchaseVolume = CalculateTotalPurchaseVolume(activeFulfilledTradeOrders);
             var totalSaleVolume = CalculateTotalSalesVolume(activeFulfilledTradeOrders);
 
             var sizeOfVirtualPosition = totalPurchaseVolume - totalSaleVolume;
             if (sizeOfVirtualPosition <= 0)
             {
-                return realisedRevenue.GetValueOrDefault(0);
+                // fully traded out position; return its value
+                return realisedRevenue;
             }
 
+            // has a virtual position; calculate its value
             var security = activeFulfilledTradeOrders.FirstOrDefault()?.Security;
             if (security == null)
             {
-                return realisedRevenue.GetValueOrDefault(0);
+                return realisedRevenue;
             }
 
             var securityTick =
@@ -184,26 +209,53 @@ namespace Surveillance.Rules.High_Profits
 
             if (securityTick == null)
             {
-                return CalculateInferredVirtualProfit(activeFulfilledTradeOrders, realisedRevenue, sizeOfVirtualPosition);
+                return await CalculateInferredVirtualProfit(activeFulfilledTradeOrders, realisedRevenue, sizeOfVirtualPosition, targetCurrency);
             }
 
             var virtualRevenue = securityTick.Spread.Price.Value * sizeOfVirtualPosition;
+            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
+            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime);
 
-            return realisedRevenue.GetValueOrDefault(0) + virtualRevenue;
+            if (realisedRevenue == null
+                && convertedVirtualRevenues == null)
+            {
+                return null;
+            }
+
+            if (realisedRevenue == null)
+            {
+                return convertedVirtualRevenues;
+            }
+
+            if (convertedVirtualRevenues == null)
+            {
+                return realisedRevenue;
+            }
+
+            return realisedRevenue + convertedVirtualRevenues;
         }
 
-        private decimal? CalculateRealisedRevenue
-            (IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private async Task<CurrencyAmount?> CalculateRealisedRevenue
+            (IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            Domain.Finance.Currency targetCurrency)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
-                return 0;
+                return null;
             }
 
-            return activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.Sell)
-                    .Select(afto => afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0)
-                    .Sum();
+            var filledOrders =
+                activeFulfilledTradeOrders
+                .Where(afto => afto.Position == OrderPosition.Sell)
+                .Select(afto =>
+                    new CurrencyAmount(
+                        afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0,
+                        afto.OrderCurrency))
+                .ToList();
+
+            var conversion = await _currencyConverter.Convert(filledOrders, targetCurrency, UniverseDateTime);
+
+            return conversion;
         }
 
         private int CalculateTotalPurchaseVolume(
@@ -234,10 +286,11 @@ namespace Surveillance.Rules.High_Profits
                 .Sum();
         }
 
-        private decimal CalculateInferredVirtualProfit(
+        private async Task<CurrencyAmount?> CalculateInferredVirtualProfit(
             IList<TradeOrderFrame> activeFulfilledTradeOrders,
-            decimal? realisedRevenue,
-            int sizeOfVirtualPosition)
+            CurrencyAmount? realisedRevenue,
+            int sizeOfVirtualPosition,
+            Domain.Finance.Currency targetCurrency)
         {
             _logger.LogInformation(
                 "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
@@ -250,12 +303,30 @@ namespace Surveillance.Rules.High_Profits
 
             if (mostRecentTrade == null)
             {
-                return realisedRevenue.GetValueOrDefault(0);
+                return realisedRevenue;
             }
 
             var inferredVirtualProfits = mostRecentTrade.ExecutedPrice?.Value * sizeOfVirtualPosition ?? 0;
+            var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
+            var convertedCurrencyAmount = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime);
 
-            return realisedRevenue.GetValueOrDefault(0) + inferredVirtualProfits;
+            if (realisedRevenue == null
+                && convertedCurrencyAmount == null)
+            {
+                return null;
+            }
+
+            if (realisedRevenue == null)
+            {
+                return convertedCurrencyAmount;
+            }
+
+            if (convertedCurrencyAmount == null)
+            {
+                return realisedRevenue;
+            }
+
+            return realisedRevenue + convertedCurrencyAmount;
         }
 
         protected override void Genesis()

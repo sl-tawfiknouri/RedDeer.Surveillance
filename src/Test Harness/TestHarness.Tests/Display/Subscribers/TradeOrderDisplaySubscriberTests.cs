@@ -63,7 +63,8 @@ namespace TestHarness.Tests.Display.Subscribers
                     "party-broker",
                     "counterParty-broker",
                     "trader rationale",
-                    "trade strategy");
+                    "trade strategy",
+                    "GBX");
 
             tradeOrderSubscriber.OnNext(tradeOrderFrame);
 

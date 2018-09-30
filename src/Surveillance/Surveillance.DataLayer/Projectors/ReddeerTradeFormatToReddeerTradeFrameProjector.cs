@@ -93,6 +93,7 @@ namespace Surveillance.DataLayer.Projectors
                 var counterPartyBrokerId = document.CounterPartyBrokerId;
                 var tradeRationale = document.TradeRationale;
                 var tradeStrategy = document.TradeStrategy;
+                var orderCurrency = document.OrderCurrency;
 
                 var frame =
                     new TradeOrderFrame(
@@ -114,7 +115,8 @@ namespace Surveillance.DataLayer.Projectors
                         partyBrokerId,
                         counterPartyBrokerId,
                         tradeRationale,
-                        tradeStrategy);
+                        tradeStrategy,
+                        orderCurrency);
 
                 return frame;
             }

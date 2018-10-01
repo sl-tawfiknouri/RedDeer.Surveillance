@@ -96,6 +96,11 @@ namespace Surveillance.Currency
             // implicit exchange rate i.e. we want to do EUR to GBP but we have EUR / USD and GBP / USD
             var indirectConversion = TryIndirectConversion(exchangeRates, initial, targetCurrency, dayOfConversion);
 
+            if (indirectConversion == null)
+            {
+                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
+            }
+
             return indirectConversion;
         }
 

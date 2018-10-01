@@ -6,7 +6,7 @@ namespace Domain.Finance
     {
         public Currency(string value)
         {
-            Value = value ?? string.Empty;
+            Value = value?.ToUpper() ?? string.Empty;
         }
 
         public string Value { get; }

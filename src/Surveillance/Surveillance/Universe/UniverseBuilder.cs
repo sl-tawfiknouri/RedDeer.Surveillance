@@ -85,6 +85,7 @@ namespace Surveillance.Universe
         {
             var tradeEvents = 
                 trades
+                    .Where(tr => tr != null)
                     .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, tr))
                     .ToArray();
 

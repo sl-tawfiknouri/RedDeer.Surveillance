@@ -12,10 +12,12 @@ namespace Surveillance
     {
         private readonly IReddeerTradeService _reddeerTradeService;
         private readonly IReddeerRuleScheduler _ruleScheduler;
+        private readonly IReddeerSmartRuleScheduler _smartRuleScheduler;
 
         public Mediator(
             IReddeerTradeService reddeerTradeService,
-            IReddeerRuleScheduler ruleScheduler)
+            IReddeerRuleScheduler ruleScheduler,
+            IReddeerSmartRuleScheduler smartRuleScheduler)
         {
             _reddeerTradeService =
                 reddeerTradeService 
@@ -23,11 +25,15 @@ namespace Surveillance
             _ruleScheduler =
                 ruleScheduler
                 ?? throw new ArgumentNullException(nameof(ruleScheduler));
+            _smartRuleScheduler =
+                smartRuleScheduler
+                ?? throw new ArgumentNullException(nameof(smartRuleScheduler));
         }
 
         public void Initiate()
         {
             _ruleScheduler.Initiate();
+            _smartRuleScheduler.Initiate();
             _reddeerTradeService.Initialise();
         }
 
@@ -35,6 +41,7 @@ namespace Surveillance
         {
             _reddeerTradeService.Dispose();
             _ruleScheduler.Terminate();
+            _smartRuleScheduler.Terminate();
         }
     }
 }

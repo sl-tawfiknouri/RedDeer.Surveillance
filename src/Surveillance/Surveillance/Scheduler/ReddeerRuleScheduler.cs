@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe.Interfaces;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Scheduling;
@@ -87,7 +89,12 @@ namespace Surveillance.Scheduler
 
             _awsQueueClient.SubscribeToQueueAsync(
                 _awsConfiguration.ScheduledRuleQueueName,
-                async (s1, s2) => { await ExecuteMessage(s1, s2); },
+                async (s1, s2) => { await ExecuteNonDistributedMessage(s1, s2); },
+                _messageBusCts.Token);
+
+            _awsQueueClient.SubscribeToQueueAsync(
+                _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+                async (s1, s2) => { await ExecuteDistributedMessage(s1, s2); },
                 _messageBusCts.Token);
         }
 
@@ -97,9 +104,45 @@ namespace Surveillance.Scheduler
             _messageBusCts = null;
         }
 
-        public async Task ExecuteMessage(string messageId, string messageBody)
+        public async Task ExecuteNonDistributedMessage(string messageId, string messageBody)
         {
-            _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody}");
+            _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName}");
+
+            var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
+
+            if (execution == null)
+            {
+                _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+            }
+
+            if (execution?.Rules == null
+                || !execution.Rules.Any())
+            {
+                return;
+            }
+
+            foreach (var rule in execution.Rules)
+            {
+                var distributedExecution = new ScheduledExecution
+                {
+                    Rules = new List<Domain.Scheduling.Rules> {rule},
+                    TimeSeriesInitiation = execution.TimeSeriesInitiation,
+                    TimeSeriesTermination = execution.TimeSeriesTermination
+                };
+
+                var serialisedDistributedExecution =
+                    _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
+
+                await _awsQueueClient.SendToQueue(
+                    _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
+                    serialisedDistributedExecution,
+                    _messageBusCts.Token);
+            }
+        }
+
+        public async Task ExecuteDistributedMessage(string messageId, string messageBody)
+        {
+            _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
             var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 

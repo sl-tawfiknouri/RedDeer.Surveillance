@@ -69,7 +69,8 @@ namespace Surveillance.DataLayer.Tests.Projectors
                         OrderTypeId = 2,
                         OrderTypeDescription = "Limit",
                         FulfilledVolume = 100,
-                        StatusChangedOn = new DateTime(2018, 1, 1)
+                        StatusChangedOn = new DateTime(2018, 1, 1),
+                        OrderCurrency = "CNY"
                     }
                 };
 
@@ -86,6 +87,7 @@ namespace Surveillance.DataLayer.Tests.Projectors
             Assert.AreEqual(firstResult.Market.Name, "LSE");
             Assert.AreEqual(firstResult.StatusChangedOn, new DateTime(2018, 1, 1));
             Assert.AreEqual(firstResult.FulfilledVolume, 100);
+            Assert.AreEqual(firstResult.OrderCurrency, "CNY");
             Assert.AreEqual(firstResult.Security.Identifiers.ClientIdentifier, "STAN");
             Assert.AreEqual(firstResult.Security.Identifiers.Figi, "STAN");
             Assert.AreEqual(firstResult.Security.Identifiers.Isin, "STA123456789");

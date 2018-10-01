@@ -12,15 +12,16 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
     {
         private readonly IExchangeRateApiRepository _apiRepository;
         private readonly IDictionary<DateRange, CachedRates> _cache;
-        private readonly TimeSpan _expiry;
         private readonly object _lock = new object();
 
         public ExchangeRateApiCachingDecoratorRepository(IExchangeRateApiRepository apiRepository)
         {
             _apiRepository = apiRepository ?? throw new ArgumentNullException(nameof(apiRepository));
             _cache = new ConcurrentDictionary<DateRange, CachedRates>();
-            _expiry = TimeSpan.FromDays(1).Add(TimeSpan.FromHours(1));
+            Expiry = TimeSpan.FromDays(1).Add(TimeSpan.FromHours(1));
         }
+
+        public TimeSpan Expiry { get; set; }
 
         public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(
             DateTime commencement,
@@ -28,6 +29,9 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
         {
             lock (_lock)
             {
+                commencement = commencement.Date;
+                termination = termination.Date;
+
                 CleanCache();
 
                 var dateRange = new DateRange(commencement, termination);
@@ -47,7 +51,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
                 resultTask.Wait();
                 var results = resultTask.Result;
 
-                var cacheRates = new CachedRates { Dtos = results, Expiry = DateTime.UtcNow.Add(_expiry) };
+                var cacheRates = new CachedRates { Dtos = results, Expiry = DateTime.UtcNow.Add(Expiry) };
                 _cache.Add(dateRange, cacheRates);
 
                 return results;
@@ -85,8 +89,8 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 
             public override int GetHashCode()
             {
-                return Start.GetHashCode() * 13
-                       + End.GetHashCode() * 19;
+                return Start.Date.GetHashCode() * 13
+                       + End.Date.GetHashCode() * 19;
             }
 
             public override bool Equals(object obj)

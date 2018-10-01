@@ -51,5 +51,36 @@ namespace Surveillance.DataLayer.Tests.Api.ExchangeRate
 
             A.CallTo(() => _apiRepository.Get(start, end)).MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public async Task Get_FetchesFromApi_TwiceWithCachingExpiring()
+        {
+            var repo = new ExchangeRateApiCachingDecoratorRepository(_apiRepository)
+            {
+                Expiry = TimeSpan.Zero
+            };
+
+            var start = new DateTime(2018, 1, 1);
+            var end = new DateTime(2018, 1, 2);
+
+            await repo.Get(start, end);
+            await repo.Get(start, end);
+
+            A.CallTo(() => _apiRepository.Get(start, end)).MustHaveHappenedTwiceExactly();
+        }
+
+        [Test]
+        public async Task Get_FetchesFromApi_TwiceWithSameDateButDifferentTimes()
+        {
+            var repo = new ExchangeRateApiCachingDecoratorRepository(_apiRepository);
+
+            var start = new DateTime(2018, 1, 1);
+            var end = new DateTime(2018, 1, 2);
+
+            await repo.Get(start, end);
+            await repo.Get(start.AddMinutes(5), end.AddMinutes(5));
+
+            A.CallTo(() => _apiRepository.Get(start, end)).MustHaveHappenedOnceExactly();
+        }
     }
 }

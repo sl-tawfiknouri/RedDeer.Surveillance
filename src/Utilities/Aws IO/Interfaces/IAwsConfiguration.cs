@@ -4,5 +4,6 @@
     {
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
+        string ScheduleRuleDistributedWorkQueueName { get; }
     }
 }

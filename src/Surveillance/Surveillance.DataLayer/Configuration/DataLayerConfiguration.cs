@@ -10,6 +10,7 @@ namespace Surveillance.DataLayer.Configuration
         public string ElasticSearchPort { get; set; }
         public string ElasticSearchProtocol { get; set; }
         public string CaseMessageQueueName { get; set; }
+        public string ScheduleRuleDistributedWorkQueueName { get; set; }
         public string SurveillanceUserApiAccessToken { get; set; }
         public string ClientServiceUrl { get; set; }
     }

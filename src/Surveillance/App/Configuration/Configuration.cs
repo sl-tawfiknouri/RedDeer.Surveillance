@@ -28,6 +28,7 @@ namespace RedDeer.Surveillance.App.Configuration
             {
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
+                ScheduleRuleDistributedWorkQueueName = configurationBuilder.GetValue<string>("ScheduleRuleDistributedWorkQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
                 ElasticSearchProtocol = configurationBuilder.GetValue<string>("ElasticSearchProtocol"),
                 ElasticSearchDomain = configurationBuilder.GetValue<string>("ElasticSearchDomain"),

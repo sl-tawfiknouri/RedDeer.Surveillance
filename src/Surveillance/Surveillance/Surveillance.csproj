@@ -13,6 +13,7 @@
     <PackageReference Include="RedDeer.Contracts.ClientAgent" Version="1.0.0" />
     <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.2.0" />
     <PackageReference Include="StructureMap" Version="4.7.0" />
+    <PackageReference Include="TimeZoneDb" Version="1.0.15" />
   </ItemGroup>
 
   <ItemGroup>

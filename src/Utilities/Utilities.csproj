@@ -13,6 +13,8 @@
     <PackageReference Include="Fleck" Version="1.0.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="TimeZoneDb" Version="1.0.15" />
+    <PackageReference Include="TimeZoneMapper" Version="1.2.24" />
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
 

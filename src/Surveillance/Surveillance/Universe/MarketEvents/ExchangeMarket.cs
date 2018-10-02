@@ -15,7 +15,7 @@ namespace Surveillance.Universe.MarketEvents
         public string Code => _dto.Code;
         public TimeSpan MarketOpenTime => _dto.MarketOpenTime;
         public TimeSpan MarketCloseTime => _dto.MarketCloseTime;
-        public TimeZoneInfo TimeZone => TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
+        public TimeZoneInfo TimeZone => TryGetTimeZone(_dto.TimeZone);
 
         public bool IsOpenOnDay(DateTime dateTime)
         {
@@ -57,12 +57,24 @@ namespace Surveillance.Universe.MarketEvents
         /// </summary>
         public DateTimeOffset DateTime(DateTime offsetRelativeTo)
         {
-            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
+            var timeZoneInfo = TryGetTimeZone(_dto.TimeZone);
             var offset = timeZoneInfo.GetUtcOffset(offsetRelativeTo);
             var baseDate = new DateTime(offsetRelativeTo.Year, offsetRelativeTo.Month, offsetRelativeTo.Day);
             var offsetTime = new DateTimeOffset(baseDate, offset);
 
             return offsetTime;
+        }
+
+        /// <summary>
+        /// Added because linux and windows do not share a common language for describing time zones
+        /// </summary>
+        private TimeZoneInfo TryGetTimeZone(string timeZone)
+        {
+
+
+            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
+
+            return timeZoneInfo;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 
 namespace Surveillance.Universe.MarketEvents
@@ -15,7 +16,7 @@ namespace Surveillance.Universe.MarketEvents
         public string Code => _dto.Code;
         public TimeSpan MarketOpenTime => _dto.MarketOpenTime;
         public TimeSpan MarketCloseTime => _dto.MarketCloseTime;
-        public TimeZoneInfo TimeZone => TryGetTimeZone(_dto.TimeZone);
+        public TimeZoneInfo TimeZone => TryGetTimeZone();
 
         public bool IsOpenOnDay(DateTime dateTime)
         {
@@ -57,7 +58,7 @@ namespace Surveillance.Universe.MarketEvents
         /// </summary>
         public DateTimeOffset DateTime(DateTime offsetRelativeTo)
         {
-            var timeZoneInfo = TryGetTimeZone(_dto.TimeZone);
+            var timeZoneInfo = TryGetTimeZone();
             var offset = timeZoneInfo.GetUtcOffset(offsetRelativeTo);
             var baseDate = new DateTime(offsetRelativeTo.Year, offsetRelativeTo.Month, offsetRelativeTo.Day);
             var offsetTime = new DateTimeOffset(baseDate, offset);
@@ -68,13 +69,29 @@ namespace Surveillance.Universe.MarketEvents
         /// <summary>
         /// Added because linux and windows do not share a common language for describing time zones
         /// </summary>
-        private TimeZoneInfo TryGetTimeZone(string timeZone)
+        private TimeZoneInfo TryGetTimeZone()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var windowsTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
 
+                return windowsTimeZoneInfo;
+            }
 
-            var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_dto.TimeZone);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var countryCode =
+                    string.IsNullOrWhiteSpace(_dto.CountryCode)
+                        ? null
+                        : _dto.CountryCode;
 
-            return timeZoneInfo;
+                var ianaTimeZone = TimeZoneConverter.TZConvert.WindowsToIana(_dto.TimeZone, countryCode);
+                var linuxTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ianaTimeZone);
+
+                return linuxTimeZoneInfo;
+            }
+
+            throw new InvalidOperationException("ExchangeMarket.cs did not recognise the host operating system");
         }
     }
 }

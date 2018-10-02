@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
@@ -66,6 +67,18 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             {
                 _cache.Remove(item);
             }
+        }
+
+        public async Task<bool> HeartBeating(CancellationToken token)
+        {
+            if (_apiRepository == null)
+            {
+                return false;
+            }
+
+            var result = await _apiRepository.HeartBeating(token);
+
+            return result;
         }
 
         private class CachedRates

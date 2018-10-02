@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 {
     public class RuleParameterApiRepository : BaseApiRepository, IRuleParameterApiRepository
     {
+        private const string HeartbeatRoute = "api/surveillanceruleparameter/heartbeat";
         private const string Route = "api/surveillanceruleparameter/get/v1";
         private readonly ILogger _logger;
 
@@ -48,6 +50,14 @@ namespace Surveillance.DataLayer.Api.RuleParameter
             }
 
             return new RuleParameterDto();
+        }
+
+        public async Task<bool> HeartBeating(CancellationToken token)
+        {
+            var client = BuildHttpClient();
+            var result = await client.GetAsync(HeartbeatRoute, token);
+
+            return result.IsSuccessStatusCode;
         }
     }
 }

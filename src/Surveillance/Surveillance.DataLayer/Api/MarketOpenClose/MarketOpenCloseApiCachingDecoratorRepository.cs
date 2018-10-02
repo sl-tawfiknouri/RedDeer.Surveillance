@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
@@ -40,6 +41,16 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
             _cacheExpiry = DateTime.Now.Add(_cacheLength);
 
             return _cachedMarketData;
+        }
+
+        public async Task<bool> HeartBeating(CancellationToken token)
+        {
+            if (_decoratedRepository == null)
+            {
+                return false;
+            }
+
+            return await _decoratedRepository.HeartBeating(token);
         }
     }
 }

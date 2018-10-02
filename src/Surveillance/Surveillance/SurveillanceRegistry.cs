@@ -46,6 +46,8 @@ using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
+using Surveillance.Utility;
+using Surveillance.Utility.Interfaces;
 
 namespace Surveillance
 {
@@ -121,6 +123,8 @@ namespace Surveillance
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerSmartRuleScheduler>().Use<ReddeerSmartRuleScheduler>();
+
+            For<IApiHeartbeat>().Use<ApiHeartbeat>();
         }
     }
 }

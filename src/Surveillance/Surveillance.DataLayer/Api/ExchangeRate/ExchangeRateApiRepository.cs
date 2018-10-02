@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 {
     public class ExchangeRateApiRepository : BaseApiRepository, IExchangeRateApiRepository
     {
+        private const string HeartbeatRoute = "api/exchangerates/heartbeat";
         private const string Route = "api/exchangerates/get/v1";
         private readonly ILogger _logger;
 
@@ -64,6 +66,15 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             }
 
             return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
+        }
+
+        public async Task<bool> HeartBeating(CancellationToken token)
+        {
+            var httpClient = BuildHttpClient();
+
+            var response = await httpClient.GetAsync(HeartbeatRoute, token);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }

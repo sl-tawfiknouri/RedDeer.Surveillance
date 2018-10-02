@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
 {
     public class MarketOpenCloseApiRepository : BaseApiRepository, IMarketOpenCloseApiRepository
     {
+        private const string HeartbeatRoute = "api/markets/heartbeat";
         private const string Route = "api/markets/get/v1";
         private readonly ILogger _logger;
 
@@ -49,6 +51,15 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
             }
 
             return new ExchangeDto[0];
+        }
+
+        public async Task<bool> HeartBeating(CancellationToken token)
+        {
+            var client = BuildHttpClient();
+
+            var result = await client.GetAsync(HeartbeatRoute, token);
+
+            return result.IsSuccessStatusCode;
         }
     }
 }

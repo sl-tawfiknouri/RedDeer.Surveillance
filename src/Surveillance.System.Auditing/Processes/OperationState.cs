@@ -1,4 +1,4 @@
-﻿namespace Surveillance.System.DataLayer.Entities
+﻿namespace Surveillance.System.Auditing.Processes
 {
     public enum OperationState
     {

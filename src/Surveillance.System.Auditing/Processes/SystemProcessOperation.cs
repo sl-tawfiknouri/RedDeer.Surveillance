@@ -1,9 +1,17 @@
 ﻿using System;
+using Surveillance.System.Auditing.Processes.Interfaces;
 
-namespace Surveillance.System.DataLayer.Entities
+namespace Surveillance.System.Auditing.Processes
 {
-    public class SystemProcessOperationEntity
+    public class SystemProcessOperation : ISystemProcessOperation
     {
+        private readonly ISystemProcess _parent;
+
+        public SystemProcessOperation(ISystemProcess parent)
+        {
+            _parent = parent ?? throw new ArgumentNullException();
+        }
+
         /// <summary>
         /// Primary Key
         /// </summary>
@@ -28,5 +36,10 @@ namespace Surveillance.System.DataLayer.Entities
         /// Operation state
         /// </summary>
         public OperationState OperationState { get; set; }
+
+        public ISystemProcessOperationFileUpload SpawnFileUpload()
+        {
+            return new SystemProcessOperationFileUpload(this);
+        }
     }
 }

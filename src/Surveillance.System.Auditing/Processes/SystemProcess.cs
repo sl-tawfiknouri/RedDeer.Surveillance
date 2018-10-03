@@ -1,8 +1,9 @@
 ﻿using System;
+using Surveillance.System.Auditing.Processes.Interfaces;
 
-namespace Surveillance.System.DataLayer.Entities
+namespace Surveillance.System.Auditing.Processes
 {
-    public class SystemProcessEntity
+    public class SystemProcess : ISystemProcess
     {
         /// <summary>
         /// A composite of machine - process and datetime the process began at
@@ -29,5 +30,10 @@ namespace Surveillance.System.DataLayer.Entities
         /// The last time the instance issued a heart beat
         /// </summary>
         public DateTime Heartbeat { get; set; }
+
+        public ISystemProcessOperation SpawnOperation()
+        {
+            return new SystemProcessOperation(this);
+        }
     }
 }

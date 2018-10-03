@@ -1,9 +1,9 @@
-﻿using Surveillance.System.DataLayer.Entities;
+﻿using Surveillance.System.Auditing.Processes;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationRepository
     {
-        void Create(SystemProcessOperationEntity entity);
+        void Create(SystemProcessOperation entity);
     }
 }

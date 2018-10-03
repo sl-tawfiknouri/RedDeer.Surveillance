@@ -30,10 +30,5 @@ namespace Surveillance.System.Auditing.Processes
         /// The last time the instance issued a heart beat
         /// </summary>
         public DateTime Heartbeat { get; set; }
-
-        public ISystemProcessOperation SpawnOperation()
-        {
-            return new SystemProcessOperation(this);
-        }
     }
 }

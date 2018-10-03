@@ -36,10 +36,5 @@ namespace Surveillance.System.Auditing.Processes
         /// Operation state
         /// </summary>
         public OperationState OperationState { get; set; }
-
-        public ISystemProcessOperationFileUpload SpawnFileUpload()
-        {
-            return new SystemProcessOperationFileUpload(this);
-        }
     }
 }

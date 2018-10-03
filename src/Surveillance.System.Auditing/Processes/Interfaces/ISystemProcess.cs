@@ -9,7 +9,5 @@ namespace Surveillance.System.Auditing.Processes.Interfaces
         DateTime InstanceInitiated { get; set; }
         string MachineId { get; set; }
         string ProcessId { get; set; }
-
-        ISystemProcessOperation SpawnOperation();
     }
 }

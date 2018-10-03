@@ -9,7 +9,5 @@ namespace Surveillance.System.Auditing.Processes.Interfaces
         DateTime? OperationEnd { get; set; }
         DateTime OperationStart { get; set; }
         OperationState OperationState { get; set; }
-
-        ISystemProcessOperationFileUpload SpawnFileUpload();
     }
 }

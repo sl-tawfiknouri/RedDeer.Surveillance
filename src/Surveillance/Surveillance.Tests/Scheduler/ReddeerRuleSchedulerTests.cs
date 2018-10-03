@@ -12,6 +12,7 @@ using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Tests.Scheduler
@@ -30,7 +31,8 @@ namespace Surveillance.Tests.Scheduler
         private IUniversePlayer _universePlayer;
         private IRuleParameterApiRepository _ruleApiRepository;
         private IRuleParameterToRulesMapper _parameterMapper;
-
+        private IApiHeartbeat _apiHeartbeat;
+        
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
@@ -54,6 +56,7 @@ namespace Surveillance.Tests.Scheduler
             _messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _ruleApiRepository = A.Fake<IRuleParameterApiRepository>();
             _parameterMapper = A.Fake<IRuleParameterToRulesMapper>();
+            _apiHeartbeat = A.Fake<IApiHeartbeat>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -74,6 +77,7 @@ namespace Surveillance.Tests.Scheduler
                     _messageBusSerialiser,
                     _ruleApiRepository,
                     _parameterMapper,
+                    _apiHeartbeat,
                     _logger));
         }
 
@@ -94,6 +98,7 @@ namespace Surveillance.Tests.Scheduler
                     _messageBusSerialiser,
                     _ruleApiRepository,
                     _parameterMapper,
+                    _apiHeartbeat,
                     _logger));
         }
 
@@ -114,6 +119,7 @@ namespace Surveillance.Tests.Scheduler
                     _messageBusSerialiser,
                     _ruleApiRepository,
                     _parameterMapper,
+                    _apiHeartbeat,
                     _logger));
         }
 
@@ -132,6 +138,7 @@ namespace Surveillance.Tests.Scheduler
                 _messageBusSerialiser,
                 _ruleApiRepository,
                 _parameterMapper,
+                _apiHeartbeat,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -168,6 +175,7 @@ namespace Surveillance.Tests.Scheduler
                 _messageBusSerialiser,
                 _ruleApiRepository,
                 _parameterMapper,
+                _apiHeartbeat,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -186,6 +194,49 @@ namespace Surveillance.Tests.Scheduler
             A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _universePlayerFactory.Build()).MustNotHaveHappened();
             A.CallTo(() => _universePlayer.Subscribe(_spoofingRule)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task ExecuteDistributedMessage_ContinuesOnNormalLogicIfServicesRunning()
+        {
+            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            A.CallTo(() => _messageBusSerialiser.DeserialisedScheduledExecution(A<string>.Ignored)).Returns(null);
+
+            var scheduler = new ReddeerRuleScheduler(
+                _spoofingRuleFactory,
+                _cancelledOrderRuleFactory,
+                _highProfitRuleFactory,
+                _markingTheCloseRuleFactory,
+                _universeBuilder,
+                _universePlayerFactory,
+                _awsQueueClient,
+                _awsConfiguration,
+                _messageBusSerialiser,
+                _ruleApiRepository,
+                _parameterMapper,
+                _apiHeartbeat,
+                _logger);
+
+            var schedule = new ScheduledExecution
+            {
+                Rules = new List<Domain.Scheduling.Rules>(),
+                TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
+                TimeSeriesTermination = DateTime.UtcNow
+            };
+
+            A.CallTo(() => _apiHeartbeat.HeartsBeating()).ReturnsNextFromSequence(
+                new[]
+                {
+                    Task.FromResult(false),
+                    Task.FromResult(true)
+                });
+
+            var message = serialiser.SerialiseScheduledExecution(schedule);
+
+            await scheduler.ExecuteDistributedMessage("etc", message);
+            
+            A.CallTo(() => _messageBusSerialiser.DeserialisedScheduledExecution(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _apiHeartbeat.HeartsBeating()).MustHaveHappenedTwiceExactly();
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Scheduler
@@ -28,6 +29,7 @@ namespace Surveillance.Scheduler
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IApiHeartbeat _apiHeartbeat;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -44,6 +46,7 @@ namespace Surveillance.Scheduler
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
+            IApiHeartbeat apiHeartbeat,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _spoofingRuleFactory = 
@@ -77,6 +80,8 @@ namespace Surveillance.Scheduler
             _ruleParameterMapper =
                 ruleParameterMapper
                 ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+
+            _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
         }
        
         public void Initiate()
@@ -100,6 +105,29 @@ namespace Surveillance.Scheduler
         public async Task ExecuteDistributedMessage(string messageId, string messageBody)
         {
             _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+
+
+            var servicesRunning = await _apiHeartbeat.HeartsBeating();
+
+            if (!servicesRunning)
+            {
+                _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+            }
+
+            int servicesDownMinutes = 0;
+            while (!servicesRunning)
+            {
+                Thread.Sleep(30 * 1000);
+                var apiHeartBeat = _apiHeartbeat.HeartsBeating();
+                apiHeartBeat.Wait();
+                servicesRunning = apiHeartBeat.Result;
+                servicesDownMinutes += 1;
+
+                if (servicesDownMinutes == 60)
+                {
+                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over an hour but the api services on the client service have been down");
+                }
+            }
 
             var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 

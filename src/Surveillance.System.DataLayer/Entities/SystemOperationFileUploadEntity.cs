@@ -2,6 +2,9 @@
 
 namespace Surveillance.System.DataLayer.Entities
 {
+    /// <summary>
+    /// Tracks side effects
+    /// </summary>
     public class SystemOperationFileUploadEntity
     {
         /// <summary>

@@ -23,6 +23,11 @@ namespace Surveillance.System.DataLayer.Entities
         public string RuleDescription { get; set; }
 
         /// <summary>
+        /// The version of the rule being executed
+        /// </summary>
+        public string RuleVersion { get; set; }
+
+        /// <summary>
         /// The starting point for the rule run data
         /// </summary>
         public DateTime? RuleScheduleBegin { get; set; }

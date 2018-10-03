@@ -197,6 +197,7 @@ namespace Surveillance.Tests.Scheduler
         }
 
         [Test]
+        [Explicit("Takes over a minute to run")]
         public async Task ExecuteDistributedMessage_ContinuesOnNormalLogicIfServicesRunning()
         {
             var serialiser = new ScheduledExecutionMessageBusSerialiser();

@@ -6,6 +6,7 @@ using Surveillance.Scheduler.Interfaces;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
+using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance
 {
@@ -18,12 +19,14 @@ namespace Surveillance
         private readonly IReddeerTradeService _reddeerTradeService;
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerSmartRuleScheduler _smartRuleScheduler;
+        private readonly ISystemProcessRepository _processRepository;
         private ISystemProcessContext _systemProcessContext;
 
         public Mediator(
             IReddeerTradeService reddeerTradeService,
             IReddeerRuleScheduler ruleScheduler,
-            IReddeerSmartRuleScheduler smartRuleScheduler)
+            IReddeerSmartRuleScheduler smartRuleScheduler,
+            ISystemProcessRepository processRepository)
         {
             _reddeerTradeService =
                 reddeerTradeService 
@@ -34,20 +37,22 @@ namespace Surveillance
             _smartRuleScheduler =
                 smartRuleScheduler
                 ?? throw new ArgumentNullException(nameof(smartRuleScheduler));
+            _processRepository =
+                processRepository
+                ?? throw new ArgumentNullException(nameof(processRepository));
         }
 
         public void Initiate()
         {
             var systemProcess = new SystemProcess
             {
+                Heartbeat = DateTime.UtcNow,
+                InstanceInitiated = DateTime.UtcNow,
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess()?.Id.ToString(),
-                InstanceInitiated = DateTime.UtcNow,
-                Heartbeat = DateTime.UtcNow
             };
             systemProcess.InstanceId = systemProcess.GenerateInstanceId();
-
-            _systemProcessContext = new SystemProcessContext();
+            _systemProcessContext = new SystemProcessContext(_processRepository);
             _systemProcessContext.StartEvent(systemProcess);
 
             _smartRuleScheduler.Initiate();

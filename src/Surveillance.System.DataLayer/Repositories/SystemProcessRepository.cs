@@ -1,11 +1,11 @@
-﻿using Surveillance.System.DataLayer.Processes;
+﻿using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories
 {
     public class SystemProcessRepository : ISystemProcessRepository
     {
-        public void Create(SystemProcess entity)
+        public void Create(ISystemProcess entity)
         {
             if (entity == null
                 || string.IsNullOrWhiteSpace(entity.InstanceId))
@@ -16,7 +16,7 @@ namespace Surveillance.System.DataLayer.Repositories
             // TODO handle saving to Aurora
         }
 
-        public void Update(SystemProcess entity)
+        public void Update(ISystemProcess entity)
         {
             if (entity == null
                 || string.IsNullOrWhiteSpace(entity.InstanceId))

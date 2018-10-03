@@ -19,7 +19,10 @@ namespace Surveillance.System.Auditing.Context
             return new SystemProcessOperationFileUploadContext(this);
         }
 
-        public ISystemProcessOperationDistributeRuleContext 
+        public ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext()
+        {
+            return new SystemProcessOperationDistributeRuleContext(this);
+        }
 
         public void StartEvent(ISystemProcessOperation processOperation)
         {

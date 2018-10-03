@@ -1,6 +1,6 @@
 ﻿using System;
 using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.System.Auditing.Processes.Interfaces;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.Auditing.Context
 {

@@ -1,11 +1,11 @@
-﻿using Surveillance.System.DataLayer.Processes;
+﻿using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories
 {
-    public class SystemProcessOperationRuleRunRepository : ISystemProcessOperationRuleRunRepository
+    public class SystemProcessOperationDistributeRuleRepository : ISystemProcessOperationDistributeRuleRepository
     {
-        public void Create(SystemProcessOperationRuleRun entity)
+        public void Create(ISystemProcessOperationDistributeRule entity)
         {
             if (entity == null
                 || string.IsNullOrWhiteSpace(entity.OperationId))
@@ -15,6 +15,5 @@ namespace Surveillance.System.DataLayer.Repositories
 
             // TODO handle saving to Aurora
         }
-
     }
 }

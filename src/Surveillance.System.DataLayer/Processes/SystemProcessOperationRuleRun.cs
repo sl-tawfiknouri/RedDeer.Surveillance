@@ -1,22 +1,13 @@
 ﻿using System;
-using Surveillance.System.Auditing.Processes.Interfaces;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.Auditing.Processes
+namespace Surveillance.System.DataLayer.Processes
 {
     /// <summary>
     /// Tracks side effects
     /// </summary>
     public class SystemProcessOperationRuleRun : ISystemProcessOperationRuleRun
     {
-        private readonly ISystemProcessOperation _systemProcessOperation;
-
-        public SystemProcessOperationRuleRun(ISystemProcessOperation systemProcessOperation)
-        {
-            _systemProcessOperation =
-                systemProcessOperation
-                ?? throw new ArgumentNullException(nameof(systemProcessOperation));
-        }
-
         /// <summary>
         /// Primary key
         /// </summary>

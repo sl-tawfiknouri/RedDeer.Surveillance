@@ -1,17 +1,10 @@
 ﻿using System;
-using Surveillance.System.Auditing.Processes.Interfaces;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.Auditing.Processes
+namespace Surveillance.System.DataLayer.Processes
 {
     public class SystemProcessOperation : ISystemProcessOperation
     {
-        private readonly ISystemProcess _parent;
-
-        public SystemProcessOperation(ISystemProcess parent)
-        {
-            _parent = parent ?? throw new ArgumentNullException();
-        }
-
         /// <summary>
         /// Primary Key
         /// </summary>

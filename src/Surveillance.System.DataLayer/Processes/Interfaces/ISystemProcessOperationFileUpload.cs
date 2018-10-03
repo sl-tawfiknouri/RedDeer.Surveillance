@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surveillance.System.Auditing.Processes.Interfaces
+namespace Surveillance.System.DataLayer.Processes.Interfaces
 {
     public interface ISystemProcessOperationFileUpload
     {

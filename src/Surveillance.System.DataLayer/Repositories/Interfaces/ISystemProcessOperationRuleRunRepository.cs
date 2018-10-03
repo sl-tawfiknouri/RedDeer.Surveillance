@@ -1,4 +1,4 @@
-﻿using Surveillance.System.Auditing.Processes;
+﻿using Surveillance.System.DataLayer.Processes;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {

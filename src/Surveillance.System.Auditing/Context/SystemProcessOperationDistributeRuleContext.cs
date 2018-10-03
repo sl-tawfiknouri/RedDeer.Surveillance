@@ -4,21 +4,20 @@ using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.Auditing.Context
 {
-    public class SystemProcessOperationRunRuleContext : ISystemProcessOperationRunRuleContext
+    public class SystemProcessOperationDistributeRuleContext : ISystemProcessOperationDistributeRuleContext
     {
         private readonly ISystemProcessOperationContext _processOperationContext;
-        private ISystemProcessOperationRuleRun _ruleRun;
-
-        public SystemProcessOperationRunRuleContext(ISystemProcessOperationContext processOperationContext)
+        
+        public SystemProcessOperationDistributeRuleContext(ISystemProcessOperationContext processOperationContext)
         {
             _processOperationContext =
                 processOperationContext
                 ?? throw new ArgumentNullException(nameof(processOperationContext));
         }
 
-        public void StartEvent(ISystemProcessOperationRuleRun ruleRun)
+        public void StartEvent(ISystemProcessOperationDistributeRule distributeRule)
         {
-            _ruleRun = ruleRun;
+            // save distribute rule
         }
 
         public ISystemProcessOperationContext EndEvent()

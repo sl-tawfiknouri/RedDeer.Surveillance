@@ -1,7 +1,7 @@
 ﻿using System;
-using Surveillance.System.Auditing.Processes.Interfaces;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.Auditing.Processes
+namespace Surveillance.System.DataLayer.Processes
 {
     public class SystemProcess : ISystemProcess
     {
@@ -30,5 +30,11 @@ namespace Surveillance.System.Auditing.Processes
         /// The last time the instance issued a heart beat
         /// </summary>
         public DateTime Heartbeat { get; set; }
+
+        public string GenerateInstanceId()
+        {
+            // ReSharper disable once UseFormatSpecifierInInterpolation
+            return $"{ProcessId}-{InstanceInitiated.ToString("yyyy/MM/dd hh:mm:ss")}";
+        }
     }
 }

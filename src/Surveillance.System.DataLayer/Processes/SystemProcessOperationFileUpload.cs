@@ -1,20 +1,13 @@
 ﻿using System;
-using Surveillance.System.Auditing.Processes.Interfaces;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.Auditing.Processes
+namespace Surveillance.System.DataLayer.Processes
 {
     /// <summary>
     /// Tracks side effects
     /// </summary>
     public class SystemProcessOperationFileUpload : ISystemProcessOperationFileUpload
     {
-        private readonly ISystemProcessOperation _systemOperation;
-
-        public SystemProcessOperationFileUpload(ISystemProcessOperation systemOperation)
-        {
-            _systemOperation = systemOperation ?? throw new ArgumentNullException(nameof(systemOperation));
-        }
-
         /// <summary>
         /// Primary key
         /// </summary>

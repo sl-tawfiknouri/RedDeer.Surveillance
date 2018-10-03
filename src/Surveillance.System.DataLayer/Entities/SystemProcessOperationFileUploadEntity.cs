@@ -5,7 +5,7 @@ namespace Surveillance.System.DataLayer.Entities
     /// <summary>
     /// Tracks side effects
     /// </summary>
-    public class SystemOperationFileUploadEntity
+    public class SystemProcessOperationFileUploadEntity
     {
         /// <summary>
         /// Primary key

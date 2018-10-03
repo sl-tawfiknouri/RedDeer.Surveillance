@@ -21,7 +21,7 @@ namespace Surveillance.Tests.Scheduler
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _busSerialiser;
         private IRuleParameterApiRepository _apiRepository;
-        private ILogger<ReddeerSmartRuleScheduler> _logger;
+        private ILogger<ReddeerDistributedRuleScheduler> _logger;
 
         [SetUp]
         public void Setup()
@@ -30,7 +30,7 @@ namespace Surveillance.Tests.Scheduler
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _busSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _apiRepository = A.Fake<IRuleParameterApiRepository>();
-            _logger = A.Fake<ILogger<ReddeerSmartRuleScheduler>>();
+            _logger = A.Fake<ILogger<ReddeerDistributedRuleScheduler>>();
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     null,
                     _awsConfiguration,
                     _busSerialiser,
@@ -51,7 +51,7 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     null,
                     _busSerialiser,
@@ -65,7 +65,7 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     null,
@@ -78,7 +78,7 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     _busSerialiser,
@@ -91,7 +91,7 @@ namespace Surveillance.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     _busSerialiser,
@@ -116,7 +116,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler = 
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -155,7 +155,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -197,7 +197,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -239,7 +239,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -281,7 +281,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -323,7 +323,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -366,7 +366,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -409,7 +409,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -452,7 +452,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,
@@ -499,7 +499,7 @@ namespace Surveillance.Tests.Scheduler
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
             var scheduler =
-                new ReddeerSmartRuleScheduler(
+                new ReddeerDistributedRuleScheduler(
                     _awsClient,
                     _awsConfiguration,
                     serialiser,

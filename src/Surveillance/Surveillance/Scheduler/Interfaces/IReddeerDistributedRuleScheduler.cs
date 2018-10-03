@@ -2,7 +2,7 @@
 
 namespace Surveillance.Scheduler.Interfaces
 {
-    public interface IReddeerSmartRuleScheduler
+    public interface IReddeerDistributedRuleScheduler
     {
         Task ExecuteNonDistributedMessage(string messageId, string messageBody);
         void Initiate();

@@ -122,7 +122,7 @@ namespace Surveillance
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
-            For<IReddeerSmartRuleScheduler>().Use<ReddeerSmartRuleScheduler>();
+            For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
         }

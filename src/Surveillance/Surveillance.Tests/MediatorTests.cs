@@ -12,7 +12,7 @@ namespace Surveillance.Tests
     {
         private IReddeerTradeService _tradeService;
         private IReddeerRuleScheduler _ruleScheduler;
-        private IReddeerSmartRuleScheduler _ruleSmartScheduler;
+        private IReddeerDistributedRuleScheduler _ruleDistributedScheduler;
         private ISystemProcessRepository _processRepository;
 
         [SetUp]
@@ -20,7 +20,7 @@ namespace Surveillance.Tests
         {
             _tradeService = A.Fake<IReddeerTradeService>();
             _ruleScheduler = A.Fake<IReddeerRuleScheduler>();
-            _ruleSmartScheduler = A.Fake<IReddeerSmartRuleScheduler>();
+            _ruleDistributedScheduler = A.Fake<IReddeerDistributedRuleScheduler>();
             _processRepository = A.Fake<ISystemProcessRepository>();
         }
 
@@ -28,14 +28,14 @@ namespace Surveillance.Tests
         public void Constructor_NullTradeService_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleSmartScheduler, _processRepository));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _processRepository));
         }
 
         [Test]
         public void Constructor_NullRuleScheduler_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleSmartScheduler, _processRepository));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _processRepository));
         }
 
         [Test]
@@ -48,25 +48,25 @@ namespace Surveillance.Tests
         [Test]
         public void Initiate_CallsInitiateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleSmartScheduler, _processRepository);
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _processRepository);
 
             mediator.Initiate();
 
             A.CallTo(() => _tradeService.Initialise()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleScheduler.Initiate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _ruleSmartScheduler.Initiate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleDistributedScheduler.Initiate()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void Terminate_CallsTerminateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleSmartScheduler, _processRepository);
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _processRepository);
 
             mediator.Terminate();
 
             A.CallTo(() => _tradeService.Dispose()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleScheduler.Terminate()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _ruleSmartScheduler.Terminate()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleDistributedScheduler.Terminate()).MustHaveHappenedOnceExactly();
         }
     }
 }

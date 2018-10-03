@@ -13,22 +13,22 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Scheduler
 {
-    public class ReddeerSmartRuleScheduler : IReddeerSmartRuleScheduler
+    public class ReddeerDistributedRuleScheduler : IReddeerDistributedRuleScheduler
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
 
-        private readonly ILogger<ReddeerSmartRuleScheduler> _logger;
+        private readonly ILogger<ReddeerDistributedRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
 
-        public ReddeerSmartRuleScheduler(
+        public ReddeerDistributedRuleScheduler(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             IRuleParameterApiRepository ruleParameterApiRepository,
-            ILogger<ReddeerSmartRuleScheduler> logger)
+            ILogger<ReddeerDistributedRuleScheduler> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));

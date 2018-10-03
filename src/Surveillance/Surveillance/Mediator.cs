@@ -18,14 +18,14 @@ namespace Surveillance
     {
         private readonly IReddeerTradeService _reddeerTradeService;
         private readonly IReddeerRuleScheduler _ruleScheduler;
-        private readonly IReddeerSmartRuleScheduler _smartRuleScheduler;
+        private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly ISystemProcessRepository _processRepository;
         private ISystemProcessContext _systemProcessContext;
 
         public Mediator(
             IReddeerTradeService reddeerTradeService,
             IReddeerRuleScheduler ruleScheduler,
-            IReddeerSmartRuleScheduler smartRuleScheduler,
+            IReddeerDistributedRuleScheduler distributedRuleScheduler,
             ISystemProcessRepository processRepository)
         {
             _reddeerTradeService =
@@ -34,9 +34,9 @@ namespace Surveillance
             _ruleScheduler =
                 ruleScheduler
                 ?? throw new ArgumentNullException(nameof(ruleScheduler));
-            _smartRuleScheduler =
-                smartRuleScheduler
-                ?? throw new ArgumentNullException(nameof(smartRuleScheduler));
+            _distributedRuleScheduler =
+                distributedRuleScheduler
+                ?? throw new ArgumentNullException(nameof(distributedRuleScheduler));
             _processRepository =
                 processRepository
                 ?? throw new ArgumentNullException(nameof(processRepository));
@@ -55,7 +55,7 @@ namespace Surveillance
             _systemProcessContext = new SystemProcessContext(_processRepository);
             _systemProcessContext.StartEvent(systemProcess);
 
-            _smartRuleScheduler.Initiate();
+            _distributedRuleScheduler.Initiate();
             _ruleScheduler.Initiate();
             _reddeerTradeService.Initialise();
         }
@@ -64,7 +64,7 @@ namespace Surveillance
         {
             _reddeerTradeService.Dispose();
             _ruleScheduler.Terminate();
-            _smartRuleScheduler.Terminate();
+            _distributedRuleScheduler.Terminate();
         }
     }
 }

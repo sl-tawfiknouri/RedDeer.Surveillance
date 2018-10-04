@@ -10,17 +10,19 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Tests.Scheduler
 {
     [TestFixture]
-    public class ReddeerSmartRuleSchedulerTests
+    public class ReddeerDistributedRuleSchedulerTests
     {
         private IAwsQueueClient _awsClient;
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _busSerialiser;
         private IRuleParameterApiRepository _apiRepository;
+        private ISystemProcessContext _systemProcessContext;
         private ILogger<ReddeerDistributedRuleScheduler> _logger;
 
         [SetUp]
@@ -30,6 +32,7 @@ namespace Surveillance.Tests.Scheduler
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _busSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _apiRepository = A.Fake<IRuleParameterApiRepository>();
+            _systemProcessContext = A.Fake<ISystemProcessContext>();
             _logger = A.Fake<ILogger<ReddeerDistributedRuleScheduler>>();
         }
 
@@ -43,6 +46,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     _busSerialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger));
         }
 
@@ -56,6 +60,7 @@ namespace Surveillance.Tests.Scheduler
                     null,
                     _busSerialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger));
         }
 
@@ -70,6 +75,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     null,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger));
         }
 
@@ -83,6 +89,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     _busSerialiser,
                     null,
+                    _systemProcessContext,
                     _logger));
         }
 
@@ -96,6 +103,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     _busSerialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     null));
         }
 
@@ -121,6 +129,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -160,6 +169,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -202,6 +212,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -244,6 +255,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -286,6 +298,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -328,6 +341,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -371,6 +385,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -414,6 +429,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -457,6 +473,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =
@@ -504,6 +521,7 @@ namespace Surveillance.Tests.Scheduler
                     _awsConfiguration,
                     serialiser,
                     _apiRepository,
+                    _systemProcessContext,
                     _logger);
 
             var execution =

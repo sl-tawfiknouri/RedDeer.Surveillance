@@ -1,4 +1,5 @@
-﻿using Surveillance.System.DataLayer.Processes.Interfaces;
+﻿using System;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.Auditing.Context.Interfaces
 {
@@ -6,6 +7,12 @@ namespace Surveillance.System.Auditing.Context.Interfaces
     {
         ISystemProcessOperationFileUploadContext CreateFileUploadContext();
         ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext();
+
+        ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(
+            DateTime? initialStart,
+            DateTime? initialEnd,
+            string rules);
+
         ISystemProcessContext EndEvent();
         void StartEvent(ISystemProcessOperation processOperation);
     }

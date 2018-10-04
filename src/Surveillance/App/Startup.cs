@@ -9,6 +9,8 @@ using Surveillance;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.Auditing;
+using Surveillance.System.DataLayer;
 using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.Surveillance.App
@@ -33,6 +35,8 @@ namespace RedDeer.Surveillance.App
 
             container.Configure(config =>
             {
+                config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.IncludeRegistry<DataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceRegistry>();
                 config.IncludeRegistry<AppRegistry>();

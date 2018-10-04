@@ -9,7 +9,9 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Aws_IO.Interfaces;
+using Utilities.Extensions;
 
 namespace Surveillance.Scheduler
 {
@@ -19,6 +21,7 @@ namespace Surveillance.Scheduler
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly ISystemProcessContext _systemProcessContext;
 
         private readonly ILogger<ReddeerDistributedRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -28,6 +31,7 @@ namespace Surveillance.Scheduler
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             IRuleParameterApiRepository ruleParameterApiRepository,
+            ISystemProcessContext systemProcessContext,
             ILogger<ReddeerDistributedRuleScheduler> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
@@ -38,12 +42,15 @@ namespace Surveillance.Scheduler
             _ruleParameterApiRepository =
                 ruleParameterApiRepository
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
+
+            _systemProcessContext =
+                systemProcessContext
+                ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
-        
+
         public void Initiate()
         {
             _messageBusCts?.Cancel();
-
             _messageBusCts = new CancellationTokenSource();
 
             _awsQueueClient.SubscribeToQueueAsync(
@@ -60,6 +67,8 @@ namespace Surveillance.Scheduler
 
         public async Task ExecuteNonDistributedMessage(string messageId, string messageBody)
         {
+            var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+            
             _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName}");
 
             var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
@@ -72,6 +81,7 @@ namespace Surveillance.Scheduler
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {
+                opCtx.EndEvent();
                 return;
             }
 
@@ -80,11 +90,22 @@ namespace Surveillance.Scheduler
                 ruleTimespan.TotalDays >= 7
                 ? await _ruleParameterApiRepository.Get()
                 : null;
-            
+
+            var ruleCtx = 
+                opCtx
+                    .CreateAndStartDistributeRuleContext(
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime,
+                        execution.Rules?.Aggregate(string.Empty, (x,i) => x + ", " + i.GetDescription()));
+
             foreach (var rule in execution.Rules)
             {
                 await ScheduleRule(rule, execution, parameters);
             }
+
+            ruleCtx
+                .EndEvent()
+                .EndEvent();
         }
 
         private async Task ScheduleRule(Domain.Scheduling.Rules rule, ScheduledExecution execution, RuleParameterDto dtos)

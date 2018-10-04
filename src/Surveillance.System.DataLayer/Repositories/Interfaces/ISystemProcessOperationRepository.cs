@@ -1,9 +1,10 @@
 ﻿using Surveillance.System.DataLayer.Processes;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationRepository
     {
-        void Create(SystemProcessOperation entity);
+        void Create(ISystemProcessOperation entity);
     }
 }

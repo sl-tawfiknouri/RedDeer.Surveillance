@@ -5,7 +5,6 @@ namespace Surveillance.System.Auditing.Context.Interfaces
 {
     public interface ISystemProcessOperationContext
     {
-        ISystemProcessOperationFileUploadContext CreateFileUploadContext();
         ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext();
 
         ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(

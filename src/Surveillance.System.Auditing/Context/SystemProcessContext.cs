@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.System.Auditing.Factories.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
@@ -10,13 +11,17 @@ namespace Surveillance.System.Auditing.Context
     public class SystemProcessContext : ISystemProcessContext
     {
         private readonly ISystemProcessRepository _systemProcessRepository;
+        private readonly ISystemProcessOperationContextFactory _factory;
         private ISystemProcess _systemProcess;
 
-        public SystemProcessContext(ISystemProcessRepository systemProcessRepository)
+        public SystemProcessContext(
+            ISystemProcessRepository systemProcessRepository,
+            ISystemProcessOperationContextFactory factory)
         {
             _systemProcessRepository =
                 systemProcessRepository
                 ?? throw new ArgumentNullException(nameof(systemProcessRepository));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
             var systemProcess = new SystemProcess
             {
@@ -38,7 +43,7 @@ namespace Surveillance.System.Auditing.Context
 
         public ISystemProcessOperationContext CreateOperationContext()
         {
-            return new SystemProcessOperationContext(this);
+            return _factory.Build(this);
         }
 
         public ISystemProcessOperationContext CreateAndStartOperationContext()
@@ -51,7 +56,7 @@ namespace Surveillance.System.Auditing.Context
                 OperationState = OperationState.InProcess
             };
 
-            var ctx = new SystemProcessOperationContext(this);
+            var ctx = _factory.Build(this);
             ctx.StartEvent(op);
 
             return ctx;

@@ -1,11 +1,11 @@
-﻿using Surveillance.System.DataLayer.Processes;
+﻿using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories
 {
     public class SystemProcessOperationRuleRunRepository : ISystemProcessOperationRuleRunRepository
     {
-        public void Create(SystemProcessOperationRuleRun entity)
+        public void Create(ISystemProcessOperationRuleRun entity)
         {
             if (entity == null
                 || string.IsNullOrWhiteSpace(entity.OperationId))

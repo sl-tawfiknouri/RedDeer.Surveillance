@@ -1,28 +1,46 @@
 ﻿using System;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.System.Auditing.Factories.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance.System.Auditing.Context
 {
     public class SystemProcessOperationContext : ISystemProcessOperationContext
     {
-        private readonly ISystemProcessContext _systemProcessContext;
         private ISystemProcessOperation _systemProcessOperation;
+        private readonly ISystemProcessContext _systemProcessContext;
+        private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
+        private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
+        private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
 
-        public SystemProcessOperationContext(ISystemProcessContext systemProcessContext)
+        public SystemProcessOperationContext(
+            ISystemProcessContext systemProcessContext,
+            ISystemProcessOperationRepository systemProcessOperationRepository,
+            ISystemProcessOperationRunRuleContextFactory runRuleContextFactory,
+            ISystemProcessOperationDistributeRuleContextFactory distributeRuleContextFactory)
         {
-            _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
-        }
+            _systemProcessContext =
+                systemProcessContext
+                ?? throw new ArgumentNullException(nameof(systemProcessContext));
 
-        public ISystemProcessOperationFileUploadContext CreateFileUploadContext()
-        {
-            return new SystemProcessOperationFileUploadContext(this);
+            _systemProcessOperationRepository =
+                systemProcessOperationRepository
+                ?? throw new ArgumentNullException(nameof(systemProcessOperationRepository));
+
+            _runRuleContextFactory =
+                runRuleContextFactory
+                ?? throw new ArgumentNullException(nameof(runRuleContextFactory));
+
+            _distributeRuleContextFactory =
+                distributeRuleContextFactory
+                ?? throw new ArgumentNullException(nameof(distributeRuleContextFactory));
         }
 
         public ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext()
         {
-            return new SystemProcessOperationDistributeRuleContext(this);
+            return _distributeRuleContextFactory.Build(this);
         }
 
         public ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(
@@ -38,7 +56,7 @@ namespace Surveillance.System.Auditing.Context
                 RulesDistributed = rules
             };
 
-            var ctx = new SystemProcessOperationDistributeRuleContext(this);
+            var ctx = _distributeRuleContextFactory.Build(this);
             ctx.StartEvent(op);
 
             return ctx;
@@ -46,7 +64,7 @@ namespace Surveillance.System.Auditing.Context
 
         public ISystemProcessOperationRunRuleContext CreateRuleRunContext()
         {
-            return new SystemProcessOperationRunRuleContext(this);
+            return _runRuleContextFactory.Build(this);
         }
 
         public ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
@@ -55,7 +73,7 @@ namespace Surveillance.System.Auditing.Context
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd)
         {
-            var ctx = new SystemProcessOperationRunRuleContext(this);
+            var ctx = _runRuleContextFactory.Build(this);
             var startEvent = new SystemProcessOperationRuleRun
             {
                 OperationId = _systemProcessOperation.Id,
@@ -73,6 +91,7 @@ namespace Surveillance.System.Auditing.Context
         public void StartEvent(ISystemProcessOperation processOperation)
         {
             _systemProcessOperation = processOperation;
+            _systemProcessOperationRepository.Create(processOperation);
         }
 
         public ISystemProcessContext EndEvent()

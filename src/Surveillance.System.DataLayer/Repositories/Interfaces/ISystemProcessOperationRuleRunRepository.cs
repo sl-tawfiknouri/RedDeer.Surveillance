@@ -1,9 +1,9 @@
-﻿using Surveillance.System.DataLayer.Processes;
+﻿using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationRuleRunRepository
     {
-        void Create(SystemProcessOperationRuleRun entity);
+        void Create(ISystemProcessOperationRuleRun entity);
     }
 }

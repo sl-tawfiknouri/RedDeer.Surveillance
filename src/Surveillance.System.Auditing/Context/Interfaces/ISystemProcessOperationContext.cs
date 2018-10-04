@@ -13,6 +13,14 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             DateTime? initialEnd,
             string rules);
 
+        ISystemProcessOperationRunRuleContext CreateRuleRunContext();
+
+        ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
+            string ruleDescription,
+            string ruleVersion,
+            DateTime ruleScheduleBegin,
+            DateTime ruleScheduleEnd);
+
         ISystemProcessContext EndEvent();
         void StartEvent(ISystemProcessOperation processOperation);
     }

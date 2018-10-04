@@ -5,6 +5,7 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -15,17 +16,20 @@ namespace Surveillance.Rules.Cancelled_Orders
     {
         private readonly ICancelledOrderRuleParameters _parameters;
         private readonly ICancelledOrderRuleCachedMessageSender _cachedMessageSender;
+        private readonly ISystemProcessOperationRunRuleContext _opCtx;
 
         private readonly ILogger _logger;
         
         public CancelledOrderRule(
             ICancelledOrderRuleParameters parameters,
             ICancelledOrderRuleCachedMessageSender cachedMessageSender,
+            ISystemProcessOperationRunRuleContext opCtx,
             ILogger<CancelledOrderRule> logger)
             : base(parameters?.WindowSize ?? TimeSpan.FromMinutes(60), Domain.Scheduling.Rules.CancelledOrders, Versioner.Version(2, 0), "Cancelled Order Rule", logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
+            _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -138,6 +142,7 @@ namespace Surveillance.Rules.Cancelled_Orders
             _logger.LogDebug("Universe Eschaton occurred in the Cancelled Order Rule");
 
             _cachedMessageSender.Flush();
+            _opCtx?.EndEvent();
         }
     }
 }

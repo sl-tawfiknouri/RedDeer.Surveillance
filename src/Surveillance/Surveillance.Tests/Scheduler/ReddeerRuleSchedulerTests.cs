@@ -11,6 +11,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
@@ -32,7 +33,8 @@ namespace Surveillance.Tests.Scheduler
         private IRuleParameterApiRepository _ruleApiRepository;
         private IRuleParameterToRulesMapper _parameterMapper;
         private IApiHeartbeat _apiHeartbeat;
-        
+        private ISystemProcessContext _ctx;
+        private ISystemProcessOperationContext _opCtx;
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
@@ -57,6 +59,8 @@ namespace Surveillance.Tests.Scheduler
             _ruleApiRepository = A.Fake<IRuleParameterApiRepository>();
             _parameterMapper = A.Fake<IRuleParameterToRulesMapper>();
             _apiHeartbeat = A.Fake<IApiHeartbeat>();
+            _ctx = A.Fake<ISystemProcessContext>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -78,6 +82,7 @@ namespace Surveillance.Tests.Scheduler
                     _ruleApiRepository,
                     _parameterMapper,
                     _apiHeartbeat,
+                    _ctx,
                     _logger));
         }
 
@@ -99,6 +104,7 @@ namespace Surveillance.Tests.Scheduler
                     _ruleApiRepository,
                     _parameterMapper,
                     _apiHeartbeat,
+                    _ctx,
                     _logger));
         }
 
@@ -120,6 +126,7 @@ namespace Surveillance.Tests.Scheduler
                     _ruleApiRepository,
                     _parameterMapper,
                     _apiHeartbeat,
+                    _ctx,
                     _logger));
         }
 
@@ -139,6 +146,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleApiRepository,
                 _parameterMapper,
                 _apiHeartbeat,
+                _ctx,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -150,11 +158,11 @@ namespace Surveillance.Tests.Scheduler
 
             A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored)).Returns(_universe);
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
-            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored)).Returns(_spoofingRule);
+            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).Returns(_spoofingRule);
 
-           await scheduler.Execute(schedule);
+           await scheduler.Execute(schedule, _opCtx);
 
-            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Subscribe(_spoofingRule)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Play(A<IUniverse>.Ignored)).MustHaveHappened();
@@ -176,6 +184,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleApiRepository,
                 _parameterMapper,
                 _apiHeartbeat,
+                _ctx,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -187,11 +196,11 @@ namespace Surveillance.Tests.Scheduler
 
             A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored)).Returns(_universe);
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
-            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored)).Returns(_spoofingRule);
+            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).Returns(_spoofingRule);
 
-            await scheduler.Execute(schedule);
+            await scheduler.Execute(schedule, _opCtx);
 
-            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => _spoofingRuleFactory.Build(A<ISpoofingRuleParameters>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => _universePlayerFactory.Build()).MustNotHaveHappened();
             A.CallTo(() => _universePlayer.Subscribe(_spoofingRule)).MustNotHaveHappened();
         }
@@ -216,6 +225,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleApiRepository,
                 _parameterMapper,
                 _apiHeartbeat,
+                _ctx,
                 _logger);
 
             var schedule = new ScheduledExecution

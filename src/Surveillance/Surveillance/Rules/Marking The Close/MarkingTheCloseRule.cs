@@ -5,6 +5,7 @@ using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -15,6 +16,7 @@ namespace Surveillance.Rules.Marking_The_Close
     {
         private readonly IMarkingTheCloseParameters _parameters;
         private readonly IMarkingTheCloseMessageSender _messageSender;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
@@ -22,6 +24,7 @@ namespace Surveillance.Rules.Marking_The_Close
         public MarkingTheCloseRule(
             IMarkingTheCloseParameters parameters,
             IMarkingTheCloseMessageSender messageSender,
+            ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger<MarkingTheCloseRule> logger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
@@ -32,6 +35,7 @@ namespace Surveillance.Rules.Marking_The_Close
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -160,6 +164,7 @@ namespace Surveillance.Rules.Marking_The_Close
         protected override void EndOfUniverse()
         {
             _logger.LogDebug("Eschaton occured in Marking The Close Rule");
+            _ruleCtx?.EndEvent();
         }
     }
 }

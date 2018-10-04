@@ -7,6 +7,7 @@ using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
 
@@ -16,11 +17,13 @@ namespace Surveillance.Rules.Spoofing
     {
         private readonly ISpoofingRuleParameters _parameters;
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
 
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
             ISpoofingRuleMessageSender spoofingRuleMessageSender,
+            ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger logger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
@@ -32,6 +35,7 @@ namespace Surveillance.Rules.Spoofing
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
         protected override void RunRule(ITradingHistoryStack history)
@@ -184,6 +188,7 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogDebug("Eschaton occured in Spoofing Rule");
+            _ruleCtx?.EndEvent();
         }
     }
 }

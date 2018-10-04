@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -20,12 +22,15 @@ namespace Surveillance.Factories
             _ruleMessageSender = ruleMessageSender ?? throw new ArgumentNullException(nameof(ruleMessageSender));
         }
 
-        public ISpoofingRule Build(ISpoofingRuleParameters spoofingParameters)
+        public ISpoofingRule Build(ISpoofingRuleParameters spoofingParameters, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             return new SpoofingRule(
                 spoofingParameters,
                 _ruleMessageSender,
+                ruleCtx,
                 _logger);
         }
+
+        public string RuleVersion => Versioner.Version(1, 0);
     }
 }

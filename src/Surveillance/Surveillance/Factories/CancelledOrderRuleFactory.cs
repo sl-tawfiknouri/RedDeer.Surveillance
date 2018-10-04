@@ -1,9 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -20,9 +22,11 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ICancelledOrderRule Build(ICancelledOrderRuleParameters parameters)
+        public ICancelledOrderRule Build(ICancelledOrderRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            return new CancelledOrderRule(parameters, _messageSender, _logger);
+            return new CancelledOrderRule(parameters, _messageSender, ruleCtx, _logger);
         }
+
+        public string Version => Versioner.Version(1, 0);
     }
 }

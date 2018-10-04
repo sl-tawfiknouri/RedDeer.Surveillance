@@ -44,6 +44,32 @@ namespace Surveillance.System.Auditing.Context
             return ctx;
         }
 
+        public ISystemProcessOperationRunRuleContext CreateRuleRunContext()
+        {
+            return new SystemProcessOperationRunRuleContext(this);
+        }
+
+        public ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
+            string ruleDescription,
+            string ruleVersion,
+            DateTime ruleScheduleBegin,
+            DateTime ruleScheduleEnd)
+        {
+            var ctx = new SystemProcessOperationRunRuleContext(this);
+            var startEvent = new SystemProcessOperationRuleRun
+            {
+                OperationId = _systemProcessOperation.Id,
+                RuleDescription = ruleDescription,
+                RuleVersion = ruleVersion,
+                RuleScheduleBegin = ruleScheduleBegin,
+                RuleScheduleEnd = ruleScheduleEnd
+            };
+
+            ctx.StartEvent(startEvent);
+
+            return ctx;
+        }
+
         public void StartEvent(ISystemProcessOperation processOperation)
         {
             _systemProcessOperation = processOperation;

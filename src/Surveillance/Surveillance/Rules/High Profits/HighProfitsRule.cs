@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -24,6 +25,7 @@ namespace Surveillance.Rules.High_Profits
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
 
         private bool _marketOpened = true; // assume the market has opened initially
 
@@ -31,6 +33,7 @@ namespace Surveillance.Rules.High_Profits
             ICurrencyConverter currencyConverter,
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger<HighProfitsRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -42,6 +45,7 @@ namespace Surveillance.Rules.High_Profits
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -357,6 +361,7 @@ namespace Surveillance.Rules.High_Profits
             }
 
             _sender.Flush();
+            _ruleCtx?.EndEvent();
         }
     }
 }

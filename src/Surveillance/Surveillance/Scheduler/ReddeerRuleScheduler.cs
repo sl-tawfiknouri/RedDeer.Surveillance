@@ -11,8 +11,10 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
+using Utilities.Extensions;
 
 namespace Surveillance.Scheduler
 {
@@ -30,6 +32,7 @@ namespace Surveillance.Scheduler
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IApiHeartbeat _apiHeartbeat;
+        private readonly ISystemProcessContext _systemProcessContext;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -47,6 +50,7 @@ namespace Surveillance.Scheduler
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IApiHeartbeat apiHeartbeat,
+            ISystemProcessContext systemProcessContext,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _spoofingRuleFactory = 
@@ -82,6 +86,7 @@ namespace Surveillance.Scheduler
                 ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
 
             _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
+            _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
        
         public void Initiate()
@@ -104,9 +109,10 @@ namespace Surveillance.Scheduler
 
         public async Task ExecuteDistributedMessage(string messageId, string messageBody)
         {
+            var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+
             _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
-
-
+            
             var servicesRunning = await _apiHeartbeat.HeartsBeating();
 
             if (!servicesRunning)
@@ -136,14 +142,14 @@ namespace Surveillance.Scheduler
                 _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
             }
 
-            await Execute(execution);
+            await Execute(execution, opCtx);
         }
 
         /// <summary>
         /// Once a message is picked up, deserialise the scheduled execution object
         /// and run execute
         /// </summary>
-        public async Task Execute(ScheduledExecution execution)
+        public async Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
             if (execution?.Rules == null
                 || !execution.Rules.Any())
@@ -154,13 +160,15 @@ namespace Surveillance.Scheduler
             var universe = await _universeBuilder.Summon(execution);
             var player = _universePlayerFactory.Build();
 
-            await SubscribeRules(execution, player);
+            await SubscribeRules(execution, player, opCtx);
             player.Play(universe);
+            opCtx.EndEvent();
         }
 
         private async Task SubscribeRules(
             ScheduledExecution execution,
-            IUniversePlayer player)
+            IUniversePlayer player,
+            ISystemProcessOperationContext opCtx)
         {
             if (execution == null
                 || player == null)
@@ -170,16 +178,17 @@ namespace Surveillance.Scheduler
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
-            SpoofingRule(execution, player, ruleParameters);
-            CancelledOrdersRule(execution, player, ruleParameters);
-            HighProfitsRule(execution, player, ruleParameters);
-            MarkingTheCloseRule(execution, player, ruleParameters);
+            SpoofingRule(execution, player, ruleParameters, opCtx);
+            CancelledOrdersRule(execution, player, ruleParameters, opCtx);
+            HighProfitsRule(execution, player, ruleParameters, opCtx);
+            MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
         }
 
         private void SpoofingRule(
             ScheduledExecution execution,
             IUniversePlayer player,
-            RuleParameterDto ruleParameters)
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
         {
             if (!execution.Rules.Contains(Domain.Scheduling.Rules.Spoofing))
             {
@@ -190,7 +199,14 @@ namespace Surveillance.Scheduler
 
             if (spoofingParameters != null)
             {
-                var spoofingRule = _spoofingRuleFactory.Build(spoofingParameters);
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.Spoofing.GetDescription(),
+                        _spoofingRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var spoofingRule = _spoofingRuleFactory.Build(spoofingParameters, ruleCtx);
                 player.Subscribe(spoofingRule);
             }
             else
@@ -202,7 +218,8 @@ namespace Surveillance.Scheduler
         private void CancelledOrdersRule(
             ScheduledExecution execution,
             IUniversePlayer player,
-            RuleParameterDto ruleParameters)
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
         {
             if (!execution.Rules.Contains(Domain.Scheduling.Rules.CancelledOrders))
             {
@@ -213,7 +230,14 @@ namespace Surveillance.Scheduler
 
             if (cancelledOrderParameters != null)
             {
-                var cancelledOrderRule = _cancelledOrderRuleFactory.Build(cancelledOrderParameters);
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
+                        _cancelledOrderRuleFactory.Version,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var cancelledOrderRule = _cancelledOrderRuleFactory.Build(cancelledOrderParameters, ruleCtx);
                 player.Subscribe(cancelledOrderRule);
             }
             else
@@ -225,7 +249,8 @@ namespace Surveillance.Scheduler
         private void HighProfitsRule(
             ScheduledExecution execution,
             IUniversePlayer player,
-            RuleParameterDto ruleParameters)
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
         {
             if (!execution.Rules.Contains(Domain.Scheduling.Rules.HighProfits))
             {
@@ -236,7 +261,14 @@ namespace Surveillance.Scheduler
 
             if (highProfitParameters != null)
             {
-                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters);
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                        _highProfitRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtx);
                 player.Subscribe(highProfitsRule);
             }
             else
@@ -248,7 +280,8 @@ namespace Surveillance.Scheduler
         private void MarkingTheCloseRule(
             ScheduledExecution execution,
             IUniversePlayer player,
-            RuleParameterDto ruleParameters)
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
         {
             if (!execution.Rules.Contains(Domain.Scheduling.Rules.MarkingTheClose))
             {
@@ -259,7 +292,14 @@ namespace Surveillance.Scheduler
 
             if (markingTheCloseParameters != null)
             {
-                var markingTheClose = _markingTheCloseFactory.Build(markingTheCloseParameters);
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
+                        _markingTheCloseFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var markingTheClose = _markingTheCloseFactory.Build(markingTheCloseParameters, ruleCtx);
                 player.Subscribe(markingTheClose);
             }
             else

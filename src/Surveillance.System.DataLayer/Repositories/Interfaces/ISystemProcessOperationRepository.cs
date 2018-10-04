@@ -6,5 +6,6 @@ namespace Surveillance.System.DataLayer.Repositories.Interfaces
     public interface ISystemProcessOperationRepository
     {
         void Create(ISystemProcessOperation entity);
+        void Update(ISystemProcessOperation entity);
     }
 }

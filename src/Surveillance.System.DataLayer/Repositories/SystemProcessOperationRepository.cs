@@ -12,8 +12,15 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 return;
             }
+        }
 
-            // TODO handle saving to Aurora
+        public void Update(ISystemProcessOperation entity)
+        {
+            if (entity == null
+                || string.IsNullOrWhiteSpace(entity.Id))
+            {
+                return;
+            }
         }
     }
 }

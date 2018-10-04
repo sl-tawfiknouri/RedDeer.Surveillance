@@ -96,6 +96,8 @@ namespace Surveillance.System.Auditing.Context
 
         public ISystemProcessContext EndEvent()
         {
+            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            _systemProcessOperationRepository.Update(_systemProcessOperation);
             return _systemProcessContext;
         }
     }

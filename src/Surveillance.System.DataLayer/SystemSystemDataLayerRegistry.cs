@@ -11,7 +11,6 @@ namespace Surveillance.System.DataLayer
             For<ISystemProcessRepository>().Use<SystemProcessRepository>();
             For<ISystemProcessOperationRepository>().Use<SystemProcessOperationRepository>();
             For<ISystemProcessOperationDistributeRuleRepository>().Use<SystemProcessOperationDistributeRuleRepository>();
-            For<ISystemProcessOperationFileRepository>().Use<SystemProcessOperationFileRepository>();
             For<ISystemProcessOperationRuleRunRepository>().Use<SystemProcessOperationRuleRunRepository>();
         }
     }

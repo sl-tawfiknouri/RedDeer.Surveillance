@@ -1,0 +1,4 @@
+-- INITIAL SQL MIGRATION SCRIPT --
+-- AUTHOR : RYAN TRENCHARD
+-- DATE : 04/10/2018
+-- PURPOSE : Seed database with a migration script table to track migrations

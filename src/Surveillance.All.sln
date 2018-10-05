@@ -40,9 +40,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.System.DataLayer", "Surveillance.System.DataLayer\Surveillance.System.DataLayer.csproj", "{A56736C5-1834-411E-80C6-0193F52A3EAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.DataLayer", "Surveillance.System.DataLayer\Surveillance.System.DataLayer.csproj", "{A56736C5-1834-411E-80C6-0193F52A3EAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.System.Auditing", "Surveillance.System.Auditing\Surveillance.System.Auditing.csproj", "{4B284ED4-A223-41D6-94B7-0C0CE8B44500}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.Auditing", "Surveillance.System.Auditing\Surveillance.System.Auditing.csproj", "{4B284ED4-A223-41D6-94B7-0C0CE8B44500}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{C7DE944F-510F-4EAA-B9F3-75106145504E}"
+	ProjectSection(SolutionItems) = preProject
+		1 - Initial.sql = 1 - Initial.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

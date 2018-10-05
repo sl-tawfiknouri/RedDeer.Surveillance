@@ -96,7 +96,7 @@ namespace Surveillance.Scheduler
                     .CreateAndStartDistributeRuleContext(
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
-                        execution.Rules?.Aggregate(string.Empty, (x,i) => x + ", " + i.GetDescription()));
+                        execution.Rules?.Aggregate(string.Empty, (x,i) => x + ", " + i.GetDescription()).Trim(',', ' '));
 
             foreach (var rule in execution.Rules)
             {

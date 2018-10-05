@@ -15,6 +15,7 @@ using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 // ReSharper disable UnusedParameter.Local
 
@@ -50,6 +51,7 @@ namespace RedDeer.Surveillance.App
                 Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
                 Container.Inject(typeof(IRuleConfiguration), Configuration.Configuration.BuildRuleConfiguration(configurationBuilder));
+                Container.Inject(typeof(ISystemDataLayerConfig), Configuration.Configuration.BuildDataLayerConfig(configurationBuilder));
 
                 Container.Configure(config =>
                 {

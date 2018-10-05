@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Repositories;
 
@@ -12,11 +13,13 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
     [TestFixture]
     public class SystemProcessRepositoryTests
     {
+        private ISystemDataLayerConfig _config;
         private ILogger<SystemProcessRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _config = A.Fake<ISystemDataLayerConfig>();
             _logger = A.Fake<ILogger<SystemProcessRepository>>();
         }
 
@@ -24,7 +27,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Create_InsertsRow_IntoDb()
         {
-            var repo = new SystemProcessRepository(new ConnectionStringFactory(), _logger);
+            var repo = new SystemProcessRepository(new ConnectionStringFactory(_config), _logger);
             var systemProcess = new SystemProcess
             {
                 MachineId = Environment.MachineName,
@@ -44,7 +47,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Update_InsertsRow_IntoDb()
         {
-            var repo = new SystemProcessRepository(new ConnectionStringFactory(), _logger);
+            var repo = new SystemProcessRepository(new ConnectionStringFactory(_config), _logger);
             var systemProcess = new SystemProcess
             {
                 MachineId = Environment.MachineName,

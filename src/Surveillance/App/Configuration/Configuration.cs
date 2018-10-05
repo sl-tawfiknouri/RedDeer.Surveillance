@@ -3,6 +3,8 @@ using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
 
 namespace RedDeer.Surveillance.App.Configuration
 {
@@ -46,6 +48,16 @@ namespace RedDeer.Surveillance.App.Configuration
             {
                 CancelledOrderDeduplicationDelaySeconds = configurationBuilder.GetValue<int?>("CancelledOrderDeduplicationDelaySeconds"),
                 AutoScheduleRules = configurationBuilder.GetValue<bool?>("AutoScheduleRules")
+            };
+
+            return ruleConfiguration;
+        }
+
+        public static ISystemDataLayerConfig BuildDataLayerConfig(IConfigurationRoot configurationBuilder)
+        {
+            var ruleConfiguration = new SystemDataLayerConfig
+            {
+                SurveillanceAuroraConnectionString = configurationBuilder.GetValue<string>("AuroraConnectionString")
             };
 
             return ruleConfiguration;

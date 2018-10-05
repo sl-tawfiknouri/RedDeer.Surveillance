@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Repositories;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
@@ -13,6 +14,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
     [TestFixture]
     public class SystemProcessOperationDistributeRuleRepositoryTests
     {
+        private ISystemDataLayerConfig _config;
         private ILogger<ISystemProcessRepository> _processLogger;
         private ILogger<ISystemProcessOperationRepository> _operationLogger;
         private ILogger<ISystemProcessOperationDistributeRuleRepository> _logger;
@@ -20,6 +22,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [SetUp]
         public void Setup()
         {
+            _config = A.Fake<ISystemDataLayerConfig>();
             _processLogger = A.Fake<ILogger<ISystemProcessRepository>>();
             _operationLogger = A.Fake<ILogger<ISystemProcessOperationRepository>>();
             _logger = A.Fake<ILogger<ISystemProcessOperationDistributeRuleRepository>>();
@@ -29,7 +32,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Create_InsertsADistributedRuleEntity_AsExpected()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var processRepository = new SystemProcessRepository(connFactory, _processLogger);
             var operationRepository = new SystemProcessOperationRepository(connFactory, _operationLogger);
             var distributeRepository = new SystemProcessOperationDistributeRuleRepository(connFactory, _logger);
@@ -72,7 +75,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Update_UpdatesADistributedRuleEntity_AsExpected()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var processRepository = new SystemProcessRepository(connFactory, _processLogger);
             var operationRepository = new SystemProcessOperationRepository(connFactory, _operationLogger);
             var distributeRepository = new SystemProcessOperationDistributeRuleRepository(connFactory, _logger);

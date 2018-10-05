@@ -11,6 +11,7 @@ using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.Surveillance.App
@@ -32,6 +33,7 @@ namespace RedDeer.Surveillance.App
             container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
             container.Inject(typeof(IAwsConfiguration), dbConfiguration);
             container.Inject(typeof(IRuleConfiguration), Configuration.Configuration.BuildRuleConfiguration(configurationBuilder));
+            container.Inject(typeof(ISystemDataLayerConfig), Configuration.Configuration.BuildDataLayerConfig(configurationBuilder));
 
             container.Configure(config =>
             {

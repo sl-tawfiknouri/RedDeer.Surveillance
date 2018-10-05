@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Repositories;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
@@ -13,6 +14,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
     [TestFixture]
     public class SystemProcessOperationRuleRunRepositoryTests
     {
+        private ISystemDataLayerConfig _config;
         private ILogger<ISystemProcessRepository> _processLogger;
         private ILogger<ISystemProcessOperationRepository> _operationLogger;
         private ILogger<ISystemProcessOperationRuleRunRepository> _logger;
@@ -20,6 +22,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [SetUp]
         public void Setup()
         {
+            _config = A.Fake<ISystemDataLayerConfig>();
             _processLogger = A.Fake<ILogger<ISystemProcessRepository>>();
             _operationLogger = A.Fake<ILogger<ISystemProcessOperationRepository>>();
             _logger = A.Fake<ILogger<ISystemProcessOperationRuleRunRepository>>();
@@ -29,7 +32,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Create_RuleRun_InsertsIntoDb()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var processRepository = new SystemProcessRepository(connFactory, _processLogger);
             var operationRepository = new SystemProcessOperationRepository(connFactory, _operationLogger);
             var ruleRunRepository = new SystemProcessOperationRuleRunRepository(connFactory, _logger);
@@ -74,7 +77,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Update_RuleRun_UpdatesInDb()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var processRepository = new SystemProcessRepository(connFactory, _processLogger);
             var operationRepository = new SystemProcessOperationRepository(connFactory, _operationLogger);
             var ruleRunRepository = new SystemProcessOperationRuleRunRepository(connFactory, _logger);

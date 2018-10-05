@@ -6,6 +6,7 @@ using FakeItEasy;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Repositories;
 using Microsoft.Extensions.Logging;
+using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
 namespace Surveillance.System.DataLayer.Tests.Repositories
@@ -13,12 +14,14 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
     [TestFixture]
     public class SystemProcessOperationRepositoryTests
     {
+        private ISystemDataLayerConfig _config;
         private ILogger<ISystemProcessRepository> _processLogger;
         private ILogger<ISystemProcessOperationRepository> _operationLogger;
 
         [SetUp]
         public void Setup()
         {
+            _config = A.Fake<ISystemDataLayerConfig>();
             _processLogger = A.Fake<ILogger<ISystemProcessRepository>>();
             _operationLogger = A.Fake<ILogger<ISystemProcessOperationRepository>>();
         }
@@ -27,7 +30,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Create_Operation_AddsToDb()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var parentRepository = new SystemProcessRepository(connFactory, _processLogger);
             var repository = new SystemProcessOperationRepository(connFactory, _operationLogger);
 
@@ -59,7 +62,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
         [Explicit]
         public async Task Update_Operation_AddsToDb()
         {
-            var connFactory = new ConnectionStringFactory();
+            var connFactory = new ConnectionStringFactory(_config);
             var parentRepository = new SystemProcessRepository(connFactory, _processLogger);
             var repository = new SystemProcessOperationRepository(connFactory, _operationLogger);
 

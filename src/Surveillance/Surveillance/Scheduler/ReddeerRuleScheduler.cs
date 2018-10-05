@@ -12,6 +12,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Extensions;
@@ -118,21 +119,30 @@ namespace Surveillance.Scheduler
             if (!servicesRunning)
             {
                 _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+                // set status here
+                opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
             }
 
             int servicesDownMinutes = 0;
-            while (!servicesRunning)
+            var exitClientServiceBlock = false;
+            while (!exitClientServiceBlock)
             {
                 Thread.Sleep(30 * 1000);
                 var apiHeartBeat = _apiHeartbeat.HeartsBeating();
                 apiHeartBeat.Wait();
-                servicesRunning = apiHeartBeat.Result;
+                exitClientServiceBlock = apiHeartBeat.Result;
                 servicesDownMinutes += 1;
 
                 if (servicesDownMinutes == 60)
                 {
                     _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over an hour but the api services on the client service have been down");
                 }
+            }
+
+            if (!servicesRunning)
+            {
+                _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
+                opCtx.UpdateEventState(OperationState.InProcess);
             }
 
             var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);

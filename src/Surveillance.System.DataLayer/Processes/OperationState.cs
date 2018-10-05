@@ -6,5 +6,6 @@
         Failed = 1,
         Completed = 2,
         CompletedWithErrors = 3,
+        BlockedClientServiceDown = 4,
     }
 }

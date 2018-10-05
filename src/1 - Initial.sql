@@ -26,6 +26,7 @@ INSERT INTO SystemProcessOperationState VALUES (0, "InProcess");
 INSERT INTO SystemProcessOperationState VALUES (1, "Failed");
 INSERT INTO SystemProcessOperationState VALUES (2, "Completed");
 INSERT INTO SystemProcessOperationState VALUES (3, "CompletedWithErrors");
+INSERT INTO SystemProcessOperationState VALUES (4, "BlockedClientServiceDown");
 
 -- THE SYSTEM PROCESS OPERATION TABLE IS USED TO CAPTURE OPERATIONS WHICH ARE DISCRETE SERIES OF EVENTS THAT HAPPEN WITHIN A PROCESS WITH A CLEAR START AND END
 CREATE TABLE SystemProcessOperation(Id int(255) NOT NULL AUTO_INCREMENT PRIMARY KEY, SystemProcessId NVARCHAR(255) NOT NULL, OperationStart DATETIME NOT NULL, OperationEnd DATETIME NULL, OperationState INT NOT NULL, FOREIGN KEY (SystemProcessId) REFERENCES SystemProcess(Id) ,FOREIGN KEY (OperationState) REFERENCES SystemProcessOperationState(Id));

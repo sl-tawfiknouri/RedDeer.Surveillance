@@ -34,7 +34,7 @@ namespace Surveillance.Rules.Cancelled_Orders
 
             lock (_lock)
             {
-                _logger.LogDebug($"Cancelled Order Rule Cached Message Sender received rule breach for {ruleBreach.Security.Identifiers}");
+                _logger.LogInformation($"Cancelled Order Rule Cached Message Sender received rule breach for {ruleBreach.Security.Identifiers}");
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
                 _messages = _messages.Except(duplicates).ToList();
@@ -49,7 +49,7 @@ namespace Surveillance.Rules.Cancelled_Orders
         {
             lock (_lock)
             {
-                _logger.LogDebug($"Cancelled Order Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
+                _logger.LogInformation($"Cancelled Order Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
                 foreach (var msg in _messages)
                 {
                     _cachedMessageSender.Send(msg);

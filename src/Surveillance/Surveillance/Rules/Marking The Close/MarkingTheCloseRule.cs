@@ -143,17 +143,17 @@ namespace Surveillance.Rules.Marking_The_Close
 
         protected override void Genesis()
         {
-            _logger.LogDebug("Genesis occurred in the Marking The Close Rule");
+            _logger.LogInformation("Genesis occurred in the Marking The Close Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Market Open ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Market Close ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketClose}");
 
             _processingMarketClose = true;
             _latestMarketClosure = exchange;
@@ -163,7 +163,7 @@ namespace Surveillance.Rules.Marking_The_Close
 
         protected override void EndOfUniverse()
         {
-            _logger.LogDebug("Eschaton occured in Marking The Close Rule");
+            _logger.LogInformation("Eschaton occured in Marking The Close Rule");
             _ruleCtx?.EndEvent();
         }
     }

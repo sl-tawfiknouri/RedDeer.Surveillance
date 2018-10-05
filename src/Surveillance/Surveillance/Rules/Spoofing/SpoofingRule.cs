@@ -172,22 +172,22 @@ namespace Surveillance.Rules.Spoofing
 
         protected override void Genesis()
         {
-            _logger.LogDebug("Genesis occurred in the Spoofing Rule");
+            _logger.LogInformation("Genesis occurred in the Spoofing Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Market Open ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Market Close ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogDebug("Eschaton occured in Spoofing Rule");
+            _logger.LogInformation("Eschaton occured in Spoofing Rule");
             _ruleCtx?.EndEvent();
         }
     }

@@ -43,7 +43,6 @@ namespace Surveillance.Utility
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-
                 return false;
             }
         }

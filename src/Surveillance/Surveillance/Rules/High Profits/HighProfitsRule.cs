@@ -84,7 +84,7 @@ namespace Surveillance.Rules.High_Profits
             if (revenue.Value.Value <= 0
                 || cost.Value.Value <= 0)
             {
-                _logger.LogDebug($"High profit rules had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
+                _logger.LogInformation($"High profit rules had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
                 return;
             }
 
@@ -110,7 +110,7 @@ namespace Surveillance.Rules.High_Profits
         {
             var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
 
-            _logger.LogDebug($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
+            _logger.LogInformation($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
 
             var position = new TradePosition(activeTrades.ToList());
             var breach =
@@ -335,18 +335,18 @@ namespace Surveillance.Rules.High_Profits
 
         protected override void Genesis()
         {
-            _logger.LogDebug("Universe Genesis occurred in the High Profit Rule");
+            _logger.LogInformation("Universe Genesis occurred in the High Profit Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading Opened for exchange {exchange.MarketId} in the High Profit Rule");
+            _logger.LogInformation($"Trading Opened for exchange {exchange.MarketId} in the High Profit Rule");
             _marketOpened = true;
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
+            _logger.LogInformation($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
 
             RunRuleForAllTradingHistoriesInMarket(exchange, UniverseDateTime);
             _marketOpened = false;
@@ -354,7 +354,7 @@ namespace Surveillance.Rules.High_Profits
 
         protected override void EndOfUniverse()
         {
-            _logger.LogDebug("Universe Eschaton occurred in the High Profit Rule");
+            _logger.LogInformation("Universe Eschaton occurred in the High Profit Rule");
             if (_marketOpened)
             {
                 RunRuleForAllTradingHistories();

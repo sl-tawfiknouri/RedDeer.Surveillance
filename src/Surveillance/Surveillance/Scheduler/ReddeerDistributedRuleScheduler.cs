@@ -218,7 +218,7 @@ namespace Surveillance.Scheduler
             var serialisedDistributedExecution =
                 _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
 
-            _logger.LogDebug($"Reddeer Smart Rule Scheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
+            _logger.LogInformation($"Reddeer Smart Rule Scheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
 
             _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
 

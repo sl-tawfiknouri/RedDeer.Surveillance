@@ -37,7 +37,7 @@ namespace Relay.Processors
         {
             if (value == null)
             {
-                _logger.LogDebug("Relay Trade Processor was passed a null trade frame value.");
+                _logger.LogInformation("Relay Trade Processor was passed a null trade frame value.");
             }
 
             // do your stuff, now broadcast it onwards

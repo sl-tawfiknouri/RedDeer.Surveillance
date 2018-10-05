@@ -33,7 +33,7 @@ namespace Relay.Processors
         {
             if (value == null)
             {
-                _logger.LogDebug("Relay Equity Processor was passed a null exchange frame value.");
+                _logger.LogInformation("Relay Equity Processor was passed a null exchange frame value.");
             }
 
             // do your stuff, now broadcast it onwards

@@ -124,22 +124,22 @@ namespace Surveillance.Rules.Cancelled_Orders
 
         protected override void Genesis()
         {
-            _logger.LogDebug("Universe Genesis occurred in the Cancelled Order Rule");
+            _logger.LogInformation("Universe Genesis occurred in the Cancelled Order Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading Opened for exchange {exchange.MarketId} in the Cancelled Order Rule");
+            _logger.LogInformation($"Trading Opened for exchange {exchange.MarketId} in the Cancelled Order Rule");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogDebug($"Trading closed for exchange {exchange.MarketId} in the Cancelled Order Rule.");
+            _logger.LogInformation($"Trading closed for exchange {exchange.MarketId} in the Cancelled Order Rule.");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogDebug("Universe Eschaton occurred in the Cancelled Order Rule");
+            _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
 
             _cachedMessageSender.Flush();
             _opCtx?.EndEvent();

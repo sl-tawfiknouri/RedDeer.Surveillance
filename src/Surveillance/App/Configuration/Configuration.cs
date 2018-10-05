@@ -8,9 +8,9 @@ using Surveillance.System.DataLayer.Interfaces;
 
 namespace RedDeer.Surveillance.App.Configuration
 {
-    public static class Configuration
+    public class Configuration
     {
-        public static INetworkConfiguration BuildNetworkConfiguration(IConfigurationRoot configurationBuilder)
+        public INetworkConfiguration BuildNetworkConfiguration(IConfigurationRoot configurationBuilder)
         {
             var networkConfiguration = new NetworkConfiguration
             {
@@ -24,7 +24,7 @@ namespace RedDeer.Surveillance.App.Configuration
             return networkConfiguration;
         }
 
-        public static IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
+        public IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
         {
             var networkConfiguration = new DataLayerConfiguration
             {
@@ -42,7 +42,7 @@ namespace RedDeer.Surveillance.App.Configuration
             return networkConfiguration;
         }
 
-        public static IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
+        public IRuleConfiguration BuildRuleConfiguration(IConfigurationRoot configurationBuilder)
         {
             var ruleConfiguration = new RuleConfiguration
             {
@@ -53,7 +53,7 @@ namespace RedDeer.Surveillance.App.Configuration
             return ruleConfiguration;
         }
 
-        public static ISystemDataLayerConfig BuildDataLayerConfig(IConfigurationRoot configurationBuilder)
+        public ISystemDataLayerConfig BuildDataLayerConfig(IConfigurationRoot configurationBuilder)
         {
             var ruleConfiguration = new SystemDataLayerConfig
             {

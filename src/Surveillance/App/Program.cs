@@ -46,12 +46,13 @@ namespace RedDeer.Surveillance.App
                     .AddJsonFile("appsettings.json", true, true)
                     .Build();
 
-                var dbConfiguration = Configuration.Configuration.BuildDatabaseConfiguration(configurationBuilder);
-                Container.Inject(typeof(INetworkConfiguration), Configuration.Configuration.BuildNetworkConfiguration(configurationBuilder));
+                var configBuilder = new Configuration.Configuration();
+                var dbConfiguration = configBuilder.BuildDatabaseConfiguration(configurationBuilder);
+                Container.Inject(typeof(INetworkConfiguration), configBuilder.BuildNetworkConfiguration(configurationBuilder));
                 Container.Inject(typeof(IDataLayerConfiguration), dbConfiguration);
                 Container.Inject(typeof(IAwsConfiguration), dbConfiguration);
-                Container.Inject(typeof(IRuleConfiguration), Configuration.Configuration.BuildRuleConfiguration(configurationBuilder));
-                Container.Inject(typeof(ISystemDataLayerConfig), Configuration.Configuration.BuildDataLayerConfig(configurationBuilder));
+                Container.Inject(typeof(IRuleConfiguration), configBuilder.BuildRuleConfiguration(configurationBuilder));
+                Container.Inject(typeof(ISystemDataLayerConfig), configBuilder.BuildDataLayerConfig(configurationBuilder));
 
                 Container.Configure(config =>
                 {

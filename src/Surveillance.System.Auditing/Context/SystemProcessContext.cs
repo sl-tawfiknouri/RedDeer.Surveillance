@@ -52,7 +52,6 @@ namespace Surveillance.System.Auditing.Context
             {
                 SystemProcessId = _systemProcess.Id,
                 OperationStart = DateTime.UtcNow,
-                OperationEnd = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 

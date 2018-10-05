@@ -5,7 +5,7 @@ namespace Surveillance.Rules.Cancelled_Orders.Interfaces
 {
     public interface ICancelledOrderRuleCachedMessageSender
     {
-        void Flush();
+        int Flush();
         void Send(ICancelledOrderRuleBreach ruleBreach);
     }
 }

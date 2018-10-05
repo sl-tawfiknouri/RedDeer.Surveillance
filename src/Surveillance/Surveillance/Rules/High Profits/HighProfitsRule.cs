@@ -360,7 +360,8 @@ namespace Surveillance.Rules.High_Profits
                 RunRuleForAllTradingHistories();
             }
 
-            _sender.Flush();
+            var alerts = _sender.Flush();
+            _ruleCtx.UpdateAlertEvent(alerts);
             _ruleCtx?.EndEvent();
         }
     }

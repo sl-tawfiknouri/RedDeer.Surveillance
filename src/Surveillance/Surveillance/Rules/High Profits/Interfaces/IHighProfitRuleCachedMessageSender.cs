@@ -2,7 +2,7 @@
 {
     public interface IHighProfitRuleCachedMessageSender
     {
-        void Flush();
+        int Flush();
         void Send(IHighProfitRuleBreach ruleBreach);
     }
 }

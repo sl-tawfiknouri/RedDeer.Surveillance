@@ -45,16 +45,21 @@ namespace Surveillance.Rules.Cancelled_Orders
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public void Flush()
+        public int Flush()
         {
             lock (_lock)
             {
                 _logger.LogInformation($"Cancelled Order Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
+
                 foreach (var msg in _messages)
                 {
                     _cachedMessageSender.Send(msg);
                 }
+
+                var count = _messages.Count;
                 _messages.RemoveAll(m => true);
+
+                return count;
             }
         }
     }

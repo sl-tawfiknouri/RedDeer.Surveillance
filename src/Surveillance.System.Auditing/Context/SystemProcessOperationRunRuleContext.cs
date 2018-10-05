@@ -30,6 +30,13 @@ namespace Surveillance.System.Auditing.Context
             _repository.Create(_ruleRun);
         }
 
+        public ISystemProcessOperationRunRuleContext UpdateAlertEvent(int alerts)
+        {
+            _ruleRun.Alerts = alerts;
+            _repository.Update(_ruleRun);
+            return this;
+        }
+
         public ISystemProcessOperationContext EndEvent()
         {
             return _processOperationContext;

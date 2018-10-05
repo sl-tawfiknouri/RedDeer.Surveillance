@@ -49,16 +49,21 @@ namespace Surveillance.Rules.High_Profits
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public void Flush()
+        public int Flush()
         {
             lock (_lock)
             {
                 _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
+
                 foreach (var msg in _messages)
                 {
                    _messageSender.Send(msg);
                 }
+
+                var count = _messages.Count;
                 _messages.RemoveAll(m => true);
+
+                return count;
             }
         }
     }

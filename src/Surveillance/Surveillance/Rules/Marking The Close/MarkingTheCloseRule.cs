@@ -20,6 +20,7 @@ namespace Surveillance.Rules.Marking_The_Close
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
+        private int _alertCount;
 
         public MarkingTheCloseRule(
             IMarkingTheCloseParameters parameters,
@@ -115,6 +116,7 @@ namespace Surveillance.Rules.Marking_The_Close
                     hasBuyDailyVolumeBreach,
                     buyDailyPercentageBreach);
 
+                _alertCount += 1;
                 _messageSender.Send(breach);
             }
         }
@@ -144,6 +146,7 @@ namespace Surveillance.Rules.Marking_The_Close
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred in the Marking The Close Rule");
+            _alertCount = 0;
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -164,7 +167,9 @@ namespace Surveillance.Rules.Marking_The_Close
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Marking The Close Rule");
+            _ruleCtx.UpdateAlertEvent(_alertCount);
             _ruleCtx?.EndEvent();
+            _alertCount = 0;
         }
     }
 }

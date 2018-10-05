@@ -19,6 +19,7 @@ namespace Surveillance.Rules.Spoofing
         private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
+        private int _alertCount;
 
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
@@ -167,12 +168,14 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade.Security, 
                     mostRecentTrade);
 
+            _alertCount += 1;
             _spoofingRuleMessageSender.Send(ruleBreach);
         }
 
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred in the Spoofing Rule");
+            _alertCount = 0;
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -188,7 +191,9 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Spoofing Rule");
+            _ruleCtx.UpdateAlertEvent(_alertCount);
             _ruleCtx?.EndEvent();
+            _alertCount = 0;
         }
     }
 }

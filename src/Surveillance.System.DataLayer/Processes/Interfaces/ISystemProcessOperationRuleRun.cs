@@ -4,11 +4,12 @@ namespace Surveillance.System.DataLayer.Processes.Interfaces
 {
     public interface ISystemProcessOperationRuleRun
     {
-        string Id { get; set; }
-        string OperationId { get; set; }
+        int Id { get; set; }
+        int SystemProcessOperationId { get; set; }
         string RuleDescription { get; set; }
-        DateTime? RuleScheduleBegin { get; set; }
-        DateTime? RuleScheduleEnd { get; set; }
+        DateTime? ScheduleRuleStart { get; set; }
+        DateTime? ScheduleRuleEnd { get; set; }
         string RuleVersion { get; set; }
+        int Alerts { get; set; }
     }
 }

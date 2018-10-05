@@ -5,9 +5,9 @@ namespace Surveillance.System.DataLayer.Processes
 {
     public class SystemProcessOperationDistributeRule : ISystemProcessOperationDistributeRule
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
 
-        public string OperationId { get; set; }
+        public int SystemProcessOperationId { get; set; }
 
         public DateTime? InitialStart { get; set; }
 

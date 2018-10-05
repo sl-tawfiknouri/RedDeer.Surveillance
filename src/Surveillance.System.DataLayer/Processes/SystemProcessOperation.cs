@@ -8,7 +8,7 @@ namespace Surveillance.System.DataLayer.Processes
         /// <summary>
         /// Primary Key
         /// </summary>
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Foreign Key

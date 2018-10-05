@@ -60,7 +60,7 @@ namespace Surveillance.System.DataLayer.Repositories
 
         public async Task Update(ISystemProcessOperation entity)
         {
-            if (entity?.Id == null)
+            if (entity == null)
             {
                 return;
             }

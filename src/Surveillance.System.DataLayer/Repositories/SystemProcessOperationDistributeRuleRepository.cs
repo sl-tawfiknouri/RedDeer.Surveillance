@@ -7,8 +7,7 @@ namespace Surveillance.System.DataLayer.Repositories
     {
         public void Create(ISystemProcessOperationDistributeRule entity)
         {
-            if (entity == null
-                || string.IsNullOrWhiteSpace(entity.OperationId))
+            if (entity == null)
             {
                 return;
             }

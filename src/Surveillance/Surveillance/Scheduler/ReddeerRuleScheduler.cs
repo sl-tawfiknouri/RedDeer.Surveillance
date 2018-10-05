@@ -150,6 +150,8 @@ namespace Surveillance.Scheduler
             if (execution == null)
             {
                 _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                opCtx.EndEventWithError();
+                return;
             }
 
             await Execute(execution, opCtx);
@@ -164,6 +166,8 @@ namespace Surveillance.Scheduler
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {
+                _logger.LogError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
+                opCtx.EndEventWithError();
                 return;
             }
 

@@ -109,5 +109,13 @@ namespace Surveillance.System.Auditing.Context
             _systemProcessOperationRepository.Update(_systemProcessOperation);
             return _systemProcessContext;
         }
+
+        public ISystemProcessContext EndEventWithError()
+        {
+            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            _systemProcessOperation.OperationState = OperationState.CompletedWithErrors;
+            _systemProcessOperationRepository.Update(_systemProcessOperation);
+            return _systemProcessContext;
+        }
     }
 }

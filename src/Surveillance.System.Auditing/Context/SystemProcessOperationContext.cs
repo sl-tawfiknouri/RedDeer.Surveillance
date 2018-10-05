@@ -51,8 +51,8 @@ namespace Surveillance.System.Auditing.Context
             var op = new SystemProcessOperationDistributeRule
             {
                 SystemProcessOperationId = _systemProcessOperation.Id,
-                InitialStart = initialStart,
-                InitialEnd = initialEnd,
+                ScheduleRuleInitialStart = initialStart,
+                ScheduleRuleInitialEnd = initialEnd,
                 RulesDistributed = rules
             };
 

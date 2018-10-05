@@ -1,11 +1,11 @@
-﻿using Surveillance.System.DataLayer.Processes;
+﻿using System.Threading.Tasks;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationRepository
     {
-        void Create(ISystemProcessOperation entity);
-        void Update(ISystemProcessOperation entity);
+        Task Create(ISystemProcessOperation entity);
+        Task Update(ISystemProcessOperation entity);
     }
 }

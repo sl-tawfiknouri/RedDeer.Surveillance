@@ -4,10 +4,10 @@ namespace Surveillance.System.DataLayer.Processes.Interfaces
 {
     public interface ISystemProcessOperation
     {
-        string Id { get; set; }
-        string InstanceId { get; set; }
-        DateTime? OperationEnd { get; set; }
+        int? Id { get; set; }
+        string SystemProcessId { get; set; }
         DateTime OperationStart { get; set; }
+        DateTime? OperationEnd { get; set; }
         OperationState OperationState { get; set; }
     }
 }

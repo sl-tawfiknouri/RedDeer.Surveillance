@@ -50,7 +50,7 @@ namespace Surveillance.System.Auditing.Context
         {
             var op = new SystemProcessOperation
             {
-                InstanceId = _systemProcess.Id,
+                SystemProcessId = _systemProcess.Id,
                 OperationStart = DateTime.UtcNow,
                 OperationEnd = DateTime.UtcNow,
                 OperationState = OperationState.InProcess

@@ -8,12 +8,12 @@ namespace Surveillance.System.DataLayer.Processes
         /// <summary>
         /// Primary Key
         /// </summary>
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// Foreign Key
         /// </summary>
-        public string InstanceId { get; set; }
+        public string SystemProcessId { get; set; }
 
         /// <summary>
         /// Operation began at

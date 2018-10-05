@@ -9,9 +9,9 @@ namespace Surveillance.System.DataLayer.Processes
 
         public int SystemProcessOperationId { get; set; }
 
-        public DateTime? InitialStart { get; set; }
+        public DateTime? ScheduleRuleInitialStart { get; set; }
 
-        public DateTime? InitialEnd { get; set; }
+        public DateTime? ScheduleRuleInitialEnd { get; set; }
 
         public string RulesDistributed { get; set; }
     }

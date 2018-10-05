@@ -47,7 +47,7 @@ namespace Surveillance.System.DataLayer.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"System Process Operation Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                _logger.LogError($"System Process Operation Rule Run Repository Create Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
             }
             finally
             {
@@ -76,7 +76,7 @@ namespace Surveillance.System.DataLayer.Repositories
             }
             catch (Exception e)
             {
-                _logger.LogError($"System Process Operation Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
+                _logger.LogError($"System Process Operation Rule Run Repository Update Method For {entity.Id} {entity.SystemProcessOperationId}. {e.Message}");
             }
             finally
             {

@@ -6,8 +6,8 @@ namespace Surveillance.System.DataLayer.Processes.Interfaces
     {
         int Id { get; set; }
         int SystemProcessOperationId { get; set; }
-        DateTime? InitialEnd { get; set; }
-        DateTime? InitialStart { get; set; }
+        DateTime? ScheduleRuleInitialStart { get; set; }
+        DateTime? ScheduleRuleInitialEnd { get; set; }
         string RulesDistributed { get; set; }
     }
 }

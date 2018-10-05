@@ -1,9 +1,11 @@
-﻿using Surveillance.System.DataLayer.Processes.Interfaces;
+﻿using System.Threading.Tasks;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationDistributeRuleRepository
     {
-        void Create(ISystemProcessOperationDistributeRule entity);
+        Task Create(ISystemProcessOperationDistributeRule entity);
+        Task Update(ISystemProcessOperationDistributeRule entity);
     }
 }

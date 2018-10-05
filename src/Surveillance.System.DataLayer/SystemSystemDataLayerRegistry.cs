@@ -1,4 +1,5 @@
 ﻿using StructureMap;
+using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Repositories;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
@@ -12,6 +13,7 @@ namespace Surveillance.System.DataLayer
             For<ISystemProcessOperationRepository>().Use<SystemProcessOperationRepository>();
             For<ISystemProcessOperationDistributeRuleRepository>().Use<SystemProcessOperationDistributeRuleRepository>();
             For<ISystemProcessOperationRuleRunRepository>().Use<SystemProcessOperationRuleRunRepository>();
+            For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
         }
     }
 }

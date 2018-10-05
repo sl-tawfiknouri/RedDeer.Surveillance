@@ -30,7 +30,7 @@ namespace Surveillance.System.Auditing.Context
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess()?.Id.ToString(),
             };
-            systemProcess.InstanceId = systemProcess.GenerateInstanceId();
+            systemProcess.Id = systemProcess.GenerateInstanceId();
 
             StartEvent(systemProcess);
         }
@@ -50,7 +50,7 @@ namespace Surveillance.System.Auditing.Context
         {
             var op = new SystemProcessOperation
             {
-                InstanceId = _systemProcess.InstanceId,
+                InstanceId = _systemProcess.Id,
                 OperationStart = DateTime.UtcNow,
                 OperationEnd = DateTime.UtcNow,
                 OperationState = OperationState.InProcess

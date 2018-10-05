@@ -9,7 +9,7 @@ namespace Surveillance.System.DataLayer.Processes
         /// A composite of machine - process and datetime the process began at
         /// This is the primary key
         /// </summary>
-        public string InstanceId { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// The time the instance began registering as a system process
@@ -25,6 +25,11 @@ namespace Surveillance.System.DataLayer.Processes
         /// The OS identifier for the process
         /// </summary>
         public string ProcessId { get; set; }
+
+        /// <summary>
+        /// The type of system process i.e. surveillance or relay
+        /// </summary>
+        public SystemProcessType SystemProcessType { get; set; }
 
         /// <summary>
         /// The last time the instance issued a heart beat

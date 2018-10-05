@@ -49,6 +49,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", 
 		1 - Initial.sql = 1 - Initial.sql
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.System.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.System.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,10 @@ Global
 		{4B284ED4-A223-41D6-94B7-0C0CE8B44500}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B284ED4-A223-41D6-94B7-0C0CE8B44500}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B284ED4-A223-41D6-94B7-0C0CE8B44500}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A82341B-913A-42F6-BA5B-BE56E136E746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A82341B-913A-42F6-BA5B-BE56E136E746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A82341B-913A-42F6-BA5B-BE56E136E746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A82341B-913A-42F6-BA5B-BE56E136E746}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

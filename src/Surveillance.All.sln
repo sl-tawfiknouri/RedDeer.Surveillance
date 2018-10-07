@@ -47,9 +47,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{C7DE944F-510F-4EAA-B9F3-75106145504E}"
 	ProjectSection(SolutionItems) = preProject
 		1 - Initial.sql = 1 - Initial.sql
+		2 - Trade.sql = 2 - Trade.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.System.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.System.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.System.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,87 @@
+﻿using System;
+using System.Threading.Tasks;
+using Domain.Equity;
+using Domain.Market;
+using Domain.Trades.Orders;
+using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework;
+using Surveillance.DataLayer.Aurora;
+using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Configuration;
+
+namespace Surveillance.DataLayer.Tests.Aurora.Trade
+{
+    [TestFixture]
+    public class ReddeerTradeRepositoryTests
+    {
+        private ILogger<ReddeerTradeRepository> _logger;
+
+        [SetUp]
+        public void Setup()
+        {
+            _logger = A.Fake<ILogger<ReddeerTradeRepository>>();
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task Create()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString = "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance"
+            };
+
+            var factory = new ConnectionStringFactory(config);
+            var repo = new ReddeerTradeRepository(factory, _logger);
+
+            await repo.Create(Frame());
+
+            Assert.IsTrue(true);
+        }
+
+        private TradeOrderFrame Frame()
+        {
+            var exch = new StockExchange(new Market.MarketId("id"), "LSE");
+            var orderDates = DateTime.Now;
+            const string traderId = "Trader Joe";
+            const string partyBrokerId = "Broker-1";
+            const string accountId = "Account-1";
+            const string dealerInstruction = "Trade ASAP";
+            const string tradeRationale = "Market is not pricing well";
+            const string tradeStrategy = "Unknown";
+            const string counterPartyBrokerId = "Broker-2";
+            var securityIdentifiers = new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+
+            var security = new Security(
+                securityIdentifiers,
+                "Standard Chartered",
+                "CFI",
+                "Standard Chartered Bank");
+
+            var order1 = new TradeOrderFrame(
+                OrderType.Limit,
+                exch,
+                security,
+                new Price(100, "GBX"),
+                new Price(100, "GBX"),
+                1000,
+                1000,
+                OrderPosition.Buy,
+                OrderStatus.Booked,
+                orderDates,
+                orderDates,
+                traderId,
+                string.Empty,
+                accountId,
+                dealerInstruction,
+                partyBrokerId,
+                counterPartyBrokerId,
+                tradeRationale,
+                tradeStrategy,
+                "GBX");
+
+            return order1;
+        }
+    }
+}

@@ -1,9 +1,11 @@
 -- INITIAL SQL MIGRATION SCRIPT --
 -- AUTHOR : RYAN TRENCHARD
 -- DATE : 04/10/2018
--- LAST MODIFIED: 04/10/2018 BY RYAN TRENCHARD
+-- LAST MODIFIED: 07/10/2018 BY RYAN TRENCHARD
 -- JIRA (RDPB-2930)
 -- PURPOSE : Seed database with a migration script table to track migrations. Add initial system process tables for auditing and system monitoring purposes.
+
+START TRANSACTION;
 
 CREATE DATABASE dev_surveillance;
 USE dev_surveillance;
@@ -36,3 +38,5 @@ CREATE TABLE SystemProcessOperationDistributeRule(Id INT NOT NULL AUTO_INCREMENT
 
 -- THE SYSTEM PROCESS OPERATION RULE RUN TABLE IS USED FOR CONTAINING FURTHER INFORMATION ABOUT AN OPERATION WHICH HAS A RULE EXECUTED WITHIN IT
 CREATE TABLE SystemProcessOperationRuleRun(Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, SystemProcessOperationId INT NOT NULL, RuleDescription NVARCHAR(1024) NOT NULL, RuleVersion NVARCHAR(255) NOT NULL, ScheduleRuleStart DATETIME NOT NULL, ScheduleRuleEnd DATETIME NOT NULL, Alerts INT NOT NULL, FOREIGN KEY (SystemProcessOperationId) REFERENCES SystemProcessOperation(Id));
+
+COMMIT;

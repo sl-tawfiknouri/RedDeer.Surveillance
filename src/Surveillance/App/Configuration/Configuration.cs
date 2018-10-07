@@ -63,7 +63,8 @@ namespace RedDeer.Surveillance.App.Configuration
                     ElasticSearchDomain = GetValue("ElasticSearchDomain", configurationBuilder),
                     ElasticSearchPort = GetValue("ElasticSearchPort", configurationBuilder),
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
-                    SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder)
+                    SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
+                    AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder)
                 };
 
                 return networkConfiguration;

@@ -5,5 +5,6 @@
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
         string ScheduleRuleDistributedWorkQueueName { get; }
+        string AuroraConnectionString { get; }
     }
 }

@@ -3,12 +3,12 @@ namespace Domain.Trades.Orders
 {
     public enum OrderStatus
     {
-        Booked,
-        Cancelled,
-        PartialFulfilled,
-        Fulfilled,
-        CallAmended,
-        Rejected,
-        CancelledPostBooking,
+        Booked = 0,
+        Cancelled = 1,
+        PartialFulfilled = 2,
+        Fulfilled = 3,
+        CallAmended = 4,
+        Rejected = 5,
+        CancelledPostBooking = 6, 
     }
 }

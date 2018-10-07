@@ -10,6 +10,14 @@ namespace Domain.Trades.Orders
     /// </summary>
     public class TradeOrderFrame
     {
+        /// <summary>
+        /// Used by Dapper
+        /// </summary>
+        public TradeOrderFrame()
+        {
+            
+        }
+
         public TradeOrderFrame(
             OrderType orderType,
             StockExchange market,
@@ -59,6 +67,11 @@ namespace Domain.Trades.Orders
                 throw new ArgumentException(nameof(orderType));
             }
         }
+
+        /// <summary>
+        /// Dapper field for primary key
+        /// </summary>
+        public int Id { get; set; }
 
         /// <summary>
         /// The type of order i.e. market / limit

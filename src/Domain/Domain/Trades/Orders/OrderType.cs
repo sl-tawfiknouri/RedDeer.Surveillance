@@ -3,9 +3,9 @@ namespace Domain.Trades.Orders
 {
     public enum OrderType
     {
-        Unknown,
-        Market,
-        Limit,
-        StopLoss
+        Unknown = 0,
+        Market = 1,
+        Limit = 2,
+        StopLoss = 3
     }
 }

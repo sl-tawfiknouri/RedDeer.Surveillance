@@ -12,6 +12,7 @@ namespace TestHarness.Configuration
         public string ScheduledRuleQueueName {get; set;}
         public string CaseMessageQueueName { get; set; }
         public string ScheduleRuleDistributedWorkQueueName { get; set; }
+        public string AuroraConnectionString { get; }
 
         public bool IsEc2Instance { get; set; }
     }

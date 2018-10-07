@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Domain.Equity;
+using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -182,11 +184,11 @@ VALUES(
                 end = end.Date;
                 var query = new GetQuery {Start = start, End = end};
 
-                using (var conn = dbConnection.QueryAsync<TradeOrderFrame>(GetSql, query))
+                using (var conn = dbConnection.QueryAsync<TradeOrderFrameDto>(GetSql, query))
                 {
                     var rawResult = await conn;
 
-                    return rawResult?.ToList();
+                    return rawResult?.Select(Project).ToList();
                 }
             }
             catch (Exception e)
@@ -200,6 +202,55 @@ VALUES(
             }
 
             return new TradeOrderFrame[0];
+        }
+
+        private TradeOrderFrame Project(TradeOrderFrameDto dto)
+        {
+            var limit =
+                dto.LimitPrice.HasValue
+                    ? new Price(dto.LimitPrice.Value, dto.LimitCurrency)
+                    : (Price?)null;
+
+            var executedPrice =
+                dto.ExecutedPrice.HasValue
+                    ? new Price(dto.ExecutedPrice.Value, dto.OrderCurrency)
+                    : (Price?) null; 
+
+            return new TradeOrderFrame(
+                (OrderType)dto.OrderTypeId.GetValueOrDefault(0),
+                new StockExchange(
+                    new Market.MarketId(dto.MarketId),
+                    dto.MarketName),
+                new Security(
+                    new SecurityIdentifiers(
+                        dto.SecurityClientIdentifier,
+                        dto.SecuritySedol,
+                        dto.SecurityIsin,
+                        dto.SecurityFigi,
+                        dto.SecurityCusip,
+                        dto.SecurityExchangeSymbol,
+                        dto.SecurityLei,
+                        dto.SecurityBloombergTicker),
+                    dto.SecurityName,
+                    dto.SecurityCfi,
+                    dto.SecurityIssuerIdentifier),
+                limit,
+                executedPrice,
+                dto.FilledVolume,
+                dto.OrderedVolume,
+                (OrderPosition)dto.OrderPositionId.GetValueOrDefault(0),
+                (OrderStatus)dto.OrderStatusId.GetValueOrDefault(0),
+                dto.StatusChangedOn,
+                dto.TradeSubmittedOn,
+                dto.TraderId,
+                dto.TradeClientAttributionId,
+                dto.AccountId,
+                dto.DealerInstructions,
+                dto.PartyBrokerId,
+                dto.CounterPartyBrokerId,
+                dto.TradeRationale,
+                dto.TradeStrategy,
+                dto.OrderCurrency);
         }
 
         private class GetQuery
@@ -264,7 +315,7 @@ VALUES(
             /// <summary>
             /// The type of order i.e. market / limit
             /// </summary>
-            public int OrderTypeId { get; set; }
+            public int? OrderTypeId { get; set; }
 
             /// <summary>
             /// The market the security is being traded on
@@ -331,12 +382,12 @@ VALUES(
             /// <summary>
             /// Buy or Sell
             /// </summary>
-            public int OrderPositionId { get; set; }
+            public int? OrderPositionId { get; set; }
 
             /// <summary>
             /// Status of the order (placed/cancelled/fulfilled)
             /// </summary>
-            public int OrderStatusId { get; set; }
+            public int? OrderStatusId { get; set; }
 
             /// <summary>
             /// A client identifier of the trader placing the order

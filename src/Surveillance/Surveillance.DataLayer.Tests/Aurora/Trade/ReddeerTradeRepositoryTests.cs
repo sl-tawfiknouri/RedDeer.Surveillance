@@ -40,6 +40,30 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             Assert.IsTrue(true);
         }
 
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task Get()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString =
+                    "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance"
+            };
+
+            var factory = new ConnectionStringFactory(config);
+            var repo = new ReddeerTradeRepository(factory, _logger);
+            var row1 = Frame();
+            var row2 = Frame();
+            var start = row1.StatusChangedOn.Date;
+            var end = row2.StatusChangedOn.AddDays(1).Date;
+
+            await repo.Create(row1);
+            await repo.Create(row2);
+            var result = await repo.Get(start, end);
+
+            Assert.IsTrue(true);
+        }
+
         private TradeOrderFrame Frame()
         {
             var exch = new StockExchange(new Market.MarketId("id"), "LSE");

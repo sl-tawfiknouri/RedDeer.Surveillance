@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Amazon.DynamoDBv2;
@@ -156,20 +157,30 @@ namespace RedDeer.Surveillance.App.Configuration
             };
 
             var attributes = new Dictionary<string, string>();
-            var response = client.QueryAsync(query).Result;
 
-            if (response.Items.Any())
+            try
             {
-                foreach (var item in response.Items.First())
+                var response = client.QueryAsync(query).Result;
+
+                if (response.Items.Any())
                 {
-                    attributes[item.Key] = item.Value.S;
+                    foreach (var item in response.Items.First())
+                    {
+                        attributes[item.Key] = item.Value.S;
+                    }
                 }
+
+                _hasFetchedEc2Data = true;
+                var casedAttributes = attributes.ToDictionary(i => i.Key?.ToLower(), i => i.Value);
+
+                return casedAttributes;
+            }
+            catch (Exception e)
+            {
+                //
             }
 
-            _hasFetchedEc2Data = true;
-            var casedAttributes = attributes.ToDictionary(i => i.Key?.ToLower(), i => i.Value);
-
-            return casedAttributes;
+            return new Dictionary<string, string>();
         }
     }
 }

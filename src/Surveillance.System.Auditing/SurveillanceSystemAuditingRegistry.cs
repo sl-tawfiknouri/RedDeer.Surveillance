@@ -10,7 +10,7 @@ namespace Surveillance.System.Auditing
     {
         public SurveillanceSystemAuditingRegistry()
         {
-            For<ISystemProcessContext>().Use<SystemProcessContext>();
+            For<ISystemProcessContext>().Use<SystemProcessContext>().Singleton();
             For<ISystemProcessOperationContextFactory>().Use<SystemProcessOperationContextFactory>();
             For<ISystemProcessOperationDistributeRuleContextFactory>().Use<SystemProcessOperationDistributeRuleContextFactory>();
             For<ISystemProcessOperationRunRuleContextFactory>().Use<SystemProcessOperationRunRuleContextFactory>();

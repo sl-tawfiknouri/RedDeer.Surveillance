@@ -125,6 +125,7 @@ namespace Surveillance
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
+            For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
         }
     }
 }

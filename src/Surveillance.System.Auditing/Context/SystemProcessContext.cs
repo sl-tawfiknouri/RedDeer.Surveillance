@@ -60,5 +60,16 @@ namespace Surveillance.System.Auditing.Context
 
             return ctx;
         }
+
+        public void UpdateHeartbeat()
+        {
+            if (_systemProcess == null)
+            {
+                return;
+            }
+
+            _systemProcess.Heartbeat = DateTime.UtcNow;
+            _systemProcessRepository.Update(_systemProcess);
+        }
     }
 }

@@ -9,6 +9,9 @@ using Surveillance.Utility.Interfaces;
 
 namespace Surveillance.Utility
 {
+    /// <summary>
+    /// Checks that our apis on the client service are accessible
+    /// </summary>
     public class ApiHeartbeat : IApiHeartbeat
     {
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;

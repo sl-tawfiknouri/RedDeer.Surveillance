@@ -7,5 +7,6 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         ISystemProcessOperationContext CreateOperationContext();
         ISystemProcessOperationContext CreateAndStartOperationContext();
         void StartEvent(ISystemProcess systemProcess);
+        void UpdateHeartbeat();
     }
 }

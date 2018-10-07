@@ -128,7 +128,10 @@ namespace RedDeer.Surveillance.App.Configuration
             {
                 _dynamoConfig.TryGetValue(field, out var value);
 
-                return value ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    return value;
+                }
             }
 
             return root.GetValue<string>(field);

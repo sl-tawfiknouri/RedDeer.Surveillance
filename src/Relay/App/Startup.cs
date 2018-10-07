@@ -57,7 +57,8 @@ namespace RedDeer.Relay.Relay.App
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
 
-            return ConfigBuilder.ConfigBuilder.Build(configurationBuilder);
+            var builder = new ConfigBuilder.ConfigBuilder();
+            return builder.Build(configurationBuilder);
         }
     }
 }

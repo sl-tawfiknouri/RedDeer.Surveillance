@@ -7,16 +7,19 @@ using Surveillance.Recorders.Projectors.Interfaces;
 
 namespace Surveillance.Recorders
 {
-    public class RedDeerTradeRecorder : IRedDeerTradeRecorder
+    /// <summary>
+    /// Depreciated - we're keeping it in case we want to return to ES
+    /// </summary>
+    public class RedDeerElasticSearchTradeRecorder : IRedDeerTradeRecorder
     {
         private readonly IRedDeerTradeFormatRepository _repository;
         private readonly IReddeerTradeFormatProjector _projector;
         private readonly ILogger _logger;
 
-        public RedDeerTradeRecorder(
+        public RedDeerElasticSearchTradeRecorder(
             IRedDeerTradeFormatRepository repository,
             IReddeerTradeFormatProjector projector,
-            ILogger<RedDeerTradeRecorder> logger)
+            ILogger<RedDeerElasticSearchTradeRecorder> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _projector = projector ?? throw new ArgumentNullException(nameof(projector));

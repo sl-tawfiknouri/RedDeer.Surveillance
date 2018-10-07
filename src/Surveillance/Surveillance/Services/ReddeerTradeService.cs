@@ -20,7 +20,7 @@ namespace Surveillance.Services
         private readonly ISurveillanceNetworkExchangeFactory _networkExchangeFactory;
         private readonly IUnsubscriberFactory<TradeOrderFrame> _unsubscriberFactory;
         private readonly IUnsubscriberFactory<ExchangeFrame> _equityUnsubscriberFactory;
-        private readonly IRedDeerTradeRecorder _reddeerTradeRecorder;
+        private readonly IRedDeerAuroraTradeRecorderAutoSchedule _reddeerTradeRecorder;
         private readonly IRedDeerStockExchangeRecorder _reddeerStockExchangeRecorder;
         private readonly INetworkConfiguration _configuration;
 
@@ -28,7 +28,7 @@ namespace Surveillance.Services
             ISurveillanceNetworkExchangeFactory networkExchangeFactory,
             IUnsubscriberFactory<TradeOrderFrame> unsubscriberFactory,
             IUnsubscriberFactory<ExchangeFrame> equityUnsubscriberFactory,
-            IRedDeerTradeRecorder reddeerTradeRecorder,
+            IRedDeerAuroraTradeRecorderAutoSchedule reddeerTradeRecorder,
             IRedDeerStockExchangeRecorder reddeerStockExchangeRecorder,
             INetworkConfiguration configuration)
         {

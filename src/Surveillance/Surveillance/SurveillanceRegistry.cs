@@ -69,9 +69,11 @@ namespace Surveillance
 
             For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
-            //For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorder>();
-            For<IRedDeerTradeRecorder>().Use<RedDeerTradeRecorderAutoSchedule>();
-            For<IRedDeerTradeRecorderAutoSchedule>().Use<RedDeerTradeRecorderAutoSchedule>();
+            For<IRedDeerAuroraTradeRecorder>().Use<RedDeerAuroraTradeRecorder>();
+            For<IRedDeerAuroraTradeRecorderAutoSchedule>().Use<RedDeerAuroraTradeRecorderAutoSchedule>();
+
+            For<IRedDeerTradeRecorder>().Use<RedDeerElasticSearchTradeRecorderAutoSchedule>();
+            For<IRedDeerTradeRecorderAutoSchedule>().Use<RedDeerElasticSearchTradeRecorderAutoSchedule>();
             For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
 
             For<ITradingHistory>().Use<TradingHistory>();

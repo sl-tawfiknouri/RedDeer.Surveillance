@@ -11,7 +11,10 @@ using Surveillance.Recorders.Projectors.Interfaces;
 
 namespace Surveillance.Recorders
 {
-    public class RedDeerTradeRecorderAutoSchedule : IRedDeerTradeRecorderAutoSchedule
+    /// <summary>
+    /// Depreciated - configured for elastic search
+    /// </summary>
+    public class RedDeerElasticSearchTradeRecorderAutoSchedule : IRedDeerTradeRecorderAutoSchedule
     {
         private readonly IScheduleRuleMessageSender _sender;
         private readonly IRedDeerTradeFormatRepository _repository;
@@ -22,12 +25,12 @@ namespace Surveillance.Recorders
 
         private readonly IDictionary<string, SchedulePair> _batchTracker;
 
-        public RedDeerTradeRecorderAutoSchedule(
+        public RedDeerElasticSearchTradeRecorderAutoSchedule(
             IScheduleRuleMessageSender sender,
             IRedDeerTradeFormatRepository repository,
             IReddeerTradeFormatProjector projector,
             IRuleConfiguration configuration,
-            ILogger<RedDeerTradeRecorder> logger)
+            ILogger<RedDeerElasticSearchTradeRecorder> logger)
         {
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));

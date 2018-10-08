@@ -219,7 +219,7 @@ VALUES(
             return new TradeOrderFrame(
                 (OrderType)dto.OrderTypeId.GetValueOrDefault(0),
                 new StockExchange(
-                    new Market.MarketId(dto.MarketId),
+                    new Domain.Market.Market.MarketId(dto.MarketId),
                     dto.MarketName),
                 new Security(
                     new SecurityIdentifiers(

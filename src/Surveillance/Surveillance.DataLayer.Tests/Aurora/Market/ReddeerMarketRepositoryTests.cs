@@ -1,0 +1,73 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Domain.Equity;
+using Domain.Equity.Frames;
+using Domain.Market;
+using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework;
+using Surveillance.DataLayer.Aurora;
+using Surveillance.DataLayer.Aurora.Market;
+using Surveillance.DataLayer.Configuration;
+
+namespace Surveillance.DataLayer.Tests.Aurora.Market
+{
+    [TestFixture]
+    public class ReddeerMarketRepositoryTests
+    {
+        private ILogger<ReddeerMarketRepository> _logger;
+
+        [SetUp]
+        public void Setup()
+        {
+            _logger = A.Fake<ILogger<ReddeerMarketRepository>>();
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task Create()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString = "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance; Allow User Variables=True"
+            };
+
+            var factory = new ConnectionStringFactory(config);
+            var repo = new ReddeerMarketRepository(factory, _logger);
+
+            await repo.Create(Frame());
+
+            Assert.IsTrue(true);
+        }
+
+        private ExchangeFrame Frame()
+        {
+            var stockExchange = new StockExchange(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
+
+            var securityIdentifiers = new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+
+            var security = new Security(
+                securityIdentifiers,
+                "Standard Chartered",
+                "CFI",
+                "Standard Chartered Bank");
+
+            var securities = new List<SecurityTick>
+            {
+                new SecurityTick(
+                    security,
+                    new Spread(new Price(100, "GBP"), new Price(101, "GBP"), new Price(100.5m, "GBP")),
+                    new Volume(1000),
+                    new Volume(10000),
+                    DateTime.UtcNow,
+                    1000000,
+                    new IntradayPrices(new Price(90, "GBP"), new Price(85, "GBP"), new Price(105, "GBP"), new Price(84, "GBP")),
+                    1000,
+                    stockExchange)
+            };
+
+            return new ExchangeFrame(stockExchange, DateTime.UtcNow, securities);
+        }
+    }
+}

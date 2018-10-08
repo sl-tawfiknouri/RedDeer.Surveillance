@@ -48,6 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", 
 	ProjectSection(SolutionItems) = preProject
 		1 - Initial.sql = 1 - Initial.sql
 		2 - Trade.sql = 2 - Trade.sql
+		3 - Market.sql = 3 - Market.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.System.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"

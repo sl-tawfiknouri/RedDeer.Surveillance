@@ -66,7 +66,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         private TradeOrderFrame Frame()
         {
-            var exch = new StockExchange(new Market.MarketId("id"), "LSE");
+            var exch = new StockExchange(new Domain.Market.Market.MarketId("id"), "LSE");
             var orderDates = DateTime.Now;
             const string traderId = "Trader Joe";
             const string partyBrokerId = "Broker-1";

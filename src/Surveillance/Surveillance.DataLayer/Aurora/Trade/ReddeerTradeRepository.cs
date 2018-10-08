@@ -169,6 +169,9 @@ VALUES(
 
         public async Task<IReadOnlyCollection<TradeOrderFrame>> Get(DateTime start, DateTime end)
         {
+            start = start.Date;
+            end = end.Date.AddDays(1).AddMilliseconds(-1);
+
             if (end < start)
             {
                 return new TradeOrderFrame[0];

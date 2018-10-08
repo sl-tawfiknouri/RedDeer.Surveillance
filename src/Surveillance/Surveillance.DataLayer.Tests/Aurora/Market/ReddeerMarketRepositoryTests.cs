@@ -41,6 +41,26 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             Assert.IsTrue(true);
         }
 
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task Get()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString = "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance; Allow User Variables=True"
+            };
+
+            var factory = new ConnectionStringFactory(config);
+            var repo = new ReddeerMarketRepository(factory, _logger);
+
+            await repo.Create(Frame());
+            await repo.Create(Frame());
+
+            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow);
+
+            Assert.IsTrue(true);
+        }
+
         private ExchangeFrame Frame()
         {
             var stockExchange = new StockExchange(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");

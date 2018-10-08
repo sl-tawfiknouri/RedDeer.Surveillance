@@ -18,7 +18,7 @@ namespace Surveillance.DataLayer.Aurora.Market
         private readonly ILogger<ReddeerMarketRepository> _logger;
 
         private const string CreateMarketSql =
-            @"INSERT INTO MarketStockExchange(MarketId, MarketName) SELECT @MarketId, @MarketName FROM (SELECT @MarketId, @MarketName) as TMP1 WHERE NOT EXISTS(SELECT * FROM MarketStockExchange WHERE MarketId = @MarketId);
+            @"INSERT INTO MarketStockExchange(MarketId, MarketName) SELECT MarketId, MarketName FROM (SELECT @MarketId as MarketId, @MarketName as MarketName) as TMP1 WHERE NOT EXISTS(SELECT * FROM MarketStockExchange WHERE MarketId = @MarketId);
             SELECT * FROM MarketStockExchange WHERE MarketId = @MarketID;";
 
         private const string CreateSecuritySql =
@@ -109,7 +109,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     entity
                         .Securities
                         .Select(sec => new MarketStockExchangeSecuritiesDto(sec, stockMarketId))
-                        .FirstOrDefault();
+                        .ToList();
 
                 using (var conn = dbConnection.ExecuteAsync(CreateSecuritySql, securities))
                 {

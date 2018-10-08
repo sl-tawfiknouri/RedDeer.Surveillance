@@ -7,6 +7,8 @@ using Surveillance.DataLayer.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Aurora.Market;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.DataLayer.ElasticSearch;
@@ -48,6 +50,7 @@ namespace Surveillance.DataLayer
 
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
             For<IReddeerTradeRepository>().Use<ReddeerTradeRepository>();
+            For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>();
         }
     }
 }

@@ -7,16 +7,16 @@ using Domain.Equity.Frames;
 
 namespace Surveillance.Recorders
 {
-    public class RedDeerStockExchangeRecorder : IRedDeerStockExchangeRecorder
+    public class RedDeerElasticSearchStockExchangeRecorder : IRedDeerStockExchangeRecorder
     {
         private readonly IRedDeerMarketExchangeFormatRepository _repository;
         private readonly IReddeerMarketExchangeFormatProjector _projector;
         private readonly ILogger _logger;
 
-        public RedDeerStockExchangeRecorder(
+        public RedDeerElasticSearchStockExchangeRecorder(
             IRedDeerMarketExchangeFormatRepository repository,
             IReddeerMarketExchangeFormatProjector projector,
-            ILogger<RedDeerStockExchangeRecorder> logger)
+            ILogger<RedDeerElasticSearchStockExchangeRecorder> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _projector = projector ?? throw new ArgumentNullException(nameof(projector));

@@ -183,10 +183,7 @@ VALUES(
             {
                 dbConnection.Open();
 
-                start = start.Date;
-                end = end.Date;
                 var query = new GetQuery {Start = start, End = end};
-
                 using (var conn = dbConnection.QueryAsync<TradeOrderFrameDto>(GetSql, query))
                 {
                     var rawResult = await conn;

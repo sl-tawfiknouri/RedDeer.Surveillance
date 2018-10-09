@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Domain.Equity.Frames;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Market.Interfaces;
 using Surveillance.DataLayer.ElasticSearch.Trade.Interfaces;
 using Surveillance.DataLayer.Projectors.Interfaces;
@@ -23,6 +25,8 @@ namespace Surveillance.Universe
 
         private readonly IRedDeerMarketExchangeFormatRepository _equityMarketRepository;
         private readonly IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector _equityMarketProjector;
+        private readonly IReddeerTradeRepository _auroraTradeRepository;
+        private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
 
         public UniverseBuilder(
@@ -30,12 +34,16 @@ namespace Surveillance.Universe
             IReddeerTradeFormatToReddeerTradeFrameProjector documentProjector,
             IRedDeerMarketExchangeFormatRepository equityMarketRepository,
             IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector equityMarketProjector,
+            IReddeerTradeRepository auroraTradeRepository,
+            IReddeerMarketRepository auroraMarketRepository,
             IMarketOpenCloseEventManager marketManager)
         {
             _tradeRepository = tradeRepository ?? throw new ArgumentNullException(nameof(tradeRepository));
             _documentProjector = documentProjector ?? throw new ArgumentNullException(nameof(documentProjector));
             _equityMarketRepository = equityMarketRepository ?? throw new ArgumentNullException(nameof(equityMarketRepository));
             _equityMarketProjector = equityMarketProjector ?? throw new ArgumentNullException(nameof(equityMarketProjector));
+            _auroraTradeRepository = auroraTradeRepository ?? throw new ArgumentNullException(nameof(auroraTradeRepository));
+            _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
             _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
         }
 
@@ -49,11 +57,21 @@ namespace Surveillance.Universe
                 return new Universe(null, null, null);
             }
 
-            var projectedTrades = await TradeDataFetch(execution);
-            var exchangeFrames = await MarketEquityDataFetch(execution);
+            var projectedTrades = await TradeDataFetchAurora(execution); //TradeDataFetch(execution);
+            var exchangeFrames = await MarketEquityDataFetchAurora(execution); // MarketEquityDataFetch(execution);
             var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
 
             return new Universe(projectedTrades, exchangeFrames, universe);
+        }
+
+        private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetchAurora(ScheduledExecution execution)
+        {
+            var trades =
+                await _auroraTradeRepository.Get(
+                    execution.TimeSeriesInitiation.Date,
+                    execution.TimeSeriesTermination.Date);
+
+            return trades ?? new List<TradeOrderFrame>();
         }
 
         private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetch(ScheduledExecution execution)
@@ -65,6 +83,16 @@ namespace Surveillance.Universe
             var projectedTrades = _documentProjector.Project(trades);
 
             return projectedTrades ?? new List<TradeOrderFrame>();
+        }
+
+        private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetchAurora(ScheduledExecution execution)
+        {
+            var equities =
+                await _auroraMarketRepository.Get(
+                    execution.TimeSeriesInitiation.Date,
+                    execution.TimeSeriesTermination.Date);
+
+            return equities ?? new List<ExchangeFrame>();
         }
 
         private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetch(ScheduledExecution execution)

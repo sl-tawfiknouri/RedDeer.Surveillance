@@ -57,7 +57,7 @@ namespace TestHarness.Commands
                 _appFactory
                 .EquitiesProcessFactory
                 .Create()
-                .Regular(TimeSpan.FromMilliseconds(300))
+                .Regular(TimeSpan.FromMilliseconds(1000 * 6))
                 .Finish();
 
             var tradeStream =

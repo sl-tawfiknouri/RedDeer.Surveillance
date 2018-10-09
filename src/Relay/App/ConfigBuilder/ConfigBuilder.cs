@@ -13,8 +13,8 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
 {
     public class ConfigBuilder
     {
-        private const string DynamoDbKey = "EnvironmentClientDeployment";
-        private const string DynamoDbTable = "surveillance-import";
+        private const string DynamoDbKey = "DynamoDbReddeerConfigName";
+        private const string DynamoDbTable = "reddeer-config";
         private const string DynamoDbTradeTable = "surveillance-import-trade";
         private const string DynamoDbMarketTable = "surveillance-import-market";
 
@@ -134,6 +134,8 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
 
             var environmentClientId = configurationBuilder.GetValue<string>(DynamoDbKey);
             var importDictionary = FetchEc2Data(environmentClientId, DynamoDbTable);
+
+            // 
             var tradeDictionary = FetchEc2Data(environmentClientId, DynamoDbTradeTable);
             var marketDictionary = FetchEc2Data(environmentClientId, DynamoDbMarketTable);
 
@@ -158,14 +160,14 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
             var query = new QueryRequest
             {
                 TableName = table,
-                KeyConditionExpression = "#EnvironmentClientDeploymentAttribute = :EnvironmentClientDeploymentValue",
+                KeyConditionExpression = "#NameAttribute = :NameValue",
                 ExpressionAttributeNames = new Dictionary<string, string>
                 {
-                    { "#EnvironmentClientDeploymentAttribute", "name" }
+                    { "#NameAttribute", "name" }
                 },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":EnvironmentClientDeploymentValue", new AttributeValue(environmentClientId)},
+                    {":NameValue", new AttributeValue(environmentClientId)},
                 }
             };
 
@@ -190,7 +192,7 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
             }
             catch (Exception e)
             {
-                //
+                _hasFetchedEc2Data = true;
             }
 
             return new Dictionary<string, string>();

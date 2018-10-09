@@ -170,7 +170,10 @@ namespace RedDeer.Surveillance.App.Configuration
                 {
                     foreach (var item in response.Items.First())
                     {
-                        attributes[item.Key] = item.Value.S;
+                        if (!string.IsNullOrWhiteSpace(item.Value.S))
+                        {
+                            attributes[item.Key] = item.Value.S;
+                        }
                     }
                 }
 

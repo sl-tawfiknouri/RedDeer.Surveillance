@@ -17,8 +17,8 @@ namespace RedDeer.Surveillance.App.Configuration
 {
     public class Configuration
     {
-        private const string DynamoDbKey = "EnvironmentClientDeployment";
-        private const string DynamoDbTable = "surveillance-application";
+        private const string DynamoDbKey = "DynamoDbReddeerConfigName";
+        private const string DynamoDbTable = "reddeer-config";
 
         private IDictionary<string, string> _dynamoConfig;
         private bool _hasFetchedEc2Data;
@@ -149,14 +149,14 @@ namespace RedDeer.Surveillance.App.Configuration
             var query = new QueryRequest
             {
                 TableName = DynamoDbTable,
-                KeyConditionExpression = "#EnvironmentClientDeploymentAttribute = :EnvironmentClientDeploymentValue",
+                KeyConditionExpression = "#NameAttribute = :NameValue",
                 ExpressionAttributeNames = new Dictionary<string, string>
                 {
-                    { "#EnvironmentClientDeploymentAttribute", "name" }
+                    { "#NameAttribute", "name" }
                 },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":EnvironmentClientDeploymentValue", new AttributeValue(environmentClientId)},
+                    {":NameValue", new AttributeValue(environmentClientId)},
                 }
             };
 
@@ -181,7 +181,7 @@ namespace RedDeer.Surveillance.App.Configuration
             }
             catch (Exception e)
             {
-                //
+                _hasFetchedEc2Data = true;
             }
 
             return new Dictionary<string, string>();

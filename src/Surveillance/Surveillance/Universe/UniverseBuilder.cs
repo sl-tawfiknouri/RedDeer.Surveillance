@@ -57,6 +57,9 @@ namespace Surveillance.Universe
                 return new Universe(null, null, null);
             }
 
+            execution.TimeSeriesInitiation = execution.TimeSeriesInitiation.ToUniversalTime().Date;
+            execution.TimeSeriesTermination = execution.TimeSeriesTermination.ToUniversalTime().Date;
+
             var projectedTrades = await TradeDataFetchAurora(execution); //TradeDataFetch(execution);
             var exchangeFrames = await MarketEquityDataFetchAurora(execution); // MarketEquityDataFetch(execution);
             var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);

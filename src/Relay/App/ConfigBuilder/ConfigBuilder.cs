@@ -58,21 +58,6 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                     foreach (var kvp in tradeAttributes)
                         _dynamoConfig.Add(kvp);
                 }
-                else
-                {
-                    _dynamoConfig = GetDynamoDBAttributes("alpha-relay-reddeer");
-
-                    var marketTableName = $"alpha-surveillance-import-market-reddeer";
-                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
-                    var tradeTableName = $"alpha-surveillance-import-trade-reddeer";
-                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
-
-                    foreach (var kvp in marketAttributes)
-                        _dynamoConfig.Add(kvp);
-
-                    foreach (var kvp in tradeAttributes)
-                        _dynamoConfig.Add(kvp);
-                }
             }
 
             var networkConfiguration = new Configuration

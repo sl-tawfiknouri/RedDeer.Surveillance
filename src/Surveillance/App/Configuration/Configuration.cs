@@ -130,10 +130,6 @@ namespace RedDeer.Surveillance.App.Configuration
                 var dynamoDbConfigKey = $"{environment}-surveillance-{GetTag("Customer")}".ToLower();
                 _dynamoConfig = FetchEc2Data(dynamoDbConfigKey);
             }
-            else
-            {
-                _dynamoConfig = FetchEc2Data("alpha-surveillance-reddeer");
-            }
 
             _hasFetchedEc2Data = true;
         }

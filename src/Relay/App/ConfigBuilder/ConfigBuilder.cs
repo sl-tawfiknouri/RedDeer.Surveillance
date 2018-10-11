@@ -7,20 +7,21 @@ using System.Linq;
 using System.Net;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.EC2;
+using Amazon.EC2.Model;
 // ReSharper disable InconsistentlySynchronizedField
 
 namespace RedDeer.Relay.Relay.App.ConfigBuilder
 {
     public class ConfigBuilder
     {
-        private const string DynamoDbKey = "DynamoDbReddeerConfigName";
-        private const string DynamoDbTable = "reddeer-config";
-        private const string DynamoDbTradeTable = "surveillance-import-trade";
-        private const string DynamoDbMarketTable = "surveillance-import-market";
-
-        private readonly IDictionary<string, string> _dynamoConfig;
+        private IDictionary<string, string> _dynamoConfig;
         private bool _hasFetchedEc2Data;
         private readonly object _lock = new object();
+
+
+        public static bool IsEC2Instance { get; private set; }
+        public static bool IsUnitTest { get; private set; }
 
         public ConfigBuilder()
         {
@@ -31,125 +32,192 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
         {
             lock (_lock)
             {
-                SetEc2Data(configurationBuilder);
+                IsUnitTest = AppDomain
+                    .CurrentDomain
+                    .GetAssemblies()
+                    .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
+
+                IsEC2Instance =
+                    IsUnitTest == false &&
+                    Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+
+                if (IsEC2Instance)
+                {
+                    var environment = GetTag("Environment");
+                    var dynamoDBName = $"{environment}-relay-{GetTag("Customer")}".ToLower();
+                    _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
+
+                    var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
+                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
+                    var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
+                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
+
+                    foreach (var kvp in marketAttributes)
+                        _dynamoConfig.Add(kvp);
+
+                    foreach (var kvp in tradeAttributes)
+                        _dynamoConfig.Add(kvp);
+                }
+                else
+                {
+                    _dynamoConfig = GetDynamoDBAttributes("alpha-relay-reddeer");
+
+                    var marketTableName = $"alpha-surveillance-import-market-reddeer";
+                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
+                    var tradeTableName = $"alpha-surveillance-import-trade-reddeer";
+                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
+
+                    foreach (var kvp in marketAttributes)
+                        _dynamoConfig.Add(kvp);
+
+                    foreach (var kvp in tradeAttributes)
+                        _dynamoConfig.Add(kvp);
+                }
             }
 
             var networkConfiguration = new Configuration
             {
-                RelayServiceEquityDomain = GetValue("RelayServiceEquityDomain", configurationBuilder),
-                RelayServiceEquityPort = GetValue("RelayServiceEquityPort", configurationBuilder),
-                SurveillanceServiceEquityDomain = GetValue("SurveillanceServiceEquityDomain", configurationBuilder),
-                SurveillanceServiceEquityPort = GetValue("SurveillanceServiceEquityPort", configurationBuilder),
-                RelayServiceTradeDomain = GetValue("RelayServiceTradeDomain", configurationBuilder),
-                RelayServiceTradePort = GetValue("RelayServiceTradePort", configurationBuilder),
-                SurveillanceServiceTradeDomain = GetValue("SurveillanceServiceTradeDomain", configurationBuilder),
-                SurveillanceServiceTradePort = GetValue("SurveillanceServiceTradePort", configurationBuilder),
-                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetValue("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
+                RelayServiceEquityDomain = GetSetting("RelayServiceEquityDomain", configurationBuilder),
+                RelayServiceEquityPort = GetSetting("RelayServiceEquityPort", configurationBuilder),
+                SurveillanceServiceEquityDomain = GetSetting("SurveillanceServiceEquityDomain", configurationBuilder),
+                SurveillanceServiceEquityPort = GetSetting("SurveillanceServiceEquityPort", configurationBuilder),
+                RelayServiceTradeDomain = GetSetting("RelayServiceTradeDomain", configurationBuilder),
+                RelayServiceTradePort = GetSetting("RelayServiceTradePort", configurationBuilder),
+                SurveillanceServiceTradeDomain = GetSetting("SurveillanceServiceTradeDomain", configurationBuilder),
+                SurveillanceServiceTradePort = GetSetting("SurveillanceServiceTradePort", configurationBuilder),
+                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
                 RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
-                    GetValue("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
+                    GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
 
                 // TRADE CONFIG
-                OrderTypeFieldName = GetValue("OrderTypeFieldName", configurationBuilder),
+                OrderTypeFieldName = GetSetting("OrderTypeFieldName", configurationBuilder),
 
-                MarketIdentifierCodeFieldName = GetValue("MarketIdentifierCodeFieldName", configurationBuilder),
-                MarketNameFieldName = GetValue("MarketNameFieldName", configurationBuilder),
+                MarketIdentifierCodeFieldName = GetSetting("MarketIdentifierCodeFieldName", configurationBuilder),
+                MarketNameFieldName = GetSetting("MarketNameFieldName", configurationBuilder),
 
-                SecurityNameFieldName = GetValue("SecurityNameFieldName", configurationBuilder),
-                SecurityCfiFieldName = GetValue("SecurityCfiFieldName", configurationBuilder),
+                SecurityNameFieldName = GetSetting("SecurityNameFieldName", configurationBuilder),
+                SecurityCfiFieldName = GetSetting("SecurityCfiFieldName", configurationBuilder),
 
-                SecurityClientIdentifierFieldName = GetValue("SecurityClientIdentifierFieldName", configurationBuilder),
-                SecuritySedolFieldName = GetValue("SecuritySedolFieldName", configurationBuilder),
-                SecurityIsinFieldName =  GetValue("SecurityIsinFieldName", configurationBuilder),
-                SecurityFigiFieldName =  GetValue("SecurityFigiFieldName", configurationBuilder),
-                SecurityCusipFieldName = GetValue("SecurityCusipFieldName", configurationBuilder),
-                SecurityExchangeSymbolFieldName = GetValue("SecurityExchangeSymbolFieldName", configurationBuilder),
+                SecurityClientIdentifierFieldName = GetSetting("SecurityClientIdentifierFieldName", configurationBuilder),
+                SecuritySedolFieldName = GetSetting("SecuritySedolFieldName", configurationBuilder),
+                SecurityIsinFieldName = GetSetting("SecurityIsinFieldName", configurationBuilder),
+                SecurityFigiFieldName = GetSetting("SecurityFigiFieldName", configurationBuilder),
+                SecurityCusipFieldName = GetSetting("SecurityCusipFieldName", configurationBuilder),
+                SecurityExchangeSymbolFieldName = GetSetting("SecurityExchangeSymbolFieldName", configurationBuilder),
                 
-                LimitPriceFieldName = GetValue("LimitPriceFieldName", configurationBuilder),
-                TradeSubmittedOnFieldName = GetValue("SecurityTradeSubmittedOnFieldName", configurationBuilder),
-                StatusChangedOnFieldName = GetValue("StatusChangedOnFieldName", configurationBuilder),
-                FulfilledVolumeFieldName = GetValue("FulfilledVolumeFieldName", configurationBuilder),
-                OrderPositionFieldName = GetValue("OrderPositionFieldName", configurationBuilder),
+                LimitPriceFieldName = GetSetting("LimitPriceFieldName", configurationBuilder),
+                TradeSubmittedOnFieldName = GetSetting("SecurityTradeSubmittedOnFieldName", configurationBuilder),
+                StatusChangedOnFieldName = GetSetting("StatusChangedOnFieldName", configurationBuilder),
+                FulfilledVolumeFieldName = GetSetting("FulfilledVolumeFieldName", configurationBuilder),
+                OrderPositionFieldName = GetSetting("OrderPositionFieldName", configurationBuilder),
 
-                TraderIdFieldName = GetValue("TraderIdFieldName", configurationBuilder),
-                TraderClientAttributionIdFieldName = GetValue("TraderClientAttributionIdFieldName", configurationBuilder),
-                PartyBrokerIdFieldName = GetValue("PartyBrokerIdFieldName", configurationBuilder),
-                CounterPartyBrokerIdFieldName = GetValue("CounterPartyBrokerIdFieldName", configurationBuilder),
+                TraderIdFieldName = GetSetting("TraderIdFieldName", configurationBuilder),
+                TraderClientAttributionIdFieldName = GetSetting("TraderClientAttributionIdFieldName", configurationBuilder),
+                PartyBrokerIdFieldName = GetSetting("PartyBrokerIdFieldName", configurationBuilder),
+                CounterPartyBrokerIdFieldName = GetSetting("CounterPartyBrokerIdFieldName", configurationBuilder),
 
-                OrderStatusFieldName = GetValue("OrderStatusFieldName", configurationBuilder),
-                CurrencyFieldName = GetValue("CurrencyFieldName", configurationBuilder),
+                OrderStatusFieldName = GetSetting("OrderStatusFieldName", configurationBuilder),
+                CurrencyFieldName = GetSetting("CurrencyFieldName", configurationBuilder),
 
-                SecurityLei = GetValue("SecurityLei", configurationBuilder),
-                SecurityBloombergTickerFieldName = GetValue("SecurityBloombergTickerFieldName", configurationBuilder),
-                ExecutedPriceFieldName = GetValue("ExecutedPriceFieldName", configurationBuilder),
-                OrderedVolumeFieldName = GetValue("OrderedVolumeFieldName", configurationBuilder),
-                AccountIdFieldName = GetValue("AccountIdFieldName", configurationBuilder),
-                DealerInstructionsFieldName = GetValue("DealerInstructionsFieldName", configurationBuilder),
-                TradeRationaleFieldName = GetValue("TradeRationaleFieldName", configurationBuilder),
-                TradeStrategyFieldName = GetValue("TradeStrategyFieldName", configurationBuilder),
-                SecurityIssuerIdentifier = GetValue("SecurityIssuerIdentifier", configurationBuilder),
+                SecurityLei = GetSetting("SecurityLei", configurationBuilder),
+                SecurityBloombergTickerFieldName = GetSetting("SecurityBloombergTickerFieldName", configurationBuilder),
+                ExecutedPriceFieldName = GetSetting("ExecutedPriceFieldName", configurationBuilder),
+                OrderedVolumeFieldName = GetSetting("OrderedVolumeFieldName", configurationBuilder),
+                AccountIdFieldName = GetSetting("AccountIdFieldName", configurationBuilder),
+                DealerInstructionsFieldName = GetSetting("DealerInstructionsFieldName", configurationBuilder),
+                TradeRationaleFieldName = GetSetting("TradeRationaleFieldName", configurationBuilder),
+                TradeStrategyFieldName = GetSetting("TradeStrategyFieldName", configurationBuilder),
+                SecurityIssuerIdentifier = GetSetting("SecurityIssuerIdentifier", configurationBuilder),
 
                 // TICK CONFIG
-                SecurityTickTimestampFieldName = GetValue("SecurityTickTimestampFieldName", configurationBuilder),
-                SecurityTickMarketIdentifierCodeFieldName = GetValue("SecurityTickMarketIdentifierCodeFieldName", configurationBuilder),
-                SecurityTickMarketNameFieldName = GetValue("SecurityTickMarketNameFieldName", configurationBuilder),
+                SecurityTickTimestampFieldName = GetSetting("SecurityTickTimestampFieldName", configurationBuilder),
+                SecurityTickMarketIdentifierCodeFieldName = GetSetting("SecurityTickMarketIdentifierCodeFieldName", configurationBuilder),
+                SecurityTickMarketNameFieldName = GetSetting("SecurityTickMarketNameFieldName", configurationBuilder),
 
-                SecurityTickClientIdentifierFieldName = GetValue("SecurityTickClientIdentifierFieldName", configurationBuilder),
-                SecurityTickSedolFieldName = GetValue("SecurityTickSedolFieldName", configurationBuilder),
-                SecurityTickIsinFieldName = GetValue("SecurityTickIsinFieldName", configurationBuilder),
-                SecurityTickFigiFieldName = GetValue("SecurityTickFigiFieldName", configurationBuilder),
-                SecurityTickExchangeSymbolFieldName = GetValue("SecurityTickExchangeSymbolFieldName", configurationBuilder),
-                SecurityTickCusipFieldName = GetValue("SecurityTickCusipFieldName", configurationBuilder),
+                SecurityTickClientIdentifierFieldName = GetSetting("SecurityTickClientIdentifierFieldName", configurationBuilder),
+                SecurityTickSedolFieldName = GetSetting("SecurityTickSedolFieldName", configurationBuilder),
+                SecurityTickIsinFieldName = GetSetting("SecurityTickIsinFieldName", configurationBuilder),
+                SecurityTickFigiFieldName = GetSetting("SecurityTickFigiFieldName", configurationBuilder),
+                SecurityTickExchangeSymbolFieldName = GetSetting("SecurityTickExchangeSymbolFieldName", configurationBuilder),
+                SecurityTickCusipFieldName = GetSetting("SecurityTickCusipFieldName", configurationBuilder),
 
-                SecurityTickCfiFieldName = GetValue("SecurityTickCifiFieldName", configurationBuilder),
-                SecurityTickSecurityNameFieldName = GetValue("SecurityTickSecurityNameFieldName", configurationBuilder),
-                SecurityTickSpreadAskFieldName = GetValue("SecurityTickSpreadAskFieldName", configurationBuilder),
-                SecurityTickSpreadBidFieldName = GetValue("SecurityTickSpreadBidFieldName", configurationBuilder),
-                SecurityTickSpreadPriceFieldName = GetValue("SecurityTickSpreadPriceFieldName", configurationBuilder),
+                SecurityTickCfiFieldName = GetSetting("SecurityTickCifiFieldName", configurationBuilder),
+                SecurityTickSecurityNameFieldName = GetSetting("SecurityTickSecurityNameFieldName", configurationBuilder),
+                SecurityTickSpreadAskFieldName = GetSetting("SecurityTickSpreadAskFieldName", configurationBuilder),
+                SecurityTickSpreadBidFieldName = GetSetting("SecurityTickSpreadBidFieldName", configurationBuilder),
+                SecurityTickSpreadPriceFieldName = GetSetting("SecurityTickSpreadPriceFieldName", configurationBuilder),
 
-                SecurityTickVolumeTradedFieldName = GetValue("SecurityTickVolumeTradedFieldName", configurationBuilder),
-                SecurityTickCurrencyFieldName = GetValue("SecurityTickSecurityCurrencyFieldName", configurationBuilder),
-                SecurityTickMarketCapFieldName = GetValue("SecurityTickMarketCapFieldName", configurationBuilder),
-                SecurityTickListedSecuritiesFieldName = GetValue("SecurityTickListedSecuritiesFieldName", configurationBuilder),
+                SecurityTickVolumeTradedFieldName = GetSetting("SecurityTickVolumeTradedFieldName", configurationBuilder),
+                SecurityTickCurrencyFieldName = GetSetting("SecurityTickSecurityCurrencyFieldName", configurationBuilder),
+                SecurityTickMarketCapFieldName = GetSetting("SecurityTickMarketCapFieldName", configurationBuilder),
+                SecurityTickListedSecuritiesFieldName = GetSetting("SecurityTickListedSecuritiesFieldName", configurationBuilder),
 
-                SecurityTickOpenPriceFieldName = GetValue("SecurityTickOpenPriceFieldName", configurationBuilder),
-                SecurityTickClosePriceFieldName = GetValue("SecurityTickClosePriceFieldName", configurationBuilder),
-                SecurityTickHighPriceFieldName = GetValue("SecurityTickHighPriceFieldName", configurationBuilder),
-                SecurityTickLowPriceFieldName = GetValue("SecurityTickLowPriceFieldName", configurationBuilder),
+                SecurityTickOpenPriceFieldName = GetSetting("SecurityTickOpenPriceFieldName", configurationBuilder),
+                SecurityTickClosePriceFieldName = GetSetting("SecurityTickClosePriceFieldName", configurationBuilder),
+                SecurityTickHighPriceFieldName = GetSetting("SecurityTickHighPriceFieldName", configurationBuilder),
+                SecurityTickLowPriceFieldName = GetSetting("SecurityTickLowPriceFieldName", configurationBuilder),
 
-                SecurityIssuerIdentifierFieldName = GetValue("SecurityIssuerIdentifierFieldName", configurationBuilder),
-                SecurityLeiFieldName = GetValue("SecurityLeiFieldName", configurationBuilder),
-                SecurityBloombergTicker = GetValue("SecurityBloombergTicker", configurationBuilder),
-                SecurityDailyVolumeFieldName = GetValue("SecurityDailyVolumeFieldName", configurationBuilder)
+                SecurityIssuerIdentifierFieldName = GetSetting("SecurityIssuerIdentifierFieldName", configurationBuilder),
+                SecurityLeiFieldName = GetSetting("SecurityLeiFieldName", configurationBuilder),
+                SecurityBloombergTicker = GetSetting("SecurityBloombergTicker", configurationBuilder),
+                SecurityDailyVolumeFieldName = GetSetting("SecurityDailyVolumeFieldName", configurationBuilder)
             };
 
             return networkConfiguration;
         }
 
-        private void SetEc2Data(IConfigurationRoot configurationBuilder)
+        private string GetSetting(string name, IConfigurationRoot config)
         {
-            if (_hasFetchedEc2Data)
+            if (TryGetSetting(name, out var setting, config))
             {
-                return;
+                return setting;
             }
 
-            var environmentClientId = configurationBuilder.GetValue<string>(DynamoDbKey);
-            var importDictionary = FetchEc2Data(environmentClientId, DynamoDbTable);
-
-            // 
-            var tradeDictionary = FetchEc2Data(environmentClientId, DynamoDbTradeTable);
-            var marketDictionary = FetchEc2Data(environmentClientId, DynamoDbMarketTable);
-
-            foreach (var item in importDictionary)
-                _dynamoConfig.Add(item);
-
-            foreach (var item in tradeDictionary)
-                _dynamoConfig.Add(item);
-
-            foreach (var item in marketDictionary)
-                _dynamoConfig.Add(item);
+            return string.Empty;
         }
 
-        private IDictionary<string, string> FetchEc2Data(string environmentClientId, string table)
+        private bool TryGetSetting(string name, out string setting, IConfigurationRoot config)
+        {
+            if (IsEC2Instance)
+            {
+                if (_dynamoConfig.ContainsKey(name))
+                {
+                    setting = _dynamoConfig[name];
+                    return true;
+                }
+            }
+            else
+            {
+                setting = config.GetValue<string>(name);
+                return true;
+            }
+
+            setting = string.Empty;
+            return false;
+        }
+
+        private static string GetTag(string name)
+        {
+            var instanceId = Amazon.Util.EC2InstanceMetadata.InstanceId;
+            var client = new AmazonEC2Client(new AmazonEC2Config
+            {
+                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            });
+
+            var tags = client.DescribeTagsAsync(new DescribeTagsRequest
+            {
+                Filters = new List<Filter>
+                {
+                    new Filter("resource-id", new List<string> { instanceId }),
+                    new Filter("key", new List<string> { name }),
+                }
+            }).Result.Tags;
+
+            return tags?.FirstOrDefault()?.Value;
+        }
+
+        public static Dictionary<string, string> GetDynamoDBAttributes(string dynamoDBName)
         {
             var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
             {
@@ -159,65 +227,72 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
 
             var query = new QueryRequest
             {
-                TableName = table,
-                KeyConditionExpression = "#NameAttribute = :NameValue",
+                TableName = "reddeer-config",
+                KeyConditionExpression = "#nameAttribute = :nameValue",
                 ExpressionAttributeNames = new Dictionary<string, string>
                 {
-                    { "#NameAttribute", "name" }
+                    { "#nameAttribute", "name" }
                 },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":NameValue", new AttributeValue(environmentClientId)},
+                    {":nameValue", new AttributeValue(dynamoDBName)},
                 }
             };
 
             var attributes = new Dictionary<string, string>();
-
-            try
+            var response = client.QueryAsync(query).Result;
+            if (response.Items.Any())
             {
-                var response = client.QueryAsync(query).Result;
-
-                if (response.Items.Any())
+                foreach (var item in response.Items.First())
                 {
-                    foreach (var item in response.Items.First())
+                    if (!string.IsNullOrWhiteSpace(item.Value.S))
                     {
                         attributes[item.Key] = item.Value.S;
                     }
                 }
-
-                _hasFetchedEc2Data = true;
-                var casedAttributes = attributes.ToDictionary(i => i.Key?.ToLower(), i => i.Value);
-
-                return casedAttributes;
-            }
-            catch (Exception e)
-            {
-                _hasFetchedEc2Data = true;
             }
 
-            return new Dictionary<string, string>();
+            return attributes;
         }
 
-        private string GetValue(string key, IConfigurationRoot configurationBuilder)
+        public static Dictionary<string, string> GetDynamoDbAttributesTable(string dynamoDbName)
         {
-            if (string.IsNullOrWhiteSpace(key))
+            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
             {
-                return string.Empty;
-            }
+                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            });
 
-            key = key.ToLower();
-
-            if (_dynamoConfig.ContainsKey(key))
+            var query = new QueryRequest
             {
-                _dynamoConfig.TryGetValue(key, out var value);
-
-                if (!string.IsNullOrWhiteSpace(value))
+                TableName = dynamoDbName,
+                KeyConditionExpression = "#datetimeAttribute = :datetimeValue",
+                ExpressionAttributeNames = new Dictionary<string, string>
                 {
-                    return value;
+                    { "#datetimeAttribute", "Datetime" }
+                },
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    {":datetimeValue", new AttributeValue(dynamoDbName)},
+                },
+                ScanIndexForward = false
+            };
+
+            var attributes = new Dictionary<string, string>();
+            var response = client.QueryAsync(query).Result;
+            if (response.Items.Any())
+            {
+                foreach (var item in response.Items.First())
+                {
+                    if (!string.IsNullOrWhiteSpace(item.Value.S)
+                    && !string.Equals(item.Key, "Datetime", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        attributes[item.Key] = item.Value.S;
+                    }
                 }
             }
 
-            return configurationBuilder.GetValue<string>(key) ?? string.Empty;
+            return attributes;
         }
     }
 }

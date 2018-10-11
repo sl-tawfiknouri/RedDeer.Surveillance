@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Amazon.EC2;
+using Amazon.EC2.Model;
 using Microsoft.Extensions.Configuration;
 using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
@@ -17,12 +19,14 @@ namespace RedDeer.Surveillance.App.Configuration
 {
     public class Configuration
     {
-        private const string DynamoDbKey = "DynamoDbReddeerConfigName";
         private const string DynamoDbTable = "reddeer-config";
 
         private IDictionary<string, string> _dynamoConfig;
         private bool _hasFetchedEc2Data;
         private readonly object _lock = new object();
+
+        public static bool IsEC2Instance { get; private set; }
+        public static bool IsUnitTest { get; private set; }
 
         public Configuration()
         {
@@ -33,7 +37,7 @@ namespace RedDeer.Surveillance.App.Configuration
         {
             lock (_lock)
             {
-                Ec2Check(configurationBuilder);
+                Ec2Check();
 
                 var networkConfiguration = new NetworkConfiguration
                 {
@@ -51,7 +55,7 @@ namespace RedDeer.Surveillance.App.Configuration
         {
             lock (_lock)
             {
-                Ec2Check(configurationBuilder);
+                Ec2Check();
 
                 var networkConfiguration = new DataLayerConfiguration
                 {
@@ -75,7 +79,7 @@ namespace RedDeer.Surveillance.App.Configuration
         {
             lock (_lock)
             {
-                Ec2Check(configurationBuilder);
+                Ec2Check();
 
                 var autoScheduleRules = GetValue("AutoScheduleRules", configurationBuilder);
                 bool.TryParse(autoScheduleRules, out var autoScheduleRulesValue);
@@ -93,8 +97,8 @@ namespace RedDeer.Surveillance.App.Configuration
         {
             lock (_lock)
             {
-                Ec2Check(configurationBuilder);
-
+                Ec2Check();
+            
                 var ruleConfiguration = new SystemDataLayerConfig
                 {
                     SurveillanceAuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder)
@@ -104,15 +108,34 @@ namespace RedDeer.Surveillance.App.Configuration
             }
         }
 
-        private void Ec2Check(IConfigurationRoot configurationBuilder)
+        private void Ec2Check()
         {
             if (_hasFetchedEc2Data)
             {
                 return;
             }
 
-            var environmentClientId = configurationBuilder.GetValue<string>(DynamoDbKey);
-            _dynamoConfig = FetchEc2Data(environmentClientId);
+            IsUnitTest = AppDomain
+                .CurrentDomain
+                .GetAssemblies()
+                .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
+
+            IsEC2Instance =
+                IsUnitTest == false &&
+                Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+
+            if (IsEC2Instance)
+            {
+                var environment = GetTag("Environment");
+                var dynamoDbConfigKey = $"{environment}-surveillance-{GetTag("Customer")}".ToLower();
+                _dynamoConfig = FetchEc2Data(dynamoDbConfigKey);
+            }
+            else
+            {
+                _dynamoConfig = FetchEc2Data("alpha-surveillance-reddeer");
+            }
+
+            _hasFetchedEc2Data = true;
         }
 
         private string GetValue(string field, IConfigurationRoot root)
@@ -188,6 +211,27 @@ namespace RedDeer.Surveillance.App.Configuration
             }
 
             return new Dictionary<string, string>();
+        }
+
+        private string GetTag(string name)
+        {
+            var instanceId = Amazon.Util.EC2InstanceMetadata.InstanceId;
+            var client = new AmazonEC2Client(new AmazonEC2Config
+            {
+                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            });
+
+            var tags = client.DescribeTagsAsync(new DescribeTagsRequest
+            {
+                Filters = new List<Filter>
+                {
+                    new Filter("resource-id", new List<string> { instanceId }),
+                    new Filter("key", new List<string> { name }),
+                }
+            }).Result.Tags;
+
+            return tags?.FirstOrDefault()?.Value;
         }
     }
 }

@@ -16,24 +16,28 @@ namespace Surveillance.DataLayer.Aurora.Market
     {
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ReddeerMarketRepository> _logger;
+        private readonly object _lock = new object();
 
-        private const string CreateMarketSql =
-            @"INSERT INTO MarketStockExchange(MarketId, MarketName) SELECT MarketId, MarketName FROM (SELECT @MarketId as MarketId, @MarketName as MarketName) as TMP1 WHERE NOT EXISTS(SELECT * FROM MarketStockExchange WHERE MarketId = @MarketId);
-            SELECT * FROM MarketStockExchange WHERE MarketId = @MarketID;";
+        private const string CreateTmp = @"
+            CREATE TEMPORARY TABLE IF NOT EXISTS MarketData(MarketId nvarchar(16), MarketName nvarchar(255), ClientIdentifier nvarchar(255), Sedol nvarchar(8), Isin nvarchar(20), Figi nvarchar(12), Cusip nvarchar(9), Lei nvarchar(20), ExchangeSymbol nvarchar(5), BloombergTicker nvarchar(5), SecurityName nvarchar(255), Cfi nvarchar(6), IssuerIdentifier nvarchar(255), SecurityCurrency nvarchar(10), Epoch datetime, BidPrice decimal(18, 3), AskPrice decimal(18, 3), MarketPrice decimal(18, 3), OpenPrice decimal(18, 3), ClosePrice decimal(18, 3), HighIntradayPrice decimal(18, 3), LowIntradayPrice decimal(18, 3), ListedSecurities bigint, MarketCap decimal(18, 3), VolumeTradedInTick bigint, DailyVolume bigint, SecurityId bigint, INDEX(Epoch));";
 
-        private const string CreateSecuritySql =
-            @"
-            INSERT INTO MarketStockExchangeSecurities(
-            MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency)
-             SELECT 
-             MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency
-             FROM
-             (SELECT @MarketStockExchangeId AS MarketStockExchangeId, @ClientIdentifier AS ClientIdentifier, @Sedol AS Sedol, @Isin AS Isin, @Figi AS Figi, @Cusip AS Cusip, @Lei AS Lei, @ExchangeSymbol AS ExchangeSymbol, @BloombergTicker AS BloombergTicker, @SecurityName AS SecurityName, @Cfi AS Cfi, @IssuerIdentifier AS IssuerIdentifier, @SecurityCurrency AS SecurityCurrency) AS TMP2
-             WHERE NOT EXISTS(SELECT * FROM MarketStockExchangeSecurities WHERE MarketStockExchangeId = @MarketStockExchangeId AND ClientIdentifier = @ClientIdentifier AND Sedol = @Sedol AND Isin = @Isin AND Figi = @Figi AND Cusip = @Cusip AND Lei = @Lei AND ExchangeSymbol = @ExchangeSymbol AND BloombergTicker = @BloombergTicker AND SecurityName = @SecurityName AND Cfi = @Cfi AND IssuerIdentifier = @IssuerIdentifier AND SecurityCurrency = @SecurityCurrency);
+        private const string InsertIntoTmp = @"
+            INSERT INTO MarketData(MarketId, MarketName, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES(@MarketId, @MarketName, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
 
-            SELECT @securityInsertId := Id FROM MarketStockExchangeSecurities WHERE MarketStockExchangeId = @MarketStockExchangeId AND ClientIdentifier = @ClientIdentifier AND Sedol = @Sedol AND Isin = @Isin AND Figi = @Figi AND Cusip = @Cusip AND Lei = @Lei AND ExchangeSymbol = @ExchangeSymbol AND BloombergTicker = @BloombergTicker AND SecurityName = @SecurityName AND Cfi = @Cfi AND IssuerIdentifier = @IssuerIdentifier AND SecurityCurrency = @SecurityCurrency;
+        private const string CopyAcrossMarketAndSecurityData = @"
+            INSERT INTO MarketStockExchange(MarketId, MarketName) SELECT DISTINCT (MarketId), MarketName FROM MarketData WHERE NOT MarketId in (SELECT MarketId FROM MarketStockExchange);
 
-             INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@securityInsertId, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
+            INSERT INTO MarketStockExchangeSecurities(MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency)
+             SELECT  mse.id as MarketStockExchangeId, md.clientIdentifier as ClientIdentifier, md.Sedol as Sedol, md.Isin as Isin, md.Figi as Figi, md.Cusip as Cusip, md.Lei as Lei, md.ExchangeSymbol as ExchangeSymbol, md.BloombergTicker as BloombergTicker, md.SecurityName as SecurityName, md.Cfi as Cfi, md.IssuerIdentifier as IssuerIdentifier, md.SecurityCurrency as SecurityCurrency
+             FROM MarketData as md LEFT JOIN MarketStockExchange as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM MarketStockExchangeSecurities) AND NOT md.isin IN (SELECT Isin FROM MarketStockExchangeSecurities);
+
+            UPDATE MarketData
+            LEFT JOIN MarketStockExchangeSecurities on MarketData.isin = MarketStockExchangeSecurities.isin set MarketData.SecurityId = MarketStockExchangeSecurities.Id;
+            UPDATE MarketData
+            LEFT JOIN MarketStockExchangeSecurities on MarketData.sedol = MarketStockExchangeSecurities.sedol set MarketData.SecurityId = MarketStockExchangeSecurities.Id;";
+        
+        private const string InsertSecuritySql = @"
+        INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;";
 
         private const string GetMarketSql =
             @"
@@ -92,38 +96,50 @@ namespace Surveillance.DataLayer.Aurora.Market
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
-            try
+            lock (_lock)
             {
-                dbConnection.Open();
 
-                var stockMarketId = 0;
-                var stockMarketExchangeDto = new MarketStockExchangeDto(entity);
-                using (var conn = dbConnection.QuerySingleAsync<int>(CreateMarketSql, stockMarketExchangeDto))
+                var dbConnection = _dbConnectionFactory.BuildConn();
+
+                try
                 {
-                    stockMarketId = await conn;
+                    dbConnection.Open();
+
+                    using (var conn = dbConnection.ExecuteAsync(CreateTmp))
+                    {
+                        conn.Wait();
+                    }
+
+                    if (!entity.Securities?.Any() ?? true)
+                    {
+                        return;
+                    }
+
+                    var projectedSecurities = entity.Securities.Select(Project).ToList();
+                    using (var conn = dbConnection.ExecuteAsync(InsertIntoTmp, projectedSecurities))
+                     {
+                        conn.Wait();
+                    }
+
+                    using (var conn = dbConnection.ExecuteAsync(CopyAcrossMarketAndSecurityData))
+                    {
+                        conn.Wait();
+                    }
+
+                    using (var conn = dbConnection.ExecuteAsync(InsertSecuritySql))
+                    {
+                        conn.Wait();
+                    }
                 }
-
-                var securities =
-                    entity
-                        .Securities
-                        .Select(sec => new MarketStockExchangeSecuritiesDto(sec, stockMarketId))
-                        .ToList();
-
-                using (var conn = dbConnection.ExecuteAsync(CreateSecuritySql, securities))
+                catch (Exception e)
                 {
-                    await conn;
+                    _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} {e.Message}");
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} {e.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                finally
+                {
+                    dbConnection.Close();
+                    dbConnection.Dispose();
+                }
             }
         }
 
@@ -380,6 +396,104 @@ namespace Surveillance.DataLayer.Aurora.Market
             // dont set these two for writes they're just for reads
             public string MarketId { get; set; }
             public string MarketName { get; set; }
+        }
+
+        private InsertSecurityDto Project(SecurityTick tick)
+        {
+            return new InsertSecurityDto(tick);
+        }
+
+        private class InsertSecurityDto
+        {
+            public InsertSecurityDto(SecurityTick entity)
+            {
+                if (entity == null)
+                {
+                    return;
+                }
+
+                MarketId = entity.Market?.Id?.Id;
+                MarketName = entity.Market?.Name;
+                ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
+                Sedol = entity.Security?.Identifiers.Sedol;
+                Isin = entity.Security?.Identifiers.Isin;
+                Figi = entity.Security?.Identifiers.Figi;
+                Cusip = entity.Security?.Identifiers.Cusip;
+                Lei = entity.Security?.Identifiers.Lei;
+                ExchangeSymbol = entity.Security?.Identifiers.ExchangeSymbol;
+                BloombergTicker = entity.Security?.Identifiers.BloombergTicker;
+                SecurityName = entity.Security?.Name;
+                Cfi = entity.Security?.Cfi;
+                IssuerIdentifier = entity.Security?.IssuerIdentifier;
+                SecurityCurrency =
+                    entity.Spread.Price.Currency
+                    ?? entity.Spread.Ask.Currency
+                    ?? entity.Spread.Bid.Currency;
+                Epoch = entity.TimeStamp;
+                BidPrice = entity.Spread.Bid.Value;
+                AskPrice = entity.Spread.Ask.Value;
+                MarketPrice = entity.Spread.Price.Value;
+                OpenPrice = entity.IntradayPrices.Open?.Value;
+                ClosePrice = entity.IntradayPrices.Close?.Value;
+                HighIntradayPrice = entity.IntradayPrices.High?.Value;
+                LowIntradayPrice = entity.IntradayPrices.Low?.Value;
+                ListedSecurities = entity.ListedSecurities;
+                MarketCap = entity.MarketCap;
+                VolumeTradedInTick = entity.Volume.Traded;
+                DailyVolume = entity.DailyVolume.Traded;
+            }
+
+
+            public string MarketId { get; set; }
+            public string MarketName { get; set; }
+
+            public string ClientIdentifier { get; set; }
+
+            public string Sedol { get; set; }
+
+            public string Isin { get; set; }
+
+            public string Figi { get; set; }
+
+            public string Cusip { get; set; }
+
+            public string Lei { get; set; }
+
+            public string ExchangeSymbol { get; set; }
+
+            public string BloombergTicker { get; set; }
+
+            public string SecurityName { get; set; }
+
+            public string Cfi { get; set; }
+
+            public string IssuerIdentifier { get; set; }
+
+            public string SecurityCurrency { get; set; }
+
+            public DateTime Epoch { get; set; }
+
+            public decimal? BidPrice { get; set; }
+
+            public decimal? AskPrice { get; set; }
+
+            public decimal? MarketPrice { get; set; }
+
+            public decimal? OpenPrice { get; set; }
+
+            public decimal? ClosePrice { get; set; }
+
+            public decimal? HighIntradayPrice { get; set; }
+
+            public decimal? LowIntradayPrice { get; set; }
+
+            public int? ListedSecurities { get; set; }
+
+            public decimal? MarketCap { get; set; }
+
+            public int? VolumeTradedInTick { get; set; }
+
+            public int? DailyVolume { get; set; }
         }
     }
 }

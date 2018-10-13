@@ -47,8 +47,11 @@ namespace TestHarness.Factory.Interfaces
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
         INetworkConfiguration Configuration { get; }
         IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
+<<<<<<< HEAD
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
+=======
         IAuroraRepository AuroraRepository { get; }
 
+>>>>>>> RDPB-2985 Added a nuke command to the test harness to purge aws queues and delete trade and market data from aurora
     }
 }

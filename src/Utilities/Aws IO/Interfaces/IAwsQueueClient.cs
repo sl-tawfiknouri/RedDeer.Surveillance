@@ -10,5 +10,6 @@ namespace Utilities.Aws_IO.Interfaces
         Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken, bool retry = true);
         Task SendToQueue(string name, string message, CancellationToken cancellationToken);
         Task SubscribeToQueueAsync(string name, Func<string, string, Task> action, CancellationToken cancellationToken);
+        Task PurgeQueue(string queueName, CancellationToken token);
     }
 }

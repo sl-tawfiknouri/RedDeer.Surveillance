@@ -8,71 +8,38 @@ using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.Rule_Parameters;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
-using Utilities.Extensions;
 
 namespace Surveillance.Scheduler
 {
     public class ReddeerRuleScheduler : IReddeerRuleScheduler
     {
-        private readonly ISpoofingRuleFactory _spoofingRuleFactory;
-        private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
-        private readonly IHighProfitRuleFactory _highProfitRuleFactory;
-        private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
-        private readonly ILayeringRuleFactory _layeringRuleFactory;
         private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
-        private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
-        private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IApiHeartbeat _apiHeartbeat;
         private readonly ISystemProcessContext _systemProcessContext;
+        private readonly IUniverseRuleSubscriber _ruleSubscriber;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
 
         public ReddeerRuleScheduler(
-            ISpoofingRuleFactory spoofingRuleFactory,
-            ICancelledOrderRuleFactory cancelledOrderRuleFactory,
-            IHighProfitRuleFactory highProfitRuleFactory,
-            IMarkingTheCloseRuleFactory markingTheCloseFactory,
-            ILayeringRuleFactory layeringRuleFactory,
             IUniverseBuilder universeBuilder,
             IUniversePlayerFactory universePlayerFactory,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
-            IRuleParameterApiRepository ruleParameterApiRepository,
-            IRuleParameterToRulesMapper ruleParameterMapper,
             IApiHeartbeat apiHeartbeat,
             ISystemProcessContext systemProcessContext,
+            IUniverseRuleSubscriber ruleSubscriber,
             ILogger<ReddeerRuleScheduler> logger)
         {
-            _spoofingRuleFactory = 
-                spoofingRuleFactory
-                ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
-            _cancelledOrderRuleFactory =
-                cancelledOrderRuleFactory
-                ?? throw new ArgumentNullException(nameof(cancelledOrderRuleFactory));
-            _highProfitRuleFactory =
-                highProfitRuleFactory
-                ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
-            _markingTheCloseFactory =
-                markingTheCloseFactory
-                ?? throw new ArgumentNullException(nameof(markingTheCloseFactory));
-            _layeringRuleFactory =
-                layeringRuleFactory
-                ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
-
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
             _universePlayerFactory =
@@ -82,20 +49,12 @@ namespace Surveillance.Scheduler
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            _ruleParameterApiRepository =
-                ruleParameterApiRepository
-                ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
-
-            _ruleParameterMapper =
-                ruleParameterMapper
-                ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
-
             _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            _ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-       
+
         public void Initiate()
         {
             _messageBusCts?.Cancel();
@@ -180,184 +139,9 @@ namespace Surveillance.Scheduler
             var universe = await _universeBuilder.Summon(execution);
             var player = _universePlayerFactory.Build();
 
-            await SubscribeRules(execution, player, opCtx);
+            await _ruleSubscriber.SubscribeRules(execution, player, opCtx);
             player.Play(universe);
             opCtx.EndEvent();
-        }
-
-        private async Task SubscribeRules(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (execution == null
-                || player == null)
-            {
-                return;
-            }
-
-            var ruleParameters = await _ruleParameterApiRepository.Get();
-
-            SpoofingRule(execution, player, ruleParameters, opCtx);
-            CancelledOrdersRule(execution, player, ruleParameters, opCtx);
-            HighProfitsRule(execution, player, ruleParameters, opCtx);
-            MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
-            LayeringRule(execution, player, opCtx);
-        }
-
-        private void SpoofingRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.Spoofing))
-            {
-                return;
-            }
-
-            var spoofingParameters = _ruleParameterMapper.Map(ruleParameters.Spoofing);
-
-            if (spoofingParameters != null)
-            {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.Spoofing.GetDescription(),
-                        _spoofingRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var spoofingRule = _spoofingRuleFactory.Build(spoofingParameters, ruleCtx);
-                player.Subscribe(spoofingRule);
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
-            }
-        }
-
-        private void CancelledOrdersRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.CancelledOrders))
-            {
-                return;
-            }
-
-            var cancelledOrderParameters = _ruleParameterMapper.Map(ruleParameters.CancelledOrder);
-
-            if (cancelledOrderParameters != null)
-            {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                        _cancelledOrderRuleFactory.Version,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var cancelledOrderRule = _cancelledOrderRuleFactory.Build(cancelledOrderParameters, ruleCtx);
-                player.Subscribe(cancelledOrderRule);
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-            }
-        }
-
-        private void HighProfitsRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.HighProfits))
-            {
-                return;
-            }
-            
-            var highProfitParameters = _ruleParameterMapper.Map(ruleParameters.HighProfits);
-
-            if (highProfitParameters != null)
-            {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                        _highProfitRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtx);
-                player.Subscribe(highProfitsRule);
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
-            }
-        }
-
-        private void MarkingTheCloseRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.MarkingTheClose))
-            {
-                return;
-            }
-
-            var markingTheCloseParameters = _ruleParameterMapper.Map(ruleParameters.MarkingTheClose);
-
-            if (markingTheCloseParameters != null)
-            {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
-                        _markingTheCloseFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var markingTheClose = _markingTheCloseFactory.Build(markingTheCloseParameters, ruleCtx);
-                player.Subscribe(markingTheClose);
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
-            }
-        }
-
-        private void LayeringRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            ISystemProcessOperationContext opCtx)
-        {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.Layering))
-            {
-                return;
-            }
-
-            var layeringParameters = new LayeringRuleParameters(TimeSpan.FromMinutes(25), 0.2m);
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (layeringParameters != null)
-            {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.Layering.GetDescription(),
-                        _layeringRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var layering = _layeringRuleFactory.Build(layeringParameters, ruleCtx);
-                player.Subscribe(layering);
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
-            }
         }
     }
 }

@@ -99,6 +99,8 @@ namespace Surveillance
             For<IUniverseBuilder>().Use<UniverseBuilder>();
             For<IUniverseEvent>().Use<UniverseEvent>();
             For<IUniversePlayer>().Use<UniversePlayer>();
+            For<IUniverseRuleSubscriber>().Use<UniverseRuleSubscriber>();
+
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
@@ -128,7 +130,7 @@ namespace Surveillance
 
             For<ILayeringRule>().Use<LayeringRule>();
             For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
-
+            
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();

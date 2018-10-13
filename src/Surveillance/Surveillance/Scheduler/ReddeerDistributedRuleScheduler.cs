@@ -211,6 +211,8 @@ namespace Surveillance.Scheduler
                     return dtos?.MarkingTheClose?.Window;
                 case Domain.Scheduling.Rules.Spoofing:
                     return dtos?.Spoofing?.WindowSize;
+                case Domain.Scheduling.Rules.Layering:
+                    return TimeSpan.FromMinutes(25);
                 default:
                     return null;
             }

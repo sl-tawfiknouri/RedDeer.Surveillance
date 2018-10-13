@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
@@ -25,6 +26,7 @@ namespace Surveillance.Tests.Scheduler
         private ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private IHighProfitRuleFactory _highProfitRuleFactory;
         private IMarkingTheCloseRuleFactory _markingTheCloseRuleFactory;
+        private ILayeringRuleFactory _layeringRuleFactory;
         private IUniverseBuilder _universeBuilder;
         private IUniversePlayerFactory _universePlayerFactory;
         private ISpoofingRule _spoofingRule;
@@ -48,6 +50,7 @@ namespace Surveillance.Tests.Scheduler
             _cancelledOrderRuleFactory = A.Fake<ICancelledOrderRuleFactory>();
             _highProfitRuleFactory = A.Fake<IHighProfitRuleFactory>();
             _markingTheCloseRuleFactory = A.Fake<IMarkingTheCloseRuleFactory>();
+            _layeringRuleFactory = A.Fake<ILayeringRuleFactory>();
             _universeBuilder = A.Fake<IUniverseBuilder>();
             _universePlayerFactory = A.Fake<IUniversePlayerFactory>();
             _spoofingRule = A.Fake<ISpoofingRule>();
@@ -74,6 +77,7 @@ namespace Surveillance.Tests.Scheduler
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
                     _markingTheCloseRuleFactory,
+                    _layeringRuleFactory,
                     _universeBuilder,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -96,6 +100,7 @@ namespace Surveillance.Tests.Scheduler
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
                     _markingTheCloseRuleFactory,
+                    _layeringRuleFactory,
                     null,
                     _universePlayerFactory,
                     _awsQueueClient,
@@ -118,6 +123,7 @@ namespace Surveillance.Tests.Scheduler
                     _cancelledOrderRuleFactory,
                     _highProfitRuleFactory,
                     _markingTheCloseRuleFactory,
+                    _layeringRuleFactory,
                     _universeBuilder,
                     null,
                     _awsQueueClient,
@@ -138,6 +144,7 @@ namespace Surveillance.Tests.Scheduler
                 _cancelledOrderRuleFactory,
                 _highProfitRuleFactory,
                 _markingTheCloseRuleFactory,
+                _layeringRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
@@ -176,6 +183,7 @@ namespace Surveillance.Tests.Scheduler
                 _cancelledOrderRuleFactory,
                 _highProfitRuleFactory,
                 _markingTheCloseRuleFactory,
+                _layeringRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,
@@ -217,6 +225,7 @@ namespace Surveillance.Tests.Scheduler
                 _cancelledOrderRuleFactory,
                 _highProfitRuleFactory,
                 _markingTheCloseRuleFactory,
+                _layeringRuleFactory,
                 _universeBuilder,
                 _universePlayerFactory,
                 _awsQueueClient,

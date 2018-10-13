@@ -10,6 +10,7 @@ using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
+using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -25,6 +26,7 @@ namespace Surveillance.Scheduler
         private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private readonly IHighProfitRuleFactory _highProfitRuleFactory;
         private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
+        private readonly ILayeringRuleFactory _layeringRuleFactory;
         private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -43,6 +45,7 @@ namespace Surveillance.Scheduler
             ICancelledOrderRuleFactory cancelledOrderRuleFactory,
             IHighProfitRuleFactory highProfitRuleFactory,
             IMarkingTheCloseRuleFactory markingTheCloseFactory,
+            ILayeringRuleFactory layeringRuleFactory,
             IUniverseBuilder universeBuilder,
             IUniversePlayerFactory universePlayerFactory,
             IAwsQueueClient awsQueueClient,
@@ -66,6 +69,9 @@ namespace Surveillance.Scheduler
             _markingTheCloseFactory =
                 markingTheCloseFactory
                 ?? throw new ArgumentNullException(nameof(markingTheCloseFactory));
+            _layeringRuleFactory =
+                layeringRuleFactory
+                ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
 
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
@@ -124,7 +130,7 @@ namespace Surveillance.Scheduler
             }
 
             int servicesDownMinutes = 0;
-            var exitClientServiceBlock = false;
+            var exitClientServiceBlock = servicesRunning;
             while (!exitClientServiceBlock)
             {
                 Thread.Sleep(30 * 1000);
@@ -135,7 +141,7 @@ namespace Surveillance.Scheduler
 
                 if (servicesDownMinutes == 60)
                 {
-                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over an hour but the api services on the client service have been down");
+                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
                 }
             }
 
@@ -196,6 +202,7 @@ namespace Surveillance.Scheduler
             CancelledOrdersRule(execution, player, ruleParameters, opCtx);
             HighProfitsRule(execution, player, ruleParameters, opCtx);
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
+            LayeringRule(execution, player, opCtx);
         }
 
         private void SpoofingRule(
@@ -319,6 +326,37 @@ namespace Surveillance.Scheduler
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
+            }
+        }
+
+        private void LayeringRule(
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            ISystemProcessOperationContext opCtx)
+        {
+            if (!execution.Rules.Contains(Domain.Scheduling.Rules.Layering))
+            {
+                return;
+            }
+
+            var layeringParameters = new LayeringRuleParameters(TimeSpan.FromMinutes(25), 0.2m);
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (layeringParameters != null)
+            {
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.Layering.GetDescription(),
+                        _layeringRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var layering = _layeringRuleFactory.Build(layeringParameters, ruleCtx);
+                player.Subscribe(layering);
+            }
+            else
+            {
+                _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
             }
         }
     }

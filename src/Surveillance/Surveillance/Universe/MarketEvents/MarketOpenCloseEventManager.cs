@@ -55,7 +55,29 @@ namespace Surveillance.Universe.MarketEvents
                 universeEvents.AddRange(intraPeriodEvents);
             }
 
+            universeEvents = TrimTimeline(start, end, universeEvents);
+
             return universeEvents.OrderBy(ue => ue.EventTime).ToList();
+        }
+
+        private List<IUniverseEvent> TrimTimeline(
+            DateTime start,
+            DateTime end,
+            List<IUniverseEvent> universeEvents)
+        {
+            if (universeEvents == null)
+            {
+                return new List<IUniverseEvent>();
+            }
+
+            universeEvents =
+                universeEvents
+                    .Where(ue => ue != null)
+                    .Where(ue => ue.EventTime.Date >= start.Date)
+                    .Where(ue => ue.EventTime.Date <= end.Date)
+                    .ToList();
+
+            return universeEvents;
         }
 
         private DateTime SetMarketEventTime(ExchangeMarket exchangeMarket, DateTime start, double marketEventSeconds)

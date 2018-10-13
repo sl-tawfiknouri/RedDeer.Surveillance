@@ -122,6 +122,11 @@ namespace Surveillance.Rules.Cancelled_Orders
                 cancellationRatioByOrderCount);
         }
 
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Universe Genesis occurred in the Cancelled Order Rule");

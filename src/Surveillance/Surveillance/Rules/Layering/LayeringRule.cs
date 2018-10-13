@@ -35,7 +35,7 @@ namespace Surveillance.Rules.Layering
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -54,7 +54,6 @@ namespace Surveillance.Rules.Layering
 
             if (mostRecentTrade.OrderStatus != OrderStatus.Fulfilled)
             {
-                // we need to start from a fulfilled order   ayyy lmao so true..we need to change this to filled at some point lol
                 return;
             }
 
@@ -134,6 +133,11 @@ namespace Surveillance.Rules.Layering
             }
 
             return hasBreachedLayeringRule;
+        }
+
+        protected override void RunRule(ITradingHistoryStack history)
+        {
+            // we don't analyse rules based on when their status last changed in the layering rule
         }
 
         protected override void Genesis()

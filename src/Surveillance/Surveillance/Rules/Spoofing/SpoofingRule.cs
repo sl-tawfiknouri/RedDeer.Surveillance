@@ -29,7 +29,7 @@ namespace Surveillance.Rules.Spoofing
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                   Domain.Scheduling.Rules.Spoofing,
-                  Versioner.Version(1,0),
+                  Versioner.Version(2,0),
                   "Spoofing Rule",
                   logger)
         {
@@ -39,7 +39,7 @@ namespace Surveillance.Rules.Spoofing
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -80,13 +80,13 @@ namespace Surveillance.Rules.Spoofing
 
             var tradingPosition =
                 mostRecentTrade.Position == OrderPosition.Buy
-                ? buyPosition
-                : sellPosition;
+                    ? buyPosition
+                    : sellPosition;
 
             var opposingPosition =
                 mostRecentTrade.Position == OrderPosition.Sell
-                ? buyPosition
-                : sellPosition;
+                    ? buyPosition
+                    : sellPosition;
 
             var hasBreachedSpoofingRule = CheckPositionForSpoofs(tradeWindow, buyPosition, sellPosition, tradingPosition, opposingPosition);
 
@@ -95,7 +95,7 @@ namespace Surveillance.Rules.Spoofing
                 RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
             }
         }
-
+        
         private bool CheckPositionForSpoofs(
             Stack<TradeOrderFrame> tradeWindow,
             ITradePositionCancellations buyPosition,
@@ -170,6 +170,11 @@ namespace Surveillance.Rules.Spoofing
 
             _alertCount += 1;
             _spoofingRuleMessageSender.Send(ruleBreach);
+        }
+
+        protected override void RunRule(ITradingHistoryStack history)
+        {
+            // spoofing rule does not monitor by last status changed
         }
 
         protected override void Genesis()

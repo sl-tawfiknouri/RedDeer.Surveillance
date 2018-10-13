@@ -72,6 +72,11 @@ namespace Surveillance.Rules.Marking_The_Close
             }
         }
 
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private void CheckDailyVolumeTraded(
             Stack<TradeOrderFrame> securities,
             SecurityTick tradedSecurity)

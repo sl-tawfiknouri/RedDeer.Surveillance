@@ -101,6 +101,11 @@ namespace Surveillance.Rules.High_Profits
             }
         }
 
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private void WriteAlertToMessageSender(
             Stack<TradeOrderFrame> activeTrades,
             decimal absoluteProfit,

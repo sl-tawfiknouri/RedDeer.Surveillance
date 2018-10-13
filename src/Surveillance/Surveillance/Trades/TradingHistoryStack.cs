@@ -15,12 +15,16 @@ namespace Surveillance.Trades
 
         private readonly object _lock = new object();
         private readonly TimeSpan _activeTradeDuration;
-
-        public TradingHistoryStack(TimeSpan activeTradeDuration)
+        private readonly Func<TradeOrderFrame, DateTime> _getFrameTime;
+        
+        public TradingHistoryStack(
+            TimeSpan activeTradeDuration,
+            Func<TradeOrderFrame, DateTime> getFrameTime)
         {
             _activeStack = new Stack<TradeOrderFrame>();
             _history = new Queue<TradeOrderFrame>();
             _activeTradeDuration = activeTradeDuration;
+            _getFrameTime = getFrameTime;
         }
 
         public void Add(TradeOrderFrame frame, DateTime currentTime)
@@ -32,7 +36,7 @@ namespace Surveillance.Trades
 
             lock (_lock)
             {
-                if (currentTime.Subtract(frame.StatusChangedOn) <= _activeTradeDuration)
+                if (currentTime.Subtract(_getFrameTime(frame)) <= _activeTradeDuration)
                 {
                     _activeStack.Push(frame);
                 }
@@ -53,7 +57,7 @@ namespace Surveillance.Trades
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Subtract(poppedItem.StatusChangedOn) > _activeTradeDuration)
+                    if (currentTime.Subtract(_getFrameTime(poppedItem)) > _activeTradeDuration)
                     {
                         _history.Enqueue(poppedItem);
                     }

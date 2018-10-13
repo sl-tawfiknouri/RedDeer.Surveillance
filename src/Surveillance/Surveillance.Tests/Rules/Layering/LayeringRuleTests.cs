@@ -73,10 +73,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.Position = OrderPosition.Sell;
             tradeSell.OrderStatus = OrderStatus.Fulfilled;
 
-            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow.AddMinutes(-1), new object());
-            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow.AddSeconds(-20), tradeBuy);
-            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow.AddSeconds(-10), tradeSell);
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
 
             rule.OnNext(genesis);
             rule.OnNext(buyEvent);

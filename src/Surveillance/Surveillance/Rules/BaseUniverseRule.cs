@@ -21,6 +21,7 @@ namespace Surveillance.Rules
 
         protected readonly TimeSpan WindowSize;
         protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingInitialHistory;
 
         private readonly ILogger _logger;
         private readonly object _lock = new object();
@@ -41,6 +42,7 @@ namespace Surveillance.Rules
             Rule = rules;
             Version = version ?? string.Empty;
             TradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
+            TradingInitialHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
 
             _name = name ?? "Unnamed rule";
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -72,6 +74,9 @@ namespace Surveillance.Rules
                         break;
                     case UniverseStateEvent.StockTickReddeer:
                         StockTick(value);
+                        break;
+                    case UniverseStateEvent.TradeReddeerSubmitted:
+                        TradeSubmitted(value);
                         break;
                     case UniverseStateEvent.TradeReddeer:
                         Trade(value);
@@ -115,6 +120,34 @@ namespace Surveillance.Rules
             UniverseDateTime = universeEvent.EventTime;
         }
 
+        private void TradeSubmitted(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is TradeOrderFrame value))
+            {
+                return;
+            }
+
+            UniverseDateTime = universeEvent.EventTime;
+
+            if (!TradingInitialHistory.ContainsKey(value.Security.Identifiers))
+            {
+                var history = new TradingHistoryStack(WindowSize, i => i.TradeSubmittedOn);
+                history.Add(value, value.TradeSubmittedOn);
+                TradingInitialHistory.TryAdd(value.Security.Identifiers, history);
+            }
+            else
+            {
+                TradingInitialHistory.TryGetValue(value.Security.Identifiers, out var history);
+
+                history?.Add(value, value.TradeSubmittedOn);
+                history?.ArchiveExpiredActiveItems(value.TradeSubmittedOn);
+            }
+
+            TradingInitialHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);
+
+            RunInitialSubmissionRule(updatedHistory);
+        }
+
         private void Trade(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is TradeOrderFrame value))
@@ -126,7 +159,7 @@ namespace Surveillance.Rules
 
             if (!TradingHistory.ContainsKey(value.Security.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize);
+                var history = new TradingHistoryStack(WindowSize, i => i.StatusChangedOn);
                 history.Add(value, value.StatusChangedOn);
                 TradingHistory.TryAdd(value.Security.Identifiers, history);
             }
@@ -217,9 +250,17 @@ namespace Surveillance.Rules
         }
 
         /// <summary>
-        /// Run the rule with a trading history within the time window for that security
+        /// Run the rule with a trading history within the time window for that security.
+        /// This is done on the basis of status changed on i.e. the last state and the time of
+        /// that state change is used to drive run rule.
         /// </summary>
         protected abstract void RunRule(ITradingHistoryStack history);
+
+        /// <summary>
+        /// We have some rules such as spoofing and layering that are HFT and need to be based off
+        /// of when the rule was initially submitted in order to preserve the ordering between events
+        /// </summary>
+        protected abstract void RunInitialSubmissionRule(ITradingHistoryStack history);
 
         protected abstract void Genesis();
         protected abstract void MarketOpen(MarketOpenClose exchange);

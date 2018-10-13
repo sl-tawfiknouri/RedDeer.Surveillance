@@ -24,35 +24,86 @@ namespace Surveillance.Tests.Universe
     [TestFixture]
     public class UniverseBuilderTests
     {
-        private IReddeerTradeRepository _tradeRepository;
-        private IReddeerMarketRepository _marketRepository;
+<<<<<<< HEAD
+        private IRedDeerTradeFormatRepository _tradeRepository;
+        private IReddeerTradeFormatToReddeerTradeFrameProjector _documentProjector;
+
+        private IRedDeerMarketExchangeFormatRepository _equityMarketRepository;
+        private IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector _equityMarketProjector;
+
         private IReddeerTradeRepository _auroraTradeRepository;
         private IReddeerMarketRepository _auroraMarketRepository;
+=======
+        private IReddeerTradeRepository _tradeRepository;
+        private IReddeerMarketRepository _marketRepository;
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
         private IMarketOpenCloseEventManager _marketManager;
 
         [SetUp]
         public void Setup()
         {
-            _tradeRepository = A.Fake<IReddeerTradeRepository>();
-            _marketRepository = A.Fake<IReddeerMarketRepository>();
+<<<<<<< HEAD
+            _tradeRepository = A.Fake<IRedDeerTradeFormatRepository>();
+            _documentProjector = A.Fake<IReddeerTradeFormatToReddeerTradeFrameProjector>();
+            _equityMarketRepository = A.Fake<IRedDeerMarketExchangeFormatRepository>();
+            _equityMarketProjector = A.Fake<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
             _auroraTradeRepository = A.Fake<IReddeerTradeRepository>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
+=======
+            _tradeRepository = A.Fake<IReddeerTradeRepository>();
+            _marketRepository = A.Fake<IReddeerMarketRepository>();
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
         }
 
         [Test]
+<<<<<<< HEAD
+        public void Constructor_NullTradeRepository_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new UniverseBuilder(
+                    null,
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+                    _marketManager));
+        }
+
+        [Test]
+        public void Constructor_NullProjector_IsExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new UniverseBuilder(
+                    _tradeRepository,
+                    null, 
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+                    _marketManager));
+        }
+
+        [Test]
+=======
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
         public void Summon_DoesNot_ReturnNull()
         {
             var builder =
                 new UniverseBuilder(
                     _tradeRepository,
-                    _marketRepository,
+<<<<<<< HEAD
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+=======
+                    _marketRepository,
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
                     _marketManager);
 
             var result = builder.Summon(null);
@@ -68,9 +119,15 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _tradeRepository,
-                    _marketRepository,
+<<<<<<< HEAD
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+=======
+                    _marketRepository,
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -95,9 +152,15 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _tradeRepository,
-                    _marketRepository,
+<<<<<<< HEAD
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+=======
+                    _marketRepository,
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -132,9 +195,15 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _tradeRepository,
-                    _marketRepository,
+<<<<<<< HEAD
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+=======
+                    _marketRepository,
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -177,9 +246,15 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _tradeRepository,
-                    _marketRepository,
+<<<<<<< HEAD
+                    _documentProjector,
+                    _equityMarketRepository,
+                    _equityMarketProjector,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
+=======
+                    _marketRepository,
+>>>>>>> RDPB-2970 small refactor - removed unneeded dependencies from the universe builder
                     _marketManager);
 
             var schedule = new ScheduledExecution

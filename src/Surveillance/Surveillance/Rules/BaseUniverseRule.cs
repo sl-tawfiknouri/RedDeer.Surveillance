@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Market;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
@@ -26,7 +28,8 @@ namespace Surveillance.Rules
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
-        protected ExchangeFrame LatestExchangeFrame;
+        protected IDictionary<Market.MarketId, ExchangeFrame> LatestExchangeFrameBook;
+
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
@@ -43,6 +46,7 @@ namespace Surveillance.Rules
             Version = version ?? string.Empty;
             TradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
+            LatestExchangeFrameBook = new ConcurrentDictionary<Market.MarketId, ExchangeFrame>();
 
             _name = name ?? "Unnamed rule";
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -116,7 +120,16 @@ namespace Surveillance.Rules
                 return;
             }
 
-            LatestExchangeFrame = value;
+            if (LatestExchangeFrameBook.ContainsKey(value.Exchange.Id))
+            {
+                LatestExchangeFrameBook.Remove(value.Exchange.Id);
+                LatestExchangeFrameBook.Add(value.Exchange.Id, value);
+            }
+            else
+            {
+                LatestExchangeFrameBook.Add(value.Exchange.Id, value);
+            }
+
             UniverseDateTime = universeEvent.EventTime;
         }
 

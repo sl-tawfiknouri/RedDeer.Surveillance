@@ -57,9 +57,23 @@ namespace Surveillance.Rules.Marking_The_Close
                 return;
             }
 
-            var tradedSecurity = LatestExchangeFrame
-                 ?.Securities
-                 ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities.FirstOrDefault()?.Security.Identifiers));
+            var marketId = securities.FirstOrDefault()?.Market?.Id;
+            if (marketId == null)
+            {
+                return;
+            }
+
+            if (!LatestExchangeFrameBook.ContainsKey(marketId))
+            {
+                return;
+            }
+
+            LatestExchangeFrameBook.TryGetValue(marketId, out var frame);
+
+            var tradedSecurity =
+                frame
+                    ?.Securities
+                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities.FirstOrDefault()?.Security.Identifiers));
 
             if (tradedSecurity == null)
             {

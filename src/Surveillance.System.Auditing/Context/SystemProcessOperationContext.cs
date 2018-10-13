@@ -14,6 +14,7 @@ namespace Surveillance.System.Auditing.Context
         private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
         private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
+        private bool _hasEnded = false;
 
         public SystemProcessOperationContext(
             ISystemProcessContext systemProcessContext,
@@ -104,6 +105,12 @@ namespace Surveillance.System.Auditing.Context
 
         public ISystemProcessContext EndEvent()
         {
+            if (_hasEnded)
+            {
+                return _systemProcessContext;
+            }
+
+            _hasEnded = true;
             _systemProcessOperation.OperationEnd = DateTime.UtcNow;
             _systemProcessOperation.OperationState = OperationState.Completed;
             _systemProcessOperationRepository.Update(_systemProcessOperation);
@@ -112,8 +119,28 @@ namespace Surveillance.System.Auditing.Context
 
         public ISystemProcessContext EndEventWithError()
         {
+            if (_hasEnded)
+            {
+                return _systemProcessContext;
+            }
+
+            _hasEnded = true;
             _systemProcessOperation.OperationEnd = DateTime.UtcNow;
             _systemProcessOperation.OperationState = OperationState.CompletedWithErrors;
+            _systemProcessOperationRepository.Update(_systemProcessOperation);
+            return _systemProcessContext;
+        }
+
+        public ISystemProcessContext EndEventWithMissingDataError()
+        {
+            if (_hasEnded)
+            {
+                return _systemProcessContext;
+            }
+
+            _hasEnded = true;
+            _systemProcessOperation.OperationEnd = DateTime.UtcNow;
+            _systemProcessOperation.OperationState = OperationState.IncompleteMissingData;
             _systemProcessOperationRepository.Update(_systemProcessOperation);
             return _systemProcessContext;
         }

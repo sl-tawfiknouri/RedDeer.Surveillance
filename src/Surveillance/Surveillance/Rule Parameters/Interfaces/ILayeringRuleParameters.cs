@@ -5,6 +5,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
     public interface ILayeringRuleParameters
     {
         TimeSpan WindowSize { get; }
-        decimal? PercentageOfMarketVolume { get; }
+        decimal? PercentageOfMarketDailyVolume { get; }
     }
 }

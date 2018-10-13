@@ -125,11 +125,13 @@ namespace Surveillance.Rules.Layering
                 var nextTrade = tradeWindow.Pop();
                 AddToPositions(buyPosition, sellPosition, nextTrade);
 
-                if (tradingPosition.Get().Any()
-                    && opposingPosition.Get().Any())
+                if (!tradingPosition.Get().Any()
+                    || !opposingPosition.Get().Any())
                 {
-                    hasBreachedLayeringRule = true;
+                    continue;
                 }
+
+
             }
 
             return hasBreachedLayeringRule;

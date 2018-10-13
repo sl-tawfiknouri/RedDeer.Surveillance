@@ -7,13 +7,13 @@ namespace Surveillance.Rule_Parameters
     {
         public LayeringRuleParameters(
             TimeSpan windowSize,
-            decimal? percentageOfMarketVolume)
+            decimal? percentageOfMarketDailyVolume)
         {
             WindowSize = windowSize;
-            PercentageOfMarketVolume = percentageOfMarketVolume;
+            PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
         }
 
         public TimeSpan WindowSize { get; }
-        public decimal? PercentageOfMarketVolume { get; }
+        public decimal? PercentageOfMarketDailyVolume { get; }
     }
 }

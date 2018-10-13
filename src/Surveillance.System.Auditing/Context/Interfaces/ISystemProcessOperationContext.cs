@@ -23,6 +23,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
 
         ISystemProcessContext EndEvent();
         ISystemProcessContext EndEventWithError();
+        ISystemProcessContext EndEventWithMissingDataError();
         void StartEvent(ISystemProcessOperation processOperation);
         ISystemProcessOperationContext UpdateEventState(OperationState state);
     }

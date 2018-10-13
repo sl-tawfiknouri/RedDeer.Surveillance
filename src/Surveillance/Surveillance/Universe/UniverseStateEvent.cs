@@ -10,6 +10,7 @@
         Genesis, // The, or at least a - beginning of the universe
         Eschaton, // The end of the universe
         TradeReddeer, // A trade happened (in reddeer format)
+        TradeReddeerSubmitted, // A trade was initially submitted (in reddeer format)
         StockTickReddeer, // A stock tick happened (in reddeer format)
         StockMarketOpen, // A stock market has opened
         StockMarketClose, // a stock market has closed

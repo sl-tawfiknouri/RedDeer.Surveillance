@@ -76,9 +76,16 @@ namespace Surveillance.Universe
             IReadOnlyCollection<TradeOrderFrame> trades,
             IReadOnlyCollection<ExchangeFrame> exchangeFrames)
         {
-            var tradeEvents = 
+            var tradeSubmittedEvents =
                 trades
                     .Where(tr => tr != null)
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tr.TradeSubmittedOn, tr))
+                    .ToArray();
+
+            var tradeStatusChangedOnEvents =
+                trades
+                    .Where(tr => tr != null)
+                    .Where(tr => ! (tr.OrderStatus == OrderStatus.Booked && tr.TradeSubmittedOn == tr.StatusChangedOn))
                     .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, tr))
                     .ToArray();
 
@@ -97,7 +104,8 @@ namespace Surveillance.Universe
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, execution.TimeSeriesTermination.DateTime, execution);
 
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
-            intraUniversalHistoryEvents.AddRange(tradeEvents);
+            intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
+            intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
             intraUniversalHistoryEvents.AddRange(exchangeEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();

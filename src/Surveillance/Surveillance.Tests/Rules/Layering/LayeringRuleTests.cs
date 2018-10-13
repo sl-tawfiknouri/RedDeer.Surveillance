@@ -1,10 +1,12 @@
 ﻿using System;
+using Domain.Trades.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Rules.Layering;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 
 namespace Surveillance.Tests.Rules.Layering
@@ -55,6 +57,33 @@ namespace Surveillance.Tests.Rules.Layering
 
             A.CallTo(() => _ruleCtx.UpdateAlertEvent(A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+        }
+
+        /// <summary>
+        /// This test isn't relevant to the final analysis but will get us there
+        /// </summary>
+        [Test]
+        public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
+        {
+            var rule = new LayeringRule(_parameters, _logger, _ruleCtx);
+            var tradeBuy = ((TradeOrderFrame)null).Random();
+            var tradeSell = ((TradeOrderFrame)null).Random();
+            tradeBuy.Position = OrderPosition.Buy;
+            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
+            tradeSell.Position = OrderPosition.Sell;
+            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow.AddMinutes(-1), new object());
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow.AddSeconds(-20), tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow.AddSeconds(-10), tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
+
+            rule.OnNext(genesis);
+            rule.OnNext(buyEvent);
+            rule.OnNext(sellEvent);
+            rule.OnNext(eschaton);
+
+            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
         }
     }
 }

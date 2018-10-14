@@ -1,0 +1,4 @@
+Timestamp,MarketIdentifierCode,MarketName,SecurityClientIdentifier,Sedol,Isin,Figi,ExchangeSymbol,Lei,Cusip,IssuerIdentifier,BloombergTicker,Cfi,SecurityName,Currency,Ask,Bid,Price,Volume,MarketCap,ListedSecurities,Open,Close,High,Low,DailyVolume
+01/09/2018 01:01,XLON,London Stock Exchange,STAN,ST12345,STAN12345678,STANFIGI,STAN,LEI-STAN,STANCUSIP,Standard Chartered,STAN,,Standard Chartered,GBP,990,982,12.5,60000,766870000,100000,995,990,1000,980,180000
+01/09/2018 01:02,XLON,London Stock Exchange,STAN,ST12345,STAN12345678,STANFIGI,STAN,LEI-STAN,STANCUSIP,Standard Chartered,STAN,,Standard Chartered,GBP,990,982,13.5,60000,766870000,100000,995,990,1000,980,180000
+01/09/2018 01:06,XLON,London Stock Exchange,STAN,ST12345,STAN12345678,STANFIGI,STAN,LEI-STAN,STANCUSIP,Standard Chartered,STAN,,Standard Chartered,GBP,990,982,15,60000,766870000,100000,995,990,1000,980,180000

@@ -81,7 +81,7 @@ namespace Surveillance.Markets
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<ExchangeFrame> ActiveTradeHistory()
+        public Stack<ExchangeFrame> ActiveMarketHistory()
         {
             lock (_lock)
             {

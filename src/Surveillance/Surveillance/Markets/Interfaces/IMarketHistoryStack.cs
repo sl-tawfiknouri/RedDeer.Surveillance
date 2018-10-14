@@ -14,7 +14,7 @@ namespace Surveillance.Markets.Interfaces
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        Stack<ExchangeFrame> ActiveTradeHistory();
+        Stack<ExchangeFrame> ActiveMarketHistory();
 
         StockExchange Exchange();
     }

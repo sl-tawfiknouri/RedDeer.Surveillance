@@ -224,7 +224,46 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
+            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.Id, out var marketStack))
+            {
+                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
+                _hadMissingData = true;
+                return false;
+            }
+
+            var securityDataTicks = marketStack
+                .ActiveMarketHistory()
+                .Where(amh => amh != null)
+                .Select(amh =>
+                    amh.Securities?.FirstOrDefault(sec =>
+                        Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers)))
+                .Where(sec => sec != null)
+                .ToList();
+
+            var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
+
+            if (windowVolume <= 0)
+            {
+                _logger.LogInformation($"Layering unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            if (opposingPosition.TotalVolume() <= 0)
+            {
+                _logger.LogInformation($"Layering unable to calculate opposing position volume window in {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var percentageWindowVolume = (decimal)opposingPosition.TotalVolume() / (decimal)windowVolume;
+            if (percentageWindowVolume >= _parameters.PercentageOfMarketWindowVolume)
+            {
+                return true;
+            }
 
             return false;
         }

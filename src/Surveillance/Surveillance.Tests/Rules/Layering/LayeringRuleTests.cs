@@ -229,5 +229,137 @@ namespace Surveillance.Tests.Rules.Layering
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
+
+        [Test]
+        public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
+        {
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m);
+            var rule = new LayeringRule(parameters, _logger, _ruleCtx);
+            var tradeBuy = ((TradeOrderFrame)null).Random();
+            var tradeSell = ((TradeOrderFrame)null).Random();
+            tradeBuy.Position = OrderPosition.Buy;
+            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
+            tradeSell.Position = OrderPosition.Sell;
+            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+
+            tradeBuy.FulfilledVolume = 300;
+            tradeSell.FulfilledVolume = 5;
+            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+
+            var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
+                new List<SecurityTick>
+                {
+                    new SecurityTick(tradeBuy.Security,
+                        new Spread(tradeBuy.ExecutedPrice.Value, tradeSell.ExecutedPrice.Value,
+                            tradeSell.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
+                        tradeBuy.TradeSubmittedOn.AddSeconds(-55), 100000,
+                        new IntradayPrices(tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value,
+                            tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value), 5000, market)
+                });
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.StockTickReddeer, tradeBuy.TradeSubmittedOn.AddSeconds(-55), marketData);
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+
+            rule.OnNext(genesis);
+            rule.OnNext(marketDataEvent);
+            rule.OnNext(buyEvent);
+            rule.OnNext(sellEvent);
+            rule.OnNext(eschaton);
+
+            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
+        {
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m);
+            var rule = new LayeringRule(parameters, _logger, _ruleCtx);
+            var tradeBuy = ((TradeOrderFrame)null).Random();
+            var tradeSell = ((TradeOrderFrame)null).Random();
+            tradeBuy.Position = OrderPosition.Buy;
+            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
+            tradeSell.Position = OrderPosition.Sell;
+            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+
+            tradeBuy.FulfilledVolume = 100;
+            tradeSell.FulfilledVolume = 100;
+            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+
+            var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
+                new List<SecurityTick>
+                {
+                    new SecurityTick(tradeBuy.Security,
+                        new Spread(tradeBuy.ExecutedPrice.Value, tradeSell.ExecutedPrice.Value,
+                            tradeSell.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
+                        tradeBuy.TradeSubmittedOn.AddSeconds(-55), 100000,
+                        new IntradayPrices(tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value,
+                            tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value), 5000, market)
+                });
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.StockTickReddeer, tradeBuy.TradeSubmittedOn.AddSeconds(-55), marketData);
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+
+            rule.OnNext(genesis);
+            rule.OnNext(marketDataEvent);
+            rule.OnNext(buyEvent);
+            rule.OnNext(sellEvent);
+            rule.OnNext(eschaton);
+
+            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
+        {
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m);
+            var rule = new LayeringRule(parameters, _logger, _ruleCtx);
+            var tradeBuy = ((TradeOrderFrame)null).Random();
+            var tradeSell = ((TradeOrderFrame)null).Random();
+            tradeBuy.Position = OrderPosition.Buy;
+            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
+            tradeSell.Position = OrderPosition.Sell;
+            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+
+            tradeBuy.FulfilledVolume = 100;
+            tradeSell.FulfilledVolume = 100;
+            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+
+            var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
+                new List<SecurityTick>
+                {
+                    new SecurityTick(tradeBuy.Security,
+                        new Spread(tradeBuy.ExecutedPrice.Value, tradeSell.ExecutedPrice.Value,
+                            tradeSell.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
+                        tradeBuy.TradeSubmittedOn.AddSeconds(-55), 100000,
+                        new IntradayPrices(tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value,
+                            tradeBuy.ExecutedPrice.Value, tradeBuy.ExecutedPrice.Value), 5000, market)
+                });
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
+            var marketDataEvent = new UniverseEvent(UniverseStateEvent.StockTickReddeer, tradeBuy.TradeSubmittedOn.AddSeconds(-55), marketData);
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+
+            rule.OnNext(genesis);
+            rule.OnNext(buyEvent);
+            rule.OnNext(sellEvent);
+            rule.OnNext(marketDataEvent);
+            rule.OnNext(eschaton);
+
+            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
+        }
     }
 }

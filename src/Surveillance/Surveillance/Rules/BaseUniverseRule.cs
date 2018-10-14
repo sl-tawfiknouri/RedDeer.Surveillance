@@ -8,6 +8,8 @@ using Domain.Market;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -24,11 +26,13 @@ namespace Surveillance.Rules
         protected readonly TimeSpan WindowSize;
         protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingHistory;
         protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingInitialHistory;
-
+        
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
         protected IDictionary<Market.MarketId, ExchangeFrame> LatestExchangeFrameBook;
+
+        protected ConcurrentDictionary<Market.MarketId, IMarketHistoryStack> MarketHistory;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
@@ -46,6 +50,7 @@ namespace Surveillance.Rules
             Version = version ?? string.Empty;
             TradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
+            MarketHistory = new ConcurrentDictionary<Market.MarketId, IMarketHistoryStack>();
             LatestExchangeFrameBook = new ConcurrentDictionary<Market.MarketId, ExchangeFrame>();
 
             _name = name ?? "Unnamed rule";
@@ -131,6 +136,20 @@ namespace Surveillance.Rules
             }
 
             UniverseDateTime = universeEvent.EventTime;
+
+            if (!MarketHistory.ContainsKey(value.Exchange.Id))
+            {
+                var history = new MarketHistoryStack(WindowSize);
+                history.Add(value, value.TimeStamp);
+                MarketHistory.TryAdd(value.Exchange.Id, history);
+            }
+            else
+            {
+                MarketHistory.TryGetValue(value.Exchange.Id, out var history);
+
+                history?.Add(value, value.TimeStamp);
+                history?.ArchiveExpiredActiveItems(value.TimeStamp);
+            }
         }
 
         private void TradeSubmitted(IUniverseEvent universeEvent)

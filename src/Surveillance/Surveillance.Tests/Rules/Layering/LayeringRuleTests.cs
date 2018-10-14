@@ -30,7 +30,7 @@ namespace Surveillance.Tests.Rules.Layering
             _logger = A.Fake<ILogger>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _operationCtx = A.Fake<ISystemProcessOperationContext>();
-            _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m);
+            _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null);
 
             A.CallTo(() => _ruleCtx.EndEvent()).Returns(_operationCtx);
         }
@@ -71,7 +71,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null);
             var rule = new LayeringRule(parameters, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();

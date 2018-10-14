@@ -135,13 +135,20 @@ namespace Surveillance.Rules.Layering
                 }
 
                 // IF ALL PARAMETERS ARE NULL JUST DO THE BIDIRECTIONAL TRADE CHECK
-                if (_parameters.PercentageOfMarketDailyVolume == null)
+                if (_parameters.PercentageOfMarketDailyVolume == null
+                    && _parameters.PercentageOfMarketWindowVolume == null)
                 {
                     return true;
                 }
 
                 if (_parameters.PercentageOfMarketDailyVolume != null
                     && CheckDailyVolumeBreach(opposingPosition, mostRecentTrade))
+                {
+                    hasBreachedLayeringRule = true;
+                }
+
+                if (_parameters.PercentageOfMarketWindowVolume != null
+                    && CheckWindowVolumeBreach(opposingPosition, mostRecentTrade))
                 {
                     hasBreachedLayeringRule = true;
                 }
@@ -210,6 +217,13 @@ namespace Surveillance.Rules.Layering
                 return true;
             }
 
+            return false;
+        }
+
+        private bool CheckWindowVolumeBreach(
+            ITradePosition opposingPosition,
+            TradeOrderFrame mostRecentTrade)
+        {
             return false;
         }
 

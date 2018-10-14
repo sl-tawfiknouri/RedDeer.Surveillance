@@ -6,5 +6,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
     {
         TimeSpan WindowSize { get; }
         decimal? PercentageOfMarketDailyVolume { get; }
+        decimal? PercentageOfMarketWindowVolume { get; }
     }
 }

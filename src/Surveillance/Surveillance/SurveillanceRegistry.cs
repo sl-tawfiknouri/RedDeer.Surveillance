@@ -130,7 +130,9 @@ namespace Surveillance
 
             For<ILayeringRule>().Use<LayeringRule>();
             For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
-            
+            For<ILayeringAlertSender>().Use<LayeringAlertSender>();
+            For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
+
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();

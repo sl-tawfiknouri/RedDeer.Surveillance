@@ -17,12 +17,14 @@ namespace Surveillance.Rules.Layering
     {
         private readonly ILogger _logger;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly ILayeringCachedMessageSender _messageSender;
         private readonly ILayeringRuleParameters _parameters;
         private int _alertCount = 0;
         private bool _hadMissingData = false;
 
         public LayeringRule(
             ILayeringRuleParameters parameters,
+            ILayeringCachedMessageSender messageSender,
             ILogger logger,
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
@@ -35,6 +37,7 @@ namespace Surveillance.Rules.Layering
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            _messageSender = messageSender;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
@@ -74,7 +77,7 @@ namespace Surveillance.Rules.Layering
                     ? buyPosition
                     : sellPosition;
 
-            var hasBreachedLayeringRule =
+            var layeringRuleBreach =
                 CheckPositionForLayering(
                     tradeWindow,
                     buyPosition,
@@ -83,8 +86,9 @@ namespace Surveillance.Rules.Layering
                     opposingPosition,
                     mostRecentTrade);
 
-            if (hasBreachedLayeringRule)
+            if (layeringRuleBreach != null)
             {
+                _messageSender.Send(layeringRuleBreach);
                 _alertCount += 1;
             }
         }
@@ -105,7 +109,7 @@ namespace Surveillance.Rules.Layering
             }
         }
 
-        private bool CheckPositionForLayering(
+        private ILayeringRuleBreach CheckPositionForLayering(
             Stack<TradeOrderFrame> tradeWindow,
             ITradePosition buyPosition,
             ITradePosition sellPosition,
@@ -115,6 +119,11 @@ namespace Surveillance.Rules.Layering
         {
             var hasBreachedLayeringRule = false;
             var hasTradesInWindow = tradeWindow.Any();
+
+            var hasBidirectionalBreach = false;
+            var hasDailyVolumeBreach = false;
+            var hasWindowVolumeBreach = false;
+            var hasPriceMovementBreach = false;
 
             // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
             while (hasTradesInWindow)
@@ -140,18 +149,21 @@ namespace Surveillance.Rules.Layering
                     && _parameters.PercentageOfMarketWindowVolume == null
                     && _parameters.CheckForCorrespondingPriceMovement == null)
                 {
-                    return true;
+                    hasBidirectionalBreach = true;
+                    hasBreachedLayeringRule = true;
                 }
 
                 if (_parameters.PercentageOfMarketDailyVolume != null
                     && CheckDailyVolumeBreach(opposingPosition, mostRecentTrade))
                 {
+                    hasDailyVolumeBreach = true;
                     hasBreachedLayeringRule = true;
                 }
 
                 if (_parameters.PercentageOfMarketWindowVolume != null
                     && CheckWindowVolumeBreach(opposingPosition, mostRecentTrade))
                 {
+                    hasWindowVolumeBreach = true;
                     hasBreachedLayeringRule = true;
                 }
 
@@ -159,11 +171,24 @@ namespace Surveillance.Rules.Layering
                     && _parameters.CheckForCorrespondingPriceMovement.Value
                     && CheckForPriceMovement(opposingPosition, mostRecentTrade))
                 {
+                    hasPriceMovementBreach = true;
                     hasBreachedLayeringRule = true;
                 }
             }
+            
+            opposingPosition.Add(mostRecentTrade);
 
-            return hasBreachedLayeringRule;
+            return hasBreachedLayeringRule 
+                ? new LayeringRuleBreach(
+                    _parameters,
+                    _parameters.WindowSize,
+                    opposingPosition,
+                    mostRecentTrade.Security,
+                    hasBidirectionalBreach,
+                    hasDailyVolumeBreach,
+                    hasWindowVolumeBreach,
+                    hasPriceMovementBreach)
+                : null;
         }
 
         private bool CheckDailyVolumeBreach(
@@ -340,7 +365,7 @@ namespace Surveillance.Rules.Layering
                 case OrderPosition.Sell:
                     return priceMovement > 0;
                 default:
-                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position}");
+                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position} (Arg Out of Range)");
                     break;
             }
 
@@ -428,6 +453,7 @@ namespace Surveillance.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
+            _messageSender.Flush();
 
             if (_hadMissingData)
             {

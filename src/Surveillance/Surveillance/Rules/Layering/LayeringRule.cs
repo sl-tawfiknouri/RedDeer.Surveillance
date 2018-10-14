@@ -224,6 +224,8 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
+
+
             return false;
         }
 

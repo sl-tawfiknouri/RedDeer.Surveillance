@@ -332,8 +332,6 @@ namespace Surveillance.Rules.Layering
                 return false;
             }
             
-            // end date should be the trade submitted on or opposing position whichever is bigger (shuld jsut be the most recent trade)
-
             var priceMovement = endTick.Spread.Price.Value - startTick.Spread.Price.Value;
             switch (mostRecentTrade.Position)
             {

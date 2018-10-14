@@ -489,6 +489,69 @@ namespace Surveillance.Tests.Rules.Layering
         }
 
         [Test]
+        public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
+        {
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
+            var rule = new LayeringRule(parameters, _logger, _ruleCtx);
+            var tradeBuy = ((TradeOrderFrame)null).Random();
+            var tradeSell = ((TradeOrderFrame)null).Random();
+            tradeBuy.Position = OrderPosition.Sell;
+            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
+            tradeSell.Position = OrderPosition.Buy;
+            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+
+            tradeBuy.FulfilledVolume = 300;
+            tradeSell.FulfilledVolume = 5;
+
+            tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
+            tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
+
+            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+
+            var initialPrice = tradeBuy.ExecutedPrice.Value.Value;
+            var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.TradeSubmittedOn.AddSeconds(-55));
+            var marketData2 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.95m, tradeBuy.TradeSubmittedOn.AddSeconds(-50));
+
+            var marketData3 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.9m, tradeBuy.TradeSubmittedOn.AddSeconds(5));
+            var marketData4 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.85m, tradeBuy.TradeSubmittedOn.AddSeconds(10));
+
+            var marketData5 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.8m, tradeSell.TradeSubmittedOn.AddSeconds(5));
+            var marketData6 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.75m, tradeSell.TradeSubmittedOn.AddSeconds(10));
+
+
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
+
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
+
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+
+            rule.OnNext(genesis);
+            rule.OnNext(marketDataEvent1);
+            rule.OnNext(marketDataEvent2);
+            rule.OnNext(buyEvent);
+            rule.OnNext(marketDataEvent3);
+            rule.OnNext(marketDataEvent4);
+            rule.OnNext(sellEvent);
+            rule.OnNext(marketDataEvent5);
+            rule.OnNext(marketDataEvent6);
+            rule.OnNext(eschaton);
+
+            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
+        }
+
+        [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);

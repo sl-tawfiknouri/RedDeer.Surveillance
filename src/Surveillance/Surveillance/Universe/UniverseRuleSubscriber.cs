@@ -199,7 +199,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var layeringParameters = new LayeringRuleParameters(TimeSpan.FromMinutes(25), 0.2m, 0.1m);
+            var layeringParameters = new LayeringRuleParameters(TimeSpan.FromMinutes(25), 0.2m, 0.1m, true);
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (layeringParameters != null)

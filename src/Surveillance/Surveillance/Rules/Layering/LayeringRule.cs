@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Layering.Interfaces;
@@ -136,7 +137,8 @@ namespace Surveillance.Rules.Layering
 
                 // IF ALL PARAMETERS ARE NULL JUST DO THE BIDIRECTIONAL TRADE CHECK
                 if (_parameters.PercentageOfMarketDailyVolume == null
-                    && _parameters.PercentageOfMarketWindowVolume == null)
+                    && _parameters.PercentageOfMarketWindowVolume == null
+                    && _parameters.CheckForCorrespondingPriceMovement == null)
                 {
                     return true;
                 }
@@ -149,6 +151,13 @@ namespace Surveillance.Rules.Layering
 
                 if (_parameters.PercentageOfMarketWindowVolume != null
                     && CheckWindowVolumeBreach(opposingPosition, mostRecentTrade))
+                {
+                    hasBreachedLayeringRule = true;
+                }
+
+                if (_parameters.CheckForCorrespondingPriceMovement != null
+                    && _parameters.CheckForCorrespondingPriceMovement.Value
+                    && CheckForPriceMovement(opposingPosition, mostRecentTrade))
                 {
                     hasBreachedLayeringRule = true;
                 }
@@ -266,6 +275,135 @@ namespace Surveillance.Rules.Layering
             }
 
             return false;
+        }
+
+        private bool CheckForPriceMovement(
+            ITradePosition opposingPosition,
+            TradeOrderFrame mostRecentTrade)
+        {
+            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.Id, out var marketStack))
+            {
+                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var securityDataTicks = marketStack
+                .ActiveMarketHistory()
+                .Where(amh => amh != null)
+                .Select(amh =>
+                    amh.Securities?.FirstOrDefault(sec =>
+                        Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers)))
+                .Where(sec => sec != null)
+                .ToList();
+
+            if (!securityDataTicks.Any())
+            {
+                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var startDate = opposingPosition.Get().Min(op => op.TradeSubmittedOn);
+            var endDate = opposingPosition.Get().Max(op => op.TradeSubmittedOn);
+
+            if (mostRecentTrade.TradeSubmittedOn > endDate)
+            {
+                endDate = mostRecentTrade.TradeSubmittedOn;
+            }
+
+            var startTick = StartTick(securityDataTicks, startDate);
+            if (startTick == null)
+            {
+                _logger.LogInformation($"Layering unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var endTick = EndTick(securityDataTicks, endDate);
+            if (endTick == null)
+            {
+                _logger.LogInformation($"Layering unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+
+                _hadMissingData = true;
+                return false;
+            }
+            
+            // end date should be the trade submitted on or opposing position whichever is bigger (shuld jsut be the most recent trade)
+
+            var priceMovement = endTick.Spread.Price.Value - startTick.Spread.Price.Value;
+            switch (mostRecentTrade.Position)
+            {
+                case OrderPosition.Buy:
+                    return priceMovement < 0;
+                case OrderPosition.Sell:
+                    return priceMovement > 0;
+                default:
+                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position}");
+                    break;
+            }
+
+            return false;
+        }
+
+        private SecurityTick StartTick(List<SecurityTick> securityDataTicks, DateTime startDate)
+        {
+            if (securityDataTicks == null
+                || !securityDataTicks.Any())
+            {
+                return null;
+            }
+
+            SecurityTick startTick;
+            if (securityDataTicks.Any(sdt => sdt.TimeStamp < startDate))
+            {
+                startTick =
+                    securityDataTicks
+                        .Where(sdt => sdt.TimeStamp < startDate)
+                        .OrderBy(sdt => sdt.TimeStamp)
+                        .Reverse().FirstOrDefault();
+            }
+            else
+            {
+                startTick =
+                    securityDataTicks
+                        .OrderBy(sdt => sdt.TimeStamp)
+                        .FirstOrDefault();
+            }
+
+            return startTick;
+        }
+
+        private SecurityTick EndTick(List<SecurityTick> securityDataTicks, DateTime endDate)
+        {
+            if (securityDataTicks == null
+                || !securityDataTicks.Any())
+            {
+                return null;
+            }
+
+            SecurityTick endTick;
+            if (securityDataTicks.Any(sdt => sdt.TimeStamp > endDate))
+            {
+                endTick =
+                    securityDataTicks
+                        .Where(sdt => sdt.TimeStamp > endDate)
+                        .OrderBy(sdt => sdt.TimeStamp)
+                        .FirstOrDefault();
+            }
+            else
+            {
+                endTick =
+                    securityDataTicks
+                        .OrderBy(sdt => sdt.TimeStamp)
+                        .Reverse()
+                        .FirstOrDefault();
+            }
+
+            return endTick;
         }
 
         protected override void RunRule(ITradingHistoryStack history)

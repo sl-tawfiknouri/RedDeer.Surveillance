@@ -19,7 +19,7 @@ namespace Surveillance.Tests.Helpers
                     "ENTSPB",
                     "Random Inc"),
                 null,
-                null,
+                new Price(20, "GBP"), 
                 1000,
                 1000,
                 OrderPosition.Buy,

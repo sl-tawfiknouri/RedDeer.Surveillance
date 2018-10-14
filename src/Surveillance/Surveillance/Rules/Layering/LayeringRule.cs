@@ -18,6 +18,7 @@ namespace Surveillance.Rules.Layering
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILayeringRuleParameters _parameters;
         private int _alertCount = 0;
+        private bool _hadMissingData = false;
 
         public LayeringRule(
             ILayeringRuleParameters parameters,
@@ -78,7 +79,8 @@ namespace Surveillance.Rules.Layering
                     buyPosition,
                     sellPosition,
                     tradingPosition,
-                    opposingPosition);
+                    opposingPosition,
+                    mostRecentTrade);
 
             if (hasBreachedLayeringRule)
             {
@@ -107,7 +109,8 @@ namespace Surveillance.Rules.Layering
             ITradePosition buyPosition,
             ITradePosition sellPosition,
             ITradePosition tradingPosition,
-            ITradePosition opposingPosition)
+            ITradePosition opposingPosition,
+            TradeOrderFrame mostRecentTrade)
         {
             var hasBreachedLayeringRule = false;
             var hasTradesInWindow = tradeWindow.Any();
@@ -131,12 +134,83 @@ namespace Surveillance.Rules.Layering
                     continue;
                 }
 
+                // IF ALL PARAMETERS ARE NULL JUST DO THE BIDIRECTIONAL TRADE CHECK
+                if (_parameters.PercentageOfMarketDailyVolume == null)
+                {
+                    return true;
+                }
 
-
-
+                if (_parameters.PercentageOfMarketDailyVolume != null
+                    && CheckDailyVolumeBreach(opposingPosition, mostRecentTrade))
+                {
+                    hasBreachedLayeringRule = true;
+                }
             }
 
             return hasBreachedLayeringRule;
+        }
+
+        private bool CheckDailyVolumeBreach(
+            ITradePosition opposingPosition,
+            TradeOrderFrame mostRecentTrade)
+        {
+            var marketId = mostRecentTrade.Market.Id;
+
+            if (marketId == null)
+            {
+                _logger.LogInformation($"Layering unable to evaluate the market id for the most recent trade {mostRecentTrade?.Security?.Identifiers}");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            if (!LatestExchangeFrameBook.ContainsKey(marketId))
+            {
+                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers}");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            LatestExchangeFrameBook.TryGetValue(marketId, out var frame);
+
+            if (frame == null)
+            {
+                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers} the frame was null");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var marketSecurityData = frame
+                .Securities
+                ?.FirstOrDefault(sec => Equals(sec.Security?.Identifiers, mostRecentTrade.Security.Identifiers));
+
+            if (marketSecurityData == null)
+            {
+                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers} the market data did not contain the security indicated as trading in that market");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            if (marketSecurityData?.DailyVolume.Traded <= 0
+                || opposingPosition.TotalVolume() <= 0)
+            {
+                _logger.LogInformation($"Layering unable to evaluate for {mostRecentTrade?.Security?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolume()}");
+
+                _hadMissingData = true;
+                return false;
+            }
+
+            var percentageDailyVolume = (decimal)opposingPosition.TotalVolume() / (decimal)marketSecurityData.DailyVolume.Traded;
+
+            if (percentageDailyVolume >= _parameters.PercentageOfMarketDailyVolume)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected override void RunRule(ITradingHistoryStack history)
@@ -163,7 +237,16 @@ namespace Surveillance.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
-            _ruleCtx?.EndEvent();
+
+            if (_hadMissingData)
+            {
+                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+            }
+            else
+            {
+                _ruleCtx?.EndEvent();
+            }
+
             _alertCount = 0;
         }
     }

@@ -118,10 +118,10 @@ namespace Surveillance.Rules.Layering
             TradeOrderFrame mostRecentTrade)
         {
             var hasTradesInWindow = tradeWindow.Any();
-            RuleBreachDescription hasBidirectionalBreach = null;
-            RuleBreachDescription hasDailyVolumeBreach = null;
-            RuleBreachDescription hasWindowVolumeBreach = null;
-            RuleBreachDescription priceMovementBreach = null;
+            RuleBreachDescription hasBidirectionalBreach = RuleBreachDescription.False();
+            RuleBreachDescription hasDailyVolumeBreach = RuleBreachDescription.False();
+            RuleBreachDescription hasWindowVolumeBreach = RuleBreachDescription.False();
+            RuleBreachDescription priceMovementBreach = RuleBreachDescription.False();
 
             // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
             while (hasTradesInWindow)

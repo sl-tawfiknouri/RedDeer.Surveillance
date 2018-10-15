@@ -17,6 +17,8 @@ using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Universe.MarketEvents;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 
 namespace Surveillance.Tests.Universe
 {
@@ -29,6 +31,8 @@ namespace Surveillance.Tests.Universe
         private IRedDeerMarketExchangeFormatRepository _equityMarketRepository;
         private IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector _equityMarketProjector;
 
+        private IReddeerTradeRepository _auroraTradeRepository;
+        private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
 
         [SetUp]
@@ -38,6 +42,8 @@ namespace Surveillance.Tests.Universe
             _documentProjector = A.Fake<IReddeerTradeFormatToReddeerTradeFrameProjector>();
             _equityMarketRepository = A.Fake<IRedDeerMarketExchangeFormatRepository>();
             _equityMarketProjector = A.Fake<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
+            _auroraTradeRepository = A.Fake<IReddeerTradeRepository>();
+            _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
         }
 
@@ -51,6 +57,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager));
         }
 
@@ -64,6 +72,8 @@ namespace Surveillance.Tests.Universe
                     null, 
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager));
         }
 
@@ -76,6 +86,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager);
 
             var result = builder.Summon(null);
@@ -94,6 +106,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -121,6 +135,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -160,6 +176,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager);
 
             var schedule = new ScheduledExecution
@@ -205,6 +223,8 @@ namespace Surveillance.Tests.Universe
                     _documentProjector,
                     _equityMarketRepository,
                     _equityMarketProjector,
+                    _auroraTradeRepository,
+                    _auroraMarketRepository,
                     _marketManager);
 
             var schedule = new ScheduledExecution

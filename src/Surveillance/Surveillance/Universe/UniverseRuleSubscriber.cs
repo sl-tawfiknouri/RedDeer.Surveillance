@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -62,7 +61,7 @@ namespace Surveillance.Universe
             CancelledOrdersRule(execution, player, ruleParameters, opCtx);
             HighProfitsRule(execution, player, ruleParameters, opCtx);
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
-            LayeringRule(execution, player, opCtx);
+            LayeringRule(execution, player, ruleParameters, opCtx);
         }
 
         private void SpoofingRule(
@@ -192,6 +191,7 @@ namespace Surveillance.Universe
         private void LayeringRule(
             ScheduledExecution execution,
             IUniversePlayer player,
+            RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
             if (!execution.Rules.Contains(Domain.Scheduling.Rules.Layering))
@@ -199,7 +199,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var layeringParameters = new LayeringRuleParameters(TimeSpan.FromMinutes(25), 0.2m, 0.1m, true);
+            var layeringParameters = _ruleParameterMapper.Map(ruleParameters.Layering);
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (layeringParameters != null)

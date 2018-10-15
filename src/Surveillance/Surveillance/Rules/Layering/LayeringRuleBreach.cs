@@ -13,10 +13,10 @@ namespace Surveillance.Rules.Layering
             TimeSpan window,
             ITradePosition trades,
             Security security,
-            bool bidirectionalTradeBreach, 
-            bool dailyVolumeTradeBreach,
-            bool windowVolumeTradeBreach,
-            bool priceMovementBreach)
+            RuleBreachDescription bidirectionalTradeBreach, 
+            RuleBreachDescription dailyVolumeTradeBreach,
+            RuleBreachDescription windowVolumeTradeBreach,
+            RuleBreachDescription priceMovementBreach)
         {
             Parameters = parameters;
             Window = window;
@@ -33,9 +33,9 @@ namespace Surveillance.Rules.Layering
         public ITradePosition Trades { get; }
         public Security Security { get; }
 
-        public bool BidirectionalTradeBreach { get; }
-        public bool DailyVolumeTradeBreach { get; }
-        public bool WindowVolumeTradeBreach { get; }
-        public bool PriceMovementBreach { get; }
+        public RuleBreachDescription BidirectionalTradeBreach { get; }
+        public RuleBreachDescription DailyVolumeTradeBreach { get; }
+        public RuleBreachDescription WindowVolumeTradeBreach { get; }
+        public RuleBreachDescription PriceMovementBreach { get; }
     }
 }

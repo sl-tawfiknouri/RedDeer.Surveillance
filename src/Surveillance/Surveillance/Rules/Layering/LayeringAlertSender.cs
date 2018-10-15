@@ -27,27 +27,7 @@ namespace Surveillance.Rules.Layering
 
         private string BuildDescription(ILayeringRuleBreach breach)
         {
-            var bidirectionalTradeDescription =
-                breach.BidirectionalTradeBreach
-                    ? " Trading in both buy/sell positions simultaneously was detected."
-                    : string.Empty;
-
-            var dailyVolumeTradeDescription =
-                breach.DailyVolumeTradeBreach
-                    ? $" Trading in a layered position exceeded the daily volume threshold set at {breach.Parameters.PercentageOfMarketDailyVolume * 100}%."
-                    : string.Empty;
-
-            var windowVolumeTradeDescription =
-                breach.WindowVolumeTradeBreach
-                    ? $" Trading in a layered position exceed the window volume threshold set at {breach.Parameters.PercentageOfMarketWindowVolume * 100}%."
-                    : string.Empty;
-
-            var priceMovementTradeDescription =
-                breach.PriceMovementBreach
-                    ? $" Trading in a layered position failed the price movement check."
-                    : string.Empty;
-
-            return $"Layering rule breach detected for {breach.Security.Name} ({breach.Security.Identifiers}).{bidirectionalTradeDescription}{dailyVolumeTradeDescription}{windowVolumeTradeDescription}{priceMovementTradeDescription}";
+            return $"Layering rule breach detected for {breach.Security.Name} ({breach.Security.Identifiers}).{breach.BidirectionalTradeBreach.Description}{breach.DailyVolumeTradeBreach.Description}{breach.WindowVolumeTradeBreach.Description}{breach.PriceMovementBreach.Description}";
         }
     }
 }

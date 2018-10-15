@@ -117,13 +117,11 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
-            var hasBreachedLayeringRule = false;
             var hasTradesInWindow = tradeWindow.Any();
-
-            var hasBidirectionalBreach = false;
-            var hasDailyVolumeBreach = false;
-            var hasWindowVolumeBreach = false;
-            var hasPriceMovementBreach = false;
+            RuleBreachDescription hasBidirectionalBreach = null;
+            RuleBreachDescription hasDailyVolumeBreach = null;
+            RuleBreachDescription hasWindowVolumeBreach = null;
+            RuleBreachDescription priceMovementBreach = null;
 
             // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
             while (hasTradesInWindow)
@@ -149,36 +147,33 @@ namespace Surveillance.Rules.Layering
                     && _parameters.PercentageOfMarketWindowVolume == null
                     && _parameters.CheckForCorrespondingPriceMovement == null)
                 {
-                    hasBidirectionalBreach = true;
-                    hasBreachedLayeringRule = true;
+                    hasBidirectionalBreach = new RuleBreachDescription
+                    {
+                        RuleBreached = true,
+                        Description = " Trading in both buy/sell positions simultaneously was detected."
+                    };
                 }
 
-                if (_parameters.PercentageOfMarketDailyVolume != null
-                    && CheckDailyVolumeBreach(opposingPosition, mostRecentTrade))
+                if (_parameters.PercentageOfMarketDailyVolume != null)
                 {
-                    hasDailyVolumeBreach = true;
-                    hasBreachedLayeringRule = true;
+                    hasDailyVolumeBreach = CheckDailyVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
-                if (_parameters.PercentageOfMarketWindowVolume != null
-                    && CheckWindowVolumeBreach(opposingPosition, mostRecentTrade))
+                if (_parameters.PercentageOfMarketWindowVolume != null)
                 {
-                    hasWindowVolumeBreach = true;
-                    hasBreachedLayeringRule = true;
+                    hasWindowVolumeBreach = CheckWindowVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
                 if (_parameters.CheckForCorrespondingPriceMovement != null
-                    && _parameters.CheckForCorrespondingPriceMovement.Value
-                    && CheckForPriceMovement(opposingPosition, mostRecentTrade))
+                    && _parameters.CheckForCorrespondingPriceMovement.Value)
                 {
-                    hasPriceMovementBreach = true;
-                    hasBreachedLayeringRule = true;
+                    priceMovementBreach = CheckForPriceMovement(opposingPosition, mostRecentTrade);
                 }
             }
-            
+
             opposingPosition.Add(mostRecentTrade);
 
-            return hasBreachedLayeringRule 
+            return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
                     _parameters,
                     _parameters.WindowSize,
@@ -187,11 +182,23 @@ namespace Surveillance.Rules.Layering
                     hasBidirectionalBreach,
                     hasDailyVolumeBreach,
                     hasWindowVolumeBreach,
-                    hasPriceMovementBreach)
+                    priceMovementBreach)
                 : null;
         }
 
-        private bool CheckDailyVolumeBreach(
+        private static bool HasRuleBreach(
+            RuleBreachDescription hasBidirectionalBreach,
+            RuleBreachDescription hasDailyVolumeBreach,
+            RuleBreachDescription hasWindowVolumeBreach,
+            RuleBreachDescription priceMovementBreach)
+        {
+            return (hasBidirectionalBreach?.RuleBreached ?? false)
+                || (hasDailyVolumeBreach?.RuleBreached ?? false)
+                || (hasWindowVolumeBreach?.RuleBreached ?? false)
+                || (priceMovementBreach?.RuleBreached ?? false);
+        }
+
+        private RuleBreachDescription CheckDailyVolumeBreach(
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
@@ -202,7 +209,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to evaluate the market id for the most recent trade {mostRecentTrade?.Security?.Identifiers}");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             if (!LatestExchangeFrameBook.ContainsKey(marketId))
@@ -210,7 +217,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers}");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             LatestExchangeFrameBook.TryGetValue(marketId, out var frame);
@@ -220,7 +227,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers} the frame was null");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var marketSecurityData = frame
@@ -232,7 +239,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Security?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             if (marketSecurityData?.DailyVolume.Traded <= 0
@@ -241,20 +248,23 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to evaluate for {mostRecentTrade?.Security?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolume()}");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var percentageDailyVolume = (decimal)opposingPosition.TotalVolume() / (decimal)marketSecurityData.DailyVolume.Traded;
-
             if (percentageDailyVolume >= _parameters.PercentageOfMarketDailyVolume)
             {
-                return true;
+                return new RuleBreachDescription
+                {
+                    RuleBreached = true,
+                    Description = $" Percentage of market daily volume traded within a {_parameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_parameters.PercentageOfMarketDailyVolume * 100}%."
+                };
             }
 
-            return false;
+            return RuleBreachDescription.False();
         }
 
-        private bool CheckWindowVolumeBreach(
+        private RuleBreachDescription CheckWindowVolumeBreach(
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
@@ -263,7 +273,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var securityDataTicks = marketStack
@@ -282,7 +292,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             if (opposingPosition.TotalVolume() <= 0)
@@ -290,19 +300,23 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to calculate opposing position volume window in {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var percentageWindowVolume = (decimal)opposingPosition.TotalVolume() / (decimal)windowVolume;
             if (percentageWindowVolume >= _parameters.PercentageOfMarketWindowVolume)
             {
-                return true;
+                return new RuleBreachDescription
+                {
+                    RuleBreached = true,
+                    Description = $" Percentage of market volume traded within a {_parameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_parameters.PercentageOfMarketWindowVolume * 100}%."
+                };
             }
 
-            return false;
+            return RuleBreachDescription.False();
         }
 
-        private bool CheckForPriceMovement(
+        private RuleBreachDescription CheckForPriceMovement(
             ITradePosition opposingPosition,
             TradeOrderFrame mostRecentTrade)
         {
@@ -311,7 +325,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var securityDataTicks = marketStack
@@ -328,7 +342,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var startDate = opposingPosition.Get().Min(op => op.TradeSubmittedOn);
@@ -345,7 +359,7 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
 
             var endTick = EndTick(securityDataTicks, endDate);
@@ -354,22 +368,25 @@ namespace Surveillance.Rules.Layering
                 _logger.LogInformation($"Layering unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
-                return false;
+                return RuleBreachDescription.False();
             }
             
             var priceMovement = endTick.Spread.Price.Value - startTick.Spread.Price.Value;
             switch (mostRecentTrade.Position)
             {
                 case OrderPosition.Buy:
-                    return priceMovement < 0;
+                    return priceMovement < 0
+                        ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Security.Name} moved from ({endTick.Spread.Price.Currency}) {endTick.Spread.Price.Value} to ({startTick.Spread.Price.Currency}) {startTick.Spread.Price.Value} for a net change of {startTick.Spread.Price.Currency} {priceMovement} in line with the layering price pressure influence." }
+                        : RuleBreachDescription.False();
                 case OrderPosition.Sell:
-                    return priceMovement > 0;
+                    return priceMovement > 0
+                        ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Security.Name} moved from ({endTick.Spread.Price.Currency}) {endTick.Spread.Price.Value} to ({startTick.Spread.Price.Currency}) {startTick.Spread.Price.Value} for a net change of {startTick.Spread.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:
                     _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position} (Arg Out of Range)");
                     break;
             }
 
-            return false;
+            return RuleBreachDescription.False();
         }
 
         private SecurityTick StartTick(List<SecurityTick> securityDataTicks, DateTime startDate)

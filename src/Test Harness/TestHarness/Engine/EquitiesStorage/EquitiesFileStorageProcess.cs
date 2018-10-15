@@ -81,7 +81,7 @@ namespace TestHarness.Engine.EquitiesStorage
                 return;
             }
 
-            var fileName = $"{value.Exchange.Id}-{value.TimeStamp.ToString("yyyyMMddHHmmssffff")}.csv";
+            var fileName = $"{value.Exchange.Id.Id}-{value.TimeStamp.ToString("yyyyMMddHHmmssffff")}.csv";
             var filePath = Path.Combine(_path, fileName);
 
             using (var writer = File.CreateText(filePath))

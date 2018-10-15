@@ -38,6 +38,7 @@ namespace TestHarness.Commands
                 new HelpCommand(),
                 new QuitCommand(programState),
                 new DemoCommand(appFactory),
+                new DemoCsvCommand(appFactory),
                 new DemoNetworkingCommand(appFactory),
                 new DemoTradeFileCommand(appFactory),
                 new DemoTradeFileNetworkingCommand(appFactory),

@@ -46,5 +46,6 @@ namespace TestHarness.Factory.Interfaces
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
         INetworkConfiguration Configuration { get; }
         IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
+        IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
     }
 }

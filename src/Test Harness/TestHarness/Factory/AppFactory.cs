@@ -21,6 +21,8 @@ using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
+using TestHarness.Repository;
+using TestHarness.Repository.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
@@ -56,6 +58,7 @@ namespace TestHarness.Factory
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
+            AuroraRepository = new AuroraRepository(networkConfiguration, Console);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -114,5 +117,6 @@ namespace TestHarness.Factory
         public IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
 
         public IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
+        public IAuroraRepository AuroraRepository { get; }
     }
 }

@@ -26,8 +26,8 @@ namespace Surveillance.Tests.Universe.MarketEvents
                 {
                     Code = "XLON",
                     MarketOpenTime = TimeSpan.FromHours(8),
-                    MarketCloseTime = TimeSpan.FromHours(16),
-                    TimeZone = "Central Standard Time",
+                    MarketCloseTime = TimeSpan.FromHours(16).Add(TimeSpan.FromMinutes(30)),
+                    TimeZone = "UTC",
                     IsOpenOnMonday = true,
                     IsOpenOnTuesday = true,
                     IsOpenOnWednesday = true,
@@ -61,7 +61,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
 
-            Assert.AreEqual(results.Count, 0);
+            Assert.AreEqual(results.Count, 4);
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
 
-            Assert.AreEqual(results.Count, 0);
+            Assert.AreEqual(results.Count, 4);
         }
 
         [Test]
@@ -84,28 +84,28 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var earlyEnd = new DateTime(2000, 1, 1, 15, 0, 0);
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
-            var firstResult = results.FirstOrDefault();
+            var firstResult = results.Skip(1).FirstOrDefault();
 
-            Assert.AreEqual(results.Count, 1);
+            Assert.AreEqual(results.Count, 4);
             Assert.IsNotNull(firstResult);
-            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 14, 0, 0));
+            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
             Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
         }
 
         [Test]
-        public async Task AllOpenCloseEvents_TimespanCloseOnlyMarket_ReturnOnlyOneClose()
+        public async Task AllOpenCloseEvents_TimespanCloseOnlyMarket_ReturnFiveEventsClose()
         {
             var manager = new MarketOpenCloseEventManager(_repository);
             var earlyStart = new DateTime(2000, 1, 1, 16, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 23, 0, 0);
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
-            var firstResult = results.FirstOrDefault();
+            var closeResult = results.Skip(2).FirstOrDefault();
 
-            Assert.AreEqual(results.Count, 1);
-            Assert.IsNotNull(firstResult);
-            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 22, 0, 0));
-            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(results.Count, 5);
+            Assert.IsNotNull(closeResult);
+            Assert.AreEqual(closeResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
+            Assert.AreEqual(closeResult.StateChange, UniverseStateEvent.StockMarketClose);
         }
 
         [Test]
@@ -116,17 +116,17 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var earlyEnd = new DateTime(2000, 1, 1, 23, 0, 0);
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
-            var firstResult = results.FirstOrDefault();
-            var secondResult = results.Skip(1).FirstOrDefault();
+            var firstResult = results.Skip(2).FirstOrDefault();
+            var secondResult = results.Skip(3).FirstOrDefault();
 
-            Assert.AreEqual(results.Count, 2);
+            Assert.AreEqual(results.Count, 6);
 
             Assert.IsNotNull(firstResult);
-            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 14, 0, 0));
+            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
             Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
 
             Assert.IsNotNull(secondResult);
-            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 22, 0, 0));
+            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
             Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketClose);
         }
 
@@ -138,22 +138,22 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var earlyEnd = new DateTime(2000, 1, 2, 20, 0, 0);
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
-            var firstResult = results.FirstOrDefault();
-            var secondResult = results.Skip(1).FirstOrDefault();
-            var thirdResult = results.Skip(2).FirstOrDefault();
+            var firstResult = results.Skip(1).FirstOrDefault();
+            var secondResult = results.Skip(2).FirstOrDefault();
+            var thirdResult = results.Skip(3).FirstOrDefault();
 
-            Assert.AreEqual(results.Count, 3);
+            Assert.AreEqual(results.Count, 7);
 
             Assert.IsNotNull(firstResult);
-            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 14, 0, 0));
+            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
             Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
 
             Assert.IsNotNull(secondResult);
-            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 22, 0, 0));
+            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
             Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketClose);
 
             Assert.IsNotNull(thirdResult);
-            Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 14, 0, 0));
+            Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 8, 0, 0));
             Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketOpen);
         }
 
@@ -165,22 +165,22 @@ namespace Surveillance.Tests.Universe.MarketEvents
             var earlyEnd = new DateTime(2000, 1, 2, 23, 0, 0);
 
             var results = await manager.AllOpenCloseEvents(earlyStart, earlyEnd);
-            var firstResult = results.FirstOrDefault();
-            var secondResult = results.Skip(1).FirstOrDefault();
-            var thirdResult = results.Skip(2).FirstOrDefault();
+            var firstResult = results.Skip(2).FirstOrDefault();
+            var secondResult = results.Skip(3).FirstOrDefault();
+            var thirdResult = results.Skip(4).FirstOrDefault();
 
-            Assert.AreEqual(results.Count, 3);
+            Assert.AreEqual(results.Count, 7);
 
             Assert.IsNotNull(firstResult);
-            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 22, 0, 0));
+            Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
             Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketClose);
 
             Assert.IsNotNull(secondResult);
-            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 2, 14, 0, 0));
+            Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 2, 8, 0, 0));
             Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketOpen);
 
             Assert.IsNotNull(thirdResult);
-            Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 22, 0, 0));
+            Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 16, 30, 0));
             Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketClose);
         }
 
@@ -193,7 +193,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             var results = await manager.AllOpenCloseEvents(start, end);
 
-            Assert.AreEqual(results.Count, 10);
+            Assert.AreEqual(results.Count, 14);
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             var results = await manager.AllOpenCloseEvents(start, end);
 
-            Assert.AreEqual(results.Count, 9);
+            Assert.AreEqual(results.Count, 13);
         }
 
         [Test]
@@ -217,7 +217,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             var results = await manager.AllOpenCloseEvents(start, end);
 
-            Assert.AreEqual(results.Count, 9);
+            Assert.AreEqual(results.Count, 13);
         }
     }
 }

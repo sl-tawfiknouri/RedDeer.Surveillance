@@ -15,6 +15,8 @@ namespace TestHarness.App
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
+                ScheduleRuleDistributedWorkQueueName = configurationBuilder.GetValue<string>("ScheduleRuleDistributedWorkQueueName"),
+                AuroraConnectionString = configurationBuilder.GetValue<string>("AuroraConnectionString")
             };
 
             return networkConfiguration;

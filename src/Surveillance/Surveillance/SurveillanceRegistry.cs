@@ -32,6 +32,8 @@ using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
 using Surveillance.Rules.High_Profits;
 using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Rules.Layering;
+using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.Marking_The_Close;
 using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Trades;
@@ -97,6 +99,8 @@ namespace Surveillance
             For<IUniverseBuilder>().Use<UniverseBuilder>();
             For<IUniverseEvent>().Use<UniverseEvent>();
             For<IUniversePlayer>().Use<UniversePlayer>();
+            For<IUniverseRuleSubscriber>().Use<UniverseRuleSubscriber>();
+
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
@@ -123,6 +127,11 @@ namespace Surveillance
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
             For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
+
+            For<ILayeringRule>().Use<LayeringRule>();
+            For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
+            For<ILayeringAlertSender>().Use<LayeringAlertSender>();
+            For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

@@ -7,5 +7,6 @@
         Completed = 2,
         CompletedWithErrors = 3,
         BlockedClientServiceDown = 4,
+        IncompleteMissingData = 5
     }
 }

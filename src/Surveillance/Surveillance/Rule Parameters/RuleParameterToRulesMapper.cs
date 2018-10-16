@@ -61,5 +61,19 @@ namespace Surveillance.Rule_Parameters
                 dto.PercentageThresholdWindowVolume,
                 dto.PercentThresholdOffTouch);
         }
+
+        public ILayeringRuleParameters Map(LayeringRuleParameterDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new LayeringRuleParameters(
+                dto.WindowSize,
+                dto.PercentageOfMarketDailyVolume,
+                dto.PercentageOfMarketWindowVolume,
+                dto.CheckForCorrespondingPriceMovement);
+        }
     }
 }

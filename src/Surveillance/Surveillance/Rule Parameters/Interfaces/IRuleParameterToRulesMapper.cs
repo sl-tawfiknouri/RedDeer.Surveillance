@@ -9,5 +9,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
         ICancelledOrderRuleParameters Map(CancelledOrderRuleParameterDto dto);
         IHighProfitsRuleParameters Map(HighProfitsRuleParameterDto dto);
         IMarkingTheCloseParameters Map(MarkingTheCloseRuleParameterDto dto);
+        ILayeringRuleParameters Map(LayeringRuleParameterDto dto);
     }
 }

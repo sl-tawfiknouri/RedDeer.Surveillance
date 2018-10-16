@@ -101,6 +101,11 @@ namespace Surveillance.Rules.High_Profits
             }
         }
 
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
+            // do nothing
+        }
+
         private void WriteAlertToMessageSender(
             Stack<TradeOrderFrame> activeTrades,
             decimal absoluteProfit,
@@ -206,14 +211,39 @@ namespace Surveillance.Rules.High_Profits
                 return realisedRevenue;
             }
 
+            var marketId = activeFulfilledTradeOrders.FirstOrDefault()?.Market?.Id;
+            if (marketId == null)
+            {
+                return await CalculateInferredVirtualProfit(
+                    activeFulfilledTradeOrders,
+                    realisedRevenue,
+                    sizeOfVirtualPosition,
+                    targetCurrency);
+            }
+
+            if (!LatestExchangeFrameBook.ContainsKey(marketId))
+            {
+                return await CalculateInferredVirtualProfit(
+                    activeFulfilledTradeOrders,
+                    realisedRevenue,
+                    sizeOfVirtualPosition,
+                    targetCurrency);
+            }
+
+            LatestExchangeFrameBook.TryGetValue(marketId, out var frame);
+
             var securityTick =
-                LatestExchangeFrame
+                frame
                     ?.Securities
                     ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, security.Identifiers));
 
             if (securityTick == null)
             {
-                return await CalculateInferredVirtualProfit(activeFulfilledTradeOrders, realisedRevenue, sizeOfVirtualPosition, targetCurrency);
+                return await CalculateInferredVirtualProfit(
+                    activeFulfilledTradeOrders,
+                    realisedRevenue,
+                    sizeOfVirtualPosition,
+                    targetCurrency);
             }
 
             var virtualRevenue = securityTick.Spread.Price.Value * sizeOfVirtualPosition;

@@ -9,6 +9,7 @@ using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
+using TestHarness.Repository.Interfaces;
 using TestHarness.State.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
@@ -47,5 +48,7 @@ namespace TestHarness.Factory.Interfaces
         INetworkConfiguration Configuration { get; }
         IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
+        IAuroraRepository AuroraRepository { get; }
+
     }
 }

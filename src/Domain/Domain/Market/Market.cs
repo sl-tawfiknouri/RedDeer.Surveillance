@@ -1,4 +1,5 @@
-﻿using Domain.Market.Interfaces;
+﻿using System;
+using Domain.Market.Interfaces;
 
 namespace Domain.Market
 {
@@ -25,6 +26,22 @@ namespace Domain.Market
             }
 
             public string Id { get; }
+
+            public override int GetHashCode()
+            {
+                return Id?.GetHashCode() ?? 0;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is MarketId))
+                {
+                    return false;
+                }
+
+                var otherId = (MarketId)obj;
+                return string.Equals(Id, otherId?.Id, StringComparison.InvariantCultureIgnoreCase);
+            }
         }
     }
 }

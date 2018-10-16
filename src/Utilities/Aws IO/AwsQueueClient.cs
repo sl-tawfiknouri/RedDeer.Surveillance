@@ -33,6 +33,24 @@ namespace Utilities.Aws_IO
             _logger = logger;
         }
 
+        public async Task PurgeQueue(string queueName, CancellationToken token)
+        {
+            if (string.IsNullOrWhiteSpace(queueName))
+            {
+                return;
+            }
+
+            var queueUrl = await GetQueueUrlAsync(queueName, token);
+
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            var purgeRequest = new PurgeQueueRequest {QueueUrl = queueUrl};
+            await _sqsClient.PurgeQueueAsync(purgeRequest, token);
+        }
+
         public async Task<string> GetQueueUrlAsync(string name, CancellationToken cancellationToken, bool retry = true)
         {
             try

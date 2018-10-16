@@ -80,11 +80,14 @@ namespace TestHarness.Commands
                 return;
             }
 
+            initialDate = DateTime.SpecifyKind(initialDate, DateTimeKind.Utc);
+            terminationDate = DateTime.SpecifyKind(terminationDate, DateTimeKind.Utc);
+
             var allRulesList = GetAllRules();
 
             var scheduledExecution = new ScheduledExecution
             {
-                Rules = allRulesList,
+                Rules = new List<Rules> { Rules.MarkingTheClose },
                 TimeSeriesInitiation = initialDate,
                 TimeSeriesTermination = terminationDate
             };

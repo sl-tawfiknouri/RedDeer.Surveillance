@@ -8,6 +8,7 @@ using Domain.Trades.Orders;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance.Universe
@@ -98,7 +99,6 @@ namespace Surveillance.Universe
                         execution.TimeSeriesTermination.DateTime);
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, execution.TimeSeriesInitiation.DateTime, execution);
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, execution.TimeSeriesTermination.DateTime, execution);
 
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
@@ -109,6 +109,12 @@ namespace Surveillance.Universe
 
             var universeEvents = new List<IUniverseEvent> {genesis};
             universeEvents.AddRange(orderedIntraUniversalHistory);
+
+            var youngestEventInUniverse = orderedIntraUniversalHistory.Max(i => i.EventTime);
+            var eschatonDate = youngestEventInUniverse > execution.TimeSeriesTermination.DateTime
+                ? youngestEventInUniverse
+                : execution.TimeSeriesTermination.DateTime;
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, eschatonDate, execution);
             universeEvents.Add(eschaton);
 
             return universeEvents;

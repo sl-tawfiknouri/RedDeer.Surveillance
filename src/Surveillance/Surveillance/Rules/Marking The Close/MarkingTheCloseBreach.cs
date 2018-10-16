@@ -17,10 +17,8 @@ namespace Surveillance.Rules.Marking_The_Close
             MarketOpenClose marketClose,
             ITradePosition tradingPosition,
             IMarkingTheCloseParameters parameters,
-            bool hasSellDailyVolumeBreach,
-            decimal? sellDailyVolumeBreach,
-            bool hasBuyDailyVolumeBreach,
-            decimal? buyDailyVolumeBreach)
+            VolumeBreach dailyBreach,
+            VolumeBreach windowBreach)
         {
             Window = window;
             Security = security ?? throw new ArgumentNullException(nameof(security));
@@ -29,10 +27,8 @@ namespace Surveillance.Rules.Marking_The_Close
             Trades = tradingPosition ?? new TradePosition(new List<TradeOrderFrame>());
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
-            HasSellDailyVolumeBreach = hasSellDailyVolumeBreach;
-            SellDailyVolumeBreach = sellDailyVolumeBreach;
-            HasBuyDailyVolumeBreach = hasBuyDailyVolumeBreach;
-            BuyDailyVolumeBreach = buyDailyVolumeBreach;
+            DailyBreach = dailyBreach;
+            WindowBreach = windowBreach;
         }
 
         public TimeSpan Window { get; }
@@ -43,10 +39,8 @@ namespace Surveillance.Rules.Marking_The_Close
         public ITradePosition Trades { get; }
         public Security Security { get; }
 
-        public bool HasBuyDailyVolumeBreach { get; }
-        public decimal? BuyDailyVolumeBreach { get; }
+        public VolumeBreach DailyBreach { get; }
+        public VolumeBreach WindowBreach { get; }
 
-        public bool HasSellDailyVolumeBreach { get; }
-        public decimal? SellDailyVolumeBreach { get; }
     }
 }

@@ -80,10 +80,36 @@ namespace Surveillance.Rules.Marking_The_Close
                 return;
             }
 
+            VolumeBreach dailyVolumeBreach = null;
             if (_parameters.PercentageThresholdDailyVolume != null)
             {
-                CheckDailyVolumeTraded(securities, tradedSecurity);
+                dailyVolumeBreach = CheckDailyVolumeTraded(securities, tradedSecurity);
             }
+
+            VolumeBreach windowVolumeBreach = null;
+            if (_parameters.PercentageThresholdWindowVolume != null)
+            {
+                windowVolumeBreach = CheckWindowVolumeTraded();
+            }
+
+            if (dailyVolumeBreach == null
+                && windowVolumeBreach == null)
+            {
+                return;
+            }
+
+            var position = new TradePosition(securities.ToList());
+            var breach = new MarkingTheCloseBreach(
+                _parameters.Window,
+                tradedSecurity.Security,
+                _latestMarketClosure,
+                position,
+                _parameters,
+                dailyVolumeBreach ?? new VolumeBreach(),
+                windowVolumeBreach ?? new VolumeBreach());
+
+            _alertCount += 1;
+            _messageSender.Send(breach);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
@@ -91,7 +117,12 @@ namespace Surveillance.Rules.Marking_The_Close
             // do nothing
         }
 
-        private void CheckDailyVolumeTraded(
+        private VolumeBreach CheckWindowVolumeTraded()
+        {
+            return new VolumeBreach();
+        }
+
+        private VolumeBreach CheckDailyVolumeTraded(
             Stack<TradeOrderFrame> securities,
             SecurityTick tradedSecurity)
         {
@@ -99,7 +130,7 @@ namespace Surveillance.Rules.Marking_The_Close
                 || !securities.Any()
                 || tradedSecurity == null)
             {
-                return;
+                return null;
             }
 
             var volumeTradedBuy =
@@ -119,25 +150,20 @@ namespace Surveillance.Rules.Marking_The_Close
 
             var hasSellDailyVolumeBreach = volumeTradedSell >= thresholdVolumeTraded;
             var sellDailyPercentageBreach = CalculateSellBreach(tradedSecurity, volumeTradedSell, hasSellDailyVolumeBreach);
-
-            if (hasSellDailyVolumeBreach
-                || hasBuyDailyVolumeBreach)
+            
+            if (!hasSellDailyVolumeBreach
+                && !hasBuyDailyVolumeBreach)
             {
-                var position = new TradePosition(securities.ToList());
-                var breach = new MarkingTheCloseBreach(
-                    _parameters.Window,
-                    tradedSecurity.Security,
-                    _latestMarketClosure,
-                    position,
-                    _parameters,
-                    hasSellDailyVolumeBreach,
-                    sellDailyPercentageBreach,
-                    hasBuyDailyVolumeBreach,
-                    buyDailyPercentageBreach);
-
-                _alertCount += 1;
-                _messageSender.Send(breach);
+                return new VolumeBreach();
             }
+
+            return new VolumeBreach
+            {
+                BuyVolumeBreach = buyDailyPercentageBreach,
+                HasBuyVolumeBreach = hasBuyDailyVolumeBreach,
+                SellVolumeBreach = sellDailyPercentageBreach,
+                HasSellVolumeBreach = hasSellDailyVolumeBreach
+            };
         }
 
         private static decimal? CalculateBuyBreach(SecurityTick tradedSecurity, int volumeTradedBuy, bool hasBuyDailyVolumeBreach)

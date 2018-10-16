@@ -110,7 +110,9 @@ namespace Surveillance.Universe
             var universeEvents = new List<IUniverseEvent> {genesis};
             universeEvents.AddRange(orderedIntraUniversalHistory);
 
-            var youngestEventInUniverse = orderedIntraUniversalHistory.Max(i => i.EventTime);
+            var youngestEventInUniverse = orderedIntraUniversalHistory.Any()
+                ? orderedIntraUniversalHistory.Max(i => i.EventTime)
+                : execution.TimeSeriesTermination.DateTime;
             var eschatonDate = youngestEventInUniverse > execution.TimeSeriesTermination.DateTime
                 ? youngestEventInUniverse
                 : execution.TimeSeriesTermination.DateTime;

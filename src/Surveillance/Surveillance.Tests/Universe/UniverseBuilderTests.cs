@@ -10,22 +10,16 @@ using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.ElasticSearchDtos.Market;
-using Surveillance.ElasticSearchDtos.Trades;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Universe.MarketEvents;
-using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 
 namespace Surveillance.Tests.Universe
 {
     [TestFixture]
     public class UniverseBuilderTests
     {
-        private IReddeerTradeRepository _tradeRepository;
-        private IReddeerMarketRepository _marketRepository;
         private IReddeerTradeRepository _auroraTradeRepository;
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
@@ -33,24 +27,16 @@ namespace Surveillance.Tests.Universe
         [SetUp]
         public void Setup()
         {
-            _tradeRepository = A.Fake<IReddeerTradeRepository>();
-            _marketRepository = A.Fake<IReddeerMarketRepository>();
             _auroraTradeRepository = A.Fake<IReddeerTradeRepository>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
         }
 
         [Test]
-                    _auroraTradeRepository,
-                    _auroraMarketRepository,
-                    _auroraTradeRepository,
-                    _auroraMarketRepository,
         public void Summon_DoesNot_ReturnNull()
         {
             var builder =
                 new UniverseBuilder(
-                    _tradeRepository,
-                    _marketRepository,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager);
@@ -67,8 +53,6 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _tradeRepository,
-                    _marketRepository,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager);
@@ -94,8 +78,6 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _tradeRepository,
-                    _marketRepository,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager);
@@ -109,7 +91,7 @@ namespace Surveillance.Tests.Universe
             var frame = ((TradeOrderFrame)null).Random();
 
             A
-                .CallTo(() => _tradeRepository.Get(timeSeriesInitiation, timeSeriesTermination))
+                .CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination))
                 .Returns(new[] {frame});
 
             var result = await builder.Summon(schedule);
@@ -119,9 +101,9 @@ namespace Surveillance.Tests.Universe
             Assert.AreEqual(result.Trades.FirstOrDefault(), frame);
             Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
 
-            A.CallTo(() => _tradeRepository.Get(timeSeriesInitiation, timeSeriesTermination)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -131,8 +113,6 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _tradeRepository,
-                    _marketRepository,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager);
@@ -176,8 +156,6 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _tradeRepository,
-                    _marketRepository,
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager);
@@ -204,7 +182,7 @@ namespace Surveillance.Tests.Universe
             };
 
             A
-                .CallTo(() => _marketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
+                .CallTo(() => _auroraMarketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
                 .Returns(exchangeFrames);
 
             var result = await builder.Summon(schedule);

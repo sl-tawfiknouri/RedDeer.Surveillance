@@ -34,7 +34,7 @@ namespace Surveillance.Rules.Marking_The_Close
         private string BuildDescription(IMarkingTheCloseBreach ruleBreach)
         {
             var header =
-                $"Marking the close rule breach detected for {ruleBreach.Security} ({ruleBreach.Security.Identifiers}) traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. ";
+                $"Marking the close rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}) traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. ";
 
             if ((ruleBreach.WindowBreach?.HasBuyVolumeBreach ?? false)
                 || (ruleBreach.WindowBreach?.HasSellVolumeBreach ?? false))
@@ -137,9 +137,9 @@ namespace Surveillance.Rules.Marking_The_Close
             decimal buyVolumePercentage,
             bool window)
         {
-            var windowType = window ? "daily" : "window";
+            var windowType = window ? "Daily" : "Window";
 
-            return $" {windowType} volume threshold of {volumePercentageSetByUser}% was exceeded on buy orders by {buyVolumePercentage}% of {windowType} volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close.";
+            return $" {windowType} volume threshold of {volumePercentageSetByUser}% was exceeded on buy orders by {buyVolumePercentage}% of {windowType.ToLower()} volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close.";
         }
 
         private string SellVolumeDescription(
@@ -148,9 +148,9 @@ namespace Surveillance.Rules.Marking_The_Close
             decimal sellVolumePercentage,
             bool window)
         {
-            var windowType = window ? "daily" : "window";
+            var windowType = window ? "Daily" : "Window";
 
-            return $" {windowType} volume threshold of {volumePercentageSetByUser}% was exceeded on sell orders by {sellVolumePercentage}% of {windowType} volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close.";
+            return $" {windowType} volume threshold of {volumePercentageSetByUser}% was exceeded on sell orders by {sellVolumePercentage}% of {windowType.ToLower()} volume purchased within {ruleBreach.Window.TotalMinutes} minutes of market close.";
         }
     }
 }

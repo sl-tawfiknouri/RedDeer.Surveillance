@@ -7,5 +7,10 @@
 
         public bool HasSellVolumeBreach { get; set; }
         public decimal? SellVolumeBreach { get; set; }
+
+        public bool HasBreach()
+        {
+            return HasBuyVolumeBreach || HasSellVolumeBreach;
+        }
     }
 }

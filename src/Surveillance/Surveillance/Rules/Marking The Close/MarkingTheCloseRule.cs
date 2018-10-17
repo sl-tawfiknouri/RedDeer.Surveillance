@@ -21,6 +21,7 @@ namespace Surveillance.Rules.Marking_The_Close
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
         private int _alertCount;
+        private bool _hadMissingData = false;
 
         public MarkingTheCloseRule(
             IMarkingTheCloseParameters parameters,
@@ -80,10 +81,36 @@ namespace Surveillance.Rules.Marking_The_Close
                 return;
             }
 
+            VolumeBreach dailyVolumeBreach = null;
             if (_parameters.PercentageThresholdDailyVolume != null)
             {
-                CheckDailyVolumeTraded(securities, tradedSecurity);
+                dailyVolumeBreach = CheckDailyVolumeTraded(securities, tradedSecurity);
             }
+
+            VolumeBreach windowVolumeBreach = null;
+            if (_parameters.PercentageThresholdWindowVolume != null)
+            {
+                windowVolumeBreach = CheckWindowVolumeTraded(securities, tradedSecurity);
+            }
+
+            if ((dailyVolumeBreach == null || !dailyVolumeBreach.HasBreach())
+                && (windowVolumeBreach == null || !windowVolumeBreach.HasBreach()))
+            {
+                return;
+            }
+
+            var position = new TradePosition(securities.ToList());
+            var breach = new MarkingTheCloseBreach(
+                _parameters.Window,
+                tradedSecurity.Security,
+                _latestMarketClosure,
+                position,
+                _parameters,
+                dailyVolumeBreach ?? new VolumeBreach(),
+                windowVolumeBreach ?? new VolumeBreach());
+
+            _alertCount += 1;
+            _messageSender.Send(breach);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
@@ -91,15 +118,85 @@ namespace Surveillance.Rules.Marking_The_Close
             // do nothing
         }
 
-        private void CheckDailyVolumeTraded(
+        private VolumeBreach CheckWindowVolumeTraded(
             Stack<TradeOrderFrame> securities,
             SecurityTick tradedSecurity)
+        {
+            if (tradedSecurity.Market?.Id == null 
+                || !MarketHistory.ContainsKey(tradedSecurity.Market?.Id))
+            {
+                _hadMissingData = true;
+                return new VolumeBreach();
+            }
+
+            MarketHistory.TryGetValue(tradedSecurity.Market.Id, out var marketHistoryStack);
+
+            if (marketHistoryStack == null)
+            {
+                _hadMissingData = true;
+                return new VolumeBreach();
+            }
+
+            var securityUpdates =
+                marketHistoryStack
+                .ActiveMarketHistory()
+                .SelectMany(amh =>
+                    amh.Securities.Where(sec => Equals(sec.Security.Identifiers, tradedSecurity.Security.Identifiers)))
+                .Where(secUpdate => secUpdate != null)
+                .ToList();
+
+            var securityVolume = securityUpdates.Sum(su => su.Volume.Traded);
+            var thresholdVolumeTraded = securityVolume * _parameters.PercentageThresholdWindowVolume;
+
+            if (thresholdVolumeTraded == null)
+            {
+                _hadMissingData = true;
+                return new VolumeBreach();
+            }
+
+            var result =
+                CalculateVolumeBreaches(
+                    securities, 
+                    tradedSecurity,
+                    thresholdVolumeTraded.GetValueOrDefault(0),
+                    securityVolume);
+
+            return result;
+        }
+
+        private VolumeBreach CheckDailyVolumeTraded(
+            Stack<TradeOrderFrame> securities,
+            SecurityTick tradedSecurity)
+        {
+            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
+
+            if (thresholdVolumeTraded == null)
+            {
+                _hadMissingData = true;
+                return new VolumeBreach();
+            }
+
+            var result =
+                CalculateVolumeBreaches(
+                    securities,
+                    tradedSecurity,
+                    thresholdVolumeTraded.GetValueOrDefault(0),
+                    tradedSecurity.DailyVolume.Traded);
+
+            return result;
+        }
+
+        private VolumeBreach CalculateVolumeBreaches(
+            Stack<TradeOrderFrame> securities,
+            SecurityTick tradedSecurity,
+            decimal thresholdVolumeTraded,
+            int marketVolumeTraded)
         {
             if (securities == null
                 || !securities.Any()
                 || tradedSecurity == null)
             {
-                return;
+                return new VolumeBreach();
             }
 
             var volumeTradedBuy =
@@ -112,52 +209,45 @@ namespace Surveillance.Rules.Marking_The_Close
                     .Where(sec => sec.Position == OrderPosition.Sell)
                     .Sum(sec => sec.FulfilledVolume);
 
-            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
-
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;
-            var buyDailyPercentageBreach = CalculateBuyBreach(tradedSecurity, volumeTradedBuy, hasBuyDailyVolumeBreach);
+            var buyDailyPercentageBreach = CalculateBuyBreach(volumeTradedBuy, marketVolumeTraded, hasBuyDailyVolumeBreach);
 
             var hasSellDailyVolumeBreach = volumeTradedSell >= thresholdVolumeTraded;
-            var sellDailyPercentageBreach = CalculateSellBreach(tradedSecurity, volumeTradedSell, hasSellDailyVolumeBreach);
+            var sellDailyPercentageBreach = CalculateSellBreach(volumeTradedSell, marketVolumeTraded, hasSellDailyVolumeBreach);
 
-            if (hasSellDailyVolumeBreach
-                || hasBuyDailyVolumeBreach)
+            if (!hasSellDailyVolumeBreach
+                && !hasBuyDailyVolumeBreach)
             {
-                var position = new TradePosition(securities.ToList());
-                var breach = new MarkingTheCloseBreach(
-                    _parameters.Window,
-                    tradedSecurity.Security,
-                    _latestMarketClosure,
-                    position,
-                    _parameters,
-                    hasSellDailyVolumeBreach,
-                    sellDailyPercentageBreach,
-                    hasBuyDailyVolumeBreach,
-                    buyDailyPercentageBreach);
-
-                _alertCount += 1;
-                _messageSender.Send(breach);
+                return new VolumeBreach();
             }
+
+            return new VolumeBreach
+            {
+                BuyVolumeBreach = buyDailyPercentageBreach,
+                HasBuyVolumeBreach = hasBuyDailyVolumeBreach,
+                SellVolumeBreach = sellDailyPercentageBreach,
+                HasSellVolumeBreach = hasSellDailyVolumeBreach
+            };
         }
 
-        private static decimal? CalculateBuyBreach(SecurityTick tradedSecurity, int volumeTradedBuy, bool hasBuyDailyVolumeBreach)
+        private decimal? CalculateBuyBreach(int volumeTradedBuy, int marketVolume, bool hasBuyVolumeBreach)
         {
-            return hasBuyDailyVolumeBreach
+            return hasBuyVolumeBreach
                 && volumeTradedBuy > 0
-                && tradedSecurity.DailyVolume.Traded > 0
+                && marketVolume > 0
                 // ReSharper disable RedundantCast
-                ? (decimal?)((decimal)volumeTradedBuy / (decimal)tradedSecurity.DailyVolume.Traded)
+                ? (decimal?)((decimal)volumeTradedBuy / (decimal)marketVolume)
                 // ReSharper restore RedundantCast
                     : null;
         }
 
-        private static decimal? CalculateSellBreach(SecurityTick tradedSecurity, int volumeTradedSell, bool hasSellDailyVolumeBreach)
+        private decimal? CalculateSellBreach(int volumeTradedSell, int marketVolume, bool hasSellDailyVolumeBreach)
         {
             return hasSellDailyVolumeBreach
                    && volumeTradedSell > 0
-                   && tradedSecurity.DailyVolume.Traded > 0
+                   && marketVolume > 0
                 // ReSharper disable RedundantCast
-                ? (decimal?)((decimal)volumeTradedSell / (decimal)tradedSecurity.DailyVolume.Traded)
+                ? (decimal?)((decimal)volumeTradedSell / (decimal)marketVolume)
                 // ReSharper restore RedundantCast
                 : null;
         }
@@ -187,7 +277,13 @@ namespace Surveillance.Rules.Marking_The_Close
         {
             _logger.LogInformation("Eschaton occured in Marking The Close Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
-            _ruleCtx?.EndEvent();
+            var opCtx = _ruleCtx?.EndEvent();
+
+            if (_hadMissingData)
+            {
+                opCtx.EndEventWithMissingDataError();
+            }
+
             _alertCount = 0;
         }
     }

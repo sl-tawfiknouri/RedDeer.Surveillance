@@ -19,7 +19,7 @@ namespace Surveillance.DataLayer.Aurora.Market
         private readonly object _lock = new object();
 
         private const string CreateTmp = @"
-            CREATE TEMPORARY TABLE IF NOT EXISTS MarketData(MarketId nvarchar(16), MarketName nvarchar(255), ClientIdentifier nvarchar(255), Sedol nvarchar(8), Isin nvarchar(20), Figi nvarchar(12), Cusip nvarchar(9), Lei nvarchar(20), ExchangeSymbol nvarchar(5), BloombergTicker nvarchar(5), SecurityName nvarchar(255), Cfi nvarchar(6), IssuerIdentifier nvarchar(255), SecurityCurrency nvarchar(10), Epoch datetime, BidPrice decimal(18, 3), AskPrice decimal(18, 3), MarketPrice decimal(18, 3), OpenPrice decimal(18, 3), ClosePrice decimal(18, 3), HighIntradayPrice decimal(18, 3), LowIntradayPrice decimal(18, 3), ListedSecurities bigint, MarketCap decimal(18, 3), VolumeTradedInTick bigint, DailyVolume bigint, SecurityId bigint, INDEX(Epoch));";
+            CREATE TABLE IF NOT EXISTS MarketData(MarketId nvarchar(16), MarketName nvarchar(255), ClientIdentifier nvarchar(255), Sedol nvarchar(8), Isin nvarchar(20), Figi nvarchar(12), Cusip nvarchar(9), Lei nvarchar(20), ExchangeSymbol nvarchar(5), BloombergTicker nvarchar(5), SecurityName nvarchar(255), Cfi nvarchar(6), IssuerIdentifier nvarchar(255), SecurityCurrency nvarchar(10), Epoch datetime, BidPrice decimal(18, 3), AskPrice decimal(18, 3), MarketPrice decimal(18, 3), OpenPrice decimal(18, 3), ClosePrice decimal(18, 3), HighIntradayPrice decimal(18, 3), LowIntradayPrice decimal(18, 3), ListedSecurities bigint, MarketCap decimal(18, 3), VolumeTradedInTick bigint, DailyVolume bigint, SecurityId bigint, INDEX(Epoch));";
 
         private const string InsertIntoTmp = @"
             INSERT INTO MarketData(MarketId, MarketName, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES(@MarketId, @MarketName, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
@@ -29,15 +29,17 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             INSERT INTO MarketStockExchangeSecurities(MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency)
              SELECT  mse.id as MarketStockExchangeId, md.clientIdentifier as ClientIdentifier, md.Sedol as Sedol, md.Isin as Isin, md.Figi as Figi, md.Cusip as Cusip, md.Lei as Lei, md.ExchangeSymbol as ExchangeSymbol, md.BloombergTicker as BloombergTicker, md.SecurityName as SecurityName, md.Cfi as Cfi, md.IssuerIdentifier as IssuerIdentifier, md.SecurityCurrency as SecurityCurrency
-             FROM MarketData as md LEFT JOIN MarketStockExchange as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM MarketStockExchangeSecurities) AND NOT md.isin IN (SELECT Isin FROM MarketStockExchangeSecurities);
+             FROM MarketData as md LEFT OUTER JOIN MarketStockExchange as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM MarketStockExchangeSecurities) AND NOT md.isin IN (SELECT Isin FROM MarketStockExchangeSecurities);
 
             UPDATE MarketData
-            LEFT JOIN MarketStockExchangeSecurities on MarketData.isin = MarketStockExchangeSecurities.isin set MarketData.SecurityId = MarketStockExchangeSecurities.Id;
+            LEFT OUTER JOIN MarketStockExchangeSecurities on MarketData.isin = MarketStockExchangeSecurities.isin set MarketData.SecurityId = MarketStockExchangeSecurities.Id;
             UPDATE MarketData
-            LEFT JOIN MarketStockExchangeSecurities on MarketData.sedol = MarketStockExchangeSecurities.sedol set MarketData.SecurityId = MarketStockExchangeSecurities.Id;";
+            LEFT OUTER JOIN MarketStockExchangeSecurities on MarketData.sedol = MarketStockExchangeSecurities.sedol set MarketData.SecurityId = MarketStockExchangeSecurities.Id;";
         
         private const string InsertSecuritySql = @"
-        INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;";
+            INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;
+
+            DROP TABLE MarketData;";
 
         private const string GetMarketSql =
             @"

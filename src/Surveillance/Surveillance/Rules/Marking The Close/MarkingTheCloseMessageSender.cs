@@ -36,16 +36,16 @@ namespace Surveillance.Rules.Marking_The_Close
             var header =
                 $"Marking the close rule breach detected for {ruleBreach.Security} ({ruleBreach.Security.Identifiers}) traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. ";
 
-            if ((ruleBreach.DailyBreach?.HasBuyVolumeBreach ?? false)
-                || (ruleBreach.DailyBreach?.HasSellVolumeBreach ?? false))
-            {
-                header = AppendDailyBreach(ruleBreach, header);
-            }
-
             if ((ruleBreach.WindowBreach?.HasBuyVolumeBreach ?? false)
                 || (ruleBreach.WindowBreach?.HasSellVolumeBreach ?? false))
             {
                 header = AppendWindowBreach(ruleBreach, header);
+            }
+
+            if ((ruleBreach.DailyBreach?.HasBuyVolumeBreach ?? false)
+                || (ruleBreach.DailyBreach?.HasSellVolumeBreach ?? false))
+            {
+                header = AppendDailyBreach(ruleBreach, header);
             }
 
             return header;

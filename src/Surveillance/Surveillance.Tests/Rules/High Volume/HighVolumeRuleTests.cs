@@ -21,7 +21,7 @@ namespace Surveillance.Tests.Rules.High_Volume
     [TestFixture]
     public class HighVolumeRuleTests
     {
-        private IHighVolumeMessageSender _messageSender;
+        private IHighVolumeRuleCachedMessageSender _messageSender;
         private IHighVolumeRuleParameters _parameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _opCtx;
@@ -30,7 +30,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         [SetUp]
         public void Setup()
         {
-            _messageSender = A.Fake<IHighVolumeMessageSender>();
+            _messageSender = A.Fake<IHighVolumeRuleCachedMessageSender>();
             _parameters = A.Fake<IHighVolumeRuleParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();

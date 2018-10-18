@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
@@ -13,6 +15,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
+
         private int _alertCount = 0;
         private bool _hadMissingData = false;
 
@@ -34,10 +37,58 @@ namespace Surveillance.Rules.HighVolume
 
         protected override void RunRule(ITradingHistoryStack history)
         {
+            var tradeWindow = history?.ActiveTradeHistory();
+
+            if (tradeWindow == null
+                || !tradeWindow.Any())
+            {
+                return;
+            }
+            
+            var tradedVolume =
+                tradeWindow
+                    .Where(tr =>
+                        tr.OrderStatus == OrderStatus.Fulfilled
+                        || tr.OrderStatus == OrderStatus.PartialFulfilled)
+                    .Sum(tr => tr.FulfilledVolume);
+
+            var mostRecentTrade = tradeWindow.Pop();
+            if (_parameters.HighVolumePercentageDaily.HasValue)
+            {
+                DailyVolumeCheck(mostRecentTrade);
+            }
+
+            if (_parameters.HighVolumePercentageWindow.HasValue)
+            {
+                WindowVolumeCheck();
+            }
+        }
+
+        private void DailyVolumeCheck(TradeOrderFrame mostRecentTrade)
+        {
+            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
+            {
+                _hadMissingData = true;
+                return;
+            }
+
+            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.Id, out var exchangeFrame);
+
+            if (exchangeFrame == null)
+            {
+                _hadMissingData = true;
+                return;
+            }
+        }
+
+        private void WindowVolumeCheck()
+        {
+
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
+
         }
 
         protected override void Genesis()

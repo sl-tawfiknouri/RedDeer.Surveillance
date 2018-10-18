@@ -11,10 +11,10 @@ namespace Surveillance.Factories
 {
     public class HighVolumeRuleFactory : IHighVolumeRuleFactory
     {
-        private readonly IHighVolumeMessageSender _messageSender;
+        private readonly IHighVolumeRuleCachedMessageSender _messageSender;
         private readonly ILogger<IHighVolumeRule> _logger;
 
-        public HighVolumeRuleFactory(IHighVolumeMessageSender messageSender, ILogger<IHighVolumeRule> logger)
+        public HighVolumeRuleFactory(IHighVolumeRuleCachedMessageSender messageSender, ILogger<IHighVolumeRule> logger)
         {
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

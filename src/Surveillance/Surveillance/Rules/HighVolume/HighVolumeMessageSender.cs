@@ -10,7 +10,7 @@ namespace Surveillance.Rules.HighVolume
     {
         public HighVolumeMessageSender(
             ITradeOrderDataItemDtoMapper dtoMapper,
-            ILogger logger,
+            ILogger<IHighVolumeMessageSender> logger,
             ICaseMessageSender caseMessageSender)
             : base(
                 dtoMapper,

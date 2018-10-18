@@ -26,6 +26,9 @@
     <None Update="Play Trade Files\TradeOrderFileTest.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PlayMarketFiles\MarketDataEquityHighVolume.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PlayMarketFiles\MarketDataEquityLayering.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -45,6 +48,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="PlayTradeFiles\TradeOrderFileTestHighProfits.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PlayTradeFiles\TradeOrderFileTestHighVolume.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="PlayTradeFiles\TradeOrderFileTestLayering.csv">

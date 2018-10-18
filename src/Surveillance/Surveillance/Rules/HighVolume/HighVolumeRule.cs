@@ -15,7 +15,7 @@ namespace Surveillance.Rules.HighVolume
     {
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IHighVolumeMessageSender _messageSender;
+        private readonly IHighVolumeRuleCachedMessageSender _messageSender;
         private readonly ILogger _logger;
 
         private int _alertCount = 0;
@@ -24,7 +24,7 @@ namespace Surveillance.Rules.HighVolume
         public HighVolumeRule(
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
-            IHighVolumeMessageSender messageSender,
+            IHighVolumeRuleCachedMessageSender messageSender,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -56,6 +56,7 @@ namespace Surveillance.Rules.HighVolume
                         || tr.OrderStatus == OrderStatus.PartialFulfilled)
                     .Sum(tr => tr.FulfilledVolume);
 
+            var tradePosition = new TradePosition(tradeWindow.ToList());
             var mostRecentTrade = tradeWindow.Pop();
 
             HighVolumeRuleBreach.BreachDetails dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
@@ -76,11 +77,10 @@ namespace Surveillance.Rules.HighVolume
                 return;
             }
 
-            var position = new TradePosition(tradeWindow.ToList());
             var breach =
                 new HighVolumeRuleBreach(
                     _parameters.WindowSize, 
-                    position,
+                    tradePosition,
                     mostRecentTrade?.Security,
                     _parameters,
                     dailyBreach,
@@ -203,6 +203,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
+            _messageSender.Flush();
 
             if (_hadMissingData)
             {

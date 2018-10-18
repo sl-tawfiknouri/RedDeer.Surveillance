@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
@@ -14,6 +15,7 @@ namespace Surveillance.Rules.HighVolume
     {
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IHighVolumeMessageSender _messageSender;
         private readonly ILogger _logger;
 
         private int _alertCount = 0;
@@ -22,6 +24,7 @@ namespace Surveillance.Rules.HighVolume
         public HighVolumeRule(
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
+            IHighVolumeMessageSender messageSender,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -32,6 +35,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -53,23 +57,46 @@ namespace Surveillance.Rules.HighVolume
                     .Sum(tr => tr.FulfilledVolume);
 
             var mostRecentTrade = tradeWindow.Pop();
+
+            HighVolumeRuleBreach.BreachDetails dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
             if (_parameters.HighVolumePercentageDaily.HasValue)
             {
-                DailyVolumeCheck(mostRecentTrade);
+                dailyBreach = DailyVolumeCheck(mostRecentTrade, tradedVolume);
             }
 
+            HighVolumeRuleBreach.BreachDetails windowBreach = HighVolumeRuleBreach.BreachDetails.None();
             if (_parameters.HighVolumePercentageWindow.HasValue)
             {
-                WindowVolumeCheck();
+                windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
             }
+
+            if ((!dailyBreach?.HasBreach ?? true)
+                && (!windowBreach?.HasBreach ?? true))
+            {
+                return;
+            }
+
+            var position = new TradePosition(tradeWindow.ToList());
+            var breach =
+                new HighVolumeRuleBreach(
+                    _parameters.WindowSize, 
+                    position,
+                    mostRecentTrade?.Security,
+                    _parameters,
+                    dailyBreach,
+                    windowBreach,
+                    tradedVolume);
+
+            _messageSender.Send(breach);
+            _alertCount += 1;
         }
 
-        private void DailyVolumeCheck(TradeOrderFrame mostRecentTrade)
+        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
         {
             if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
             {
                 _hadMissingData = true;
-                return;
+                return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.Id, out var exchangeFrame);
@@ -77,19 +104,85 @@ namespace Surveillance.Rules.HighVolume
             if (exchangeFrame == null)
             {
                 _hadMissingData = true;
-                return;
+                return HighVolumeRuleBreach.BreachDetails.None();
             }
+
+            var security = exchangeFrame
+                .Securities
+                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers));
+
+            if (security == null)
+            {
+                _hadMissingData = true;
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailyVolume.Traded);
+
+            var breachPercentage = 
+                security.DailyVolume.Traded != 0 && tradedVolume != 0
+                ? (decimal)tradedVolume / (decimal)security.DailyVolume.Traded
+                : 0;
+
+            if (threshold <= 0)
+            {
+                _hadMissingData = true;
+                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            if (tradedVolume >= threshold)
+            {
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+            }
+
+            return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private void WindowVolumeCheck()
+        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
         {
+            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.Id, out var marketStack))
+            {
+                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
+                _hadMissingData = true;
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            var securityDataTicks = marketStack
+                .ActiveMarketHistory()
+                .Where(amh => amh != null)
+                .Select(amh =>
+                    amh.Securities?.FirstOrDefault(sec =>
+                        Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers)))
+                .Where(sec => sec != null)
+                .ToList();
+
+            var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
+            var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+
+            var breachPercentage =
+                windowVolume != 0 && tradedVolume != 0
+                    ? (decimal)tradedVolume / (decimal)windowVolume
+                    : 0;
+
+            if (threshold <= 0)
+            {
+                _hadMissingData = true;
+                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            if (tradedVolume >= threshold)
+            {
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+            }
+
+            return HighVolumeRuleBreach.BreachDetails.None();
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
-        {
-
-        }
+        { }
 
         protected override void Genesis()
         {

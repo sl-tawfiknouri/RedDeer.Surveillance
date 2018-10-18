@@ -137,6 +137,7 @@ namespace Surveillance
 
             For<IHighVolumeRule>().Use<HighVolumeRule>();
             For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
+            For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

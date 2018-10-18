@@ -212,7 +212,9 @@ namespace Surveillance.Scheduler
                 case Domain.Scheduling.Rules.Spoofing:
                     return dtos?.Spoofing?.WindowSize;
                 case Domain.Scheduling.Rules.Layering:
-                    return TimeSpan.FromMinutes(25);
+                    return dtos?.Layering?.WindowSize;
+                case Domain.Scheduling.Rules.HighVolume:
+                    return dtos?.HighVolume.WindowSize;
                 default:
                     return null;
             }

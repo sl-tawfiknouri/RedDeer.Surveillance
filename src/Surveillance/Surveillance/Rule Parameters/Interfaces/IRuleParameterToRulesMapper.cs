@@ -10,5 +10,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
         IHighProfitsRuleParameters Map(HighProfitsRuleParameterDto dto);
         IMarkingTheCloseParameters Map(MarkingTheCloseRuleParameterDto dto);
         ILayeringRuleParameters Map(LayeringRuleParameterDto dto);
+        IHighVolumeRuleParameters Map(HighVolumeRuleParameterDto dto);
     }
 }

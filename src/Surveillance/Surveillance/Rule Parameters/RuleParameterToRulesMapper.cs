@@ -75,5 +75,18 @@ namespace Surveillance.Rule_Parameters
                 dto.PercentageOfMarketWindowVolume,
                 dto.CheckForCorrespondingPriceMovement);
         }
+
+        public IHighVolumeRuleParameters Map(HighVolumeRuleParameterDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new HighVolumeRuleParameters(
+                dto.WindowSize,
+                dto.HighVolumePercentageDaily,
+                dto.HighVolumePercentageWindow);
+        }
     }
 }

@@ -25,8 +25,7 @@ namespace Surveillance.Universe
 
         public void Play(IUniverse universe)
         {
-            if (universe == null
-                || !universe.Trades.Any())
+            if (universe == null)
             {
                 return;
             }

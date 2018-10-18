@@ -17,8 +17,10 @@ namespace Surveillance.Universe
         private readonly ISpoofingRuleFactory _spoofingRuleFactory;
         private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private readonly IHighProfitRuleFactory _highProfitRuleFactory;
+        private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
         private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
         private readonly ILayeringRuleFactory _layeringRuleFactory;
+
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly ILogger _logger;
@@ -29,6 +31,7 @@ namespace Surveillance.Universe
             IHighProfitRuleFactory highProfitRuleFactory,
             IMarkingTheCloseRuleFactory markingTheCloseFactory,
             ILayeringRuleFactory layeringRuleFactory,
+            IHighVolumeRuleFactory highVolumeRuleFactory,
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
             ILogger<UniverseRuleSubscriber> logger)
@@ -36,6 +39,9 @@ namespace Surveillance.Universe
             _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
             _cancelledOrderRuleFactory = cancelledOrderRuleFactory ?? throw new ArgumentNullException(nameof(cancelledOrderRuleFactory));
             _highProfitRuleFactory = highProfitRuleFactory ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
+            _highVolumeRuleFactory =
+                highVolumeRuleFactory
+                ?? throw new ArgumentNullException(nameof(highVolumeRuleFactory));
             _markingTheCloseFactory = markingTheCloseFactory ?? throw new ArgumentNullException(nameof(markingTheCloseFactory));
             _layeringRuleFactory = layeringRuleFactory ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
             _ruleParameterApiRepository = ruleParameterApiRepository
@@ -62,6 +68,7 @@ namespace Surveillance.Universe
             HighProfitsRule(execution, player, ruleParameters, opCtx);
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
             LayeringRule(execution, player, ruleParameters, opCtx);
+            HighVolumeRule(execution, player, ruleParameters, opCtx);
         }
 
         private void SpoofingRule(
@@ -217,6 +224,38 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
+            }
+        }
+
+        private void HighVolumeRule(
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
+        {
+            if (!execution.Rules.Contains(Domain.Scheduling.Rules.HighVolume))
+            {
+                return;
+            }
+
+            var highVolumeParameters = _ruleParameterMapper.Map(ruleParameters.HighVolume);
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (highVolumeParameters != null)
+            {
+                var ruleCtx = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.HighVolume.GetDescription(),
+                        _highVolumeRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var highVolume = _highVolumeRuleFactory.Build(highVolumeParameters, ruleCtx);
+                player.Subscribe(highVolume);
+            }
+            else
+            {
+                _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
             }
         }
     }

@@ -40,7 +40,7 @@ namespace Surveillance.Rules.HighVolume
                 var dailyPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
                 var dailyBreachPercentage = Math.Ceiling(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
 
-                var dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage}% was exceed by a daily volume traded value of {dailyBreachPercentage}%. {ruleBreach.TotalOrdersTradedInWindow} orders were submitted against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount}.";
+                var dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage}% was exceeded by trading {dailyBreachPercentage}% of daily volume. {ruleBreach.TotalOrdersTradedInWindow} orders were submitted against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount}.";
 
                 description = $"{description}{dailyDescription}";
             }
@@ -50,7 +50,7 @@ namespace Surveillance.Rules.HighVolume
                 var windowPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100);
                 var windowBreachPercentage = Math.Ceiling(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
                 
-                var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by a window volume traded value of {windowBreachPercentage}%. {ruleBreach.TotalOrdersTradedInWindow} orders were submitted against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
+                var windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by trading {windowBreachPercentage}% of window volume within the window of {ruleBreach.Parameters.WindowSize.TotalMinutes} minutes. {ruleBreach.TotalOrdersTradedInWindow} orders were submitted against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
 
                 description = $"{description}{windowDescription}";
             }

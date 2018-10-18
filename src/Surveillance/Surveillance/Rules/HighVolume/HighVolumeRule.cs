@@ -42,21 +42,22 @@ namespace Surveillance.Rules.HighVolume
 
         protected override void Genesis()
         {
+            _logger.LogInformation("Genesis occurred in the High Volume Rule");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in the High Volume Rule at {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in the High Volume Rule at {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured in High Volume Rule");
+            _logger.LogInformation("Eschaton occured in the High Volume Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
 
             if (_hadMissingData)

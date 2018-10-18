@@ -11,8 +11,10 @@ namespace Surveillance.Rules.HighVolume
     public class HighVolumeRule : BaseUniverseRule, IHighVolumeRule
     {
         private readonly IHighVolumeRuleParameters _parameters;
-        private readonly ISystemProcessOperationRunRuleContext _opCtx;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
+        private int _alertCount = 0;
+        private bool _hadMissingData = false;
 
         public HighVolumeRule(
             IHighVolumeRuleParameters parameters,
@@ -26,7 +28,7 @@ namespace Surveillance.Rules.HighVolume
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
+            _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -54,7 +56,19 @@ namespace Surveillance.Rules.HighVolume
 
         protected override void EndOfUniverse()
         {
+            _logger.LogInformation("Eschaton occured in High Volume Rule");
+            _ruleCtx.UpdateAlertEvent(_alertCount);
 
+            if (_hadMissingData)
+            {
+                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+            }
+            else
+            {
+                _ruleCtx?.EndEvent();
+            }
+
+            _alertCount = 0;
         }
     }
 }

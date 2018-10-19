@@ -13,6 +13,8 @@ namespace Domain.Scheduling
         [Description("Marking the Close")]
         MarkingTheClose,
         [Description("Layering")]
-        Layering
+        Layering,
+        [Description("High Volume")]
+        HighVolume
     }
 }

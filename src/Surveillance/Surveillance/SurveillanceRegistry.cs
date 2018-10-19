@@ -30,6 +30,8 @@ using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
 using Surveillance.Rules.Cancelled_Orders;
 using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.HighVolume;
+using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rules.High_Profits;
 using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Rules.Layering;
@@ -132,6 +134,11 @@ namespace Surveillance
             For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
             For<ILayeringAlertSender>().Use<LayeringAlertSender>();
             For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
+
+            For<IHighVolumeRule>().Use<HighVolumeRule>();
+            For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
+            For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
+            For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

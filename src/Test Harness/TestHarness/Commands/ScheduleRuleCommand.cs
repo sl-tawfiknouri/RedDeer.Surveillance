@@ -87,7 +87,7 @@ namespace TestHarness.Commands
 
             var scheduledExecution = new ScheduledExecution
             {
-                Rules = new List<Rules> { Rules.MarkingTheClose },
+                Rules = allRulesList,
                 TimeSeriesInitiation = initialDate,
                 TimeSeriesTermination = terminationDate
             };

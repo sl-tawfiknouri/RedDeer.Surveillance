@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
@@ -83,11 +84,11 @@ namespace TestHarness.Commands
             initialDate = DateTime.SpecifyKind(initialDate, DateTimeKind.Utc);
             terminationDate = DateTime.SpecifyKind(terminationDate, DateTimeKind.Utc);
 
-            var allRulesList = GetAllRules();
+            //var allRulesList = GetAllRules();
 
             var scheduledExecution = new ScheduledExecution
             {
-                Rules = allRulesList,
+                Rules = new [] { Rules.HighProfits }.ToList(),
                 TimeSeriesInitiation = initialDate,
                 TimeSeriesTermination = terminationDate
             };

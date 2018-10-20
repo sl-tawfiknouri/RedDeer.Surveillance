@@ -26,9 +26,15 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IHighProfitRule Build(IHighProfitsRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
+        public IHighProfitRule Build(
+            IHighProfitsRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtxStream,
+            ISystemProcessOperationRunRuleContext ruleCtxMarket)
         {
-            return new HighProfitsRule(_currencyConverter, _messageSender, parameters, ruleCtx, _logger);
+            var stream = new HighProfitStreamRule(_currencyConverter, _messageSender, parameters, ruleCtxStream, _logger);
+            var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, _messageSender, parameters, ruleCtxMarket, _logger);
+
+            return new HighProfitsRule(stream, marketClosure);
         }
 
         public string RuleVersion => Versioner.Version(1, 0);

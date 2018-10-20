@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighProfits.Interfaces;
+using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.HighProfits
 {
@@ -43,6 +44,27 @@ namespace Surveillance.Rules.HighProfits
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
                 _messages = _messages.Except(duplicates).ToList();
                 _messages.Add(ruleBreach);
+            }
+        }
+
+        public void Remove(ITradePosition position)
+        {
+            if (position == null
+                || !position.Get().Any())
+            {
+                return;
+            }
+
+            lock (_lock)
+            {
+                var duplicates =
+                    _messages
+                        .Where(msg => msg != null)
+                        .Where(msg => msg.MarketClosureVirtualProfitComponent)
+                        .Where(msg => msg.Trades.PositionIsSubsetOf(position))
+                        .ToList();
+
+                _messages = _messages.Except(duplicates).ToList();
             }
         }
 

@@ -7,6 +7,7 @@ namespace Surveillance.Trades
 {
     /// <summary>
     /// Buy or Sell position on an security
+    /// Can mix both
     /// </summary>
     public class TradePosition : ITradePosition
     {
@@ -57,6 +58,11 @@ namespace Surveillance.Trades
             if (position == null)
             {
                 return false;
+            }
+
+            if (position.Get().SequenceEqual(_trades))
+            {
+                return true;
             }
 
             return !_trades.Except(position.Get()).Any();

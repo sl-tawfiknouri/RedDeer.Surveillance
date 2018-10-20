@@ -140,6 +140,10 @@ namespace Surveillance
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
+            For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
+
+
+
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();

@@ -19,7 +19,8 @@ namespace Surveillance.Rules.HighProfits
             Security security,
             bool hasAbsoluteProfitBreach,
             bool hasRelativeProfitBreach,
-            ITradePosition trades)
+            ITradePosition trades,
+            bool marketClosureVirtualProfitComponent)
         {
             Window = parameters.WindowSize;
             Parameters = parameters;
@@ -30,6 +31,7 @@ namespace Surveillance.Rules.HighProfits
             HasAbsoluteProfitBreach = hasAbsoluteProfitBreach;
             HasRelativeProfitBreach = hasRelativeProfitBreach;
             Trades = trades ?? new TradePosition(new List<TradeOrderFrame>());
+            MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -38,6 +40,7 @@ namespace Surveillance.Rules.HighProfits
         public decimal? AbsoluteProfits { get; }
         public string AbsoluteProfitCurrency { get; }
         public decimal? RelativeProfits { get; }
+        public bool MarketClosureVirtualProfitComponent { get; }
         public Security Security { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }

@@ -148,14 +148,21 @@ namespace Surveillance.Universe
 
             if (highProfitParameters != null)
             {
-                var ruleCtx = opCtx
+                var ruleCtxStream = opCtx
                     .CreateAndStartRuleRunContext(
                         Domain.Scheduling.Rules.HighProfits.GetDescription(),
                         _highProfitRuleFactory.RuleVersion,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime);
 
-                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtx);
+                var ruleCtxMarketClosure = opCtx
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                        _highProfitRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtxStream, ruleCtxMarketClosure);
                 player.Subscribe(highProfitsRule);
             }
             else

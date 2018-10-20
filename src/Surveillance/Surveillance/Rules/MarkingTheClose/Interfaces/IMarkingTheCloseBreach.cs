@@ -1,7 +1,7 @@
 ﻿using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
-namespace Surveillance.Rules.Marking_The_Close.Interfaces
+namespace Surveillance.Rules.MarkingTheClose.Interfaces
 {
     public interface IMarkingTheCloseBreach : IRuleBreach
     {

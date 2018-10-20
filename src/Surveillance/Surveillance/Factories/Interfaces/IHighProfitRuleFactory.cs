@@ -1,4 +1,4 @@
-﻿using Surveillance.Rules.High_Profits.Interfaces;
+﻿using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

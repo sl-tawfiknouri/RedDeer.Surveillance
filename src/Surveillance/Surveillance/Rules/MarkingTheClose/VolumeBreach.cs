@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Rules.Marking_The_Close
+﻿namespace Surveillance.Rules.MarkingTheClose
 {
     public class VolumeBreach
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using Domain.Equity;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
 
-namespace Surveillance.Rules.Cancelled_Orders
+namespace Surveillance.Rules.CancelledOrders
 {
     public class CancelledOrderRuleBreach : ICancelledOrderRuleBreach
     {

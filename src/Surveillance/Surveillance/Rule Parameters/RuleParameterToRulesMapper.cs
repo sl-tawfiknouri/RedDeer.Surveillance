@@ -1,5 +1,5 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Rule_Parameters

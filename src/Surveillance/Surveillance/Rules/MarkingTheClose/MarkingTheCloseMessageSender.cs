@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 
-namespace Surveillance.Rules.Marking_The_Close
+namespace Surveillance.Rules.MarkingTheClose
 {
     public class MarkingTheCloseMessageSender : BaseMessageSender, IMarkingTheCloseMessageSender
     {

@@ -3,11 +3,11 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Utilities.Extensions;
 
-namespace Surveillance.Rules.Cancelled_Orders
+namespace Surveillance.Rules.CancelledOrders
 {
     public class CancelledOrderCachedMessageSender : BaseMessageSender, ICancelledOrderCachedMessageSender
     {

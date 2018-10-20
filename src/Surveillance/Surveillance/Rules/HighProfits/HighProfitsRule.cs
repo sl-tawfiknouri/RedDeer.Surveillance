@@ -6,15 +6,15 @@ using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
-using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 // ReSharper disable AssignNullToNotNullAttribute
-namespace Surveillance.Rules.High_Profits
+namespace Surveillance.Rules.HighProfits
 {
     /// <summary>
     /// Calculate the profits from the trade

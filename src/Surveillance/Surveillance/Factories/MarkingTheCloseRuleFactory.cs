@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
-using Surveillance.Rules.Marking_The_Close;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories

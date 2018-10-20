@@ -1,7 +1,7 @@
 ﻿using Surveillance.Rules.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 
-namespace Surveillance.Rules.Cancelled_Orders.Interfaces
+namespace Surveillance.Rules.CancelledOrders.Interfaces
 {
     public interface ICancelledOrderRuleBreach : IRuleBreach
     {

@@ -1,6 +1,6 @@
 ﻿using Surveillance.Rules.Interfaces;
 
-namespace Surveillance.Rules.Cancelled_Orders.Interfaces
+namespace Surveillance.Rules.CancelledOrders.Interfaces
 {
     public interface ICancelledOrderRule : IUniverseRule
     { }

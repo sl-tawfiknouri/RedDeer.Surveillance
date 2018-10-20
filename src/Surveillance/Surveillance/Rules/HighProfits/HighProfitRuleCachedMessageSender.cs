@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Rules.HighProfits.Interfaces;
 
-namespace Surveillance.Rules.High_Profits
+namespace Surveillance.Rules.HighProfits
 {
     /// <summary>
     /// Cache and deduplicate high profit rule messages

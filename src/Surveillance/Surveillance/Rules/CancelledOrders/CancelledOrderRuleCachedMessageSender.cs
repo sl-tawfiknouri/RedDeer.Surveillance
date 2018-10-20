@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders.Interfaces;
 
-namespace Surveillance.Rules.Cancelled_Orders
+namespace Surveillance.Rules.CancelledOrders
 {
     public class CancelledOrderRuleCachedMessageSender : ICancelledOrderRuleCachedMessageSender
     {

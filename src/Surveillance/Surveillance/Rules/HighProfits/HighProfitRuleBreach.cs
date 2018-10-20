@@ -1,13 +1,13 @@
 ﻿using System;
-using Domain.Equity;
-using Surveillance.Rule_Parameters.Interfaces;
 using System.Collections.Generic;
+using Domain.Equity;
 using Domain.Trades.Orders;
-using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Rules.HighProfits.Interfaces;
+using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 
-namespace Surveillance.Rules.High_Profits
+namespace Surveillance.Rules.HighProfits
 {
     public class HighProfitRuleBreach : IHighProfitRuleBreach
     {

@@ -1,7 +1,8 @@
 ﻿using System;
+
 // ReSharper disable UnusedMember.Global
 
-namespace Surveillance.Rules.Marking_The_Close.Interfaces
+namespace Surveillance.Rules.MarkingTheClose.Interfaces
 {
     public interface IMarkingTheCloseParameters
     {

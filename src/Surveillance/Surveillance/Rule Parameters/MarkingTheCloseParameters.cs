@@ -1,5 +1,5 @@
 ﻿using System;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Rule_Parameters
 {

@@ -1,4 +1,4 @@
-﻿using Surveillance.Rules.Marking_The_Close.Interfaces;
+﻿using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories.Interfaces

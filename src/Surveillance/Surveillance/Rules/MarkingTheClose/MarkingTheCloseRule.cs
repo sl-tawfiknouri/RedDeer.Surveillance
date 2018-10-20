@@ -4,13 +4,13 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
-namespace Surveillance.Rules.Marking_The_Close
+namespace Surveillance.Rules.MarkingTheClose
 {
     public class MarkingTheCloseRule : BaseUniverseRule, IMarkingTheCloseRule
     {

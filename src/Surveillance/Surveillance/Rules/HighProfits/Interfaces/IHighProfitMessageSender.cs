@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Rules.High_Profits.Interfaces
+﻿namespace Surveillance.Rules.HighProfits.Interfaces
 {
     public interface IHighProfitMessageSender
     {

@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
-using Surveillance.Rules.High_Profits.Interfaces;
+using Surveillance.Rules.HighProfits.Interfaces;
 
-namespace Surveillance.Rules.High_Profits
+namespace Surveillance.Rules.HighProfits
 {
     public class HighProfitMessageSender : BaseMessageSender, IHighProfitMessageSender
     {

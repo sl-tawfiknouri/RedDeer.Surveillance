@@ -1,6 +1,6 @@
 ﻿using Surveillance.Rules.Interfaces;
 
-namespace Surveillance.Rules.Marking_The_Close.Interfaces
+namespace Surveillance.Rules.MarkingTheClose.Interfaces
 {
     public interface IMarkingTheCloseRule : IUniverseRule
     {

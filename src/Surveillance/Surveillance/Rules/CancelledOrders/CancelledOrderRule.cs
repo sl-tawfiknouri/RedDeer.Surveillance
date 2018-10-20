@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
-namespace Surveillance.Rules.Cancelled_Orders
+namespace Surveillance.Rules.CancelledOrders
 {
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {

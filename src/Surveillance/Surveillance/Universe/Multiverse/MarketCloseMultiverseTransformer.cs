@@ -23,8 +23,7 @@ namespace Surveillance.Universe.Multiverse
         private readonly Queue<IUniverseEvent> _universeEvents;
         private readonly object _lock = new object();
 
-        public MarketCloseMultiverseTransformer(
-            IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory)
+        public MarketCloseMultiverseTransformer(IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory)
         {
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -109,7 +108,11 @@ namespace Surveillance.Universe.Multiverse
             {
                 _exchangeFrame.Add(
                     new Market.MarketId(marketOpenClose.MarketId),
-                    new List<FrameToDate>{ new FrameToDate { OpenDate = marketOpenClose.MarketOpen, Frame =  null}});
+                    new List<FrameToDate>
+                    {
+                        new FrameToDate { OpenDate = marketOpenClose.MarketOpen.AddHours(-4), Frame =  null},
+                        new FrameToDate { OpenDate = marketOpenClose.MarketOpen.AddDays(1).AddHours(-4), Frame =  null}
+                    });
 
                 return;
             }
@@ -166,7 +169,7 @@ namespace Surveillance.Universe.Multiverse
             var updateFrame =
                 frames
                     .Where(fra => fra.OpenDate > frame.TimeStamp)
-                    .OrderByDescending(fra => fra.OpenDate)
+                    .OrderBy(fra => fra.OpenDate)
                     .FirstOrDefault(fra => fra.Frame != null) 
                     ?.Frame;
 

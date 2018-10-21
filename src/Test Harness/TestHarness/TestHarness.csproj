@@ -29,6 +29,9 @@
     <None Update="PlayMarketFiles\MarketDataEquityHighProfits.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PlayMarketFiles\MarketDataEquityHighProfitsMarketClosure.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PlayMarketFiles\MarketDataEquityHighVolume.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

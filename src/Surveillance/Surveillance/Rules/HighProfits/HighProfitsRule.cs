@@ -1,6 +1,7 @@
 ﻿using System;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.Multiverse.Interfaces;
 
 // ReSharper disable AssignNullToNotNullAttribute
 namespace Surveillance.Rules.HighProfits
@@ -11,34 +12,37 @@ namespace Surveillance.Rules.HighProfits
     public class HighProfitsRule : IHighProfitRule
     {
         private readonly IHighProfitStreamRule _streamRule;
-        private readonly IHighProfitStreamRule _marketCloseRule;
+        private readonly IMarketCloseMultiverseTransformer _multiverseTransformer;
 
-        public HighProfitsRule(IHighProfitStreamRule streamRule, IHighProfitMarketClosureRule marketCloseRule)
+        public HighProfitsRule(
+            IHighProfitStreamRule streamRule,
+            IMarketCloseMultiverseTransformer multiverseTransformer)
         {
             _streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
-            _marketCloseRule = marketCloseRule ?? throw new ArgumentNullException(nameof(marketCloseRule));
+            _multiverseTransformer =
+                multiverseTransformer
+                ?? throw new ArgumentNullException(nameof(multiverseTransformer));
         }
 
         public void OnCompleted()
         {
+            _multiverseTransformer.OnCompleted();
             _streamRule.OnCompleted();
-            _marketCloseRule.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
+            _multiverseTransformer.OnError(error);
             _streamRule.OnError(error);
-            _marketCloseRule.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
-             _streamRule.OnNext(value);
-            // todo multiverse rewrite stream and pass it onto the market closure rule =)
-            _marketCloseRule.OnNext(value);
+            _multiverseTransformer.OnNext(value);
+            _streamRule.OnNext(value);
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
-        public string Version { get; } = Versioner.Version(1, 0);
+        public string Version { get; } = Versioner.Version(2, 0);
     }
 }

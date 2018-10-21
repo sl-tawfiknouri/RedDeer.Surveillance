@@ -50,6 +50,8 @@ using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
+using Surveillance.Universe.Multiverse;
+using Surveillance.Universe.Multiverse.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 
@@ -141,7 +143,8 @@ namespace Surveillance
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
             For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
-
+            For<IMarketCloseMultiverseTransformer>()
+                .Use<MarketCloseMultiverseTransformer>();
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();

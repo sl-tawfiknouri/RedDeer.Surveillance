@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
@@ -14,6 +17,7 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly ILogger<ISystemProcessOperationRepository> _logger;
         private const string CreateSql = "INSERT INTO SystemProcessOperation(SystemProcessId, OperationStart, OperationEnd, OperationState)  VALUES(@SystemProcessId, @OperationStart, @OperationEnd, @OperationState); SELECT LAST_INSERT_ID();";
         private const string UpdateSql = "UPDATE SystemProcessOperation SET OperationStart = @OperationStart, OperationEnd = @OperationEnd, OperationState = @OperationState WHERE Id = @Id;";
+        private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperation ORDER BY Id DESC LIMIT 15;";
 
         public SystemProcessOperationRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -85,6 +89,33 @@ namespace Surveillance.System.DataLayer.Repositories
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
+        }
+
+        public async Task<IReadOnlyCollection<ISystemProcessOperation>> GetDashboard()
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.QueryAsync<SystemProcessOperation>(GetDashboardSql))
+                {
+                    var result = await conn;
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"System Process Operation Repository Get Dashboard {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new ISystemProcessOperation[0];
         }
     }
 }

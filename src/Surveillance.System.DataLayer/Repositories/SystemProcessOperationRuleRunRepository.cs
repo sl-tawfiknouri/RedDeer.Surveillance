@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 
@@ -15,6 +18,8 @@ namespace Surveillance.System.DataLayer.Repositories
 
         private const string CreateSql = "INSERT INTO SystemProcessOperationRuleRun(SystemProcessOperationId, RuleDescription, RuleVersion, ScheduleRuleStart, ScheduleRuleEnd, Alerts) VALUES(@SystemProcessOperationId, @RuleDescription, @RuleVersion, @ScheduleRuleStart, @ScheduleRuleEnd, @Alerts); SELECT LAST_INSERT_ID();";
         private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd, Alerts = @Alerts WHERE Id = @Id";
+        private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationRuleRun ORDER BY Id DESC LIMIT 100;";
+
 
         public SystemProcessOperationRuleRunRepository(
             IConnectionStringFactory connectionFactory,
@@ -83,6 +88,33 @@ namespace Surveillance.System.DataLayer.Repositories
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
+        }
+
+        public async Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> GetDashboard()
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetDashboardSql))
+                {
+                    var result = await conn;
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"System Process Operation Rule Run Repository Get Dashboard method {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new ISystemProcessOperationRuleRun[0];
         }
     }
 }

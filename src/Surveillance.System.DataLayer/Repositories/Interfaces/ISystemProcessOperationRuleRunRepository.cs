@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.DataLayer.Repositories.Interfaces
@@ -7,5 +8,6 @@ namespace Surveillance.System.DataLayer.Repositories.Interfaces
     {
         Task Create(ISystemProcessOperationRuleRun entity);
         Task Update(ISystemProcessOperationRuleRun entity);
+        Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> GetDashboard();
     }
 }

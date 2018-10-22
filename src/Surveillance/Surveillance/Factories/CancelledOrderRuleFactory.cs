@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
-using Surveillance.Rules.Cancelled_Orders;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders;
+using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

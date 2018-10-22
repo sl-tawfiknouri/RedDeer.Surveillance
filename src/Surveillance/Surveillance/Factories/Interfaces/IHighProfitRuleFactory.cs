@@ -1,4 +1,4 @@
-﻿using Surveillance.Rules.High_Profits.Interfaces;
+﻿using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -6,7 +6,11 @@ namespace Surveillance.Factories.Interfaces
 {
     public interface IHighProfitRuleFactory
     {
-        IHighProfitRule Build(IHighProfitsRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx);
+        IHighProfitRule Build(
+            IHighProfitsRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtxStream,
+            ISystemProcessOperationRunRuleContext ruleCtxMarket);
+
         string RuleVersion { get; }
     }
 }

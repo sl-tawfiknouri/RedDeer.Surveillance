@@ -8,7 +8,6 @@ using Domain.Trades.Orders;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.Universe.Interfaces;
-using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance.Universe

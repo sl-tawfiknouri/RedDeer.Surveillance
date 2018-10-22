@@ -28,16 +28,16 @@ using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
 using Surveillance.Recorders.Projectors;
 using Surveillance.Recorders.Projectors.Interfaces;
-using Surveillance.Rules.Cancelled_Orders;
-using Surveillance.Rules.Cancelled_Orders.Interfaces;
+using Surveillance.Rules.CancelledOrders;
+using Surveillance.Rules.CancelledOrders.Interfaces;
+using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
-using Surveillance.Rules.High_Profits;
-using Surveillance.Rules.High_Profits.Interfaces;
 using Surveillance.Rules.Layering;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.Rules.Marking_The_Close;
-using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rules.MarkingTheClose;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
@@ -50,6 +50,8 @@ using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
+using Surveillance.Universe.Multiverse;
+using Surveillance.Universe.Multiverse.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 
@@ -139,6 +141,11 @@ namespace Surveillance
             For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
+
+            For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
+            For<IMarketCloseMultiverseTransformer>()
+                .Use<MarketCloseMultiverseTransformer>();
+
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

@@ -1,4 +1,4 @@
-﻿using Surveillance.Rules.Cancelled_Orders.Interfaces;
+﻿using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

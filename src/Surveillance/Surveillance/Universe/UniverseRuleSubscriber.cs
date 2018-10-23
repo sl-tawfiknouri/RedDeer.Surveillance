@@ -84,7 +84,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .Spoofings
@@ -126,7 +126,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .CancelledOrders
@@ -168,7 +168,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .HighProfits
@@ -217,7 +217,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .MarkingTheCloses
@@ -259,7 +259,7 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .Layerings
@@ -301,8 +301,8 @@ namespace Surveillance.Universe
             {
                 return;
             }
-            
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
                     .HighVolumes

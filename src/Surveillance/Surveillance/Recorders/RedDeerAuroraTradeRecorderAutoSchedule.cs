@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
@@ -112,7 +113,7 @@ namespace Surveillance.Recorders
             }
         }
 
-        private List<Domain.Scheduling.Rules> GetAllRules()
+        private List<RuleIdentifier> GetAllRules()
         {
             var allRules = Enum.GetValues(typeof(Domain.Scheduling.Rules));
             var allRulesList = new List<Domain.Scheduling.Rules>();
@@ -122,7 +123,7 @@ namespace Surveillance.Recorders
                 allRulesList.Add((Domain.Scheduling.Rules)item);
             }
 
-            return allRulesList;
+            return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();
         }
 
         private class SchedulePair

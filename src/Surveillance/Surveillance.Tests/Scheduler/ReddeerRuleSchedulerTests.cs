@@ -102,7 +102,7 @@ namespace Surveillance.Tests.Scheduler
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules> {Domain.Scheduling.Rules.Spoofing},
+                Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = Domain.Scheduling.Rules.Spoofing, Ids = new string[0]}},
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };
@@ -133,7 +133,7 @@ namespace Surveillance.Tests.Scheduler
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };
@@ -167,7 +167,7 @@ namespace Surveillance.Tests.Scheduler
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };

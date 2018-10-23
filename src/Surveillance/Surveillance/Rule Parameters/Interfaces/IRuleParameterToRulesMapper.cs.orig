@@ -1,6 +1,11 @@
+<<<<<<< HEAD
+﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Rules.MarkingTheClose.Interfaces;
+=======
 ﻿using System.Collections.Generic;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Rules.Marking_The_Close.Interfaces;
+>>>>>>> RDPB-3019 rule parameter update compiling
 
 namespace Surveillance.Rule_Parameters.Interfaces
 {

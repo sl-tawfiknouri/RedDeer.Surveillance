@@ -180,14 +180,13 @@ namespace Surveillance.Universe
             if (highProfitParameters != null
                 && highProfitParameters.Any())
             {
-                foreach (var param in highProfitParameters)
-                {
+<<<<<<< HEAD
                 var ruleCtxStream = opCtx
-                        .CreateAndStartRuleRunContext(
-                            Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                            _highProfitRuleFactory.RuleVersion,
-                            execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                    .CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                        _highProfitRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
 
                 var ruleCtxMarketClosure = opCtx
                     .CreateAndStartRuleRunContext(
@@ -197,8 +196,21 @@ namespace Surveillance.Universe
                         execution.TimeSeriesTermination.DateTime);
 
                 var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtxStream, ruleCtxMarketClosure);
+                player.Subscribe(highProfitsRule);
+=======
+                foreach (var param in highProfitParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                            _highProfitRuleFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
+
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtx);
                     player.Subscribe(highProfitsRule);
                 }
+>>>>>>> RDPB-3019 rule parameter update compiling
             }
             else
             {

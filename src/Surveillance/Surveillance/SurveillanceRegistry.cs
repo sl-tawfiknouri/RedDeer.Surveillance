@@ -47,6 +47,7 @@ using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe;
+using Surveillance.Universe.Filter;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;

@@ -4,7 +4,7 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Rule_Parameters.Filter;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 
@@ -15,15 +15,15 @@ namespace Surveillance.Universe.Filter
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
 
-        private readonly RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter _accounts;
-        private readonly RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter _traders;
-        private readonly RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter _markets;
+        private readonly RuleFilter _accounts;
+        private readonly RuleFilter _traders;
+        private readonly RuleFilter _markets;
 
         public UniverseFilter(
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
-            RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter accounts,
-            RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter traders,
-            RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter markets)
+            RuleFilter accounts,
+            RuleFilter traders,
+            RuleFilter markets)
         {
             _universeUnsubscriberFactory =
                 universeUnsubscriberFactory
@@ -97,6 +97,11 @@ namespace Surveillance.Universe.Filter
                 return false;
             }
 
+            if (_accounts.Type == RuleFilterType.None)
+            {
+                return false;
+            }
+
             if (value == null)
             {
                 return false;
@@ -117,9 +122,9 @@ namespace Surveillance.Universe.Filter
 
             switch (_accounts.Type)
             {
-                case FilterType.Include:
+                case RuleFilterType.Include:
                     return !_accounts.Ids.Contains(frame.AccountId, StringComparer.InvariantCultureIgnoreCase);
-                case FilterType.Exclude:
+                case RuleFilterType.Exclude:
                     return _accounts.Ids.Contains(frame.AccountId, StringComparer.InvariantCultureIgnoreCase);
                 default:
                     return false;
@@ -129,6 +134,11 @@ namespace Surveillance.Universe.Filter
         private bool FilterOnTraders(IUniverseEvent value)
         {
             if (_traders == null)
+            {
+                return false;
+            }
+
+            if (_traders.Type == RuleFilterType.None)
             {
                 return false;
             }
@@ -153,9 +163,9 @@ namespace Surveillance.Universe.Filter
 
             switch (_traders.Type)
             {
-                case FilterType.Include:
+                case RuleFilterType.Include:
                     return !_traders.Ids.Contains(frame.TraderId, StringComparer.InvariantCultureIgnoreCase);
-                case FilterType.Exclude:
+                case RuleFilterType.Exclude:
                     return _traders.Ids.Contains(frame.TraderId, StringComparer.InvariantCultureIgnoreCase);
                 default:
                     return false;
@@ -165,6 +175,11 @@ namespace Surveillance.Universe.Filter
         private bool FilterOnMarkets(IUniverseEvent value)
         {
             if (_markets == null)
+            {
+                return false;
+            }
+
+            if (_markets.Type == RuleFilterType.None)
             {
                 return false;
             }
@@ -189,7 +204,7 @@ namespace Surveillance.Universe.Filter
                     return false;
                 }
 
-                if (_markets.Type == FilterType.Include)
+                if (_markets.Type == RuleFilterType.Include)
                 {
                     if (exchFrame?.Exchange?.Id == null)
                     {
@@ -199,7 +214,7 @@ namespace Surveillance.Universe.Filter
                     return !_markets.Ids.Contains(exchFrame.Exchange.Id.Id, StringComparer.InvariantCultureIgnoreCase);
                 }
 
-                if (_markets.Type == FilterType.Exclude)
+                if (_markets.Type == RuleFilterType.Exclude)
                 {
                     if (exchFrame?.Exchange?.Id == null)
                     {
@@ -221,7 +236,7 @@ namespace Surveillance.Universe.Filter
                     return false;
                 }
 
-                if (_markets.Type == FilterType.Include)
+                if (_markets.Type == RuleFilterType.Include)
                 {
                     if (tradeFrame?.Market?.Id?.Id == null)
                     {
@@ -231,7 +246,7 @@ namespace Surveillance.Universe.Filter
                     return !_markets.Ids.Contains(tradeFrame.Market.Id.Id, StringComparer.InvariantCultureIgnoreCase);
                 }
 
-                if (_markets.Type == FilterType.Exclude)
+                if (_markets.Type == RuleFilterType.Exclude)
                 {
                     if (tradeFrame?.Market?.Id?.Id == null)
                     {

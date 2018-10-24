@@ -10,6 +10,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
 using System.Linq;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Universe
 {
@@ -24,6 +25,7 @@ namespace Surveillance.Universe
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
         public UniverseRuleSubscriber(
@@ -35,6 +37,7 @@ namespace Surveillance.Universe
             IHighVolumeRuleFactory highVolumeRuleFactory,
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
+            IUniverseFilterFactory universeFilterFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
@@ -48,6 +51,7 @@ namespace Surveillance.Universe
             _ruleParameterApiRepository = ruleParameterApiRepository
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+            _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -106,6 +110,7 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime);
 
                     var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx);
+
                     player.Subscribe(spoofingRule);
                 }
             }

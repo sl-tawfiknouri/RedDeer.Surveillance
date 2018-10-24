@@ -5,7 +5,7 @@ using Domain.Market;
 using Domain.Trades.Orders;
 using FakeItEasy;
 using NUnit.Framework;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Rule_Parameters.Filter;
 using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter;
@@ -31,9 +31,9 @@ namespace Surveillance.Tests.Universe.Filter
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseFilter(null,
-                new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter(),
-                new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter(),
-                new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter()));
+                new RuleFilter(),
+                new RuleFilter(),
+                new RuleFilter()));
         }
 
         [Test]
@@ -72,10 +72,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Accounts()
         {
-            var account = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var account = new RuleFilter
             {
                 Ids = new string[] {"abc"},
-                Type = FilterType.Include
+                Type = RuleFilterType.Include
             };
 
             var filter = new UniverseFilter(_unsubscriber, account, null, null);
@@ -100,10 +100,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Accounts()
         {
-            var account = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var account = new RuleFilter
             {
                 Ids = new string[] { "abc" },
-                Type = FilterType.Exclude
+                Type = RuleFilterType.Exclude
             };
 
             var filter = new UniverseFilter(_unsubscriber, account, null, null);
@@ -128,10 +128,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Accounts()
         {
-            var account = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var account = new RuleFilter
             {
                 Ids = new string[] { "abc" },
-                Type = FilterType.None
+                Type = RuleFilterType.None
             };
 
             var filter = new UniverseFilter(_unsubscriber, account, null, null);
@@ -156,10 +156,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Traders()
         {
-            var traders = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var traders = new RuleFilter
             {
                 Ids = new string[] { "abc" },
-                Type = FilterType.Include
+                Type = RuleFilterType.Include
             };
 
             var filter = new UniverseFilter(_unsubscriber, null, traders, null);
@@ -184,10 +184,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Traders()
         {
-            var traders = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var traders = new RuleFilter
             {
                 Ids = new string[] { "abc" },
-                Type = FilterType.Exclude
+                Type = RuleFilterType.Exclude
             };
 
             var filter = new UniverseFilter(_unsubscriber, null, traders, null);
@@ -212,10 +212,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Markets()
         {
-            var markets = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var markets = new RuleFilter
             {
                 Ids = new string[] { "abc", "ghi" },
-                Type = FilterType.Include
+                Type = RuleFilterType.Include
             };
 
             var filter = new UniverseFilter(_unsubscriber, null, null, markets);
@@ -250,10 +250,10 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Markets()
         {
-            var markets = new RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Filter
+            var markets = new RuleFilter
             {
                 Ids = new string[] { "abc", "ghi" },
-                Type = FilterType.Exclude
+                Type = RuleFilterType.Exclude
             };
 
             var filter = new UniverseFilter(_unsubscriber, null, null, markets);

@@ -206,26 +206,22 @@ namespace Surveillance.Universe
             {
                 foreach (var param in highProfitParameters)
                 {
-                var ruleCtxStream = opCtx
+
+                    var ruleCtxStream = opCtx
+                            .CreateAndStartRuleRunContext(
+                                Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                                _highProfitRuleFactory.RuleVersion,
+                                execution.TimeSeriesInitiation.DateTime,
+                                execution.TimeSeriesTermination.DateTime);
+
+                    var ruleCtxMarketClosure = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.HighProfits.GetDescription(),
                             _highProfitRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
-<<<<<<< HEAD
-                var ruleCtxMarketClosure = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                        _highProfitRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
-
-                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtxStream, ruleCtxMarketClosure);
-                    player.Subscribe(highProfitsRule);
-=======
-                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtx);
-
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure);
                     if (param.HasFilters())
                     {
                         var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
@@ -236,7 +232,6 @@ namespace Surveillance.Universe
                     {
                         player.Subscribe(highProfitsRule);
                     }
->>>>>>> RDPB-3019 universe subscriber wire in for the filtered universe
                 }
             }
             else

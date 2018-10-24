@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-<<<<<<< HEAD
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-=======
-using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Rule_Parameters.Filter.Interfaces;
->>>>>>> RDPB-3019 universe subscriber wire in for the filtered universe
 using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Rule_Parameters

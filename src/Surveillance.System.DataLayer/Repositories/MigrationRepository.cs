@@ -37,11 +37,9 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 dbConnection.Open();
 
-                using (var conn = dbConnection.QueryAsync<int>(HighestMigrationSql))
+                using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
-                    var result = await conn;
-
-                    return result.FirstOrDefault();
+                    return await conn;
                 }
             }
             catch (Exception e)

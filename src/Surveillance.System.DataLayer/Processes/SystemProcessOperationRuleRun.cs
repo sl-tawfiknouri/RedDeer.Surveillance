@@ -13,6 +13,8 @@ namespace Surveillance.System.DataLayer.Processes
         /// </summary>
         public int Id { get; set; }
 
+        public string SystemProcessId { get; set; }
+
         /// <summary>
         /// Foreign Key to Operation
         /// </summary>

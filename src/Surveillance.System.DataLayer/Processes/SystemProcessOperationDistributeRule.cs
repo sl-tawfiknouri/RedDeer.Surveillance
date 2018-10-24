@@ -7,6 +7,8 @@ namespace Surveillance.System.DataLayer.Processes
     {
         public int Id { get; set; }
 
+        public string SystemProcessId { get; set; }
+
         public int SystemProcessOperationId { get; set; }
 
         public DateTime? ScheduleRuleInitialStart { get; set; }

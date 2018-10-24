@@ -51,6 +51,7 @@ namespace Surveillance.System.Auditing.Context
         {
             var op = new SystemProcessOperationDistributeRule
             {
+                SystemProcessId = _systemProcessOperation.SystemProcessId,
                 SystemProcessOperationId = _systemProcessOperation.Id,
                 ScheduleRuleInitialStart = initialStart,
                 ScheduleRuleInitialEnd = initialEnd,
@@ -77,6 +78,7 @@ namespace Surveillance.System.Auditing.Context
             var ctx = _runRuleContextFactory.Build(this);
             var startEvent = new SystemProcessOperationRuleRun
             {
+                SystemProcessId = _systemProcessOperation.SystemProcessId,
                 SystemProcessOperationId = _systemProcessOperation.Id,
                 RuleDescription = ruleDescription,
                 RuleVersion = ruleVersion,

@@ -43,10 +43,14 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rule_Parameters;
+using Surveillance.Rule_Parameters.Filter;
+using Surveillance.Rule_Parameters.Filter.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe;
+using Surveillance.Universe.Filter;
+using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
@@ -104,6 +108,7 @@ namespace Surveillance
             For<IUniverseEvent>().Use<UniverseEvent>();
             For<IUniversePlayer>().Use<UniversePlayer>();
             For<IUniverseRuleSubscriber>().Use<UniverseRuleSubscriber>();
+            For<IUniverseFilterFactory>().Use<UniverseFilterFactory>();
 
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 
@@ -153,6 +158,7 @@ namespace Surveillance
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
+            For<IRuleProjector>().Use<RuleProjector>();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rule_Parameters.Interfaces
 {
-    public interface ILayeringRuleParameters
+    public interface ILayeringRuleParameters : IFilterableRule
     {
         TimeSpan WindowSize { get; }
         decimal? PercentageOfMarketDailyVolume { get; }

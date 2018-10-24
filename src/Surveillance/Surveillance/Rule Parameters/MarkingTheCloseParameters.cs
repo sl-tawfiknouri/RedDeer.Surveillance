@@ -1,5 +1,6 @@
 ﻿using System;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Rule_Parameters.Filter;
 
 namespace Surveillance.Rule_Parameters
 {
@@ -15,6 +16,29 @@ namespace Surveillance.Rule_Parameters
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
             PercentThresholdOffTouch = percentThresholdOffTouch;
+
+            Accounts = RuleFilter.None();
+            Traders = RuleFilter.None();
+            Markets = RuleFilter.None();
+        }
+
+        public MarkingTheCloseParameters(
+            TimeSpan window,
+            decimal? percentageThresholdDailyVolume,
+            decimal? percentageThresholdWindowVolume,
+            decimal? percentThresholdOffTouch,
+            RuleFilter accounts,
+            RuleFilter traders,
+            RuleFilter markets)
+        {
+            Window = window;
+            PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
+            PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
+            PercentThresholdOffTouch = percentThresholdOffTouch;
+
+            Accounts = accounts ?? RuleFilter.None();
+            Traders = traders ?? RuleFilter.None();
+            Markets = markets ?? RuleFilter.None();
         }
 
         public TimeSpan Window { get; }
@@ -34,5 +58,16 @@ namespace Surveillance.Rule_Parameters
         /// </summary>
         public decimal? PercentThresholdOffTouch { get; }
 
+        public RuleFilter Accounts { get; set; }
+        public RuleFilter Traders { get; set; }
+        public RuleFilter Markets { get; set; }
+
+        public bool HasFilters()
+        {
+            return
+                Accounts?.Type != RuleFilterType.None
+                || Traders?.Type != RuleFilterType.None
+                || Markets?.Type != RuleFilterType.None;
+        }
     }
 }

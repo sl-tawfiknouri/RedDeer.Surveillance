@@ -59,7 +59,7 @@ namespace Surveillance.Tests.Universe
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = timeSeriesInitiation,
                 TimeSeriesTermination = timeSeriesTermination
             };
@@ -84,7 +84,7 @@ namespace Surveillance.Tests.Universe
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = timeSeriesInitiation,
                 TimeSeriesTermination = timeSeriesTermination
             };
@@ -119,7 +119,7 @@ namespace Surveillance.Tests.Universe
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = timeSeriesInitiation,
                 TimeSeriesTermination = timeSeriesTermination
             };
@@ -162,7 +162,7 @@ namespace Surveillance.Tests.Universe
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<Domain.Scheduling.Rules>(),
+                Rules = new List<RuleIdentifier>(),
                 TimeSeriesInitiation = timeSeriesInitiation,
                 TimeSeriesTermination = timeSeriesTermination
             };

@@ -106,7 +106,7 @@ namespace TestHarness.Commands
             return terminationDate;
         }
 
-        private List<Rules> GetAllRules()
+        private List<RuleIdentifier> GetAllRules()
         {
             var allRules = Enum.GetValues(typeof(Rules));
             var allRulesList = new List<Rules>();
@@ -116,7 +116,7 @@ namespace TestHarness.Commands
                 allRulesList.Add((Rules)item);
             }
 
-            return allRulesList;
+            return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();
         }
     }
 }

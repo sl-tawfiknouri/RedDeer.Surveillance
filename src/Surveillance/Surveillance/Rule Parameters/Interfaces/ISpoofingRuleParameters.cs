@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rule_Parameters.Interfaces
 {
-    public interface ISpoofingRuleParameters
+    public interface ISpoofingRuleParameters : IFilterableRule
     {
         decimal CancellationThreshold { get; }
         decimal RelativeSizeMultipleForSpoofExceedingReal { get; }

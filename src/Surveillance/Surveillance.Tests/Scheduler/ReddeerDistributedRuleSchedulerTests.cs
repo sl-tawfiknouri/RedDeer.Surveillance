@@ -115,10 +115,10 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(10, 0, 0, 0, 0)
-                        }
+                        }}
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -135,7 +135,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> {Domain.Scheduling.Rules.HighProfits},
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0]}},
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 06)
                 };
@@ -144,14 +144,13 @@ namespace Surveillance.Tests.Scheduler
             
             await scheduler.ExecuteNonDistributedMessage("any-id", messageBody);
 
-            A.CallTo(() => _apiRepository.Get()).MustNotHaveHappened();
             A
                 .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
         [Test]
-        public async Task Initiate_RuleRunForTwoWeeksButNullParams_JustRunsRuleForTwoWeeks()
+        public async Task Initiate_RuleRunForTwoWeeksButNullParams_DoesNotDoAnything()
         {
             A
                 .CallTo(() => _apiRepository.Get())
@@ -175,7 +174,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 15)
                 };
@@ -184,10 +183,9 @@ namespace Surveillance.Tests.Scheduler
 
             await scheduler.ExecuteNonDistributedMessage("any-id", messageBody);
 
-            A.CallTo(() => _apiRepository.Get()).MustHaveHappened();
             A
                 .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
-                .MustHaveHappenedOnceExactly();
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -198,10 +196,10 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(10, 0, 0, 0, 0)
-                        }
+                        }}
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -218,7 +216,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 01)
                 };
@@ -227,7 +225,6 @@ namespace Surveillance.Tests.Scheduler
 
             await scheduler.ExecuteNonDistributedMessage("any-id", messageBody);
 
-            A.CallTo(() => _apiRepository.Get()).MustNotHaveHappened();
             A
                 .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -241,11 +238,11 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(10, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -261,7 +258,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 07)
                 };
@@ -270,7 +267,6 @@ namespace Surveillance.Tests.Scheduler
 
             await scheduler.ExecuteNonDistributedMessage("any-id", messageBody);
 
-            A.CallTo(() => _apiRepository.Get()).MustNotHaveHappened();
             A
                 .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
@@ -284,11 +280,12 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
+                            Id = "abc",
                             WindowSize = new TimeSpan(10, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -304,7 +301,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 10)
                 };
@@ -327,11 +324,11 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(1, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -347,7 +344,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 8)
                 };
@@ -371,11 +368,11 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(1, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -391,7 +388,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 14)
                 };
@@ -415,11 +412,11 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(8, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -435,7 +432,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -459,11 +456,11 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(3, 0, 0, 0, 0)
                         }
-                    });
+                    }});
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
 
@@ -479,7 +476,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -503,14 +500,14 @@ namespace Surveillance.Tests.Scheduler
                 .Returns(
                     new RuleParameterDto
                     {
-                        HighProfits = new HighProfitsRuleParameterDto
+                        HighProfits = new[] { new HighProfitsRuleParameterDto
                         {
                             WindowSize = new TimeSpan(3, 0, 0, 0, 0)
-                        },
-                        CancelledOrder = new CancelledOrderRuleParameterDto
+                        }},
+                        CancelledOrders = new [] { new CancelledOrderRuleParameterDto
                         {
                             WindowSize = new TimeSpan(08, 0, 0, 0, 0)
-                        }
+                        }}
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -527,7 +524,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<Domain.Scheduling.Rules> { Domain.Scheduling.Rules.HighProfits, Domain.Scheduling.Rules.CancelledOrders },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] }, new RuleIdentifier { Rule = Domain.Scheduling.Rules.CancelledOrders, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };

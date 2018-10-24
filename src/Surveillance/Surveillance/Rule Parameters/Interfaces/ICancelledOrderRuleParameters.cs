@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rule_Parameters.Interfaces
 {
-    public interface ICancelledOrderRuleParameters
+    public interface ICancelledOrderRuleParameters : IFilterableRule
     {
         TimeSpan WindowSize { get; }
         decimal? CancelledOrderPercentagePositionThreshold { get; }

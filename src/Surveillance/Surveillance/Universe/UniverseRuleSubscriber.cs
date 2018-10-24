@@ -9,6 +9,8 @@ using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
+using System.Linq;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Universe
 {
@@ -23,6 +25,7 @@ namespace Surveillance.Universe
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
         public UniverseRuleSubscriber(
@@ -34,6 +37,7 @@ namespace Surveillance.Universe
             IHighVolumeRuleFactory highVolumeRuleFactory,
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
+            IUniverseFilterFactory universeFilterFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
@@ -47,6 +51,7 @@ namespace Surveillance.Universe
             _ruleParameterApiRepository = ruleParameterApiRepository
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+            _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -77,24 +82,46 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.Spoofing))
+            if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Scheduling.Rules.Spoofing)
+                ?? true)
             {
                 return;
             }
 
-            var spoofingParameters = _ruleParameterMapper.Map(ruleParameters.Spoofing);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .Spoofings
+                    .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            if (spoofingParameters != null)
+            var spoofingParameters = _ruleParameterMapper.Map(dtos);
+
+            if (spoofingParameters != null
+                && spoofingParameters.Any())
             {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.Spoofing.GetDescription(),
-                        _spoofingRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in spoofingParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.Spoofing.GetDescription(),
+                            _spoofingRuleFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
 
-                var spoofingRule = _spoofingRuleFactory.Build(spoofingParameters, ruleCtx);
-                player.Subscribe(spoofingRule);
+                    var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(spoofingRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(spoofingRule);
+                    }
+                }
             }
             else
             {
@@ -108,24 +135,45 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.CancelledOrders))
+            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
             {
                 return;
             }
 
-            var cancelledOrderParameters = _ruleParameterMapper.Map(ruleParameters.CancelledOrder);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .CancelledOrders
+                    .Where(co => filteredParameters.Contains(co.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            if (cancelledOrderParameters != null)
+            var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
+
+            if (cancelledOrderParameters != null
+                && cancelledOrderParameters.Any())
             {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                        _cancelledOrderRuleFactory.Version,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in cancelledOrderParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
+                            _cancelledOrderRuleFactory.Version,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
 
-                var cancelledOrderRule = _cancelledOrderRuleFactory.Build(cancelledOrderParameters, ruleCtx);
-                player.Subscribe(cancelledOrderRule);
+                    var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(cancelledOrderRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(cancelledOrderRule);
+                    }
+                }
             }
             else
             {
@@ -139,31 +187,52 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.HighProfits))
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
             {
                 return;
             }
 
-            var highProfitParameters = _ruleParameterMapper.Map(ruleParameters.HighProfits);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .HighProfits
+                    .Where(hp => filteredParameters.Contains(hp.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
+            
+            var highProfitParameters = _ruleParameterMapper.Map(dtos);
 
-            if (highProfitParameters != null)
+            if (highProfitParameters != null
+                && highProfitParameters.Any())
             {
-                var ruleCtxStream = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                        _highProfitRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in highProfitParameters)
+                {
 
-                var ruleCtxMarketClosure = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                        _highProfitRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                    var ruleCtxStream = opCtx
+                            .CreateAndStartRuleRunContext(
+                                Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                                _highProfitRuleFactory.RuleVersion,
+                                execution.TimeSeriesInitiation.DateTime,
+                                execution.TimeSeriesTermination.DateTime);
 
-                var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtxStream, ruleCtxMarketClosure);
-                player.Subscribe(highProfitsRule);
+                    var ruleCtxMarketClosure = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                            _highProfitRuleFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
+
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure);
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(highProfitsRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(highProfitsRule);
+                    }
+                }
             }
             else
             {
@@ -177,24 +246,45 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.MarkingTheClose))
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.MarkingTheClose) ?? true)
             {
                 return;
             }
 
-            var markingTheCloseParameters = _ruleParameterMapper.Map(ruleParameters.MarkingTheClose);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .MarkingTheCloses
+                    .Where(mtc => filteredParameters.Contains(mtc.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            if (markingTheCloseParameters != null)
+            var markingTheCloseParameters = _ruleParameterMapper.Map(dtos);
+
+            if (markingTheCloseParameters != null
+                && markingTheCloseParameters.Any())
             {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
-                        _markingTheCloseFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in markingTheCloseParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
+                            _markingTheCloseFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
 
-                var markingTheClose = _markingTheCloseFactory.Build(markingTheCloseParameters, ruleCtx);
-                player.Subscribe(markingTheClose);
+                    var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(markingTheClose);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(markingTheClose);
+                    }
+                }
             }
             else
             {
@@ -208,25 +298,46 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.Layering))
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.Layering) ?? true)
             {
                 return;
             }
 
-            var layeringParameters = _ruleParameterMapper.Map(ruleParameters.Layering);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .Layerings
+                    .Where(la => filteredParameters.Contains(la.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
+
+            var layeringParameters = _ruleParameterMapper.Map(dtos);
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (layeringParameters != null)
+            if (layeringParameters != null
+                && layeringParameters.Any())
             {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.Layering.GetDescription(),
-                        _layeringRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in layeringParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.Layering.GetDescription(),
+                            _layeringRuleFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
 
-                var layering = _layeringRuleFactory.Build(layeringParameters, ruleCtx);
-                player.Subscribe(layering);
+                    var layering = _layeringRuleFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(layering);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(layering);
+                    }
+                }
             }
             else
             {
@@ -240,25 +351,46 @@ namespace Surveillance.Universe
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx)
         {
-            if (!execution.Rules.Contains(Domain.Scheduling.Rules.HighVolume))
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighVolume) ?? true)
             {
                 return;
             }
 
-            var highVolumeParameters = _ruleParameterMapper.Map(ruleParameters.HighVolume);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .HighVolumes
+                    .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
+
+            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (highVolumeParameters != null)
+            if (highVolumeParameters != null
+                && highVolumeParameters.Any())
             {
-                var ruleCtx = opCtx
-                    .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighVolume.GetDescription(),
-                        _highVolumeRuleFactory.RuleVersion,
-                        execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                foreach (var param in highVolumeParameters)
+                {
+                    var ruleCtx = opCtx
+                        .CreateAndStartRuleRunContext(
+                            Domain.Scheduling.Rules.HighVolume.GetDescription(),
+                            _highVolumeRuleFactory.RuleVersion,
+                            execution.TimeSeriesInitiation.DateTime,
+                            execution.TimeSeriesTermination.DateTime);
 
-                var highVolume = _highVolumeRuleFactory.Build(highVolumeParameters, ruleCtx);
-                player.Subscribe(highVolume);
+                    var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(highVolume);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(highVolume);
+                    }
+                }
             }
             else
             {

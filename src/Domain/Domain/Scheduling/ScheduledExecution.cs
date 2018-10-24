@@ -11,7 +11,7 @@ namespace Domain.Scheduling
         /// <summary>
         /// Rule to run
         /// </summary>
-        public List<Rules> Rules { get; set; } = new List<Rules>();
+        public List<RuleIdentifier> Rules { get; set; } = new List<RuleIdentifier>();
 
         /// <summary>
         /// Filter to apply to the data set time series

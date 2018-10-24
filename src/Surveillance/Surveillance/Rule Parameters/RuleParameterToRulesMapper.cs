@@ -1,92 +1,147 @@
-﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Rule_Parameters.Filter.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Rule_Parameters
 {
     public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
     {
-        public ISpoofingRuleParameters Map(SpoofingRuleParameterDto dto)
-        {
-            if (dto == null)
-            {
-                return null;
-            }
+        private readonly IRuleProjector _ruleProjector;
 
-            return new SpoofingRuleParameters(
-                dto.WindowSize,
-                dto.CancellationThreshold,
-                dto.RelativeSizeMultipleForSpoofExceedingReal);
+        public RuleParameterToRulesMapper(IRuleProjector ruleProjector)
+        {
+            _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
         }
 
-        public ICancelledOrderRuleParameters Map(CancelledOrderRuleParameterDto dto)
+        public IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos)
         {
-            if (dto == null)
+            if (dtos == null
+                || !dtos.Any())
             {
                 return null;
             }
 
-            return new CancelledOrderRuleParameters(
-                dto.WindowSize,
-                dto.CancelledOrderPercentagePositionThreshold,
-                dto.CancelledOrderCountPercentageThreshold,
-                dto.MinimumNumberOfTradesToApplyRuleTo,
-                dto.MaximumNumberOfTradesToApplyRuleTo);
+            return dtos
+                .Select(dto =>
+                    new SpoofingRuleParameters(
+                    dto.WindowSize,
+                    dto.CancellationThreshold,
+                    dto.RelativeSizeMultipleForSpoofExceedingReal,
+                    _ruleProjector.Project(dto.Accounts),
+                    _ruleProjector.Project(dto.Traders),
+                    _ruleProjector.Project(dto.Markets)))
+                .ToList();
         }
 
-        public IHighProfitsRuleParameters Map(HighProfitsRuleParameterDto dto)
+        public IReadOnlyCollection<ICancelledOrderRuleParameters> Map(List<CancelledOrderRuleParameterDto> dtos)
         {
-            if (dto == null)
+            if (dtos == null
+                || !dtos.Any())
             {
                 return null;
             }
 
-            return new HighProfitsRuleParameters(
-                dto.WindowSize,
-                dto.HighProfitPercentageThreshold,
-                dto.HighProfitAbsoluteThreshold,
-                dto.HighProfitAbsoluteThresholdCurrency);
+            return dtos
+                .Select(dto =>
+                    new CancelledOrderRuleParameters(
+                        dto.WindowSize,
+                        dto.CancelledOrderPercentagePositionThreshold,
+                        dto.CancelledOrderCountPercentageThreshold,
+                        dto.MinimumNumberOfTradesToApplyRuleTo,
+                        dto.MaximumNumberOfTradesToApplyRuleTo,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
+                .ToList();
         }
 
-        public IMarkingTheCloseParameters Map(MarkingTheCloseRuleParameterDto dto)
+        public IReadOnlyCollection<IHighProfitsRuleParameters> Map(List<HighProfitsRuleParameterDto> dtos)
         {
-            if (dto == null)
+            if (dtos == null
+                || !dtos.Any())
             {
                 return null;
             }
 
-            return new MarkingTheCloseParameters(
-                dto.Window,
-                dto.PercentageThresholdDailyVolume,
-                dto.PercentageThresholdWindowVolume,
-                dto.PercentThresholdOffTouch);
+            return dtos
+                .Select(dto =>
+                    new HighProfitsRuleParameters(
+                        dto.WindowSize,
+                        dto.HighProfitPercentageThreshold,
+                        dto.HighProfitAbsoluteThreshold,
+                        dto.HighProfitAbsoluteThresholdCurrency,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
+                .ToList();
         }
 
-        public ILayeringRuleParameters Map(LayeringRuleParameterDto dto)
+        public IReadOnlyCollection<IMarkingTheCloseParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos)
         {
-            if (dto == null)
+            if (dtos == null
+                || !dtos.Any())
             {
                 return null;
             }
 
-            return new LayeringRuleParameters(
-                dto.WindowSize,
-                dto.PercentageOfMarketDailyVolume,
-                dto.PercentageOfMarketWindowVolume,
-                dto.CheckForCorrespondingPriceMovement);
+            return dtos
+                .Select(dto =>
+                    new MarkingTheCloseParameters(
+                        dto.WindowSize,
+                        dto.PercentageThresholdDailyVolume,
+                        dto.PercentageThresholdWindowVolume,
+                        dto.PercentThresholdOffTouch,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
+                .ToList();
         }
 
-        public IHighVolumeRuleParameters Map(HighVolumeRuleParameterDto dto)
+        public IReadOnlyCollection<ILayeringRuleParameters> Map(List<LayeringRuleParameterDto> dtos)
         {
-            if (dto == null)
+            if (dtos == null
+                || !dtos.Any())
             {
                 return null;
             }
 
-            return new HighVolumeRuleParameters(
-                dto.WindowSize,
-                dto.HighVolumePercentageDaily,
-                dto.HighVolumePercentageWindow);
+            return
+                dtos
+                    .Select(dto =>
+                        new LayeringRuleParameters(
+                            dto.WindowSize,
+                            dto.PercentageOfMarketDailyVolume,
+                            dto.PercentageOfMarketWindowVolume,
+                            dto.CheckForCorrespondingPriceMovement,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets)))
+                    .ToList();
+        }
+
+        public IReadOnlyCollection<IHighVolumeRuleParameters> Map(List<HighVolumeRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                return null;
+            }
+
+            return 
+                dtos
+                    .Select(dto => 
+                        new HighVolumeRuleParameters(
+                            dto.WindowSize,
+                            dto.HighVolumePercentageDaily,
+                            dto.HighVolumePercentageWindow,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets)))
+                    .ToList();
         }
     }
 }

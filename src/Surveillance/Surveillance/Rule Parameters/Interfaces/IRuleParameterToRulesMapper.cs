@@ -1,15 +1,16 @@
-﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+﻿using System.Collections.Generic;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Rule_Parameters.Interfaces
 {
     public interface IRuleParameterToRulesMapper
     {
-        ISpoofingRuleParameters Map(SpoofingRuleParameterDto dto);
-        ICancelledOrderRuleParameters Map(CancelledOrderRuleParameterDto dto);
-        IHighProfitsRuleParameters Map(HighProfitsRuleParameterDto dto);
-        IMarkingTheCloseParameters Map(MarkingTheCloseRuleParameterDto dto);
-        ILayeringRuleParameters Map(LayeringRuleParameterDto dto);
-        IHighVolumeRuleParameters Map(HighVolumeRuleParameterDto dto);
+        IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos);
+        IReadOnlyCollection<ICancelledOrderRuleParameters> Map(List<CancelledOrderRuleParameterDto> dtos);
+        IReadOnlyCollection<IHighProfitsRuleParameters> Map(List<HighProfitsRuleParameterDto> dtos);
+        IReadOnlyCollection<IMarkingTheCloseParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos);
+        IReadOnlyCollection<ILayeringRuleParameters> Map(List<LayeringRuleParameterDto> dtos);
+        IReadOnlyCollection<IHighVolumeRuleParameters> Map(List<HighVolumeRuleParameterDto> dtos);
     }
 }

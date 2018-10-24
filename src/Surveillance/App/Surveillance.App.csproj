@@ -53,6 +53,15 @@
       <TransformOnBuild Condition="'$(Configuration)' == 'Release'">true</TransformOnBuild>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Update="Migrations\1 - Initial.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\2 - Trade.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\3 - Market.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="nlog.Release.config">
       <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
     </None>

@@ -1,10 +1,10 @@
 ﻿using System;
-using Surveillance.DataLayer.Aurora.Exceptions;
-using Surveillance.DataLayer.Aurora.Exceptions.Interfaces;
-using Surveillance.Logging.Interfaces;
+using Surveillance.System.Auditing.Logging.Interfaces;
 using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.System.DataLayer.Repositories.Exceptions;
+using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
 
-namespace Surveillance.Logging
+namespace Surveillance.System.Auditing.Logging
 {
     public class OperationLogging : IOperationLogging
     {

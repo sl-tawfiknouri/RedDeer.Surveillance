@@ -71,5 +71,10 @@ namespace Surveillance.System.Auditing.Context
             _systemProcess.Heartbeat = DateTime.UtcNow;
             _systemProcessRepository.Update(_systemProcess);
         }
+
+        public ISystemProcess SystemProcess()
+        {
+            return _systemProcess;
+        }
     }
 }

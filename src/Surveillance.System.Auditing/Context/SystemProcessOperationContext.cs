@@ -1,6 +1,7 @@
 ﻿using System;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.Auditing.Factories.Interfaces;
+using Surveillance.System.Auditing.Logging.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
@@ -14,13 +15,15 @@ namespace Surveillance.System.Auditing.Context
         private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
         private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
+        private readonly IOperationLogging _operationLogging;
         private bool _hasEnded = false;
 
         public SystemProcessOperationContext(
             ISystemProcessContext systemProcessContext,
             ISystemProcessOperationRepository systemProcessOperationRepository,
             ISystemProcessOperationRunRuleContextFactory runRuleContextFactory,
-            ISystemProcessOperationDistributeRuleContextFactory distributeRuleContextFactory)
+            ISystemProcessOperationDistributeRuleContextFactory distributeRuleContextFactory,
+            IOperationLogging operationLogging)
         {
             _systemProcessContext =
                 systemProcessContext
@@ -37,6 +40,7 @@ namespace Surveillance.System.Auditing.Context
             _distributeRuleContextFactory =
                 distributeRuleContextFactory
                 ?? throw new ArgumentNullException(nameof(distributeRuleContextFactory));
+            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
         public ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext()
@@ -119,12 +123,14 @@ namespace Surveillance.System.Auditing.Context
             return _systemProcessContext;
         }
 
-        public ISystemProcessContext EndEventWithError()
+        public ISystemProcessContext EndEventWithError(string message)
         {
             if (_hasEnded)
             {
                 return _systemProcessContext;
             }
+            
+            _operationLogging.Log(new Exception(message));
 
             _hasEnded = true;
             _systemProcessOperation.OperationEnd = DateTime.UtcNow;

@@ -6,8 +6,6 @@ using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Aurora;
-using Surveillance.DataLayer.Aurora.Exceptions;
-using Surveillance.DataLayer.Aurora.Exceptions.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
@@ -53,8 +51,6 @@ namespace Surveillance.DataLayer
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
             For<IReddeerTradeRepository>().Use<ReddeerTradeRepository>();
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>();
-
-            For<IExceptionRepository>().Use<ExceptionRepository>();
         }
     }
 }

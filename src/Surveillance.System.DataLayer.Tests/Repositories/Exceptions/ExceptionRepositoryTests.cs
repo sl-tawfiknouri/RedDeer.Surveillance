@@ -1,11 +1,9 @@
 ﻿using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.DataLayer.Aurora;
-using Surveillance.DataLayer.Aurora.Exceptions;
-using Surveillance.DataLayer.Configuration;
+using Surveillance.System.DataLayer.Repositories.Exceptions;
 
-namespace Surveillance.DataLayer.Tests.Aurora.Exceptions
+namespace Surveillance.System.DataLayer.Tests.Repositories.Exceptions
 {
     [TestFixture]
     public class ExceptionRepositoryTests
@@ -22,9 +20,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Exceptions
         [Explicit]
         public void ExceptionSavesToDatabase()
         {
-            var config = new DataLayerConfiguration
+            var config = new SystemDataLayerConfig
             {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
+                SurveillanceAuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
             };
             var repository = new ExceptionRepository(new ConnectionStringFactory(config), _logger);
             var dtos = new ExceptionDto

@@ -10,7 +10,7 @@ namespace Surveillance.System.Auditing.Context
         private ISystemProcessOperationDistributeRule _distributeRule;
         private readonly ISystemProcessOperationContext _processOperationContext;
         private readonly ISystemProcessOperationDistributeRuleRepository _repository;
-        
+
         public SystemProcessOperationDistributeRuleContext(
             ISystemProcessOperationContext processOperationContext,
             ISystemProcessOperationDistributeRuleRepository repository)

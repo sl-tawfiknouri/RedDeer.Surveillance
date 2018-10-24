@@ -1,4 +1,4 @@
-﻿namespace Surveillance.DataLayer.Aurora.Exceptions
+﻿namespace Surveillance.System.DataLayer.Repositories.Exceptions
 {
     public class ExceptionDto
     {

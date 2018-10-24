@@ -1,7 +1,7 @@
 ﻿using System;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Logging.Interfaces
+namespace Surveillance.System.Auditing.Logging.Interfaces
 {
     public interface IOperationLogging
     {

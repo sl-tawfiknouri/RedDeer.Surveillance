@@ -1,10 +1,10 @@
 ﻿using System;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.DataLayer.Aurora.Exceptions.Interfaces;
-using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
 
-namespace Surveillance.DataLayer.Aurora.Exceptions
+namespace Surveillance.System.DataLayer.Repositories.Exceptions
 {
     public class ExceptionRepository : IExceptionRepository
     {

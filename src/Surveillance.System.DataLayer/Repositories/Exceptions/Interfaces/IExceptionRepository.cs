@@ -1,4 +1,4 @@
-﻿namespace Surveillance.DataLayer.Aurora.Exceptions.Interfaces
+﻿namespace Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces
 {
     public interface IExceptionRepository
     {

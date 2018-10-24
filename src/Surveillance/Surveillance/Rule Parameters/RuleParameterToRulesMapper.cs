@@ -1,13 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+<<<<<<< HEAD
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+=======
+using Surveillance.Rules.Marking_The_Close.Interfaces;
+using Surveillance.Rule_Parameters.Filter.Interfaces;
+>>>>>>> RDPB-3019 universe subscriber wire in for the filtered universe
 using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Rule_Parameters
 {
     public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
     {
+        private readonly IRuleProjector _ruleProjector;
+
+        public RuleParameterToRulesMapper(IRuleProjector ruleProjector)
+        {
+            _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
+        }
+
         public IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos)
         {
             if (dtos == null
@@ -21,7 +34,10 @@ namespace Surveillance.Rule_Parameters
                     new SpoofingRuleParameters(
                     dto.WindowSize,
                     dto.CancellationThreshold,
-                    dto.RelativeSizeMultipleForSpoofExceedingReal))
+                    dto.RelativeSizeMultipleForSpoofExceedingReal,
+                    _ruleProjector.Project(dto.Accounts),
+                    _ruleProjector.Project(dto.Traders),
+                    _ruleProjector.Project(dto.Markets)))
                 .ToList();
         }
 
@@ -40,7 +56,10 @@ namespace Surveillance.Rule_Parameters
                         dto.CancelledOrderPercentagePositionThreshold,
                         dto.CancelledOrderCountPercentageThreshold,
                         dto.MinimumNumberOfTradesToApplyRuleTo,
-                        dto.MaximumNumberOfTradesToApplyRuleTo))
+                        dto.MaximumNumberOfTradesToApplyRuleTo,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
                 .ToList();
         }
 
@@ -58,7 +77,10 @@ namespace Surveillance.Rule_Parameters
                         dto.WindowSize,
                         dto.HighProfitPercentageThreshold,
                         dto.HighProfitAbsoluteThreshold,
-                        dto.HighProfitAbsoluteThresholdCurrency))
+                        dto.HighProfitAbsoluteThresholdCurrency,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
                 .ToList();
         }
 
@@ -76,7 +98,10 @@ namespace Surveillance.Rule_Parameters
                         dto.WindowSize,
                         dto.PercentageThresholdDailyVolume,
                         dto.PercentageThresholdWindowVolume,
-                        dto.PercentThresholdOffTouch))
+                        dto.PercentThresholdOffTouch,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets)))
                 .ToList();
         }
 
@@ -95,7 +120,10 @@ namespace Surveillance.Rule_Parameters
                             dto.WindowSize,
                             dto.PercentageOfMarketDailyVolume,
                             dto.PercentageOfMarketWindowVolume,
-                            dto.CheckForCorrespondingPriceMovement))
+                            dto.CheckForCorrespondingPriceMovement,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets)))
                     .ToList();
         }
 
@@ -113,7 +141,10 @@ namespace Surveillance.Rule_Parameters
                         new HighVolumeRuleParameters(
                             dto.WindowSize,
                             dto.HighVolumePercentageDaily,
-                            dto.HighVolumePercentageWindow))
+                            dto.HighVolumePercentageWindow,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets)))
                     .ToList();
         }
     }

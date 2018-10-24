@@ -53,5 +53,13 @@ namespace Surveillance.Rule_Parameters
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
+
+        public bool HasFilters()
+        {
+            return
+                Accounts?.Type != RuleFilterType.None
+                || Traders?.Type != RuleFilterType.None
+                || Markets?.Type != RuleFilterType.None;
+        }
     }
 }

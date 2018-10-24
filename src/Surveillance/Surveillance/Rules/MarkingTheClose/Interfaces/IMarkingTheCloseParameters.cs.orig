@@ -1,0 +1,18 @@
+﻿using System;
+<<<<<<< HEAD:src/Surveillance/Surveillance/Rules/MarkingTheClose/Interfaces/IMarkingTheCloseParameters.cs
+=======
+using Surveillance.Rule_Parameters.Interfaces;
+>>>>>>> RDPB-3019 updated with new mapped (but unused) filter types from the dtos:src/Surveillance/Surveillance/Rules/Marking The Close/Interfaces/IMarkingTheCloseParameters.cs
+
+// ReSharper disable UnusedMember.Global
+
+namespace Surveillance.Rules.MarkingTheClose.Interfaces
+{
+    public interface IMarkingTheCloseParameters : IFilterableRule
+    {
+        decimal? PercentageThresholdDailyVolume { get; }
+        decimal? PercentageThresholdWindowVolume { get; }
+        decimal? PercentThresholdOffTouch { get; }
+        TimeSpan Window { get; }
+    }
+}

@@ -111,7 +111,16 @@ namespace Surveillance.Universe
 
                     var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx);
 
-                    player.Subscribe(spoofingRule);
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(spoofingRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(spoofingRule);
+                    }
                 }
             }
             else
@@ -153,7 +162,17 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime);
 
                     var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx);
-                    player.Subscribe(cancelledOrderRule);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(cancelledOrderRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(cancelledOrderRule);
+                    }
                 }
             }
             else
@@ -194,6 +213,7 @@ namespace Surveillance.Universe
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
+<<<<<<< HEAD
                 var ruleCtxMarketClosure = opCtx
                     .CreateAndStartRuleRunContext(
                         Domain.Scheduling.Rules.HighProfits.GetDescription(),
@@ -203,6 +223,20 @@ namespace Surveillance.Universe
 
                 var highProfitsRule = _highProfitRuleFactory.Build(highProfitParameters, ruleCtxStream, ruleCtxMarketClosure);
                     player.Subscribe(highProfitsRule);
+=======
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(highProfitsRule);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(highProfitsRule);
+                    }
+>>>>>>> RDPB-3019 universe subscriber wire in for the filtered universe
                 }
             }
             else
@@ -244,7 +278,17 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime);
 
                     var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx);
-                    player.Subscribe(markingTheClose);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(markingTheClose);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(markingTheClose);
+                    }
                 }
             }
             else
@@ -287,7 +331,17 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime);
 
                     var layering = _layeringRuleFactory.Build(param, ruleCtx);
-                    player.Subscribe(layering);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(layering);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(layering);
+                    }
                 }
             }
             else
@@ -330,7 +384,17 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime);
 
                     var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx);
-                    player.Subscribe(highVolume);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(highVolume);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(highVolume);
+                    }
                 }
             }
             else

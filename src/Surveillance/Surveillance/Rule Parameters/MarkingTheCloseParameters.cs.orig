@@ -1,6 +1,10 @@
 ﻿using System;
+<<<<<<< HEAD
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+=======
+using Surveillance.Rules.Marking_The_Close.Interfaces;
 using Surveillance.Rule_Parameters.Filter;
+>>>>>>> RDPB-3019 updated with new mapped (but unused) filter types from the dtos
 
 namespace Surveillance.Rule_Parameters
 {
@@ -61,13 +65,5 @@ namespace Surveillance.Rule_Parameters
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
-
-        public bool HasFilters()
-        {
-            return
-                Accounts?.Type != RuleFilterType.None
-                || Traders?.Type != RuleFilterType.None
-                || Markets?.Type != RuleFilterType.None;
-        }
     }
 }

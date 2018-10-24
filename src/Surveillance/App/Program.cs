@@ -8,6 +8,7 @@ using DasMulli.Win32.ServiceUtils;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using RedDeer.Surveillance.App.Interfaces;
+using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
 using Surveillance;
 using Surveillance.Configuration.Interfaces;
@@ -62,6 +63,8 @@ namespace RedDeer.Surveillance.App
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
+
+                Container.GetInstance<IScriptRunner>();
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();

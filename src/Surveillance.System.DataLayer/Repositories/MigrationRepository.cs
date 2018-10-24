@@ -16,7 +16,7 @@ namespace Surveillance.System.DataLayer.Repositories
         private const string MigrationFolder = "Migrations";
 
         private const string HighestMigrationSql =
-            @"SELECT MAX(Id) FROM dev_surveillance.migrations WHERE Complete = 1;";
+            @"SELECT MAX(Id) FROM migrations;";
 
         public MigrationRepository(
             IConnectionStringFactory connectionStringFactory,

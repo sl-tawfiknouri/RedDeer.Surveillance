@@ -9,12 +9,13 @@ namespace Surveillance.System.DataLayer
     {
         public SystemSystemDataLayerRegistry()
         {
+            For<IMigrationRepository>().Use<MigrationRepository>();
+            For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
+
             For<ISystemProcessRepository>().Use<SystemProcessRepository>();
             For<ISystemProcessOperationRepository>().Use<SystemProcessOperationRepository>();
             For<ISystemProcessOperationDistributeRuleRepository>().Use<SystemProcessOperationDistributeRuleRepository>();
             For<ISystemProcessOperationRuleRunRepository>().Use<SystemProcessOperationRuleRunRepository>();
-            For<IMigrationRepository>().Use<MigrationRepository>();
-            For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
         }
     }
 }

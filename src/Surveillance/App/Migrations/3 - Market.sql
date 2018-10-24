@@ -6,7 +6,7 @@
 -- PURPOSE : Migrate exchange data from elastic search to Aurora
 START TRANSACTION;
 
-INSERT INTO Migrations VALUES(3, "Market.sql", now(), 0);
+INSERT INTO Migrations VALUES(3, "Market.sql", now());
 
 CREATE TABLE MarketStockExchange(Id int auto_increment primary key NOT NULL, MarketId nvarchar(16) NOT NULL, MarketName nvarchar(255) NOT NULL, INDEX(MarketId));
 
@@ -15,9 +15,5 @@ CREATE TABLE MarketStockExchangeSecurities(Id int auto_increment primary key NOT
 CREATE TABLE MarketStockExchangePrices (Id int auto_increment primary key NOT NULL, SecurityId int NOT NULL, Epoch datetime NOT NULL, BidPrice decimal(18, 3) NULL, AskPrice decimal(18,3) NULL, MarketPrice decimal(18,3) NULL, OpenPrice decimal(18,3) NULL, ClosePrice decimal(18,3) NULL, HighIntradayPrice decimal(18,3) NULL, LowIntradayPrice decimal(18, 3) NULL, ListedSecurities bigint NULL, MarketCap decimal(18, 3) NULL, VolumeTradedInTick bigint NULL, DailyVolume bigint NULL, foreign key (SecurityId) REFERENCES MarketStockExchangeSecurities(Id), INDEX(Epoch), INDEX(SecurityId));
 
 CREATE TABLE MarketData(MarketId nvarchar(16), MarketName nvarchar(255), ClientIdentifier nvarchar(255), Sedol nvarchar(8), Isin nvarchar(20), Figi nvarchar(12), Cusip nvarchar(9), Lei nvarchar(20), ExchangeSymbol nvarchar(5), BloombergTicker nvarchar(5), SecurityName nvarchar(255), Cfi nvarchar(6), IssuerIdentifier nvarchar(255), SecurityCurrency nvarchar(10), Epoch datetime, BidPrice decimal(18, 3), AskPrice decimal(18, 3), MarketPrice decimal(18, 3), OpenPrice decimal(18, 3), ClosePrice decimal(18, 3), HighIntradayPrice decimal(18, 3), LowIntradayPrice decimal(18, 3), ListedSecurities bigint, MarketCap decimal(18, 3), VolumeTradedInTick bigint, DailyVolume bigint, SecurityId bigint, INDEX(Epoch));
-
-COMMIT;
-
-UPDATE Migrations SET Complete = 1 WHERE Id = 3;
 
 COMMIT;

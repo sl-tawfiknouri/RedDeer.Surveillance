@@ -33,6 +33,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 Domain.Scheduling.Rules.MarkingTheClose,
                 Versioner.Version(1, 0),
                 "Marking The Close",
+                ruleCtx,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

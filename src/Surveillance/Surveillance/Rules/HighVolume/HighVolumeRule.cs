@@ -31,6 +31,7 @@ namespace Surveillance.Rules.HighVolume
                 Domain.Scheduling.Rules.HighVolume,
                 Versioner.Version(1, 0),
                 "High Volume Rule",
+                opCtx,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

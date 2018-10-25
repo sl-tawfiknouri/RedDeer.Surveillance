@@ -25,7 +25,13 @@ namespace Surveillance.Rules.CancelledOrders
             ICancelledOrderRuleCachedMessageSender cachedMessageSender,
             ISystemProcessOperationRunRuleContext opCtx,
             ILogger<CancelledOrderRule> logger)
-            : base(parameters?.WindowSize ?? TimeSpan.FromMinutes(60), Domain.Scheduling.Rules.CancelledOrders, Versioner.Version(2, 0), "Cancelled Order Rule", logger)
+            : base(
+                parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
+                Domain.Scheduling.Rules.CancelledOrders,
+                Versioner.Version(2, 0),
+                "Cancelled Order Rule",
+                opCtx,
+                logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));

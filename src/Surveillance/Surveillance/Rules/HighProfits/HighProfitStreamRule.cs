@@ -36,6 +36,7 @@ namespace Surveillance.Rules.HighProfits
                 Domain.Scheduling.Rules.HighProfits,
                 Versioner.Version(1, 0),
                 "High Profit Rule",
+                ruleCtx,
                 logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
@@ -154,6 +155,7 @@ namespace Surveillance.Rules.HighProfits
                 absoluteProfits.Currency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {
+                _ruleCtx.EventException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
                 throw new InvalidOperationException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
             }
 

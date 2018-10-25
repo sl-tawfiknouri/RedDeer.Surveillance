@@ -7,6 +7,7 @@ using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents.Interfaces;
 
@@ -34,26 +35,29 @@ namespace Surveillance.Universe
         /// <summary>
         /// Crack the cosmic egg and unscramble your reality
         /// </summary>
-        public async Task<IUniverse> Summon(ScheduledExecution execution)
+        public async Task<IUniverse> Summon(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
             if (execution == null)
             {
                 return new Universe(null, null, null);
             }
 
-            var projectedTrades = await TradeDataFetchAurora(execution);
+            var projectedTrades = await TradeDataFetchAurora(execution, opCtx);
             var exchangeFrames = await MarketEquityDataFetchAurora(execution);
             var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
 
             return new Universe(projectedTrades, exchangeFrames, universe);
         }
 
-        private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetchAurora(ScheduledExecution execution)
+        private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetchAurora(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx)
         {
             var trades =
                 await _auroraTradeRepository.Get(
                     execution.TimeSeriesInitiation.Date,
-                    execution.TimeSeriesTermination.Date);
+                    execution.TimeSeriesTermination.Date,
+                    opCtx);
 
             return trades ?? new List<TradeOrderFrame>();
         }

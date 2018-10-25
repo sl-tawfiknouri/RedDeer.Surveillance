@@ -138,7 +138,7 @@ namespace Surveillance.Scheduler
                 return;
             }
 
-            var universe = await _universeBuilder.Summon(execution);
+            var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
 
             await _ruleSubscriber.SubscribeRules(execution, player, opCtx);

@@ -9,6 +9,8 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Configuration;
+using Surveillance.System.Auditing.Context;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Trade
 {
@@ -16,11 +18,13 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
     public class ReddeerTradeRepositoryTests
     {
         private ILogger<ReddeerTradeRepository> _logger;
+        private ISystemProcessOperationContext _opCtx;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerTradeRepository>>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
         }
 
         [Test]
@@ -59,7 +63,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             await repo.Create(row1);
             await repo.Create(row2);
-            var result = await repo.Get(start, end);
+            var result = await repo.Get(start, end, _opCtx);
 
             Assert.IsTrue(true);
         }

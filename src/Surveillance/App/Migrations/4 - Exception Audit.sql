@@ -7,12 +7,9 @@
 
 START TRANSACTION;
 
-INSERT INTO Migrations VALUES(4, "Exception Audit.sql", now(), 0);
+INSERT INTO Migrations VALUES(4, "Exception Audit.sql", now());
 
 CREATE TABLE Exceptions(Id int auto_increment primary key NOT NULL, Exception text, InnerException text, StackTrace text, SystemProcessId nvarchar(255) NULL, SystemProcessOperationId int NULL, SystemProcessOperationRuleRunId int NULL, SystemProcessOperationDistributeRuleId int NULL);
 
 COMMIT;
 
-UPDATE Migrations SET Complete = 1 WHERE Id = 4;
-
-COMMIT;

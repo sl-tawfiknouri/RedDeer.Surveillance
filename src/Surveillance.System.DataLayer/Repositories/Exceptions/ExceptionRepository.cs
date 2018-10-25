@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.DataLayer.Interfaces;
@@ -11,7 +14,9 @@ namespace Surveillance.System.DataLayer.Repositories.Exceptions
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ExceptionRepository> _logger;
 
-        private const string ExceptionInsertSql = @"INSERT INTO Exceptions(Exception, InnerException, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationruleRunId, SystemProcessOperationDistributeRuleId) VALUES(@ExceptionMessage, @InnerExceptionMessage, @StackTrace, @SystemProcessId, @SystemProcessOperationId, @SystemProcessOperationRuleRunId, @SystemProcessOperationDistributeRuleId)";
+        private const string ExceptionInsertSql = @"INSERT INTO Exceptions(Exception, InnerException, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId) VALUES(@ExceptionMessage, @InnerExceptionMessage, @StackTrace, @SystemProcessId, @SystemProcessOperationId, @SystemProcessOperationRuleRunId, @SystemProcessOperationDistributeRuleId)";
+
+        private const string ExceptionDashboardSql = @"SELECT Id as Id, Exception as ExceptionMessage, InnerException As InnerExceptionMessage, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId FROM Exceptions Limit 30;";
 
         public ExceptionRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -23,7 +28,8 @@ namespace Surveillance.System.DataLayer.Repositories.Exceptions
 
         public void Save(ExceptionDto dto)
         {
-            if (dto == null)
+            if (dto == null
+                || string.IsNullOrWhiteSpace(dto.ExceptionMessage))
             {
                 return;
             }
@@ -48,6 +54,33 @@ namespace Surveillance.System.DataLayer.Repositories.Exceptions
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
+        }
+
+        public async Task<IReadOnlyCollection<ExceptionDto>> GetForDashboard()
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.QueryAsync<ExceptionDto>(ExceptionDashboardSql))
+                {
+                    var result = await conn;
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Exception in the Exception Repository {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new ExceptionDto[0];
         }
     }
 }

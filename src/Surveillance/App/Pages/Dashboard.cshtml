@@ -181,6 +181,34 @@ table {
     </h1>
 }
 
+<h1>Audit Exceptions</h1>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>System Process Id</th>
+        <th>Operation Id</th>
+        <th>Rule Run Id</th>
+        <th>Distribute Id</th>
+        <th>Exception</th>
+        <th>Inner Exception</th>
+        <th>Stack Trace</th>
+    </tr>
+    @foreach (var row in Model.Exceptions)
+    {
+    <tr>
+        <td>@row.Id</td>
+        <td>@row.SystemProcessId</td>
+        <td>@row.SystemProcessOperationId</td>
+        <td>@row.SystemProcessOperationRuleRunId</td>
+        <td>@row.SystemProcessOperationDistributeRuleId</td>
+        <td>@row.ExceptionMessage</td>
+        <td>@row.InnerExceptionMessage</td>
+        <td>@row.StackTrace</td>
+    </tr>
+    }
+
+</table>
+
 <h1>System Processes</h1>
     <table>
         <tr>

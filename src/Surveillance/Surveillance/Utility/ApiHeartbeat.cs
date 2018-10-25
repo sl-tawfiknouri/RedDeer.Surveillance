@@ -50,7 +50,6 @@ namespace Surveillance.Utility
             catch (Exception e)
             {
                 _logger.LogError(e.ToString());
-                _systemProcessContext.EventException(e);
                 return false;
             }
         }

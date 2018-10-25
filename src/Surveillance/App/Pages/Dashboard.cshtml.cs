@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.System.DataLayer.Repositories.Exceptions;
+using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 using Surveillance.Utility.Interfaces;
 
@@ -15,6 +17,7 @@ namespace Surveillance.App.Pages
         private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
         private readonly ISystemProcessOperationRuleRunRepository _systemProcessRuleRunRepository;
         private readonly ISystemProcessOperationDistributeRuleRepository _systemProcessDistributeRepository;
+        private readonly IExceptionRepository _exceptionRepository;
         private readonly IApiHeartbeat _apiHeartbeat;
 
         public DashboardModel(
@@ -22,6 +25,7 @@ namespace Surveillance.App.Pages
             ISystemProcessOperationRuleRunRepository systemProcessRuleRunRepository,
             ISystemProcessOperationRepository systemProcessOperationRepository,
             ISystemProcessOperationDistributeRuleRepository systemProcessDistributeRepository,
+            IExceptionRepository exceptionRepository,
             IApiHeartbeat apiHeartbeat)
         {
             _systemProcessRepository =
@@ -36,6 +40,9 @@ namespace Surveillance.App.Pages
             _systemProcessDistributeRepository =
                 systemProcessDistributeRepository
                 ?? throw new ArgumentNullException(nameof(systemProcessDistributeRepository));
+            _exceptionRepository =
+                exceptionRepository
+                ?? throw new ArgumentNullException(nameof(exceptionRepository));
             _apiHeartbeat =
                 apiHeartbeat
                 ?? throw new ArgumentNullException(nameof(apiHeartbeat));
@@ -43,13 +50,6 @@ namespace Surveillance.App.Pages
 
         public async Task OnGet()
         {
-            // awesome! now I think we have enough to get this ball rolling.
-            // lets go fetch things like uptime etc
-            
-            // ok that's enough cool stuff now we also need the audit logs
-            // and a snap of the AWS queues too
-            
-
             ProcessId = Process.GetCurrentProcess().Id.ToString();
             ProcessPeakWorkingSet = Process.GetCurrentProcess().PeakWorkingSet64.ToString();
             ProcessStartTime = Process.GetCurrentProcess().StartTime.ToString();
@@ -61,6 +61,7 @@ namespace Surveillance.App.Pages
             SystemProcessRuleRun = await _systemProcessRuleRunRepository.GetDashboard();
             SystemProcessDistribute = await _systemProcessDistributeRepository.GetDashboard();
             ApiHeartbeat = await _apiHeartbeat.HeartsBeating();
+            Exceptions = await _exceptionRepository.GetForDashboard();
         }
 
         public string ProcessId { get; set; }
@@ -83,6 +84,6 @@ namespace Surveillance.App.Pages
 
         public IReadOnlyCollection<ISystemProcessOperation> SystemProcessOperation { get; set; }
 
-
+        public IReadOnlyCollection<ExceptionDto> Exceptions { get; set; }
     }
 }

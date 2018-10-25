@@ -181,7 +181,8 @@ namespace Surveillance.Rules.HighProfits
                     .Select(afto => new CurrencyAmount(afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0, afto.OrderCurrency))
                     .ToList();
 
-            var adjustedToCurrencyPurchaseOrders = await _currencyConverter.Convert(purchaseOrders, targetCurrency, UniverseDateTime);
+            var adjustedToCurrencyPurchaseOrders =
+                await _currencyConverter.Convert(purchaseOrders, targetCurrency, UniverseDateTime, _ruleCtx);
 
             return adjustedToCurrencyPurchaseOrders;
         }
@@ -254,7 +255,7 @@ namespace Surveillance.Rules.HighProfits
 
             var virtualRevenue = securityTick.Spread.Price.Value * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
-            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime);
+            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime, _ruleCtx);
 
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
@@ -293,7 +294,7 @@ namespace Surveillance.Rules.HighProfits
                         afto.OrderCurrency))
                 .ToList();
 
-            var conversion = await _currencyConverter.Convert(filledOrders, targetCurrency, UniverseDateTime);
+            var conversion = await _currencyConverter.Convert(filledOrders, targetCurrency, UniverseDateTime, _ruleCtx);
 
             return conversion;
         }
@@ -348,7 +349,7 @@ namespace Surveillance.Rules.HighProfits
 
             var inferredVirtualProfits = mostRecentTrade.ExecutedPrice?.Value * sizeOfVirtualPosition ?? 0;
             var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
-            var convertedCurrencyAmount = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime);
+            var convertedCurrencyAmount = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime, _ruleCtx);
 
             if (realisedRevenue == null
                 && convertedCurrencyAmount == null)

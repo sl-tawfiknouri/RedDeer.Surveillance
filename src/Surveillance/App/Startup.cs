@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
 using Surveillance;
 using Surveillance.Configuration.Interfaces;
@@ -48,6 +49,7 @@ namespace RedDeer.Surveillance.App
                 config.Populate(services);
             });
 
+            container.GetInstance<IScriptRunner>();
 
             return container.GetInstance<IServiceProvider>();
         }

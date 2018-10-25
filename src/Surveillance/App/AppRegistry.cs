@@ -1,6 +1,7 @@
 ﻿using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using RedDeer.Surveillance.App.Interfaces;
+using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
 
 namespace RedDeer.Surveillance.App
@@ -14,6 +15,7 @@ namespace RedDeer.Surveillance.App
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
             
             For<IStartUpTaskRunner>().Use<MediatorBootstrapper>();
+            For<IScriptRunner>().Use<ScriptRunner.ScriptRunner>();
         }
     }
 }

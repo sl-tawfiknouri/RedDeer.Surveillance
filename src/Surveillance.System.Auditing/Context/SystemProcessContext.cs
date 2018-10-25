@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.Auditing.Factories.Interfaces;
+using Surveillance.System.Auditing.Logging.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
@@ -10,18 +11,21 @@ namespace Surveillance.System.Auditing.Context
 {
     public class SystemProcessContext : ISystemProcessContext
     {
+        private readonly IOperationLogging _operationLogging;
         private readonly ISystemProcessRepository _systemProcessRepository;
         private readonly ISystemProcessOperationContextFactory _factory;
         private ISystemProcess _systemProcess;
 
         public SystemProcessContext(
             ISystemProcessRepository systemProcessRepository,
-            ISystemProcessOperationContextFactory factory)
+            ISystemProcessOperationContextFactory factory,
+            IOperationLogging operationLogging)
         {
             _systemProcessRepository =
                 systemProcessRepository
                 ?? throw new ArgumentNullException(nameof(systemProcessRepository));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
 
             var systemProcess = new SystemProcess
             {
@@ -59,6 +63,11 @@ namespace Surveillance.System.Auditing.Context
             ctx.StartEvent(op);
 
             return ctx;
+        }
+
+        public void EventException(Exception e)
+        {
+            _operationLogging.Log(e);
         }
 
         public void UpdateHeartbeat()

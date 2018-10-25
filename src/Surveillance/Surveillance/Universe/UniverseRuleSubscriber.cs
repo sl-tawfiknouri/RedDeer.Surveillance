@@ -126,6 +126,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
             }
         }
 
@@ -178,6 +179,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
             }
         }
 
@@ -237,6 +239,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
             }
         }
 
@@ -289,6 +292,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
             }
         }
 
@@ -342,6 +346,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
             }
         }
 
@@ -395,6 +400,7 @@ namespace Surveillance.Universe
             else
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
             }
         }
     }

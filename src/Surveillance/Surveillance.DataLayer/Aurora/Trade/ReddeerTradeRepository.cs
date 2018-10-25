@@ -195,7 +195,7 @@ VALUES(
             catch (Exception e)
             {
                 _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message}");
-                opCtx.EventError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message}");
+                opCtx.EventError(e);
             }
             finally
             {

@@ -27,5 +27,6 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         void StartEvent(ISystemProcessOperation processOperation);
         ISystemProcessOperationContext UpdateEventState(OperationState state);
         void EventError(string message);
+        void EventError(Exception e);
     }
 }

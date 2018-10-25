@@ -43,7 +43,7 @@ namespace Surveillance.Universe
             }
 
             var projectedTrades = await TradeDataFetchAurora(execution, opCtx);
-            var exchangeFrames = await MarketEquityDataFetchAurora(execution);
+            var exchangeFrames = await MarketEquityDataFetchAurora(execution, opCtx);
             var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
 
             return new Universe(projectedTrades, exchangeFrames, universe);
@@ -62,12 +62,15 @@ namespace Surveillance.Universe
             return trades ?? new List<TradeOrderFrame>();
         }
 
-        private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetchAurora(ScheduledExecution execution)
+        private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetchAurora(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx)
         {
             var equities =
                 await _auroraMarketRepository.Get(
                     execution.TimeSeriesInitiation.Date,
-                    execution.TimeSeriesTermination.Date);
+                    execution.TimeSeriesTermination.Date,
+                    opCtx);
 
             return equities ?? new List<ExchangeFrame>();
         }

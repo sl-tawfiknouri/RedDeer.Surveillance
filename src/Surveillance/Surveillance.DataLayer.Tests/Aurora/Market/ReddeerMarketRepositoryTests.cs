@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Configuration;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
 {
@@ -17,11 +18,13 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
     public class ReddeerMarketRepositoryTests
     {
         private ILogger<ReddeerMarketRepository> _logger;
+        private ISystemProcessOperationContext _opCtx;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerMarketRepository>>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
         }
 
         [Test]
@@ -56,7 +59,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             await repo.Create(Frame());
             await repo.Create(Frame());
 
-            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow);
+            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
 
             Assert.IsTrue(true);
         }

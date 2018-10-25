@@ -185,7 +185,7 @@ namespace Surveillance.Tests.Universe
             };
 
             A
-                .CallTo(() => _auroraMarketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
+                .CallTo(() => _auroraMarketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored, _opCtx))
                 .Returns(exchangeFrames);
 
             var result = await builder.Summon(schedule, _opCtx);

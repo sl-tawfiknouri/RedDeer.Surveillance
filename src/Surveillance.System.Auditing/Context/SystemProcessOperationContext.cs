@@ -133,6 +133,11 @@ namespace Surveillance.System.Auditing.Context
             _operationLogging.Log(new Exception(message));
         }
 
+        public void EventError(Exception e)
+        {
+            _operationLogging.Log(e);
+        }
+
         public ISystemProcessContext EndEventWithError(string message)
         {
             if (_hasEnded)

@@ -107,7 +107,7 @@ namespace Surveillance.Tests.Scheduler
                 TimeSeriesTermination = DateTime.UtcNow
             };
 
-            A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored)).Returns(_universe);
+            A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored, A<ISystemProcessOperationContext>.Ignored)).Returns(_universe);
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
 
            await scheduler.Execute(schedule, _opCtx);
@@ -138,7 +138,7 @@ namespace Surveillance.Tests.Scheduler
                 TimeSeriesTermination = DateTime.UtcNow
             };
 
-            A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored)).Returns(_universe);
+            A.CallTo(() => _universeBuilder.Summon(A<ScheduledExecution>.Ignored, A<ISystemProcessOperationContext>.Ignored)).Returns(_universe);
             A.CallTo(() => _universePlayerFactory.Build()).Returns(_universePlayer);
 
             await scheduler.Execute(schedule, _opCtx);

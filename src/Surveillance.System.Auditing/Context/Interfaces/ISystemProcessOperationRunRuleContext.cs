@@ -1,4 +1,5 @@
-﻿using Surveillance.System.DataLayer.Processes.Interfaces;
+﻿using System;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.Auditing.Context.Interfaces
 {
@@ -7,5 +8,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         void StartEvent(ISystemProcessOperationRuleRun ruleRun);
         ISystemProcessOperationRunRuleContext UpdateAlertEvent(int alerts);
         ISystemProcessOperationContext EndEvent();
+        void EventException(string message);
+        void EventException(Exception e);
     }
 }

@@ -31,6 +31,7 @@ namespace Surveillance.Rules.HighVolume
                 Domain.Scheduling.Rules.HighVolume,
                 Versioner.Version(1, 0),
                 "High Volume Rule",
+                opCtx,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -87,7 +88,7 @@ namespace Surveillance.Rules.HighVolume
                     windowBreach,
                     tradedVolume);
 
-            _messageSender.Send(breach);
+            _messageSender.Send(breach, _ruleCtx);
             _alertCount += 1;
         }
 
@@ -203,7 +204,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
-            _messageSender.Flush();
+            _messageSender.Flush(_ruleCtx);
 
             if (_hadMissingData)
             {

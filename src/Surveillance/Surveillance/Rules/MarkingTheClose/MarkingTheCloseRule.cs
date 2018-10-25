@@ -33,6 +33,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 Domain.Scheduling.Rules.MarkingTheClose,
                 Versioner.Version(1, 0),
                 "Marking The Close",
+                ruleCtx,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -110,7 +111,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 windowVolumeBreach ?? new VolumeBreach());
 
             _alertCount += 1;
-            _messageSender.Send(breach);
+            _messageSender.Send(breach, _ruleCtx);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

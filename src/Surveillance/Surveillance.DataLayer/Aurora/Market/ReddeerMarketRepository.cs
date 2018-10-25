@@ -9,6 +9,7 @@ using Domain.Market;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Market
 {
@@ -145,7 +146,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task<IReadOnlyCollection<ExchangeFrame>> Get(DateTime start, DateTime end)
+        public async Task<IReadOnlyCollection<ExchangeFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date;
@@ -200,6 +201,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             catch (Exception e)
             {
                 _logger.LogError($"ReddeerMarketRepository Get Method For {start} {end} {e.Message}");
+                opCtx.EventError(e);
             }
             finally
             {

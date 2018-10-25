@@ -10,6 +10,7 @@ using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Tests.Helpers;
@@ -23,6 +24,7 @@ namespace Surveillance.Tests.Universe
         private IReddeerTradeRepository _auroraTradeRepository;
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
+        private ISystemProcessOperationContext _opCtx;
 
         [SetUp]
         public void Setup()
@@ -30,6 +32,7 @@ namespace Surveillance.Tests.Universe
             _auroraTradeRepository = A.Fake<IReddeerTradeRepository>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
         }
 
         [Test]
@@ -41,7 +44,7 @@ namespace Surveillance.Tests.Universe
                     _auroraMarketRepository,
                     _marketManager);
 
-            var result = builder.Summon(null);
+            var result = builder.Summon(null, _opCtx);
 
             Assert.IsNotNull(result);
         }
@@ -64,7 +67,7 @@ namespace Surveillance.Tests.Universe
                 TimeSeriesTermination = timeSeriesTermination
             };
 
-            var result = await builder.Summon(schedule);
+            var result = await builder.Summon(schedule, _opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
@@ -91,10 +94,10 @@ namespace Surveillance.Tests.Universe
             var frame = ((TradeOrderFrame)null).Random();
 
             A
-                .CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination))
+                .CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
                 .Returns(new[] {frame});
 
-            var result = await builder.Summon(schedule);
+            var result = await builder.Summon(schedule, _opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Trades.Count, 1);
@@ -103,7 +106,7 @@ namespace Surveillance.Tests.Universe
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
 
-            A.CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -140,7 +143,7 @@ namespace Surveillance.Tests.Universe
                 .CallTo(() => _marketManager.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
                 .Returns(marketOpenClose);
 
-            var result = await builder.Summon(schedule);
+            var result = await builder.Summon(schedule, _opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
@@ -182,10 +185,10 @@ namespace Surveillance.Tests.Universe
             };
 
             A
-                .CallTo(() => _auroraMarketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
+                .CallTo(() => _auroraMarketRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored, _opCtx))
                 .Returns(exchangeFrames);
 
-            var result = await builder.Summon(schedule);
+            var result = await builder.Summon(schedule, _opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);

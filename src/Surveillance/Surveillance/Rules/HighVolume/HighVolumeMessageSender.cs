@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighVolume
 {
@@ -20,7 +21,7 @@ namespace Surveillance.Rules.HighVolume
                 caseMessageSender)
         { }
 
-        public void Send(IHighVolumeRuleBreach ruleBreach)
+        public void Send(IHighVolumeRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (ruleBreach == null)
             {
@@ -28,7 +29,7 @@ namespace Surveillance.Rules.HighVolume
             }
 
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description);
+            Send(ruleBreach, description, ruleCtx);
         }
 
         private string BuildDescription(IHighVolumeRuleBreach ruleBreach)

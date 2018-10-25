@@ -32,6 +32,7 @@ namespace Surveillance.Rules.Layering
                 Domain.Scheduling.Rules.Layering,
                 Versioner.Version(1, 0),
                 "Layering Rule",
+                opCtx,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -105,6 +106,7 @@ namespace Surveillance.Rules.Layering
                     break;
                 default:
                     _logger.LogError("Layering rule not considering an out of range order direction");
+                    _ruleCtx.EventException("Layering rule not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
@@ -383,6 +385,7 @@ namespace Surveillance.Rules.Layering
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Security.Name} moved from ({endTick.Spread.Price.Currency}) {endTick.Spread.Price.Value} to ({startTick.Spread.Price.Currency}) {startTick.Spread.Price.Value} for a net change of {startTick.Spread.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:
                     _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position} (Arg Out of Range)");
+                    _ruleCtx.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.Position} (Arg Out of Range)");
                     break;
             }
 
@@ -470,7 +473,7 @@ namespace Surveillance.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
-            _messageSender.Flush();
+            _messageSender.Flush(_ruleCtx);
 
             if (_hadMissingData)
             {

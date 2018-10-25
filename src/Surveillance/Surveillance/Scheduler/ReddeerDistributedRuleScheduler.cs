@@ -77,7 +77,7 @@ namespace Surveillance.Scheduler
             if (execution == null)
             {
                 _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                opCtx.EndEventWithError();
+                opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
                 return;
             }
 
@@ -85,20 +85,23 @@ namespace Surveillance.Scheduler
                 || !execution.Rules.Any())
             {
                 _logger.LogError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                opCtx.EndEventWithError();
+                opCtx.EndEventWithError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
                 return;
             }
 
             var parameters = await _ruleParameterApiRepository.Get();
             var ruleCtx = BuildRuleCtx(opCtx, execution);
-            await ScheduleRule(execution, parameters);
+            await ScheduleRule(execution, parameters, ruleCtx);
 
             ruleCtx
                 .EndEvent()
                 .EndEvent();
         }
 
-        private async Task ScheduleRule(ScheduledExecution execution, RuleParameterDto parameters)
+        private async Task ScheduleRule(
+            ScheduledExecution execution,
+            RuleParameterDto parameters,
+            ISystemProcessOperationDistributeRuleContext ruleCtx)
         {
             foreach (var rule in execution.Rules.Where(ru => ru != null))
             {
@@ -106,30 +109,31 @@ namespace Surveillance.Scheduler
                 {
                     case Domain.Scheduling.Rules.CancelledOrders:
                         var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
                         break;
                     case Domain.Scheduling.Rules.HighProfits:
                         var highProfitRuleRuns = parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, highProfitRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, highProfitRuleRuns, rule, ruleCtx);
                         break;
                     case Domain.Scheduling.Rules.HighVolume:
                         var highVolumeRuleRuns = parameters.HighVolumes?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleCtx);
                         break;
                     case Domain.Scheduling.Rules.Layering:
                         var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, layeringRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
                     case Domain.Scheduling.Rules.MarkingTheClose:
                         var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
                         break;
                     case Domain.Scheduling.Rules.Spoofing:
                         var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, spoofingRuleRuns, rule);
+                        await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
                     default:
                         _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        ruleCtx.EventError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         break;
                 }
             }
@@ -138,7 +142,8 @@ namespace Surveillance.Scheduler
         private async Task ScheduleRuleRuns(
             ScheduledExecution execution, 
             IReadOnlyCollection<IIdentifiableRule> identifiableRules,
-            RuleIdentifier rule)
+            RuleIdentifier rule,
+            ISystemProcessOperationDistributeRuleContext ruleCtx)
         {
             if (identifiableRules == null
                 || !identifiableRules.Any())
@@ -167,6 +172,8 @@ namespace Surveillance.Scheduler
                     if (identifiableRule == null)
                     {
                         _logger.LogError($"Reddeer Distributed Rule Scheduler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
+
+                        ruleCtx.EventError($"Reddeer Distributed Rule Scheduler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
 
                         continue;
                     }

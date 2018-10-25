@@ -7,8 +7,9 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Currency.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-// ReSharper disable MemberCanBeMadeStatic.Local
+using Surveillance.System.Auditing.Context.Interfaces;
 
+// ReSharper disable MemberCanBeMadeStatic.Local
 namespace Surveillance.Currency
 {
     public class CurrencyConverter : ICurrencyConverter
@@ -30,7 +31,8 @@ namespace Surveillance.Currency
         public async Task<CurrencyAmount?> Convert(
             IReadOnlyCollection<CurrencyAmount> currencyAmounts,
             Domain.Finance.Currency targetCurrency,
-            DateTime dayOfConversion)
+            DateTime dayOfConversion,
+            ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (currencyAmounts == null
                 || !currencyAmounts.Any())
@@ -43,19 +45,20 @@ namespace Surveillance.Currency
                 return currencyAmounts.Aggregate((i,o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
             }
 
-            var rates = await ExchangeRates(dayOfConversion);
+            var rates = await ExchangeRates(dayOfConversion, ruleCtx);
 
             if (rates == null
                 || !rates.Any())
             {
                 _logger.LogError($"Currency Converter unable to change rates to {targetCurrency} on {dayOfConversion.ToShortDateString()}");
+                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency} on {dayOfConversion.ToShortDateString()}");
 
                 return null;
             }
 
             var convertedToTargetCurrency =
                 currencyAmounts
-                    .Select(currency => Convert(rates, currency, targetCurrency, dayOfConversion))
+                    .Select(currency => Convert(rates, currency, targetCurrency, dayOfConversion, ruleCtx))
                     .ToList();
 
             var totalInConvertedCurrency = convertedToTargetCurrency
@@ -70,7 +73,8 @@ namespace Surveillance.Currency
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
             Domain.Finance.Currency targetCurrency,
-            DateTime dayOfConversion)
+            DateTime dayOfConversion,
+            ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (Equals(initial.Currency, targetCurrency))
             {
@@ -94,11 +98,12 @@ namespace Surveillance.Currency
             }
 
             // implicit exchange rate i.e. we want to do EUR to GBP but we have EUR / USD and GBP / USD
-            var indirectConversion = TryIndirectConversion(exchangeRates, initial, targetCurrency, dayOfConversion);
+            var indirectConversion = TryIndirectConversion(exchangeRates, initial, targetCurrency, dayOfConversion, ruleCtx);
 
             if (indirectConversion == null)
             {
                 _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
             }
 
             return indirectConversion;
@@ -152,7 +157,8 @@ namespace Surveillance.Currency
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
             Domain.Finance.Currency targetCurrency,
-            DateTime dayOfConversion)
+            DateTime dayOfConversion,
+            ISystemProcessOperationRunRuleContext ruleCtx)
         {
             var initialExchangeRate = GetExchangeRates(exchangeRates, initial.Currency);
             var targetExchangeRate = GetExchangeRates(exchangeRates, targetCurrency);
@@ -165,6 +171,8 @@ namespace Surveillance.Currency
             if (sharedVariableRateInitial == null)
             {
                 _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }
@@ -180,6 +188,8 @@ namespace Surveillance.Currency
             if (sharedVariableRateTarget == null)
             {
                 _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }
@@ -216,7 +226,9 @@ namespace Surveillance.Currency
                 .ToList();
         }
 
-        private async Task<IReadOnlyCollection<ExchangeRateDto>> ExchangeRates(DateTime dayOfRate)
+        private async Task<IReadOnlyCollection<ExchangeRateDto>> ExchangeRates(
+            DateTime dayOfRate,
+            ISystemProcessOperationRunRuleContext ruleCtx)
         {
             dayOfRate = dayOfRate.Date;
             var exchRate = await _exchangeRateApiRepository.Get(dayOfRate, dayOfRate);
@@ -234,6 +246,7 @@ namespace Surveillance.Currency
             if (offset > 14)
             {
                 _logger.LogError($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate}.");
+                ruleCtx.EventException($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate}.");
 
                 return new ExchangeRateDto[0];
             }
@@ -241,6 +254,7 @@ namespace Surveillance.Currency
             if (!exchRate.TryGetValue(cycleDate, out var rates))
             {
                 _logger.LogError($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
+                ruleCtx.EventException($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
 
                 return new ExchangeRateDto[0];
             }

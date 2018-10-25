@@ -1,7 +1,9 @@
-﻿namespace Surveillance.Rules.Layering.Interfaces
+﻿using Surveillance.System.Auditing.Context.Interfaces;
+
+namespace Surveillance.Rules.Layering.Interfaces
 {
     public interface ILayeringAlertSender
     {
-        void Send(ILayeringRuleBreach breach);
+        void Send(ILayeringRuleBreach breach, ISystemProcessOperationRunRuleContext opCtx);
     }
 }

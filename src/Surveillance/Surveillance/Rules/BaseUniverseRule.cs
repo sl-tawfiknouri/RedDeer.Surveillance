@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe;
@@ -26,7 +27,8 @@ namespace Surveillance.Rules
         protected readonly TimeSpan WindowSize;
         protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingHistory;
         protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingInitialHistory;
-        
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
@@ -43,6 +45,7 @@ namespace Surveillance.Rules
             Domain.Scheduling.Rules rules,
             string version,
             string name,
+            ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger logger)
         {
             WindowSize = windowSize;
@@ -53,6 +56,7 @@ namespace Surveillance.Rules
             MarketHistory = new ConcurrentDictionary<Market.MarketId, IMarketHistoryStack>();
             LatestExchangeFrameBook = new ConcurrentDictionary<Market.MarketId, ExchangeFrame>();
 
+            _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -101,6 +105,7 @@ namespace Surveillance.Rules
                         break;
                     case UniverseStateEvent.Unknown:
                         _logger.LogWarning($"Universe rule {_name} received an unknown event");
+                        _ruleCtx.EventException($"Universe rule {_name} received an unknown event");
                         break;
                 }
             }

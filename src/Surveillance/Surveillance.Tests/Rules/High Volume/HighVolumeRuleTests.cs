@@ -126,7 +126,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             highVolumeRule.OnNext(trade);
             highVolumeRule.OnNext(Eschaton());
 
-            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored, A.Fake<ISystemProcessOperationRunRuleContext>())).MustNotHaveHappened();
             A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
         }
 
@@ -164,7 +164,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             highVolumeRule.OnNext(trade);
             highVolumeRule.OnNext(Eschaton());
 
-            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
         }
 
@@ -202,7 +202,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             highVolumeRule.OnNext(trade);
             highVolumeRule.OnNext(Eschaton());
 
-            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _messageSender.Send(A<IHighVolumeRuleBreach>.Ignored, A<ISystemProcessOperationRunRuleContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
         }
 

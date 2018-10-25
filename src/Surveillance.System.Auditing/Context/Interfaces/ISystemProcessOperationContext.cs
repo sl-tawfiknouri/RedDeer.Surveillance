@@ -22,9 +22,11 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             DateTime ruleScheduleEnd);
 
         ISystemProcessContext EndEvent();
-        ISystemProcessContext EndEventWithError();
+        ISystemProcessContext EndEventWithError(string message);
         ISystemProcessContext EndEventWithMissingDataError();
         void StartEvent(ISystemProcessOperation processOperation);
         ISystemProcessOperationContext UpdateEventState(OperationState state);
+        void EventError(string message);
+        void EventError(Exception e);
     }
 }

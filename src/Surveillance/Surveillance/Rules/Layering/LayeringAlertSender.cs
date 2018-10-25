@@ -2,6 +2,7 @@
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.Layering
 {
@@ -14,7 +15,7 @@ namespace Surveillance.Rules.Layering
             : base(dtoMapper, "Automated Layering Rule Breach Detected", "Layering Message Sender", logger, caseMessageSender)
         { }
 
-        public void Send(ILayeringRuleBreach breach)
+        public void Send(ILayeringRuleBreach breach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (breach == null)
             {
@@ -22,7 +23,7 @@ namespace Surveillance.Rules.Layering
             }
 
             var description = BuildDescription(breach);
-            Send(breach, description);
+            Send(breach, description, opCtx);
         }
 
         private string BuildDescription(ILayeringRuleBreach breach)

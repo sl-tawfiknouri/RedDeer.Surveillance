@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Utility.Interfaces;
 
 namespace Surveillance.Utility
@@ -14,6 +15,7 @@ namespace Surveillance.Utility
     /// </summary>
     public class ApiHeartbeat : IApiHeartbeat
     {
+        private readonly ISystemProcessContext _systemProcessContext;
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
         private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketRateApi;
         private readonly IRuleParameterApiRepository _rulesApi;
@@ -23,11 +25,13 @@ namespace Surveillance.Utility
             IExchangeRateApiCachingDecoratorRepository exchangeRateApi,
             IMarketOpenCloseApiCachingDecoratorRepository marketRateApi,
             IRuleParameterApiRepository rulesApi,
+            ISystemProcessContext processCtx,
             ILogger<ApiHeartbeat> logger)
         {
             _exchangeRateApi = exchangeRateApi ?? throw new ArgumentNullException(nameof(exchangeRateApi));
             _marketRateApi = marketRateApi ?? throw new ArgumentNullException(nameof(marketRateApi));
             _rulesApi = rulesApi ?? throw new ArgumentNullException(nameof(rulesApi));
+            _systemProcessContext = processCtx ?? throw new ArgumentNullException(nameof(processCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

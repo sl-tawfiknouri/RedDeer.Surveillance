@@ -31,6 +31,7 @@ namespace Surveillance.Rules.Spoofing
                   Domain.Scheduling.Rules.Spoofing,
                   Versioner.Version(2,0),
                   "Spoofing Rule",
+                  ruleCtx,
                   logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -149,6 +150,7 @@ namespace Surveillance.Rules.Spoofing
                     break;
                 default:
                     _logger.LogError("Spoofing rule not considering an out of range order direction");
+                    _ruleCtx.EventException("Spoofing rule not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
@@ -169,7 +171,7 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade);
 
             _alertCount += 1;
-            _spoofingRuleMessageSender.Send(ruleBreach);
+            _spoofingRuleMessageSender.Send(ruleBreach, _ruleCtx);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

@@ -8,12 +8,14 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Currency;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Tests.Currency
 {
     [TestFixture]
     public class CurrencyConverterTests
     {
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IExchangeRateApiCachingDecoratorRepository _apiRepository;
         private ILogger<CurrencyConverter> _logger;
         private Domain.Finance.Currency _currency;
@@ -22,6 +24,7 @@ namespace Surveillance.Tests.Currency
         [SetUp]
         public void Setup()
         {
+            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _apiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
             _logger = A.Fake<ILogger<CurrencyConverter>>();
             _currency = new Domain.Finance.Currency("USD");
@@ -47,7 +50,7 @@ namespace Surveillance.Tests.Currency
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
 
-            var result = await converter.Convert(null, _currency, _conversionTime);
+            var result = await converter.Convert(null, _currency, _conversionTime, _ruleCtx);
 
             Assert.IsNull(result);
         }
@@ -58,7 +61,7 @@ namespace Surveillance.Tests.Currency
             var converter = new CurrencyConverter(_apiRepository, _logger);
             var currencyAmounts = new List<CurrencyAmount>();
 
-            var result = await converter.Convert(currencyAmounts, _currency, _conversionTime);
+            var result = await converter.Convert(currencyAmounts, _currency, _conversionTime, _ruleCtx);
             
             Assert.IsNull(result);
         }
@@ -73,7 +76,7 @@ namespace Surveillance.Tests.Currency
             };
             var targetCurrency = new Domain.Finance.Currency("CNY");
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.Now);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.Now, _ruleCtx);
 
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Value, "CNY");
@@ -92,7 +95,7 @@ namespace Surveillance.Tests.Currency
             var targetCurrency = new Domain.Finance.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNull(conversion);
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappened();
@@ -113,7 +116,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>());
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNull(conversion);
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
@@ -146,7 +149,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -191,7 +194,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 20);
@@ -228,7 +231,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -264,7 +267,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -311,7 +314,7 @@ namespace Surveillance.Tests.Currency
                 .CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, expected);

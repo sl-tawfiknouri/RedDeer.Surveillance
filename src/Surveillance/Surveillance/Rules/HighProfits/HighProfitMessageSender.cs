@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits
 {
@@ -15,10 +16,10 @@ namespace Surveillance.Rules.HighProfits
             : base(dtoMapper, "Automated High Profit Rule Breach Detected", "High Profit Message Sender", logger, caseMessageSender)
         { }
 
-        public void Send(IHighProfitRuleBreach ruleBreach)
+        public void Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description);
+            Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(IHighProfitRuleBreach ruleBreach)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighProfits.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.HighProfits
@@ -71,7 +72,7 @@ namespace Surveillance.Rules.HighProfits
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush()
+        public int Flush(ISystemProcessOperationRunRuleContext ruleCtx)
         {
             lock (_lock)
             {
@@ -79,7 +80,7 @@ namespace Surveillance.Rules.HighProfits
 
                 foreach (var msg in _messages)
                 {
-                   _messageSender.Send(msg);
+                   _messageSender.Send(msg, ruleCtx);
                 }
 
                 var count = _messages.Count;

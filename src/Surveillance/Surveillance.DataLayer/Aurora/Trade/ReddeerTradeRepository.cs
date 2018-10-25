@@ -9,6 +9,7 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade
 {
@@ -167,7 +168,7 @@ VALUES(
             }
         }
 
-        public async Task<IReadOnlyCollection<TradeOrderFrame>> Get(DateTime start, DateTime end)
+        public async Task<IReadOnlyCollection<TradeOrderFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date.AddDays(1).AddMilliseconds(-1);
@@ -194,6 +195,7 @@ VALUES(
             catch (Exception e)
             {
                 _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message}");
+                opCtx.EventError(e);
             }
             finally
             {

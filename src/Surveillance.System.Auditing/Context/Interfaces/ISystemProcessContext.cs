@@ -1,4 +1,5 @@
-﻿using Surveillance.System.DataLayer.Processes.Interfaces;
+﻿using System;
+using Surveillance.System.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.System.Auditing.Context.Interfaces
 {
@@ -8,5 +9,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         ISystemProcessOperationContext CreateAndStartOperationContext();
         void StartEvent(ISystemProcess systemProcess);
         void UpdateHeartbeat();
+        ISystemProcess SystemProcess();
+        void EventException(Exception e);
     }
 }

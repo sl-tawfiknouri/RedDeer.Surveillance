@@ -86,6 +86,7 @@ namespace Surveillance.Scheduler
                 _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
                 // set status here
                 opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
+                opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
             }
 
             int servicesDownMinutes = 0;
@@ -101,6 +102,7 @@ namespace Surveillance.Scheduler
                 if (servicesDownMinutes == 60)
                 {
                     _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                    opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
                 }
             }
 
@@ -115,7 +117,7 @@ namespace Surveillance.Scheduler
             if (execution == null)
             {
                 _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                opCtx.EndEventWithError();
+                opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
                 return;
             }
 
@@ -132,11 +134,11 @@ namespace Surveillance.Scheduler
                 || !execution.Rules.Any())
             {
                 _logger.LogError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
-                opCtx.EndEventWithError();
+                opCtx.EndEventWithError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
                 return;
             }
 
-            var universe = await _universeBuilder.Summon(execution);
+            var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
 
             await _ruleSubscriber.SubscribeRules(execution, player, opCtx);

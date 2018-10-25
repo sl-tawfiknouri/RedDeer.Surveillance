@@ -123,14 +123,27 @@ namespace Surveillance.System.Auditing.Context
             return _systemProcessContext;
         }
 
+        public void EventError(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+
+            _operationLogging.Log(new Exception(message));
+        }
+
         public ISystemProcessContext EndEventWithError(string message)
         {
             if (_hasEnded)
             {
                 return _systemProcessContext;
             }
-            
-            _operationLogging.Log(new Exception(message));
+
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                _operationLogging.Log(new Exception(message));
+            }
 
             _hasEnded = true;
             _systemProcessOperation.OperationEnd = DateTime.UtcNow;

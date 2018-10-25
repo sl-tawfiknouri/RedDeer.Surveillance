@@ -37,6 +37,11 @@ namespace Surveillance.System.Auditing.Context
 
         public void EventError(string message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+
             _operationLogging.Log(new Exception(message));
         }
 

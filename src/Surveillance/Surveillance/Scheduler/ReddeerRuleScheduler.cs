@@ -86,6 +86,7 @@ namespace Surveillance.Scheduler
                 _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
                 // set status here
                 opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
+                opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
             }
 
             int servicesDownMinutes = 0;
@@ -101,6 +102,7 @@ namespace Surveillance.Scheduler
                 if (servicesDownMinutes == 60)
                 {
                     _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                    opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
                 }
             }
 

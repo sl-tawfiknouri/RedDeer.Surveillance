@@ -111,7 +111,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 windowVolumeBreach ?? new VolumeBreach());
 
             _alertCount += 1;
-            _messageSender.Send(breach);
+            _messageSender.Send(breach, _ruleCtx);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

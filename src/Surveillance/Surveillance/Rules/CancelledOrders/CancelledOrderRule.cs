@@ -152,7 +152,7 @@ namespace Surveillance.Rules.CancelledOrders
         {
             _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
 
-            var alerts = _cachedMessageSender.Flush();
+            var alerts = _cachedMessageSender.Flush(_opCtx);
             _opCtx.UpdateAlertEvent(alerts);
             _opCtx?.EndEvent();
         }

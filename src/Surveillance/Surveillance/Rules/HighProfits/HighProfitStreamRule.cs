@@ -394,7 +394,7 @@ namespace Surveillance.Rules.HighProfits
                 RunRuleForAllTradingHistories();
             }
 
-            var alerts = _sender.Flush();
+            var alerts = _sender.Flush(_ruleCtx);
             _ruleCtx.UpdateAlertEvent(alerts);
             _ruleCtx?.EndEvent();
         }

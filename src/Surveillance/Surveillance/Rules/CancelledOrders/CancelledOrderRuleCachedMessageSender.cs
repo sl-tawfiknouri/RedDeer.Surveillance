@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.CancelledOrders.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.CancelledOrders
 {
@@ -45,7 +46,7 @@ namespace Surveillance.Rules.CancelledOrders
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush()
+        public int Flush(ISystemProcessOperationRunRuleContext opCtx)
         {
             lock (_lock)
             {
@@ -53,7 +54,7 @@ namespace Surveillance.Rules.CancelledOrders
 
                 foreach (var msg in _messages)
                 {
-                    _cachedMessageSender.Send(msg);
+                    _cachedMessageSender.Send(msg, opCtx);
                 }
 
                 var count = _messages.Count;

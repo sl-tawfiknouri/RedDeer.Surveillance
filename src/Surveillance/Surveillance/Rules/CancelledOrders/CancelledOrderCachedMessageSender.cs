@@ -5,6 +5,7 @@ using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.CancelledOrders
@@ -23,7 +24,7 @@ namespace Surveillance.Rules.CancelledOrders
                 caseMessageSender)
         { }
 
-        public void Send(ICancelledOrderRuleBreach ruleBreach)
+        public void Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (ruleBreach?.Trades == null
                 || !ruleBreach.Trades.Get().Any())
@@ -32,7 +33,7 @@ namespace Surveillance.Rules.CancelledOrders
             }
 
             var description = BuildDescription(ruleBreach.Parameters, ruleBreach, ruleBreach.Trades.Get().FirstOrDefault());
-            Send(ruleBreach, description);
+            Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(

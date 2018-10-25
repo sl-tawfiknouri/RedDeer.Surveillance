@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Layering.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.Layering
 {
@@ -45,7 +46,7 @@ namespace Surveillance.Rules.Layering
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush()
+        public int Flush(ISystemProcessOperationRunRuleContext ruleCtx)
         {
             lock (_lock)
             {
@@ -53,7 +54,7 @@ namespace Surveillance.Rules.Layering
 
                 foreach (var msg in _messages)
                 {
-                    _messageSender.Send(msg);
+                    _messageSender.Send(msg, ruleCtx);
                 }
 
                 var count = _messages.Count;

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.Spoofing
@@ -22,7 +23,7 @@ namespace Surveillance.Rules.Spoofing
                 caseMessageSender)
         { }
 
-        public void Send(ISpoofingRuleBreach ruleBreach)
+        public void Send(ISpoofingRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (ruleBreach == null)
             {
@@ -30,7 +31,7 @@ namespace Surveillance.Rules.Spoofing
             }
 
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description);
+            Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(ISpoofingRuleBreach ruleBreach)

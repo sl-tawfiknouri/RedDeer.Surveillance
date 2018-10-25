@@ -473,7 +473,7 @@ namespace Surveillance.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
             _ruleCtx.UpdateAlertEvent(_alertCount);
-            _messageSender.Flush();
+            _messageSender.Flush(_ruleCtx);
 
             if (_hadMissingData)
             {

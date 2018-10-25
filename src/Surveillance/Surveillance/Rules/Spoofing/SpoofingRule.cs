@@ -171,7 +171,7 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade);
 
             _alertCount += 1;
-            _spoofingRuleMessageSender.Send(ruleBreach);
+            _spoofingRuleMessageSender.Send(ruleBreach, _ruleCtx);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

@@ -1,8 +1,10 @@
-﻿namespace Surveillance.Rules.Layering.Interfaces
+﻿using Surveillance.System.Auditing.Context.Interfaces;
+
+namespace Surveillance.Rules.Layering.Interfaces
 {
     public interface ILayeringCachedMessageSender
     {
-        int Flush();
+        int Flush(ISystemProcessOperationRunRuleContext ruleCtx);
         void Send(ILayeringRuleBreach ruleBreach);
     }
 }

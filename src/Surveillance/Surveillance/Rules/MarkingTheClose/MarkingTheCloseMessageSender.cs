@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.MarkingTheClose
 {
@@ -20,7 +21,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 caseMessageSender)
         { }
 
-        public void Send(IMarkingTheCloseBreach breach)
+        public void Send(IMarkingTheCloseBreach breach, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (breach == null)
             {
@@ -28,7 +29,7 @@ namespace Surveillance.Rules.MarkingTheClose
             }
 
             var description = BuildDescription(breach);
-            Send(breach, description);
+            Send(breach, description, ruleCtx);
         }
 
         private string BuildDescription(IMarkingTheCloseBreach ruleBreach)

@@ -40,6 +40,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,
+                            raw.Symbol,
                             raw.Symbol),
                         raw.Symbol,
                         "CFI",

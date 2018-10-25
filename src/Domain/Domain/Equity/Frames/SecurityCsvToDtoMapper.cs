@@ -147,6 +147,7 @@ namespace Domain.Equity.Frames
         {
             return new Security(
                 new SecurityIdentifiers(
+                    string.Empty,
                     csv.SecurityClientIdentifier,
                     csv.Sedol,
                     csv.Isin,

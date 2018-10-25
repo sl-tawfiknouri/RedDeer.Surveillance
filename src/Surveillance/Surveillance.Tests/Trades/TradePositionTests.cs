@@ -125,7 +125,7 @@ namespace Surveillance.Tests.Trades
         private TradeOrderFrame TradeFrame(OrderStatus status)
         {
             var securityIdentifiers =
-                new SecurityIdentifiers("client id", "1234567", "12345678912", "figi", "cusip", "test", "test lei", "ticker");
+                new SecurityIdentifiers("reddeer id", "client id", "1234567", "12345678912", "figi", "cusip", "test", "test lei", "ticker");
 
             var security =
                 new Security(

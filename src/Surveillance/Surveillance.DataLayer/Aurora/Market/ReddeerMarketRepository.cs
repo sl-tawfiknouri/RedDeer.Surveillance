@@ -47,6 +47,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             SELECT
              MSE.MarketId as MarketId,
              MSE.MarketName as MarketName,
+             MSES.ReddeerId as ReddeerId,
              MSES.ClientIdentifier as ClientIdentifier,
              MSES.Sedol as Sedol,
              MSES.Isin as Isin,
@@ -222,6 +223,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var security =
                 new Security(
                     new SecurityIdentifiers(
+                        dto.ReddeerId,
                         dto.ClientIdentifier,
                         dto.Sedol,
                         dto.Isin,
@@ -306,6 +308,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 MarketStockExchangeId = marketStockExchangeId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
+                ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 Sedol = entity.Security?.Identifiers.Sedol;
                 Isin = entity.Security?.Identifiers.Isin;
                 Figi = entity.Security?.Identifiers.Figi;
@@ -343,6 +346,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public int MarketStockExchangeId { get; set; }
 
             public string ClientIdentifier { get; set; }
+
+            public string ReddeerId { get; set; }
 
             public string Sedol { get; set; }
 
@@ -418,6 +423,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 MarketId = entity.Market?.Id?.Id;
                 MarketName = entity.Market?.Name;
+                ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
                 Sedol = entity.Security?.Identifiers.Sedol;
                 Isin = entity.Security?.Identifiers.Isin;
@@ -452,6 +458,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string MarketName { get; set; }
 
             public string ClientIdentifier { get; set; }
+
+            public string ReddeerId { get; set; }
 
             public string Sedol { get; set; }
 

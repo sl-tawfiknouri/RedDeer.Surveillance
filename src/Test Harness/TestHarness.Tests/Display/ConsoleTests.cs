@@ -33,6 +33,7 @@ namespace TestHarness.Tests.Display
             var securityIdentifiers =
                 new SecurityIdentifiers(
                     "STAN",
+                    "STAN",
                     "st12345",
                     "sta123456789",
                     "stan",

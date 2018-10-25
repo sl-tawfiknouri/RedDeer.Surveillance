@@ -65,10 +65,11 @@
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Migrations\5 - Security Enrichment.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>    
+<<<<<<< HEAD
     <None Update="Migrations\6 - Relay Audit.sql">
+=======
+    <None Update="Migrations\5 - Security Enrichment.sql">
+>>>>>>> RDPB-2990 security enrichment script added for the reddeer id and an enrichment flag
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="nlog.Release.config">

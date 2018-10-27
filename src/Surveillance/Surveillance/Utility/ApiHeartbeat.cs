@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
@@ -19,12 +20,14 @@ namespace Surveillance.Utility
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
         private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketRateApi;
         private readonly IRuleParameterApiRepository _rulesApi;
+        private readonly IEnrichmentApiRepository _enrichmentApi;
         private readonly ILogger<ApiHeartbeat> _logger;
 
         public ApiHeartbeat(
             IExchangeRateApiCachingDecoratorRepository exchangeRateApi,
             IMarketOpenCloseApiCachingDecoratorRepository marketRateApi,
             IRuleParameterApiRepository rulesApi,
+            IEnrichmentApiRepository enrichmentApi,
             ISystemProcessContext processCtx,
             ILogger<ApiHeartbeat> logger)
         {
@@ -32,6 +35,7 @@ namespace Surveillance.Utility
             _marketRateApi = marketRateApi ?? throw new ArgumentNullException(nameof(marketRateApi));
             _rulesApi = rulesApi ?? throw new ArgumentNullException(nameof(rulesApi));
             _systemProcessContext = processCtx ?? throw new ArgumentNullException(nameof(processCtx));
+            _enrichmentApi = enrichmentApi ?? throw new ArgumentNullException(nameof(enrichmentApi));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -44,8 +48,9 @@ namespace Surveillance.Utility
                 var exchangeBeating = await _exchangeRateApi.HeartBeating(token.Token);
                 var marketBeating = await _marketRateApi.HeartBeating(token.Token);
                 var rulesBeating = await _rulesApi.HeartBeating(token.Token);
+                var enrichmentBeating = await _enrichmentApi.HeartBeating(token.Token);
 
-                return exchangeBeating && marketBeating && rulesBeating;
+                return exchangeBeating && marketBeating && rulesBeating && enrichmentBeating;
             }
             catch (Exception e)
             {

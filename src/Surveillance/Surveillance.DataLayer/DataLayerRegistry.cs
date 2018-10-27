@@ -1,4 +1,6 @@
 ﻿using StructureMap;
+using Surveillance.DataLayer.Api.Enrichment;
+using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose;
@@ -45,12 +47,14 @@ namespace Surveillance.DataLayer
             For<IExchangeRateApiRepository>().Use<ExchangeRateApiRepository>();
             For<IExchangeRateApiCachingDecoratorRepository>().Use<ExchangeRateApiCachingDecoratorRepository>();
 
+            For<IEnrichmentApiRepository>().Use<EnrichmentApiRepository>();
+
             For<IReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>()
                 .Use<ReddeerMarketExchangeFormatToReddeerExchangeFrameProjector>();
 
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
-            For<IReddeerTradeRepository>().Use<ReddeerTradeRepository>();
-            For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>();
+            For<IReddeerTradeRepository>().Use<ReddeerTradeRepository>().Singleton();
+            For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
         }
     }
 }

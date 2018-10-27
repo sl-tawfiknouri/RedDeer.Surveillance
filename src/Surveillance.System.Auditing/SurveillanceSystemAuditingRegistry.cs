@@ -18,6 +18,7 @@ namespace Surveillance.System.Auditing
             For<ISystemProcessOperationContextFactory>().Use<SystemProcessOperationContextFactory>();
             For<ISystemProcessOperationDistributeRuleContextFactory>().Use<SystemProcessOperationDistributeRuleContextFactory>();
             For<ISystemProcessOperationRunRuleContextFactory>().Use<SystemProcessOperationRunRuleContextFactory>();
+            For<ISystemProcessOperationFileUploadContextFactory>().Use<SystemProcessOperationFileUploadContextFactory>();
             For<IExceptionRepository>().Use<ExceptionRepository>();
             For<IOperationLogging>().Use<OperationLogging>();
         }

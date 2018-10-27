@@ -15,6 +15,7 @@ namespace Surveillance.System.Auditing.Context
         private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
         private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
+        private readonly ISystemProcessOperationFileUploadContextFactory _uploadFileFactory;
         private readonly IOperationLogging _operationLogging;
         private bool _hasEnded = false;
 
@@ -23,6 +24,7 @@ namespace Surveillance.System.Auditing.Context
             ISystemProcessOperationRepository systemProcessOperationRepository,
             ISystemProcessOperationRunRuleContextFactory runRuleContextFactory,
             ISystemProcessOperationDistributeRuleContextFactory distributeRuleContextFactory,
+            ISystemProcessOperationFileUploadContextFactory uploadFileFactory,
             IOperationLogging operationLogging)
         {
             _systemProcessContext =
@@ -40,6 +42,11 @@ namespace Surveillance.System.Auditing.Context
             _distributeRuleContextFactory =
                 distributeRuleContextFactory
                 ?? throw new ArgumentNullException(nameof(distributeRuleContextFactory));
+
+            _uploadFileFactory =
+                uploadFileFactory
+                ?? throw new ArgumentNullException(nameof(uploadFileFactory));
+
             _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
 
@@ -71,6 +78,27 @@ namespace Surveillance.System.Auditing.Context
         public ISystemProcessOperationRunRuleContext CreateRuleRunContext()
         {
             return _runRuleContextFactory.Build(this);
+        }
+
+        public ISystemProcessOperationUploadFileContext CreateUploadFileContext()
+        {
+            return _uploadFileFactory.Build(this);
+        }
+
+        public ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(
+            SystemProcessOperationUploadFileType type,
+            string filePath)
+        {
+            var upload = _uploadFileFactory.Build(this);
+            upload.StartEvent(new SystemProcessOperationUploadFile
+            {
+                FilePath = filePath,
+                FileType = (int) type,
+                SystemProcessId = _systemProcessOperation.SystemProcessId,
+                SystemProcessOperationId = _systemProcessOperation.Id
+            });
+
+            return upload;
         }
 
         public ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(

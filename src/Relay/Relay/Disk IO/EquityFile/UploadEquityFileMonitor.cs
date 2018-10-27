@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Relay.Configuration.Interfaces;
 using Relay.Disk_IO.EquityFile.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using Utilities.Disk_IO.Interfaces;
 
 namespace Relay.Disk_IO.EquityFile
@@ -45,10 +46,15 @@ namespace Relay.Disk_IO.EquityFile
         {
             lock (_lock)
             {
+                var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+                var fileUpload =
+                    opCtx
+                        .CreateAndStartUploadFileContext(
+                            SystemProcessOperationUploadFileType.MarketDataFile,
+                            path);
+
                 try
                 {
-                    var opCtx = _systemProcessContext.CreateAndStartOperationContext();
-
                     _logger.LogInformation($"Process File Initiating in Upload Equity File Monitor for {path}");
 
                     var csvReadResults = _fileProcessor.Process(path);
@@ -56,6 +62,7 @@ namespace Relay.Disk_IO.EquityFile
                     if (csvReadResults == null
                         || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                     {
+                        fileUpload.EndEvent().EndEvent();
                         return;
                     }
 
@@ -71,6 +78,7 @@ namespace Relay.Disk_IO.EquityFile
                     if (!csvReadResults.UnsuccessfulReads.Any())
                     {
                         _logger.LogInformation($"Process File success for {path}");
+                        fileUpload.EndEvent().EndEvent();
                         return;
                     }
 
@@ -81,10 +89,13 @@ namespace Relay.Disk_IO.EquityFile
                         GetFailedReadsPath(),
                         originatingFileName,
                         csvReadResults.UnsuccessfulReads);
+
+                    fileUpload.EndEvent().EndEventWithError($"Had failed reads written to disk {GetFailedReadsPath()}");
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"Upload Equity File Monitor encountered and swallowed an exception whilst processing {path}", e);
+                    fileUpload.EndEvent().EndEventWithError(e.Message);
                 }
             }
         }

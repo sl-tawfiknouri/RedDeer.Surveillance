@@ -15,6 +15,7 @@ using Relay.Configuration.Interfaces;
 using StructureMap;
 using Surveillance.System.Auditing;
 using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -46,6 +47,7 @@ namespace RedDeer.Relay.Relay.App
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 Container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
                 Container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
+                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
 
                 Container.Configure(config =>
                 {
@@ -55,6 +57,7 @@ namespace RedDeer.Relay.Relay.App
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 });
 
+                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
 

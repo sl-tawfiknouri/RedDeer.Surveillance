@@ -12,6 +12,7 @@ using Relay.Configuration.Interfaces;
 using StructureMap;
 using Surveillance.System.Auditing;
 using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
 
 namespace RedDeer.Relay.Relay.App
 {
@@ -28,6 +29,7 @@ namespace RedDeer.Relay.Relay.App
             container.Inject(typeof(IUploadConfiguration), builtConfig);
             container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
             container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
+            container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
 
             container.Configure(config =>
             {
@@ -37,6 +39,8 @@ namespace RedDeer.Relay.Relay.App
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.Populate(services);
             });
+
+            container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
 
             return container.GetInstance<IServiceProvider>();
         }

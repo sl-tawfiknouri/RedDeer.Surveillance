@@ -122,7 +122,7 @@ namespace Relay.Disk_IO
 
             _fileSystemWatcher = new FileSystemWatcher(UploadDirectoryPath())
             {
-                NotifyFilter = NotifyFilters.LastWrite,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size,
                 Filter = "*.csv",
                 IncludeSubdirectories = false
             };

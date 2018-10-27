@@ -10,5 +10,7 @@
         string SurveillanceServiceTradePort { get; set; }
         string RelayServiceTradeDomain { get; set; }
         string RelayServiceTradePort { get; set; }
+        string AuroraConnectionString { get; set; }
+        string IsDeployedOnClientMachine { get; set; }
     }
 }

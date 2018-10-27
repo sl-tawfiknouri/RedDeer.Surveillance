@@ -10,6 +10,8 @@ using Relay;
 using Relay.Configuration;
 using Relay.Configuration.Interfaces;
 using StructureMap;
+using Surveillance.System.Auditing;
+using Surveillance.System.DataLayer;
 
 namespace RedDeer.Relay.Relay.App
 {
@@ -31,6 +33,8 @@ namespace RedDeer.Relay.Relay.App
             {
                 config.IncludeRegistry<RelayRegistry>();
                 config.IncludeRegistry<AppRegistry>();
+                config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.Populate(services);
             });
 

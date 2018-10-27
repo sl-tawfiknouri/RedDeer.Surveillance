@@ -5,6 +5,7 @@ using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Relay.Configuration.Interfaces;
 using Relay.Disk_IO.EquityFile.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace Relay.Disk_IO.EquityFile
@@ -14,6 +15,7 @@ namespace Relay.Disk_IO.EquityFile
         private readonly IStockExchangeStream _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadEquityFileProcessor _fileProcessor;
+        private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
@@ -22,6 +24,7 @@ namespace Relay.Disk_IO.EquityFile
             IUploadConfiguration uploadConfiguration,
             IUploadEquityFileProcessor fileProcessor,
             IReddeerDirectory directory,
+            ISystemProcessContext systemContext,
             ILogger logger,
             string uploadFileMonitorName) 
             : base(directory, logger, uploadFileMonitorName)
@@ -29,6 +32,7 @@ namespace Relay.Disk_IO.EquityFile
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
             _fileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
+            _systemProcessContext = systemContext ?? throw new ArgumentNullException(nameof(systemContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -43,6 +47,8 @@ namespace Relay.Disk_IO.EquityFile
             {
                 try
                 {
+                    var opCtx = _systemProcessContext.CreateAndStartOperationContext();
+
                     _logger.LogInformation($"Process File Initiating in Upload Equity File Monitor for {path}");
 
                     var csvReadResults = _fileProcessor.Process(path);

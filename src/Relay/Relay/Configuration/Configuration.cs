@@ -17,7 +17,7 @@ namespace Relay.Configuration
         public string RelayServiceTradePort { get; set; }
         public string RelayTradeFileUploadDirectoryPath { get; set; }
         public string RelayEquityFileUploadDirectoryPath { get; set; }
-        public string AuroraConnectionString { get; set; }
+        public string SurveillanceAuroraConnectionString { get; set; }
 
         public string IsDeployedOnClientMachine { get; set; }
 

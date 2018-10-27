@@ -159,6 +159,8 @@ namespace Surveillance
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
             For<IRuleProjector>().Use<RuleProjector>();
+
+            For<IDeadLetterQueueService>().Use<DeadLetterQueueService>();
         }
     }
 }

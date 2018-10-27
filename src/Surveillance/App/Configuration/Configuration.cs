@@ -68,7 +68,10 @@ namespace RedDeer.Surveillance.App.Configuration
                     ElasticSearchPort = GetValue("ElasticSearchPort", configurationBuilder),
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
-                    AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder)
+                    AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
+                    ScheduledRuleDeadLetterQueueName = GetValue("ScheduledRuleDeadLetterQueueName", configurationBuilder),
+                    ScheduleRuleDistributedWorkDeadLetterQueueName = GetValue("ScheduleRuleDistributedWorkDeadLetterQueueName", configurationBuilder),
+                    CaseMessageDeadLetterQueueName = GetValue("CaseMessageDeadLetterQueueName", configurationBuilder),
                 };
 
                 return networkConfiguration;

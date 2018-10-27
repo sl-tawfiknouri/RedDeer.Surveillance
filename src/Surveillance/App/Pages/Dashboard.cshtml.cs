@@ -17,6 +17,7 @@ namespace Surveillance.App.Pages
         private readonly ISystemProcessOperationRepository _systemProcessOperationRepository;
         private readonly ISystemProcessOperationRuleRunRepository _systemProcessRuleRunRepository;
         private readonly ISystemProcessOperationDistributeRuleRepository _systemProcessDistributeRepository;
+        private readonly ISystemProcessOperationUploadFileRepository _systemProcessUploadFileRepository;
         private readonly IExceptionRepository _exceptionRepository;
         private readonly IApiHeartbeat _apiHeartbeat;
 
@@ -26,7 +27,8 @@ namespace Surveillance.App.Pages
             ISystemProcessOperationRepository systemProcessOperationRepository,
             ISystemProcessOperationDistributeRuleRepository systemProcessDistributeRepository,
             IExceptionRepository exceptionRepository,
-            IApiHeartbeat apiHeartbeat)
+            IApiHeartbeat apiHeartbeat, 
+            ISystemProcessOperationUploadFileRepository systemProcessUploadFileRepository)
         {
             _systemProcessRepository =
                 systemProcessRepository
@@ -46,6 +48,9 @@ namespace Surveillance.App.Pages
             _apiHeartbeat =
                 apiHeartbeat
                 ?? throw new ArgumentNullException(nameof(apiHeartbeat));
+            _systemProcessUploadFileRepository =
+                systemProcessUploadFileRepository
+                ?? throw new ArgumentNullException(nameof(systemProcessUploadFileRepository));
         }
 
         public async Task OnGet()
@@ -60,6 +65,7 @@ namespace Surveillance.App.Pages
             SystemProcessOperation = await _systemProcessOperationRepository.GetDashboard();
             SystemProcessRuleRun = await _systemProcessRuleRunRepository.GetDashboard();
             SystemProcessDistribute = await _systemProcessDistributeRepository.GetDashboard();
+            SystemProcessUploadFile = await _systemProcessUploadFileRepository.GetDashboard();
             ApiHeartbeat = await _apiHeartbeat.HeartsBeating();
             Exceptions = await _exceptionRepository.GetForDashboard();
         }
@@ -83,6 +89,8 @@ namespace Surveillance.App.Pages
         public IReadOnlyCollection<ISystemProcessOperationRuleRun> SystemProcessRuleRun { get; set; }
 
         public IReadOnlyCollection<ISystemProcessOperation> SystemProcessOperation { get; set; }
+
+        public IReadOnlyCollection<ISystemProcessOperationUploadFile> SystemProcessUploadFile { get; set; }
 
         public IReadOnlyCollection<ExceptionDto> Exceptions { get; set; }
     }

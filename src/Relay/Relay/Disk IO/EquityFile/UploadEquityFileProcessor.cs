@@ -115,6 +115,8 @@ namespace Relay.Disk_IO.EquityFile
             {
                 Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file");
             }
+
+            _csvToDtoMapper.FailedParseTotal = 0;
         }
 
         public void WriteFailedReadsToDisk(

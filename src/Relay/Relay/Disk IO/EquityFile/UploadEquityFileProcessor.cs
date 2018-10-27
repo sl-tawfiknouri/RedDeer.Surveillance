@@ -109,11 +109,11 @@ namespace Relay.Disk_IO.EquityFile
             }
         }
 
-        protected override void CheckAndLogFailedParsesFromDtoMapper()
+        protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
         {
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file");
+                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
             }
 
             _csvToDtoMapper.FailedParseTotal = 0;

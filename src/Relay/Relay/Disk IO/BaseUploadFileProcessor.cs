@@ -76,7 +76,7 @@ namespace Relay.Disk_IO
                 Logger.LogError(e.Message);
             }
 
-            CheckAndLogFailedParsesFromDtoMapper();
+            CheckAndLogFailedParsesFromDtoMapper(path);
 
             return new UploadFileProcessorResult<TCsv, TFrame>(tradeOrders, failedTradeOrderReads);
         }
@@ -85,6 +85,6 @@ namespace Relay.Disk_IO
 
         protected abstract void MapRecord(TCsv record, List<TFrame> tradeOrders, List<TCsv> failedTradeOrderReads);
 
-        protected abstract void CheckAndLogFailedParsesFromDtoMapper();
+        protected abstract void CheckAndLogFailedParsesFromDtoMapper(string path);
     }
 }

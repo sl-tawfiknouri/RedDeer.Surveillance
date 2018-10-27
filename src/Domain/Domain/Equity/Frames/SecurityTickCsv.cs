@@ -37,5 +37,7 @@
         public string Volume { get; set; }
         public string ListedSecurities { get; set; }
         public string MarketCap { get; set; }
+
+        public int RowId { get; set; }
     }
 }

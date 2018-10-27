@@ -14,6 +14,7 @@ namespace Relay.Disk_IO.EquityFile
         private readonly IStockExchangeStream _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadEquityFileProcessor _fileProcessor;
+        private readonly ILogger _logger;
         private readonly object _lock = new object();
 
         public UploadEquityFileMonitor(
@@ -28,6 +29,7 @@ namespace Relay.Disk_IO.EquityFile
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
             _fileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected override string UploadDirectoryPath()
@@ -39,34 +41,45 @@ namespace Relay.Disk_IO.EquityFile
         {
             lock (_lock)
             {
-                var csvReadResults = _fileProcessor.Process(path);
-
-                if (csvReadResults == null
-                    || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
+                try
                 {
-                    return;
+                    _logger.LogInformation($"Process File Initiating in Upload Equity File Monitor for {path}");
+
+                    var csvReadResults = _fileProcessor.Process(path);
+
+                    if (csvReadResults == null
+                        || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
+                    {
+                        return;
+                    }
+
+                    var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
+
+                    foreach (var item in orderedSuccessfulReads)
+                    {
+                        _stream.Add(item);
+                    }
+
+                    ReddeerDirectory.Move(path, archivePath);
+
+                    if (!csvReadResults.UnsuccessfulReads.Any())
+                    {
+                        _logger.LogInformation($"Process File success for {path}");
+                        return;
+                    }
+
+                    _logger.LogInformation($"Process File failure for {path}");
+                    var originatingFileName = Path.GetFileNameWithoutExtension(path);
+
+                    _fileProcessor.WriteFailedReadsToDisk(
+                        GetFailedReadsPath(),
+                        originatingFileName,
+                        csvReadResults.UnsuccessfulReads);
                 }
-
-                var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
-
-                foreach (var item in orderedSuccessfulReads)
+                catch (Exception e)
                 {
-                    _stream.Add(item);
+                    _logger.LogError($"Upload Equity File Monitor encountered and swallowed an exception whilst processing {path}", e);
                 }
-
-                ReddeerDirectory.Move(path, archivePath);
-
-                if (!csvReadResults.UnsuccessfulReads.Any())
-                {
-                    return;
-                }
-
-                var originatingFileName = Path.GetFileNameWithoutExtension(path);
-
-                _fileProcessor.WriteFailedReadsToDisk(
-                    GetFailedReadsPath(),
-                    originatingFileName,
-                    csvReadResults.UnsuccessfulReads);
             }
         }
     }

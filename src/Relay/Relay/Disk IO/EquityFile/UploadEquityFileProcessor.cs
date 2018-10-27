@@ -26,7 +26,7 @@ namespace Relay.Disk_IO.EquityFile
             _csvConfig = csvConfig ?? throw new ArgumentNullException(nameof(csvConfig));
         }
         
-        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord)
+        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -67,7 +67,9 @@ namespace Relay.Disk_IO.EquityFile
                 IssuerIdentifier = rawRecord[_csvConfig.SecurityIssuerIdentifierFieldName],
                 Lei = rawRecord[_csvConfig.SecurityLeiFieldName],
                 BloombergTicker = rawRecord[_csvConfig.SecurityBloombergTicker],
-                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName]
+                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName],
+
+                RowId = rowId
             };
         }
 

@@ -56,5 +56,7 @@
 
         public string OrderStatus { get; set; }
         public string OrderCurrency { get; set; }
+
+        public int RowId { get; set; }
     }
 }

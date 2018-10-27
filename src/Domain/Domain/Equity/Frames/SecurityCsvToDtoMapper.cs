@@ -32,7 +32,7 @@ namespace Domain.Equity.Frames
             if (!int.TryParse(csv.Volume, out var volume))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable volume");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable volume {csv.Volume} for row {csv.RowId}");
 
                 return null;
             }
@@ -40,13 +40,13 @@ namespace Domain.Equity.Frames
             if (!int.TryParse(csv.DailyVolume, out var dailyVolume))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable daily volume");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable daily volume {csv.DailyVolume} for row {csv.RowId}");
             }
 
             if (!DateTime.TryParse(csv.Timestamp, out var timeStamp))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError("Failed to parse security tick csv due to being passed an unparseable timestamp");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable timestamp {csv.Timestamp} for row {csv.RowId}");
 
                 return null;
             }
@@ -56,7 +56,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.MarketCap, out marketCap))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable market cap {csv.MarketCap}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable market cap {csv.MarketCap} for row {csv.RowId}");
 
                 return null;
             }
@@ -66,7 +66,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Ask, out spreadAsk))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread ask price {csv.Ask}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread ask price {csv.Ask} for row {csv.RowId}");
 
                 return null;
             }
@@ -76,7 +76,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Bid, out spreadBid))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread bid price {csv.Bid}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread bid price {csv.Bid} for row {csv.RowId}");
 
                 return null;
             }
@@ -86,7 +86,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Price, out spreadPrice))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread price {csv.Price}");
+                _logger?.LogError($"Failed to parse security tick csv due to being passed an unparseable spread price {csv.Price} for row {csv.RowId}");
 
                 return null;
             }
@@ -96,7 +96,7 @@ namespace Domain.Equity.Frames
                 && !int.TryParse(csv.ListedSecurities, out listedSecurities))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse listed securities due to being passed an unparseable listed security {csv.ListedSecurities}");
+                _logger?.LogError($"Failed to parse listed securities due to being passed an unparseable listed security {csv.ListedSecurities} for row {csv.RowId}");
 
                 return null;
             }
@@ -106,7 +106,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Open, out open))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse open price due to being passed an unparseable price {csv.Open}");
+                _logger?.LogError($"Failed to parse open price due to being passed an unparseable price {csv.Open} for row {csv.RowId}");
 
                 return null;
             }
@@ -116,7 +116,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Close, out close))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse close price due to being passed an unparseable price {csv.Close}");
+                _logger?.LogError($"Failed to parse close price due to being passed an unparseable price {csv.Close} for row {csv.RowId}");
 
                 return null;
             }
@@ -126,7 +126,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.High, out high))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse high price due to being passed an unparseable price {csv.High}");
+                _logger?.LogError($"Failed to parse high price due to being passed an unparseable price {csv.High} for row {csv.RowId}");
 
                 return null;
             }
@@ -136,7 +136,7 @@ namespace Domain.Equity.Frames
                 && !decimal.TryParse(csv.Low, out low))
             {
                 FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse low price due to being passed an unparseable price {csv.Low}");
+                _logger?.LogError($"Failed to parse low price due to being passed an unparseable price {csv.Low} for row {csv.RowId}");
 
                 return null;
             }

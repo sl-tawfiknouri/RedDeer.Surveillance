@@ -48,9 +48,11 @@ namespace Relay.Disk_IO
                     csv.Read();
                     csv.ReadHeader();
 
+                    var row = 0;
                     while (csv.Read())
                     {
-                        var record = MapToCsvDto(csv);
+                        row += 1;
+                        var record = MapToCsvDto(csv, row);
 
                         if (record == null)
                         {
@@ -79,7 +81,7 @@ namespace Relay.Disk_IO
             return new UploadFileProcessorResult<TCsv, TFrame>(tradeOrders, failedTradeOrderReads);
         }
 
-        protected abstract TCsv MapToCsvDto(CsvReader rawRecord);
+        protected abstract TCsv MapToCsvDto(CsvReader rawRecord, int rowId);
 
         protected abstract void MapRecord(TCsv record, List<TFrame> tradeOrders, List<TCsv> failedTradeOrderReads);
 

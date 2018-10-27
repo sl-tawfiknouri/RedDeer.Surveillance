@@ -49,7 +49,7 @@ namespace Relay.Disk_IO.TradeFile
             }
         }
 
-        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
+        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -94,6 +94,8 @@ namespace Relay.Disk_IO.TradeFile
                 TradeRationale = rawRecord[_mappingConfig.TradeRationaleFieldName],
                 TradeStrategy = rawRecord[_mappingConfig.TradeStrategyFieldName],
                 SecurityIssuerIdentifier = rawRecord[_mappingConfig.SecurityIssuerIdentifier],
+
+                RowId = rowId
             };
         }
 

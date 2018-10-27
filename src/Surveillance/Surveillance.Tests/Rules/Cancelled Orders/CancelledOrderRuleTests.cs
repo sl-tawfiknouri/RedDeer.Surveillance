@@ -189,6 +189,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         {
             var trade = TradeFrame(OrderStatus.Cancelled);
             trade.FulfilledVolume = trade.FulfilledVolume * 100;
+            trade.OrderedVolume = trade.OrderedVolume * 100;
 
             var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
             {

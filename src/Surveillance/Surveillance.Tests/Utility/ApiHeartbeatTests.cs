@@ -63,6 +63,7 @@ namespace Surveillance.Tests.Utility
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
             A.CallTo(() => _ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
+            A.CallTo(() => _enrichmentApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
 
             var result = await heartbeat.HeartsBeating();
 

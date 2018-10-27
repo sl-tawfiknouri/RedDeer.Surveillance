@@ -83,6 +83,7 @@ namespace Surveillance.Tests.Trades
         {
             var bigPosition = TradeFrame(OrderStatus.Cancelled);
             bigPosition.FulfilledVolume = bigPosition.FulfilledVolume * 100;
+            bigPosition.OrderedVolume = bigPosition.FulfilledVolume * 100;
 
             var tof = new List<TradeOrderFrame>
             {

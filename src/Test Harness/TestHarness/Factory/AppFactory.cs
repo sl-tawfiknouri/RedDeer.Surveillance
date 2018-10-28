@@ -48,6 +48,7 @@ namespace TestHarness.Factory
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
+            EquitiesDataGenerationProcessFactory = new EquitiesDataGenerationProcessFactory(Logger);
             NetworkManagerFactory = new NetworkManagerFactory(Console, Logger, networkConfiguration);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
@@ -99,7 +100,9 @@ namespace TestHarness.Factory
         public IPulsatingHeartbeat CancelTradeHeartbeat { get; }
 
         // new factories
-        public IEquitiesProcessFactory EquitiesProcessFactory { get; } 
+        public IEquitiesProcessFactory EquitiesProcessFactory { get; }
+
+        public IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
 
         public IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 

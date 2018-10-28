@@ -11,7 +11,7 @@ namespace TestHarness.Commands
     public class DemoDataGenerationCommand : ICommand
     {
         private readonly IAppFactory _appFactory;
-        private IEquityDataGenerator _equityProcess;
+        private IEquitiesDataGenerationMarkovProcess _equityProcess;
         private IOrderDataGenerator _tradingProcess;
 
         private readonly object _lock = new object();
@@ -119,21 +119,15 @@ namespace TestHarness.Commands
                     return;
                 }
 
-                // ok so...what's next? I think it;s the actual processor tbh we have the market data and the exchange rates
-                // we'll pass both into initiate trading
-
                 var equityStream =
                     _appFactory
                         .StockExchangeStreamFactory
                         .CreateDisplayable(console);
 
-                // this is what we will be replacing
                 _equityProcess =
                     _appFactory
-                        .EquitiesProcessFactory
-                        .Create()
-                        .Regular(TimeSpan.FromMilliseconds(300))
-                        .Finish();
+                        .EquitiesDataGenerationProcessFactory
+                        .Build();
 
                 var tradeStream =
                     _appFactory
@@ -149,6 +143,7 @@ namespace TestHarness.Commands
                         .Finish();
 
                 _tradingProcess.InitiateTrading(equityStream, tradeStream);
+                _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
         }
     }

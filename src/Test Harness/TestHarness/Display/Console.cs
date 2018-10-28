@@ -60,7 +60,7 @@ namespace TestHarness.Display
                 }
 
                 WriteToLine(_marketFrameOffset, "*****************************");
-                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({DateTime.Now}). {frame}");
+                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({frame.TimeStamp}). {frame}");
                 WriteToLine(_marketFrameOffset + 2, "*****************************");
             }
         }

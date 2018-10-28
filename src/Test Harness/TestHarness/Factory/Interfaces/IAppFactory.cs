@@ -36,6 +36,8 @@ namespace TestHarness.Factory.Interfaces
 
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
+        IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
+
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
         INetworkManagerFactory NetworkManagerFactory { get; }

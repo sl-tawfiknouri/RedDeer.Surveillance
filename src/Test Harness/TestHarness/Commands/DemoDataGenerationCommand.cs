@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -36,17 +37,18 @@ namespace TestHarness.Commands
             {
                 // command splitter
                 var console = _appFactory.Console;
+                var apiRepository = _appFactory.SecurityApiRepository;
 
                 var cmd = command.ToLower();
-                cmd = cmd.Replace("run data generation", string.Empty);
+                cmd = cmd.Replace("run data generation", string.Empty).Trim();
                 var splitCmd = cmd.Split(' ');
 
                 var rawFromDate = (splitCmd.Take(1)).FirstOrDefault();
                 var rawToDate = splitCmd.Skip(1).Take(1).FirstOrDefault();
                 var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
 
-                var fromSuccess = DateTime.TryParse(rawFromDate, out var fromDate);
-                var toSuccess = DateTime.TryParse(rawToDate, out var toDate);
+                var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
+                var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
                 var marketSuccess = !string.IsNullOrWhiteSpace(market);
 
                 if (!fromSuccess)
@@ -67,17 +69,27 @@ namespace TestHarness.Commands
                     return;
                 }
 
+                var isHeartbeatingTask = apiRepository.Heartbeating();
+                isHeartbeatingTask.Wait();
 
-                // heartbeat API to check
+                if (!isHeartbeatingTask.Result)
+                {
+                    console.WriteToUserFeedbackLine("Could not connect to the security api on the client service");
+                    return;
+                }
 
+                // if heart beat, go and make the real request =)
+                // ja ja ja
 
+                var resultTask = apiRepository.Get(fromDate, toDate, market);
+                resultTask.Wait();
 
-                // if heart beated, go and make the real request =)
-
-
-
-
-
+                if (resultTask.Result == null
+                    || (!resultTask.Result.SecurityPrices?.Any() ?? true))
+                {
+                    console.WriteToUserFeedbackLine("Could not find any results on the security api for the provided query");
+                    return;
+                }
 
                 var equityStream =
                     _appFactory

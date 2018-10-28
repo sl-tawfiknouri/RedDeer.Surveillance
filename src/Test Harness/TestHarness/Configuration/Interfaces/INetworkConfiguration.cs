@@ -9,5 +9,7 @@ namespace TestHarness.Configuration.Interfaces
 
         string StockExchangeDomainUriDomainSegment { get; }
         string StockExchangeDomainUriPort { get; }
+        string ClientServiceUrl { get; set; }
+        string SurveillanceUserApiAccessToken { get; set; }
     }
 }

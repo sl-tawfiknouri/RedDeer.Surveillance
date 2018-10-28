@@ -22,6 +22,8 @@ using TestHarness.Display.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Repository;
+using TestHarness.Repository.Api;
+using TestHarness.Repository.Api.Interfaces;
 using TestHarness.Repository.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -60,6 +62,8 @@ namespace TestHarness.Factory
             Configuration = networkConfiguration;
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);
 
+            SecurityApiRepository = new SecurityApiRepository(networkConfiguration);
+
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
 
@@ -67,6 +71,8 @@ namespace TestHarness.Factory
         /// Ctor is used to construct this
         /// </summary>
         public ILogger Logger { get; }
+
+        public ISecurityApiRepository SecurityApiRepository { get; }
 
         /// <summary>
         /// Ctor is used to construct this

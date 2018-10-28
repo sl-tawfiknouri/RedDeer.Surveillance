@@ -65,7 +65,11 @@
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+<<<<<<< HEAD
     <None Update="Migrations\6 - Relay Audit.sql">
+=======
+    <None Update="Migrations\7 - Bloomberg Ticker.sql">
+>>>>>>> RDPB-2989 added a bloomberg ticker migration script to handle larger tickers than I expected
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="nlog.Release.config">

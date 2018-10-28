@@ -52,6 +52,6 @@ namespace TestHarness.Factory.Interfaces
         IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         IAuroraRepository AuroraRepository { get; }
-
+        IMarketApiRepository MarketApiRepository { get; }
     }
 }

@@ -38,6 +38,7 @@ namespace TestHarness.Commands
                 // command splitter
                 var console = _appFactory.Console;
                 var apiRepository = _appFactory.SecurityApiRepository;
+                var marketApiRepository = _appFactory.MarketApiRepository;
 
                 var cmd = command.ToLower();
                 cmd = cmd.Replace("run data generation", string.Empty).Trim();
@@ -78,18 +79,48 @@ namespace TestHarness.Commands
                     return;
                 }
 
-                // if heart beat, go and make the real request =)
-                // ja ja ja
+                var priceApiTask = apiRepository.Get(fromDate, toDate, market);
+                priceApiTask.Wait();
+                var priceApiResult = priceApiTask.Result;
 
-                var resultTask = apiRepository.Get(fromDate, toDate, market);
-                resultTask.Wait();
-
-                if (resultTask.Result == null
-                    || (!resultTask.Result.SecurityPrices?.Any() ?? true))
+                if (priceApiResult == null
+                    || (!priceApiResult.SecurityPrices?.Any() ?? true))
                 {
                     console.WriteToUserFeedbackLine("Could not find any results on the security api for the provided query");
                     return;
                 }
+
+                var marketApiHeartbeatTask = marketApiRepository.HeartBeating();
+                marketApiHeartbeatTask.Wait();
+
+                if (!marketApiHeartbeatTask.Result)
+                {
+                    console.WriteToUserFeedbackLine("Could not connect to the market api on the client service");
+                    return;
+                }
+
+                var marketApiTask = marketApiRepository.Get();
+                marketApiTask.Wait();
+                var marketApiResult = marketApiTask.Result;
+
+                if (marketApiResult == null
+                    || marketApiResult.Count == 0)
+                {
+                    console.WriteToUserFeedbackLine("Could not find any results for the market api on the client service");
+                    return;
+                }
+
+                var marketData = marketApiResult.FirstOrDefault(ap => 
+                    string.Equals(ap.Code, market, StringComparison.InvariantCultureIgnoreCase));
+
+                if (marketData == null)
+                {
+                    console.WriteToUserFeedbackLine("Could not find any relevant results for the market api on the client service");
+                    return;
+                }
+
+                // ok so...what's next? I think it;s the actual processor tbh we have the market data and the exchange rates
+                // we'll pass both into initiate trading
 
                 var equityStream =
                     _appFactory

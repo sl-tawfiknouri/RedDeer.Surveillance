@@ -63,6 +63,7 @@ namespace TestHarness.Factory
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);
 
             SecurityApiRepository = new SecurityApiRepository(networkConfiguration);
+            MarketApiRepository = new MarketApiRepository(networkConfiguration);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -124,5 +125,7 @@ namespace TestHarness.Factory
 
         public IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         public IAuroraRepository AuroraRepository { get; }
+
+        public IMarketApiRepository MarketApiRepository { get; }
     }
 }

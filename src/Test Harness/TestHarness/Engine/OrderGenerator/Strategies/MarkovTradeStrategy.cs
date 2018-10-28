@@ -114,8 +114,8 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var executedPrice = tick.Spread.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
-            var orderStatusLastChanged = DateTime.UtcNow;
-            var orderSubmittedOn = orderStatusLastChanged.AddMilliseconds(-300);
+            var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
+            var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
             var accountId = GenerateProbabilisticIdString();

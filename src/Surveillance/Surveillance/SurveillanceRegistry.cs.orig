@@ -160,8 +160,11 @@ namespace Surveillance
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
             For<IRuleProjector>().Use<RuleProjector>();
 
+<<<<<<< HEAD
             For<IDeadLetterQueueService>().Use<DeadLetterQueueService>();
+=======
             For<IEnrichmentService>().Use<EnrichmentService>();
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
         }
     }
 }

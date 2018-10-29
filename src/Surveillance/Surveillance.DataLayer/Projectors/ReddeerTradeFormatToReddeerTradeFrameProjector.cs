@@ -53,6 +53,7 @@ namespace Surveillance.DataLayer.Projectors
                         document.MarketName);
 
                 var securityIdentifiers = new SecurityIdentifiers(
+                    document.SecurityReddeerId,
                     document.SecurityClientIdentifier,
                     document.SecuritySedol,
                     document.SecurityIsin,

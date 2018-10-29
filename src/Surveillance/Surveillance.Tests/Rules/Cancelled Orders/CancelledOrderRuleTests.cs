@@ -189,6 +189,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         {
             var trade = TradeFrame(OrderStatus.Cancelled);
             trade.FulfilledVolume = trade.FulfilledVolume * 100;
+            trade.OrderedVolume = trade.OrderedVolume * 100;
 
             var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
             {
@@ -261,6 +262,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         {
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    "reddeer id",
                     "client id",
                     "1234567",
                     "12345678912",

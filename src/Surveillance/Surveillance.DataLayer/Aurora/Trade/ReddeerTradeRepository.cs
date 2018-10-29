@@ -225,6 +225,7 @@ VALUES(
                     dto.MarketName),
                 new Security(
                     new SecurityIdentifiers(
+                        dto.SecurityReddeerId,
                         dto.SecurityClientIdentifier,
                         dto.SecuritySedol,
                         dto.SecurityIsin,
@@ -278,6 +279,7 @@ VALUES(
                 OrderTypeId = (int)frame.OrderType;
                 MarketId = frame.Market?.Id?.Id;
                 MarketName = frame.Market?.Name;
+                SecurityReddeerId = frame.Security?.Identifiers.ReddeerId;
                 SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier;
                 SecuritySedol = frame.Security?.Identifiers.Sedol;
                 SecurityIsin = frame.Security?.Identifiers.Isin;
@@ -329,6 +331,7 @@ VALUES(
             /// </summary>
             public string MarketName { get; set; }
 
+            public string SecurityReddeerId { get; set; }
             public string SecurityClientIdentifier { get; set; }
             public string SecuritySedol { get; set; }
             public string SecurityIsin { get; set; }

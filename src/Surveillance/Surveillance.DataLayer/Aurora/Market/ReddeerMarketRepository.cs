@@ -7,6 +7,7 @@ using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Market;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -47,6 +48,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             SELECT
              MSE.MarketId as MarketId,
              MSE.MarketName as MarketName,
+             MSES.ReddeerId as ReddeerId,
              MSES.ClientIdentifier as ClientIdentifier,
              MSES.Sedol as Sedol,
              MSES.Isin as Isin,
@@ -78,7 +80,49 @@ namespace Surveillance.DataLayer.Aurora.Market
              ON MSES.MarketStockExchangeId = MSE.Id
              WHERE MSEP.Epoch >= @start
              AND MSEP.Epoch <= @end;";
-        
+
+        private const string GetUnEnrichedSecuritiesSql =
+            @"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+              SELECT 
+              sec.Id AS Id,
+              sec.ReddeerId As ReddeerId,
+              mse.MarketId as MarketIdentifierCode,
+              mse.MarketName As MarketName,
+              sec.SecurityName As SecurityName,
+              sec.Cfi As Cfi,
+              sec.IssuerIdentifier As IssuerIdentifier,
+              sec.ClientIdentifier As SecurityClientIdentifier,
+              sec.Sedol As Sedol,
+              sec.Isin As Isin,
+              sec.Figi As Figi,
+              sec.ExchangeSymbol As ExchangeSymbol,
+              sec.Cusip As Cusip,
+              sec.Lei As Lei,
+              sec.BloombergTicker As BloombergTicker
+              FROM MarketStockExchangeSecurities as sec
+              left join marketstockexchange as mse
+              on sec.MarketStockExchangeId = mse.Id
+              WHERE sec.Enrichment is null
+              LIMIT 10000;
+              COMMIT;";
+
+        private const string UpdateUnEnrichedSecuritiesSql =
+            @"UPDATE MarketStockExchangeSecurities
+              SET ReddeerId = @ReddeerId,
+              SecurityName = @SecurityName,
+              Cfi = @Cfi,
+              IssuerIdentifier = @IssuerIdentifier,
+              ClientIdentifier = @SecurityClientIdentifier,
+              Sedol = @Sedol,
+              Isin = @Isin,
+              Figi = @Figi,
+              ExchangeSymbol = @ExchangeSymbol,
+              Cusip = @Cusip,
+              Lei = @Lei,
+              BloombergTicker = @BloombergTicker,
+              Enrichment = (SELECT UTC_TIMESTAMP())
+              WHERE Id = @Id;";
+
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<ReddeerMarketRepository> logger)
@@ -90,6 +134,64 @@ namespace Surveillance.DataLayer.Aurora.Market
             _logger =
                 logger
                 ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<IReadOnlyCollection<SecurityEnrichmentDto>> GetUnEnrichedSecurities()
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.QueryAsync<SecurityEnrichmentDto>(GetUnEnrichedSecuritiesSql))
+                {
+                    var result = await conn;
+
+                    return result?.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository GetUnEnrichedSecurities method for {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new SecurityEnrichmentDto[0];
+        }
+
+        public async Task UpdateUnEnrichedSecurities(IReadOnlyCollection<SecurityEnrichmentDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                return;
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.ExecuteAsync(UpdateUnEnrichedSecuritiesSql, dtos))
+                {
+                    await conn;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository UpdateUnEnrichedSecurities method for {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
         }
 
         public async Task Create(ExchangeFrame entity)
@@ -222,6 +324,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var security =
                 new Security(
                     new SecurityIdentifiers(
+                        dto.ReddeerId,
                         dto.ClientIdentifier,
                         dto.Sedol,
                         dto.Isin,
@@ -306,6 +409,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 MarketStockExchangeId = marketStockExchangeId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
+                ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 Sedol = entity.Security?.Identifiers.Sedol;
                 Isin = entity.Security?.Identifiers.Isin;
                 Figi = entity.Security?.Identifiers.Figi;
@@ -343,6 +447,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public int MarketStockExchangeId { get; set; }
 
             public string ClientIdentifier { get; set; }
+
+            public string ReddeerId { get; set; }
 
             public string Sedol { get; set; }
 
@@ -418,6 +524,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 MarketId = entity.Market?.Id?.Id;
                 MarketName = entity.Market?.Name;
+                ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
                 Sedol = entity.Security?.Identifiers.Sedol;
                 Isin = entity.Security?.Identifiers.Isin;
@@ -452,6 +559,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string MarketName { get; set; }
 
             public string ClientIdentifier { get; set; }
+
+            public string ReddeerId { get; set; }
 
             public string Sedol { get; set; }
 

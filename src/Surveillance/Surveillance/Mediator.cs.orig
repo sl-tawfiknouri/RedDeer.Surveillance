@@ -15,16 +15,22 @@ namespace Surveillance
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly IApplicationHeartbeatService _heartbeatService;
+<<<<<<< HEAD
         private readonly IDeadLetterQueueService _deadLetterQueueService;
+=======
         private readonly IEnrichmentService _enrichmentService;
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
 
         public Mediator(
             IReddeerTradeService reddeerTradeService,
             IReddeerRuleScheduler ruleScheduler,
             IReddeerDistributedRuleScheduler distributedRuleScheduler,
             IApplicationHeartbeatService heartbeatService,
-            IDeadLetterQueueService deadLetterQueueService,
+<<<<<<< HEAD
+            IDeadLetterQueueService deadLetterQueueService)
+=======
             IEnrichmentService enrichmentService)
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
         {
             _reddeerTradeService =
                 reddeerTradeService 
@@ -38,12 +44,15 @@ namespace Surveillance
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
+<<<<<<< HEAD
             _deadLetterQueueService =
                 deadLetterQueueService
                 ?? throw new ArgumentNullException(nameof(deadLetterQueueService));
+=======
             _enrichmentService =
                 enrichmentService
                 ?? throw new ArgumentNullException(nameof(enrichmentService));
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
         }
 
         public void Initiate()
@@ -52,8 +61,11 @@ namespace Surveillance
             _ruleScheduler.Initiate();
             _reddeerTradeService.Initialise();
             _heartbeatService.Initialise();
+<<<<<<< HEAD
             _deadLetterQueueService.Initialise();
+=======
             _enrichmentService.Initialise();
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
         }
 
         public void Terminate()
@@ -61,8 +73,11 @@ namespace Surveillance
             _reddeerTradeService.Dispose();
             _ruleScheduler.Terminate();
             _distributedRuleScheduler.Terminate();
+<<<<<<< HEAD
             _deadLetterQueueService.Terminate();
+=======
             _enrichmentService.Terminate();
+>>>>>>> RDPB-2990 updated enrichment api repository and services to now enrich in blocks of 10k rows with a cosntant stream of updates if theres more to be done to protect against post max length limits on web servers.
             // we don't terminate the heart beat service as it will stop when the entire app has stopped
         }
     }

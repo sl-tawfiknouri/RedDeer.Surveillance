@@ -22,7 +22,7 @@ namespace Surveillance.System.DataLayer.Repositories
         }
 
         private const string HighestMigrationSql =
-            @"SELECT MAX(Id) FROM migrations;";
+            @"SELECT Max(Id) FROM Migrations;";
 
         public MigrationRepository(
             IConnectionStringFactory connectionStringFactory,

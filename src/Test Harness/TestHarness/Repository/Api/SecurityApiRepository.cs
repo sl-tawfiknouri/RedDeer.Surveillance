@@ -18,11 +18,18 @@ namespace TestHarness.Repository.Api
 
         public async Task<bool> Heartbeating()
         {
-            var client = BuildHttpClient();
+            try
+            {
+                var client = BuildHttpClient();
 
-            var response = await client.GetAsync(HeartBeatUrl);
+                var response = await client.GetAsync(HeartBeatUrl);
 
-            return (response.IsSuccessStatusCode);
+                return (response.IsSuccessStatusCode);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public async Task<SecurityPriceResponseDto> Get(DateTime from, DateTime to, string market)

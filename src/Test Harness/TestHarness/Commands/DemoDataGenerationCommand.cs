@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
@@ -11,10 +13,13 @@ namespace TestHarness.Commands
 {
     public class DemoDataGenerationCommand : ICommand
     {
+        public const string FileDirectory = "DataGenerationStorage";
+
         private readonly IAppFactory _appFactory;
         private INetworkManager _networkManager;
         private IEquitiesDataGenerationMarkovProcess _equityProcess;
         private IOrderDataGenerator _tradingProcess;
+        private IEquityDataStorage _equitiesFileStorageProcess;
 
         private readonly object _lock = new object();
 
@@ -65,6 +70,7 @@ namespace TestHarness.Commands
             var rawToDate = splitCmd.Skip(1).Take(1).FirstOrDefault();
             var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
             var trade = splitCmd.Skip(3).Take(1).FirstOrDefault();
+            var save = splitCmd.Skip(4).Take(1).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
@@ -72,6 +78,11 @@ namespace TestHarness.Commands
             var tradeSuccess =
                 string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals(trade, "notrades", StringComparison.InvariantCultureIgnoreCase);
+            var savesuccess =
+                string.Equals(save, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(save, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
+
+
 
             if (!fromSuccess)
             {
@@ -97,6 +108,13 @@ namespace TestHarness.Commands
                 return;
             }
 
+            if (!savesuccess)
+            {
+                console.WriteToUserFeedbackLine($"Did not understand the save to csv value. Options are 'market' or 'nomarketcsv'. No spaces.");
+                return;
+            }
+
+            
             var isHeartbeatingTask = apiRepository.Heartbeating();
             isHeartbeatingTask.Wait();
 
@@ -174,6 +192,12 @@ namespace TestHarness.Commands
                     .NetworkManagerFactory
                     .CreateWebsockets();
 
+            var directory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
+
+            _equitiesFileStorageProcess = _appFactory
+                .EquitiesFileStorageProcessFactory
+                .Create(directory);
+
             // start networking processes
             var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
 
@@ -200,6 +224,11 @@ namespace TestHarness.Commands
             if (string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase))
             {
                 _tradingProcess.InitiateTrading(equityStream, tradeStream);
+            }
+
+            if (string.Equals(save, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _equitiesFileStorageProcess.Initiate(equityStream);
             }
 
             _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);

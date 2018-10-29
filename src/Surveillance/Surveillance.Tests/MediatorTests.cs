@@ -31,27 +31,27 @@ namespace Surveillance.Tests
         public void Constructor_NullTradeService_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService));
         }
 
         [Test]
         public void Constructor_NullRuleScheduler_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService));
         }
 
         [Test]
         public void Constructor_NullSmartRuleScheduler_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, _ruleScheduler, null, _heartbeatService, _deadLetterQueueService));
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, _ruleScheduler, null, _heartbeatService, _deadLetterQueueService, _enrichmentService));
         }
 
         [Test]
         public void Initiate_CallsInitiateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService);
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService);
 
             mediator.Initiate();
 
@@ -65,7 +65,7 @@ namespace Surveillance.Tests
         [Test]
         public void Terminate_CallsTerminateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService);
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService);
 
             mediator.Terminate();
 

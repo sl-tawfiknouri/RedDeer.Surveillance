@@ -70,7 +70,7 @@ namespace TestHarness.Commands
             var rawToDate = splitCmd.Skip(1).Take(1).FirstOrDefault();
             var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
             var trade = splitCmd.Skip(3).Take(1).FirstOrDefault();
-            var save = splitCmd.Skip(4).Take(1).FirstOrDefault();
+            var saveMarketCsv = splitCmd.Skip(4).Take(1).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
@@ -78,9 +78,9 @@ namespace TestHarness.Commands
             var tradeSuccess =
                 string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals(trade, "notrades", StringComparison.InvariantCultureIgnoreCase);
-            var savesuccess =
-                string.Equals(save, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(save, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
+            var saveMarketCsvSuccess =
+                string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
 
 
 
@@ -108,7 +108,7 @@ namespace TestHarness.Commands
                 return;
             }
 
-            if (!savesuccess)
+            if (!saveMarketCsvSuccess)
             {
                 console.WriteToUserFeedbackLine($"Did not understand the save to csv value. Options are 'market' or 'nomarketcsv'. No spaces.");
                 return;
@@ -226,7 +226,7 @@ namespace TestHarness.Commands
                 _tradingProcess.InitiateTrading(equityStream, tradeStream);
             }
 
-            if (string.Equals(save, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
             {
                 _equitiesFileStorageProcess.Initiate(equityStream);
             }

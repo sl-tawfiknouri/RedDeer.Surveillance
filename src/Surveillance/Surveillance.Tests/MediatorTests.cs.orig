@@ -13,8 +13,11 @@ namespace Surveillance.Tests
         private IReddeerRuleScheduler _ruleScheduler;
         private IReddeerDistributedRuleScheduler _ruleDistributedScheduler;
         private IApplicationHeartbeatService _heartbeatService;
+<<<<<<< HEAD
         private IDeadLetterQueueService _deadLetterQueueService;
+=======
         private IEnrichmentService _enrichmentService;
+>>>>>>> RDPB-2990 mediator tests GO GREEN
 
         [SetUp]
         public void Setup()
@@ -23,35 +26,54 @@ namespace Surveillance.Tests
             _ruleScheduler = A.Fake<IReddeerRuleScheduler>();
             _ruleDistributedScheduler = A.Fake<IReddeerDistributedRuleScheduler>();
             _heartbeatService = A.Fake<IApplicationHeartbeatService>();
-            _enrichmentService = A.Fake<IEnrichmentService>();
+<<<<<<< HEAD
             _deadLetterQueueService = A.Fake<IDeadLetterQueueService>();
+=======
+            _enrichmentService = A.Fake<IEnrichmentService>();
+>>>>>>> RDPB-2990 mediator tests GO GREEN
         }
 
         [Test]
         public void Constructor_NullTradeService_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService));
+<<<<<<< HEAD
+            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService));
+=======
+            Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _enrichmentService));
+>>>>>>> RDPB-2990 mediator tests GO GREEN
         }
 
         [Test]
         public void Constructor_NullRuleScheduler_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService));
+<<<<<<< HEAD
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService));
+=======
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, null, _ruleDistributedScheduler, _heartbeatService, _enrichmentService));
+>>>>>>> RDPB-2990 mediator tests GO GREEN
         }
 
         [Test]
         public void Constructor_NullSmartRuleScheduler_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, _ruleScheduler, null, _heartbeatService, _deadLetterQueueService, _enrichmentService));
+<<<<<<< HEAD
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, _ruleScheduler, null, _heartbeatService, _deadLetterQueueService));
+=======
+            Assert.Throws<ArgumentNullException>(() => new Mediator(_tradeService, _ruleScheduler, null, _heartbeatService, _enrichmentService));
+>>>>>>> RDPB-2990 mediator tests GO GREEN
         }
 
         [Test]
         public void Initiate_CallsInitiateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService);
+<<<<<<< HEAD
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService);
+=======
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _enrichmentService);
+>>>>>>> RDPB-2990 mediator tests GO GREEN
 
             mediator.Initiate();
 
@@ -65,7 +87,11 @@ namespace Surveillance.Tests
         [Test]
         public void Terminate_CallsTerminateOnTradeServiceAndScheduler()
         {
-            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService, _enrichmentService);
+<<<<<<< HEAD
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _deadLetterQueueService);
+=======
+            var mediator = new Mediator(_tradeService, _ruleScheduler, _ruleDistributedScheduler, _heartbeatService, _enrichmentService);
+>>>>>>> RDPB-2990 mediator tests GO GREEN
 
             mediator.Terminate();
 

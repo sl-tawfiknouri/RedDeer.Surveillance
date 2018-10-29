@@ -13,7 +13,7 @@ namespace Surveillance.Tests.Helpers
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"),
                 new Security(
-                    new SecurityIdentifiers("client-identifier", "sedol", "isin", "figi", "cusip", "xlon", "lei",
+                    new SecurityIdentifiers("reddeer-id", "client-identifier", "sedol", "isin", "figi", "cusip", "xlon", "lei",
                         "bloomberg"),
                     "random-security",
                     "ENTSPB",

@@ -14,5 +14,10 @@ namespace Surveillance.DataLayer.Configuration
         public string SurveillanceUserApiAccessToken { get; set; }
         public string ClientServiceUrl { get; set; }
         public string AuroraConnectionString { get; set; }
+
+        // Dead letter queues
+        public string ScheduledRuleDeadLetterQueueName { get; set; }
+        public string CaseMessageDeadLetterQueueName { get; set; }
+        public string ScheduleRuleDistributedWorkDeadLetterQueueName { get; set; }
     }
 }

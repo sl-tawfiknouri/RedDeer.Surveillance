@@ -120,6 +120,7 @@ namespace Surveillance.DataLayer.Projectors
         {
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    string.Empty,
                     doc.SecurityClientIdentifier,
                     doc.SecuritySedol,
                     doc.SecurityIsin,

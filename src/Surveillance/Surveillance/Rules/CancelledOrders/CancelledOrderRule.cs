@@ -122,7 +122,8 @@ namespace Surveillance.Rules.CancelledOrders
             return new CancelledOrderRuleBreach(
                 _parameters,
                 tradingPosition,
-                tradingPosition?.Get()?.FirstOrDefault()?.Security, hasBreachedRuleByPositionSize,
+                tradingPosition?.Get()?.FirstOrDefault()?.Security,
+                hasBreachedRuleByPositionSize,
                 cancellationRatioByPositionSize,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount);

@@ -52,6 +52,12 @@ namespace Surveillance.ElasticSearchDtos.Trades
         public string SecurityClientIdentifier { get; set; }
 
         /// <summary>
+        /// Security Reddeer Id
+        /// </summary>
+        [Keyword]
+        public string SecurityReddeerId { get; set; }
+
+        /// <summary>
         /// Security Sedol (7 digits)
         /// </summary>
         [Keyword]

@@ -36,7 +36,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var identifiers = new SecurityIdentifiers("MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
             var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
 
@@ -68,7 +68,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new SecurityIdentifiers("MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var identifiers = new SecurityIdentifiers("MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
             var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
 

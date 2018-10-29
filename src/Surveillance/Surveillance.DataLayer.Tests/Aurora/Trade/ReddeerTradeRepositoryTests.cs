@@ -9,7 +9,6 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Configuration;
-using Surveillance.System.Auditing.Context;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Trade
@@ -79,7 +78,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             const string tradeRationale = "Market is not pricing well";
             const string tradeStrategy = "Unknown";
             const string counterPartyBrokerId = "Broker-2";
-            var securityIdentifiers = new SecurityIdentifiers("stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new SecurityIdentifiers("stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
             var security = new Security(
                 securityIdentifiers,

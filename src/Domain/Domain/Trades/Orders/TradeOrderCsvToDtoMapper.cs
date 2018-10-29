@@ -116,6 +116,7 @@ namespace Domain.Trades.Orders
 
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    string.Empty,
                     csv.SecurityClientIdentifier,
                     csv.SecuritySedol,
                     csv.SecurityIsin,

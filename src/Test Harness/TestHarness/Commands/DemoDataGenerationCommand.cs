@@ -169,21 +169,21 @@ namespace TestHarness.Commands
 
             if (!connectionEstablished)
             {
-                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
+                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
                 return;
             }
 
             connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
             if (!connectionEstablished)
             {
-                console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run demo networking.");
+                console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
                 return;
             }
 
             connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
             if (!connectionEstablished)
             {
-                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run demo networking.");
+                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
                 return;
             }
 

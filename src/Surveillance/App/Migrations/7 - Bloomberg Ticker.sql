@@ -9,10 +9,10 @@ START TRANSACTION;
 
 INSERT INTO Migrations VALUES(7, "Bloomberg Ticker.sql", now());
 
-
 ALTER TABLE MarketStockExchangeSecurities MODIFY COLUMN BloombergTicker NVARCHAR(4090);
 ALTER TABLE MarketData MODIFY COLUMN BloombergTicker NVARCHAR(4090);
 ALTER TABLE TradeReddeer MODIFY COLUMN SecurityBloombergTicker NVARCHAR(4090);
+ALTER TABLE MarketData MODIFY COLUMN ExchangeSymbol NVARCHAR(4090);
 
 COMMIT;
 

@@ -27,7 +27,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         {
             var strategy = new MarkovEquityStrategy();
 
-            var result = strategy.AdvanceFrame(null);
+            var result = strategy.AdvanceFrame(null, DateTime.UtcNow);
 
             Assert.IsNull(result);
         }
@@ -52,7 +52,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     100,
                     new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
 
-            var result = strategy.AdvanceFrame(tick);
+            var result = strategy.AdvanceFrame(tick, DateTime.UtcNow);
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             var printableGeneratedSecurity = JsonConvert.SerializeObject(result);
@@ -89,7 +89,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 
             for(var i = 0; i < 99; i++)
             {
-                tick = strategy.AdvanceFrame(tick);
+                tick = strategy.AdvanceFrame(tick, DateTime.UtcNow);
 
                 var printableGeneratedSecurity = JsonConvert.SerializeObject(security);
                 Console.WriteLine(printableGeneratedSecurity);

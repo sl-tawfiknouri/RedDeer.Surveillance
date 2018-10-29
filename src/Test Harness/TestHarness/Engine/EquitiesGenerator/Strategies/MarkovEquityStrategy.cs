@@ -38,7 +38,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             }
         }
 
-        public SecurityTick AdvanceFrame(SecurityTick tick)
+        public SecurityTick AdvanceFrame(SecurityTick tick, DateTime advanceTick)
         {
             if (tick == null)
             {
@@ -64,7 +64,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     newSpread,
                     newVolume,
                     tick.DailyVolume,
-                    DateTime.UtcNow,
+                    advanceTick,
                     newMarketCap,
                     newIntraday,
                     tick.ListedSecurities,

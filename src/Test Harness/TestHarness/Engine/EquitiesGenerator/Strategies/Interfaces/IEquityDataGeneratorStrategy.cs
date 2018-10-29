@@ -1,9 +1,10 @@
-﻿using Domain.Equity.Frames;
+﻿using System;
+using Domain.Equity.Frames;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
 {
     public interface IEquityDataGeneratorStrategy
     {
-        SecurityTick AdvanceFrame(SecurityTick tick);
+        SecurityTick AdvanceFrame(SecurityTick tick, DateTime advanceTick);
     }
 }

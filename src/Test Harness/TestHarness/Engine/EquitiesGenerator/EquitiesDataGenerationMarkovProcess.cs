@@ -103,7 +103,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             {
                 var tockedSecurities = _activeFrame
                     .Securities
-                    .Select(TickSecurity)
+                    .Select(sec => TickSecurity(sec, advanceTick))
                     .ToArray();
 
                 var tickTock = new ExchangeFrame(_activeFrame.Exchange, advanceTick, tockedSecurities);
@@ -113,9 +113,9 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private SecurityTick TickSecurity(SecurityTick tick)
+        private SecurityTick TickSecurity(SecurityTick tick, DateTime advanceTick)
         {
-            return _dataStrategy.AdvanceFrame(tick);
+            return _dataStrategy.AdvanceFrame(tick, advanceTick);
         }
 
         public void TerminateWalk()

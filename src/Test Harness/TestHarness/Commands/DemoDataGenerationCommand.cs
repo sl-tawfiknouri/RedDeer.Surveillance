@@ -64,10 +64,14 @@ namespace TestHarness.Commands
             var rawFromDate = (splitCmd.Take(1)).FirstOrDefault();
             var rawToDate = splitCmd.Skip(1).Take(1).FirstOrDefault();
             var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
+            var trade = splitCmd.Skip(3).Take(1).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
             var marketSuccess = !string.IsNullOrWhiteSpace(market);
+            var tradeSuccess =
+                string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(trade, "notrades", StringComparison.InvariantCultureIgnoreCase);
 
             if (!fromSuccess)
             {
@@ -84,6 +88,12 @@ namespace TestHarness.Commands
             if (!marketSuccess)
             {
                 console.WriteToUserFeedbackLine($"Did not understand market of {market}");
+                return;
+            }
+
+            if (!tradeSuccess)
+            {
+                console.WriteToUserFeedbackLine($"Did not understand value for whether to include trades. Options are 'trades' or 'notrades'. No spaces.");
                 return;
             }
 
@@ -187,7 +197,11 @@ namespace TestHarness.Commands
                 return;
             }
 
-            _tradingProcess.InitiateTrading(equityStream, tradeStream);
+            if (string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase))
+            {
+                _tradingProcess.InitiateTrading(equityStream, tradeStream);
+            }
+
             _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
         }
 

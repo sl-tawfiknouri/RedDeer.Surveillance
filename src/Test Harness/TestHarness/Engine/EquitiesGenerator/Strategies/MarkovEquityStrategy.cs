@@ -12,7 +12,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
     /// </summary>
     public class MarkovEquityStrategy : IEquityDataGeneratorStrategy
     {
-        private readonly double _pricingStandardDeviation = 1; // good value for 15 minute tick updates
+        private readonly double _pricingStandardDeviation = 0.1; // good value for 15 minute tick updates
         private readonly double _tradingStandardDeviation = 4; // volume of trades will track larger volatility
         private readonly decimal _maxSpread = 0.05m;
 

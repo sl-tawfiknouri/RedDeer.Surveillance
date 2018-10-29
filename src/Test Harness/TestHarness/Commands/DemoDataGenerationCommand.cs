@@ -156,7 +156,7 @@ namespace TestHarness.Commands
                     .TradingFactory
                     .Create()
                     .MarketUpdate()
-                    .TradingFixedVolume(2)
+                    .TradingNormalDistributionVolume(4)
                     .Finish();
 
             _networkManager =

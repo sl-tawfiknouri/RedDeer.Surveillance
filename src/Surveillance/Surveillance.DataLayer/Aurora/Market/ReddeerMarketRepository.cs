@@ -99,7 +99,7 @@ namespace Surveillance.DataLayer.Aurora.Market
               sec.Lei As Lei,
               sec.BloombergTicker As BloombergTicker
               FROM MarketStockExchangeSecurities as sec
-              left join marketstockexchange as mse
+              left join MarketStockExchange as mse
               on sec.MarketStockExchangeId = mse.Id
               WHERE sec.Enrichment is null
               LIMIT 10000;";

@@ -65,7 +65,7 @@ namespace Surveillance.System.DataLayer.Repositories
         {
             if (!Directory.Exists(MigrationFolders()))
             {
-                _logger.LogError("MigrationRepository could not find the migration folder. Check application permissions.");
+                _logger.LogError($"MigrationRepository could not find the migration folder. {MigrationFolders()} Check application permissions.");
                 return 0;
             }
 

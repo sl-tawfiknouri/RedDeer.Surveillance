@@ -110,7 +110,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         private SecurityTick TickSecurity(SecurityTick tick)
         {
-            return _dataStrategy.AdvanceFrame(tick, DateTime.UtcNow);
+            return _dataStrategy.AdvanceFrame(tick, DateTime.UtcNow, true);
         }
 
         public void TerminateWalk()

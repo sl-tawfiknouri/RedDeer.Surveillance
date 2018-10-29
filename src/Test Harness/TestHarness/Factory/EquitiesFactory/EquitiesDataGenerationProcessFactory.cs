@@ -19,7 +19,7 @@ namespace TestHarness.Factory.EquitiesFactory
         public IEquitiesDataGenerationMarkovProcess Build()
         {
             return new EquitiesDataGenerationMarkovProcess(
-                new MarkovEquityStrategy(4, 5, 0.05m),
+                new MarkovEquityStrategy(0.1, 3, 0.001m),
                 TimeSpan.FromMinutes(15),
                 _logger);
         }

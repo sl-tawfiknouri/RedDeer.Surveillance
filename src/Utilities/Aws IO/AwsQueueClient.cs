@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,6 +99,32 @@ namespace Utilities.Aws_IO
 
             var sendMessageResponse = await _sqsClient.SendMessageAsync(sendMessageRequest, cancellationToken);
             _logger?.LogInformation($"Sent Message To Queue (Name: {name}, Size: {message.Length}, HttpCode: {sendMessageResponse.HttpStatusCode.ToString()}).");
+        }
+
+        public async Task<int> QueueMessageCount(string name, CancellationToken cancellationToken)
+        {
+            var queueUrl = await GetQueueUrlAsync(name, cancellationToken);
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var response =
+                        await _sqsClient.GetQueueAttributesAsync(
+                            new GetQueueAttributesRequest
+                            {
+                                QueueUrl = queueUrl,
+                                AttributeNames = new List<string> { "ApproximateNumberOfMessages" }
+                            }, cancellationToken);
+
+                    return response.ApproximateNumberOfMessages;
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogError(ex.ToString());
+                }
+            }
+
+            return 0;
         }
 
         public async Task SubscribeToQueueAsync(string name, Func<string, string, Task> action, CancellationToken cancellationToken)

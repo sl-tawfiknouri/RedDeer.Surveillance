@@ -1,6 +1,8 @@
-﻿namespace Relay.Configuration.Interfaces
+﻿using Surveillance.System.DataLayer.Interfaces;
+
+namespace Relay.Configuration.Interfaces
 {
-    public interface INetworkConfiguration
+    public interface INetworkConfiguration : ISystemDataLayerConfig
     {
         string RelayServiceEquityDomain { get; set; }
         string RelayServiceEquityPort { get; set; }
@@ -10,5 +12,6 @@
         string SurveillanceServiceTradePort { get; set; }
         string RelayServiceTradeDomain { get; set; }
         string RelayServiceTradePort { get; set; }
+        string IsDeployedOnClientMachine { get; set; }
     }
 }

@@ -65,6 +65,9 @@
     <None Update="Migrations\4 - Exception Audit.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\6 - Relay Audit.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="nlog.Release.config">
       <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
     </None>

@@ -36,27 +36,27 @@ namespace Relay.Disk_IO
                 return;
             }
 
-            var archivePath = GetArchivePath();
-            var failedReadsPath = GetFailedReadsPath();
-
             try
             {
+                var archivePath = GetArchivePath();
+                var failedReadsPath = GetFailedReadsPath();
+
                 ReddeerDirectory.Create(UploadDirectoryPath());
                 ReddeerDirectory.Create(archivePath);
                 ReddeerDirectory.Create(failedReadsPath);
-            }
-            catch (ArgumentException e)
-            {
-                Logger.LogError($"Argument exception in {_uploadFileMonitorName} {UploadDirectoryPath()} {e.Message}");
-            }
 
-            var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
+                var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
 
-            if (files.Any())
-            {
-                ProcessInitialStartupFiles(archivePath, files);
+                if (files.Any())
+                {
+                    ProcessInitialStartupFiles(archivePath, files);
+                }
+                SetFileSystemWatch();
             }
-            SetFileSystemWatch();
+            catch (Exception e)
+            {
+                Logger.LogError($"Exception in {_uploadFileMonitorName} {UploadDirectoryPath()} {e.Message}");
+            }
         }
 
         protected abstract string UploadDirectoryPath();
@@ -73,18 +73,32 @@ namespace Relay.Disk_IO
 
         private void DetectedFileChange(object source, FileSystemEventArgs e)
         {
-            var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
-            ProcessFile(e.FullPath, archivePath);
+            try
+            {
+                var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
+                ProcessFile(e.FullPath, archivePath);
+            }
+            catch (Exception a)
+            {
+                Logger.LogError("BaseUploadFileMonitor had an error in detected file change", a);
+            }
         }
 
         private void ProcessInitialStartupFiles(string archivePath, IReadOnlyCollection<string> files)
         {
-            Logger.LogInformation($"{_uploadFileMonitorName} found some existing files on start up. Processing now");
-
-            foreach (var filePath in files)
+            try
             {
-                var archiveFilePath = ArchiveFilePath(archivePath, filePath);
-                ProcessFile(filePath, archiveFilePath);
+                Logger.LogInformation($"{_uploadFileMonitorName} found some existing files on start up. Processing now");
+
+                foreach (var filePath in files)
+                {
+                    var archiveFilePath = ArchiveFilePath(archivePath, filePath);
+                    ProcessFile(filePath, archiveFilePath);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Base upload file monitor had an error whilst process initial start up files", e);
             }
         }
 
@@ -108,7 +122,7 @@ namespace Relay.Disk_IO
 
             _fileSystemWatcher = new FileSystemWatcher(UploadDirectoryPath())
             {
-                NotifyFilter = NotifyFilters.LastWrite,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size,
                 Filter = "*.csv",
                 IncludeSubdirectories = false
             };

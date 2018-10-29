@@ -8,6 +8,11 @@ namespace Surveillance.System.Auditing.Context.Interfaces
     {
         ISystemProcessOperationDistributeRuleContext CreateDistributeRuleContext();
 
+        ISystemProcessOperationUploadFileContext CreateUploadFileContext();
+
+        ISystemProcessOperationUploadFileContext CreateAndStartUploadFileContext(SystemProcessOperationUploadFileType type, string filePath);
+
+
         ISystemProcessOperationDistributeRuleContext CreateAndStartDistributeRuleContext(
             DateTime? initialStart,
             DateTime? initialEnd,

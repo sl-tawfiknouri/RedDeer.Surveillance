@@ -1,4 +1,5 @@
 ﻿@page
+@using Surveillance.System.DataLayer.Processes
 @using Utilities.Extensions
 @model Surveillance.App.Pages.DashboardModel
 @{
@@ -305,9 +306,31 @@ table {
         }
 
     </table>
-    <hr />
+<hr />
+
+<h1>File Uploads</h1>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Op Id</th>
+        <th>File Type</th>
+        <th>File Path</th>
+    </tr>
+
+    @foreach (var row in Model.SystemProcessUploadFile)
+    {
+        <tr>
+            <td>@row.Id</td>
+            <td>@row.SystemProcessOperationId</td>
+            <td>@(((SystemProcessOperationUploadFileType)row.FileType).ToString())</td>
+            <td>@row.FilePath</td>
+        </tr>
+    }
+
+</table>
+<hr />
     
-    <h1>Process Information</h1>
+<h1>Process Information</h1>
     <table>
         <tr>
             <th>Property</th>

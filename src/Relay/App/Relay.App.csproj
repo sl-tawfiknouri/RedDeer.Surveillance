@@ -47,6 +47,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.System.Auditing.csproj" />
+    <ProjectReference Include="..\..\Surveillance.System.DataLayer\Surveillance.System.DataLayer.csproj" />
     <ProjectReference Include="..\Relay\Relay.csproj" />
   </ItemGroup>
 

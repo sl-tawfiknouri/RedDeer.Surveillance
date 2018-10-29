@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,11 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger _logger;
         private const string MigrationFolder = "Migrations";
+
+        private string MigrationFolders()
+        {
+            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), MigrationFolder);
+        }
 
         private const string HighestMigrationSql =
             @"SELECT MAX(Id) FROM migrations;";
@@ -57,13 +63,13 @@ namespace Surveillance.System.DataLayer.Repositories
 
         public int LatestMigrationAvailable()
         {
-            if (!Directory.Exists(MigrationFolder))
+            if (!Directory.Exists(MigrationFolders()))
             {
                 _logger.LogError("MigrationRepository could not find the migration folder. Check application permissions.");
                 return 0;
             }
 
-            var entries = Directory.GetFiles(MigrationFolder).Select(Path.GetFileName).ToList();
+            var entries = Directory.GetFiles(MigrationFolders()).Select(Path.GetFileName).ToList();
 
             if (!entries.Any())
             {
@@ -113,13 +119,13 @@ namespace Surveillance.System.DataLayer.Repositories
 
             var scriptIds = Enumerable.Range(databaseSet + 1, migrationSet - databaseSet).OrderBy(x => x).ToList();
 
-            if (!Directory.Exists(MigrationFolder))
+            if (!Directory.Exists(MigrationFolders()))
             {
                 _logger.LogError("MigrationRepository could not find the migration folder. Check application permissions.");
                 return;
             }
 
-            var entries = Directory.GetFiles(MigrationFolder).Select(Path.GetFileName).ToList();
+            var entries = Directory.GetFiles(MigrationFolders()).Select(Path.GetFileName).ToList();
 
             if (!entries.Any())
             {
@@ -157,7 +163,7 @@ namespace Surveillance.System.DataLayer.Repositories
 
             try
             {
-                var file = File.ReadAllText(Path.Combine("Migrations", name.FileName));
+                var file = File.ReadAllText(Path.Combine(MigrationFolders(), name.FileName));
 
                 dbConnection.Open();
 

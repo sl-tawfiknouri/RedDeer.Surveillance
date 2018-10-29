@@ -82,8 +82,7 @@ namespace Surveillance.DataLayer.Aurora.Market
              AND MSEP.Epoch <= @end;";
 
         private const string GetUnEnrichedSecuritiesSql =
-            @"SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-              SELECT 
+            @"SELECT 
               sec.Id AS Id,
               sec.ReddeerId As ReddeerId,
               mse.MarketId as MarketIdentifierCode,
@@ -103,8 +102,7 @@ namespace Surveillance.DataLayer.Aurora.Market
               left join marketstockexchange as mse
               on sec.MarketStockExchangeId = mse.Id
               WHERE sec.Enrichment is null
-              LIMIT 10000;
-              COMMIT;";
+              LIMIT 10000;";
 
         private const string UpdateUnEnrichedSecuritiesSql =
             @"UPDATE MarketStockExchangeSecurities

@@ -31,53 +31,43 @@ namespace Domain.Trades.Orders
                 return null;
             }
 
+            var failedParse = false;
+
             if (!Enum.TryParse(csv.OrderPosition, out OrderPosition orderPosition))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order position {orderPosition}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order position {csv.OrderPosition} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!Enum.TryParse(csv.OrderType, out OrderType orderType))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order type {orderType}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order type {csv.OrderType} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!Enum.TryParse(csv.OrderStatus, out OrderStatus orderStatus))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order status {orderStatus}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable order status {csv.OrderStatus} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!int.TryParse(csv.FulfilledVolume, out var fulfilledVolume))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable fulfilled volume {fulfilledVolume}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable fulfilled volume {csv.FulfilledVolume} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!int.TryParse(csv.OrderedVolume, out var orderedVolume))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable ordered volume {orderedVolume}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable ordered volume {csv.OrderedVolume} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!decimal.TryParse(csv.LimitPrice, out var limitPrice)
                 && orderType == OrderType.Limit)
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable limit price on a limit order {limitPrice}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable limit price on a limit order {csv.LimitPrice} for row {csv.RowId}");
+                failedParse = true;
             }
 
             var parsedLimitPrice =
@@ -95,10 +85,8 @@ namespace Domain.Trades.Orders
             if (!string.IsNullOrWhiteSpace(csv.ExecutedPrice)
                 && !decimal.TryParse(csv.ExecutedPrice, out executedPrice))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable executed price {executedPrice}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable executed price {csv.ExecutedPrice} for row {csv.RowId}");
+                failedParse = true;
             }
 
             var pricedExecutedPrice =
@@ -108,17 +96,19 @@ namespace Domain.Trades.Orders
 
             if (!DateTime.TryParse(csv.StatusChangedOn, out var statusChangedOn))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable status changed on date {statusChangedOn}");
-
-                return null;
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable status changed on date {csv.StatusChangedOn} for row {csv.RowId}");
+                failedParse = true;
             }
 
             if (!DateTime.TryParse(csv.TradeSubmittedOn, out var tradeSubmittedOn))
             {
-                FailedParseTotal += 1;
-                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable trade submitted on date {tradeSubmittedOn}");
+                _logger?.LogError($"Failed to parse trade order frame csv due to being passed an unparseable trade submitted on date {csv.TradeSubmittedOn} for row {csv.RowId}");
+                failedParse = true;
+            }
 
+            if (failedParse)
+            {
+                FailedParseTotal += 1;
                 return null;
             }
 

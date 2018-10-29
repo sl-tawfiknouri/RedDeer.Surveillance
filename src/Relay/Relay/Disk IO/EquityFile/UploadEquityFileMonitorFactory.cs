@@ -3,6 +3,7 @@ using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Relay.Configuration.Interfaces;
 using Relay.Disk_IO.EquityFile.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace Relay.Disk_IO.EquityFile
@@ -12,12 +13,14 @@ namespace Relay.Disk_IO.EquityFile
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadEquityFileProcessor _uploadEquityFileProcessor;
         private readonly IReddeerDirectory _reddeerDirectory;
+        private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger<UploadEquityFileMonitor> _logger;
 
         public UploadEquityFileMonitorFactory(
             IUploadConfiguration uploadConfiguration,
             IUploadEquityFileProcessor uploadEquityFileProcessor,
             IReddeerDirectory reddeerDirectory,
+            ISystemProcessContext systemProcessContext,
             ILogger<UploadEquityFileMonitor> logger)
         {
             _uploadConfiguration =
@@ -32,6 +35,10 @@ namespace Relay.Disk_IO.EquityFile
                 reddeerDirectory
                 ?? throw new ArgumentNullException(nameof(reddeerDirectory));
 
+            _systemProcessContext =
+                systemProcessContext
+                ?? throw new ArgumentNullException(nameof(systemProcessContext));
+
             _logger =
                 logger
                 ?? throw new ArgumentNullException(nameof(logger));
@@ -44,6 +51,7 @@ namespace Relay.Disk_IO.EquityFile
                 _uploadConfiguration,
                 _uploadEquityFileProcessor,
                 _reddeerDirectory,
+                _systemProcessContext,
                 _logger,
                 "Upload Equity File Monitor");
         }

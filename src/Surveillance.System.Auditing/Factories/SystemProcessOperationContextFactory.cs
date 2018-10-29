@@ -12,18 +12,21 @@ namespace Surveillance.System.Auditing.Factories
         private readonly ISystemProcessOperationRepository _operationRepository;
         private readonly ISystemProcessOperationRunRuleContextFactory _ruleRunFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleFactory;
+        private readonly ISystemProcessOperationFileUploadContextFactory _fileUploadFactory;
         private readonly IOperationLogging _operationLogging;
 
         public SystemProcessOperationContextFactory(
             ISystemProcessOperationRepository operationContext,
             ISystemProcessOperationRunRuleContextFactory ruleRunRepository,
             ISystemProcessOperationDistributeRuleContextFactory distributeRuleFactory,
-            IOperationLogging operationLogging)
+            IOperationLogging operationLogging,
+            ISystemProcessOperationFileUploadContextFactory fileUploadFactory)
         {
             _operationRepository = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
             _ruleRunFactory = ruleRunRepository ?? throw new ArgumentNullException(nameof(ruleRunRepository));
             _distributeRuleFactory = distributeRuleFactory ?? throw new ArgumentNullException(nameof(distributeRuleFactory));
             _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
+            _fileUploadFactory = fileUploadFactory ?? throw new ArgumentNullException(nameof(fileUploadFactory));
         }
 
         public ISystemProcessOperationContext Build(ISystemProcessContext context)
@@ -33,6 +36,7 @@ namespace Surveillance.System.Auditing.Factories
                 _operationRepository,
                 _ruleRunFactory,
                 _distributeRuleFactory,
+                _fileUploadFactory,
                 _operationLogging);
         }
     }

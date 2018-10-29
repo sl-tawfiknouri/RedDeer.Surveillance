@@ -26,7 +26,7 @@ namespace Relay.Disk_IO.EquityFile
             _csvConfig = csvConfig ?? throw new ArgumentNullException(nameof(csvConfig));
         }
         
-        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord)
+        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -67,7 +67,9 @@ namespace Relay.Disk_IO.EquityFile
                 IssuerIdentifier = rawRecord[_csvConfig.SecurityIssuerIdentifierFieldName],
                 Lei = rawRecord[_csvConfig.SecurityLeiFieldName],
                 BloombergTicker = rawRecord[_csvConfig.SecurityBloombergTicker],
-                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName]
+                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName],
+
+                RowId = rowId
             };
         }
 
@@ -107,12 +109,14 @@ namespace Relay.Disk_IO.EquityFile
             }
         }
 
-        protected override void CheckAndLogFailedParsesFromDtoMapper()
+        protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
         {
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file");
+                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
             }
+
+            _csvToDtoMapper.FailedParseTotal = 0;
         }
 
         public void WriteFailedReadsToDisk(

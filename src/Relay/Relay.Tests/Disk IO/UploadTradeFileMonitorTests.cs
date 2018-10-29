@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Relay.Configuration.Interfaces;
 using Relay.Disk_IO.TradeFile;
 using Relay.Disk_IO.TradeFile.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace Relay.Tests.Disk_IO
@@ -18,6 +19,7 @@ namespace Relay.Tests.Disk_IO
         private IUploadConfiguration _uploadConfiguration;
         private IReddeerDirectory _directory;
         private IUploadTradeFileProcessor _fileProcessor;
+        private ISystemProcessContext _systemProcessContext;
         private ILogger<UploadTradeFileMonitor> _logger;
 
         [SetUp]
@@ -27,6 +29,7 @@ namespace Relay.Tests.Disk_IO
             _uploadConfiguration = A.Fake<IUploadConfiguration>();
             _directory = A.Fake<IReddeerDirectory>();
             _fileProcessor = A.Fake<IUploadTradeFileProcessor>();
+            _systemProcessContext = A.Fake<ISystemProcessContext>();
             _logger = A.Fake<ILogger<UploadTradeFileMonitor>>();
         }
 
@@ -35,7 +38,7 @@ namespace Relay.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(null, _uploadConfiguration, _directory, _fileProcessor, _logger));
+                new UploadTradeFileMonitor(null, _uploadConfiguration, _directory, _fileProcessor, _systemProcessContext, _logger));
         }
 
         [Test]
@@ -43,7 +46,7 @@ namespace Relay.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_tradeOrderStream, null, _directory, _fileProcessor, _logger));
+                new UploadTradeFileMonitor(_tradeOrderStream, null, _directory, _fileProcessor, _systemProcessContext, _logger));
         }
 
         [Test]
@@ -51,7 +54,7 @@ namespace Relay.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, null, _fileProcessor, _logger));
+                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, null, _fileProcessor, _systemProcessContext, _logger));
         }
 
         [Test]
@@ -59,7 +62,7 @@ namespace Relay.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, null, _logger));
+                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, null, _systemProcessContext, _logger));
         }
 
         [Test]
@@ -67,13 +70,13 @@ namespace Relay.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, null));
+                new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _systemProcessContext, null));
         }
 
         [Test]
         public void Initiate_EmptyConfigurationPath_Logs()
         {
-            var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _logger);
+            var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _systemProcessContext, _logger);
 
             monitor.Initiate();
 
@@ -86,7 +89,7 @@ namespace Relay.Tests.Disk_IO
         [Explicit]
         public void Initiate_SetConfigurationPath_Logs()
         {
-            var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _logger);
+            var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _systemProcessContext, _logger);
             A.CallTo(() => _uploadConfiguration.RelayTradeFileUploadDirectoryPath).Returns("testPath");
 
             monitor.Initiate();

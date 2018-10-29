@@ -41,15 +41,17 @@ namespace Relay.Disk_IO.TradeFile
             }
         }
 
-        protected override void CheckAndLogFailedParsesFromDtoMapper()
+        protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
         {
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file");
+                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
             }
+
+            _csvToDtoMapper.FailedParseTotal = 0;
         }
 
-        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord)
+        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -94,6 +96,8 @@ namespace Relay.Disk_IO.TradeFile
                 TradeRationale = rawRecord[_mappingConfig.TradeRationaleFieldName],
                 TradeStrategy = rawRecord[_mappingConfig.TradeStrategyFieldName],
                 SecurityIssuerIdentifier = rawRecord[_mappingConfig.SecurityIssuerIdentifier],
+
+                RowId = rowId
             };
         }
 

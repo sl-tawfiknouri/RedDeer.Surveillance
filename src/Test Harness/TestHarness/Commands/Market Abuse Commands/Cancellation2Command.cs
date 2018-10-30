@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using TestHarness.Commands.Interfaces;
+using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 
@@ -13,10 +16,12 @@ namespace TestHarness.Commands.Market_Abuse_Commands
     /// </summary>
     public class Cancellation2Command : ICommand
     {
-        private readonly IAppFactory _appFactory;
-        private INetworkManager _networkManager;
-
         private readonly object _lock = new object();
+        private readonly IAppFactory _appFactory;
+
+        private INetworkManager _networkManager;
+        private IEquitiesDataGenerationMarkovProcess _equityProcess;
+        private IOrderDataGenerator _tradingProcess;
 
         public Cancellation2Command(IAppFactory appFactory)
         {
@@ -37,17 +42,90 @@ namespace TestHarness.Commands.Market_Abuse_Commands
         {
             lock (_lock)
             {
-                var console = _appFactory.Console;
+                var fromDate = new DateTime(2018, 03, 01);
+                var toDate = new DateTime(2018, 03, 02);
+                const string market = "xlon";
 
-                _networkManager =
+                var console = _appFactory.Console;
+                var apiRepository = _appFactory.SecurityApiRepository;
+                var marketApiRepository = _appFactory.MarketApiRepository;
+                
+                var isHeartbeatingTask = apiRepository.Heartbeating();
+                isHeartbeatingTask.Wait();
+
+                if (!isHeartbeatingTask.Result)
+                {
+                    console.WriteToUserFeedbackLine("Could not connect to the security api on the client service");
+                    return;
+                }
+
+                var priceApiTask = apiRepository.Get(fromDate, toDate, market);
+                priceApiTask.Wait();
+                var priceApiResult = priceApiTask.Result;
+
+                if (priceApiResult == null
+                    || (!priceApiResult.SecurityPrices?.Any() ?? true))
+                {
+                    console.WriteToUserFeedbackLine("Could not find any results on the security api for the provided query");
+                    return;
+                }
+
+                var marketApiHeartbeatTask = marketApiRepository.HeartBeating();
+                marketApiHeartbeatTask.Wait();
+
+                if (!marketApiHeartbeatTask.Result)
+                {
+                    console.WriteToUserFeedbackLine("Could not connect to the market api on the client service");
+                    return;
+                }
+
+                var marketApiTask = marketApiRepository.Get();
+                marketApiTask.Wait();
+                var marketApiResult = marketApiTask.Result;
+
+                if (marketApiResult == null
+                    || marketApiResult.Count == 0)
+                {
+                    console.WriteToUserFeedbackLine("Could not find any results for the market api on the client service");
+                    return;
+                }
+
+                var marketData = marketApiResult.FirstOrDefault(ap =>
+                    string.Equals(ap.Code, market, StringComparison.InvariantCultureIgnoreCase));
+
+                if (marketData == null)
+                {
+                    console.WriteToUserFeedbackLine("Could not find any relevant results for the market api on the client service");
+                    return;
+                }
+
+                var equityStream =
                     _appFactory
-                        .NetworkManagerFactory
-                        .CreateWebsockets();
+                        .StockExchangeStreamFactory
+                        .CreateDisplayable(console);
+
+                _equityProcess =
+                    _appFactory
+                        .EquitiesDataGenerationProcessFactory
+                        .Build();
 
                 var tradeStream =
                     _appFactory
                         .TradeOrderStreamFactory
                         .CreateDisplayable(console);
+
+                _tradingProcess =
+                    _appFactory
+                        .TradingFactory
+                        .Create()
+                        .MarketUpdate()
+                        .TradingNormalDistributionVolume(4)
+                        .Finish();
+
+                _networkManager =
+                    _appFactory
+                        .NetworkManagerFactory
+                        .CreateWebsockets();
 
                 // start networking processes
                 var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
@@ -65,7 +143,15 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
+                connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
+                if (!connectionEstablished)
+                {
+                    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
+                    return;
+                }
                 
+                _tradingProcess.InitiateTrading(equityStream, tradeStream);
+                _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
         }
     }

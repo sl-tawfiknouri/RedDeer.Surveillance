@@ -160,7 +160,6 @@ namespace Surveillance
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
             For<IRuleProjector>().Use<RuleProjector>();
 
-            For<IDeadLetterQueueService>().Use<DeadLetterQueueService>();
             For<IEnrichmentService>().Use<EnrichmentService>();
         }
     }

@@ -15,7 +15,6 @@ namespace Surveillance
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly IApplicationHeartbeatService _heartbeatService;
-        private readonly IDeadLetterQueueService _deadLetterQueueService;
         private readonly IEnrichmentService _enrichmentService;
 
         public Mediator(
@@ -23,7 +22,6 @@ namespace Surveillance
             IReddeerRuleScheduler ruleScheduler,
             IReddeerDistributedRuleScheduler distributedRuleScheduler,
             IApplicationHeartbeatService heartbeatService,
-            IDeadLetterQueueService deadLetterQueueService,
             IEnrichmentService enrichmentService)
         {
             _reddeerTradeService =
@@ -38,9 +36,6 @@ namespace Surveillance
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
-            _deadLetterQueueService =
-                deadLetterQueueService
-                ?? throw new ArgumentNullException(nameof(deadLetterQueueService));
             _enrichmentService =
                 enrichmentService
                 ?? throw new ArgumentNullException(nameof(enrichmentService));
@@ -52,7 +47,6 @@ namespace Surveillance
             _ruleScheduler.Initiate();
             _reddeerTradeService.Initialise();
             _heartbeatService.Initialise();
-            _deadLetterQueueService.Initialise();
             _enrichmentService.Initialise();
         }
 
@@ -61,7 +55,6 @@ namespace Surveillance
             _reddeerTradeService.Dispose();
             _ruleScheduler.Terminate();
             _distributedRuleScheduler.Terminate();
-            _deadLetterQueueService.Terminate();
             _enrichmentService.Terminate();
             // we don't terminate the heart beat service as it will stop when the entire app has stopped
         }

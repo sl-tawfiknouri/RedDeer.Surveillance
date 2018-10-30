@@ -1,5 +1,6 @@
 ﻿using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
+using Domain.Trades.Orders;
 using NLog;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
@@ -57,7 +58,7 @@ namespace TestHarness.Factory
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
             EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
-            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, Logger);
+            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeOrderCsvToDtoMapper(),  Logger);
 
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();

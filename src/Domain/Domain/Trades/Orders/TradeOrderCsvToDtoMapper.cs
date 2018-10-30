@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Domain.Equity;
 using Domain.Market;
 using Domain.Trades.Orders.Interfaces;
@@ -154,6 +155,49 @@ namespace Domain.Trades.Orders
                 csv.TradeRationale,
                 csv.TradeStrategy,
                 csv.OrderCurrency);
+        }
+
+        public TradeOrderFrameCsv Map(TradeOrderFrame frame)
+        {
+            if (frame == null)
+            {
+                return new TradeOrderFrameCsv();
+            }
+
+            return new TradeOrderFrameCsv
+            {
+                OrderType = frame.OrderType.ToString(),
+                MarketIdentifierCode = frame.Market?.Id.Id,
+                MarketName = frame.Market?.Name,
+                SecurityName = frame.Security?.Name,
+                SecurityCfi =  frame.Security?.Cfi,
+                SecurityIssuerIdentifier = frame.Security?.IssuerIdentifier,
+                SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier,
+                SecuritySedol = frame.Security?.Identifiers.Sedol,
+                SecurityIsin = frame.Security?.Identifiers.Isin,
+                SecurityFigi = frame.Security?.Identifiers.Figi,
+                SecurityCusip = frame.Security?.Identifiers.Cusip,
+                SecurityLei = frame.Security?.Identifiers.Lei,
+                SecurityExchangeSymbol = frame.Security?.Identifiers.ExchangeSymbol,
+                SecurityBloombergTicker = frame.Security?.Identifiers.BloombergTicker,
+                LimitPrice = frame.Limit?.Value.ToString() ?? null,
+                ExecutedPrice = frame.ExecutedPrice?.Value.ToString() ?? null,
+                TradeSubmittedOn = frame.TradeSubmittedOn.ToString(CultureInfo.CurrentCulture),
+                StatusChangedOn = frame.StatusChangedOn.ToString(CultureInfo.CurrentCulture),
+                OrderedVolume = frame.OrderedVolume.ToString(),
+                FulfilledVolume = frame.FulfilledVolume.ToString(),
+                OrderPosition = frame.Position.ToString(),
+                TraderId = frame.TraderId,
+                ClientAttributionId = frame.TradeClientAttributionId,
+                AccountId = frame.AccountId,
+                PartyBrokerId = frame.PartyBrokerId,
+                CounterPartyBrokerId = frame.CounterPartyBrokerId,
+                DealerInstructions = frame.DealerInstructions,
+                TradeRationale = frame.TradeRationale,
+                TradeStrategy = frame.TradeStrategy,
+                OrderStatus = frame.OrderStatus.ToString(),
+                OrderCurrency = frame.OrderCurrency
+            };
         }
     }
 }

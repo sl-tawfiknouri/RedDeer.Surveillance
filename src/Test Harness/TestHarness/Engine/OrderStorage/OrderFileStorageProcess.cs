@@ -5,6 +5,7 @@ using System.Linq;
 using System.Timers;
 using CsvHelper;
 using Domain.Trades.Orders;
+using Domain.Trades.Orders.Interfaces;
 using NLog;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.OrderStorage.Interfaces;
@@ -25,14 +26,17 @@ namespace TestHarness.Engine.OrderStorage
         private readonly string _fileStamp;
 
         private readonly IConsole _console;
+        private readonly ITradeOrderCsvToDtoMapper _csvMapper;
 
         public OrderFileStorageProcess(
             string storagePath,
             IConsole console,
+            ITradeOrderCsvToDtoMapper csvMapper,
             ILogger logger)
         {
             _storagePath = storagePath ?? "GeneratedOrderFiles";
             _console = console ?? throw new ArgumentNullException(nameof(console));
+            _csvMapper = csvMapper ?? throw new ArgumentNullException(nameof(csvMapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _frames = new List<TradeOrderFrame>();
             _timerInitiated = false;
@@ -97,11 +101,14 @@ namespace TestHarness.Engine.OrderStorage
                 {
                     var filePath = Path.Combine(_storagePath, _fileStamp);
 
+
+                    var csvFrames = _frames.Select(_csvMapper.Map).ToList();
+
                     using (var writer = File.CreateText(filePath))
                     {
                         var csv = new CsvWriter(writer);
                         csv.Configuration.HasHeaderRecord = true;
-                        csv.WriteRecords(_frames);
+                        csv.WriteRecords(csvFrames);
                     }
 
                     _timerInitiated = false;

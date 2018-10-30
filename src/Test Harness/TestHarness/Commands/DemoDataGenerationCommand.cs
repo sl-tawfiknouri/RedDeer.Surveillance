@@ -6,6 +6,7 @@ using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
+using TestHarness.Engine.OrderStorage.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 
@@ -13,13 +14,15 @@ namespace TestHarness.Commands
 {
     public class DemoDataGenerationCommand : ICommand
     {
-        public const string FileDirectory = "DataGenerationStorage";
+        public const string FileDirectory = "DataGenerationStorageMarket";
+        public const string TradeFileDirectory = "DataGenerationStorageTrades";
 
         private readonly IAppFactory _appFactory;
         private INetworkManager _networkManager;
         private IEquitiesDataGenerationMarkovProcess _equityProcess;
         private IOrderDataGenerator _tradingProcess;
         private IEquityDataStorage _equitiesFileStorageProcess;
+        private IOrderFileStorageProcess _orderFileStorageProcess;
 
         private readonly object _lock = new object();
 
@@ -61,7 +64,7 @@ namespace TestHarness.Commands
             var console = _appFactory.Console;
             var apiRepository = _appFactory.SecurityApiRepository;
             var marketApiRepository = _appFactory.MarketApiRepository;
-
+            
             var cmd = command.ToLower();
             cmd = cmd.Replace("run data generation", string.Empty).Trim();
             var splitCmd = cmd.Split(' ');
@@ -71,6 +74,7 @@ namespace TestHarness.Commands
             var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
             var trade = splitCmd.Skip(3).Take(1).FirstOrDefault();
             var saveMarketCsv = splitCmd.Skip(4).Take(1).FirstOrDefault();
+            var saveTradeCsv = splitCmd.Skip(5).Take(1).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
@@ -81,7 +85,9 @@ namespace TestHarness.Commands
             var saveMarketCsvSuccess =
                 string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
-
+            var saveTradeCsvSuccess =
+                string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
+                || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
 
 
             if (!fromSuccess)
@@ -114,7 +120,12 @@ namespace TestHarness.Commands
                 return;
             }
 
-            
+            if (!saveTradeCsvSuccess)
+            {
+                console.WriteToUserFeedbackLine($"Did not understand the save to csv value. Options are 'trade' or 'notradecsv'. No spaces.");
+                return;
+            }           
+
             var isHeartbeatingTask = apiRepository.Heartbeating();
             isHeartbeatingTask.Wait();
 
@@ -192,11 +203,17 @@ namespace TestHarness.Commands
                     .NetworkManagerFactory
                     .CreateWebsockets();
 
-            var directory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
+            var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
 
             _equitiesFileStorageProcess = _appFactory
                 .EquitiesFileStorageProcessFactory
-                .Create(directory);
+                .Create(equitiesDirectory);
+
+            var tradeDirectory = Path.Combine(Directory.GetCurrentDirectory(), TradeFileDirectory);
+
+             _orderFileStorageProcess = _appFactory
+                .OrderFileStorageProcessFactory
+                .Build(tradeDirectory);
 
             // start networking processes
             var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
@@ -229,6 +246,11 @@ namespace TestHarness.Commands
             if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
             {
                 _equitiesFileStorageProcess.Initiate(equityStream);
+            }
+
+            if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase))
+            {
+                tradeStream.Subscribe(_orderFileStorageProcess);
             }
 
             _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);

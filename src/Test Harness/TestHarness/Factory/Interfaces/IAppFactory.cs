@@ -40,6 +40,8 @@ namespace TestHarness.Factory.Interfaces
 
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
+        IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }
+
         INetworkManagerFactory NetworkManagerFactory { get; }
 
         ITradingFactory TradingFactory { get; }

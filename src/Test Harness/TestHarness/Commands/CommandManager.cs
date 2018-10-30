@@ -49,6 +49,7 @@ namespace TestHarness.Commands
                 new CancellationCommand(appFactory),
                 new NukeCommand(appFactory),
                 new DemoDataGenerationCommand(appFactory),
+                new Cancellation2Command(appFactory),
                _unRecognisedCommand,
             };
         }

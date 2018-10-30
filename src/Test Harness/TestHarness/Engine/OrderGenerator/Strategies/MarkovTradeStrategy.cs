@@ -114,17 +114,17 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var executedPrice = tick.Spread.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
-            var orderStatusLastChanged = DateTime.UtcNow;
-            var orderSubmittedOn = orderStatusLastChanged.AddMilliseconds(-300);
+            var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
+            var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
             var accountId = GenerateProbabilisticIdString();
             var dealerInstructions = string.Empty;
             var partyBrokerId = GenerateIdString();
             var counterPartyBrokerId = GenerateIdString();
-            const string tradeRationale = "The security looked like good value";
-            const string tradeStrategy = "Taking profits";
-            const string orderCurrency = "GBP";
+            var tradeRationale = string.Empty;
+            var tradeStrategy = string.Empty;
+            var orderCurrency = tick?.Spread.Price.Currency ?? string.Empty;
 
             return new TradeOrderFrame(
                 orderType,

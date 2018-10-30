@@ -1,5 +1,6 @@
 ﻿using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
+using Domain.Trades.Orders;
 using NLog;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
@@ -22,6 +23,8 @@ using TestHarness.Display.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Repository;
+using TestHarness.Repository.Api;
+using TestHarness.Repository.Api.Interfaces;
 using TestHarness.Repository.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -46,6 +49,7 @@ namespace TestHarness.Factory
 
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
+            EquitiesDataGenerationProcessFactory = new EquitiesDataGenerationProcessFactory(Logger);
             NetworkManagerFactory = new NetworkManagerFactory(Console, Logger, networkConfiguration);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
@@ -54,11 +58,15 @@ namespace TestHarness.Factory
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
             EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
+            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeOrderCsvToDtoMapper(),  Logger);
 
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);
+
+            SecurityApiRepository = new SecurityApiRepository(networkConfiguration);
+            MarketApiRepository = new MarketApiRepository(networkConfiguration);
 
             CommandManager = new CommandManager(this, State, Logger, Console);
         }
@@ -67,6 +75,8 @@ namespace TestHarness.Factory
         /// Ctor is used to construct this
         /// </summary>
         public ILogger Logger { get; }
+
+        public ISecurityApiRepository SecurityApiRepository { get; }
 
         /// <summary>
         /// Ctor is used to construct this
@@ -92,9 +102,13 @@ namespace TestHarness.Factory
         public IPulsatingHeartbeat CancelTradeHeartbeat { get; }
 
         // new factories
-        public IEquitiesProcessFactory EquitiesProcessFactory { get; } 
+        public IEquitiesProcessFactory EquitiesProcessFactory { get; }
+
+        public IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
 
         public IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
+
+        public IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }
 
         public INetworkManagerFactory NetworkManagerFactory { get; } 
 
@@ -118,5 +132,7 @@ namespace TestHarness.Factory
 
         public IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         public IAuroraRepository AuroraRepository { get; }
+
+        public IMarketApiRepository MarketApiRepository { get; }
     }
 }

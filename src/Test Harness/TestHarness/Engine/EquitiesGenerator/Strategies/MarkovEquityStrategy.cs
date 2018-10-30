@@ -12,9 +12,9 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
     /// </summary>
     public class MarkovEquityStrategy : IEquityDataGeneratorStrategy
     {
-        private readonly double _pricingStandardDeviation = 1; // good value for 15 minute tick updates
+        private readonly double _pricingStandardDeviation = 0.1; // good value for 15 minute tick updates
         private readonly double _tradingStandardDeviation = 4; // volume of trades will track larger volatility
-        private readonly decimal _maxSpread = 0.05m;
+        private readonly decimal _maxSpread = 0.001m;
 
         public MarkovEquityStrategy()
         {
@@ -38,7 +38,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             }
         }
 
-        public SecurityTick AdvanceFrame(SecurityTick tick)
+        public SecurityTick AdvanceFrame(SecurityTick tick, DateTime advanceTick, bool walkIntraday)
         {
             if (tick == null)
             {
@@ -56,7 +56,10 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             var newVolume = CalculateNewVolume(tick);
             var newMarketCap = newVolume.Traded * newBuy;
 
-            var newIntraday = BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency);
+            var newIntraday =
+                walkIntraday
+                    ? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency)
+                    : (tick.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency));
 
             return
                 new SecurityTick(
@@ -64,7 +67,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     newSpread,
                     newVolume,
                     tick.DailyVolume,
-                    DateTime.UtcNow,
+                    advanceTick,
                     newMarketCap,
                     newIntraday,
                     tick.ListedSecurities,
@@ -106,7 +109,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private decimal CalculateNewBuyValue(SecurityTick tick)
         {
-            var newBuy = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _pricingStandardDeviation);
+            var newBuy = (decimal)Normal.Sample((double)tick.Spread.Price.Value, _pricingStandardDeviation);
 
             if (newBuy < 0.001m)
             {
@@ -120,7 +123,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private decimal CalculateNewSellValue(SecurityTick tick, decimal newBuy)
         {
-            var newSellSample = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _pricingStandardDeviation);
+            var newSellSample = (decimal)Normal.Sample((double)tick.Spread.Price.Value, _pricingStandardDeviation);
 
             var newSellLimit = Math.Min(newBuy, newSellSample);
             var newSellFloor = (newBuy * (1 - _maxSpread)); // allow for a max of 5% spread

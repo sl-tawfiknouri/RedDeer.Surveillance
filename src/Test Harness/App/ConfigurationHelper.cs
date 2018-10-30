@@ -16,7 +16,9 @@ namespace TestHarness.App
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),
                 ScheduleRuleDistributedWorkQueueName = configurationBuilder.GetValue<string>("ScheduleRuleDistributedWorkQueueName"),
-                AuroraConnectionString = configurationBuilder.GetValue<string>("AuroraConnectionString")
+                AuroraConnectionString = configurationBuilder.GetValue<string>("AuroraConnectionString"),
+                ClientServiceUrl = configurationBuilder.GetValue<string>("ClientServiceUrl"),
+                SurveillanceUserApiAccessToken = configurationBuilder.GetValue<string>("SurveillanceUserApiAccessToken")
             };
 
             return networkConfiguration;

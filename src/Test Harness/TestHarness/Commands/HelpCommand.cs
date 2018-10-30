@@ -16,7 +16,7 @@ namespace TestHarness.Commands
 
         public void Run(string command)
         {
-            Display.Console.WriteToLine(1, "Available commands | help | quit | run demo | stop demo | run demo csv | stop demo csv | run demo networking | stop demo networking | run spoofed trade | run cancelled trade | run demo trade file | stop demo trade file |  run demo trade networking file | stop demo trade networking file | run demo equity market file file.csv | stop demo equity market file | run demo equity market file networking file.csv | stop demo equity market file networking | run schedule rule 01/01/2018 12/01/2018 | nuke");
+            Display.Console.WriteToLine(1, "Available commands | help | quit | run demo | stop demo | run demo csv | stop demo csv | run demo networking | stop demo networking | run spoofed trade | run cancelled trade | run demo trade file | stop demo trade file |  run demo trade networking file | stop demo trade networking file | run demo equity market file file.csv | stop demo equity market file | run demo equity market file networking file.csv | stop demo equity market file networking | run schedule rule 01/01/2018 12/01/2018 | nuke | run data generation 20/4/2018 22/04/2018 xlon trades nomarketcsv notradecsv");
         }
     }
 }

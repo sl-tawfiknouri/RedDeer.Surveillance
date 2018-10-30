@@ -18,5 +18,8 @@ namespace TestHarness.Configuration
         public string AuroraConnectionString { get; set; }
 
         public bool IsEc2Instance { get; set; }
+
+        public string ClientServiceUrl { get; set; }
+        public string SurveillanceUserApiAccessToken { get; set; }
     }
 }

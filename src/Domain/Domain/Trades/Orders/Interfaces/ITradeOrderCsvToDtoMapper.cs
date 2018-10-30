@@ -5,5 +5,6 @@
         int FailedParseTotal { get; set; }
 
         TradeOrderFrame Map(TradeOrderFrameCsv csv);
+        TradeOrderFrameCsv Map(TradeOrderFrame frame);
     }
 }

@@ -9,6 +9,7 @@ using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
+using TestHarness.Repository.Api.Interfaces;
 using TestHarness.Repository.Interfaces;
 using TestHarness.State.Interfaces;
 using Utilities.Aws_IO.Interfaces;
@@ -18,6 +19,8 @@ namespace TestHarness.Factory.Interfaces
     public interface IAppFactory
     {
         ILogger Logger { get; }
+
+        ISecurityApiRepository SecurityApiRepository { get; }
 
         ICommandManager CommandManager { get; }
 
@@ -33,7 +36,11 @@ namespace TestHarness.Factory.Interfaces
 
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
+        IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
+
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
+
+        IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }
 
         INetworkManagerFactory NetworkManagerFactory { get; }
 
@@ -49,6 +56,6 @@ namespace TestHarness.Factory.Interfaces
         IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         IAuroraRepository AuroraRepository { get; }
-
+        IMarketApiRepository MarketApiRepository { get; }
     }
 }

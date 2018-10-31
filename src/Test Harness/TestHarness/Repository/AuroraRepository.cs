@@ -24,6 +24,16 @@ namespace TestHarness.Repository
             AND TradeSubmittedOn >= @FromDate
             AND TradeSubmittedOn < @ToDate;";
 
+        private const string DeleteSecurityPriceSql = @"
+            DELETE msep FROM MarketStockExchangePrices msep
+            LEFT OUTER JOIN MarketStockExchangeSecurities mses
+            ON msep.SecurityId = mses.Id
+            LEFT OUTER JOIN MarketStockExchange mse
+            ON mse.Id = mses.MarketStockExchangeId
+            WHERE mse.MarketId = @MarketId
+            AND Epoch >= @FromDate
+            AND Epoch < @ToDate;";
+
         public AuroraRepository(
             IAwsConfiguration configuration,
             IConsole console)
@@ -62,6 +72,11 @@ namespace TestHarness.Repository
             connection.Open();
 
             using (var conn = connection.ExecuteAsync(DeleteTradeSql, delete))
+            {
+                conn.Wait();
+            }
+
+            using (var conn = connection.ExecuteAsync(DeleteSecurityPriceSql, delete))
             {
                 conn.Wait();
             }

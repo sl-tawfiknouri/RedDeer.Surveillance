@@ -54,10 +54,14 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var rawFromDate = splitCmd.FirstOrDefault();
                 var rawToDate = splitCmd.Skip(1).FirstOrDefault();
                 var market = splitCmd.Skip(2).FirstOrDefault();
-                var sedols = splitCmd.Skip(3).ToList();
+                var trades = splitCmd.Skip(3).FirstOrDefault();
+                var sedols = splitCmd.Skip(4).ToList();
                                     
                 var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
                 var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
+                var tradesSuccess =
+                    string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(trades, "notrade", StringComparison.InvariantCultureIgnoreCase);
                 var marketSuccess = !string.IsNullOrWhiteSpace(market);
 
                 if (!fromSuccess)
@@ -75,6 +79,12 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 if (!marketSuccess)
                 {
                     console.WriteToUserFeedbackLine($"Did not understand market of {market}");
+                    return;
+                }
+
+                if (!tradesSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand trades of {trades}. Can be 'trade' or 'notrade'");
                     return;
                 }
 
@@ -154,6 +164,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .Create()
                         .MarketUpdate()
                         .TradingNormalDistributionVolume(4)
+                        .FilterSedol(sedols)
                         .Finish();
 
                 var cancelledProcess =
@@ -190,7 +201,12 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
                 equityStream.Subscribe(cancelledProcess);
                 cancelledProcess.InitiateTrading(equityStream, tradeStream);
-               _tradingProcess.InitiateTrading(equityStream, tradeStream);
+
+                if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _tradingProcess.InitiateTrading(equityStream, tradeStream);
+                }
+
                 _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
         }

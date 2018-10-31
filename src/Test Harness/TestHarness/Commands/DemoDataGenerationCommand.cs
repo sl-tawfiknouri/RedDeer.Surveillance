@@ -196,6 +196,7 @@ namespace TestHarness.Commands
                     .Create()
                     .MarketUpdate()
                     .TradingNormalDistributionVolume(4)
+                    .FilterNone()
                     .Finish();
 
             _networkManager =

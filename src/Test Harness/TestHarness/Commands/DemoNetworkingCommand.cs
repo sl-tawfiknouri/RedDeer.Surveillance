@@ -72,6 +72,7 @@ namespace TestHarness.Commands
                 .Heartbeat()
                 .Irregular(TimeSpan.FromMilliseconds(800), 8)
                 .TradingFixedVolume(3)
+                .FilterNone()
                 .Finish();
 
             var spoofingTradeProcess = _appFactory

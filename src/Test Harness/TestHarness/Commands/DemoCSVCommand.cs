@@ -79,6 +79,7 @@ namespace TestHarness.Commands
                 .Create()
                 .MarketUpdate()
                 .TradingFixedVolume(2)
+                .FilterNone()
                 .Finish();
 
             var spoofingTradeProcess = _appFactory

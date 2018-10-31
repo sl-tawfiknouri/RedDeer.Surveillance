@@ -69,12 +69,12 @@ namespace TestHarness.Commands
             cmd = cmd.Replace("run data generation", string.Empty).Trim();
             var splitCmd = cmd.Split(' ');
 
-            var rawFromDate = (splitCmd.Take(1)).FirstOrDefault();
-            var rawToDate = splitCmd.Skip(1).Take(1).FirstOrDefault();
-            var market = splitCmd.Skip(2).Take(1).FirstOrDefault();
-            var trade = splitCmd.Skip(3).Take(1).FirstOrDefault();
-            var saveMarketCsv = splitCmd.Skip(4).Take(1).FirstOrDefault();
-            var saveTradeCsv = splitCmd.Skip(5).Take(1).FirstOrDefault();
+            var rawFromDate = splitCmd.FirstOrDefault();
+            var rawToDate = splitCmd.Skip(1).FirstOrDefault();
+            var market = splitCmd.Skip(2).FirstOrDefault();
+            var trade = splitCmd.Skip(3).FirstOrDefault();
+            var saveMarketCsv = splitCmd.Skip(4).FirstOrDefault();
+            var saveTradeCsv = splitCmd.Skip(5).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);

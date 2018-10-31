@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NLog;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
@@ -14,7 +15,7 @@ namespace TestHarness.Factory.TradeCancelledFactory
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public TradingCancelledOrderTradeProcess Build(DateTime trigger, params string[] sedols)
+        public TradingCancelledOrderTradeProcess Build(DateTime trigger, List<string> sedols)
         {
             return new TradingCancelledOrderTradeProcess(new StubTradeStrategy(), sedols, trigger, _logger);
         }

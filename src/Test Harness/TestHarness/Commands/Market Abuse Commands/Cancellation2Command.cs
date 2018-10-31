@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -42,13 +43,46 @@ namespace TestHarness.Commands.Market_Abuse_Commands
         {
             lock (_lock)
             {
-                var fromDate = new DateTime(2018, 03, 01);
-                var toDate = new DateTime(2018, 03, 02);
-                const string market = "xlon";
-
                 var console = _appFactory.Console;
                 var apiRepository = _appFactory.SecurityApiRepository;
                 var marketApiRepository = _appFactory.MarketApiRepository;
+
+                var cmd = command.ToLower();
+                cmd = cmd.Replace("run cancellation2 trade", string.Empty).Trim();
+                var splitCmd = cmd.Split(' ');
+
+                var rawFromDate = splitCmd.FirstOrDefault();
+                var rawToDate = splitCmd.Skip(1).FirstOrDefault();
+                var market = splitCmd.Skip(2).FirstOrDefault();
+                var sedols = splitCmd.Skip(3).ToList();
+                                    
+                var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
+                var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
+                var marketSuccess = !string.IsNullOrWhiteSpace(market);
+
+                if (!fromSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand from date of {rawFromDate}");
+                    return;
+                }
+
+                if (!toSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand to date of {rawToDate}");
+                    return;
+                }
+
+                if (!marketSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand market of {market}");
+                    return;
+                }
+
+                if (!sedols.Any())
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand any of the sedol arguments provided");
+                    return;
+                }
                 
                 var isHeartbeatingTask = apiRepository.Heartbeating();
                 isHeartbeatingTask.Wait();
@@ -125,39 +159,38 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var cancelledProcess =
                     _appFactory
                         .TradingCancelled2Factory
-                        .Build(fromDate, "B188SR5", "3163836");
+                        .Build(fromDate, sedols);
 
-                //_networkManager =
-                //    _appFactory
-                //        .NetworkManagerFactory
-                //        .CreateWebsockets();
+                _networkManager =
+                    _appFactory
+                        .NetworkManagerFactory
+                        .CreateWebsockets();
 
-                // start networking processes
-                //var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
+                var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
 
-                //if (!connectionEstablished)
-                //{
-                //    console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
-                //    return;
-                //}
+                if (!connectionEstablished)
+                {
+                    console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
+                    return;
+                }
 
-                //connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
-                //if (!connectionEstablished)
-                //{
-                //    console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
-                //    return;
-                //}
+                connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
+                if (!connectionEstablished)
+                {
+                    console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
+                    return;
+                }
 
-                //connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-                //if (!connectionEstablished)
-                //{
-                //    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
-                //    return;
-                //}
+                connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
+                if (!connectionEstablished)
+                {
+                    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
+                    return;
+                }
 
                 equityStream.Subscribe(cancelledProcess);
                 cancelledProcess.InitiateTrading(equityStream, tradeStream);
-               // _tradingProcess.InitiateTrading(equityStream, tradeStream);
+               _tradingProcess.InitiateTrading(equityStream, tradeStream);
                 _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
         }

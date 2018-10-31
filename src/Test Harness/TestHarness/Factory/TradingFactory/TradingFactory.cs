@@ -1,5 +1,7 @@
 ﻿using NLog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator;
@@ -19,6 +21,7 @@ namespace TestHarness.Factory.TradingFactory
         ITradingFactoryHeartbeatOrMarketUpdateSelector,
         ITradingFactoryHeartbeatSelector,
         ITradingFactoryVolumeStrategySelector,
+         ITradingFactoryFilterStrategySelector,
         ICompleteSelector
     {
         private readonly ILogger _logger;
@@ -32,6 +35,8 @@ namespace TestHarness.Factory.TradingFactory
 
         // volume strategy
         private ITradeVolumeStrategy _volumeStrategy;
+
+        private IReadOnlyCollection<string> _sedolFilter;
 
         public TradingFactory(ILogger logger)
         {
@@ -70,15 +75,27 @@ namespace TestHarness.Factory.TradingFactory
         }
         
         // Trading volume picker
-        public ICompleteSelector TradingFixedVolume(int fixedVolume)
+        public ITradingFactoryFilterStrategySelector TradingFixedVolume(int fixedVolume)
         {
             _volumeStrategy = new TradeVolumeFixedStrategy(fixedVolume);
             return this;
         }
 
-        public ICompleteSelector TradingNormalDistributionVolume(int sd)
+        public ITradingFactoryFilterStrategySelector TradingNormalDistributionVolume(int sd)
         {
             _volumeStrategy = new TradeVolumeNormalDistributionStrategy(sd);
+            return this;
+        }
+
+        // Sedol filter selector
+        public ICompleteSelector FilterSedol(IReadOnlyCollection<string> sedols)
+        {
+            _sedolFilter = sedols ?? new List<string>();
+            return this;
+        }
+
+        public ICompleteSelector FilterNone()
+        {
             return this;
         }
 
@@ -88,13 +105,27 @@ namespace TestHarness.Factory.TradingFactory
             if (_heartbeatSelected)
             {
                 var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
-                return new TradingHeartBeatDrivenProcess(_logger, strategy, _heartbeat);
+                IOrderDataGenerator process = new TradingHeartBeatDrivenProcess(_logger, strategy, _heartbeat);
+
+                if (_sedolFilter?.Any() ?? false)
+                {
+                    process = new OrderDataGeneratorSedolFilteringDecorator(process, _sedolFilter);
+                }
+
+                return process;
             }
 
             if (_marketUpdateSelected)
             {
                 var strategy = new MarkovTradeStrategy(_logger, _volumeStrategy);
-                return new TradingMarketUpdateDrivenProcess(_logger, strategy);
+                IOrderDataGenerator process = new TradingMarketUpdateDrivenProcess(_logger, strategy);
+
+                if (_sedolFilter?.Any() ?? false)
+                {
+                    process = new OrderDataGeneratorSedolFilteringDecorator(process, _sedolFilter);
+                }
+
+                return process;
             }
 
             throw new ArgumentOutOfRangeException(nameof(_marketUpdateSelected));

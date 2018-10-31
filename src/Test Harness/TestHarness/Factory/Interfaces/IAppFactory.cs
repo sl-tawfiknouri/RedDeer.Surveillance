@@ -6,6 +6,7 @@ using TestHarness.Display.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
+using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
@@ -50,6 +51,8 @@ namespace TestHarness.Factory.Interfaces
         ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
         ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
         ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
+        ITradingCancelled2Factory TradingCancelled2Factory { get; }
+
         IAwsQueueClient AwsQueueClient { get; }
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
         INetworkConfiguration Configuration { get; }

@@ -18,6 +18,22 @@ namespace TestHarness.Repository
             DELETE FROM MarketStockExchange WHERE ID > -1;
             DELETE FROM TradeReddeer WHERE ID > -1;";
 
+        private const string DeleteTradeSql = @"
+            DELETE FROM TradeReddeer
+            WHERE MarketId = @MarketId
+            AND TradeSubmittedOn >= @FromDate
+            AND TradeSubmittedOn < @ToDate;";
+
+        private const string DeleteSecurityPriceSql = @"
+            DELETE msep FROM MarketStockExchangePrices msep
+            LEFT OUTER JOIN MarketStockExchangeSecurities mses
+            ON msep.SecurityId = mses.Id
+            LEFT OUTER JOIN MarketStockExchange mse
+            ON mse.Id = mses.MarketStockExchangeId
+            WHERE mse.MarketId = @MarketId
+            AND Epoch >= @FromDate
+            AND Epoch < @ToDate;";
+
         public AuroraRepository(
             IAwsConfiguration configuration,
             IConsole console)
@@ -41,6 +57,36 @@ namespace TestHarness.Repository
             {
                 conn.Wait();
             }
+        }
+
+        public void DeleteTradingAndMarketDataForMarketOnDate(string market, DateTime date)
+        {
+            var delete = new DeleteTradeDto
+            {
+                MarketId = market,
+                FromDate = date.Date,
+                ToDate = date.Date.AddDays(1)
+            };
+
+            var connection = new MySqlConnection(_configuration.AuroraConnectionString);
+            connection.Open();
+
+            using (var conn = connection.ExecuteAsync(DeleteTradeSql, delete))
+            {
+                conn.Wait();
+            }
+
+            using (var conn = connection.ExecuteAsync(DeleteSecurityPriceSql, delete))
+            {
+                conn.Wait();
+            }
+        }
+
+        public class DeleteTradeDto
+        {
+            public string MarketId { get; set; }
+            public DateTime FromDate { get; set; }
+            public DateTime ToDate { get; set; }
         }
     }
 }

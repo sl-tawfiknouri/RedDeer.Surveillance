@@ -3,7 +3,7 @@ namespace TestHarness.Factory.TradingFactory.Interfaces
 {
     public interface ITradingFactoryVolumeStrategySelector
     {
-        ICompleteSelector TradingFixedVolume(int fixedVolume);
-        ICompleteSelector TradingNormalDistributionVolume(int sd);
+        ITradingFactoryFilterStrategySelector TradingFixedVolume(int fixedVolume);
+        ITradingFactoryFilterStrategySelector TradingNormalDistributionVolume(int sd);
     }
 }

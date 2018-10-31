@@ -135,6 +135,13 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
                 
+
+                // clear out data now
+
+                var auroraRepository = _appFactory.AuroraRepository;
+                auroraRepository.DeleteTradingAndMarketDataForMarketOnDate(market, fromDate);
+
+
                 var equityStream =
                     _appFactory
                         .StockExchangeStreamFactory

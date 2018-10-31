@@ -59,6 +59,7 @@ namespace TestHarness.Factory
             EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
             OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeOrderCsvToDtoMapper(),  Logger);
+            TradingCancelled2Factory = new TradingCancelled2Factory(Logger);
 
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -121,6 +122,8 @@ namespace TestHarness.Factory
         public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
 
         public ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
+
+        public ITradingCancelled2Factory TradingCancelled2Factory { get; }
 
         public IAwsQueueClient AwsQueueClient { get; }
 

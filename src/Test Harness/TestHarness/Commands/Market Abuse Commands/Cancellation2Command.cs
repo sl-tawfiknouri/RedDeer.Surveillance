@@ -98,7 +98,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     console.WriteToUserFeedbackLine("Could not find any relevant results for the market api on the client service");
                     return;
                 }
-
+                
                 var equityStream =
                     _appFactory
                         .StockExchangeStreamFactory
@@ -122,35 +122,42 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .TradingNormalDistributionVolume(4)
                         .Finish();
 
-                _networkManager =
+                var cancelledProcess =
                     _appFactory
-                        .NetworkManagerFactory
-                        .CreateWebsockets();
+                        .TradingCancelled2Factory
+                        .Build(fromDate, "B188SR5", "3163836");
+
+                //_networkManager =
+                //    _appFactory
+                //        .NetworkManagerFactory
+                //        .CreateWebsockets();
 
                 // start networking processes
-                var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
+                //var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
 
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
-                    return;
-                }
+                //if (!connectionEstablished)
+                //{
+                //    console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
+                //    return;
+                //}
 
-                connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
-                    return;
-                }
+                //connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
+                //if (!connectionEstablished)
+                //{
+                //    console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
+                //    return;
+                //}
 
-                connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
-                    return;
-                }
-                
-                _tradingProcess.InitiateTrading(equityStream, tradeStream);
+                //connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
+                //if (!connectionEstablished)
+                //{
+                //    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
+                //    return;
+                //}
+
+                equityStream.Subscribe(cancelledProcess);
+                cancelledProcess.InitiateTrading(equityStream, tradeStream);
+               // _tradingProcess.InitiateTrading(equityStream, tradeStream);
                 _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
         }

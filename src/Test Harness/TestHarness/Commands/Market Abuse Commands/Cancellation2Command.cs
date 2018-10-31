@@ -36,7 +36,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 return false;
             }
 
-            return command.ToLower().Contains("run cancellation2 trade");
+            return command.ToLower().Contains("run cancellation ratio trades");
         }
 
         public void Run(string command)
@@ -48,17 +48,15 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var marketApiRepository = _appFactory.MarketApiRepository;
 
                 var cmd = command.ToLower();
-                cmd = cmd.Replace("run cancellation2 trade", string.Empty).Trim();
+                cmd = cmd.Replace("run cancellation ratio trades", string.Empty).Trim();
                 var splitCmd = cmd.Split(' ');
 
                 var rawFromDate = splitCmd.FirstOrDefault();
-                var rawToDate = splitCmd.Skip(1).FirstOrDefault();
-                var market = splitCmd.Skip(2).FirstOrDefault();
-                var trades = splitCmd.Skip(3).FirstOrDefault();
-                var sedols = splitCmd.Skip(4).ToList();
+                var market = splitCmd.Skip(1).FirstOrDefault();
+                var trades = splitCmd.Skip(2).FirstOrDefault();
+                var sedols = splitCmd.Skip(3).ToList();
                                     
                 var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
-                var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
                 var tradesSuccess =
                     string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase)
                     || string.Equals(trades, "notrade", StringComparison.InvariantCultureIgnoreCase);
@@ -67,12 +65,6 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 if (!fromSuccess)
                 {
                     console.WriteToUserFeedbackLine($"Did not understand from date of {rawFromDate}");
-                    return;
-                }
-
-                if (!toSuccess)
-                {
-                    console.WriteToUserFeedbackLine($"Did not understand to date of {rawToDate}");
                     return;
                 }
 
@@ -103,7 +95,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
-                var priceApiTask = apiRepository.Get(fromDate, toDate, market);
+                var priceApiTask = apiRepository.Get(fromDate, fromDate.Date.AddDays(1).AddSeconds(-1), market);
                 priceApiTask.Wait();
                 var priceApiResult = priceApiTask.Result;
 

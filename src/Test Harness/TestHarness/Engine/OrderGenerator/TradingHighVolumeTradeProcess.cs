@@ -106,60 +106,6 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CreateHighVolumeTradesForDailyBreachInSedol(
-            string sedol,
-            ExchangeFrame frame,
-            decimal percentageOfTraded)
-        {
-            if (string.IsNullOrWhiteSpace(sedol))
-            {
-                return;
-            }
-
-            var securities =
-                frame
-                    .Securities.FirstOrDefault(sec =>
-                        string.Equals(
-                            sec?.Security.Identifiers.Sedol,
-                            sedol,
-                            StringComparison.InvariantCultureIgnoreCase));
-            
-            if (securities == null)
-            {
-                return;
-            }
-
-            var tradedVolume = securities.DailyVolume.Traded;
-            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
-
-            for (var i = 0; i < 5; i++)
-            {
-                var volumeFrame = new TradeOrderFrame(
-                    OrderType.Market,
-                    securities.Market,
-                    securities.Security,
-                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
-                    securities.TimeStamp.AddSeconds(30 * i),
-                    securities.TimeStamp.AddSeconds(30 * i),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    securities.Spread.Price.Currency);
-
-                TradeStream.Add(volumeFrame);
-            }
-        }
-
         private void CreateHighVolumeTradesForWindowBreachInSedol(
             string sedol,
             Stack<ExchangeFrame> frames,
@@ -212,6 +158,60 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     headSecurity.Spread.Price.Currency);
+
+                TradeStream.Add(volumeFrame);
+            }
+        }
+
+        private void CreateHighVolumeTradesForDailyBreachInSedol(
+            string sedol,
+            ExchangeFrame frame,
+            decimal percentageOfTraded)
+        {
+            if (string.IsNullOrWhiteSpace(sedol))
+            {
+                return;
+            }
+
+            var securities =
+                frame
+                    .Securities.FirstOrDefault(sec =>
+                        string.Equals(
+                            sec?.Security.Identifiers.Sedol,
+                            sedol,
+                            StringComparison.InvariantCultureIgnoreCase));
+
+            if (securities == null)
+            {
+                return;
+            }
+
+            var tradedVolume = securities.DailyVolume.Traded;
+            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
+
+            for (var i = 0; i < 5; i++)
+            {
+                var volumeFrame = new TradeOrderFrame(
+                    OrderType.Market,
+                    securities.Market,
+                    securities.Security,
+                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    (int)volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
+                    OrderPosition.Buy,
+                    OrderStatus.Fulfilled,
+                    securities.TimeStamp.AddSeconds(30 * i),
+                    securities.TimeStamp.AddSeconds(30 * i),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    securities.Spread.Price.Currency);
 
                 TradeStream.Add(volumeFrame);
             }

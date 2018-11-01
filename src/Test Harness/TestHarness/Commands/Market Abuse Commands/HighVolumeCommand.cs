@@ -156,10 +156,10 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .FilterSedol(sedols)
                         .Finish();
 
-                var cancelledProcess =
+                var highVolumeTradingProcess =
                     _appFactory
-                        .TradingCancelled2Factory
-                        .Build(fromDate, sedols);
+                        .TradingHighVolumeFactory
+                        .Build(sedols);
 
                 _networkManager =
                     _appFactory
@@ -188,8 +188,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
-                equityStream.Subscribe(cancelledProcess);
-                cancelledProcess.InitiateTrading(equityStream, tradeStream);
+                equityStream.Subscribe(highVolumeTradingProcess);
+                highVolumeTradingProcess.InitiateTrading(equityStream, tradeStream);
 
                 if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
                 {

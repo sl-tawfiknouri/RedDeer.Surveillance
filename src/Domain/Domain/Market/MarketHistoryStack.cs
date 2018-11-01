@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.Frames;
-using Domain.Market;
-using Surveillance.Markets.Interfaces;
+using Domain.Market.Interfaces;
 
-namespace Surveillance.Markets
+namespace Domain.Market
 {
     public class MarketHistoryStack : IMarketHistoryStack
     {

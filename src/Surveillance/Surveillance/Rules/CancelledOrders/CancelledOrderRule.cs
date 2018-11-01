@@ -119,12 +119,20 @@ namespace Surveillance.Rules.CancelledOrders
                 }
             }
 
+            var cancelledPositionOrders = tradingPosition.Get().Count(tp =>
+                tp.OrderStatus == OrderStatus.Cancelled
+                || tp.OrderStatus == OrderStatus.CancelledPostBooking);
+
+            var totalPositionOrders = tradingPosition.Get().Count;
+
             return new CancelledOrderRuleBreach(
                 _parameters,
                 tradingPosition,
                 tradingPosition?.Get()?.FirstOrDefault()?.Security,
                 hasBreachedRuleByPositionSize,
                 cancellationRatioByPositionSize,
+                cancelledPositionOrders,
+                totalPositionOrders,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount);
         }

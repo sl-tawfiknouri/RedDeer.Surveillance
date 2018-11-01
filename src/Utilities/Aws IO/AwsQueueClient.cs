@@ -66,7 +66,7 @@ namespace Utilities.Aws_IO
 
                 return getQueueUrlResponse.QueueUrl;
             }
-            catch
+            catch (Exception e)
             {
                 if (!retry)
                 {

@@ -9,7 +9,6 @@ using Domain.Market.Interfaces;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.Markets;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;

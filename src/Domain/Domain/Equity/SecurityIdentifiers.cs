@@ -113,9 +113,12 @@ namespace Domain.Equity
             return false;
         }
 
+        /// <summary>
+        /// Don't show reddeer id otherwise it'll be exposed to clients
+        /// </summary>
         public override string ToString()
         {
-            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol} | Lei {Lei} | Bloomberg Ticker {BloombergTicker} | Reddeer Id {ReddeerId}";
+            return $"Client Id: {ClientIdentifier} | Sedol {Sedol} | Isin {Isin} | Figi {Figi} | Cusip {Cusip} | Exchange Symbol {ExchangeSymbol} | Lei {Lei} | Bloomberg Ticker {BloombergTicker}";
         }
     }
 }

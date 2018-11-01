@@ -82,22 +82,22 @@ namespace TestHarness.Engine.OrderGenerator
                     switch (i)
                     {
                         case 0:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.8m);
+                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.8m);
                             break;
                         case 1:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.6m);
+                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.8m);
                             break;
                         case 2:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.4m);
+                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.6m);
                             break;
                         case 3:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.2m);
+                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.6m);
                             break;
                         case 4:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.15m);
+                            CreateHighVolumeTradesForWindowBreachInSedol(sedol, activeItems, 0.4m);
                             break;
                         case 5:
-                            CreateHighVolumeTradesForSedol(sedol, activeItems, 0.1m);
+                            CreateHighVolumeTradesForDailyBreachInSedol(sedol, value, 0.4m);
                             break;
                     }
                     i++;
@@ -106,7 +106,61 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CreateHighVolumeTradesForSedol(
+        private void CreateHighVolumeTradesForDailyBreachInSedol(
+            string sedol,
+            ExchangeFrame frame,
+            decimal percentageOfTraded)
+        {
+            if (string.IsNullOrWhiteSpace(sedol))
+            {
+                return;
+            }
+
+            var securities =
+                frame
+                    .Securities.FirstOrDefault(sec =>
+                        string.Equals(
+                            sec?.Security.Identifiers.Sedol,
+                            sedol,
+                            StringComparison.InvariantCultureIgnoreCase));
+            
+            if (securities == null)
+            {
+                return;
+            }
+
+            var tradedVolume = securities.DailyVolume.Traded;
+            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
+
+            for (var i = 0; i < 5; i++)
+            {
+                var volumeFrame = new TradeOrderFrame(
+                    OrderType.Market,
+                    securities.Market,
+                    securities.Security,
+                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    new Price(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    (int)volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
+                    OrderPosition.Buy,
+                    OrderStatus.Fulfilled,
+                    securities.TimeStamp.AddSeconds(30 * i),
+                    securities.TimeStamp.AddSeconds(30 * i),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    securities.Spread.Price.Currency);
+
+                TradeStream.Add(volumeFrame);
+            }
+        }
+
+        private void CreateHighVolumeTradesForWindowBreachInSedol(
             string sedol,
             Stack<ExchangeFrame> frames,
             decimal percentageOfTraded)

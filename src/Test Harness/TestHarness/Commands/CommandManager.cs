@@ -51,6 +51,7 @@ namespace TestHarness.Commands
                 new DemoDataGenerationCommand(appFactory),
                 new Cancellation2Command(appFactory),
                 new HighVolumeCommand(appFactory),
+                new MarkingTheCloseCommand(appFactory),
                _unRecognisedCommand,
             };
         }

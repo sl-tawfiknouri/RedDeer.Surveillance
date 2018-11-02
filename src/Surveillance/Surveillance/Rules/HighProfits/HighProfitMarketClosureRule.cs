@@ -20,7 +20,7 @@ namespace Surveillance.Rules.HighProfits
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger<HighProfitsRule> logger)
-            : base(currencyConverter, sender, parameters, ruleCtx, logger)
+            : base(currencyConverter, sender, parameters, ruleCtx, true, logger)
         {
             MarketClosureRule = true;
             _messageSender = sender;

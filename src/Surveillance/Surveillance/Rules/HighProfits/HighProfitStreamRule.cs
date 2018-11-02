@@ -22,6 +22,7 @@ namespace Surveillance.Rules.HighProfits
         private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly bool _submitRuleBreaches;
 
         protected bool MarketClosureRule = false;
 
@@ -30,6 +31,7 @@ namespace Surveillance.Rules.HighProfits
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            bool submitRuleBreaches,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -43,6 +45,7 @@ namespace Surveillance.Rules.HighProfits
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _submitRuleBreaches = submitRuleBreaches;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -394,7 +397,12 @@ namespace Surveillance.Rules.HighProfits
                 RunRuleForAllTradingHistories();
             }
 
-            var alerts = _sender.Flush(_ruleCtx);
+            int alerts = 0;
+            if (_submitRuleBreaches)
+            {
+                alerts = _sender.Flush(_ruleCtx);
+            }
+
             _ruleCtx.UpdateAlertEvent(alerts);
             _ruleCtx?.EndEvent();
         }

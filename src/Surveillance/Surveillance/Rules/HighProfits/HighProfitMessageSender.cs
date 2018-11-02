@@ -36,9 +36,16 @@ namespace Surveillance.Rules.HighProfits
                     2,
                     MidpointRounding.AwayFromZero);
 
+            var highAbsoluteProfit =
+                Math.Round(
+                    (ruleBreach.AbsoluteProfits.GetValueOrDefault(0)),
+                    2,
+                    MidpointRounding.AwayFromZero);
+
             var highRelativeProfitSection =
                 HighRelativeProfitText(ruleBreach, highRelativeProfitAsPercentage, highRelativeProfitAsPercentageSetByUser);
-            var highAbsoluteProfitSection = HighAbsoluteProfitText(ruleBreach);
+
+            var highAbsoluteProfitSection = HighAbsoluteProfitText(ruleBreach, highAbsoluteProfit);
 
             return $"High profit rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}).{highRelativeProfitSection}{highAbsoluteProfitSection}";
         }
@@ -53,10 +60,10 @@ namespace Surveillance.Rules.HighProfits
                     : string.Empty;
         }
 
-        private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach)
+        private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach, decimal absoluteProfit)
         {
             return ruleBreach.HasAbsoluteProfitBreach
-                ? $" There was a high profit of {ruleBreach.AbsoluteProfits} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
+                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
                 : string.Empty;
         }
     }

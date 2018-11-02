@@ -10,15 +10,15 @@ namespace Surveillance.Rules.CancelledOrders
     public class CancelledOrderRuleCachedMessageSender : ICancelledOrderRuleCachedMessageSender
     {
         private readonly object _lock = new object();
-        private readonly ICancelledOrderCachedMessageSender _cachedMessageSender;
+        private readonly ICancelledOrderMessageSender _messageSender;
         private readonly ILogger<CancelledOrderRuleCachedMessageSender> _logger;
         private List<ICancelledOrderRuleBreach> _messages;
 
         public CancelledOrderRuleCachedMessageSender(
-            ICancelledOrderCachedMessageSender cachedMessageSender,
+            ICancelledOrderMessageSender messageSender,
             ILogger<CancelledOrderRuleCachedMessageSender> logger)
         {
-            _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messages = new List<ICancelledOrderRuleBreach>();
         }
@@ -54,7 +54,7 @@ namespace Surveillance.Rules.CancelledOrders
 
                 foreach (var msg in _messages)
                 {
-                    _cachedMessageSender.Send(msg, opCtx);
+                    _messageSender.Send(msg, opCtx);
                 }
 
                 var count = _messages.Count;

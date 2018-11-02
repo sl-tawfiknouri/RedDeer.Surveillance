@@ -13,19 +13,36 @@ namespace TestHarness.Engine.EquitiesGenerator
     public class ApiDataGenerationInitialiser : IApiDataGenerationInitialiser
     {
         private readonly ExchangeDto _market;
+        private readonly TimeSpan _tickFrequency;
         private readonly IReadOnlyCollection<SecurityPriceDto> _securityPrices;
 
         public ApiDataGenerationInitialiser(
             ExchangeDto market,
+            TimeSpan tickFrequency,
             IReadOnlyCollection<SecurityPriceDto> securityPrices)
         {
             _market = market ?? throw new ArgumentNullException(nameof(market));
+            _tickFrequency = tickFrequency;
             _securityPrices = securityPrices ?? throw new ArgumentNullException(nameof(securityPrices));
         }
 
         public IReadOnlyCollection<ExchangeFrame> OrderedDailyFrames()
         {
- 
+            var close = _market.MarketCloseTime;
+            var open = _market.MarketOpenTime;
+            var openFor = close - open;
+            var openMinutes = openFor.TotalMinutes;
+            var ticksInDay = 0;
+
+            if (openMinutes > 0 && _tickFrequency.TotalMinutes > 0)
+            {
+               ticksInDay = (int)Math.Ceiling(openMinutes / _tickFrequency.TotalMinutes);
+            }
+
+            Func<double, int> volume = (x) => ticksInDay == 0
+                ? (int)x
+                : (int)Math.Ceiling(x * ((double) 1 / (double) ticksInDay));
+
             var initialTicks =
                 _securityPrices
                     .SelectMany(sm =>
@@ -55,7 +72,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     new Price(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency)),
-                                new Volume(smp.Value.DailyVolume),
+                                new Volume(volume((double)smp.Value.DailyVolume)),
                                 new Volume(smp.Value.DailyVolume),
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
                                 smp.Value.MarketCapUsd,

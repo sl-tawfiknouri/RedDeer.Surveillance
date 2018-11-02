@@ -34,7 +34,7 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();
-            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromMinutes(15));
+            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromMinutes(29));
             _marketDto = marketDto ?? throw new ArgumentNullException(nameof(marketDto));
         }
 
@@ -67,7 +67,7 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (value.TimeStamp >= _executeOn)
+                if (value.TimeStamp < _executeOn.Value)
                 {
                     return;
                 }
@@ -81,22 +81,22 @@ namespace TestHarness.Engine.OrderGenerator
                     switch (i)
                     {
                         case 0:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.15m);
+                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.2m);
                             break;
                         case 1:
-                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, value, 0.15m);
+                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, activeItems, 0.4m);
                             break;
                         case 2:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.1m);
+                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.15m);
                             break;
                         case 3:
-                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, value, 0.1m);
+                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, activeItems, 0.3m);
                             break;
                         case 4:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.05m);
+                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, 0.1m);
                             break;
                         case 5:
-                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, value, 0.05m);
+                            CreateMarkingTheCloseTradesForDailyBreachInSedol(sedol, activeItems, 0.05m);
                             break;
                     }
                     i++;
@@ -167,7 +167,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForDailyBreachInSedol(
             string sedol,
-            ExchangeFrame frame,
+            Stack<ExchangeFrame> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -176,12 +176,21 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var securities =
-                frame
+                frames
+                    .OrderByDescending(i => i.TimeStamp)
+                    .FirstOrDefault()
                     .Securities.FirstOrDefault(sec =>
                         string.Equals(
                             sec?.Security.Identifiers.Sedol,
                             sedol,
                             StringComparison.InvariantCultureIgnoreCase));
+
+            var totalVolumeInWindow =
+                frames.Sum(io => io.Securities.FirstOrDefault(sec =>
+                     string.Equals(
+                         sec?.Security.Identifiers.Sedol,
+                         sedol,
+                         StringComparison.InvariantCultureIgnoreCase))?.Volume.Traded ?? 0);
 
             if (securities == null)
             {
@@ -189,7 +198,14 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var tradedVolume = securities.DailyVolume.Traded;
-            var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.18m;
+            var volumeForBreachesToTrade = (((decimal) tradedVolume * percentageOfTraded) + 1);
+
+            var adjustedVolumeForBreachesToTrade =
+                volumeForBreachesToTrade > totalVolumeInWindow
+                    ? totalVolumeInWindow
+                    : volumeForBreachesToTrade;
+
+            var finalVolumeForBreachestoTrade = adjustedVolumeForBreachesToTrade * 0.18m;
 
             for (var i = 0; i < 6; i++)
             {
@@ -202,8 +218,8 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.Security,
                     new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
                     new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
+                    (int)finalVolumeForBreachestoTrade,
+                    (int)finalVolumeForBreachestoTrade,
                     OrderPosition.Buy,
                     OrderStatus.Fulfilled,
                     tradeTime,

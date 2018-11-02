@@ -68,7 +68,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _walkInitiated = true;
                 _stream = stream;
 
-                var apiGeneration = new ApiDataGenerationInitialiser(market, prices.SecurityPrices);
+                var apiGeneration = new ApiDataGenerationInitialiser(market, _tickSeparation, prices.SecurityPrices);
                 var framesToGenerateFor = apiGeneration.OrderedDailyFrames();
 
                 foreach (var frame in framesToGenerateFor)

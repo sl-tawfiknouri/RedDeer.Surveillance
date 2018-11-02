@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Equity.Frames;
-using Domain.Market;
 
-namespace Surveillance.Markets.Interfaces
+namespace Domain.Market.Interfaces
 {
     public interface IMarketHistoryStack
     {

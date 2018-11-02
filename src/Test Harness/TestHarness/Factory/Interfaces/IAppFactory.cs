@@ -8,6 +8,7 @@ using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
+using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Repository.Api.Interfaces;
@@ -52,6 +53,7 @@ namespace TestHarness.Factory.Interfaces
         ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
         ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
         ITradingCancelled2Factory TradingCancelled2Factory { get; }
+        ITradingHighVolumeFactory TradingHighVolumeFactory { get; }
 
         IAwsQueueClient AwsQueueClient { get; }
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }

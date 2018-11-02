@@ -67,7 +67,7 @@ namespace Surveillance.Rules.CancelledOrders
             decimal percentagePositionCancelled)
         {
             return ruleBreach.ExceededPercentagePositionCancellations
-                ? $" Position cancelled exceeded threshold at {percentagePositionCancelled}% cancelled. Limit was set at {parameters.CancelledOrderPercentagePositionThreshold * 100}%."
+                ? $" Position cancelled exceeded threshold at {percentagePositionCancelled}% cancelled. Limit was set at {parameters.CancelledOrderPercentagePositionThreshold * 100}%. {ruleBreach.AmountOfPositionInTotal} orders in the security in during the breach in total of which {ruleBreach.AmountOfPositionCancelled} were cancelled."
                 : string.Empty;
         }
 

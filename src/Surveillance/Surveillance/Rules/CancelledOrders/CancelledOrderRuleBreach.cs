@@ -14,6 +14,8 @@ namespace Surveillance.Rules.CancelledOrders
             Security security,
             bool exceededPercentagePositionCancellations,
             decimal? percentagePositionCancelled,
+            int? amountOfPositionCancelled,
+            int? amountOfPositionInTotal,
             bool exceededPercentageTradeCountCancellations,
             decimal? percentageTradeCountCancelled)
         {
@@ -22,6 +24,8 @@ namespace Surveillance.Rules.CancelledOrders
             Security = security;
             ExceededPercentagePositionCancellations = exceededPercentagePositionCancellations;
             PercentagePositionCancelled = percentagePositionCancelled;
+            AmountOfPositionCancelled = amountOfPositionCancelled;
+            AmountOfPositionInTotal = amountOfPositionInTotal;
             ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
             PercentageTradeCountCancelled = percentageTradeCountCancelled;
             Window = parameters.WindowSize;
@@ -41,6 +45,8 @@ namespace Surveillance.Rules.CancelledOrders
 
         public bool ExceededPercentagePositionCancellations { get; }
         public decimal? PercentagePositionCancelled { get; }
+        public int? AmountOfPositionCancelled { get; }
+        public int? AmountOfPositionInTotal { get; }
         public bool ExceededPercentageTradeCountCancellations { get; }
         public decimal? PercentageTradeCountCancelled { get; }
     }

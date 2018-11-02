@@ -50,6 +50,7 @@ namespace TestHarness.Commands
                 new NukeCommand(appFactory),
                 new DemoDataGenerationCommand(appFactory),
                 new Cancellation2Command(appFactory),
+                new HighVolumeCommand(appFactory),
                _unRecognisedCommand,
             };
         }

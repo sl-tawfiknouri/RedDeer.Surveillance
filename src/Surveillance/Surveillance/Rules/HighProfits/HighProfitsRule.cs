@@ -26,20 +26,20 @@ namespace Surveillance.Rules.HighProfits
 
         public void OnCompleted()
         {
-            _multiverseTransformer.OnCompleted();
             _streamRule.OnCompleted();
+            _multiverseTransformer.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _multiverseTransformer.OnError(error);
             _streamRule.OnError(error);
+            _multiverseTransformer.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
-            _multiverseTransformer.OnNext(value);
             _streamRule.OnNext(value);
+            _multiverseTransformer.OnNext(value);
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;

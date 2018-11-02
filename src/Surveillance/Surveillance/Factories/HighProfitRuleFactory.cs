@@ -37,7 +37,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket)
         {
-            var stream = new HighProfitStreamRule(_currencyConverter, _messageSender, parameters, ruleCtxStream, _logger);
+            var stream = new HighProfitStreamRule(_currencyConverter, _messageSender, parameters, ruleCtxStream, false, _logger);
             var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, _messageSender, parameters, ruleCtxMarket, _logger);
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);

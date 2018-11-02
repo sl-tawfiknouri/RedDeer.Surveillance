@@ -158,8 +158,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
                 var markingTheCloseProcess =
                     _appFactory
-                        .TradingHighVolumeFactory
-                        .Build(sedols);
+                        .MarkingTheCloseFactory
+                        .Build(sedols, marketData);
 
                 _networkManager =
                     _appFactory

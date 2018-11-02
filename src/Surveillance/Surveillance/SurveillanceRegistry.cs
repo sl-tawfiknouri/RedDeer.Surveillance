@@ -122,7 +122,7 @@ namespace Surveillance
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
-            For<ICancelledOrderCachedMessageSender>().Use<CancelledOrderCachedMessageSender>();
+            For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
             For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderRuleCachedMessageSender>().Use<CancelledOrderRuleCachedMessageSender>();

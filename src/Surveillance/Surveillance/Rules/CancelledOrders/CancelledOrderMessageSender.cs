@@ -10,11 +10,11 @@ using Utilities.Extensions;
 
 namespace Surveillance.Rules.CancelledOrders
 {
-    public class CancelledOrderCachedMessageSender : BaseMessageSender, ICancelledOrderCachedMessageSender
+    public class CancelledOrderMessageSender : BaseMessageSender, ICancelledOrderMessageSender
     {
-        public CancelledOrderCachedMessageSender(
+        public CancelledOrderMessageSender(
             ITradeOrderDataItemDtoMapper dtoMapper,
-            ILogger<CancelledOrderCachedMessageSender> logger,
+            ILogger<CancelledOrderMessageSender> logger,
             ICaseMessageSender caseMessageSender)
             : base(
                 dtoMapper,

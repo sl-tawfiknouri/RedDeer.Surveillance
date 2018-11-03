@@ -74,6 +74,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     tick.Market);
         }
 
+        public EquityGenerationStrategies Strategy { get; } = EquityGenerationStrategies.Markov;
+
         private IntradayPrices BuildIntraday(SecurityTick tick, decimal newBuy, string currency)
         {
             if (tick.IntradayPrices?.High == null

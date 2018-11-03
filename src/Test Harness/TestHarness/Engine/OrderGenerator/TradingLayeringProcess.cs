@@ -8,37 +8,44 @@ using Domain.Market.Interfaces;
 using Domain.Trades.Orders;
 using NLog;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using TestHarness.Engine.Plans;
 
 namespace TestHarness.Engine.OrderGenerator
 {
-    public class TradingSpoofingProcess : BaseTradingProcess
+    public class TradingLayeringProcess : BaseTradingProcess
     {
         private readonly object _lock = new object();
-        private readonly IReadOnlyCollection<string> _spoofingTargetSedols;
+        private readonly IReadOnlyCollection<string> _layeringTargetSedols;
         private readonly IMarketHistoryStack _marketHistoryStack;
-        private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
+        private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
 
-        private bool _hasProcessedSpoofingBreaches;
+        private bool _hasProcessedLayeringBreaches;
         private DateTime? _executeOn;
 
-        public TradingSpoofingProcess(
-            IReadOnlyCollection<string> spoofingTargetSedols,
+        public TradingLayeringProcess(
+            IReadOnlyCollection<string> layeringTargetSedols,
+            IReadOnlyCollection<DataGenerationPlan> plan,
             ITradeStrategy<TradeOrderFrame> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            _spoofingTargetSedols =
-                spoofingTargetSedols
+            _layeringTargetSedols =
+                layeringTargetSedols
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();
 
             _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(1));
+            _plan = plan ?? new DataGenerationPlan[0];
         }
 
         protected override void _InitiateTrading()
         { }
 
+        // i think we still need to maintain the link between exchange frames and the orders
+        // to keep prices reflecting the incremental behaviour ...yeah =( -.- o.(0) yeah
+        // ok so the assumption is that we'll still receive the exchange frames?
+        // sure...in that case the layering can be entirely frame driven...
         public override void OnNext(ExchangeFrame value)
         {
             if (value == null)
@@ -46,22 +53,21 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
-
-            if (_executeOn == null)
+            if (_plan?.Any() ?? true)
             {
-                _executeOn = value.TimeStamp.Add(_executePoint);
                 return;
             }
 
-            if (_hasProcessedSpoofingBreaches)
+            _marketHistoryStack.Add(value, value.TimeStamp);
+
+            if (_hasProcessedLayeringBreaches)
             {
                 return;
             }
 
             lock (_lock)
             {
-                if (_hasProcessedSpoofingBreaches)
+                if (_hasProcessedLayeringBreaches)
                 {
                     return;
                 }
@@ -75,36 +81,36 @@ namespace TestHarness.Engine.OrderGenerator
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
-                foreach (var sedol in _spoofingTargetSedols)
+                foreach (var sedol in _layeringTargetSedols)
                 {
                     switch (i)
                     {
                         case 0:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 10);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 10);
                             break;
                         case 1:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 7);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 7);
                             break;
                         case 2:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 5);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 5);
                             break;
                         case 3:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 4);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 4);
                             break;
                         case 4:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 3);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 3);
                             break;
                         case 5:
-                            CreateMarkingTheCloseTradesForWindowBreachInSedol(sedol, activeItems, value, 2);
+                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 2);
                             break;
                     }
                     i++;
                 }
-                _hasProcessedSpoofingBreaches = true;
+                _hasProcessedLayeringBreaches = true;
             }
         }
 
-        private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
+        private void CreateLayeringTradesForWindowBreachInSedol(
             string sedol,
             Stack<ExchangeFrame> frames,
             ExchangeFrame latestFrame,
@@ -128,7 +134,7 @@ namespace TestHarness.Engine.OrderGenerator
             var headSecurity =
                 latestFrame
                     .Securities
-                    .FirstOrDefault(fram => 
+                    .FirstOrDefault(fram =>
                         string.Equals(
                             fram.Security.Identifiers.Sedol,
                             sedol,

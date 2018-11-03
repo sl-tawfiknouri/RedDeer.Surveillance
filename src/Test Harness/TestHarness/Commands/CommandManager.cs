@@ -53,6 +53,7 @@ namespace TestHarness.Commands
                 new HighVolumeCommand(appFactory),
                 new MarkingTheCloseCommand(appFactory),
                 new Spoofing2Command(appFactory),
+                new LayeringCommand(appFactory),
                _unRecognisedCommand,
             };
         }

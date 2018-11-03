@@ -4,6 +4,9 @@ using TestHarness.Factory.Interfaces;
 
 namespace TestHarness.Commands.Market_Abuse_Commands
 {
+    /// <summary>
+    /// Legacy approach of using a NASDAQ closing file to inject data
+    /// </summary>
     public class SpoofingCommand : ICommand
     {
         private readonly IAppFactory _appFactory;

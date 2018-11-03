@@ -6,6 +6,6 @@ namespace TestHarness.Factory.TradingLayeringFactory.Interfaces
 {
     public interface ITradingLayeringFactory
     {
-        IOrderDataGenerator Build(IReadOnlyCollection<string> sedols, IReadOnlyCollection<DataGenerationPlan> plan);
+        IOrderDataGenerator Build(IReadOnlyCollection<DataGenerationPlan> plan);
     }
 }

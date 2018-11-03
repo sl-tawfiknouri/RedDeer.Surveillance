@@ -18,10 +18,9 @@ namespace TestHarness.Factory.TradingLayeringFactory
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IOrderDataGenerator Build(IReadOnlyCollection<string> sedols, IReadOnlyCollection<DataGenerationPlan> plan)
+        public IOrderDataGenerator Build(IReadOnlyCollection<DataGenerationPlan> plan)
         {
-            sedols = sedols ?? new string[0];
-            return new TradingLayeringProcess(sedols, plan, new StubTradeStrategy(), _logger);
+            return new TradingLayeringProcess(plan, new StubTradeStrategy(), _logger);
         }
     }
 }

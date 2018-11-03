@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Market;
 using Domain.Market.Interfaces;
@@ -15,25 +14,15 @@ namespace TestHarness.Engine.OrderGenerator
     public class TradingLayeringProcess : BaseTradingProcess
     {
         private readonly object _lock = new object();
-        private readonly IReadOnlyCollection<string> _layeringTargetSedols;
         private readonly IMarketHistoryStack _marketHistoryStack;
         private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
 
-        private bool _hasProcessedLayeringBreaches;
-        private DateTime? _executeOn;
-
         public TradingLayeringProcess(
-            IReadOnlyCollection<string> layeringTargetSedols,
             IReadOnlyCollection<DataGenerationPlan> plan,
             ITradeStrategy<TradeOrderFrame> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            _layeringTargetSedols =
-                layeringTargetSedols
-                    ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
-                    ?.ToList()
-                ?? new List<string>();
 
             _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(1));
             _plan = plan ?? new DataGenerationPlan[0];
@@ -42,10 +31,6 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        // i think we still need to maintain the link between exchange frames and the orders
-        // to keep prices reflecting the incremental behaviour ...yeah =( -.- o.(0) yeah
-        // ok so the assumption is that we'll still receive the exchange frames?
-        // sure...in that case the layering can be entirely frame driven...
         public override void OnNext(ExchangeFrame value)
         {
             if (value == null)
@@ -53,68 +38,66 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            if (_plan?.Any() ?? true)
+            if (!_plan?.Any() ?? true)
             {
                 return;
             }
 
             _marketHistoryStack.Add(value, value.TimeStamp);
 
-            if (_hasProcessedLayeringBreaches)
+            var plan = PlanInDateRange(value);
+            if (plan == null)
             {
                 return;
             }
 
             lock (_lock)
             {
-                if (_hasProcessedLayeringBreaches)
-                {
-                    return;
-                }
-
-                if (value.TimeStamp < _executeOn.Value)
-                {
-                    return;
-                }
 
                 _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
-                var i = 0;
-                foreach (var sedol in _layeringTargetSedols)
+                if (plan.EquityInstructions.TerminationInUtc == value.TimeStamp)
                 {
-                    switch (i)
-                    {
-                        case 0:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 10);
-                            break;
-                        case 1:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 7);
-                            break;
-                        case 2:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 5);
-                            break;
-                        case 3:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 4);
-                            break;
-                        case 4:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 3);
-                            break;
-                        case 5:
-                            CreateLayeringTradesForWindowBreachInSedol(sedol, activeItems, value, 2);
-                            break;
-                    }
-                    i++;
+                    CreateLayeringTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, false);
+                    CreateLayeringTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, true);
                 }
-                _hasProcessedLayeringBreaches = true;
+                else
+                {
+                    CreateLayeringTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, false);
+                }
             }
+        }
+
+        private DataGenerationPlan PlanInDateRange(ExchangeFrame value)
+        {
+            if (!_plan?.Any() ?? true)
+            {
+                return null;
+            }
+
+            if (value == null)
+            {
+                return null;
+            }
+
+            foreach (var plan in _plan)
+            {
+                if (plan.EquityInstructions.CommencementInUtc <= value.TimeStamp
+                    && plan.EquityInstructions.TerminationInUtc >= value.TimeStamp)
+                {
+                    return plan;
+                }
+            }
+
+            return null;
         }
 
         private void CreateLayeringTradesForWindowBreachInSedol(
             string sedol,
             Stack<ExchangeFrame> frames,
             ExchangeFrame latestFrame,
-            int cancelledTrades)
+            bool realisedTrade)
         {
             if (string.IsNullOrWhiteSpace(sedol))
             {
@@ -145,40 +128,35 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            // _executeOn
             var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
 
-            // select a suitably low % of the traded volume
-            tradedVolume = (int)((decimal)tradedVolume * 0.03m);
+            // select a suitably low % of the traded volume so we don't fire a huge amount of other rules =)
+            tradedVolume = (int)((decimal)tradedVolume * 0.04m);
+            var tradeTime = latestFrame.TimeStamp;
 
-            for (var i = 0; i < cancelledTrades; i++)
-            {
-                var tradeTime = latestFrame.TimeStamp;
+            var volumeFrame = new TradeOrderFrame(
+                realisedTrade ? OrderType.Market : OrderType.Limit,
+                headSecurity.Market,
+                headSecurity.Security,
+                headSecurity.Spread.Price,
+                headSecurity.Spread.Price,
+                realisedTrade ? (int)tradedVolume : 0,
+                (int)tradedVolume,
+                realisedTrade ? OrderPosition.Sell : OrderPosition.Buy,
+                realisedTrade ? OrderStatus.Fulfilled : OrderStatus.Cancelled,
+                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                headSecurity.Spread.Price.Currency);
 
-                var volumeFrame = new TradeOrderFrame(
-                    i == 0 ? OrderType.Market : OrderType.Limit,
-                    headSecurity.Market,
-                    headSecurity.Security,
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    i == 0 ? (int)tradedVolume : 0,
-                    (int)tradedVolume,
-                    i == 0 ? OrderPosition.Buy : OrderPosition.Sell,
-                    i == 0 ? OrderStatus.Fulfilled : OrderStatus.Cancelled,
-                    tradeTime.AddSeconds(i),
-                    tradeTime.AddSeconds(-i),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    headSecurity.Spread.Price.Currency);
-
-                TradeStream.Add(volumeFrame);
-            }
+            TradeStream.Add(volumeFrame);
         }
 
         protected override void _TerminateTradingStrategy()

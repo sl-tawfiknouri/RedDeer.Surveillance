@@ -162,10 +162,10 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .FilterSedol(sedols)
                         .Finish();
 
-                var spoofingProcess =
+                var layeringProcess =
                     _appFactory
                         .LayeringProcessFactory
-                        .Build(sedols, plans);
+                        .Build(plans);
 
                 _networkManager =
                     _appFactory
@@ -194,8 +194,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
-                equityStream.Subscribe(spoofingProcess);
-                spoofingProcess.InitiateTrading(equityStream, tradeStream);
+                equityStream.Subscribe(layeringProcess);
+                layeringProcess.InitiateTrading(equityStream, tradeStream);
 
                 if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -221,6 +221,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
             var i = 1;
             foreach (var sedol in sedols)
             {
+                
+
                 var openTime = from.Add(dto.MarketOpenTime).AddMinutes(i * 30);
                 var intervalInstruction =
                     new IntervalEquityPriceInstruction(
@@ -228,6 +230,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         openTime.TimeOfDay,
                         openTime.TimeOfDay.Add(TimeSpan.FromMinutes(10)),
                         TimeSpan.FromMinutes(1),
+                        from.Date.Add(openTime.TimeOfDay),
+                        from.Date.Add(openTime.TimeOfDay.Add(TimeSpan.FromMinutes(10))),
                         PriceManipulation.Increase,
                         0.01m);
 

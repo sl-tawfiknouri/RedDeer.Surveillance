@@ -9,6 +9,8 @@ namespace TestHarness.Engine.Plans
             TimeSpan intervalCommencement,
             TimeSpan intervalTermination,
             TimeSpan updateFrequency,
+            DateTime commenceInUtc,
+            DateTime terminationInUtc,
             PriceManipulation priceManipulation,
             decimal? priceTickData)
         {
@@ -16,6 +18,8 @@ namespace TestHarness.Engine.Plans
             IntervalCommencement = intervalCommencement;
             IntervalTermination = intervalTermination;
             UpdateFrequency = updateFrequency;
+            CommencementInUtc = commenceInUtc;
+            TerminationInUtc = terminationInUtc;
             PriceManipulation = priceManipulation;
             PriceTickDelta = priceTickData;
         }
@@ -46,5 +50,8 @@ namespace TestHarness.Engine.Plans
         /// A fraction to represent the per tick update change i.e. 0.01m is 1% in the direction of price manipulation
         /// </summary>
         public decimal? PriceTickDelta { get; }
+
+        public DateTime CommencementInUtc { get; }
+        public DateTime TerminationInUtc { get; }
     }
 }

@@ -4,6 +4,9 @@ using TestHarness.Factory.Interfaces;
 
 namespace TestHarness.Commands.Market_Abuse_Commands
 {
+    /// <summary>
+    /// legacy nasdaq file approach
+    /// </summary>
     public class CancellationCommand : ICommand
     {
         private readonly IAppFactory _appFactory;

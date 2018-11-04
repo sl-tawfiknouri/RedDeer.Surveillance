@@ -78,7 +78,6 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
                     || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
 
-
                 if (!fromSuccess)
                 {
                     console.WriteToUserFeedbackLine($"Did not understand from date of {rawFromDate}");

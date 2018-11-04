@@ -20,8 +20,10 @@ using TestHarness.Factory.TradingSpoofingFactory;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
+using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
+using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
 using TestHarness.Factory.TradeMarkingTheCloseFactory;
@@ -70,6 +72,7 @@ namespace TestHarness.Factory
             TradingHighVolumeFactory = new TradingHighVolumeFactory(Logger);
             MarkingTheCloseFactory = new TradingMarkingTheCloseFactory(Logger);
             SpoofingV2Factory = new TradingSpoofingV2Factory.TradingSpoofingV2Factory(Logger);
+            HighProfitsFactory = new TradeHighProfitFactory.TradeHighProfitFactory(Logger);
 
             AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -116,6 +119,7 @@ namespace TestHarness.Factory
         public IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
         public IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
+        public ITradeHighProfitFactory HighProfitsFactory { get; }
 
         public ITradingLayeringFactory LayeringProcessFactory { get; }
 

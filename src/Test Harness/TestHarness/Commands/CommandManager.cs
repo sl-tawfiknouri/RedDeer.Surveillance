@@ -54,6 +54,7 @@ namespace TestHarness.Commands
                 new MarkingTheCloseCommand(appFactory),
                 new Spoofing2Command(appFactory),
                 new LayeringCommand(appFactory),
+                new HighProfitCommand(appFactory),
                _unRecognisedCommand,
             };
         }

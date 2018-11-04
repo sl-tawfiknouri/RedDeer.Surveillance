@@ -15,10 +15,10 @@ using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands.Market_Abuse_Commands
 {
-    public class LayeringCommand : ICommand
+    public class HighProfitCommand : ICommand
     {
-        public const string FileDirectory = "DataGenerationStorageMarketLayeringCmd";
-        public const string TradeFileDirectory = "DataGenerationStorageTradesLayeringCmd";
+        public const string FileDirectory = "DataGenerationStorageMarketHighProfitCmd";
+        public const string TradeFileDirectory = "DataGenerationStorageTradesHighProfitCmd";
 
         private readonly object _lock = new object();
         private readonly IAppFactory _appFactory;
@@ -29,7 +29,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
         private IEquityDataStorage _equitiesFileStorageProcess;
         private IOrderFileStorageProcess _orderFileStorageProcess;
 
-        public LayeringCommand(IAppFactory appFactory)
+        public HighProfitCommand(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? throw new ArgumentNullException(nameof(appFactory));
         }
@@ -41,7 +41,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 return false;
             }
 
-            return command.ToLower().Contains("run layering trades");
+            return command.ToLower().Contains("run high profits");
         }
 
         public void Run(string command)
@@ -53,7 +53,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var marketApiRepository = _appFactory.MarketApiRepository;
 
                 var cmd = command.ToLower();
-                cmd = cmd.Replace("run layering trades", string.Empty).Trim();
+                cmd = cmd.Replace("run high profits", string.Empty).Trim();
                 var splitCmd = cmd.Split(' ');
 
                 var rawFromDate = splitCmd.FirstOrDefault();
@@ -161,7 +161,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 }
 
                 var plans = Plan(sedols, marketData, fromDate.Date);
-                
+
                 var auroraRepository = _appFactory.AuroraRepository;
                 auroraRepository.DeleteTradingAndMarketDataForMarketOnDate(market, fromDate);
 
@@ -201,9 +201,9 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .FilterSedol(sedols)
                         .Finish();
 
-                var layeringProcess =
+                var highProfitProcess =
                     _appFactory
-                        .LayeringProcessFactory
+                        .HighProfitsFactory
                         .Build(plans);
 
                 _networkManager =
@@ -233,8 +233,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
-                equityStream.Subscribe(layeringProcess);
-                layeringProcess.InitiateTrading(equityStream, tradeStream);
+                equityStream.Subscribe(highProfitProcess);
+                highProfitProcess.InitiateTrading(equityStream, tradeStream);
 
                 if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -267,22 +267,22 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
             var result = new List<DataGenerationPlan>();
 
-            var i = 1;
+            var i = 0;
             foreach (var sedol in sedols)
             {
-                var openTime = from.Add(dto.MarketOpenTime).AddMinutes(i * 30);
+                var openTime = from.Add(dto.MarketOpenTime).AddMinutes(i * 60);
                 var intervalInstruction =
                     new IntervalEquityPriceInstruction(
                         sedol,
                         openTime.TimeOfDay,
-                        openTime.TimeOfDay.Add(TimeSpan.FromMinutes(10)),
+                        openTime.TimeOfDay.Add(TimeSpan.FromMinutes(45)),
                         TimeSpan.FromMinutes(1),
                         from.Date.Add(openTime.TimeOfDay),
-                        from.Date.Add(openTime.TimeOfDay.Add(TimeSpan.FromMinutes(10))),
+                        from.Date.Add(openTime.TimeOfDay.Add(TimeSpan.FromMinutes(45))),
                         PriceManipulation.Increase,
-                        0.01m);
+                        0.03m);
 
-                var newPlan = new DataGenerationPlan(sedol,  intervalInstruction);
+                var newPlan = new DataGenerationPlan(sedol, intervalInstruction);
                 result.Add(newPlan);
                 i++;
             }

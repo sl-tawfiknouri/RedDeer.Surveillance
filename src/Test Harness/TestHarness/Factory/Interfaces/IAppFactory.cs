@@ -8,6 +8,7 @@ using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
+using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
 using TestHarness.Factory.TradeMarkingTheCloseFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -42,6 +43,8 @@ namespace TestHarness.Factory.Interfaces
         IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
         IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
+
+        ITradeHighProfitFactory HighProfitsFactory { get; }
 
         ITradingLayeringFactory LayeringProcessFactory { get;}
         ITradingMarkingTheCloseFactory MarkingTheCloseFactory { get; }

@@ -70,20 +70,20 @@ namespace Relay.S3_IO
 
                 switch (splitPath)
                 {
-                    case "trade":
+                    case "surveillance-trade":
                         await ProcessTradeFile(
                             dto,
                             _configuration.RelayTradeFileFtpDirectoryPath,
                             _configuration.RelayTradeFileUploadDirectoryPath);
                         break;
-                    case "market":
+                    case "surveillance-market":
                         await ProcessTradeFile(
                             dto,
                             _configuration.RelayEquityFileFtpDirectoryPath,
                             _configuration.RelayEquityFileUploadDirectoryPath);
                         break;
                     default:
-                        _logger.LogInformation("S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file.");
+                        _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                         return;
                 }
             }
@@ -103,7 +103,15 @@ namespace Relay.S3_IO
 
             foreach (var file in files)
             {
-                MoveFile(file, uploadDirectoryPath);
+                try
+                {
+                    MoveFile(file, uploadDirectoryPath);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"S3 File Upload Monitoring Process moving process trade file {file} to {uploadDirectoryPath} {e.Message}");
+                    continue;
+                }
             }
 
             _logger.LogInformation($"Moved all {fileCount}.");
@@ -125,6 +133,7 @@ namespace Relay.S3_IO
 
             if (File.Exists(fullPathToNewFile))
             {
+                _logger.LogInformation($"Deleting {fullPathToNewFile} as it already exists");
                 File.Delete(fullPathToNewFile);
             }
 

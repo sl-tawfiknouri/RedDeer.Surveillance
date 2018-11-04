@@ -26,6 +26,8 @@ using Relay.Processors.Interfaces;
 using Relay.S3_IO;
 using Relay.S3_IO.Interfaces;
 using StructureMap;
+using Utilities.Aws_IO;
+using Utilities.Aws_IO.Interfaces;
 using Utilities.Disk_IO;
 using Utilities.Disk_IO.Interfaces;
 using Utilities.Network_IO.Interfaces;
@@ -87,6 +89,9 @@ namespace Relay
             For<IUploadEquityFileMonitorFactory>().Use<UploadEquityFileMonitorFactory>();
 
             For<IS3FileUploadMonitoringProcess>().Use<S3FileUploadMonitoringProcess>();
+            For<IAwsQueueClient>().Use<AwsQueueClient>();
+            For<IFileUploadMessageMapper>().Use<FileUploadMessageMapper>();
+            For<IAwsS3Client>().Use<AwsS3Client>();
         }
     }
 }

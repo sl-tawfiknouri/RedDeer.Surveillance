@@ -75,6 +75,9 @@ namespace RedDeer.Relay.Relay.App.ConfigBuilder
                     GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
                 SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
                 IsDeployedOnClientMachine = GetSetting("IsDeployedOnClientMachine", configurationBuilder),
+                RelayS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
+                RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
+                RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
 
                 // TRADE CONFIG
                 OrderTypeFieldName = GetSetting("OrderTypeFieldName", configurationBuilder),

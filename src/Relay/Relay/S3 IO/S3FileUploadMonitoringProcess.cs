@@ -64,19 +64,28 @@ namespace Relay.S3_IO
 
                     return;
                 }
-                
-                await ProcessFile(dto, 3);
 
-                var files = Directory.EnumerateFiles(_configuration.RelayTradeFileFtpDirectoryPath).ToList();
-                var fileCount = files.Count;
-                _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
+                var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
+                var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
 
-                foreach (var file in files)
+                switch (splitPath)
                 {
-                    MoveFile(file);
+                    case "trade":
+                        await ProcessTradeFile(
+                            dto,
+                            _configuration.RelayTradeFileFtpDirectoryPath,
+                            _configuration.RelayTradeFileUploadDirectoryPath);
+                        break;
+                    case "market":
+                        await ProcessTradeFile(
+                            dto,
+                            _configuration.RelayEquityFileFtpDirectoryPath,
+                            _configuration.RelayEquityFileUploadDirectoryPath);
+                        break;
+                    default:
+                        _logger.LogInformation("S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file.");
+                        return;
                 }
-
-                _logger.LogInformation($"Moved all {fileCount}.");
             }
             catch (Exception e)
             {
@@ -84,7 +93,23 @@ namespace Relay.S3_IO
             }
         }
 
-        private void MoveFile(string file)
+        private async Task ProcessTradeFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
+        {
+            await ProcessFile(dto, 3, ftpDirectoryPath);
+
+            var files = Directory.EnumerateFiles(ftpDirectoryPath).ToList();
+            var fileCount = files.Count;
+            _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
+
+            foreach (var file in files)
+            {
+                MoveFile(file, uploadDirectoryPath);
+            }
+
+            _logger.LogInformation($"Moved all {fileCount}.");
+        }
+
+        private void MoveFile(string file, string uploadDirectoryPath)
         {
             var fileName = Path.GetFileName(file) ?? string.Empty;
 
@@ -96,8 +121,7 @@ namespace Relay.S3_IO
             }
 
             _logger.LogInformation($"Moving {fileName} to processing folder.");
-
-            var fullPathToNewFile = Path.Combine(_configuration.RelayTradeFileUploadDirectoryPath, fileName);
+            var fullPathToNewFile = Path.Combine(uploadDirectoryPath, fileName);
 
             if (File.Exists(fullPathToNewFile))
             {
@@ -107,7 +131,7 @@ namespace Relay.S3_IO
             Directory.Move(file, fullPathToNewFile);
         }
 
-        private async Task ProcessFile(FileUploadMessageDto dto, int retries)
+        private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)
         {
             var filePath = Path.GetFileName(dto.FileName) ?? string.Empty;
 
@@ -117,7 +141,7 @@ namespace Relay.S3_IO
                 return;
             }
 
-            var newPath = Path.Combine(_configuration.RelayTradeFileFtpDirectoryPath, filePath);
+            var newPath = Path.Combine(ftpDirectoryPath, filePath);
             var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, newPath);
 
             if (result || retries <= 0)
@@ -125,7 +149,7 @@ namespace Relay.S3_IO
                 return;
             }
 
-            await ProcessFile(dto, retries - 1);
+            await ProcessFile(dto, retries - 1, ftpDirectoryPath);
         }
 
         public void Terminate()

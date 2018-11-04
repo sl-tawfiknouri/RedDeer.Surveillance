@@ -20,7 +20,7 @@ namespace Utilities.Aws_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> RetrieveFile(string bucketName, string key, string targetFile)
+        public async Task<bool> RetrieveFile(string bucketName, string key, string targetFile, bool retry = true)
         {
             try
             {
@@ -42,8 +42,16 @@ namespace Utilities.Aws_IO
             }
             catch (Exception e)
             {
-                _logger.LogCritical(e.Message);
-                return false;
+                if (retry)
+                {
+                    var newKey = Uri.UnescapeDataString(key).Replace('+', ' ');
+                    return await RetrieveFile(bucketName, newKey, targetFile, false);
+                }
+                else
+                {
+                    _logger.LogCritical(e.Message);
+                    return false;
+                }
             }
         }
     }

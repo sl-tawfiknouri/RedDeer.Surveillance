@@ -23,6 +23,8 @@ using Relay.Network_IO.RelaySubscribers;
 using Relay.Network_IO.RelaySubscribers.Interfaces;
 using Relay.Processors;
 using Relay.Processors.Interfaces;
+using Relay.S3_IO;
+using Relay.S3_IO.Interfaces;
 using StructureMap;
 using Utilities.Disk_IO;
 using Utilities.Disk_IO.Interfaces;
@@ -83,6 +85,8 @@ namespace Relay
             For<ISecurityCsvToDtoMapper>().Use<SecurityCsvToDtoMapper>();
             For<IUploadEquityFileMonitor>().Use<UploadEquityFileMonitor>();
             For<IUploadEquityFileMonitorFactory>().Use<UploadEquityFileMonitorFactory>();
+
+            For<IS3FileUploadMonitoringProcess>().Use<S3FileUploadMonitoringProcess>();
         }
     }
 }

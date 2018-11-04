@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
+using TestHarness.Engine.OrderStorage.Interfaces;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 
@@ -17,12 +20,17 @@ namespace TestHarness.Commands.Market_Abuse_Commands
     /// </summary>
     public class Cancellation2Command : ICommand
     {
+        public const string FileDirectory = "DataGenerationStorageMarketCancellationCmd";
+        public const string TradeFileDirectory = "DataGenerationStorageTradesCancellationCmd";
+
         private readonly object _lock = new object();
         private readonly IAppFactory _appFactory;
 
         private INetworkManager _networkManager;
         private IEquitiesDataGenerationMarkovProcess _equityProcess;
         private IOrderDataGenerator _tradingProcess;
+        private IEquityDataStorage _equitiesFileStorageProcess;
+        private IOrderFileStorageProcess _orderFileStorageProcess;
 
         public Cancellation2Command(IAppFactory appFactory)
         {
@@ -54,13 +62,22 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var rawFromDate = splitCmd.FirstOrDefault();
                 var market = splitCmd.Skip(1).FirstOrDefault();
                 var trades = splitCmd.Skip(2).FirstOrDefault();
-                var sedols = splitCmd.Skip(3).ToList();
+                var saveMarketCsv = splitCmd.Skip(3).FirstOrDefault();
+                var saveTradeCsv = splitCmd.Skip(4).FirstOrDefault();
+                var sedols = splitCmd.Skip(5).ToList();
                                     
                 var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
                 var tradesSuccess =
                     string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase)
                     || string.Equals(trades, "notrade", StringComparison.InvariantCultureIgnoreCase);
                 var marketSuccess = !string.IsNullOrWhiteSpace(market);
+                var saveMarketCsvSuccess =
+                    string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
+                var saveTradeCsvSuccess =
+                    string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
+                    || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
+
 
                 if (!fromSuccess)
                 {
@@ -77,6 +94,18 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 if (!tradesSuccess)
                 {
                     console.WriteToUserFeedbackLine($"Did not understand trades of {trades}. Can be 'trade' or 'notrade'");
+                    return;
+                }
+
+                if (!saveMarketCsvSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand the save to csv value. Options are 'market' or 'nomarketcsv'. No spaces.");
+                    return;
+                }
+
+                if (!saveTradeCsvSuccess)
+                {
+                    console.WriteToUserFeedbackLine($"Did not understand the save to csv value. Options are 'trade' or 'notradecsv'. No spaces.");
                     return;
                 }
 
@@ -137,6 +166,18 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 
                 var auroraRepository = _appFactory.AuroraRepository;
                 auroraRepository.DeleteTradingAndMarketDataForMarketOnDate(market, fromDate);
+
+                var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
+
+                _equitiesFileStorageProcess = _appFactory
+                    .EquitiesFileStorageProcessFactory
+                    .Create(equitiesDirectory);
+
+                var tradeDirectory = Path.Combine(Directory.GetCurrentDirectory(), TradeFileDirectory);
+
+                _orderFileStorageProcess = _appFactory
+                    .OrderFileStorageProcessFactory
+                    .Build(tradeDirectory);
 
                 var equityStream =
                     _appFactory
@@ -200,6 +241,16 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _tradingProcess.InitiateTrading(equityStream, tradeStream);
+                }
+
+                if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _equitiesFileStorageProcess.Initiate(equityStream);
+                }
+
+                if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    tradeStream.Subscribe(_orderFileStorageProcess);
                 }
 
                 _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);

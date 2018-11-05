@@ -120,6 +120,12 @@ namespace Relay.Disk_IO
                 return;
             }
 
+            if (_fileSystemWatcher != null)
+            {
+                _fileSystemWatcher.Dispose();
+                _fileSystemWatcher = null;
+            }
+
             _fileSystemWatcher = new FileSystemWatcher(UploadDirectoryPath())
             {
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size,
@@ -128,6 +134,9 @@ namespace Relay.Disk_IO
             };
 
             _fileSystemWatcher.Changed += DetectedFileChange;
+            _fileSystemWatcher.Renamed += DetectedFileChange;
+            _fileSystemWatcher.Created += DetectedFileChange;
+
             _fileSystemWatcher.EnableRaisingEvents = true;
         }
 

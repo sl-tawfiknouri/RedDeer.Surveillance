@@ -74,7 +74,7 @@ namespace TestHarness.Factory
             SpoofingV2Factory = new TradingSpoofingV2Factory.TradingSpoofingV2Factory(Logger);
             HighProfitsFactory = new TradeHighProfitFactory.TradeHighProfitFactory(Logger);
 
-            AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
+            AwsQueueClient = new AwsQueueClient(null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);

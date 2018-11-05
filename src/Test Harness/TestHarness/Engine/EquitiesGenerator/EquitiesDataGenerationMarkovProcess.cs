@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
@@ -6,7 +7,9 @@ using NLog;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using TestHarness.Engine.EquitiesGenerator.Strategies;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
+using TestHarness.Engine.Plans;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -18,6 +21,7 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private volatile bool _walkInitiated;
 
+        private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
@@ -30,6 +34,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         public EquitiesDataGenerationMarkovProcess(
             IEquityDataGeneratorStrategy dataStrategy,
+            IReadOnlyCollection<DataGenerationPlan> plan,
             TimeSpan tickSeparation,
             ILogger logger)
         {
@@ -38,6 +43,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 ?? throw new ArgumentNullException(nameof(dataStrategy));
 
             _tickSeparation = tickSeparation;
+            _plan = plan ?? new List<DataGenerationPlan>();
 
             _logger =
                 logger
@@ -88,22 +94,80 @@ namespace TestHarness.Engine.EquitiesGenerator
                 return;
             }
 
-            var advanceTick = frame.TimeStamp.TimeOfDay.Add(_tickSeparation);
+            var timeSpanList = new List<TickStrategy>();
+            var advanceTick = frame.TimeStamp.TimeOfDay;
 
             while (advanceTick <= market.MarketCloseTime)
             {
-                Tick(frame.TimeStamp.Date.Add(advanceTick));
+                timeSpanList.Add(
+                    new TickStrategy
+                    {
+                        TickOffset = advanceTick,
+                        Strategy = _dataStrategy
+                    });
+
                 advanceTick = advanceTick.Add(_tickSeparation);
+            }
+
+            timeSpanList = RemoveConflictingTicks(timeSpanList);
+
+            foreach (var subPlan in _plan)
+            {
+                var strategy = new PlanEquityStrategy(subPlan, _dataStrategy);
+                var initialTick = subPlan.EquityInstructions.IntervalCommencement;
+                while (initialTick <= subPlan.EquityInstructions.IntervalTermination)
+                {
+                    timeSpanList.Add(
+                        new TickStrategy
+                        {
+                            TickOffset = initialTick,
+                            Strategy = strategy
+                        });
+
+                    initialTick = initialTick.Add(subPlan.EquityInstructions.UpdateFrequency);
+                }
+            }
+
+            timeSpanList = timeSpanList.OrderBy(i => i.TickOffset).ToList();
+            foreach (var item in timeSpanList)
+            {
+                if (item?.Strategy == null)
+                {
+                    continue;
+                }
+
+                Tick(frame.TimeStamp.Date.Add(item.TickOffset), item.Strategy);
             }
         }
 
-        private void Tick(DateTime advanceTick)
+        private List<TickStrategy> RemoveConflictingTicks(List<TickStrategy> timeSpanList)
+        {
+            if (_plan == null)
+            {
+                return timeSpanList;
+            }
+
+            foreach (var subPlan in _plan.Where(pla => pla != null))
+            {
+                var itemsToEliminate = timeSpanList
+                    .Where(tpl =>
+                        tpl.TickOffset >= subPlan.EquityInstructions.IntervalCommencement
+                        && tpl.TickOffset <= subPlan.EquityInstructions.IntervalTermination)
+                    .ToList();
+
+                timeSpanList = timeSpanList.Except(itemsToEliminate).ToList();
+            }
+
+            return timeSpanList;
+        }
+
+        private void Tick(DateTime advanceTick, IEquityDataGeneratorStrategy strategy)
         {
             lock (_walkingLock)
             {
                 var tockedSecurities = _activeFrame
                     .Securities
-                    .Select(sec => TickSecurity(sec, advanceTick))
+                    .Select(sec => strategy.AdvanceFrame(sec, advanceTick, false))
                     .ToArray();
 
                 var tickTock = new ExchangeFrame(_activeFrame.Exchange, advanceTick, tockedSecurities);
@@ -113,11 +177,6 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private SecurityTick TickSecurity(SecurityTick tick, DateTime advanceTick)
-        {
-            return _dataStrategy.AdvanceFrame(tick, advanceTick, false);
-        }
-
         public void TerminateWalk()
         {
             lock (_stateTransitionLock)
@@ -125,6 +184,12 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _walkInitiated = false;
                 _logger.Log(LogLevel.Info, "Random walk generator terminating walk");
             }
+        }
+
+        private class TickStrategy
+        {
+            public TimeSpan TickOffset { get; set; }
+            public IEquityDataGeneratorStrategy Strategy { get; set; }
         }
     }
 }

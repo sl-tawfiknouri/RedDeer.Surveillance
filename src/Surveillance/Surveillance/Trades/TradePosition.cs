@@ -33,6 +33,13 @@ namespace Surveillance.Trades
             return _trades.Sum(trad => trad?.FulfilledVolume ?? 0);
         }
 
+        public int TotalVolumeOrderedOrFilled()
+        {
+            return _trades
+                .Where(trad => trad != null)
+                .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
+        }
+
         public int VolumeInStatus(OrderStatus status)
         {
             return

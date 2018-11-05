@@ -10,6 +10,7 @@ namespace Surveillance.Trades.Interfaces
         void Add(TradeOrderFrame item);
 
         int TotalVolume();
+        int TotalVolumeOrderedOrFilled();
         int VolumeInStatus(OrderStatus status);
         int VolumeNotInStatus(OrderStatus status);
 

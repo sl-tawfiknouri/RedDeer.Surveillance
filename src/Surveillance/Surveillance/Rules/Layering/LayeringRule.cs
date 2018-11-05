@@ -245,15 +245,15 @@ namespace Surveillance.Rules.Layering
             }
 
             if (marketSecurityData?.DailyVolume.Traded <= 0
-                || opposingPosition.TotalVolume() <= 0)
+                || opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
-                _logger.LogInformation($"Layering unable to evaluate for {mostRecentTrade?.Security?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolume()}");
+                _logger.LogInformation($"Layering unable to evaluate for {mostRecentTrade?.Security?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolumeOrderedOrFilled()}");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
-            var percentageDailyVolume = (decimal)opposingPosition.TotalVolume() / (decimal)marketSecurityData.DailyVolume.Traded;
+            var percentageDailyVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)marketSecurityData.DailyVolume.Traded;
             if (percentageDailyVolume >= _parameters.PercentageOfMarketDailyVolume)
             {
                 return new RuleBreachDescription
@@ -297,7 +297,7 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
 
-            if (opposingPosition.TotalVolume() <= 0)
+            if (opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
                 _logger.LogInformation($"Layering unable to calculate opposing position volume window in {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
 
@@ -305,7 +305,7 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
 
-            var percentageWindowVolume = (decimal)opposingPosition.TotalVolume() / (decimal)windowVolume;
+            var percentageWindowVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)windowVolume;
             if (percentageWindowVolume >= _parameters.PercentageOfMarketWindowVolume)
             {
                 return new RuleBreachDescription

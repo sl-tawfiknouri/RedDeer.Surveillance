@@ -3,6 +3,7 @@ using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Trades.Interfaces;
+using NotImplementedException = System.NotImplementedException;
 
 namespace Surveillance.Trades
 {
@@ -120,10 +121,16 @@ namespace Surveillance.Trades
 
         public int TotalVolume()
         {
-            return _trades.Sum(trad =>
-                trad?.FulfilledVolume != 0 
-                    ? (trad?.FulfilledVolume ?? 0) 
-                    : (trad?.OrderedVolume ?? 0));
+            return _trades
+                .Where(trad => trad != null)
+                .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
+        }
+
+        public int TotalVolumeOrderedOrFilled()
+        {
+            return _trades
+                .Where(trad => trad != null)
+                .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
         }
 
         public int VolumeInStatus(OrderStatus status)

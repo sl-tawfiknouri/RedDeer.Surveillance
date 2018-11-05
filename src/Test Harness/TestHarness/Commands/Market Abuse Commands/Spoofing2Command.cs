@@ -12,16 +12,10 @@ using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands.Market_Abuse_Commands
 {
-    /// <summary>
-    /// Edition 2 of the cancellation command
-    /// Prior edition injected cancelled orders into the
-    /// on going data generation process this one injects into
-    /// historic data only and calls run schedule rule after the injection
-    /// </summary>
-    public class Cancellation2Command : ICommand
+    public class Spoofing2Command : ICommand
     {
-        public const string FileDirectory = "DataGenerationStorageMarketCancellationCmd";
-        public const string TradeFileDirectory = "DataGenerationStorageTradesCancellationCmd";
+        public const string FileDirectory = "DataGenerationStorageMarketSpoofingCmd";
+        public const string TradeFileDirectory = "DataGenerationStorageTradesSpoofingCmd";
 
         private readonly object _lock = new object();
         private readonly IAppFactory _appFactory;
@@ -32,7 +26,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
         private IEquityDataStorage _equitiesFileStorageProcess;
         private IOrderFileStorageProcess _orderFileStorageProcess;
 
-        public Cancellation2Command(IAppFactory appFactory)
+
+        public Spoofing2Command(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? throw new ArgumentNullException(nameof(appFactory));
         }
@@ -44,7 +39,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 return false;
             }
 
-            return command.ToLower().Contains("run cancellation ratio trades");
+            return command.ToLower().Contains("run spoofing trades");
         }
 
         public void Run(string command)
@@ -56,7 +51,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var marketApiRepository = _appFactory.MarketApiRepository;
 
                 var cmd = command.ToLower();
-                cmd = cmd.Replace("run cancellation ratio trades", string.Empty).Trim();
+                cmd = cmd.Replace("run spoofing trades", string.Empty).Trim();
                 var splitCmd = cmd.Split(' ');
 
                 var rawFromDate = splitCmd.FirstOrDefault();
@@ -65,7 +60,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                 var saveMarketCsv = splitCmd.Skip(3).FirstOrDefault();
                 var saveTradeCsv = splitCmd.Skip(4).FirstOrDefault();
                 var sedols = splitCmd.Skip(5).ToList();
-                                    
+
                 var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
                 var tradesSuccess =
                     string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase)
@@ -113,7 +108,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     console.WriteToUserFeedbackLine($"Did not understand any of the sedol arguments provided");
                     return;
                 }
-                
+
                 var isHeartbeatingTask = apiRepository.Heartbeating();
                 isHeartbeatingTask.Wait();
 
@@ -162,7 +157,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     console.WriteToUserFeedbackLine("Could not find any relevant results for the market api on the client service");
                     return;
                 }
-                
+
                 var auroraRepository = _appFactory.AuroraRepository;
                 auroraRepository.DeleteTradingAndMarketDataForMarketOnDate(market, fromDate);
 
@@ -202,10 +197,10 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .FilterSedol(sedols)
                         .Finish();
 
-                var cancelledProcess =
+                var spoofingProcess =
                     _appFactory
-                        .TradingCancelled2Factory
-                        .Build(fromDate, sedols);
+                        .SpoofingV2Factory
+                        .Build(sedols);
 
                 _networkManager =
                     _appFactory
@@ -234,8 +229,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     return;
                 }
 
-                equityStream.Subscribe(cancelledProcess);
-                cancelledProcess.InitiateTrading(equityStream, tradeStream);
+                equityStream.Subscribe(spoofingProcess);
+                spoofingProcess.InitiateTrading(equityStream, tradeStream);
 
                 if (string.Equals(trades, "trade", StringComparison.InvariantCultureIgnoreCase))
                 {

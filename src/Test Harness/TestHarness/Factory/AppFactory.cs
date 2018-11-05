@@ -23,10 +23,13 @@ using TestHarness.Display.Interfaces;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
+using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
 using TestHarness.Factory.TradeMarkingTheCloseFactory;
 using TestHarness.Factory.TradeMarkingTheCloseFactory.Interfaces;
+using TestHarness.Factory.TradingLayeringFactory.Interfaces;
+using TestHarness.Factory.TradingSpoofingV2Factory.Interfaces;
 using TestHarness.Repository;
 using TestHarness.Repository.Api;
 using TestHarness.Repository.Api.Interfaces;
@@ -64,9 +67,12 @@ namespace TestHarness.Factory
             EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
             OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeOrderCsvToDtoMapper(),  Logger);
+            LayeringProcessFactory = new TradingLayeringFactory.TradingLayeringFactory(Logger);
             TradingCancelled2Factory = new TradingCancelled2Factory(Logger);
             TradingHighVolumeFactory = new TradingHighVolumeFactory(Logger);
             MarkingTheCloseFactory = new TradingMarkingTheCloseFactory(Logger);
+            SpoofingV2Factory = new TradingSpoofingV2Factory.TradingSpoofingV2Factory(Logger);
+            HighProfitsFactory = new TradeHighProfitFactory.TradeHighProfitFactory(Logger);
 
             AwsQueueClient = new AwsQueueClient(null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
@@ -113,8 +119,12 @@ namespace TestHarness.Factory
         public IEquitiesProcessFactory EquitiesProcessFactory { get; }
 
         public IEquitiesDataGenerationProcessFactory EquitiesDataGenerationProcessFactory { get; }
+        public ITradeHighProfitFactory HighProfitsFactory { get; }
+
+        public ITradingLayeringFactory LayeringProcessFactory { get; }
 
         public ITradingMarkingTheCloseFactory MarkingTheCloseFactory { get; }
+        public ITradingSpoofingV2Factory SpoofingV2Factory { get; }
 
         public IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 

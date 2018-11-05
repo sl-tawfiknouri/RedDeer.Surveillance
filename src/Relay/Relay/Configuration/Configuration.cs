@@ -16,7 +16,11 @@ namespace Relay.Configuration
         public string RelayServiceTradeDomain { get; set; }
         public string RelayServiceTradePort { get; set; }
         public string RelayTradeFileUploadDirectoryPath { get; set; }
+        public string RelayTradeFileFtpDirectoryPath { get; set; }
+        public string RelayEquityFileFtpDirectoryPath { get; set; }
+
         public string RelayEquityFileUploadDirectoryPath { get; set; }
+        public string RelayS3UploadQueueName { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
 
         public string IsDeployedOnClientMachine { get; set; }

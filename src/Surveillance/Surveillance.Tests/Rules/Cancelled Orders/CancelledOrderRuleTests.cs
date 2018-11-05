@@ -262,6 +262,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         {
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    string.Empty,
                     "reddeer id",
                     "client id",
                     "1234567",

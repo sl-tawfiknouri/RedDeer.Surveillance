@@ -6,6 +6,7 @@ namespace Domain.Equity
     public struct SecurityIdentifiers : ISecurityIdentifiers
     {
         public SecurityIdentifiers(
+            string id,
             string reddeerId,
             string clientIdentifier,
             string sedol,
@@ -16,6 +17,7 @@ namespace Domain.Equity
             string lei,
             string bloombergTicker)
         {
+            Id = id ?? string.Empty;
             ReddeerId = reddeerId ?? string.Empty;
             ClientIdentifier = clientIdentifier ?? string.Empty;
             Sedol = sedol ?? string.Empty;
@@ -27,6 +29,10 @@ namespace Domain.Equity
             BloombergTicker = bloombergTicker ?? string.Empty;
         }
 
+        /// <summary>
+        /// Primary key id
+        /// </summary>
+        public string Id { get; }
         public string ReddeerId { get; }
         public string ClientIdentifier { get; }
         public string Sedol { get; }

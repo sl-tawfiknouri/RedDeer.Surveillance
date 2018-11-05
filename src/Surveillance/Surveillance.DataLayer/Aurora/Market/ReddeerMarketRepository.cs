@@ -322,6 +322,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var security =
                 new Security(
                     new SecurityIdentifiers(
+                        dto.Id,
                         dto.ReddeerId,
                         dto.ClientIdentifier,
                         dto.Sedol,
@@ -440,7 +441,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
             }
 
-            public int Id { get; set; }
+            public string Id { get; set; }
 
             public int MarketStockExchangeId { get; set; }
 

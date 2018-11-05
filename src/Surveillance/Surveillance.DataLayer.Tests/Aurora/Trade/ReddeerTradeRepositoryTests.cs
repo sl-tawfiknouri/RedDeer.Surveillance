@@ -78,7 +78,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             const string tradeRationale = "Market is not pricing well";
             const string tradeStrategy = "Unknown";
             const string counterPartyBrokerId = "Broker-2";
-            var securityIdentifiers = new SecurityIdentifiers("stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new SecurityIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
             var security = new Security(
                 securityIdentifiers,

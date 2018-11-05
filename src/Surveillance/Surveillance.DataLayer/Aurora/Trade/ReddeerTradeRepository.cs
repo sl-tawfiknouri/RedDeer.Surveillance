@@ -51,7 +51,8 @@ INSERT INTO TradeReddeer(
 	ExecutedPrice,
 	DealerInstructions,
 	TradeRationale,
-	TradeStrategy)
+	TradeStrategy,
+    SecurityId)
 VALUES(
 	@OrderTypeId,
 	@MarketId,
@@ -84,48 +85,50 @@ VALUES(
 	@ExecutedPrice,
 	@DealerInstructions,
 	@TradeRationale,
-	@TradeStrategy);";
+	@TradeStrategy,
+    @SecurityId);";
 
         private const string GetSql = @"
-    SELECT 
-    Id,
-	OrderTypeId,
-	MarketId,
-	MarketName,
-	SecurityClientIdentifier,
-	SecuritySedol,
-	SecurityIsin,
-	SecurityFigi,
-	SecurityCusip,
-	SecurityExchangeSymbol,
-	SecurityLei,
-	SecurityBloombergTicker,
-	SecurityName,
-	SecurityCfi,
-	LimitPrice,
-	LimitCurrency,
-	TradeSubmittedOn,
-	StatusChangedOn,
-	FilledVolume,
-	OrderedVolume,
-	OrderPositionId,
-	OrderStatusId,
-	OrderCurrency,
-	TraderId,
-	TradeClientAttributionId,
-	AccountId,
-	PartyBrokerId,
-	CounterPartyBrokerId,
-	SecurityIssuerIdentifier,
-	ExecutedPrice,
-	DealerInstructions,
-	TradeRationale,
-	TradeStrategy 
-    FROM 
-    TradeReddeer
-    WHERE 
-    StatusChangedOn >= @Start 
-    AND StatusChangedOn <= @End;";
+        SELECT 
+        Id,
+	    OrderTypeId,
+	    MarketId,
+	    MarketName,
+	    SecurityClientIdentifier,
+	    SecuritySedol,
+	    SecurityIsin,
+	    SecurityFigi,
+	    SecurityCusip,
+	    SecurityExchangeSymbol,
+	    SecurityLei,
+	    SecurityBloombergTicker,
+	    SecurityName,
+	    SecurityCfi,
+	    LimitPrice,
+	    LimitCurrency,
+	    TradeSubmittedOn,
+	    StatusChangedOn,
+	    FilledVolume,
+	    OrderedVolume,
+	    OrderPositionId,
+	    OrderStatusId,
+	    OrderCurrency,
+	    TraderId,
+	    TradeClientAttributionId,
+	    AccountId,
+	    PartyBrokerId,
+	    CounterPartyBrokerId,
+	    SecurityIssuerIdentifier,
+	    ExecutedPrice,
+	    DealerInstructions,
+	    TradeRationale,
+	    TradeStrategy,
+        SecurityId
+        FROM 
+        TradeReddeer
+        WHERE 
+        StatusChangedOn >= @Start 
+        AND StatusChangedOn <= @End;";
 
         public ReddeerTradeRepository(
             IConnectionStringFactory connectionStringFactory,
@@ -225,6 +228,7 @@ VALUES(
                     dto.MarketName),
                 new Security(
                     new SecurityIdentifiers(
+                        dto.SecurityId,
                         dto.SecurityReddeerId,
                         dto.SecurityClientIdentifier,
                         dto.SecuritySedol,
@@ -279,6 +283,7 @@ VALUES(
                 OrderTypeId = (int)frame.OrderType;
                 MarketId = frame.Market?.Id?.Id;
                 MarketName = frame.Market?.Name;
+                SecurityId = frame.Security?.Identifiers.Id ?? string.Empty;
                 SecurityReddeerId = frame.Security?.Identifiers.ReddeerId;
                 SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier;
                 SecuritySedol = frame.Security?.Identifiers.Sedol;
@@ -331,6 +336,7 @@ VALUES(
             /// </summary>
             public string MarketName { get; set; }
 
+            public string SecurityId { get; set; }
             public string SecurityReddeerId { get; set; }
             public string SecurityClientIdentifier { get; set; }
             public string SecuritySedol { get; set; }

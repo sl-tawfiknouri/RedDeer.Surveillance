@@ -32,6 +32,7 @@ namespace TestHarness.Tests.Display
             var stock = new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange");
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    string.Empty,
                     "STAN",
                     "STAN",
                     "st12345",

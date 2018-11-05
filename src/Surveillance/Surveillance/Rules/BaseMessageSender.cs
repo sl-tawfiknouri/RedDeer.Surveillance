@@ -67,7 +67,20 @@ namespace Surveillance.Rules
             var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.StatusChangedOn);
             var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.StatusChangedOn);
             var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
-            
+
+            var entityReferences =
+               string.IsNullOrWhiteSpace(ruleBreach.Security.Identifiers.ReddeerId)
+                ? new EntityReference[0]
+                : 
+                new[]
+                {
+                    new EntityReference
+                    {
+                        EntityId = ruleBreach.Security.Identifiers.ReddeerId,
+                        EntityType = EntityReferenceType.SecurityId
+                    }
+                };
+
             return new ComplianceCaseDataItemDto
             {
                 Title = _caseTitle,
@@ -79,7 +92,8 @@ namespace Surveillance.Rules
                 Venue = venue,
                 StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.Now),
                 EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now),
-                AssetType = ruleBreach.Security.Cfi
+                AssetType = ruleBreach.Security.Cfi,
+                EntityReferences = entityReferences
             };
         }
 

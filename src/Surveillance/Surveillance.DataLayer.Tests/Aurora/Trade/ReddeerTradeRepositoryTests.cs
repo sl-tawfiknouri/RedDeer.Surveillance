@@ -7,7 +7,9 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -18,12 +20,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
     {
         private ILogger<ReddeerTradeRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
+        private IReddeerMarketRepository _marketRepository;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerTradeRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
+            _marketRepository = A.Fake<IReddeerMarketRepository>();
         }
 
         [Test]
@@ -36,7 +40,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             };
 
             var factory = new ConnectionStringFactory(config);
-            var repo = new ReddeerTradeRepository(factory, _logger);
+            var repo = new ReddeerTradeRepository(factory, _marketRepository, _logger);
 
             await repo.Create(Frame());
 
@@ -50,11 +54,11 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             var config = new DataLayerConfiguration
             {
                 AuroraConnectionString =
-                    "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance"
+                    "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
             };
 
             var factory = new ConnectionStringFactory(config);
-            var repo = new ReddeerTradeRepository(factory, _logger);
+            var repo = new ReddeerTradeRepository(factory, _marketRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();
             var start = row1.StatusChangedOn.Date;

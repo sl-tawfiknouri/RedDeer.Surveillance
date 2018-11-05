@@ -8,6 +8,8 @@ using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Aurora.Market;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -15,6 +17,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 {
     public class ReddeerTradeRepository : IReddeerTradeRepository
     {
+        private readonly IReddeerMarketRepository _marketRepository;
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger _logger;
 
@@ -64,41 +67,61 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         private const string GetSql = @"
         SELECT 
-        Id,
-	    OrderTypeId,
-	    LimitPrice,
-	    LimitCurrency,
-	    TradeSubmittedOn,
-	    StatusChangedOn,
-	    FilledVolume,
-	    OrderedVolume,
-	    OrderPositionId,
-	    OrderStatusId,
-	    OrderCurrency,
-	    TraderId,
-	    TradeClientAttributionId,
-	    AccountId,
-	    PartyBrokerId,
-	    CounterPartyBrokerId,
-	    ExecutedPrice,
-	    DealerInstructions,
-	    TradeRationale,
-	    TradeStrategy,
-        SecurityId
+            tr.Id,
+	        tr.OrderTypeId,
+	        tr.LimitPrice,
+	        tr.LimitCurrency,
+	        tr.TradeSubmittedOn,
+	        tr.StatusChangedOn,
+	        tr.FilledVolume,
+	        tr.OrderedVolume,
+	        tr.OrderPositionId,
+	        tr.OrderStatusId,
+	        tr.OrderCurrency,
+	        tr.TraderId,
+	        tr.TradeClientAttributionId,
+	        tr.AccountId,
+	        tr.PartyBrokerId,
+	        tr.CounterPartyBrokerId,
+	        tr.ExecutedPrice,
+	        tr.DealerInstructions,
+	        tr.TradeRationale,
+	        tr.TradeStrategy,
+            tr.SecurityId,
+            mses.ReddeerId AS SecurityReddeerId,
+            mses.ClientIdentifier AS SecurityClientIdentifier,
+            mses.Sedol AS SecuritySedol,
+            mses.Isin AS SecurityIsin,
+            mses.Figi AS SecurityFigi,
+            mses.Cusip AS SecurityCusip,
+            mses.ExchangeSymbol AS SecurityExchangeSymbol,
+            mses.Lei AS SecurityLei,
+            mses.BloombergTicker AS SecurityBloombergTicker,
+            mses.SecurityName AS SecurityName,
+            mses.Cfi AS SecurityCfi,
+            mses.IssuerIdentifier AS SecurityIssuerIdentifier,
+            mse.MarketId,
+            mse.MarketName
         FROM 
-        TradeReddeer
+            TradeReddeer AS tr
+        LEFT OUTER JOIN MarketStockExchangeSecurities AS mses 
+            ON tr.SecurityId = mses.Id
+        LEFT OUTER JOIN MarketStockExchange as mse
+            ON mses.MarketStockExchangeId = mse.Id
         WHERE 
-        StatusChangedOn >= @Start 
-        AND StatusChangedOn <= @End;";
+            tr.StatusChangedOn >= @Start
+            AND tr.StatusChangedOn <= @End;";
 
         public ReddeerTradeRepository(
             IConnectionStringFactory connectionStringFactory,
+            IReddeerMarketRepository marketRepository,
             ILogger<ReddeerTradeRepository> logger)
         {
             _dbConnectionFactory =
                 connectionStringFactory
                 ?? throw new ArgumentNullException(nameof(connectionStringFactory));
 
+            _marketRepository = marketRepository ?? throw new ArgumentNullException(nameof(marketRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -116,6 +139,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Open();
 
                 var dto = new TradeOrderFrameDto(entity);
+
+                if (string.IsNullOrWhiteSpace(dto.SecurityId))
+                {
+                    var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Security};
+                    var securityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
+                    dto.SecurityId = securityId;
+                }
+
                 using (var conn = dbConnection.ExecuteAsync(CreateSql, dto))
                 {
                     await conn;

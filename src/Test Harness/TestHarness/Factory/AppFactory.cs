@@ -68,7 +68,7 @@ namespace TestHarness.Factory
             TradingHighVolumeFactory = new TradingHighVolumeFactory(Logger);
             MarkingTheCloseFactory = new TradingMarkingTheCloseFactory(Logger);
 
-            AwsQueueClient = new AwsQueueClient(networkConfiguration, null);
+            AwsQueueClient = new AwsQueueClient(null);
             ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
             Configuration = networkConfiguration;
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);

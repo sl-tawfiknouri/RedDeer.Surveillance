@@ -13,7 +13,7 @@ namespace Utilities.Aws_IO
     public class AwsQueueClient : IAwsQueueClient
     {
         private readonly AmazonSQSClient _sqsClient;
-        private readonly ILogger<AwsQueueClient> _logger; // can be null
+        private readonly ILogger _logger; // can be null
 
         public AwsQueueClient(ILogger<AwsQueueClient> logger)
         {

@@ -75,6 +75,7 @@ namespace Relay.Disk_IO
         {
             try
             {
+                Logger.LogInformation($"BaseUploadFileMonitor detected a file change at {e.FullPath}.");
                 var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
                 ProcessFile(e.FullPath, archivePath);
             }
@@ -95,6 +96,8 @@ namespace Relay.Disk_IO
                     var archiveFilePath = ArchiveFilePath(archivePath, filePath);
                     ProcessFile(filePath, archiveFilePath);
                 }
+
+                Logger.LogInformation($"{_uploadFileMonitorName} has completed processing the initial start up files");
             }
             catch (Exception e)
             {
@@ -115,13 +118,19 @@ namespace Relay.Disk_IO
 
         private void SetFileSystemWatch()
         {
+            Logger.LogInformation("BaseUploadFileMonitor setting file system watch");
+
             if (!ReddeerDirectory.DirectoryExists(UploadDirectoryPath()))
             {
+                Logger.LogInformation($"BaseUploadFileMonitor did not find the {UploadDirectoryPath()} not setting file watch.");
+
                 return;
             }
 
             if (_fileSystemWatcher != null)
             {
+                Logger.LogInformation("BaseUploadFileMonitor disposing an old file system watcher.");
+
                 _fileSystemWatcher.Dispose();
                 _fileSystemWatcher = null;
             }
@@ -138,10 +147,12 @@ namespace Relay.Disk_IO
             _fileSystemWatcher.Created += DetectedFileChange;
 
             _fileSystemWatcher.EnableRaisingEvents = true;
+            Logger.LogInformation("BaseUploadFileMonitor set file system watch events and now enabled raising events.");
         }
 
         public void Dispose()
         {
+            Logger.LogInformation("BaseUploadFileMonitor called dispose on file monitor.");
             _fileSystemWatcher?.Dispose();
         }
     }

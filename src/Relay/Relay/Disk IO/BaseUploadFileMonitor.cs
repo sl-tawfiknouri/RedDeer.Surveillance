@@ -14,6 +14,7 @@ namespace Relay.Disk_IO
         protected readonly ILogger Logger;
         private FileSystemWatcher _fileSystemWatcher;
         private readonly string _uploadFileMonitorName;
+        private int _retryRestart = 3;
 
         protected BaseUploadFileMonitor(
             IReddeerDirectory directory,
@@ -158,7 +159,15 @@ namespace Relay.Disk_IO
 
         private void OnError(object sender, ErrorEventArgs e)
         {
-            Logger.LogError("BaseUploadFileMonitor encountered an exception! RESTART RELAY SERVICE", e.GetException());
+            if (_retryRestart > 0)
+            {
+                Logger.LogError($"BaseUploadFileMonitor encountered an exception! INVESTIGATE {_retryRestart} retries left", e.GetException());
+                _retryRestart -= 1;
+                SetFileSystemWatch();
+                return;
+            }
+
+            Logger.LogCritical($"BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE RELAY SERVICE", e.GetException());
         }
 
         public void Dispose()

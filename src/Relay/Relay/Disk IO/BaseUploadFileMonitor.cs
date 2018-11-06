@@ -147,12 +147,18 @@ namespace Relay.Disk_IO
                 IncludeSubdirectories = false
             };
 
+            _fileSystemWatcher.Error += OnError;
             _fileSystemWatcher.Changed += DetectedFileChange;
             _fileSystemWatcher.Renamed += DetectedFileChange;
             _fileSystemWatcher.Created += DetectedFileChange;
 
             _fileSystemWatcher.EnableRaisingEvents = true;
             Logger.LogInformation("BaseUploadFileMonitor set file system watch events and now enabled raising events.");
+        }
+
+        private void OnError(object sender, ErrorEventArgs e)
+        {
+            Logger.LogError("BaseUploadFileMonitor encountered an exception! RESTART RELAY SERVICE", e.GetException());
         }
 
         public void Dispose()

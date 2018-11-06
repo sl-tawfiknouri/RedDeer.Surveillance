@@ -75,18 +75,19 @@ namespace Relay.Disk_IO.EquityFile
 
         protected override void MapRecord(
             SecurityTickCsv record,
-            List<ExchangeFrame> tradeOrders,
-            List<SecurityTickCsv> failedTradeOrderReads)
+            List<ExchangeFrame> marketUpdates,
+            List<SecurityTickCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
 
             if (mappedRecord == null)
             {
-                failedTradeOrderReads.Add(record);
+                Logger.LogInformation("UploadEquityFileProcessor read a null record, adding to failed reads");
+                failedMarketUpdateReads.Add(record);
                 return;
             }
 
-            var matchingExchange = tradeOrders
+            var matchingExchange = marketUpdates
                 .Where(to => to.Exchange?.Id?.Id == mappedRecord.Market?.Id.Id)
                 .Where(to => to.TimeStamp == mappedRecord.TimeStamp)
                 .ToList();
@@ -97,15 +98,15 @@ namespace Relay.Disk_IO.EquityFile
                 {
                     var newSecurities = new List<SecurityTick>(match.Securities) {mappedRecord};
                     var newExch = new ExchangeFrame(match.Exchange, match.TimeStamp, newSecurities);
-                    tradeOrders.Remove(match);
-                    tradeOrders.Add(newExch);
+                    marketUpdates.Remove(match);
+                    marketUpdates.Add(newExch);
                 }
             }
             else
             {
                 var exchange = new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName);
                 var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
-                tradeOrders.Add(exchangeFrame);
+                marketUpdates.Add(exchangeFrame);
             }
         }
 
@@ -127,6 +128,8 @@ namespace Relay.Disk_IO.EquityFile
             if (failedReads == null
                 || !failedReads.Any())
             {
+                Logger.LogInformation("UploadEquityFileProcessor had no failed reads to write to disk.");
+
                 return;
             }
 

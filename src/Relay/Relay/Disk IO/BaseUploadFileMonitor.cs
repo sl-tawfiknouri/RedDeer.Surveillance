@@ -168,6 +168,12 @@ namespace Relay.Disk_IO
             }
 
             Logger.LogCritical($"BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE RELAY SERVICE", e.GetException());
+
+            var exception = e.GetException();
+            if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
+            {
+                Logger.LogCritical($"INNER EXCEPTION FOR RELAY SERVICE FAILURE {exception.InnerException.Message}");
+            }
         }
 
         public void Dispose()

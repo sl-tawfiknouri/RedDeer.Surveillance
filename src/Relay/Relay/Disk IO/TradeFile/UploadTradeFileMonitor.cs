@@ -47,6 +47,8 @@ namespace Relay.Disk_IO.TradeFile
         {
             lock (_lock)
             {
+                _logger.LogInformation($"Upload Trade File beginning process file for {path}");
+
                 var opCtx = _systemProcessContext.CreateAndStartOperationContext();
                 var fileUpload =
                     opCtx
@@ -56,19 +58,19 @@ namespace Relay.Disk_IO.TradeFile
 
                 try
                 {
-                    _logger.LogInformation($"Upload Trade File beginning process file for {path}");
-
                     var csvReadResults = _fileProcessor.Process(path);
 
                     if (csvReadResults == null
                         || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                     {
+                        _logger.LogInformation($"Upload Trade File for {path} did not find any records or had zero successful and unsuccessful reads");
                         fileUpload.EndEvent().EndEvent();
                         return;
                     }
 
                     var uploadGuid = Guid.NewGuid().ToString();
 
+                    _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
                     foreach (var item in csvReadResults.SuccessfulReads)
                     {
                         item.IsInputBatch = true;
@@ -77,17 +79,20 @@ namespace Relay.Disk_IO.TradeFile
 
                         _stream.Add(item);
                     }
+                    _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to move {path} to {archivePath}");
 
                     ReddeerDirectory.Move(path, archivePath);
 
+                    _logger.LogInformation($"Upload Trade File for {path} has moved the file. Now about to check for unsuccessful reads.");
+
                     if (!csvReadResults.UnsuccessfulReads.Any())
                     {
-                        _logger.LogInformation($"Upload Trade File successfully processed file for {path}");
+                        _logger.LogInformation($"Upload Trade File successfully processed file for {path}. Did not find any unsuccessful reads.");
                         fileUpload.EndEvent().EndEvent();
                         return;
                     }
 
-                    _logger.LogInformation($"Upload Trade File had errors when processing file for {path}");
+                    _logger.LogInformation($"Upload Trade File had errors when processing file for {path} and has {csvReadResults.UnsuccessfulReads.Count} failed uploads. About to write records to disk.");
 
                     var originatingFileName = Path.GetFileNameWithoutExtension(path);
 
@@ -96,6 +101,7 @@ namespace Relay.Disk_IO.TradeFile
                         originatingFileName,
                         csvReadResults.UnsuccessfulReads);
 
+                    _logger.LogInformation($"Upload Trade File for {path} has now written failed reads to the disk.");
                     fileUpload.EndEvent().EndEventWithError($"Had failed reads written to disk {GetFailedReadsPath()}");
                 }
                 catch (Exception e)

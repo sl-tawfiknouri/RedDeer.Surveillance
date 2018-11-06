@@ -36,14 +36,18 @@ namespace Relay.Disk_IO
                 return;
             }
 
+            Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Initiating monitoring process.");
+
             try
             {
                 var archivePath = GetArchivePath();
                 var failedReadsPath = GetFailedReadsPath();
 
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders");
                 ReddeerDirectory.Create(UploadDirectoryPath());
                 ReddeerDirectory.Create(archivePath);
                 ReddeerDirectory.Create(failedReadsPath);
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Completed creating reddeer directory folders");
 
                 var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
 
@@ -51,6 +55,7 @@ namespace Relay.Disk_IO
                 {
                     ProcessInitialStartupFiles(archivePath, files);
                 }
+
                 SetFileSystemWatch();
             }
             catch (Exception e)

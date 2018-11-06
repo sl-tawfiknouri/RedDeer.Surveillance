@@ -91,6 +91,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "Standard Chartered Bank");
 
             var order1 = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 exch,
                 security,

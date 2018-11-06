@@ -109,9 +109,10 @@ namespace Surveillance.Rules
                 .Select(tp =>
                     new ComplianceCaseLogDataItemDto
                     {
+                        DataItemId = tp.Id.ToString(),
+                        DataItemType = DataItemType.TradeOrder,
                         Type = ComplianceCaseLogType.Unset,
                         Notes = string.Empty,
-                        UnderlyingOrder = _dtoMapper.Map(tp)
                     })
                 .ToArray();
         }

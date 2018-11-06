@@ -121,6 +121,7 @@ namespace TestHarness.Engine.OrderGenerator
             var splitShare = ((totalPurchase - initialBuyShare) * (1m / 9m)) - 1;
 
             var cancelledFrame = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 value.Exchange,
                 security.Security,
@@ -147,6 +148,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var i = 1; i < 10; i++)
             {
                 var frame = new TradeOrderFrame(
+                    null,
                     OrderType.Limit,
                     value.Exchange,
                     security.Security,
@@ -205,6 +207,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var i = 0; i < 10; i++)
             {
                 var frame = new TradeOrderFrame(
+                    null,
                     OrderType.Limit,
                     value.Exchange,
                     security.Security,

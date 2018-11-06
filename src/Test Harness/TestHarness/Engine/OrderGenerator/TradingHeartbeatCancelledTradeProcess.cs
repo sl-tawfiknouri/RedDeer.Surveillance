@@ -219,6 +219,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var order =
                 new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     exchange,
                     security.Security,

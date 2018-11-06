@@ -280,6 +280,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 "Issuer-Identifier");
 
             return new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
                 security,

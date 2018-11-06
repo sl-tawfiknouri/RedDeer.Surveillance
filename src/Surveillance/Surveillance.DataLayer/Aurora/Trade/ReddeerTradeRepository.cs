@@ -214,6 +214,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     : (Price?) null; 
 
             return new TradeOrderFrame(
+                dto.Id,
                 (OrderType)dto.OrderTypeId.GetValueOrDefault(0),
                 new StockExchange(
                     new Domain.Market.Market.MarketId(dto.MarketId),
@@ -311,7 +312,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             /// <summary>
             /// Dapper field for primary key
             /// </summary>
-            public int Id { get; set; }
+            public int? Id { get; set; }
 
             /// <summary>
             /// The type of order i.e. market / limit

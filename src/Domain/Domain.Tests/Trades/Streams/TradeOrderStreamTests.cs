@@ -89,6 +89,7 @@ namespace Domain.Tests.Trades.Streams
                 "Standard Chartered Bank");
 
             var order1 = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 exch,
                 security,
@@ -111,6 +112,7 @@ namespace Domain.Tests.Trades.Streams
                 "GBX");
 
             var order2 = new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 exch,
                 security,
@@ -133,6 +135,7 @@ namespace Domain.Tests.Trades.Streams
                 "GBX");
 
             var order3 = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 exch,
                 security,

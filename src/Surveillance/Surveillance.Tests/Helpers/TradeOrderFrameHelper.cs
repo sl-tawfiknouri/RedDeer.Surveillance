@@ -10,6 +10,7 @@ namespace Surveillance.Tests.Helpers
         public static TradeOrderFrame Random(this TradeOrderFrame frame)
         {
             return new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"),
                 new Security(

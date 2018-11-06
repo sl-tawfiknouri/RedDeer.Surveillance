@@ -107,8 +107,9 @@ namespace TestHarness.Engine.OrderGenerator
             var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
             var tradePlacedOn = statusChangedOn;
 
-            var spoofedTrade = new TradeOrderFrame
-                (OrderType.Limit,
+            var spoofedTrade = new TradeOrderFrame(
+                null,
+                OrderType.Limit,
                 _lastFrame.Exchange,
                 security.Security,
                 limitPrice,
@@ -142,6 +143,7 @@ namespace TestHarness.Engine.OrderGenerator
             var tradePlacedOn = statusChangedOn;
 
             return new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 _lastFrame.Exchange,
                 security.Security,

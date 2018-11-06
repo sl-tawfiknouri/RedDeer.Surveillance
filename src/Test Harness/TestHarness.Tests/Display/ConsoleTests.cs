@@ -50,6 +50,7 @@ namespace TestHarness.Tests.Display
                 "Standard Chartered Bank");
 
             return new TradeOrderFrame(
+                    null,
                     OrderType.Limit,
                     stock,
                     sec,

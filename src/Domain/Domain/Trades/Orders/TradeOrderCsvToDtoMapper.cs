@@ -136,6 +136,7 @@ namespace Domain.Trades.Orders
                     csv.SecurityIssuerIdentifier);
 
             return new TradeOrderFrame(
+                null,
                 orderType,
                 market,
                 security,

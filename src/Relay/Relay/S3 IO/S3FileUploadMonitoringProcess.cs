@@ -86,6 +86,12 @@ namespace Relay.S3_IO
                         _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                         return;
                 }
+
+                // so now what?
+                // we need a way of blocking on this ?
+                // yup...how can this be done better? maybe you can tell it as well as monitoring for it?
+
+
             }
             catch (Exception e)
             {

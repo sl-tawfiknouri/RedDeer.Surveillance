@@ -11,8 +11,10 @@ using Relay.Configuration;
 using Relay.Configuration.Interfaces;
 using StructureMap;
 using Surveillance.System.Auditing;
+using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
 using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 
 namespace RedDeer.Relay.Relay.App
 {
@@ -30,6 +32,7 @@ namespace RedDeer.Relay.Relay.App
             container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
             container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+            SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 
             container.Configure(config =>
             {

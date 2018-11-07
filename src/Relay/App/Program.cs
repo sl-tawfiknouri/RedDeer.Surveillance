@@ -14,8 +14,10 @@ using Relay.Configuration;
 using Relay.Configuration.Interfaces;
 using StructureMap;
 using Surveillance.System.Auditing;
+using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
 using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -48,6 +50,7 @@ namespace RedDeer.Relay.Relay.App
                 Container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
                 Container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+                SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 
                 Container.Configure(config =>
                 {

@@ -181,34 +181,20 @@ table {
         SURVEILLANCE SERVICE UNABLE TO ACCESS CLIENT SERVICE API
     </h1>
 }
-
-<h1>Audit Exceptions</h1>
+    
+<h1>Process Information</h1>
 <table>
     <tr>
-        <th>Id</th>
-        <th>System Process Id</th>
-        <th>Operation Id</th>
-        <th>Rule Run Id</th>
-        <th>Distribute Id</th>
-        <th>Exception</th>
-        <th>Inner Exception</th>
-        <th>Stack Trace</th>
+        <th>Property</th>
+        <th>Value</th>
     </tr>
-    @foreach (var row in Model.Exceptions)
-    {
-    <tr>
-        <td>@row.Id</td>
-        <td>@row.SystemProcessId</td>
-        <td>@row.SystemProcessOperationId</td>
-        <td>@row.SystemProcessOperationRuleRunId</td>
-        <td>@row.SystemProcessOperationDistributeRuleId</td>
-        <td>@row.ExceptionMessage</td>
-        <td>@row.InnerExceptionMessage</td>
-        <td>@row.StackTrace</td>
-    </tr>
-    }
-
+    <tr><td>Process Id</td><td>@Model.ProcessId</td></tr>
+    <tr><td>Process Machine Name</td><td>@Model.ProcessMachineName</td></tr>
+    <tr><td>Process Start Time</td><td>@Model.ProcessStartTime</td></tr>
+    <tr><td>Process Peak Working Set</td><td>@Model.ProcessPeakWorkingSet</td></tr>
+    <tr><td>Process Processor Time</td><td>@Model.ProcessProcessorTime</td></tr>
 </table>
+<hr />
 
 <h1>System Processes</h1>
     <table>
@@ -329,20 +315,35 @@ table {
 
 </table>
 <hr />
-    
-<h1>Process Information</h1>
-    <table>
+
+<h1>Audit Exceptions</h1>
+<table>
+    <tr>
+        <th>Id</th>
+        <th>System Process Id</th>
+        <th>Operation Id</th>
+        <th>Rule Run Id</th>
+        <th>Distribute Id</th>
+        <th>Exception</th>
+        <th>Inner Exception</th>
+        <th>Stack Trace</th>
+    </tr>
+    @foreach (var row in Model.Exceptions)
+    {
         <tr>
-            <th>Property</th>
-            <th>Value</th>
+            <td>@row.Id</td>
+            <td>@row.SystemProcessId</td>
+            <td>@row.SystemProcessOperationId</td>
+            <td>@row.SystemProcessOperationRuleRunId</td>
+            <td>@row.SystemProcessOperationDistributeRuleId</td>
+            <td>@row.ExceptionMessage</td>
+            <td>@row.InnerExceptionMessage</td>
+            <td>@row.StackTrace</td>
         </tr>
-        <tr><td>Process Id</td><td>@Model.ProcessId</td></tr>
-        <tr><td>Process Machine Name</td><td>@Model.ProcessMachineName</td></tr>
-        <tr><td>Process Start Time</td><td>@Model.ProcessStartTime</td></tr>
-        <tr><td>Process Peak Working Set</td><td>@Model.ProcessPeakWorkingSet</td></tr>
-        <tr><td>Process Processor Time</td><td>@Model.ProcessProcessorTime</td></tr>
-    </table>
-    <hr />
+    }
+
+</table>
+<hr />
 
 </body>
 </html>

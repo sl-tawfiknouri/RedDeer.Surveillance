@@ -17,7 +17,7 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly ILogger _logger;
         private const string CreateSql = "INSERT INTO SystemProcess(Id, InstanceInitiated, Heartbeat, MachineId, ProcessId, SystemProcessTypeId) VALUES(@Id, @InstanceInitiated, @Heartbeat, @MachineId, @ProcessId, @SystemProcessType)";
         private const string UpdateSql = "UPDATE SystemProcess SET Heartbeat = @Heartbeat WHERE Id = @Id";
-        private const string GetDashboardSql = "SELECT * FROM SystemProcess ORDER BY Heartbeat DESC LIMIT 10;";
+        private const string GetDashboardSql = "SELECT Id, InstanceInitiated, Heartbeat, MachineId, ProcessId, SystemProcessTypeId as SystemProcessType FROM SystemProcess ORDER BY Heartbeat DESC LIMIT 10;";
 
         public SystemProcessRepository(
             IConnectionStringFactory connectionStringFactory,

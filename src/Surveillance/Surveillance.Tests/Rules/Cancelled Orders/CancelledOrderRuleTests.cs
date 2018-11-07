@@ -262,6 +262,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         {
             var securityIdentifiers =
                 new SecurityIdentifiers(
+                    string.Empty,
                     "reddeer id",
                     "client id",
                     "1234567",
@@ -279,6 +280,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 "Issuer-Identifier");
 
             return new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
                 security,

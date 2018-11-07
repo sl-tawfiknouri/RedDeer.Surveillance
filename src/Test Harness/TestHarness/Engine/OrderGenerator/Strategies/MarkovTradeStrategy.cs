@@ -127,6 +127,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderCurrency = tick?.Spread.Price.Currency ?? string.Empty;
 
             return new TradeOrderFrame(
+                null,
                 orderType,
                 exchFrame.Exchange,
                 tick.Security,

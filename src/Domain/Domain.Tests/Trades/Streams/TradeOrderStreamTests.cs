@@ -80,7 +80,7 @@ namespace Domain.Tests.Trades.Streams
             const string tradeRationale = "Market is not pricing well";
             const string tradeStrategy = "Unknown";
             const string counterPartyBrokerId = "Broker-2";
-            var securityIdentifiers = new SecurityIdentifiers("0", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new SecurityIdentifiers(string.Empty, "0", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
             var security = new Security(
                 securityIdentifiers,
@@ -89,6 +89,7 @@ namespace Domain.Tests.Trades.Streams
                 "Standard Chartered Bank");
 
             var order1 = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 exch,
                 security,
@@ -111,6 +112,7 @@ namespace Domain.Tests.Trades.Streams
                 "GBX");
 
             var order2 = new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 exch,
                 security,
@@ -133,6 +135,7 @@ namespace Domain.Tests.Trades.Streams
                 "GBX");
 
             var order3 = new TradeOrderFrame(
+                null,
                 OrderType.Limit,
                 exch,
                 security,

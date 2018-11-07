@@ -138,6 +138,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var i = 0; i < 5; i++)
             {
                 var volumeFrame = new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     headSecurity.Market,
                     headSecurity.Security,
@@ -192,6 +193,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var i = 0; i < 5; i++)
             {
                 var volumeFrame = new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     securities.Market,
                     securities.Security,

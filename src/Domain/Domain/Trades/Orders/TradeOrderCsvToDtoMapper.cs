@@ -118,6 +118,7 @@ namespace Domain.Trades.Orders
             var securityIdentifiers =
                 new SecurityIdentifiers(
                     string.Empty,
+                    string.Empty,
                     csv.SecurityClientIdentifier,
                     csv.SecuritySedol,
                     csv.SecurityIsin,
@@ -135,6 +136,7 @@ namespace Domain.Trades.Orders
                     csv.SecurityIssuerIdentifier);
 
             return new TradeOrderFrame(
+                null,
                 orderType,
                 market,
                 security,

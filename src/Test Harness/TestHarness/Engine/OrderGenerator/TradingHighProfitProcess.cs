@@ -135,6 +135,7 @@ namespace TestHarness.Engine.OrderGenerator
             var tradeTime = latestFrame.TimeStamp;
 
             var volumeFrame = new TradeOrderFrame(
+                null,
                 OrderType.Market,
                 headSecurity.Market,
                 headSecurity.Security,

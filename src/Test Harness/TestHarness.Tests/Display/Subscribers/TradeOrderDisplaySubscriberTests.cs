@@ -45,6 +45,7 @@ namespace TestHarness.Tests.Display.Subscribers
             var tradeOrderSubscriber = new TradeOrderFrameDisplaySubscriber(_console);
             var tradeOrderFrame = 
                 new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     null,
                     null,

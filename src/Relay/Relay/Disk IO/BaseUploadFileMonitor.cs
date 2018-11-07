@@ -41,12 +41,10 @@ namespace Relay.Disk_IO
 
             try
             {
-                var archivePath = GetArchivePath();
                 var failedReadsPath = GetFailedReadsPath();
 
                 Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders");
                 ReddeerDirectory.Create(UploadDirectoryPath());
-                ReddeerDirectory.Create(archivePath);
                 ReddeerDirectory.Create(failedReadsPath);
                 Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Completed creating reddeer directory folders");
 
@@ -54,7 +52,7 @@ namespace Relay.Disk_IO
 
                 if (files.Any())
                 {
-                    ProcessInitialStartupFiles(archivePath, files);
+                    ProcessInitialStartupFiles(files);
                 }
 
                 SetFileSystemWatch();
@@ -67,11 +65,6 @@ namespace Relay.Disk_IO
 
         protected abstract string UploadDirectoryPath();
 
-        protected string GetArchivePath()
-        {
-            return Path.Combine(UploadDirectoryPath(), "Archive");
-        }
-
         protected string GetFailedReadsPath()
         {
             return Path.Combine(UploadDirectoryPath(), "FailedReads");
@@ -82,8 +75,7 @@ namespace Relay.Disk_IO
             try
             {
                 Logger.LogInformation($"BaseUploadFileMonitor detected a file change at {e.FullPath}.");
-                var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
-                ProcessFile(e.FullPath, archivePath);
+                ProcessFile(e.FullPath);
             }
             catch (Exception a)
             {
@@ -91,7 +83,7 @@ namespace Relay.Disk_IO
             }
         }
 
-        private void ProcessInitialStartupFiles(string archivePath, IReadOnlyCollection<string> files)
+        private void ProcessInitialStartupFiles(IReadOnlyCollection<string> files)
         {
             try
             {
@@ -99,8 +91,7 @@ namespace Relay.Disk_IO
 
                 foreach (var filePath in files)
                 {
-                    var archiveFilePath = ArchiveFilePath(archivePath, filePath);
-                    ProcessFile(filePath, archiveFilePath);
+                    ProcessFile(filePath);
                 }
 
                 Logger.LogInformation($"{_uploadFileMonitorName} has completed processing the initial start up files");
@@ -111,16 +102,7 @@ namespace Relay.Disk_IO
             }
         }
 
-        private string ArchiveFilePath(string archivePath, string filePath)
-        {
-            var fileName = Path.GetFileName(filePath);
-            fileName = "archived_" + fileName;
-            var archiveFilePath = Path.Combine(archivePath, fileName);
-
-            return archiveFilePath;
-        }
-
-        protected abstract void ProcessFile(string path, string archivePath);
+        protected abstract void ProcessFile(string path);
 
         private void SetFileSystemWatch()
         {

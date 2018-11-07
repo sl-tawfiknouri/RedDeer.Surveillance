@@ -42,7 +42,7 @@ namespace Relay.Disk_IO.EquityFile
             return _uploadConfiguration.RelayEquityFileUploadDirectoryPath;
         }
 
-        protected override void ProcessFile(string path, string archivePath)
+        protected override void ProcessFile(string path)
         {
             lock (_lock)
             {
@@ -78,10 +78,10 @@ namespace Relay.Disk_IO.EquityFile
                         _stream.Add(item);
                     }
 
-                    _logger.LogInformation($"Upload equity file monitor uploaded {orderedSuccessfulReads.Count} records. Now moving {path} to {archivePath}.");
-                    ReddeerDirectory.Move(path, archivePath);
+                    _logger.LogInformation($"Upload equity file monitor uploaded {orderedSuccessfulReads.Count} records. Now deleting {path}.");
+                    ReddeerDirectory.DeleteFile(path);
+                    _logger.LogInformation($"Upload equity file monitor deleted processed files. Now checking for unsuccessful reads ({csvReadResults.UnsuccessfulReads.Count})");
 
-                    _logger.LogInformation($"Upload equity file monitor moved files to archive. Now checking for unsuccessful reads ({csvReadResults.UnsuccessfulReads.Count})");
                     if (!csvReadResults.UnsuccessfulReads.Any())
                     {
                         _logger.LogInformation($"Process File success for {path}. Had zero unsuccessful reads.");

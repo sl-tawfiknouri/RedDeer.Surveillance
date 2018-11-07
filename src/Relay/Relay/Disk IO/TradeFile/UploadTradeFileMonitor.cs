@@ -43,7 +43,7 @@ namespace Relay.Disk_IO.TradeFile
             return _uploadConfiguration.RelayTradeFileUploadDirectoryPath;
         }
 
-        protected override void ProcessFile(string path, string archivePath)
+        protected override void ProcessFile(string path)
         {
             lock (_lock)
             {
@@ -79,11 +79,9 @@ namespace Relay.Disk_IO.TradeFile
 
                         _stream.Add(item);
                     }
-                    _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to move {path} to {archivePath}");
-
-                    ReddeerDirectory.Move(path, archivePath);
-
-                    _logger.LogInformation($"Upload Trade File for {path} has moved the file. Now about to check for unsuccessful reads.");
+                    _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to delete {path}.");
+                    ReddeerDirectory.Delete(path);
+                    _logger.LogInformation($"Upload Trade File for {path} has deleted the file. Now about to check for unsuccessful reads.");
 
                     if (!csvReadResults.UnsuccessfulReads.Any())
                     {

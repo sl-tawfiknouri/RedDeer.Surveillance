@@ -33,6 +33,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 new SecurityTick(
                     new Security(
                         new SecurityIdentifiers(
+                            string.Empty,
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,

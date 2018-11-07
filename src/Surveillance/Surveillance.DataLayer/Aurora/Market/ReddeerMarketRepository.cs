@@ -121,6 +121,31 @@ namespace Surveillance.DataLayer.Aurora.Market
               Enrichment = (SELECT UTC_TIMESTAMP())
               WHERE Id = @Id;";
 
+        private const string MarketMatchOrInsertSql = @"
+            INSERT INTO MarketStockExchange(MarketId, MarketName)
+            SELECT @MarketId, @MarketName
+            FROM DUAL
+            WHERE NOT EXISTS(
+                SELECT 1
+                FROM MarketStockExchange
+                WHERE MarketId = @MarketId)
+            LIMIT 1;
+
+            SELECT Id FROM MarketStockExchange WHERE MarketId = @MarketId;";
+
+        private const string SecurityMatchOrInsertSql = @"
+            INSERT INTO MarketStockExchangeSecurities(MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, ReddeerId)
+            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId
+            FROM DUAL
+            WHERE NOT EXISTS(
+	            SELECT 1
+	            FROM MarketStockExchangeSecurities
+	            WHERE Sedol = @Sedol
+                Or (Isin = @Isin and MarketStockExchangeId = @MarketIdPrimaryKey))
+            LIMIT 1;
+
+            SELECT Id FROM MarketStockExchangeSecurities WHERE Sedol = @sedol or (Isin = @Isin and MarketStockExchangeId = @MarketIdPrimaryKey);";
+
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<ReddeerMarketRepository> logger)
@@ -312,6 +337,85 @@ namespace Surveillance.DataLayer.Aurora.Market
             return new ExchangeFrame[0];
         }
 
+        /// <summary>
+        /// Trades consist of market data plus trade data
+        /// Try to get the security id if we already know it
+        /// Otherwise create a new entry and provide the market ids and security ids
+        /// Future caching possibility if you're investigating slow inserts
+        /// </summary>
+        public async Task<string> CreateAndOrGetSecurityId(MarketDataPair pair)
+        {
+            if (pair == null)
+            {
+                _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId was passed a null market data pair.");
+                return string.Empty;
+            }
+
+            if (!string.IsNullOrWhiteSpace(pair.Security?.Identifiers.Id))
+            {
+                return pair.Security?.Identifiers.Id;
+            }
+
+            if (pair.Exchange == null
+                || string.IsNullOrWhiteSpace(pair.Exchange?.Id.Id))
+            {
+                _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId either received a null exchange object or an empty market id for a trade. Not able to continue.");
+                return string.Empty;
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                var marketId = string.Empty;
+                var securityId = string.Empty;
+
+                var marketUpdate = new MarketUpdateDto(pair.Exchange);
+                using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
+                {
+                    marketId = await conn;                 
+                }
+
+                var securityUpdate = new InsertSecurityDto(pair.Security, marketId);
+                using (var conn = dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate))
+                {
+                    securityId = await conn;
+                }
+
+                return securityId;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return string.Empty;
+        }
+
+        private class MarketUpdateDto
+        {
+            public MarketUpdateDto()
+            { }
+
+            public MarketUpdateDto(Domain.Market.Market market)
+            {
+                MarketId = market.Id.Id;
+                MarketName = market.Name;
+            }
+
+            // ReSharper disable MemberCanBePrivate.Local
+            public string MarketId { get; set; }
+            public string MarketName { get; set; }
+            // ReSharper restore MemberCanBePrivate.Local
+        }
+
         private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, StockExchange market)
         {
             if (dto == null)
@@ -322,6 +426,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             var security =
                 new Security(
                     new SecurityIdentifiers(
+                        dto.Id,
                         dto.ReddeerId,
                         dto.ClientIdentifier,
                         dto.Sedol,
@@ -386,11 +491,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                 MarketName = entity?.Exchange?.Name;
             }
 
+            // ReSharper disable MemberCanBePrivate.Local
             public int Id { get; set; }
-
             public string MarketId { get; set; }
-
             public string MarketName { get; set; }
+            // ReSharper restore MemberCanBePrivate.Local
         }
 
         private class MarketStockExchangeSecuritiesDto
@@ -440,7 +545,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
             }
 
-            public int Id { get; set; }
+            public string Id { get; set; }
 
             public int MarketStockExchangeId { get; set; }
 
@@ -520,6 +625,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     return;
                 }
 
+                Id = entity?.Security?.Identifiers.Id ?? string.Empty;
                 MarketId = entity.Market?.Id?.Id;
                 MarketName = entity.Market?.Name;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
@@ -552,11 +658,33 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
             }
 
+            public InsertSecurityDto(Security security, string marketIdForeignKey)
+            {
+                MarketIdPrimaryKey = marketIdForeignKey;
 
+                Id = security.Identifiers.Id;
+                ReddeerId = security.Identifiers.ReddeerId;
+                ClientIdentifier = security.Identifiers.ClientIdentifier;
+                Sedol = security.Identifiers.Sedol;
+                Isin = security.Identifiers.Isin;
+                Figi = security.Identifiers.Figi;
+                Cusip = security.Identifiers.Cusip;
+                Lei = security.Identifiers.Lei;
+                ExchangeSymbol = security.Identifiers.ExchangeSymbol;
+                BloombergTicker = security.Identifiers.BloombergTicker;
+                SecurityName = security.Name;
+                Cfi = security.Cfi;
+                IssuerIdentifier = security.IssuerIdentifier;
+            }
+
+            public string MarketIdPrimaryKey { get; set; }
+            // This is the MIC
             public string MarketId { get; set; }
             public string MarketName { get; set; }
 
             public string ClientIdentifier { get; set; }
+
+            public string Id { get; set; }
 
             public string ReddeerId { get; set; }
 
@@ -581,6 +709,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string IssuerIdentifier { get; set; }
 
             public string SecurityCurrency { get; set; }
+
+
 
             public DateTime Epoch { get; set; }
 

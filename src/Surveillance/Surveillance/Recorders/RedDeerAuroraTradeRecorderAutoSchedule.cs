@@ -26,7 +26,7 @@ namespace Surveillance.Recorders
             IReddeerTradeRepository tradeRepository,
             IScheduleRuleMessageSender sender,
             IRuleConfiguration configuration,
-            ILogger<RedDeerElasticSearchTradeRecorder> logger)
+            ILogger<RedDeerAuroraTradeRecorderAutoSchedule> logger)
         {
             _tradeRepository = tradeRepository ?? throw new ArgumentNullException(nameof(tradeRepository));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));

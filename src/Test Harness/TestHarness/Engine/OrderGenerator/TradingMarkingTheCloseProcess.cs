@@ -140,6 +140,7 @@ namespace TestHarness.Engine.OrderGenerator
                 var tradeTime = headSecurity.TimeStamp.Date.Add(timeOffset);
 
                 var volumeFrame = new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     headSecurity.Market,
                     headSecurity.Security,
@@ -213,6 +214,7 @@ namespace TestHarness.Engine.OrderGenerator
                 var tradeTime = securities.TimeStamp.Date.Add(timeOffset);
 
                 var volumeFrame = new TradeOrderFrame(
+                    null,
                     OrderType.Market,
                     securities.Market,
                     securities.Security,

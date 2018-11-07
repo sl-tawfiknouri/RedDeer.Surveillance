@@ -68,7 +68,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         {
             var stockExchange = new StockExchange(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
 
-            var securityIdentifiers = new SecurityIdentifiers("stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new SecurityIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
             var security = new Security(
                 securityIdentifiers,

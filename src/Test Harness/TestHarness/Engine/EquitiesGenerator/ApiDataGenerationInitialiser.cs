@@ -52,6 +52,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     new SecurityIdentifiers(
                                         string.Empty,
                                         string.Empty,
+                                        string.Empty,
                                         sm.Sedol,
                                         sm.Isin,
                                         sm.Figi,

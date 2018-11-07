@@ -13,5 +13,6 @@ namespace Surveillance.DataLayer.Aurora.Market.Interfaces
         Task UpdateUnEnrichedSecurities(IReadOnlyCollection<SecurityEnrichmentDto> dtos);
         Task Create(ExchangeFrame entity);
         Task<IReadOnlyCollection<ExchangeFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
+        Task<string> CreateAndOrGetSecurityId(MarketDataPair pair);
     }
 }

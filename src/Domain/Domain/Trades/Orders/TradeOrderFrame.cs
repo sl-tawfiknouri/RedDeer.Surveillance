@@ -19,6 +19,7 @@ namespace Domain.Trades.Orders
         }
 
         public TradeOrderFrame(
+            int? id,
             OrderType orderType,
             StockExchange market,
             Security security,
@@ -40,6 +41,7 @@ namespace Domain.Trades.Orders
             string tradeStrategy,
             string orderCurrency)
         {
+            Id = id;
             OrderType = orderType;
             Market = market;
             Security = security;
@@ -71,7 +73,7 @@ namespace Domain.Trades.Orders
         /// <summary>
         /// Dapper field for primary key
         /// </summary>
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// The type of order i.e. market / limit

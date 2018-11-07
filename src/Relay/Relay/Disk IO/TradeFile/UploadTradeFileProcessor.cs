@@ -27,17 +27,17 @@ namespace Relay.Disk_IO.TradeFile
 
         protected override void MapRecord(
             TradeOrderFrameCsv record,
-            List<TradeOrderFrame> tradeOrders,
-            List<TradeOrderFrameCsv> failedTradeOrderReads)
+            List<TradeOrderFrame> marketUpdates,
+            List<TradeOrderFrameCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
             if (mappedRecord != null)
             {
-                tradeOrders.Add(mappedRecord);
+                marketUpdates.Add(mappedRecord);
             }
             else
             {
-                failedTradeOrderReads.Add(record);
+                failedMarketUpdateReads.Add(record);
             }
         }
 

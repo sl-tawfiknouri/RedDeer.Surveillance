@@ -14,6 +14,7 @@ namespace Relay.Disk_IO
         protected readonly ILogger Logger;
         private FileSystemWatcher _fileSystemWatcher;
         private readonly string _uploadFileMonitorName;
+        private int _retryRestart = 3;
 
         protected BaseUploadFileMonitor(
             IReddeerDirectory directory,
@@ -36,14 +37,18 @@ namespace Relay.Disk_IO
                 return;
             }
 
+            Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Initiating monitoring process.");
+
             try
             {
                 var archivePath = GetArchivePath();
                 var failedReadsPath = GetFailedReadsPath();
 
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders");
                 ReddeerDirectory.Create(UploadDirectoryPath());
                 ReddeerDirectory.Create(archivePath);
                 ReddeerDirectory.Create(failedReadsPath);
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Completed creating reddeer directory folders");
 
                 var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
 
@@ -51,6 +56,7 @@ namespace Relay.Disk_IO
                 {
                     ProcessInitialStartupFiles(archivePath, files);
                 }
+
                 SetFileSystemWatch();
             }
             catch (Exception e)
@@ -75,6 +81,7 @@ namespace Relay.Disk_IO
         {
             try
             {
+                Logger.LogInformation($"BaseUploadFileMonitor detected a file change at {e.FullPath}.");
                 var archivePath = ArchiveFilePath(GetArchivePath(), e.FullPath);
                 ProcessFile(e.FullPath, archivePath);
             }
@@ -95,6 +102,8 @@ namespace Relay.Disk_IO
                     var archiveFilePath = ArchiveFilePath(archivePath, filePath);
                     ProcessFile(filePath, archiveFilePath);
                 }
+
+                Logger.LogInformation($"{_uploadFileMonitorName} has completed processing the initial start up files");
             }
             catch (Exception e)
             {
@@ -115,13 +124,19 @@ namespace Relay.Disk_IO
 
         private void SetFileSystemWatch()
         {
+            Logger.LogInformation("BaseUploadFileMonitor setting file system watch");
+
             if (!ReddeerDirectory.DirectoryExists(UploadDirectoryPath()))
             {
+                Logger.LogInformation($"BaseUploadFileMonitor did not find the {UploadDirectoryPath()} not setting file watch.");
+
                 return;
             }
 
             if (_fileSystemWatcher != null)
             {
+                Logger.LogInformation("BaseUploadFileMonitor disposing an old file system watcher.");
+
                 _fileSystemWatcher.Dispose();
                 _fileSystemWatcher = null;
             }
@@ -133,15 +148,37 @@ namespace Relay.Disk_IO
                 IncludeSubdirectories = false
             };
 
+            _fileSystemWatcher.Error += OnError;
             _fileSystemWatcher.Changed += DetectedFileChange;
             _fileSystemWatcher.Renamed += DetectedFileChange;
             _fileSystemWatcher.Created += DetectedFileChange;
 
             _fileSystemWatcher.EnableRaisingEvents = true;
+            Logger.LogInformation("BaseUploadFileMonitor set file system watch events and now enabled raising events.");
+        }
+
+        private void OnError(object sender, ErrorEventArgs e)
+        {
+            if (_retryRestart > 0)
+            {
+                Logger.LogError($"BaseUploadFileMonitor encountered an exception! INVESTIGATE {_retryRestart} retries left", e.GetException());
+                _retryRestart -= 1;
+                SetFileSystemWatch();
+                return;
+            }
+
+            Logger.LogCritical($"BaseUploadFileMonitor encountered an exception! RAN OUT OF RETRIES RESTART THE RELAY SERVICE", e.GetException());
+
+            var exception = e.GetException();
+            if (exception.InnerException != null && !string.IsNullOrWhiteSpace(exception.InnerException.Message))
+            {
+                Logger.LogCritical($"INNER EXCEPTION FOR RELAY SERVICE FAILURE {exception.InnerException.Message}");
+            }
         }
 
         public void Dispose()
         {
+            Logger.LogInformation("BaseUploadFileMonitor called dispose on file monitor.");
             _fileSystemWatcher?.Dispose();
         }
     }

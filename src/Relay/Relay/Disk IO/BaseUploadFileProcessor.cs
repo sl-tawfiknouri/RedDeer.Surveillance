@@ -83,7 +83,7 @@ namespace Relay.Disk_IO
 
         protected abstract TCsv MapToCsvDto(CsvReader rawRecord, int rowId);
 
-        protected abstract void MapRecord(TCsv record, List<TFrame> tradeOrders, List<TCsv> failedTradeOrderReads);
+        protected abstract void MapRecord(TCsv record, List<TFrame> marketUpdates, List<TCsv> failedMarketUpdateReads);
 
         protected abstract void CheckAndLogFailedParsesFromDtoMapper(string path);
     }

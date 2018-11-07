@@ -73,7 +73,7 @@ namespace Surveillance.System.Auditing.Context
 
         public void EventException(Exception e)
         {
-            _operationLogging.Log(e);
+            _operationLogging.Log(e, _systemProcess);
         }
 
         public void UpdateHeartbeat()

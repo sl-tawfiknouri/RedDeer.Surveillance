@@ -10,5 +10,6 @@
         public int? SystemProcessOperationId { get; set; }
         public int? SystemProcessOperationRuleRunId { get; set; }
         public int? SystemProcessOperationDistributeRuleId { get; set; }
+        public int? SystemProcessOperationUploadFileRuleId { get; set; }
     }
 }

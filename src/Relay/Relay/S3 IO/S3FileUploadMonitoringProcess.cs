@@ -5,7 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Relay.Configuration.Interfaces;
+using Relay.Disk_IO.EquityFile.Interfaces;
+using Relay.Disk_IO.Interfaces;
 using Relay.S3_IO.Interfaces;
+using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Relay.S3_IO
@@ -13,7 +16,10 @@ namespace Relay.S3_IO
     public class S3FileUploadMonitoringProcess : IS3FileUploadMonitoringProcess
     {
         private CancellationTokenSource _cts;
+        private AwsResusableCancellationToken _token;
 
+        private IUploadEquityFileMonitor _uploadEquityFileMonitor;
+        private IUploadTradeFileMonitor _uploadTradeFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
         private readonly IUploadConfiguration _configuration;
         private readonly IAwsQueueClient _queueClient;
@@ -34,13 +40,19 @@ namespace Relay.S3_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Initialise()
+        public void Initialise(
+            IUploadTradeFileMonitor uploadTradeFileMonitor,
+            IUploadEquityFileMonitor uploadEquityFileMonitor)
         {
             _logger.LogInformation("Initialising file upload monitoring process");
 
-            _cts = new CancellationTokenSource();
+            _uploadTradeFileMonitor = uploadTradeFileMonitor;
+            _uploadEquityFileMonitor = uploadEquityFileMonitor;
 
-            _queueClient.SubscribeToQueueAsync(_configuration.RelayS3UploadQueueName , ReadMessage, _cts.Token);
+            _cts = new CancellationTokenSource();
+            _token = new AwsResusableCancellationToken();
+
+            _queueClient.SubscribeToQueueAsync(_configuration.RelayS3UploadQueueName , ReadMessage, _cts.Token, _token);
         }
 
         private async Task ReadMessage(string messageId, string messageBody)
@@ -77,7 +89,7 @@ namespace Relay.S3_IO
                             _configuration.RelayTradeFileUploadDirectoryPath);
                         break;
                     case "surveillance-market":
-                        await ProcessTradeFile(
+                        await ProcessEquityFile(
                             dto,
                             _configuration.RelayEquityFileFtpDirectoryPath,
                             _configuration.RelayEquityFileUploadDirectoryPath);
@@ -86,12 +98,6 @@ namespace Relay.S3_IO
                         _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                         return;
                 }
-
-                // so now what?
-                // we need a way of blocking on this ?
-                // yup...how can this be done better? maybe you can tell it as well as monitoring for it?
-
-
             }
             catch (Exception e)
             {
@@ -111,7 +117,12 @@ namespace Relay.S3_IO
             {
                 try
                 {
-                    MoveFile(file, uploadDirectoryPath);
+                    var result = _uploadTradeFileMonitor.ProcessFile(file);
+
+                    if (result == false)
+                    {
+                        _token.Cancel = true;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -123,27 +134,33 @@ namespace Relay.S3_IO
             _logger.LogInformation($"Moved all {fileCount}.");
         }
 
-        private void MoveFile(string file, string uploadDirectoryPath)
+        private async Task ProcessEquityFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
         {
-            var fileName = Path.GetFileName(file) ?? string.Empty;
+            await ProcessFile(dto, 3, ftpDirectoryPath);
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            var files = Directory.EnumerateFiles(ftpDirectoryPath).ToList();
+            var fileCount = files.Count;
+            _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
+
+            foreach (var file in files)
             {
-                _logger.LogInformation($"{file} had an empty file name");
+                try
+                {
+                    var result = _uploadEquityFileMonitor.ProcessFile(file);
 
-                return;
+                    if (result == false)
+                    {
+                        _token.Cancel = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"S3 File Upload Monitoring Process moving process trade file {file} to {uploadDirectoryPath} {e.Message}");
+                    continue;
+                }
             }
 
-            _logger.LogInformation($"Moving {fileName} to processing folder.");
-            var fullPathToNewFile = Path.Combine(uploadDirectoryPath, fileName);
-
-            if (File.Exists(fullPathToNewFile))
-            {
-                _logger.LogInformation($"Deleting {fullPathToNewFile} as it already exists");
-                File.Delete(fullPathToNewFile);
-            }
-
-            Directory.Move(file, fullPathToNewFile);
+            _logger.LogInformation($"Moved all {fileCount}.");
         }
 
         private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)

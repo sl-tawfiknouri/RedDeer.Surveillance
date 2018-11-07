@@ -102,7 +102,7 @@ namespace Relay.Disk_IO
             }
         }
 
-        protected abstract bool ProcessFile(string path);
+        public abstract bool ProcessFile(string path);
 
         private void SetFileSystemWatch()
         {

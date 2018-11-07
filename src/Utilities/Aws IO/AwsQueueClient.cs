@@ -121,7 +121,11 @@ namespace Utilities.Aws_IO
             return 0;
         }
 
-        public async Task SubscribeToQueueAsync(string name, Func<string, string, Task> action, CancellationToken cancellationToken)
+        public async Task SubscribeToQueueAsync(
+            string name,
+            Func<string, string, Task> action,
+            CancellationToken cancellationToken,
+            AwsResusableCancellationToken reusableToken)
         {
             var queueUrl = await GetQueueUrlAsync(name, cancellationToken);
             while (!cancellationToken.IsCancellationRequested)
@@ -142,11 +146,19 @@ namespace Utilities.Aws_IO
 
                         await action(message.MessageId, message.Body);
 
+                        if (reusableToken?.Cancel == true)
+                        {
+                            _logger?.LogInformation($"Cancelling Processing for Message (Queue: {name}, MessageId: {message.MessageId}, Size: {message.Body.Length})");
+                            reusableToken.Cancel = false;
+                            continue;
+                        }
+
                         var deleteMessageRequest = new DeleteMessageRequest
                         {
                             QueueUrl = queueUrl,
                             ReceiptHandle = message.ReceiptHandle
                         };
+
                         await _sqsClient.DeleteMessageAsync(deleteMessageRequest, cancellationToken);
                     }
                 }

@@ -76,12 +76,32 @@ namespace Relay.Disk_IO.EquityFile
                         SuccessfulReads(path, csvReadResults, fileUpload);
                         return true;
                     }
+<<<<<<< HEAD
+
+                    _logger.LogInformation($"Process File failure for {path}. Detected {csvReadResults.UnsuccessfulReads.Count} failed reads.");
+                    var originatingFileName = Path.GetFileNameWithoutExtension(path);
+
+                    _fileProcessor.WriteFailedReadsToDisk(
+                        GetFailedReadsPath(),
+                        originatingFileName,
+                        csvReadResults.UnsuccessfulReads);
+
+                    _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
+                    fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
+                    fileUpload.EndEvent().EndEvent();
+=======
+>>>>>>> RDPB-3127 updated S3 process to now push messages onto DLQ if it cant process the file several times
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"Upload Equity File Monitor encountered and swallowed an exception whilst processing {path}", e);
+<<<<<<< HEAD
+                    fileUpload.EventException(e);
+                    fileUpload.EndEvent().EndEvent();
+=======
                     fileUpload.EndEvent().EndEventWithError(e.Message);
                     return false;
+>>>>>>> RDPB-3127 updated S3 process to now push messages onto DLQ if it cant process the file several times
                 }
             }
         }
@@ -127,8 +147,7 @@ namespace Relay.Disk_IO.EquityFile
             _logger.LogInformation($"Upload equity file monitor deleted processed files.");
 
             _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
-            fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
-            fileUpload.EndEvent().EndEvent();
+            fileUpload.EndEvent().EndEventWithError($"Had failed reads written to disk {GetFailedReadsPath()}");
         }
     }
 }

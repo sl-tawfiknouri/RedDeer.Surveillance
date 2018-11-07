@@ -1,7 +1,9 @@
-﻿namespace Relay.Managers.Interfaces
+﻿using Relay.Disk_IO.Interfaces;
+
+namespace Relay.Managers.Interfaces
 {
     public interface ITradeOrderStreamManager
     {
-        void Initialise();
+        IUploadTradeFileMonitor Initialise();
     }
 }

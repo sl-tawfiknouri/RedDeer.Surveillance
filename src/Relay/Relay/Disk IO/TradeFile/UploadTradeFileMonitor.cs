@@ -43,7 +43,7 @@ namespace Relay.Disk_IO.TradeFile
             return _uploadConfiguration.RelayTradeFileUploadDirectoryPath;
         }
 
-        protected override bool ProcessFile(string path)
+        public override bool ProcessFile(string path)
         {
             lock (_lock)
             {
@@ -95,12 +95,16 @@ namespace Relay.Disk_IO.TradeFile
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
 
-            _logger.LogInformation($"Upload Trade File had errors when processing file for {path} and has {csvReadResults.UnsuccessfulReads.Count} failed uploads. About to write records to logs.");
+            _logger.LogError($"Upload Trade File had errors when processing file for {path} and has {csvReadResults.UnsuccessfulReads.Count} failed uploads. About to write records to logs.");
 
             foreach (var row in csvReadResults.UnsuccessfulReads)
             {
-                _logger.LogError($"UploadTradeFileMonitor could not parse row {row.RowId} of {originatingFileName}.");
+                _logger.LogInformation($"UploadTradeFileMonitor could not parse row {row.RowId} of {originatingFileName}.");
             }
+
+            _logger.LogInformation($"Upload Trade File for {path} has errors and will not commit to further processing. Now about to delete {path}.");
+            ReddeerDirectory.Delete(path);
+            _logger.LogInformation($"Upload Trade File for {path} has deleted the file.");
 
             fileUpload.EndEvent().EndEventWithError($"Had failed reads ({csvReadResults.UnsuccessfulReads.Count}) written to disk {GetFailedReadsPath()}");
         }
@@ -112,6 +116,7 @@ namespace Relay.Disk_IO.TradeFile
         {
             var uploadGuid = Guid.NewGuid().ToString();
             _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
+
             foreach (var item in csvReadResults.SuccessfulReads)
             {
                 item.IsInputBatch = true;

@@ -46,7 +46,7 @@ namespace Relay.Managers
                 ?? throw new ArgumentNullException(nameof(equityFileMonitorFactory));
         }
 
-        public void Initialise()
+        public IUploadEquityFileMonitor Initialise()
         {
             var unsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
             var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO relay
@@ -70,6 +70,8 @@ namespace Relay.Managers
             // set up trading file monitor and wire it into the stream
             var fileMonitor = _equityFileMonitorFactory.Build(stockExchangeStream);
             fileMonitor.Initiate();
+
+            return fileMonitor;
         }
     }
 }

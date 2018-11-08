@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Domain.Equity;
+using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
@@ -59,6 +61,16 @@ namespace Surveillance.Rules.HighProfits
             _messageSender.Remove(position);
 
             return false;
+        }
+
+        protected override Price? SecurityTickToPrice(SecurityTick tick)
+        {
+            if (tick == null)
+            {
+                return null;
+            }
+
+            return tick.IntradayPrices.Close ?? tick.Spread.Price;
         }
     }
 }

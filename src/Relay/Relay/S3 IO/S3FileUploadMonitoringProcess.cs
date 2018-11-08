@@ -18,6 +18,8 @@ namespace Relay.S3_IO
         private CancellationTokenSource _cts;
         private AwsResusableCancellationToken _token;
 
+        private readonly object _lock = new object();
+
         private IUploadEquityFileMonitor _uploadEquityFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
@@ -57,51 +59,56 @@ namespace Relay.S3_IO
 
         private async Task ReadMessage(string messageId, string messageBody)
         {
-            try
+            lock (_lock)
             {
-                _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
-
-                var dto = _mapper.Map(messageBody);
-
-                if (dto == null)
+                try
                 {
-                    _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
+                    _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
 
-                    return;
-                }
+                    var dto = _mapper.Map(messageBody);
 
-                if (dto.FileSize == 0)
-                {
-                    _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
+                    if (dto == null)
+                    {
+                        _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
 
-                    return;
-                }
-
-                var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
-                var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
-
-                switch (splitPath)
-                {
-                    case "surveillance-trade":
-                        await ProcessTradeFile(
-                            dto,
-                            _configuration.RelayTradeFileFtpDirectoryPath,
-                            _configuration.RelayTradeFileUploadDirectoryPath);
-                        break;
-                    case "surveillance-market":
-                        await ProcessEquityFile(
-                            dto,
-                            _configuration.RelayEquityFileFtpDirectoryPath,
-                            _configuration.RelayEquityFileUploadDirectoryPath);
-                        break;
-                    default:
-                        _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                         return;
+                    }
+
+                    if (dto.FileSize == 0)
+                    {
+                        _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
+
+                        return;
+                    }
+
+                    var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
+                    var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
+
+                    switch (splitPath)
+                    {
+                        case "surveillance-trade":
+                            var ptf = ProcessTradeFile(
+                                dto,
+                                _configuration.RelayTradeFileFtpDirectoryPath,
+                                _configuration.RelayTradeFileUploadDirectoryPath);
+                            ptf.Wait();
+                            break;
+                        case "surveillance-market":
+                            var pef = ProcessEquityFile(
+                                dto,
+                                _configuration.RelayEquityFileFtpDirectoryPath,
+                                _configuration.RelayEquityFileUploadDirectoryPath);
+                            pef.Wait();
+                            break;
+                        default:
+                            _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
+                            return;
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.Log(LogLevel.Critical, e.Message);
+                catch (Exception e)
+                {
+                    _logger.Log(LogLevel.Critical, e.Message);
+                }
             }
         }
 
@@ -122,6 +129,11 @@ namespace Relay.S3_IO
                     if (result == false)
                     {
                         _token.Cancel = true;
+                    }
+
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
                     }
                 }
                 catch (Exception e)
@@ -151,6 +163,11 @@ namespace Relay.S3_IO
                     if (result == false)
                     {
                         _token.Cancel = true;
+                    }
+
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
                     }
                 }
                 catch (Exception e)

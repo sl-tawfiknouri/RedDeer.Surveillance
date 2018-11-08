@@ -9,8 +9,7 @@ START TRANSACTION;
 
 INSERT INTO Migrations VALUES(8, "Trade security to foreign key.sql", now());
 
-ALTER TABLE TradeReddeer ADD COLUMN SecurityId INT DEFAULT(1), ADD FOREIGN KEY SecurityId(SecurityId) REFERENCES MarketStockExchangeSecurities(Id);
-
+ALTER TABLE TradeReddeer ADD COLUMN SecurityId INT NULL, ADD FOREIGN KEY SecurityId(SecurityId) REFERENCES MarketStockExchangeSecurities(Id);
 ALTER TABLE TradeReddeer DROP COLUMN MarketId;
 ALTER TABLE TradeReddeer DROP COLUMN MarketName;
 ALTER TABLE TradeReddeer DROP COLUMN SecurityClientIdentifier;

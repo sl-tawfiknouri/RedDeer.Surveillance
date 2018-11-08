@@ -49,12 +49,12 @@ namespace Surveillance.System.Auditing.Context
                 return;
             }
 
-            _operationLogging.Log(new Exception(message));
+            _operationLogging.Log(new Exception(message), _fileUpload);
         }
 
         public void EventException(Exception e)
         {
-            _operationLogging.Log(e);
+            _operationLogging.Log(e, _fileUpload);
         }
 
         public ISystemProcessOperationContext EndEvent()

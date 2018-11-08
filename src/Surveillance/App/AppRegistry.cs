@@ -3,6 +3,8 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Surveillance.App.Interfaces;
 using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
+using Surveillance.System.Auditing.Context;
+using Surveillance.System.DataLayer.Processes;
 
 namespace RedDeer.Surveillance.App
 {
@@ -10,6 +12,7 @@ namespace RedDeer.Surveillance.App
     {
         public AppRegistry()
         {
+            SystemProcessContext.ProcessType = SystemProcessType.SurveillanceService;
             var loggerFactory = new NLogLoggerFactory();
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));

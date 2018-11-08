@@ -15,14 +15,14 @@ namespace Surveillance.System.Auditing.Logging
             _exceptionRepository = exceptionRepository ?? throw new ArgumentNullException(nameof(exceptionRepository));
         }
 
-        public void Log(Exception e)
+        private void Log(Exception e)
         {
             var dto =
                 new ExceptionDto
                 {
                     ExceptionMessage = e.Message,
                     InnerExceptionMessage = e.InnerException?.Message,
-                    StackTrace = e.StackTrace
+                    StackTrace = e.StackTrace,
                 };
 
             _exceptionRepository.Save(dto);
@@ -108,6 +108,28 @@ namespace Surveillance.System.Auditing.Logging
                     SystemProcessOperationDistributeRuleId = distributeRule.Id,
                     SystemProcessOperationId = distributeRule.SystemProcessOperationId,
                     SystemProcessId = distributeRule.SystemProcessId
+                };
+
+            _exceptionRepository.Save(dto);
+        }
+
+        public void Log(Exception e, ISystemProcessOperationUploadFile uploadRule)
+        {
+            if (uploadRule == null)
+            {
+                Log(e);
+                return;
+            }
+
+            var dto =
+                new ExceptionDto
+                {
+                    ExceptionMessage = e.Message,
+                    InnerExceptionMessage = e.InnerException?.Message,
+                    StackTrace = e.StackTrace,
+                    SystemProcessOperationUploadFileRuleId = uploadRule.Id,
+                    SystemProcessOperationId = uploadRule.SystemProcessOperationId,
+                    SystemProcessId = uploadRule.SystemProcessId
                 };
 
             _exceptionRepository.Save(dto);

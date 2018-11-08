@@ -102,12 +102,15 @@ namespace Relay.Disk_IO.TradeFile
                         csvReadResults.UnsuccessfulReads);
 
                     _logger.LogInformation($"Upload Trade File for {path} has now written failed reads to the disk.");
-                    fileUpload.EndEvent().EndEventWithError($"Had failed reads written to disk {GetFailedReadsPath()}");
+                    fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
+                    fileUpload.EndEvent().EndEvent();
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"Upload Trade File Monitor encountered an exception in process file for {path}", e);
-                    fileUpload.EndEvent().EndEventWithError(e.Message);
+
+                    fileUpload.EventException(e);
+                    fileUpload.EndEvent().EndEvent();
                 }
             }
         }

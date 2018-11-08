@@ -158,12 +158,12 @@ namespace Surveillance.System.Auditing.Context
                 return;
             }
 
-            _operationLogging.Log(new Exception(message));
+            _operationLogging.Log(new Exception(message), _systemProcessOperation);
         }
 
         public void EventError(Exception e)
         {
-            _operationLogging.Log(e);
+            _operationLogging.Log(e, _systemProcessOperation);
         }
 
         public ISystemProcessContext EndEventWithError(string message)
@@ -175,7 +175,7 @@ namespace Surveillance.System.Auditing.Context
 
             if (!string.IsNullOrWhiteSpace(message))
             {
-                _operationLogging.Log(new Exception(message));
+                _operationLogging.Log(new Exception(message), _systemProcessOperation);
             }
 
             _hasEnded = true;

@@ -54,7 +54,6 @@ namespace Relay.Disk_IO.EquityFile
                         .CreateAndStartUploadFileContext(
                             SystemProcessOperationUploadFileType.MarketDataFile,
                             path);
-
                 try
                 {
                     var csvReadResults = _fileProcessor.Process(path);
@@ -99,12 +98,14 @@ namespace Relay.Disk_IO.EquityFile
                         csvReadResults.UnsuccessfulReads);
 
                     _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
-                    fileUpload.EndEvent().EndEventWithError($"Had failed reads written to disk {GetFailedReadsPath()}");
+                    fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
+                    fileUpload.EndEvent().EndEvent();
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"Upload Equity File Monitor encountered and swallowed an exception whilst processing {path}", e);
-                    fileUpload.EndEvent().EndEventWithError(e.Message);
+                    fileUpload.EventException(e);
+                    fileUpload.EndEvent().EndEvent();
                 }
             }
         }

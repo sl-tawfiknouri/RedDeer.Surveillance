@@ -11,6 +11,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Extensions;
 
@@ -26,6 +27,7 @@ namespace Surveillance.Scheduler
 
         private readonly ILogger<ReddeerDistributedRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
+        private AwsResusableCancellationToken _token;
 
         public ReddeerDistributedRuleScheduler(
             IAwsQueueClient awsQueueClient,
@@ -53,11 +55,13 @@ namespace Surveillance.Scheduler
         {
             _messageBusCts?.Cancel();
             _messageBusCts = new CancellationTokenSource();
+            _token = new AwsResusableCancellationToken();
 
             _awsQueueClient.SubscribeToQueueAsync(
                 _awsConfiguration.ScheduledRuleQueueName,
                 async (s1, s2) => { await ExecuteNonDistributedMessage(s1, s2); },
-                _messageBusCts.Token);
+                _messageBusCts.Token,
+                _token);
         }
 
         public void Terminate()

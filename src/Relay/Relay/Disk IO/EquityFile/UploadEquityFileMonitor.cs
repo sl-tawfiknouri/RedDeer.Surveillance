@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Relay.Configuration.Interfaces;
@@ -26,9 +27,8 @@ namespace Relay.Disk_IO.EquityFile
             IUploadEquityFileProcessor fileProcessor,
             IReddeerDirectory directory,
             ISystemProcessContext systemContext,
-            ILogger logger,
-            string uploadFileMonitorName) 
-            : base(directory, logger, uploadFileMonitorName)
+            ILogger<UploadEquityFileMonitor> logger)
+            : base(directory, logger, "UploadEquityFileMonitor")
         {
             _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
@@ -42,7 +42,7 @@ namespace Relay.Disk_IO.EquityFile
             return _uploadConfiguration.RelayEquityFileUploadDirectoryPath;
         }
 
-        protected override void ProcessFile(string path, string archivePath)
+        public override bool ProcessFile(string path)
         {
             lock (_lock)
             {
@@ -63,51 +63,72 @@ namespace Relay.Disk_IO.EquityFile
                     {
                         _logger.LogInformation($"Process File did not find any records for {path}");
                         fileUpload.EndEvent().EndEvent();
-                        return;
+                        return false;
                     }
 
-                    var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
-
-                    if (orderedSuccessfulReads.Any())
+                    if (csvReadResults.UnsuccessfulReads.Any())
                     {
-                        _logger.LogInformation($"Upload equity file monitor had successful reads, beginning to add to stream ({orderedSuccessfulReads.Count})");
+                        FailedReads(path, csvReadResults, fileUpload);
+                        return false;
                     }
-
-                    foreach (var item in orderedSuccessfulReads)
+                    else
                     {
-                        _stream.Add(item);
+                        SuccessfulReads(path, csvReadResults, fileUpload);
+                        return true;
                     }
-
-                    _logger.LogInformation($"Upload equity file monitor uploaded {orderedSuccessfulReads.Count} records. Now moving {path} to {archivePath}.");
-                    ReddeerDirectory.Move(path, archivePath);
-
-                    _logger.LogInformation($"Upload equity file monitor moved files to archive. Now checking for unsuccessful reads ({csvReadResults.UnsuccessfulReads.Count})");
-                    if (!csvReadResults.UnsuccessfulReads.Any())
-                    {
-                        _logger.LogInformation($"Process File success for {path}. Had zero unsuccessful reads.");
-                        fileUpload.EndEvent().EndEvent();
-                        return;
-                    }
-
-                    _logger.LogInformation($"Process File failure for {path}. Detected {csvReadResults.UnsuccessfulReads.Count} failed reads.");
-                    var originatingFileName = Path.GetFileNameWithoutExtension(path);
-
-                    _fileProcessor.WriteFailedReadsToDisk(
-                        GetFailedReadsPath(),
-                        originatingFileName,
-                        csvReadResults.UnsuccessfulReads);
-
-                    _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
-                    fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
-                    fileUpload.EndEvent().EndEvent();
                 }
                 catch (Exception e)
                 {
                     _logger.LogError($"Upload Equity File Monitor encountered and swallowed an exception whilst processing {path}", e);
-                    fileUpload.EventException(e);
-                    fileUpload.EndEvent().EndEvent();
+                    fileUpload.EndEvent().EndEventWithError(e.Message);
+                    return false;
                 }
             }
+        }
+
+        private void SuccessfulReads(
+            string path,
+            UploadFileProcessorResult<SecurityTickCsv, ExchangeFrame> csvReadResults,
+            ISystemProcessOperationUploadFileContext fileUpload)
+        {
+            var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
+            if (orderedSuccessfulReads.Any())
+            {
+                _logger.LogInformation($"Upload equity file monitor had successful reads, beginning to add to stream ({orderedSuccessfulReads.Count})");
+            }
+            foreach (var item in orderedSuccessfulReads)
+            {
+                _stream.Add(item);
+            }
+
+            _logger.LogInformation($"Upload equity file monitor uploaded {orderedSuccessfulReads.Count} records. Now deleting {path}.");
+            ReddeerDirectory.DeleteFile(path);
+            _logger.LogInformation($"Upload equity file monitor deleted processed files. Now checking for unsuccessful reads ({csvReadResults.UnsuccessfulReads.Count})");
+
+            _logger.LogInformation($"Process File success for {path}. Had zero unsuccessful reads.");
+            fileUpload.EndEvent().EndEvent();
+        }
+
+        private void FailedReads(
+            string path,
+            UploadFileProcessorResult<SecurityTickCsv, ExchangeFrame> csvReadResults,
+            ISystemProcessOperationUploadFileContext fileUpload)
+        {
+            var originatingFileName = Path.GetFileNameWithoutExtension(path);
+            _logger.LogError($"UploadEquityFileMonitor Process File failure for {path}. Detected {csvReadResults.UnsuccessfulReads.Count} failed reads.");
+
+            foreach (var failedRead in csvReadResults.UnsuccessfulReads)
+            {
+                _logger.LogInformation($"UploadEquityFileMonitor could not parse row {failedRead.RowId} of {originatingFileName}");
+            }
+
+            _logger.LogInformation($"Upload equity file monitor had failed reads. Now deleting {path}.");
+            ReddeerDirectory.DeleteFile(path);
+            _logger.LogInformation($"Upload equity file monitor deleted processed files.");
+
+            _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
+            fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
+            fileUpload.EndEvent().EndEvent();
         }
     }
 }

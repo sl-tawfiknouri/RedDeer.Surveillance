@@ -49,7 +49,7 @@ namespace Relay.Managers
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
         }
 
-        public void Initialise()
+        public IUploadTradeFileMonitor Initialise()
         {
             var unsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeProcessorOrderStream = new TradeOrderStream<TradeOrderFrame>(unsubscriberFactory);
@@ -73,6 +73,8 @@ namespace Relay.Managers
 
             var fileMonitor = _fileMonitorFactory.Create(tradeProcessorOrderStream);
             fileMonitor.Initiate();
+
+            return fileMonitor;
         }
     }
 }

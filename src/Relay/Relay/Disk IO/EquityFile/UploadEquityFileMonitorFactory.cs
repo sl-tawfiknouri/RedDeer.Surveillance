@@ -52,8 +52,7 @@ namespace Relay.Disk_IO.EquityFile
                 _uploadEquityFileProcessor,
                 _reddeerDirectory,
                 _systemProcessContext,
-                _logger,
-                "Upload Equity File Monitor");
+                _logger);
         }
     }
 }

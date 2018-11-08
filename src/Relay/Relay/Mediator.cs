@@ -38,9 +38,9 @@ namespace Relay
         {
             _logger.LogInformation("Initiating relay in mediator");
 
-            _tradeOrderStreamManager.Initialise();
-            _stockExchangeStreamManager.Initialise();
-            _s3FileUploadProcess.Initialise();
+            var tradeFileMonitor = _tradeOrderStreamManager.Initialise();
+            var equityFileMonitor = _stockExchangeStreamManager.Initialise();
+            _s3FileUploadProcess.Initialise(tradeFileMonitor, equityFileMonitor);
 
             _logger.LogInformation("Completed initiating relay in mediator");
         }

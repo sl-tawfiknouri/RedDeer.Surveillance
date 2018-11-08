@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Equity;
+using Domain.Equity.Frames;
 using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
@@ -256,7 +258,7 @@ namespace Surveillance.Rules.HighProfits
                     targetCurrency);
             }
 
-            var virtualRevenue = securityTick.Spread.Price.Value * sizeOfVirtualPosition;
+            var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
             var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, UniverseDateTime, _ruleCtx);
 
@@ -371,6 +373,16 @@ namespace Surveillance.Rules.HighProfits
             }
 
             return realisedRevenue + convertedCurrencyAmount;
+        }
+
+        protected virtual Price? SecurityTickToPrice(SecurityTick tick)
+        {
+            if (tick == null)
+            {
+                return null;
+            }
+
+            return tick.Spread.Price;
         }
 
         protected override void Genesis()

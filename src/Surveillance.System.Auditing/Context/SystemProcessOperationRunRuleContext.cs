@@ -51,12 +51,12 @@ namespace Surveillance.System.Auditing.Context
                 return;
             }
 
-            _operationLogging.Log(new Exception(message));
+            _operationLogging.Log(new Exception(message), _ruleRun);
         }
 
         public void EventException(Exception e)
         {
-            _operationLogging.Log(e);
+            _operationLogging.Log(e, _ruleRun);
         }
 
         public ISystemProcessOperationContext EndEvent()

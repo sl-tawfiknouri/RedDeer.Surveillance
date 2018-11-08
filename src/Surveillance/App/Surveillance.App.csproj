@@ -77,6 +77,9 @@
     <None Update="Migrations\8 - Trade security to foreign key.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\9 - Exception Auditing File Upload.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="nlog.Release.config">
       <IsTransformFile Condition="'$(Configuration)' == 'Release'">True</IsTransformFile>
     </None>

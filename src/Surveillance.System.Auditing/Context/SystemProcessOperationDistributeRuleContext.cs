@@ -42,7 +42,7 @@ namespace Surveillance.System.Auditing.Context
                 return;
             }
 
-            _operationLogging.Log(new Exception(message));
+            _operationLogging.Log(new Exception(message), _distributeRule);
         }
 
         public ISystemProcessOperationContext EndEvent()

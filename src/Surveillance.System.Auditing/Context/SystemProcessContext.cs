@@ -33,11 +33,17 @@ namespace Surveillance.System.Auditing.Context
                 InstanceInitiated = DateTime.UtcNow,
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess()?.Id.ToString(),
+                SystemProcessType = ProcessType
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
 
             StartEvent(systemProcess);
         }
+
+        /// <summary>
+        /// Property injection
+        /// </summary>
+        public static SystemProcessType ProcessType { get; set; }
 
         public void StartEvent(ISystemProcess systemProcess)
         {
@@ -67,7 +73,7 @@ namespace Surveillance.System.Auditing.Context
 
         public void EventException(Exception e)
         {
-            _operationLogging.Log(e);
+            _operationLogging.Log(e, _systemProcess);
         }
 
         public void UpdateHeartbeat()

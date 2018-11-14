@@ -60,7 +60,7 @@ namespace Surveillance.Rules.HighVolume
                 var marketCapPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100);
                 var marketCapBreachPercentage = Math.Ceiling(ruleBreach.MarketCapBreach.BreachPercentage.GetValueOrDefault(0) * 100);
 
-                dailyDescription = $" Percentage of market cap breach has occured. A market cap limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Currency}) {ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Value} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Currency}) {ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Value}.";
+                marketCapDescription = $" Percentage of market cap breach has occured. A market cap limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Currency}) {ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Value} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Currency}) {ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Value}.";
             }
 
             description = $"{description}{dailyDescription}{windowDescription}{marketCapDescription}";

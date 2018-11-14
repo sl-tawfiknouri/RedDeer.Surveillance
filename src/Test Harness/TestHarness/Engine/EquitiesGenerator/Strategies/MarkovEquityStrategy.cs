@@ -54,7 +54,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                     new Price(newSell, tick.Spread.Ask.Currency),
                     new Price(newBuy, tick.Spread.Bid.Currency));
             var newVolume = CalculateNewVolume(tick);
-            var newMarketCap = newVolume.Traded * newBuy;
+            var newMarketCap = (tick.ListedSecurities ?? tick.DailyVolume.Traded) * newBuy;
 
             var newIntraday =
                 walkIntraday

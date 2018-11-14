@@ -191,7 +191,7 @@ namespace Surveillance.Rules.MarkingTheClose
             Stack<TradeOrderFrame> securities,
             SecurityTick tradedSecurity,
             decimal thresholdVolumeTraded,
-            int marketVolumeTraded)
+            long marketVolumeTraded)
         {
             if (securities == null
                 || !securities.Any()
@@ -231,7 +231,7 @@ namespace Surveillance.Rules.MarkingTheClose
             };
         }
 
-        private decimal? CalculateBuyBreach(int volumeTradedBuy, int marketVolume, bool hasBuyVolumeBreach)
+        private decimal? CalculateBuyBreach(long volumeTradedBuy, long marketVolume, bool hasBuyVolumeBreach)
         {
             return hasBuyVolumeBreach
                 && volumeTradedBuy > 0
@@ -242,7 +242,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     : null;
         }
 
-        private decimal? CalculateSellBreach(int volumeTradedSell, int marketVolume, bool hasSellDailyVolumeBreach)
+        private decimal? CalculateSellBreach(long volumeTradedSell, long marketVolume, bool hasSellDailyVolumeBreach)
         {
             return hasSellDailyVolumeBreach
                    && volumeTradedSell > 0

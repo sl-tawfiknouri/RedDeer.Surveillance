@@ -4,6 +4,7 @@ using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using Domain.Market;
+using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -73,8 +74,8 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     new Price(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency)),
-                                new Volume(volume((double)smp.Value.DailyVolume)),
-                                new Volume(smp.Value.DailyVolume),
+                                new Volume(volume((double)CalculateADailyVolume(smp.Value))),
+                                new Volume(CalculateADailyVolume(smp.Value)),
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
                                 smp.Value.MarketCapUsd,
                                 new IntradayPrices(
@@ -110,6 +111,23 @@ namespace TestHarness.Engine.EquitiesGenerator
                         .ToList();
 
             return frames;
+        }
+
+        private long CalculateADailyVolume(SecurityPriceSnapshotDto dto)
+        {
+            if (dto.DailyVolume > 0)
+            {
+                return dto.DailyVolume;
+            }
+
+            if (dto.MarketCapUsd == 0
+                || dto.OpenPrice == 0)
+            {
+                // just pick a random daily volume between a million and ten million
+                return DiscreteUniform.Sample(1000000, 10000000);
+            }
+
+            return (long)(dto.MarketCapUsd / dto.OpenPrice);
         }
     }
 }

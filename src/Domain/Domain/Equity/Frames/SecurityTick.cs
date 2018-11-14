@@ -16,7 +16,7 @@ namespace Domain.Equity.Frames
             DateTime timeStamp,
             decimal? marketCap,
             IntradayPrices intradayPrices,
-            int? listedSecurities,
+            long? listedSecurities,
             StockExchange market)
         {
             Security = security;
@@ -50,7 +50,7 @@ namespace Domain.Equity.Frames
         /// <summary>
         /// The number of the listed security on the exchange
         /// </summary>
-        public int? ListedSecurities { get; }
+        public long? ListedSecurities { get; }
 
         /// <summary>
         /// The volume of the security traded since the last tick

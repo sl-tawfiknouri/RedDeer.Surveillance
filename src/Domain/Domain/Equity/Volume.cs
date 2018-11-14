@@ -5,7 +5,7 @@
     /// </summary>
     public struct Volume
     {
-        public Volume(int traded)
+        public Volume(long traded)
         {
             Traded = traded;
         }
@@ -13,6 +13,6 @@
         /// <summary>
         /// Quantity of equities traded
         /// </summary>
-        public int Traded { get; }
+        public long Traded { get; }
     }
 }

@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.DataLayer.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Tests", "Surveillance\Surveillance.Tests\Surveillance.Tests.csproj", "{C09EC5C7-6732-48BD-BC49-BE2E1A54CFDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.ElasticSearchDtos", "Surveillance.ElasticSearchDtos\Surveillance.ElasticSearchDtos.csproj", "{44A842E7-6E59-451C-AC71-D257A2D9AE14}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "Utilities.Tests\Utilities.Tests.csproj", "{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E546D723-A50D-4D86-9E51-555F19A503AC}"
@@ -108,10 +106,6 @@ Global
 		{C09EC5C7-6732-48BD-BC49-BE2E1A54CFDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C09EC5C7-6732-48BD-BC49-BE2E1A54CFDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C09EC5C7-6732-48BD-BC49-BE2E1A54CFDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44A842E7-6E59-451C-AC71-D257A2D9AE14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44A842E7-6E59-451C-AC71-D257A2D9AE14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44A842E7-6E59-451C-AC71-D257A2D9AE14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44A842E7-6E59-451C-AC71-D257A2D9AE14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}.Release|Any CPU.ActiveCfg = Release|Any CPU

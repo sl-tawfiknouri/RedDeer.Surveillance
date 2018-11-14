@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Domain.Equity;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -72,8 +74,15 @@ namespace Surveillance.Rules.HighVolume
                 windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
             }
 
+            HighVolumeRuleBreach.BreachDetails marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
+            if (_parameters.HighVolumePercentageMarketCap.HasValue)
+            {
+                marketCapBreach = MarketCapCheck(mostRecentTrade, tradedVolume);
+            }
+
             if ((!dailyBreach?.HasBreach ?? true)
-                && (!windowBreach?.HasBreach ?? true))
+                && (!windowBreach?.HasBreach ?? true)
+                && (!marketCapBreach?.HasBreach ?? true))
             {
                 return;
             }
@@ -86,6 +95,7 @@ namespace Surveillance.Rules.HighVolume
                     _parameters,
                     dailyBreach,
                     windowBreach,
+                    marketCapBreach,
                     tradedVolume);
 
             _messageSender.Send(breach, _ruleCtx);
@@ -177,6 +187,61 @@ namespace Surveillance.Rules.HighVolume
             if (tradedVolume >= threshold)
             {
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, threshold);
+            }
+
+            return HighVolumeRuleBreach.BreachDetails.None();
+        }
+
+        private HighVolumeRuleBreach.BreachDetails MarketCapCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
+        {
+            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
+            {
+                _hadMissingData = true;
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.Id, out var exchangeFrame);
+
+            if (exchangeFrame == null)
+            {
+                _hadMissingData = true;
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            var security = exchangeFrame
+                .Securities
+                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers));
+
+            if (security == null)
+            {
+                _hadMissingData = true;
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            var thresholdValue =
+                (int)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
+                * security.MarketCap.GetValueOrDefault(0));
+
+            if (thresholdValue <= 0)
+            {
+                _hadMissingData = true;
+                _logger.LogError($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
+            var tradedValue = tradedVolume * security.Spread.Price.Value;
+
+            var breachPercentage =
+                security.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0
+                    ? (decimal)tradedValue / (decimal)security.MarketCap.GetValueOrDefault(0)
+                    : 0;
+
+            if (tradedValue >= thresholdValue)
+            {
+                var thresholdCurrencyValue = new CurrencyAmount(thresholdValue, security.Spread.Price.Currency);
+                var tradedCurrencyValue = new CurrencyAmount(tradedValue, security.Spread.Price.Currency);
+
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();

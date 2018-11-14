@@ -138,6 +138,7 @@ namespace Surveillance.Rule_Parameters
                             dto.WindowSize,
                             dto.HighVolumePercentageDaily,
                             dto.HighVolumePercentageWindow,
+                            dto.HighVolumePercentageMarketCap,
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets)))

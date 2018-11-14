@@ -26,8 +26,6 @@ using Surveillance.MessageBus_IO;
 using Surveillance.MessageBus_IO.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
-using Surveillance.Recorders.Projectors;
-using Surveillance.Recorders.Projectors.Interfaces;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits;
@@ -82,16 +80,11 @@ namespace Surveillance
             For<IRedDeerAuroraTradeRecorder>().Use<RedDeerAuroraTradeRecorder>();
             For<IRedDeerAuroraTradeRecorderAutoSchedule>().Use<RedDeerAuroraTradeRecorderAutoSchedule>();
 
-            For<IReddeerTradeFormatProjector>().Use<ReddeerTradeFormatProjector>();
-
             For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
 
             //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
-            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerElasticSearchStockExchangeRecorder>();
             For<IRedDeerStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
-
-            For<IReddeerMarketExchangeFormatProjector>().Use<ReddeerMarketExchangeFormatProjector>();
 
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();

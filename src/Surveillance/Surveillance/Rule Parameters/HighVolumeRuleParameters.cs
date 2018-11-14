@@ -9,11 +9,13 @@ namespace Surveillance.Rule_Parameters
         public HighVolumeRuleParameters(
             TimeSpan windowSize,
             decimal? highVolumePercentageDaily,
-            decimal? highVolumePercentageWindow)
+            decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap)
         {
             WindowSize = windowSize;
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -24,6 +26,7 @@ namespace Surveillance.Rule_Parameters
             TimeSpan windowSize,
             decimal? highVolumePercentageDaily,
             decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets)
@@ -31,6 +34,7 @@ namespace Surveillance.Rule_Parameters
             WindowSize = windowSize;
             HighVolumePercentageDaily = highVolumePercentageDaily;
             HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -40,6 +44,7 @@ namespace Surveillance.Rule_Parameters
         public TimeSpan WindowSize { get; }
         public decimal? HighVolumePercentageDaily { get; }
         public decimal? HighVolumePercentageWindow { get; }
+        public decimal? HighVolumePercentageMarketCap { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }

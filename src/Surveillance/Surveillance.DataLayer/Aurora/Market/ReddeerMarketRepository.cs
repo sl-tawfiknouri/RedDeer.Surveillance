@@ -595,13 +595,13 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? LowIntradayPrice { get; set; }
 
-            public int? ListedSecurities { get; set; }
+            public long? ListedSecurities { get; set; }
 
             public decimal? MarketCap { get; set; }
 
-            public int? VolumeTradedInTick { get; set; }
+            public long? VolumeTradedInTick { get; set; }
 
-            public int? DailyVolume { get; set; }
+            public long? DailyVolume { get; set; }
 
 
 
@@ -728,13 +728,13 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? LowIntradayPrice { get; set; }
 
-            public int? ListedSecurities { get; set; }
+            public long? ListedSecurities { get; set; }
 
             public decimal? MarketCap { get; set; }
 
-            public int? VolumeTradedInTick { get; set; }
+            public long? VolumeTradedInTick { get; set; }
 
-            public int? DailyVolume { get; set; }
+            public long? DailyVolume { get; set; }
         }
     }
 }

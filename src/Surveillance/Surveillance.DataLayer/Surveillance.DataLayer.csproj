@@ -14,13 +14,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
     <PackageReference Include="MySql.Data" Version="8.0.12" />
     <PackageReference Include="NEST" Version="6.2.0" />
-    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.11.0" />
+    <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.12.0" />
     <PackageReference Include="StructureMap" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Domain\Domain.csproj" />
-    <ProjectReference Include="..\..\Surveillance.ElasticSearchDtos\Surveillance.ElasticSearchDtos.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.System.Auditing.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>

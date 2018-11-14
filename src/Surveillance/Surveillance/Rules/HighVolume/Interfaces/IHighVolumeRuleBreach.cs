@@ -9,6 +9,7 @@ namespace Surveillance.Rules.HighVolume.Interfaces
 
         HighVolumeRuleBreach.BreachDetails DailyBreach { get; }
         HighVolumeRuleBreach.BreachDetails WindowBreach { get; }
+        HighVolumeRuleBreach.BreachDetails MarketCapBreach { get; }
 
         int TotalOrdersTradedInWindow { get; }
     }

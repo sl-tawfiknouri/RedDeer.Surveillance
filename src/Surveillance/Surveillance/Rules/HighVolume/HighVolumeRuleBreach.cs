@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity;
+using Domain.Finance;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -15,6 +16,7 @@ namespace Surveillance.Rules.HighVolume
             IHighVolumeRuleParameters parameters,
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
+            BreachDetails marketCapBreach,
             int totalOrdersTradedInWindow)
         {
             Window = window;
@@ -24,6 +26,7 @@ namespace Surveillance.Rules.HighVolume
 
             DailyBreach = dailyBreach;
             WindowBreach = windowBreach;
+            MarketCapBreach = marketCapBreach;
 
             TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
         }
@@ -36,6 +39,7 @@ namespace Surveillance.Rules.HighVolume
 
         public BreachDetails DailyBreach { get; }
         public BreachDetails WindowBreach { get; }
+        public BreachDetails MarketCapBreach { get; }
 
         public int TotalOrdersTradedInWindow { get; }
 
@@ -51,9 +55,20 @@ namespace Surveillance.Rules.HighVolume
                 BreachThresholdAmount = breachThresholdAmount;
             }
 
+            public BreachDetails(
+                bool hasBreach,
+                decimal? breachPercentage,
+                CurrencyAmount breachThresholdAmountCurrency)
+            {
+                HasBreach = hasBreach;
+                BreachPercentage = breachPercentage;
+                BreachThresholdAmountCurrency = breachThresholdAmountCurrency;
+            }
+
             public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
             public int BreachThresholdAmount { get; }
+            public CurrencyAmount BreachThresholdAmountCurrency { get; }
 
             public static BreachDetails None()
             {

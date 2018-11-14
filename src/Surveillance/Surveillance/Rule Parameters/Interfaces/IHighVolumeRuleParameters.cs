@@ -6,6 +6,7 @@ namespace Surveillance.Rule_Parameters.Interfaces
     {
         decimal? HighVolumePercentageDaily { get; }
         decimal? HighVolumePercentageWindow { get; }
+        decimal? HighVolumePercentageMarketCap { get; }
         TimeSpan WindowSize { get; }
     }
 }

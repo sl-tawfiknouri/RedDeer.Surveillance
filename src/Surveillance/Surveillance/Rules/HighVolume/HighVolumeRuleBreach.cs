@@ -58,17 +58,20 @@ namespace Surveillance.Rules.HighVolume
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
-                CurrencyAmount breachThresholdAmountCurrency)
+                CurrencyAmount breachThresholdAmountCurrency,
+                CurrencyAmount breachTradedAmountCurrency)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
                 BreachThresholdAmountCurrency = breachThresholdAmountCurrency;
+                BreachTradedAmountCurrency = breachTradedAmountCurrency;
             }
 
             public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
             public int BreachThresholdAmount { get; }
             public CurrencyAmount BreachThresholdAmountCurrency { get; }
+            public CurrencyAmount BreachTradedAmountCurrency { get; }
 
             public static BreachDetails None()
             {

@@ -239,7 +239,9 @@ namespace Surveillance.Rules.HighVolume
             if (tradedValue >= thresholdValue)
             {
                 var thresholdCurrencyValue = new CurrencyAmount(thresholdValue, security.Spread.Price.Currency);
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue);
+                var tradedCurrencyValue = new CurrencyAmount(tradedValue, security.Spread.Price.Currency);
+
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();

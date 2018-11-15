@@ -21,15 +21,18 @@ namespace Surveillance.Universe
         private readonly IReddeerTradeRepository _auroraTradeRepository;
         private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
+        private readonly IUniverseSortComparer _universeSorter;
 
         public UniverseBuilder(
             IReddeerTradeRepository auroraTradeRepository,
             IReddeerMarketRepository auroraMarketRepository,
-            IMarketOpenCloseEventManager marketManager)
+            IMarketOpenCloseEventManager marketManager,
+            IUniverseSortComparer universeSorter)
         {
             _auroraTradeRepository = auroraTradeRepository ?? throw new ArgumentNullException(nameof(auroraTradeRepository));
             _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
             _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
+            _universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
         }
 
         /// <summary>
@@ -111,7 +114,7 @@ namespace Surveillance.Universe
             intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
             intraUniversalHistoryEvents.AddRange(exchangeEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);
-            var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe.EventTime).ToList();
+            var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe, _universeSorter).ToList();
 
             var universeEvents = new List<IUniverseEvent> {genesis};
             universeEvents.AddRange(orderedIntraUniversalHistory);

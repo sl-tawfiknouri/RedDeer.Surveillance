@@ -100,6 +100,7 @@ namespace Surveillance
             For<IUniversePlayer>().Use<UniversePlayer>();
             For<IUniverseRuleSubscriber>().Use<UniverseRuleSubscriber>();
             For<IUniverseFilterFactory>().Use<UniverseFilterFactory>();
+            For<IUniverseSortComparer>().Use<UniverseEventComparer>();
 
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 

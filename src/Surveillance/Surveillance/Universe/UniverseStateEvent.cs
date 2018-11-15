@@ -3,6 +3,7 @@
     /// <summary>
     /// These state events are expected to be 1:1 mapping with deserialisable types
     /// Such as a trade being deserialised to TradeOrderFrame
+    /// DO NOT CHANGE without updating ========== UniverseEventComparer ==========
     /// </summary>
     public enum UniverseStateEvent
     {

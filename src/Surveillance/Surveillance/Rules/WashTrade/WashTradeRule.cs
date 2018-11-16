@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -51,6 +53,15 @@ namespace Surveillance.Rules.WashTrade
             // now attempts to disguise this can be done by buy at P1, sell at P2, vary volume to make up for P1; P2
             // so we're looking for trading the same [VALUE] of the stocks
 
+            var activeTrades = history.ActiveTradeHistory();
+
+            var liveTrades =
+                activeTrades
+                    .Where(at =>
+                        at.OrderStatus == OrderStatus.Fulfilled
+                        || at.OrderStatus == OrderStatus.PartialFulfilled)
+                    .ToList();
+
             
 
         }
@@ -61,6 +72,8 @@ namespace Surveillance.Rules.WashTrade
             // and how much the value can change by (%)
             // maybe absolute limit on how much it can change by as well just to filter down
             // on white noise
+
+            
         }
 
         public void PairingBuySells()
@@ -68,8 +81,6 @@ namespace Surveillance.Rules.WashTrade
             // percentage of trades that are 'paired up' i.e.
             // high trading activity without taking a position
             // in the equity
-
-
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

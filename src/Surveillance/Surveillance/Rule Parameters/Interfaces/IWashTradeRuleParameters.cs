@@ -9,7 +9,8 @@ namespace Surveillance.Rule_Parameters.Interfaces
         // Parameter set one
         int? AveragePositionMinimumNumberOfTrades { get; }
         decimal? AveragePositionMaximumPositionValueChange { get; }
-        decimal? AveragePositionMaximumAbsoluteValueChange { get; }
+        decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
+        string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
 
         // Parameter set two
         int? PairingPositionMinimumNumberOfPairedTrades { get; }

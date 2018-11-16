@@ -10,14 +10,16 @@ namespace Surveillance.Rule_Parameters
             TimeSpan windowSize,
             int? averagePositionMinimumNumberOfTrades,
             decimal? averagePositionMaximumPositionValueChange,
-            decimal? averagePositionMaximumAbsoluteValueChange,
+            decimal? averagePositionMaximumAbsoluteValueChangeAmount,
+            string averagePositionMaximumAbsoluteValueChangeCurrency,
             int? pairingPositionMinimumNumberOfPairedTrades,
             decimal? pairingPositionPercentageValueChangeThresholdPerPair)
         {
             WindowSize = windowSize;
             AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
             AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
-            AveragePositionMaximumAbsoluteValueChange = averagePositionMaximumAbsoluteValueChange;
+            AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
+            AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
             PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
             PairingPositionPercentageValueChangeThresholdPerPair = pairingPositionPercentageValueChangeThresholdPerPair;
 
@@ -30,7 +32,8 @@ namespace Surveillance.Rule_Parameters
             TimeSpan windowSize,
             int? averagePositionMinimumNumberOfTrades,
             decimal? averagePositionMaximumPositionValueChange,
-            decimal? averagePositionMaximumAbsoluteValueChange,
+            decimal? averagePositionMaximumAbsoluteValueChangeAmount,
+            string averagePositionMaximumAbsoluteValueChangeCurrency,
             int? pairingPositionMinimumNumberOfPairedTrades,
             decimal? pairingPositionPercentageValueChangeThresholdPerPair,
             RuleFilter accounts,
@@ -40,7 +43,8 @@ namespace Surveillance.Rule_Parameters
             WindowSize = windowSize;
             AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
             AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
-            AveragePositionMaximumAbsoluteValueChange = averagePositionMaximumAbsoluteValueChange;
+            AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
+            AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
             PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
             PairingPositionPercentageValueChangeThresholdPerPair = pairingPositionPercentageValueChangeThresholdPerPair;
 
@@ -54,7 +58,8 @@ namespace Surveillance.Rule_Parameters
         // Averaging parameters
         public int? AveragePositionMinimumNumberOfTrades { get; }
         public decimal? AveragePositionMaximumPositionValueChange { get; }
-        public decimal? AveragePositionMaximumAbsoluteValueChange { get; }
+        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
+        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
 
         // Pairing parameters
         public int? PairingPositionMinimumNumberOfPairedTrades { get; }

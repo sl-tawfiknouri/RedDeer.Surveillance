@@ -11,12 +11,14 @@ namespace Surveillance.Factories
 {
     public class WashTradeRuleFactory : IWashTradeRuleFactory
     {
+        private readonly IWashTradeCachedMessageSender _cachedMessageSender;
         private readonly ILogger _logger;
 
         public string RuleVersion { get; } = Versioner.Version(1, 0);
 
-        public WashTradeRuleFactory(ILogger<WashTradeRule> logger)
+        public WashTradeRuleFactory(IWashTradeCachedMessageSender cachedMessageSender, ILogger<WashTradeRule> logger)
         {
+            _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -32,7 +34,7 @@ namespace Surveillance.Factories
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            return new WashTradeRule(parameters, ruleCtx, _logger);
+            return new WashTradeRule(parameters, ruleCtx, _cachedMessageSender, _logger);
         }
     }
 }

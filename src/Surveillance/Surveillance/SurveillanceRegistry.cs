@@ -40,6 +40,8 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
+using Surveillance.Rules.WashTrade;
+using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Filter;
 using Surveillance.Rule_Parameters.Filter.Interfaces;
@@ -144,7 +146,8 @@ namespace Surveillance
                 .Use<MarketCloseMultiverseTransformer>();
 
             For<IWashTradeRuleFactory>().Use<WashTradeRuleFactory>();
-
+            For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
+            For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

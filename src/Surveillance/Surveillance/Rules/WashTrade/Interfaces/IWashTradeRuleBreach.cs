@@ -1,16 +1,12 @@
-﻿using Domain.Finance;
+﻿using Surveillance.Rules.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
-using Surveillance.Trades;
+using static Surveillance.Rules.WashTrade.WashTradeRuleBreach;
 
 namespace Surveillance.Rules.WashTrade.Interfaces
 {
-    public interface IWashTradeRuleBreach
+    public interface IWashTradeRuleBreach : IRuleBreach
     {
-        CurrencyAmount? AveragePositionAbsoluteValueChange { get; }
-        int? AveragePositionAmountOfTrades { get; }
-        decimal? AveragePositionRelativeValueChange { get; }
-        bool AveragePositionRuleBreach { get; }
-        TradePosition BreachingTradePosition { get; }
         IWashTradeRuleParameters Parameters { get; }
+        WashTradeAveragePositionBreach AveragePositionBreach { get; }
     }
 }

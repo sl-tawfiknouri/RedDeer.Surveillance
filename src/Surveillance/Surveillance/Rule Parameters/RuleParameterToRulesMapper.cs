@@ -144,5 +144,32 @@ namespace Surveillance.Rule_Parameters
                             _ruleProjector.Project(dto.Markets)))
                     .ToList();
         }
+
+        public IReadOnlyCollection<IWashTradeRuleParameters> Map(List<WashTradeRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                return null;
+            }
+
+            return
+                dtos
+                    .Select(dto =>
+                        new WashTradeRuleParameters(
+                            dto.WindowSize,
+                            dto.AveragePositionMinimumNumberOfTrades,
+                            dto.AveragePositionMaximumPositionValueChange,
+                            dto.AveragePositionMaximumAbsoluteValueChangeAmount,
+                            dto.AveragePositionMaximumAbsoluteValueChangeCurrency,
+                            dto.PairingPositionMinimumNumberOfPairedTrades,
+                            dto.PairingPositionPercentageValueChangeThresholdPerPair,
+                            dto.PairingPositionMaximumAbsoluteValueChangeAmount,
+                            dto.PairingPositionMaximumAbsoluteValueChangeCurrency,
+                            _ruleProjector.Project(dto.Accounts),
+                            _ruleProjector.Project(dto.Traders),
+                            _ruleProjector.Project(dto.Markets)))
+                    .ToList();
+        }
     }
 }

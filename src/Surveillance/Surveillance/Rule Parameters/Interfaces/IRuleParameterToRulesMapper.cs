@@ -12,5 +12,6 @@ namespace Surveillance.Rule_Parameters.Interfaces
         IReadOnlyCollection<IMarkingTheCloseParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos);
         IReadOnlyCollection<ILayeringRuleParameters> Map(List<LayeringRuleParameterDto> dtos);
         IReadOnlyCollection<IHighVolumeRuleParameters> Map(List<HighVolumeRuleParameterDto> dtos);
+        IReadOnlyCollection<IWashTradeRuleParameters> Map(List<WashTradeRuleParameterDto> dtos);
     }
 }

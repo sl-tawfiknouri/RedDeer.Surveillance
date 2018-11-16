@@ -10,7 +10,6 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
 using System.Linq;
-using Surveillance.Rule_Parameters;
 using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Universe
@@ -420,16 +419,45 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var ctx = opCtx.CreateAndStartRuleRunContext(
-                Domain.Scheduling.Rules.WashTrade.GetDescription(),
-                _washTradeRuleFactory.RuleVersion, 
-                DateTime.UtcNow,
-                DateTime.UtcNow);
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .WashTrades
+                    .Where(wt => filteredParameters.Contains(wt.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            var parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8), 6, 0.1m, 2000, "GBP", 5, 0.02m);
-            var washTrade = _washTradeRuleFactory.Build(parameters, ctx);
+            var washTradeParameters = _ruleParameterMapper.Map(dtos);
 
-            player.Subscribe(washTrade);
+            if (washTradeParameters != null
+                && washTradeParameters.Any())
+            {
+                foreach (var param in washTradeParameters)
+                {
+                    var ctx = opCtx.CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.WashTrade.GetDescription(),
+                        _washTradeRuleFactory.RuleVersion,
+                        DateTime.UtcNow,
+                        DateTime.UtcNow);
+
+                    var washTrade = _washTradeRuleFactory.Build(param, ctx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(washTrade);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(washTrade);
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogError("Rule Scheduler - tried to schedule a wash trade rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a wash trade rule execution with no parameters set");
+            }
         }
     }
 }

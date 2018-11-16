@@ -15,5 +15,7 @@ namespace Surveillance.Rule_Parameters.Interfaces
         // Parameter set two
         int? PairingPositionMinimumNumberOfPairedTrades { get; }
         decimal? PairingPositionPercentageValueChangeThresholdPerPair { get; }
+        decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
+        string PairingPositionMaximumAbsoluteCurrency { get; }
     }
 }

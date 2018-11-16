@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Currency.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -24,11 +27,13 @@ namespace Surveillance.Rules.WashTrade
         private readonly ILogger _logger;
         private readonly IWashTradeRuleParameters _parameters;
         private readonly IWashTradeCachedMessageSender _messageSender;
+        private readonly ICurrencyConverter _currencyConverter;
 
         public WashTradeRule(
             IWashTradeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradeCachedMessageSender messageSender,
+            ICurrencyConverter currencyConverter,
             ILogger logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -40,6 +45,7 @@ namespace Surveillance.Rules.WashTrade
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -59,7 +65,10 @@ namespace Surveillance.Rules.WashTrade
                 return;
             }
 
-            var averagePositionCheck = ValueOfPositionChange(liveTrades);
+            var averagePositionCheckTask = ValueOfPositionChange(liveTrades);
+            averagePositionCheckTask.Wait();
+            var averagePositionCheck = averagePositionCheckTask.Result;
+
             var pairingPositionsCheck = PairingBuySells(liveTrades);
 
             if ((averagePositionCheck == null || !averagePositionCheck.AveragePositionRuleBreach)
@@ -78,7 +87,7 @@ namespace Surveillance.Rules.WashTrade
             _messageSender?.Send(breach);
         }
 
-        public WashTradeRuleBreach.WashTradeAveragePositionBreach ValueOfPositionChange(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> ValueOfPositionChange(List<TradeOrderFrame> activeTrades)
         {
             if (activeTrades == null 
                 || !activeTrades.Any())
@@ -122,12 +131,38 @@ namespace Surveillance.Rules.WashTrade
                 return new WashTradeRuleBreach.WashTradeAveragePositionBreach
                     (true,
                     activeTrades.Count,
-                    relativeValue, null);
+                    relativeValue,
+                    null);
             }
 
-            // TODO do the absolute value check - will involve x-change stuff
+            var absDifference = Math.Abs(valueOfBuy - valueOfSell);
+            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            return null;
+            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
+
+            if (convertedCurrency == null)
+            {
+                _logger.LogError($"WashTradeRule was not able to determine currency conversion - preferring to raise alert in lieu of necessary exchange rate information");
+
+                return new WashTradeRuleBreach.WashTradeAveragePositionBreach
+                    (true,
+                     activeTrades.Count,
+                     relativeValue,
+                    null);
+            }
+
+            if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount < convertedCurrency.Value.Value)
+            {
+                return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
+            }
+
+            return new WashTradeRuleBreach.WashTradeAveragePositionBreach
+                (true,
+                activeTrades.Count,
+                relativeValue,
+                convertedCurrency);
         }
 
         public WashTradeRuleBreach PairingBuySells(List<TradeOrderFrame> activeTrades)

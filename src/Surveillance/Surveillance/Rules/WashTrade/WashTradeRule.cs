@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -11,19 +12,21 @@ namespace Surveillance.Rules.WashTrade
     {
         private int _alerts;
         private readonly ILogger _logger;
+        private readonly IWashTradeRuleParameters _parameters;
 
         public WashTradeRule(
-            TimeSpan windowSize,
+            IWashTradeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger logger)
             : base(
-                windowSize,
+                parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.WashTrade,
                 Versioner.Version(1, 0),
                 "Wash Trade Rule",
                 ruleCtx,
                 logger)
         {
+            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

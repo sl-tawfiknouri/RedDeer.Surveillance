@@ -10,6 +10,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
 using System.Linq;
+using Surveillance.Rule_Parameters;
 using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Universe
@@ -425,7 +426,8 @@ namespace Surveillance.Universe
                 DateTime.UtcNow,
                 DateTime.UtcNow);
 
-            var washTrade = _washTradeRuleFactory.Build(ctx);
+            var parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8));
+            var washTrade = _washTradeRuleFactory.Build(parameters, ctx);
 
             player.Subscribe(washTrade);
         }

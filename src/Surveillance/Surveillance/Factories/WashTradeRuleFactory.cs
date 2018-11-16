@@ -4,6 +4,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories
@@ -19,14 +20,19 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IWashTradeRule Build(ISystemProcessOperationRunRuleContext ruleCtx)
+        public IWashTradeRule Build(IWashTradeRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (ruleCtx == null)
             {
                 throw new ArgumentNullException(nameof(ruleCtx));
             }
 
-            return new WashTradeRule(new TimeSpan(), ruleCtx, _logger);
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            return new WashTradeRule(parameters, ruleCtx, _logger);
         }
     }
 }

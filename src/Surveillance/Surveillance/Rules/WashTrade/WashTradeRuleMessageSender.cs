@@ -11,7 +11,7 @@ namespace Surveillance.Rules.WashTrade
     {
         public WashTradeRuleMessageSender(
             ITradeOrderDataItemDtoMapper dtoMapper,
-            ILogger logger,
+            ILogger<WashTradeRuleMessageSender> logger,
             ICaseMessageSender caseMessageSender) 
             : base(
                 dtoMapper,

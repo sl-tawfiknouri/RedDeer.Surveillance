@@ -426,7 +426,7 @@ namespace Surveillance.Universe
                 DateTime.UtcNow,
                 DateTime.UtcNow);
 
-            var parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8));
+            var parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8), 6, 0.1m, 2000, 5, 0.02m);
             var washTrade = _washTradeRuleFactory.Build(parameters, ctx);
 
             player.Subscribe(washTrade);

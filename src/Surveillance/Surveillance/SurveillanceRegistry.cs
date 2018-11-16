@@ -143,6 +143,8 @@ namespace Surveillance
             For<IMarketCloseMultiverseTransformer>()
                 .Use<MarketCloseMultiverseTransformer>();
 
+            For<IWashTradeRuleFactory>().Use<WashTradeRuleFactory>();
+
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

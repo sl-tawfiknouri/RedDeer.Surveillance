@@ -22,6 +22,7 @@ namespace Surveillance.Universe
         private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
         private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
         private readonly ILayeringRuleFactory _layeringRuleFactory;
+        private readonly IWashTradeRuleFactory _washTradeRuleFactory;
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
@@ -38,6 +39,7 @@ namespace Surveillance.Universe
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IWashTradeRuleFactory washTradeRuleFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
@@ -52,6 +54,7 @@ namespace Surveillance.Universe
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _washTradeRuleFactory = washTradeRuleFactory ?? throw new ArgumentNullException(nameof(washTradeRuleFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -74,6 +77,7 @@ namespace Surveillance.Universe
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
             LayeringRule(execution, player, ruleParameters, opCtx);
             HighVolumeRule(execution, player, ruleParameters, opCtx);
+            WashTradeRule(execution, player, ruleParameters, opCtx);
         }
 
         private void SpoofingRule(
@@ -402,6 +406,28 @@ namespace Surveillance.Universe
                 _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
             }
+        }
+
+        private void WashTradeRule(
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
+        {
+            if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.WashTrade) ?? true)
+            {
+                return;
+            }
+
+            var ctx = opCtx.CreateAndStartRuleRunContext(
+                Domain.Scheduling.Rules.WashTrade.GetDescription(),
+                _washTradeRuleFactory.RuleVersion, 
+                DateTime.UtcNow,
+                DateTime.UtcNow);
+
+            var washTrade = _washTradeRuleFactory.Build(ctx);
+
+            player.Subscribe(washTrade);
         }
     }
 }

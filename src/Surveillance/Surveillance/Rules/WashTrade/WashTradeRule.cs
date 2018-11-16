@@ -155,6 +155,8 @@ namespace Surveillance.Rules.WashTrade
 
             if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount < convertedCurrency.Value.Value)
             {
+                _logger.LogInformation($"WashTradeRule found an average position breach but the total change in position value exceeded the threshold of {_parameters.AveragePositionMaximumAbsoluteValueChangeAmount} ({_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency}).");
+
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
@@ -62,25 +64,80 @@ namespace Surveillance.Rules.WashTrade
                         || at.OrderStatus == OrderStatus.PartialFulfilled)
                     .ToList();
 
-            
+            var averagePositionCheck = ValueOfPositionChange(liveTrades);
+            var pairingPositionsCheck = PairingBuySells(liveTrades);
+
+            if (averagePositionCheck == null
+                && pairingPositionsCheck == null)
+            {
+                return;
+            }
+
+            _alerts += 1;
+            _logger.LogInformation($"Wash Trade Rule incrementing alert count to {_alerts}");
+
+
+            // push it onto the message sender
 
         }
 
-        public void ValueOfPositionChange()
+        public WashTradeRuleBreach ValueOfPositionChange(List<TradeOrderFrame> activeTrades)
         {
-            // how many trades with no meaningful (%) change of position
-            // and how much the value can change by (%)
-            // maybe absolute limit on how much it can change by as well just to filter down
-            // on white noise
+            if (activeTrades == null 
+                || !activeTrades.Any())
+            {
+                return null;
+            }
+        
+            if (activeTrades.Count < _parameters.AveragePositionMinimumNumberOfTrades)
+            {
+                return null;
+            }
 
-            
+            var buyPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Buy).ToList());
+            var sellPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Sell).ToList());
+
+            var valueOfBuy = buyPosition.Sum(bp => bp.FulfilledVolume * (bp.ExecutedPrice?.Value ?? 0));
+            var valueOfSell = sellPosition.Sum(sp => sp.FulfilledVolume * (sp.ExecutedPrice?.Value ?? 0));
+
+            if (valueOfBuy == 0)
+            {
+                return null;
+            }
+
+            if (valueOfSell == 0)
+            {
+                return null;
+            }
+
+            var relativeValue = Math.Abs((valueOfBuy / valueOfSell) - 1);
+
+            if (relativeValue > _parameters.AveragePositionMaximumAbsoluteValueChangeAmount.GetValueOrDefault(0))
+            {
+                return null;
+            }
+
+            if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount == null
+                || string.IsNullOrWhiteSpace(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency))
+            {
+                _logger.LogInformation("WashTradeRule found an average position breach and does not have an absolute limit set. Returning with average position breach");
+                var activeTradePosition = new TradePosition(activeTrades);
+
+                return new WashTradeRuleBreach(_parameters, activeTradePosition, true, activeTrades.Count, relativeValue, null);
+            }
+
+            // TODO do the absolute value check - will involve x-change stuff
+
+            return null;
         }
 
-        public void PairingBuySells()
+        public WashTradeRuleBreach PairingBuySells(List<TradeOrderFrame> activeTrades)
         {
             // percentage of trades that are 'paired up' i.e.
             // high trading activity without taking a position
             // in the equity
+
+            return null;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

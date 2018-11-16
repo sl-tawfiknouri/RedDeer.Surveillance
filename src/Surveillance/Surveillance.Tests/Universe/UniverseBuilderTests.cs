@@ -14,6 +14,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Tests.Universe
@@ -25,6 +26,7 @@ namespace Surveillance.Tests.Universe
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
         private ISystemProcessOperationContext _opCtx;
+        private IUniverseSortComparer _sortComparer;
 
         [SetUp]
         public void Setup()
@@ -33,6 +35,7 @@ namespace Surveillance.Tests.Universe
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
+            _sortComparer = A.Fake<IUniverseSortComparer>();
         }
 
         [Test]
@@ -42,7 +45,8 @@ namespace Surveillance.Tests.Universe
                 new UniverseBuilder(
                     _auroraTradeRepository,
                     _auroraMarketRepository,
-                    _marketManager);
+                    _marketManager,
+                    _sortComparer);
 
             var result = builder.Summon(null, _opCtx);
 
@@ -58,7 +62,8 @@ namespace Surveillance.Tests.Universe
                 new UniverseBuilder(
                     _auroraTradeRepository,
                     _auroraMarketRepository,
-                    _marketManager);
+                    _marketManager,
+                    _sortComparer);
 
             var schedule = new ScheduledExecution
             {
@@ -83,7 +88,8 @@ namespace Surveillance.Tests.Universe
                 new UniverseBuilder(
                     _auroraTradeRepository,
                     _auroraMarketRepository,
-                    _marketManager);
+                    _marketManager,
+                    _sortComparer);
 
             var schedule = new ScheduledExecution
             {
@@ -118,7 +124,8 @@ namespace Surveillance.Tests.Universe
                 new UniverseBuilder(
                     _auroraTradeRepository,
                     _auroraMarketRepository,
-                    _marketManager);
+                    _marketManager,
+                    _sortComparer);
 
             var schedule = new ScheduledExecution
             {
@@ -161,7 +168,8 @@ namespace Surveillance.Tests.Universe
                 new UniverseBuilder(
                     _auroraTradeRepository,
                     _auroraMarketRepository,
-                    _marketManager);
+                    _marketManager,
+                    _sortComparer);
 
             var schedule = new ScheduledExecution
             {

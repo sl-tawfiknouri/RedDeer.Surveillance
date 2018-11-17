@@ -14,7 +14,8 @@ namespace Surveillance.Rules.WashTrade
             ITradePosition tradePosition,
             Security security,
             WashTradeAveragePositionBreach averagePositionBreach,
-            WashTradePairingPositionBreach pairingPositionBreach)
+            WashTradePairingPositionBreach pairingPositionBreach,
+            WashTradeClusteringPositionBreach clusteringPositionBreach)
         {
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
@@ -24,6 +25,7 @@ namespace Surveillance.Rules.WashTrade
 
             AveragePositionBreach = averagePositionBreach ?? throw new ArgumentNullException(nameof(averagePositionBreach));
             PairingPositionBreach = pairingPositionBreach ?? throw new ArgumentNullException(nameof(pairingPositionBreach));
+            ClusteringPositionBreach = clusteringPositionBreach ?? throw new ArgumentNullException(nameof(clusteringPositionBreach));
         }
 
         public IWashTradeRuleParameters Parameters { get; }
@@ -34,6 +36,7 @@ namespace Surveillance.Rules.WashTrade
 
         public WashTradeAveragePositionBreach AveragePositionBreach { get; }
         public WashTradePairingPositionBreach PairingPositionBreach { get; }
+        public WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }
 
         public class WashTradeAveragePositionBreach
         {
@@ -63,8 +66,7 @@ namespace Surveillance.Rules.WashTrade
 
         public class WashTradePairingPositionBreach
         {
-            public WashTradePairingPositionBreach(
-                bool pairingPositionRuleBreach)
+            public WashTradePairingPositionBreach(bool pairingPositionRuleBreach)
             {
                 PairingPositionRuleBreach = pairingPositionRuleBreach;
             }
@@ -74,6 +76,21 @@ namespace Surveillance.Rules.WashTrade
             public static WashTradePairingPositionBreach None()
             {
                 return new WashTradePairingPositionBreach(false);
+            }
+        }
+
+        public class WashTradeClusteringPositionBreach
+        {
+            public WashTradeClusteringPositionBreach(bool clusteringPositionBreach)
+            {
+                ClusteringPositionBreach = clusteringPositionBreach;
+            }
+
+            public bool ClusteringPositionBreach { get; }
+
+            public static WashTradeClusteringPositionBreach None()
+            {
+                return new WashTradeClusteringPositionBreach(false);
             }
         }
     }

@@ -81,10 +81,11 @@ namespace Surveillance.Rules.WashTrade
             // Clustering trade analysis
             var clusteringPositionsCheckTask = ClusteringTrades(liveTrades);
             clusteringPositionsCheckTask.Wait();
-
+            var clusteringPositionCheck = clusteringPositionsCheckTask.Result;
 
             if ((averagePositionCheck == null || !averagePositionCheck.AveragePositionRuleBreach)
-                && (pairingPositionsCheck == null || !pairingPositionsCheck.PairingPositionRuleBreach))
+                && (pairingPositionsCheck == null || !pairingPositionsCheck.PairingPositionRuleBreach)
+                && (clusteringPositionCheck == null || !clusteringPositionCheck.ClusteringPositionBreach))
             {
                 return;
             }
@@ -95,7 +96,15 @@ namespace Surveillance.Rules.WashTrade
             _alerts += 1;
             _logger.LogInformation($"Wash Trade Rule incrementing alert count to {_alerts} because of security {security?.Name} at {UniverseDateTime}");
 
-            var breach = new WashTradeRuleBreach(_parameters, trades, security, averagePositionCheck, pairingPositionsCheck);
+            var breach =
+                new WashTradeRuleBreach(
+                    _parameters,
+                    trades,
+                    security,
+                    averagePositionCheck,
+                    pairingPositionsCheck,
+                    clusteringPositionCheck);
+
             _messageSender?.Send(breach);
         }
 
@@ -312,20 +321,22 @@ namespace Surveillance.Rules.WashTrade
             return true;
         }
 
-        public async Task ClusteringTrades(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradeClusteringPositionBreach> ClusteringTrades(List<TradeOrderFrame> activeTrades)
         {
             if (!_parameters.PerformClusteringPositionAnalysis)
             {
-                return;
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
 
             if (activeTrades == null
                 || !activeTrades.Any())
             {
-                return;
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
 
-            return;
+
+
+            return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

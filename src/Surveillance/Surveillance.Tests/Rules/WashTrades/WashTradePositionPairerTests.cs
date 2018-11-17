@@ -19,7 +19,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         [SetUp]
         public void Setup()
         {
-            _parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8), null, null, null, null, 10, 0.02m, 10000, "GBP");
+            _parameters = new WashTradeRuleParameters(TimeSpan.FromHours(8),true,true,true,null , null, null, null, 10, 0.02m, 0.1m, 10000, "GBP");
         }
 
         [Test]

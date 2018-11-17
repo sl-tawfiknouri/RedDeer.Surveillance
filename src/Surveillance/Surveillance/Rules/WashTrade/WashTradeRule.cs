@@ -26,12 +26,14 @@ namespace Surveillance.Rules.WashTrade
         private int _alerts;
         private readonly ILogger _logger;
         private readonly IWashTradeRuleParameters _parameters;
+        private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeCachedMessageSender _messageSender;
         private readonly ICurrencyConverter _currencyConverter;
 
         public WashTradeRule(
             IWashTradeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IWashTradePositionPairer positionPairer,
             IWashTradeCachedMessageSender messageSender,
             ICurrencyConverter currencyConverter,
             ILogger logger)
@@ -44,6 +46,7 @@ namespace Surveillance.Rules.WashTrade
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -65,29 +68,38 @@ namespace Surveillance.Rules.WashTrade
                 return;
             }
 
-            var averagePositionCheckTask = ValueOfPositionChange(liveTrades);
+            // Net change analysis
+            var averagePositionCheckTask = NettingTrades(liveTrades);
             averagePositionCheckTask.Wait();
             var averagePositionCheck = averagePositionCheckTask.Result;
 
-            var pairingPositionsCheck = PairingBuySells(liveTrades);
+            // Pairing trade analysis
+            var pairingPositionsCheckTask = PairingTrades(liveTrades);
+            pairingPositionsCheckTask.Wait();
+            var pairingPositionsCheck = pairingPositionsCheckTask.Result;
+
+            // Clustering trade analysis
+            var clusteringPositionsCheckTask = ClusteringTrades(liveTrades);
+            clusteringPositionsCheckTask.Wait();
+
 
             if ((averagePositionCheck == null || !averagePositionCheck.AveragePositionRuleBreach)
-                && pairingPositionsCheck == null)
+                && (pairingPositionsCheck == null || !pairingPositionsCheck.PairingPositionRuleBreach))
             {
                 return;
             }
 
-            _alerts += 1;
-            _logger.LogInformation($"Wash Trade Rule incrementing alert count to {_alerts}");
-
             var trades = new TradePosition(liveTrades);
             var security = liveTrades?.FirstOrDefault()?.Security;
 
-            var breach = new WashTradeRuleBreach(_parameters, trades, security, averagePositionCheck);
+            _alerts += 1;
+            _logger.LogInformation($"Wash Trade Rule incrementing alert count to {_alerts} because of security {security?.Name} at {UniverseDateTime}");
+
+            var breach = new WashTradeRuleBreach(_parameters, trades, security, averagePositionCheck, pairingPositionsCheck);
             _messageSender?.Send(breach);
         }
 
-        public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> ValueOfPositionChange(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<TradeOrderFrame> activeTrades)
         {
             if (activeTrades == null 
                 || !activeTrades.Any())
@@ -167,13 +179,31 @@ namespace Surveillance.Rules.WashTrade
                 convertedCurrency);
         }
 
-        public WashTradeRuleBreach PairingBuySells(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<TradeOrderFrame> activeTrades)
         {
-            // percentage of trades that are 'paired up' i.e.
-            // high trading activity without taking a position
-            // in the equity
+            if (activeTrades == null
+                || !activeTrades.Any())
+            {
+                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
+            }
+
+            var pairings = _positionPairer.PairUp(activeTrades, _parameters);
+
+            // now how many of these pairs net out closely on volume
+            
 
             return null;
+        }
+
+        public async Task ClusteringTrades(List<TradeOrderFrame> activeTrades)
+        {
+            if (activeTrades == null
+                || !activeTrades.Any())
+            {
+                return;
+            }
+
+            return;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

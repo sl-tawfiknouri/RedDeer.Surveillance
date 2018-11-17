@@ -13,7 +13,8 @@ namespace Surveillance.Rules.WashTrade
             IWashTradeRuleParameters parameters,
             ITradePosition tradePosition,
             Security security,
-            WashTradeAveragePositionBreach averagePositionBreach)
+            WashTradeAveragePositionBreach averagePositionBreach,
+            WashTradePairingPositionBreach pairingPositionBreach)
         {
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
@@ -22,6 +23,7 @@ namespace Surveillance.Rules.WashTrade
             Security = security;
 
             AveragePositionBreach = averagePositionBreach ?? throw new ArgumentNullException(nameof(averagePositionBreach));
+            PairingPositionBreach = pairingPositionBreach ?? throw new ArgumentNullException(nameof(pairingPositionBreach));
         }
 
         public IWashTradeRuleParameters Parameters { get; }
@@ -31,6 +33,7 @@ namespace Surveillance.Rules.WashTrade
         public Security Security { get; }
 
         public WashTradeAveragePositionBreach AveragePositionBreach { get; }
+        public WashTradePairingPositionBreach PairingPositionBreach { get; }
 
         public class WashTradeAveragePositionBreach
         {
@@ -55,6 +58,22 @@ namespace Surveillance.Rules.WashTrade
             public static WashTradeAveragePositionBreach None()
             {
                 return new WashTradeAveragePositionBreach(false, null, null, null);
+            }
+        }
+
+        public class WashTradePairingPositionBreach
+        {
+            public WashTradePairingPositionBreach(
+                bool pairingPositionRuleBreach)
+            {
+                PairingPositionRuleBreach = pairingPositionRuleBreach;
+            }
+
+            public bool PairingPositionRuleBreach { get; }
+
+            public static WashTradePairingPositionBreach None()
+            {
+                return new WashTradePairingPositionBreach(false);
             }
         }
     }

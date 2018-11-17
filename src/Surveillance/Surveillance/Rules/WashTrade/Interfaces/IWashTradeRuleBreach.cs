@@ -8,5 +8,6 @@ namespace Surveillance.Rules.WashTrade.Interfaces
     {
         IWashTradeRuleParameters Parameters { get; }
         WashTradeAveragePositionBreach AveragePositionBreach { get; }
+        WashTradePairingPositionBreach PairingPositionBreach { get; }
     }
 }

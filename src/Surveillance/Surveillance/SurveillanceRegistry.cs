@@ -148,6 +148,7 @@ namespace Surveillance
             For<IWashTradeRuleFactory>().Use<WashTradeRuleFactory>();
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
+            For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

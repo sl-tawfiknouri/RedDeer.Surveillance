@@ -6,6 +6,10 @@ namespace Surveillance.Rule_Parameters.Interfaces
     {
         TimeSpan WindowSize { get; }
 
+        bool PerformAveragePositionAnalysis { get; }
+        bool PerformPairingPositionAnalysis { get; }
+        bool PerformClusteringPositionAnalysis { get; }
+
         // Parameter set one
         int? AveragePositionMinimumNumberOfTrades { get; }
         decimal? AveragePositionMaximumPositionValueChange { get; }
@@ -14,7 +18,8 @@ namespace Surveillance.Rule_Parameters.Interfaces
 
         // Parameter set two
         int? PairingPositionMinimumNumberOfPairedTrades { get; }
-        decimal? PairingPositionPercentageValueChangeThresholdPerPair { get; }
+        decimal? PairingPositionPercentagePriceChangeThresholdPerPair { get; }
+        decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
         decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
         string PairingPositionMaximumAbsoluteCurrency { get; }
     }

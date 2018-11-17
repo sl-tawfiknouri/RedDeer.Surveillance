@@ -158,12 +158,16 @@ namespace Surveillance.Rule_Parameters
                     .Select(dto =>
                         new WashTradeRuleParameters(
                             dto.WindowSize,
+                            true,
+                            true,
+                            true,
                             dto.AveragePositionMinimumNumberOfTrades,
                             dto.AveragePositionMaximumPositionValueChange,
                             dto.AveragePositionMaximumAbsoluteValueChangeAmount,
                             dto.AveragePositionMaximumAbsoluteValueChangeCurrency,
                             dto.PairingPositionMinimumNumberOfPairedTrades,
                             dto.PairingPositionPercentageValueChangeThresholdPerPair,
+                            00000000000000000000000000000m,
                             dto.PairingPositionMaximumAbsoluteValueChangeAmount,
                             dto.PairingPositionMaximumAbsoluteValueChangeCurrency,
                             _ruleProjector.Project(dto.Accounts),

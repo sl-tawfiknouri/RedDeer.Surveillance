@@ -99,8 +99,16 @@ namespace Surveillance.Rules.WashTrade
             _messageSender?.Send(breach);
         }
 
+        /// <summary>
+        /// See if trades net out to near zero i.e. large amount of churn
+        /// </summary>
         public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<TradeOrderFrame> activeTrades)
         {
+            if (!_parameters.PerformAveragePositionAnalysis)
+            {
+                return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
+            }
+
             if (activeTrades == null 
                 || !activeTrades.Any())
             {
@@ -181,22 +189,136 @@ namespace Surveillance.Rules.WashTrade
 
         public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<TradeOrderFrame> activeTrades)
         {
+            if (!_parameters.PerformPairingPositionAnalysis)
+            {
+                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
+            }
+
             if (activeTrades == null
                 || !activeTrades.Any())
             {
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
             }
 
+            var tradingWithinThreshold = await CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(activeTrades);
+
+            if (!tradingWithinThreshold)
+            {
+                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
+            }
+            
             var pairings = _positionPairer.PairUp(activeTrades, _parameters);
 
-            // now how many of these pairs net out closely on volume
-            
+            if (_parameters.PairingPositionPercentageVolumeDifferenceThreshold != null)
+            {
+                pairings = FilteredPairsByVolume(pairings);
+            }
 
-            return null;
+            if (_parameters.PairingPositionMinimumNumberOfPairedTrades == null)
+            {
+                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true);
+            }
+
+            var buyCount = pairings.SelectMany(a => a.Buys.Get()).Count();
+            var sellCount = pairings.SelectMany(a => a.Sells.Get()).Count();
+
+            if ((buyCount + sellCount) >= _parameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
+            {
+                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true);
+            }
+
+            return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
+        }
+
+        private IReadOnlyCollection<WashTradePositionPairer.PositionPair> FilteredPairsByVolume(IReadOnlyCollection<WashTradePositionPairer.PositionPair> pairs)
+        {
+            if (pairs == null
+                || !pairs.Any())
+            {
+                return new WashTradePositionPairer.PositionPair[0];
+            }
+
+            var results = new List<WashTradePositionPairer.PositionPair>();
+            foreach (var pair in pairs)
+            {
+                var buyVolume = pair.Buys.Get().Sum(b => b.FulfilledVolume);
+                var sellVolume = pair.Sells.Get().Sum(s => s.FulfilledVolume);
+
+                if (buyVolume == sellVolume)
+                {
+                    results.Add(pair);
+                    continue;
+                }
+
+                var larger = Math.Max(buyVolume, sellVolume);
+                var smaller = Math.Min(buyVolume, sellVolume);
+                var offset = (decimal)larger * (_parameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
+
+                if ((smaller >= larger - offset)
+                    && smaller <= larger + offset)
+                {
+                    results.Add(pair);
+                    continue;
+                }
+            }
+
+            return results;
+        }
+
+        private async Task<bool> CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(List<TradeOrderFrame> activeTrades)
+        {
+            if (_parameters.PairingPositionMaximumAbsoluteCurrencyAmount == null
+                || string.IsNullOrWhiteSpace(_parameters.PairingPositionMaximumAbsoluteCurrency))
+            {
+                return true;
+            }
+
+            var buyPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Buy).ToList());
+            var sellPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Sell).ToList());
+
+            var valueOfBuy = buyPosition.Sum(bp => bp.FulfilledVolume * (bp.ExecutedPrice?.Value ?? 0));
+            var valueOfSell = sellPosition.Sum(sp => sp.FulfilledVolume * (sp.ExecutedPrice?.Value ?? 0));
+
+            if (valueOfBuy == 0)
+            {
+                return false;
+            }
+
+            if (valueOfSell == 0)
+            {
+                return false;
+            }
+
+            var absDifference = Math.Abs(valueOfBuy - valueOfSell);
+            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
+
+            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
+
+            if (convertedCurrency == null)
+            {
+                _logger.LogError($"WashTradeRule was not able to determine currency conversion. Will evaluate pairing trades on its own merits.");
+
+                return true;
+            }
+
+            if (convertedCurrency?.Value >
+                _parameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async Task ClusteringTrades(List<TradeOrderFrame> activeTrades)
         {
+            if (!_parameters.PerformClusteringPositionAnalysis)
+            {
+                return;
+            }
+
             if (activeTrades == null
                 || !activeTrades.Any())
             {

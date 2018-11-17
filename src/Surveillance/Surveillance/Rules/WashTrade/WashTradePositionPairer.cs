@@ -18,7 +18,8 @@ namespace Surveillance.Rules.WashTrade
             IWashTradeRuleParameters parameters)
         {
             if (trades == null
-                || !trades.Any())
+                || !trades.Any()
+                || parameters == null)
             {
                 return new PositionPair[0];
             }
@@ -67,6 +68,12 @@ namespace Surveillance.Rules.WashTrade
                 }
             }
 
+            if (currentBuyPosition.Get().Any()
+                && currentSellPosition.Get().Any())
+            {
+                positionPairs.Add(new PositionPair(currentBuyPosition, currentSellPosition));
+            }
+
             return positionPairs;
         }
 
@@ -78,7 +85,7 @@ namespace Surveillance.Rules.WashTrade
                 return false;
             }
 
-            var offset = currentPrice * parameters.PairingPositionPercentageValueChangeThresholdPerPair.GetValueOrDefault(0);
+            var offset = currentPrice * parameters.PairingPositionPercentagePriceChangeThresholdPerPair.GetValueOrDefault(0);
 
             if (((currentPrice - offset) <= newPrice)
                 && ((currentPrice + offset) >= newPrice))

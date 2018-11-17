@@ -83,9 +83,7 @@ namespace Surveillance.Rules.WashTrade
             var pairingPositionsCheck = pairingPositionsCheckTask.Result;
 
             // Clustering trade analysis
-            var clusteringPositionsCheckTask = ClusteringTrades(liveTrades);
-            clusteringPositionsCheckTask.Wait();
-            var clusteringPositionCheck = clusteringPositionsCheckTask.Result;
+            var clusteringPositionCheck = ClusteringTrades(liveTrades);
 
             if ((averagePositionCheck == null || !averagePositionCheck.AveragePositionRuleBreach)
                 && (pairingPositionsCheck == null || !pairingPositionsCheck.PairingPositionRuleBreach)
@@ -227,17 +225,18 @@ namespace Surveillance.Rules.WashTrade
                 pairings = FilteredPairsByVolume(pairings);
             }
 
-            if (_parameters.PairingPositionMinimumNumberOfPairedTrades == null)
-            {
-                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true);
-            }
-
             var buyCount = pairings.SelectMany(a => a.Buys.Get()).Count();
             var sellCount = pairings.SelectMany(a => a.Sells.Get()).Count();
+            var totalTradesWithinPairings = buyCount + sellCount;
 
-            if ((buyCount + sellCount) >= _parameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
+            if (_parameters.PairingPositionMinimumNumberOfPairedTrades == null)
             {
-                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true);
+                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
+            }
+
+            if ((totalTradesWithinPairings) >= _parameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
+            {
+                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
             }
 
             return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
@@ -325,7 +324,7 @@ namespace Surveillance.Rules.WashTrade
             return true;
         }
 
-        public async Task<WashTradeRuleBreach.WashTradeClusteringPositionBreach> ClusteringTrades(List<TradeOrderFrame> activeTrades)
+        public WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringTrades(List<TradeOrderFrame> activeTrades)
         {
             if (!_parameters.PerformClusteringPositionAnalysis)
             {

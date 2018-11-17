@@ -67,16 +67,20 @@ namespace Surveillance.Rules.WashTrade
 
         public class WashTradePairingPositionBreach
         {
-            public WashTradePairingPositionBreach(bool pairingPositionRuleBreach)
+            public WashTradePairingPositionBreach(bool pairingPositionRuleBreach, int pairedTradesInBreach, int totalTradesPairedUp)
             {
                 PairingPositionRuleBreach = pairingPositionRuleBreach;
+                PairedTradesInBreach = pairedTradesInBreach;
+                PairedTradesTotal = totalTradesPairedUp;
             }
 
             public bool PairingPositionRuleBreach { get; }
+            public int PairedTradesInBreach { get; }
+            public int PairedTradesTotal { get; }
 
             public static WashTradePairingPositionBreach None()
             {
-                return new WashTradePairingPositionBreach(false);
+                return new WashTradePairingPositionBreach(false, 0, 0);
             }
         }
 

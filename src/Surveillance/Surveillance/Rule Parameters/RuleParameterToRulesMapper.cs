@@ -170,6 +170,8 @@ namespace Surveillance.Rule_Parameters
                             00000000000000000000000000000m,
                             dto.PairingPositionMaximumAbsoluteValueChangeAmount,
                             dto.PairingPositionMaximumAbsoluteValueChangeCurrency,
+                            6,
+                            0.05m,
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
                             _ruleProjector.Project(dto.Markets)))

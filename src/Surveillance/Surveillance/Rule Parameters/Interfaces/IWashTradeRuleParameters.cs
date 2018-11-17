@@ -22,5 +22,9 @@ namespace Surveillance.Rule_Parameters.Interfaces
         decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
         decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
         string PairingPositionMaximumAbsoluteCurrency { get; }
+
+        // Parameter set three
+        int? ClusteringPositionMinimumNumberOfTrades { get; }
+        decimal? ClusteringPercentageValueDifferenceThreshold { get; }
     }
 }

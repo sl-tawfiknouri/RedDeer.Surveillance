@@ -15,6 +15,7 @@ namespace Surveillance.Factories
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IWashTradeCachedMessageSender _cachedMessageSender;
         private readonly IWashTradePositionPairer _positionPairer;
+        private readonly IWashTradeClustering _clustering;
         private readonly ILogger _logger;
 
         public string RuleVersion { get; } = Versioner.Version(1, 0);
@@ -23,11 +24,13 @@ namespace Surveillance.Factories
             ICurrencyConverter currencyConverter,
             IWashTradeCachedMessageSender cachedMessageSender,
             IWashTradePositionPairer positionPairer,
+            IWashTradeClustering clustering,
             ILogger<WashTradeRule> logger)
         {
             _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
+            _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -43,7 +46,7 @@ namespace Surveillance.Factories
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            return new WashTradeRule(parameters, ruleCtx, _positionPairer, _cachedMessageSender, _currencyConverter, _logger);
+            return new WashTradeRule(parameters, ruleCtx, _positionPairer, _clustering, _cachedMessageSender, _currencyConverter, _logger);
         }
     }
 }

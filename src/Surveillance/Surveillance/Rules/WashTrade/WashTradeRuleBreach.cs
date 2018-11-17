@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Finance;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -81,16 +82,23 @@ namespace Surveillance.Rules.WashTrade
 
         public class WashTradeClusteringPositionBreach
         {
-            public WashTradeClusteringPositionBreach(bool clusteringPositionBreach)
+            public WashTradeClusteringPositionBreach(
+                bool clusteringPositionBreach,
+                int amountOfBreachingClusters,
+                IReadOnlyCollection<decimal> centroidsOfBreachingClusters)
             {
                 ClusteringPositionBreach = clusteringPositionBreach;
+                AmountOfBreachingClusters = amountOfBreachingClusters;
+                CentroidsOfBreachingClusters = centroidsOfBreachingClusters ?? new decimal[0];
             }
 
             public bool ClusteringPositionBreach { get; }
+            public int AmountOfBreachingClusters { get; }
+            public IReadOnlyCollection<decimal> CentroidsOfBreachingClusters { get; }
 
             public static WashTradeClusteringPositionBreach None()
             {
-                return new WashTradeClusteringPositionBreach(false);
+                return new WashTradeClusteringPositionBreach(false, 0, null);
             }
         }
     }

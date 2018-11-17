@@ -13,7 +13,7 @@ namespace Surveillance.Rules.WashTrade
     /// </summary>
     public class WashTradePositionPairer : IWashTradePositionPairer
     {
-        public IReadOnlyCollection<PositionPair> PairUp(
+        public IReadOnlyCollection<PositionCluster> PairUp(
             List<TradeOrderFrame> trades,
             IWashTradeRuleParameters parameters)
         {
@@ -21,12 +21,12 @@ namespace Surveillance.Rules.WashTrade
                 || !trades.Any()
                 || parameters == null)
             {
-                return new PositionPair[0];
+                return new PositionCluster[0];
             }
 
             trades = trades.Where(tr => tr != null).ToList();
 
-            var positionPairs = new List<PositionPair>();
+            var positionPairs = new List<PositionCluster>();
             var currentBuyPosition = new TradePosition(new List<TradeOrderFrame>());
             var currentSellPosition = new TradePosition(new List<TradeOrderFrame>());
             var benchmarkPrice = 0m;
@@ -50,7 +50,7 @@ namespace Surveillance.Rules.WashTrade
                     if (currentBuyPosition.Get().Any()
                         && currentSellPosition.Get().Any())
                     {
-                        positionPairs.Add(new PositionPair(currentBuyPosition, currentSellPosition));
+                        positionPairs.Add(new PositionCluster(currentBuyPosition, currentSellPosition));
                     }
 
                     currentBuyPosition = new TradePosition(new List<TradeOrderFrame>());
@@ -71,7 +71,7 @@ namespace Surveillance.Rules.WashTrade
             if (currentBuyPosition.Get().Any()
                 && currentSellPosition.Get().Any())
             {
-                positionPairs.Add(new PositionPair(currentBuyPosition, currentSellPosition));
+                positionPairs.Add(new PositionCluster(currentBuyPosition, currentSellPosition));
             }
 
             return positionPairs;
@@ -94,18 +94,6 @@ namespace Surveillance.Rules.WashTrade
             }
 
             return false;
-        }
-
-        public class PositionPair
-        {
-            public PositionPair(TradePosition buys, TradePosition sells)
-            {
-                Buys = buys;
-                Sells = sells;
-            }
-
-            public TradePosition Buys { get; }
-            public TradePosition Sells { get; }
         }
     }
 }

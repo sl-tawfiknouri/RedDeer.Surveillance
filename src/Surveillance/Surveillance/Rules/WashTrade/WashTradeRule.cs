@@ -27,6 +27,7 @@ namespace Surveillance.Rules.WashTrade
         private readonly ILogger _logger;
         private readonly IWashTradeRuleParameters _parameters;
         private readonly IWashTradePositionPairer _positionPairer;
+        private readonly IWashTradeClustering _clustering;
         private readonly IWashTradeCachedMessageSender _messageSender;
         private readonly ICurrencyConverter _currencyConverter;
 
@@ -34,6 +35,7 @@ namespace Surveillance.Rules.WashTrade
             IWashTradeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradePositionPairer positionPairer,
+            IWashTradeClustering clustering,
             IWashTradeCachedMessageSender messageSender,
             ICurrencyConverter currencyConverter,
             ILogger logger)
@@ -47,6 +49,7 @@ namespace Surveillance.Rules.WashTrade
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
+            _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -61,6 +64,7 @@ namespace Surveillance.Rules.WashTrade
                     .Where(at =>
                         at.OrderStatus == OrderStatus.Fulfilled
                         || at.OrderStatus == OrderStatus.PartialFulfilled)
+                    .Where(at => at.ExecutedPrice != null)
                     .ToList();
 
             if (!liveTrades?.Any() ?? true)
@@ -239,15 +243,15 @@ namespace Surveillance.Rules.WashTrade
             return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
         }
 
-        private IReadOnlyCollection<WashTradePositionPairer.PositionPair> FilteredPairsByVolume(IReadOnlyCollection<WashTradePositionPairer.PositionPair> pairs)
+        private IReadOnlyCollection<PositionCluster> FilteredPairsByVolume(IReadOnlyCollection<PositionCluster> pairs)
         {
             if (pairs == null
                 || !pairs.Any())
             {
-                return new WashTradePositionPairer.PositionPair[0];
+                return new PositionCluster[0];
             }
 
-            var results = new List<WashTradePositionPairer.PositionPair>();
+            var results = new List<PositionCluster>();
             foreach (var pair in pairs)
             {
                 var buyVolume = pair.Buys.Get().Sum(b => b.FulfilledVolume);
@@ -334,9 +338,49 @@ namespace Surveillance.Rules.WashTrade
                 return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
 
+            var clusters = _clustering.Cluster(activeTrades);
 
+            if (clusters == null
+                || !clusters.Any())
+            {
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+            }
 
-            return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+            var breachingClusters = new List<PositionClusterCentroid>();
+            foreach (var cluster in clusters)
+            {
+                var counts = cluster.Buys.Get().Count + cluster.Sells.Get().Count;
+
+                if (counts < _parameters.ClusteringPositionMinimumNumberOfTrades)
+                {
+                    continue;
+                }
+
+                var buyValue = cluster.Buys.Get().Sum(b => b.ExecutedPrice.Value.Value * b.FulfilledVolume);
+                var sellValue = cluster.Sells.Get().Sum(s => s.ExecutedPrice.Value.Value * s.FulfilledVolume);
+                
+                var largerValue = Math.Max(buyValue, sellValue);
+                var smallerValue = Math.Min(buyValue, sellValue);
+
+                var offset = largerValue * _parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
+                var lowerBoundary = largerValue - offset;
+                var upperBoundary = largerValue + offset;
+
+                if (smallerValue >= lowerBoundary
+                    && smallerValue <= upperBoundary)
+                {
+                    breachingClusters.Add(cluster);
+                }
+            }
+
+            if (!breachingClusters.Any())
+            {
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+            }
+
+            var centroids = breachingClusters.Select(bc => bc.CentroidPrice).ToList();
+
+            return new WashTradeRuleBreach.WashTradeClusteringPositionBreach(true, breachingClusters.Count, centroids);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

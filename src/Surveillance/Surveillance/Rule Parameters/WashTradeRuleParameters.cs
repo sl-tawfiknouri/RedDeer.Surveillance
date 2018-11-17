@@ -19,7 +19,9 @@ namespace Surveillance.Rule_Parameters
             decimal? pairingPositionPercentagePriceChangeThresholdPerPair,
             decimal? pairingPositionPercentageVolumeDifferenceThreshold,
             decimal? pairingPositionMaximumAbsoluteCurrencyAmount,
-            string pairingPositionMaximumAbsoluteCurrency)
+            string pairingPositionMaximumAbsoluteCurrency,
+            int? clusteringPositionMinimumNumberOfTrades,
+            decimal? clusteringPercentageValueDifferenceThreshold)
         {
             WindowSize = windowSize;
 
@@ -37,6 +39,9 @@ namespace Surveillance.Rule_Parameters
             PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
             PairingPositionMaximumAbsoluteCurrencyAmount = pairingPositionMaximumAbsoluteCurrencyAmount;
             PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
+
+            ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
+            ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -57,6 +62,8 @@ namespace Surveillance.Rule_Parameters
             decimal? pairingPositionPercentageVolumeDifferenceThreshold,
             decimal? pairingPositionMaximumAbsoluteCurrencyAmount,
             string pairingPositionMaximumAbsoluteCurrency,
+            int? clusteringPositionMinimumNumberOfTrades,
+            decimal? clusteringPercentageValueDifferenceThreshold,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets)
@@ -77,6 +84,9 @@ namespace Surveillance.Rule_Parameters
             PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
             PairingPositionMaximumAbsoluteCurrencyAmount = pairingPositionMaximumAbsoluteCurrencyAmount;
             PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
+
+            ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
+            ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
 
             Accounts = accounts;
             Traders = traders;
@@ -103,6 +113,11 @@ namespace Surveillance.Rule_Parameters
         public decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
         public decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
         public string PairingPositionMaximumAbsoluteCurrency { get; }
+        
+        // Clustering (k-means) parameters
+        public int? ClusteringPositionMinimumNumberOfTrades { get; }
+        public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }

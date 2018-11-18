@@ -122,8 +122,6 @@ namespace Surveillance.Rules.WashTrade
         /// </summary>
         public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<TradeOrderFrame> activeTrades)
         {
-            return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
-
             if (!_parameters.PerformAveragePositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
@@ -158,7 +156,7 @@ namespace Surveillance.Rules.WashTrade
 
             var relativeValue = Math.Abs((valueOfBuy / valueOfSell) - 1);
 
-            if (relativeValue > _parameters.AveragePositionMaximumAbsoluteValueChangeAmount.GetValueOrDefault(0))
+            if (relativeValue > _parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
@@ -209,8 +207,6 @@ namespace Surveillance.Rules.WashTrade
 
         public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<TradeOrderFrame> activeTrades)
         {
-            return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-
             if (!_parameters.PerformPairingPositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
@@ -234,6 +230,11 @@ namespace Surveillance.Rules.WashTrade
             if (_parameters.PairingPositionPercentageVolumeDifferenceThreshold != null)
             {
                 pairings = FilteredPairsByVolume(pairings);
+            }
+
+            if (!pairings.Any())
+            {
+                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
             }
 
             var buyCount = pairings.SelectMany(a => a.Buys.Get()).Count();

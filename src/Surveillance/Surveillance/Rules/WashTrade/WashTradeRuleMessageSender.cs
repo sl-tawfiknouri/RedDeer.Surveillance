@@ -78,7 +78,7 @@ namespace Surveillance.Rules.WashTrade
                     2,
                     MidpointRounding.AwayFromZero);
 
-            var averagePosition = $" {trades} appeared to be part of a series of wash trade activity. These trades netted a total of {percentageChange}% in the value of the traders position, lower values of change are considered to be stronger evidence of wash trading. {percentageChangeMax}% was the configured maximum value change for this to be considered an alert.";
+            var averagePosition = $" {trades} trades appeared to be part of a series of wash trade activity. These trades netted a total of {percentageChange}% in the value of the traders position, lower values of change are considered to be stronger evidence of wash trading. {percentageChangeMax}% was the configured maximum value change for this to be considered an alert.";
 
             if (breach.Parameters.AveragePositionMaximumAbsoluteValueChangeAmount != null
                 && breach.AveragePositionBreach.AveragePositionAbsoluteValueChange != null)
@@ -95,7 +95,7 @@ namespace Surveillance.Rules.WashTrade
 
         private string BuildPositionPairedDescription(IWashTradeRuleBreach breach)
         {
-            return $" Paired position rule breach was found for a total of {breach.PairingPositionBreach.PairedTradesTotal} pairs. {breach.PairingPositionBreach.PairedTradesTotal} individual trades constituted the paired trades total.";
+            return $" Paired position rule breach was found for a total of {breach.PairingPositionBreach.PairedTradesInBreach} pairs. {breach.PairingPositionBreach.PairedTradesTotal} individual trades constituted the paired trades total.";
         }
 
         private string BuildPositionClusteringDescription(IWashTradeRuleBreach breach)

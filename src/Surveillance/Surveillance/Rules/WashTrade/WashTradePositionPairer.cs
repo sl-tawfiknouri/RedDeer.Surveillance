@@ -87,8 +87,11 @@ namespace Surveillance.Rules.WashTrade
 
             var offset = currentPrice * parameters.PairingPositionPercentagePriceChangeThresholdPerPair.GetValueOrDefault(0);
 
-            if (((currentPrice - offset) <= newPrice)
-                && ((currentPrice + offset) >= newPrice))
+            var lowerBoundary = currentPrice - offset;
+            var upperBoundary = currentPrice + offset;
+
+            if (lowerBoundary <= newPrice
+                && upperBoundary >= newPrice)
             {
                 return true;
             }

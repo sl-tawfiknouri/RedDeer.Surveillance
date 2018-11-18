@@ -13,9 +13,11 @@ namespace TestHarness.Engine.OrderGenerator
     public class TradingWashTradeProcess : BaseTradingProcess
     {
         private readonly DataGenerationPlan _plan;
+        private readonly DateTime _thirdGroupActivation;
         private readonly object _lock = new object();
         private bool _initialCluster = false;
         private bool _secondaryCluster = false;
+        private bool _thirdCluster = false;
 
         public TradingWashTradeProcess(
             ITradeStrategy<TradeOrderFrame> orderStrategy,
@@ -24,6 +26,7 @@ namespace TestHarness.Engine.OrderGenerator
             : base(logger, orderStrategy)
         {
             _plan = plan;
+            _thirdGroupActivation = _plan.EquityInstructions.TerminationInUtc.AddHours(4);
         }
 
         protected override void _InitiateTrading()
@@ -58,6 +61,15 @@ namespace TestHarness.Engine.OrderGenerator
                     WashTradeInSecurityWithClustering(_plan.Sedol, value, 30);
 
                     _secondaryCluster = true;
+                    return;
+                }
+
+                if (!_thirdCluster
+                    && _thirdGroupActivation <= value.TimeStamp)
+                {
+                    WashTradeInSecurityWithClustering(_plan.Sedol, value, 20);
+
+                    _thirdCluster = true;
                     return;
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Accord.MachineLearning;
+using Accord.Math.Distances;
 using Domain.Trades.Orders;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Trades;
@@ -26,7 +27,7 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var clusterCount = OptimalClusterCount(frames);
-            var kMeans = new KMeans(k: clusterCount);
+            var kMeans = new KMeans(k: clusterCount) { Distance = new WeightedSquareEuclidean(new double[] { 2, 0.3 }) };
 
             var prices =
                 filteredFrames

@@ -436,8 +436,8 @@ namespace Surveillance.Universe
                     var ctx = opCtx.CreateAndStartRuleRunContext(
                         Domain.Scheduling.Rules.WashTrade.GetDescription(),
                         _washTradeRuleFactory.RuleVersion,
-                        DateTime.UtcNow,
-                        DateTime.UtcNow);
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
 
                     var washTrade = _washTradeRuleFactory.Build(param, ctx);
 

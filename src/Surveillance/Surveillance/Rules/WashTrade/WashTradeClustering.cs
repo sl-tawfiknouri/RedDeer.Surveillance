@@ -62,10 +62,22 @@ namespace Surveillance.Rules.WashTrade
 
         private int OptimalClusterCount(IReadOnlyCollection<TradeOrderFrame> frames)
         {
-            if (frames.Count < 3)
+            if (frames.Count < 10)
             {
-                return frames.Count;
+                return 1;
             }
+
+            if (frames.Count < 20)
+            {
+                return 3;
+            }
+
+            if (frames.Count < 100)
+            {
+                return 4;
+            }
+
+            // this is good for high numbers but leaves us with too many clusters at lower numbers
 
             return (int)Math.Ceiling(Math.Sqrt(frames.Count));
         }

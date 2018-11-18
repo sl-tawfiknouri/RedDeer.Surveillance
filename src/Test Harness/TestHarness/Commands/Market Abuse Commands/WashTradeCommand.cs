@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
+using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderStorage.Interfaces;
+using TestHarness.Engine.Plans;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 
@@ -198,8 +202,8 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
                 var washTradeProcess =
                     _appFactory
-                        .TradingCancelled2Factory
-                        .Build(fromDate, sedols);
+                        .WashTradeFactory
+                        .Build(BuildPlan(sedols, fromDate, marketData));
 
                 _networkManager =
                     _appFactory
@@ -248,6 +252,42 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
                 _equityProcess.InitiateWalk(equityStream, marketData, priceApiResult);
             }
+        }
+
+        private DataGenerationPlan BuildPlan(IReadOnlyCollection<string> sedols, DateTime from, ExchangeDto dto)
+        {
+            if (sedols == null
+                || !sedols.Any())
+            {
+                return new DataGenerationPlan(
+                    null,
+                    new IntervalEquityPriceInstruction(
+                        string.Empty,
+                        TimeSpan.MinValue,
+                        TimeSpan.MinValue, 
+                        TimeSpan.FromDays(1),
+                        DateTime.MinValue,
+                        DateTime.MinValue,
+                        PriceManipulation.Consistent,
+                        0m));
+            }
+
+            var sedol = sedols.FirstOrDefault();
+            var openTime = from.Add(dto.MarketOpenTime).AddMinutes(60);
+            var plan =
+                new DataGenerationPlan(
+                    sedol,
+                    new IntervalEquityPriceInstruction(
+                        sedol,
+                        openTime.TimeOfDay,
+                        openTime.TimeOfDay.Add(TimeSpan.FromMinutes(30)),
+                        TimeSpan.FromMinutes(1),
+                        from.Date.Add(openTime.TimeOfDay),
+                        from.Date.Add(openTime.TimeOfDay.Add(TimeSpan.FromMinutes(30))),
+                        PriceManipulation.Increase, 
+                        0.01m));
+
+            return plan;
         }
     }
 }

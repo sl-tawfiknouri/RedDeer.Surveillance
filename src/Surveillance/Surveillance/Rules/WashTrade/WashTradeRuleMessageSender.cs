@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
@@ -105,11 +106,17 @@ namespace Surveillance.Rules.WashTrade
                     2,
                     MidpointRounding.AwayFromZero);
 
+            var centroids =
+                breach
+                    .ClusteringPositionBreach?.CentroidsOfBreachingClusters
+                    .Select(ce => Math.Round(ce, 2, MidpointRounding.AwayFromZero))
+                ?? new List<decimal>();
+
             var initial = $" A clustering (k-means) rule breach was found with {breach.ClusteringPositionBreach.AmountOfBreachingClusters} clusters detected to be trading at thin margins per cluster defined as less than a {percentageChangeMax}% difference between cost and revenues when buying and selling a position.";
 
             if (breach.ClusteringPositionBreach.CentroidsOfBreachingClusters?.Any() ?? false)
             {
-                initial = $"{initial} The centroids of the clusters were {breach.ClusteringPositionBreach.CentroidsOfBreachingClusters.Aggregate(string.Empty, (a, b) => $"{a}{b}")}";
+                initial = $"{initial} The centroids of the clusters were at the prices {centroids.Aggregate(string.Empty, (a, b) => $"{a}{b}")}";
             }
 
             return initial;

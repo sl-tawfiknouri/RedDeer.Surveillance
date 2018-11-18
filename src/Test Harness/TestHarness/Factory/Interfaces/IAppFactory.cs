@@ -11,6 +11,7 @@ using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
 using TestHarness.Factory.TradeMarkingTheCloseFactory.Interfaces;
+using TestHarness.Factory.TradeWashTradeFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.Factory.TradingLayeringFactory.Interfaces;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
@@ -49,6 +50,8 @@ namespace TestHarness.Factory.Interfaces
         ITradingLayeringFactory LayeringProcessFactory { get;}
         ITradingMarkingTheCloseFactory MarkingTheCloseFactory { get; }
         ITradingSpoofingV2Factory SpoofingV2Factory { get; }
+        ITradeWashTradeFactory WashTradeFactory { get; }
+
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
         IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }

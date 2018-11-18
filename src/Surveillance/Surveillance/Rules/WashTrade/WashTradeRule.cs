@@ -72,6 +72,14 @@ namespace Surveillance.Rules.WashTrade
                 return;
             }
 
+            var tradePosition = new TradePosition(
+                activeTrades
+                    .Where(at =>
+                        at.OrderStatus == OrderStatus.Fulfilled
+                        || at.OrderStatus == OrderStatus.PartialFulfilled)
+                    .Where(at => at.ExecutedPrice != null)
+                    .ToList());
+
             // Net change analysis
             var averagePositionCheckTask = NettingTrades(liveTrades);
             averagePositionCheckTask.Wait();
@@ -92,7 +100,6 @@ namespace Surveillance.Rules.WashTrade
                 return;
             }
 
-            var trades = new TradePosition(liveTrades);
             var security = liveTrades?.FirstOrDefault()?.Security;
 
             _alerts += 1;
@@ -101,7 +108,7 @@ namespace Surveillance.Rules.WashTrade
             var breach =
                 new WashTradeRuleBreach(
                     _parameters,
-                    trades,
+                    tradePosition,
                     security,
                     averagePositionCheck,
                     pairingPositionsCheck,
@@ -115,6 +122,8 @@ namespace Surveillance.Rules.WashTrade
         /// </summary>
         public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<TradeOrderFrame> activeTrades)
         {
+            return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
+
             if (!_parameters.PerformAveragePositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
@@ -200,6 +209,8 @@ namespace Surveillance.Rules.WashTrade
 
         public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<TradeOrderFrame> activeTrades)
         {
+            return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
+
             if (!_parameters.PerformPairingPositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();

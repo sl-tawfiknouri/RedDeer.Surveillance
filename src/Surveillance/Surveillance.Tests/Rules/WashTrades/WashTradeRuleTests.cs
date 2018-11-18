@@ -275,5 +275,53 @@ namespace Surveillance.Tests.Rules.WashTrades
             Assert.AreEqual(result.ClusteringPositionBreach, true);
             Assert.AreEqual(result.AmountOfBreachingClusters, 2);
         }
+
+        [Test]
+        public void Clustering_FourClusterExpectedWithOnInValueAndNumberOfTradesRange_ReturnsOneBreach()
+        {
+            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _parameters.ClusteringPositionMinimumNumberOfTrades).Returns(4);
+
+            var rule = new WashTradeRule(
+                _parameters,
+                _ruleCtx,
+                _positionPairer,
+                _clustering,
+                _messageSender,
+                _currencyConverter,
+                _logger);
+
+            var tr1 = new TradeOrderFrame().Random(21);
+            var tr2 = new TradeOrderFrame().Random(21);
+            var tr11 = new TradeOrderFrame().Random(21);
+            var tr22 = new TradeOrderFrame().Random(21);
+
+
+            var tr3 = new TradeOrderFrame().Random(100);
+            var tr4 = new TradeOrderFrame().Random(101);
+
+            var tr5 = new TradeOrderFrame().Random(50);
+            var tr6 = new TradeOrderFrame().Random(70);
+
+            tr1.Position = OrderPosition.Buy;
+            tr2.Position = OrderPosition.Sell;
+            tr1.FulfilledVolume = 950;
+            tr2.FulfilledVolume = 1000;
+            tr11.Position = OrderPosition.Buy;
+            tr22.Position = OrderPosition.Sell;
+            tr11.FulfilledVolume = 950;
+            tr22.FulfilledVolume = 1000;
+
+            tr3.Position = OrderPosition.Buy;
+            tr4.Position = OrderPosition.Sell;
+            tr4.FulfilledVolume = 1500;
+            tr3.FulfilledVolume = 1500;
+
+            var trades = new List<TradeOrderFrame> { tr1, tr2, tr3, tr4, tr5, tr6, tr11, tr22 };
+            var result = rule.ClusteringTrades(trades);
+
+            Assert.AreEqual(result.ClusteringPositionBreach, true);
+            Assert.AreEqual(result.AmountOfBreachingClusters, 1);
+        }
     }
 }

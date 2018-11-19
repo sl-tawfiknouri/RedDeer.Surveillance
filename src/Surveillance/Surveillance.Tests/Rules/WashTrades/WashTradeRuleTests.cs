@@ -57,7 +57,6 @@ namespace Surveillance.Tests.Rules.WashTrades
             var result = rule.ClusteringTrades(null);
 
             Assert.AreEqual(result.ClusteringPositionBreach, false);
-            A.CallTo(() => _clustering.Cluster(A<IReadOnlyCollection<TradeOrderFrame>>.Ignored)).MustNotHaveHappened();
         }
 
         [Test]
@@ -77,7 +76,6 @@ namespace Surveillance.Tests.Rules.WashTrades
            var result = rule.ClusteringTrades(null);
 
             Assert.AreEqual(result.ClusteringPositionBreach, false);
-            A.CallTo(() => _clustering.Cluster(A<IReadOnlyCollection<TradeOrderFrame>>.Ignored)).MustNotHaveHappened();
         }
 
         [Test]
@@ -98,7 +96,6 @@ namespace Surveillance.Tests.Rules.WashTrades
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, false);
-            A.CallTo(() => _clustering.Cluster(A<IReadOnlyCollection<TradeOrderFrame>>.Ignored)).MustHaveHappened();
         }
 
         [Test]

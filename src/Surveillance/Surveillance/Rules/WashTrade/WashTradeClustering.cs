@@ -77,9 +77,7 @@ namespace Surveillance.Rules.WashTrade
                 return 4;
             }
 
-            // this is good for high numbers but leaves us with too many clusters at lower numbers
-
-            return (int)Math.Ceiling(Math.Sqrt(frames.Count));
+            return (int)Math.Ceiling(Math.Sqrt(frames.Count) - 5);
         }
     }
 }

@@ -45,6 +45,8 @@ namespace Surveillance.System.Auditing.Context
             _operationLogging.Log(new Exception(message), _distributeRule);
         }
 
+        public string Id => _distributeRule?.Id.ToString() ?? string.Empty;
+
         public ISystemProcessOperationContext EndEvent()
         {
             return _processOperationContext;

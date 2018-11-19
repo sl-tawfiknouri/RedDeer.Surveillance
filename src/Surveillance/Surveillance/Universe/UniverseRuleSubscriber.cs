@@ -107,7 +107,8 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.Spoofing.GetDescription(),
                             _spoofingRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx);
 
@@ -160,7 +161,8 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
                             _cancelledOrderRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx);
 
@@ -214,14 +216,16 @@ namespace Surveillance.Universe
                                 Domain.Scheduling.Rules.HighProfits.GetDescription(),
                                 _highProfitRuleFactory.RuleVersion,
                                 execution.TimeSeriesInitiation.DateTime,
-                                execution.TimeSeriesTermination.DateTime);
+                                execution.TimeSeriesTermination.DateTime,
+                                execution.CorrelationId);
 
                     var ruleCtxMarketClosure = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.HighProfits.GetDescription(),
                             _highProfitRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure);
                     if (param.HasFilters())
@@ -273,7 +277,8 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
                             _markingTheCloseFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx);
 
@@ -327,7 +332,8 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.Layering.GetDescription(),
                             _layeringRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var layering = _layeringRuleFactory.Build(param, ruleCtx);
 
@@ -381,7 +387,8 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.HighVolume.GetDescription(),
                             _highVolumeRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
                     var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx);
 

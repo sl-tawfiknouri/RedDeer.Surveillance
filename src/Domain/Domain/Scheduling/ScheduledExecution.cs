@@ -22,5 +22,10 @@ namespace Domain.Scheduling
         /// Filter to apply to the data set time series
         /// </summary>
         public DateTimeOffset TimeSeriesTermination { get; set; }
+
+        /// <summary>
+        /// Typically the op id of the distributed rule
+        /// </summary>
+        public string CorrelationId { get; set; }
     }
 }

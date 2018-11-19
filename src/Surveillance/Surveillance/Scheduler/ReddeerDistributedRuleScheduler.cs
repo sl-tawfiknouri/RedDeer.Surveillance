@@ -161,7 +161,7 @@ namespace Surveillance.Scheduler
                 foreach (var ruleSet in identifiableRules)
                 {
                     var ruleInstance = new RuleIdentifier { Rule = rule.Rule, Ids = new[] { ruleSet.Id } };
-                    await ScheduleRule(ruleInstance, execution, ruleSet.WindowSize);
+                    await ScheduleRule(ruleInstance, execution, ruleSet.WindowSize, ruleCtx.Id);
                 }
             }
             else
@@ -183,7 +183,7 @@ namespace Surveillance.Scheduler
                     }
 
                     var ruleInstance = new RuleIdentifier { Rule = rule.Rule, Ids = new[] { id } };
-                    await ScheduleRule(ruleInstance, execution, identifiableRule.WindowSize);
+                    await ScheduleRule(ruleInstance, execution, identifiableRule.WindowSize, ruleCtx.Id);
                 }
             }
         }
@@ -199,7 +199,7 @@ namespace Surveillance.Scheduler
                         execution.Rules?.Aggregate(string.Empty, (x, i) => x + ", " + i.Rule.GetDescription() + $" ({(i.Ids.Any() ? i.Ids?.Aggregate((a, b) => a + "," + b)?.Trim(',') ?? string.Empty : string.Empty) })").Trim(',', ' '));
         }
 
-        private async Task ScheduleRule(RuleIdentifier ruleIdentifier, ScheduledExecution execution, TimeSpan? timespan)
+        private async Task ScheduleRule(RuleIdentifier ruleIdentifier, ScheduledExecution execution, TimeSpan? timespan, string correlationId)
         {
             var ruleTimespan = execution.TimeSeriesTermination - execution.TimeSeriesInitiation;
             var ruleParameterTimeWindow = timespan;
@@ -207,13 +207,13 @@ namespace Surveillance.Scheduler
             if (ruleParameterTimeWindow == null
                 || ruleTimespan.TotalDays < 7)
             {
-                await ScheduleSingleExecution(ruleIdentifier, execution);
+                await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
             if (ruleParameterTimeWindow.GetValueOrDefault().TotalDays >= ruleTimespan.TotalDays)
             {
-                await ScheduleSingleExecution(ruleIdentifier, execution);
+                await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
@@ -221,20 +221,21 @@ namespace Surveillance.Scheduler
 
             if (daysToRunRuleFor >= ruleTimespan.TotalDays)
             {
-                await ScheduleSingleExecution(ruleIdentifier, execution);
+                await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
-            await TimeSplitter(ruleIdentifier, execution, ruleParameterTimeWindow, daysToRunRuleFor);
+            await TimeSplitter(ruleIdentifier, execution, ruleParameterTimeWindow, daysToRunRuleFor, correlationId);
         }
 
-        private async Task ScheduleSingleExecution(RuleIdentifier rule, ScheduledExecution execution)
+        private async Task ScheduleSingleExecution(RuleIdentifier rule, ScheduledExecution execution, string correlationId)
         {
             var distributedExecution = new ScheduledExecution
             {
                 Rules = new List<RuleIdentifier> { rule },
                 TimeSeriesInitiation = execution.TimeSeriesInitiation,
-                TimeSeriesTermination = execution.TimeSeriesTermination
+                TimeSeriesTermination = execution.TimeSeriesTermination,
+                CorrelationId = correlationId
             };
 
             await ScheduleExecution(distributedExecution);
@@ -244,7 +245,8 @@ namespace Surveillance.Scheduler
             RuleIdentifier rule,
             ScheduledExecution execution,
             TimeSpan? ruleParameterTimeWindow,
-            double daysToRunRuleFor)
+            double daysToRunRuleFor,
+            string correlationId)
         {
             var continueSplit = true;
             var executions = new List<ScheduledExecution>();
@@ -262,7 +264,8 @@ namespace Surveillance.Scheduler
                 {
                     Rules = new List<RuleIdentifier> { rule },
                     TimeSeriesInitiation = currentInitiationPoint,
-                    TimeSeriesTermination = currentEndPoint
+                    TimeSeriesTermination = currentEndPoint,
+                    CorrelationId = correlationId
                 };
 
                 executions.Add(distributedExecution);

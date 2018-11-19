@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Subscriber.Factory;
+using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
@@ -26,6 +28,7 @@ namespace Surveillance.Scheduler
         private readonly IApiHeartbeat _apiHeartbeat;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
+        private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -40,6 +43,7 @@ namespace Surveillance.Scheduler
             IApiHeartbeat apiHeartbeat,
             ISystemProcessContext systemProcessContext,
             IUniverseRuleSubscriber ruleSubscriber,
+            IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -54,6 +58,7 @@ namespace Surveillance.Scheduler
             _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
+            _analyticsSubscriber = analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -144,8 +149,11 @@ namespace Surveillance.Scheduler
 
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
+            var subscriber = _analyticsSubscriber.Build();
 
             await _ruleSubscriber.SubscribeRules(execution, player, opCtx);
+            player.Subscribe(subscriber);
+
             player.Play(universe);
             opCtx.EndEvent();
         }

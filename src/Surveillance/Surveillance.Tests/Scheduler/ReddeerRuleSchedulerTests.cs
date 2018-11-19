@@ -6,6 +6,7 @@ using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
@@ -31,6 +32,7 @@ namespace Surveillance.Tests.Scheduler
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+        private IUniverseAnalyticsSubscriberFactory _factory;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -49,6 +51,7 @@ namespace Surveillance.Tests.Scheduler
             _apiHeartbeat = A.Fake<IApiHeartbeat>();
             _ctx = A.Fake<ISystemProcessContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
+            _factory = A.Fake<IUniverseAnalyticsSubscriberFactory>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -66,6 +69,7 @@ namespace Surveillance.Tests.Scheduler
                     _apiHeartbeat,
                     _ctx,
                     _universeRuleSubscriber,
+                    _factory,
                     _logger));
         }
 
@@ -83,6 +87,7 @@ namespace Surveillance.Tests.Scheduler
                     _apiHeartbeat,
                     _ctx,
                     _universeRuleSubscriber,
+                    _factory,
                     _logger));
         }
 
@@ -98,6 +103,7 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -129,6 +135,7 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -163,6 +170,7 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
                 _logger);
 
             var schedule = new ScheduledExecution

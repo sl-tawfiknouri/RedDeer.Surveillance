@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
+using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
@@ -36,6 +37,7 @@ namespace Surveillance.Tests.Scheduler
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private IUniverseAnalyticsSubscriberFactory _factory;
         private IUniverseAlertStreamFactory _alertStreamFactory;
+        private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -56,6 +58,7 @@ namespace Surveillance.Tests.Scheduler
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _factory = A.Fake<IUniverseAnalyticsSubscriberFactory>();
             _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
+            _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -75,6 +78,7 @@ namespace Surveillance.Tests.Scheduler
                     _universeRuleSubscriber,
                     _factory,
                     _alertStreamFactory,
+                    _alertStreamSubscriberFactory,
                     _logger));
         }
 
@@ -94,6 +98,7 @@ namespace Surveillance.Tests.Scheduler
                     _universeRuleSubscriber,
                     _factory,
                     _alertStreamFactory,
+                    _alertStreamSubscriberFactory,
                     _logger));
         }
 
@@ -111,6 +116,7 @@ namespace Surveillance.Tests.Scheduler
                 _universeRuleSubscriber,
                 _factory,
                 _alertStreamFactory,
+                _alertStreamSubscriberFactory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -144,6 +150,7 @@ namespace Surveillance.Tests.Scheduler
                 _universeRuleSubscriber,
                 _factory,
                 _alertStreamFactory,
+                _alertStreamSubscriberFactory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -180,6 +187,7 @@ namespace Surveillance.Tests.Scheduler
                 _universeRuleSubscriber,
                 _factory,
                 _alertStreamFactory,
+                _alertStreamSubscriberFactory,
                 _logger);
 
             var schedule = new ScheduledExecution

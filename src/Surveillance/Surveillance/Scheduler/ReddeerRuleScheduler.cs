@@ -7,13 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
-using Domain.Streams;
 using Microsoft.Extensions.Logging;
-using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
-using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
-using Surveillance.Analytics.Subscriber.Interfaces;
+using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
@@ -34,6 +31,7 @@ namespace Surveillance.Scheduler
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
         private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
         private readonly IUniverseAlertStreamFactory _alertStreamFactory;
+        private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -50,6 +48,7 @@ namespace Surveillance.Scheduler
             IUniverseRuleSubscriber ruleSubscriber,
             IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
             IUniverseAlertStreamFactory alertStreamFactory,
+            IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -66,6 +65,7 @@ namespace Surveillance.Scheduler
             _ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
             _analyticsSubscriber = analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
+            _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -158,7 +158,9 @@ namespace Surveillance.Scheduler
             var player = _universePlayerFactory.Build();
             var subscriber = _analyticsSubscriber.Build();
             var alertStream = _alertStreamFactory.Build();
+            var alertSubscriber = _alertStreamSubscriberFactory.Build();
 
+            alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
 
             player.Subscribe(subscriber);

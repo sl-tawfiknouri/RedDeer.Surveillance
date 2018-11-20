@@ -17,6 +17,7 @@ namespace Surveillance.Analytics.Subscriber
     /// This is primarily for cross-rule analytics
     /// In the future it will be used for calculating correlations between underlying positions
     /// And perhaps aggregating alerts from multiple rules
+    /// We share one stream per scheduled execution so we can perform cross analysis on alerts raised
     /// </summary>
     public class UniverseAlertsSubscriber : IUniverseAlertSubscriber
     {

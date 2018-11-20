@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.MarkingTheClose;
@@ -10,20 +11,16 @@ namespace Surveillance.Factories
 {
     public class MarkingTheCloseRuleFactory : IMarkingTheCloseRuleFactory
     {
-        private readonly IMarkingTheCloseMessageSender _messageSender;
         private readonly ILogger<MarkingTheCloseRule> _logger;
 
-        public MarkingTheCloseRuleFactory(
-            ILogger<MarkingTheCloseRule> logger,
-            IMarkingTheCloseMessageSender messageSender)
+        public MarkingTheCloseRuleFactory(ILogger<MarkingTheCloseRule> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         }
 
-        public IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
+        public IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx, IUniverseAlertStream alertStream)
         {
-            return new MarkingTheCloseRule(parameters, _messageSender, ruleCtx, _logger);
+            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _logger);
         }
 
         public string RuleVersion => Versioner.Version(1, 0);

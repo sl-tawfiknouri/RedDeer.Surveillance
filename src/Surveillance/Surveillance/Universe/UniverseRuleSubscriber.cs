@@ -79,7 +79,7 @@ namespace Surveillance.Universe
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx, alertStream);
             LayeringRule(execution, player, ruleParameters, opCtx, alertStream);
             HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
-            WashTradeRule(execution, player, ruleParameters, opCtx);
+            WashTradeRule(execution, player, ruleParameters, opCtx, alertStream);
         }
 
         private void SpoofingRule(
@@ -290,7 +290,7 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime,
                             execution.CorrelationId);
 
-                    var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx);
+                    var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -346,7 +346,7 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime,
                             execution.CorrelationId);
 
-                    var layering = _layeringRuleFactory.Build(param, ruleCtx);
+                    var layering = _layeringRuleFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -427,7 +427,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.WashTrade) ?? true)
             {
@@ -455,7 +456,7 @@ namespace Surveillance.Universe
                         execution.TimeSeriesTermination.DateTime,
                         execution.CorrelationId);
 
-                    var washTrade = _washTradeRuleFactory.Build(param, ctx);
+                    var washTrade = _washTradeRuleFactory.Build(param, ctx, alertStream);
 
                     if (param.HasFilters())
                     {

@@ -7,6 +7,7 @@ using Domain.Trades.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters;
@@ -20,38 +21,31 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
     public class CancelledOrderRuleTests
     {
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private ICancelledOrderRuleCachedMessageSender _dedupeCachedMessageSender;
         private ICancelledOrderRuleParameters _parameters;
+        private IUniverseAlertStream _alertStream;
         private ILogger<CancelledOrderRule> _logger;
 
         [SetUp]
         public void Setup()
         {
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _dedupeCachedMessageSender = A.Fake<ICancelledOrderRuleCachedMessageSender>();
             _parameters = A.Fake<ICancelledOrderRuleParameters>();
+            _alertStream = A.Fake<IUniverseAlertStream>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
-        }
-
-        [Test]
-        public void Constructor_ConsidersNullMessageSender_Exceptional()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule( _parameters, null, _ruleCtx, _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNullParameters_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(null, _dedupeCachedMessageSender, _ruleCtx, _logger));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(null, _ruleCtx, _alertStream, _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_parameters, _dedupeCachedMessageSender, _ruleCtx, null));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_parameters, _ruleCtx, _alertStream, null));
         }
 
         [Test]
@@ -83,7 +77,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20);
 
-            var orderRule = new CancelledOrderRule(parameters, _dedupeCachedMessageSender, _ruleCtx, _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _logger);
 
 
             var universeEvents =
@@ -97,7 +91,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() => _dedupeCachedMessageSender.Send(A<CancelledOrderRuleBreach>.Ignored))
+                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -130,7 +124,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null);
 
-            var orderRule = new CancelledOrderRule(parameters, _dedupeCachedMessageSender, _ruleCtx, _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -142,7 +136,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() => _dedupeCachedMessageSender.Send(A<CancelledOrderRuleBreach>.Ignored))
+                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -168,7 +162,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10);
 
-            var orderRule = new CancelledOrderRule(parameters, _dedupeCachedMessageSender, _ruleCtx, _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -180,7 +174,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() => _dedupeCachedMessageSender.Send(A<CancelledOrderRuleBreach>.Ignored))
+                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -207,7 +201,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10);
 
-            var orderRule = new CancelledOrderRule(parameters, _dedupeCachedMessageSender, _ruleCtx, _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -219,7 +213,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() => _dedupeCachedMessageSender.Send(A<CancelledOrderRuleBreach>.Ignored))
+                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 8);
         }
 
@@ -242,7 +236,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10);
 
-            var orderRule = new CancelledOrderRule(parameters, _dedupeCachedMessageSender, _ruleCtx, _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -254,7 +248,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             A
-                .CallTo(() => _dedupeCachedMessageSender.Send(A<CancelledOrderRuleBreach>.Ignored))
+                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustNotHaveHappened();
         }
 

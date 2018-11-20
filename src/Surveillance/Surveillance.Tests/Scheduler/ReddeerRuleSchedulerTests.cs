@@ -6,6 +6,8 @@ using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Streams.Factory.Interfaces;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
@@ -33,6 +35,7 @@ namespace Surveillance.Tests.Scheduler
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private IUniverseAnalyticsSubscriberFactory _factory;
+        private IUniverseAlertStreamFactory _alertStreamFactory;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -52,6 +55,7 @@ namespace Surveillance.Tests.Scheduler
             _ctx = A.Fake<ISystemProcessContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _factory = A.Fake<IUniverseAnalyticsSubscriberFactory>();
+            _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -70,6 +74,7 @@ namespace Surveillance.Tests.Scheduler
                     _ctx,
                     _universeRuleSubscriber,
                     _factory,
+                    _alertStreamFactory,
                     _logger));
         }
 
@@ -88,6 +93,7 @@ namespace Surveillance.Tests.Scheduler
                     _ctx,
                     _universeRuleSubscriber,
                     _factory,
+                    _alertStreamFactory,
                     _logger));
         }
 
@@ -104,6 +110,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _alertStreamFactory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -119,7 +126,7 @@ namespace Surveillance.Tests.Scheduler
            await scheduler.Execute(schedule, _opCtx);
 
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Play(A<IUniverse>.Ignored)).MustHaveHappened();
         }
 
@@ -136,6 +143,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _alertStreamFactory,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -171,6 +179,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _alertStreamFactory,
                 _logger);
 
             var schedule = new ScheduledExecution

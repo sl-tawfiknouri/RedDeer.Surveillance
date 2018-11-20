@@ -7,6 +7,8 @@ using Domain.Equity.Frames;
 using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
@@ -21,18 +23,18 @@ namespace Surveillance.Rules.HighProfits
     {
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ICurrencyConverter _currencyConverter;
-        private readonly IHighProfitRuleCachedMessageSender _sender;
         private readonly IHighProfitsRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        protected readonly IUniverseAlertStream _alertStream;
         private readonly bool _submitRuleBreaches;
 
         protected bool MarketClosureRule = false;
 
         public HighProfitStreamRule(
             ICurrencyConverter currencyConverter,
-            IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream,
             bool submitRuleBreaches,
             ILogger<HighProfitsRule> logger)
             : base(
@@ -44,10 +46,10 @@ namespace Surveillance.Rules.HighProfits
                 logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
-            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _submitRuleBreaches = submitRuleBreaches;
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -139,7 +141,8 @@ namespace Surveillance.Rules.HighProfits
                     position,
                     MarketClosureRule);
 
-            _sender.Send(breach);
+            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+            _alertStream.Add(alertEvent);
         }
 
         private bool HasHighProfitPercentage(decimal profitRatio)
@@ -409,13 +412,12 @@ namespace Surveillance.Rules.HighProfits
                 RunRuleForAllTradingHistories();
             }
 
-            int alerts = 0;
             if (_submitRuleBreaches)
             {
-                alerts = _sender.Flush(_ruleCtx);
+                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
+                _alertStream.Add(alert);
             }
 
-            _ruleCtx.UpdateAlertEvent(alerts);
             _ruleCtx?.EndEvent();
         }
     }

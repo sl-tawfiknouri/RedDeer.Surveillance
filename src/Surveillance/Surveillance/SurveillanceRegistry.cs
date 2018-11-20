@@ -7,6 +7,8 @@ using Domain.Streams;
 using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Factory;
+using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
@@ -104,6 +106,7 @@ namespace Surveillance
             For<IUniverseSortComparer>().Use<UniverseEventComparer>();
 
             For<IUniverseAnalyticsSubscriberFactory>().Use<UniverseAnalyticsSubscriberFactory>();
+            For<IUniverseAlertStreamFactory>().Use<UniverseAlertStreamFactory>();
 
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
 

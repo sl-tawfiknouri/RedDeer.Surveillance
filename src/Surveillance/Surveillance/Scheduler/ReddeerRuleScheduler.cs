@@ -7,7 +7,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
+using Domain.Streams;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Factory.Interfaces;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -29,6 +33,7 @@ namespace Surveillance.Scheduler
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
         private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
+        private readonly IUniverseAlertStreamFactory _alertStreamFactory;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -44,6 +49,7 @@ namespace Surveillance.Scheduler
             ISystemProcessContext systemProcessContext,
             IUniverseRuleSubscriber ruleSubscriber,
             IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
+            IUniverseAlertStreamFactory alertStreamFactory,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -59,6 +65,7 @@ namespace Surveillance.Scheduler
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
             _analyticsSubscriber = analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
+            _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -150,10 +157,11 @@ namespace Surveillance.Scheduler
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
             var subscriber = _analyticsSubscriber.Build();
+            var alertStream = _alertStreamFactory.Build();
 
-            await _ruleSubscriber.SubscribeRules(execution, player, opCtx);
+            await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
+
             player.Subscribe(subscriber);
-
             player.Play(universe);
             opCtx.EndEvent();
         }

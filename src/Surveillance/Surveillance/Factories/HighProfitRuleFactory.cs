@@ -1,6 +1,7 @@
 ﻿using System;
 using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
@@ -35,9 +36,10 @@ namespace Surveillance.Factories
         public IHighProfitRule Build(
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
-            ISystemProcessOperationRunRuleContext ruleCtxMarket)
+            ISystemProcessOperationRunRuleContext ruleCtxMarket,
+            IUniverseAlertStream alertStream)
         {
-            var stream = new HighProfitStreamRule(_currencyConverter, _messageSender, parameters, ruleCtxStream, false, _logger);
+            var stream = new HighProfitStreamRule(_currencyConverter, parameters, ruleCtxStream, alertStream, false, _logger);
             var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, _messageSender, parameters, ruleCtxMarket, _logger);
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);

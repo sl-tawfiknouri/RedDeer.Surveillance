@@ -55,6 +55,7 @@ namespace TestHarness.Commands
                 new Spoofing2Command(appFactory),
                 new LayeringCommand(appFactory),
                 new HighProfitCommand(appFactory),
+                new WashTradeCommand(appFactory),
                _unRecognisedCommand,
             };
         }

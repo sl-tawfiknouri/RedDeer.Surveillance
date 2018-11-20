@@ -175,11 +175,15 @@ namespace Surveillance.Rules.Layering
 
             opposingPosition.Add(mostRecentTrade);
 
+
+            var allTradesInPositions = opposingPosition.Get().Concat(tradingPosition.Get()).ToList();
+            var allTrades = new TradePosition(allTradesInPositions);
+
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
                     _parameters,
                     _parameters.WindowSize,
-                    opposingPosition,
+                    allTrades,
                     mostRecentTrade.Security,
                     hasBidirectionalBreach,
                     hasDailyVolumeBreach,

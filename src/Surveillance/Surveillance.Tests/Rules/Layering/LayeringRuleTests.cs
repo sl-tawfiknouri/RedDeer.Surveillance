@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.Layering;
-using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -68,8 +67,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -94,7 +92,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
         }
 
         [Test]
@@ -119,7 +117,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
@@ -144,7 +142,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
@@ -186,7 +184,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -229,7 +227,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -273,7 +271,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -317,7 +315,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -361,7 +359,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
@@ -424,7 +422,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -487,7 +485,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -550,7 +548,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -595,7 +593,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }

@@ -271,7 +271,7 @@ namespace Surveillance.Tests.Rules.WashTrades
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
-            Assert.AreEqual(result.AmountOfBreachingClusters, 2);
+            Assert.AreEqual(result.AmountOfBreachingClusters, 1);
         }
 
         [Test]

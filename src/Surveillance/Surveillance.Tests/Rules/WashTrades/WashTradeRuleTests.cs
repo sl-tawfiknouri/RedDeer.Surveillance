@@ -3,6 +3,7 @@ using Domain.Trades.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -18,7 +19,7 @@ namespace Surveillance.Tests.Rules.WashTrades
 
         private ICurrencyConverter _currencyConverter;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private IWashTradeCachedMessageSender _messageSender;
+        private IUniverseAlertStream _alertStream;
         private IWashTradeClustering _clustering;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleParameters _parameters;
@@ -29,7 +30,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         {
             _currencyConverter = A.Fake<ICurrencyConverter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _messageSender = A.Fake<IWashTradeCachedMessageSender>();
+            _alertStream = A.Fake<IUniverseAlertStream>();
             _clustering = new WashTradeClustering();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _parameters = A.Fake<IWashTradeRuleParameters>();
@@ -50,7 +51,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -69,7 +70,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -88,7 +89,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -108,7 +109,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -138,7 +139,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -169,7 +170,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -206,7 +207,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -243,7 +244,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 
@@ -284,7 +285,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
-                _messageSender,
+                _alertStream,
                 _currencyConverter,
                 _logger);
 

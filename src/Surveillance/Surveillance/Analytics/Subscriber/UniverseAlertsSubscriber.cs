@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
@@ -8,6 +9,7 @@ using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
+using Surveillance.Rules.WashTrade.Interfaces;
 
 namespace Surveillance.Analytics.Subscriber
 {
@@ -24,6 +26,8 @@ namespace Surveillance.Analytics.Subscriber
         private readonly ILayeringCachedMessageSender _layeringCachedMessageSender;
         private readonly IMarkingTheCloseMessageSender _markingTheCloseMessageSender;
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
+        private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
+        private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         public UniverseAlertsSubscriber(
             ICancelledOrderRuleCachedMessageSender cancelledOrderMessageSender,
@@ -31,7 +35,9 @@ namespace Surveillance.Analytics.Subscriber
             IHighVolumeRuleCachedMessageSender highVolumeMessageSender,
             ILayeringCachedMessageSender layeringMessageSender,
             IMarkingTheCloseMessageSender markingTheCloseMessageSender,
-            ISpoofingRuleMessageSender spoofingMessageSender)
+            ISpoofingRuleMessageSender spoofingMessageSender,
+            IWashTradeCachedMessageSender washTradeMessageSender,
+            ILogger<IUniverseAlertSubscriber> logger)
         {
             _cancelledOrderMessageSender =
                 cancelledOrderMessageSender
@@ -56,6 +62,12 @@ namespace Surveillance.Analytics.Subscriber
             _spoofingMessageSender =
                 spoofingMessageSender
                 ?? throw new ArgumentNullException(nameof(spoofingMessageSender));
+
+            _washTradeMessageSender =
+                washTradeMessageSender
+                ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void OnCompleted()
@@ -85,7 +97,13 @@ namespace Surveillance.Analytics.Subscriber
                     break;
                 case Domain.Scheduling.Rules.Spoofing:
                     Spoofing(value);
-                    break;               
+                    break;
+                case Domain.Scheduling.Rules.WashTrade:
+                    WashTrade(value);
+                    break;
+                default:
+                    _logger.LogError($"UniverseAlertsSubscriber met a rule type it did not identify {value.Rule}. This should be explicitly addressed.");
+                    break;
             }
         }
 
@@ -173,6 +191,21 @@ namespace Surveillance.Analytics.Subscriber
 
             var ruleBreach = (ISpoofingRuleBreach)alert.UnderlyingAlert;
             _spoofingMessageSender.Send(ruleBreach, alert.Context);
+        }
+
+        private void WashTrade(IUniverseAlertEvent alert)
+        {
+            if (alert.IsFlushEvent)
+            {
+                _washTradeMessageSender.Flush(alert.Context);
+
+                // TODO think more about this line
+                alert.Context?.UpdateAlertEvent(0);
+                return;
+            }
+
+            var ruleBreach = (IWashTradeRuleBreach)alert.UnderlyingAlert;
+            _washTradeMessageSender.Send(ruleBreach);
         }
     }
 }

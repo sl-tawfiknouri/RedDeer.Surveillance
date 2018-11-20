@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Analytics
+﻿namespace Surveillance.DataLayer.Aurora.Analytics
 {
     public class AlertAnalytics
     {

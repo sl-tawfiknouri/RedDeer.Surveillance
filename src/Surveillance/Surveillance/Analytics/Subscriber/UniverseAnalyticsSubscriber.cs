@@ -1,5 +1,6 @@
 ﻿using System;
 using Surveillance.Analytics.Subscriber.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 

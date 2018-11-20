@@ -1,7 +1,12 @@
-﻿namespace Surveillance.Analytics
+﻿namespace Surveillance.DataLayer.Aurora.Analytics
 {
     public class UniverseAnalytics
     {
+        // primary key
+        public int Id { get; set; }
+
+        // foreign key - must be set
+        public int SystemProcessOperationRuleRunId { get; set;}
 
         // event counts
         public int UnknownEventCount { get; set; }
@@ -15,9 +20,9 @@
         // end event counts
 
         // analysis of uniqueness
-        public int UniqueTraders { get; set; }
-        public int UniqueSecurities { get; set; }
-        public int UniqueMarketsTradedOn { get; set; }
+        public int UniqueTradersCount { get; set; }
+        public int UniqueSecuritiesCount { get; set; }
+        public int UniqueMarketsTradedOnCount { get; set; }
         // end of uniqueness analysis
 
     }

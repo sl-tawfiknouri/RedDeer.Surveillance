@@ -7,7 +7,7 @@ namespace Surveillance.Tests.Helpers
 {
     public static class TradeOrderFrameHelper
     {
-        public static TradeOrderFrame Random(this TradeOrderFrame frame)
+        public static TradeOrderFrame Random(this TradeOrderFrame frame, int? price = 20)
         {
             return new TradeOrderFrame(
                 null,
@@ -20,7 +20,7 @@ namespace Surveillance.Tests.Helpers
                     "ENTSPB",
                     "Random Inc"),
                 null,
-                new Price(20, "GBP"), 
+                new Price(price.GetValueOrDefault(20), "GBP"), 
                 1000,
                 1000,
                 OrderPosition.Buy,

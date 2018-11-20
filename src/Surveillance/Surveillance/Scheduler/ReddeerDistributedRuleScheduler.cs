@@ -135,6 +135,10 @@ namespace Surveillance.Scheduler
                         var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
+                    case Domain.Scheduling.Rules.WashTrade:
+                        var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleCtx);
+                        break;
                     default:
                         _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         ruleCtx.EventError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

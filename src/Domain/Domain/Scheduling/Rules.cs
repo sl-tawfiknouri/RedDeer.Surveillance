@@ -15,6 +15,8 @@ namespace Domain.Scheduling
         [Description("Layering")]
         Layering,
         [Description("High Volume")]
-        HighVolume
+        HighVolume,
+        [Description("Wash Trades")]
+        WashTrade,
     }
 }

@@ -23,6 +23,7 @@ namespace Surveillance.Universe
         private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
         private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
         private readonly ILayeringRuleFactory _layeringRuleFactory;
+        private readonly IWashTradeRuleFactory _washTradeRuleFactory;
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
@@ -39,6 +40,7 @@ namespace Surveillance.Universe
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IWashTradeRuleFactory washTradeRuleFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
@@ -53,6 +55,7 @@ namespace Surveillance.Universe
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _washTradeRuleFactory = washTradeRuleFactory ?? throw new ArgumentNullException(nameof(washTradeRuleFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -76,6 +79,7 @@ namespace Surveillance.Universe
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx, alertStream);
             LayeringRule(execution, player, ruleParameters, opCtx, alertStream);
             HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
+            WashTradeRule(execution, player, ruleParameters, opCtx);
         }
 
         private void SpoofingRule(
@@ -416,6 +420,58 @@ namespace Surveillance.Universe
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
+            }
+        }
+
+        private void WashTradeRule(
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            RuleParameterDto ruleParameters,
+            ISystemProcessOperationContext opCtx)
+        {
+            if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.WashTrade) ?? true)
+            {
+                return;
+            }
+
+            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var dtos =
+                ruleParameters
+                    .WashTrades
+                    .Where(wt => filteredParameters.Contains(wt.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
+
+            var washTradeParameters = _ruleParameterMapper.Map(dtos);
+
+            if (washTradeParameters != null
+                && washTradeParameters.Any())
+            {
+                foreach (var param in washTradeParameters)
+                {
+                    var ctx = opCtx.CreateAndStartRuleRunContext(
+                        Domain.Scheduling.Rules.WashTrade.GetDescription(),
+                        _washTradeRuleFactory.RuleVersion,
+                        execution.TimeSeriesInitiation.DateTime,
+                        execution.TimeSeriesTermination.DateTime);
+
+                    var washTrade = _washTradeRuleFactory.Build(param, ctx);
+
+                    if (param.HasFilters())
+                    {
+                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                        filteredUniverse.Subscribe(washTrade);
+                        player.Subscribe(filteredUniverse);
+                    }
+                    else
+                    {
+                        player.Subscribe(washTrade);
+                    }
+                }
+            }
+            else
+            {
+                _logger.LogError("Rule Scheduler - tried to schedule a wash trade rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a wash trade rule execution with no parameters set");
             }
         }
     }

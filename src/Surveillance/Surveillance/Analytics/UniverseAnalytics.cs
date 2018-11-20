@@ -14,6 +14,11 @@
         public int StockMarketCloseCount { get; set; }
         // end event counts
 
+        // analysis of uniqueness
+        public int UniqueTraders { get; set; }
         public int UniqueSecurities { get; set; }
+        public int UniqueMarketsTradedOn { get; set; }
+        // end of uniqueness analysis
+
     }
 }

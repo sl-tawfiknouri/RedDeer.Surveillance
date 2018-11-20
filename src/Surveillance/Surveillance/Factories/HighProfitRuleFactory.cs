@@ -17,18 +17,15 @@ namespace Surveillance.Factories
     public class HighProfitRuleFactory : IHighProfitRuleFactory
     {
         private readonly ICurrencyConverter _currencyConverter;
-        private readonly IHighProfitRuleCachedMessageSender _messageSender;
         private readonly IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
             ICurrencyConverter currencyConverter,
-            IHighProfitRuleCachedMessageSender messageSender,
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
             ILogger<HighProfitsRule> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -40,7 +37,7 @@ namespace Surveillance.Factories
             IUniverseAlertStream alertStream)
         {
             var stream = new HighProfitStreamRule(_currencyConverter, parameters, ruleCtxStream, alertStream, false, _logger);
-            var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, _messageSender, parameters, ruleCtxMarket, _logger);
+            var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, parameters, ruleCtxMarket, alertStream, _logger);
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);
 

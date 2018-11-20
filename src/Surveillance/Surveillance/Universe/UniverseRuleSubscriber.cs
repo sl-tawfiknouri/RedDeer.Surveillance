@@ -236,7 +236,7 @@ namespace Surveillance.Universe
                             execution.TimeSeriesTermination.DateTime,
                             execution.CorrelationId);
 
-                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure);
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream);
                     if (param.HasFilters())
                     {
                         var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
@@ -452,7 +452,8 @@ namespace Surveillance.Universe
                         Domain.Scheduling.Rules.WashTrade.GetDescription(),
                         _washTradeRuleFactory.RuleVersion,
                         execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                        execution.TimeSeriesTermination.DateTime,
+                        execution.CorrelationId);
 
                     var washTrade = _washTradeRuleFactory.Build(param, ctx);
 

@@ -29,6 +29,8 @@ using Surveillance.Recorders;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Calculators.Factories;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -126,6 +128,7 @@ namespace Surveillance
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
+            For<ICostCalculatorFactory>().Use<CostCalculatorFactory>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
             For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
@@ -140,7 +143,7 @@ namespace Surveillance
             For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
-
+            
             For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
             For<IMarketCloseMultiverseTransformer>()
                 .Use<MarketCloseMultiverseTransformer>();

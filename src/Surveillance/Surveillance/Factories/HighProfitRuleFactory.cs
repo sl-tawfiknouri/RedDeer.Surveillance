@@ -5,6 +5,7 @@ using Surveillance.Currency.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -18,17 +19,20 @@ namespace Surveillance.Factories
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IHighProfitRuleCachedMessageSender _messageSender;
         private readonly IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
+        private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
             ICurrencyConverter currencyConverter,
             IHighProfitRuleCachedMessageSender messageSender,
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
+            ICostCalculatorFactory costCalculatorFactory,
             ILogger<HighProfitsRule> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+            _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,8 +41,23 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket)
         {
-            var stream = new HighProfitStreamRule(_currencyConverter, _messageSender, parameters, ruleCtxStream, false, _logger);
-            var marketClosure = new HighProfitMarketClosureRule(_currencyConverter, _messageSender, parameters, ruleCtxMarket, _logger);
+            var stream = new HighProfitStreamRule(
+                _currencyConverter,
+                _messageSender,
+                parameters,
+                ruleCtxStream,
+                false,
+                _costCalculatorFactory,
+                _logger);
+
+            var marketClosure = new HighProfitMarketClosureRule(
+                _currencyConverter,
+                _messageSender,
+                parameters,
+                ruleCtxMarket,
+                _costCalculatorFactory,
+                _logger);
+
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);
 

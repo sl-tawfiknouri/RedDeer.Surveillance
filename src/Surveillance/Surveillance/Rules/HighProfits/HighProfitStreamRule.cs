@@ -9,6 +9,8 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -27,6 +29,8 @@ namespace Surveillance.Rules.HighProfits
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly bool _submitRuleBreaches;
 
+        private readonly ICostCalculatorFactory _costCalculatorFactory;
+
         protected bool MarketClosureRule = false;
 
         public HighProfitStreamRule(
@@ -35,6 +39,7 @@ namespace Surveillance.Rules.HighProfits
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             bool submitRuleBreaches,
+            ICostCalculatorFactory costCalculatorFactory,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -49,6 +54,7 @@ namespace Surveillance.Rules.HighProfits
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _submitRuleBreaches = submitRuleBreaches;
+            _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -57,9 +63,21 @@ namespace Surveillance.Rules.HighProfits
             return true;
         }
 
+        private ICostCalculator GetCostCalculator()
+        {
+            var costCalculator = _parameters.UseCurrencyConversions
+                ? _costCalculatorFactory.CurrencyConvertingCalculator(new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency))
+                : _costCalculatorFactory.CostCalculator();
+
+            return costCalculator;
+        }
+
         protected override void RunRule(ITradingHistoryStack history)
         {
-            RunRuleGuard(history);
+            if (!RunRuleGuard(history))
+            {
+                return;
+            }
 
             var activeTrades = history.ActiveTradeHistory();
 
@@ -69,9 +87,11 @@ namespace Surveillance.Rules.HighProfits
                     || at.OrderStatus == OrderStatus.Fulfilled)
                 .ToList();
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
-            var costTask = CalculateCostOfPosition(liveTrades, targetCurrency);
+            var costCalculator = GetCostCalculator();
+
+            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
             var revenueTask = CalculateRevenueOfPosition(liveTrades, targetCurrency);
 
             costTask.Wait();
@@ -166,31 +186,6 @@ namespace Surveillance.Rules.HighProfits
             }
 
             return absoluteProfits.Value >= _parameters.HighProfitAbsoluteThreshold;
-        }
-
-        /// <summary>
-        /// Sum the total buy in for the position
-        /// </summary>
-        private async Task<CurrencyAmount?> CalculateCostOfPosition(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
-            Domain.Finance.Currency targetCurrency)
-        {
-            if (activeFulfilledTradeOrders == null
-                || !activeFulfilledTradeOrders.Any())
-            {
-                return null;
-            }
-
-            var purchaseOrders =
-                activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.Buy)
-                    .Select(afto => new CurrencyAmount(afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0, afto.OrderCurrency))
-                    .ToList();
-
-            var adjustedToCurrencyPurchaseOrders =
-                await _currencyConverter.Convert(purchaseOrders, targetCurrency, UniverseDateTime, _ruleCtx);
-
-            return adjustedToCurrencyPurchaseOrders;
         }
 
         /// <summary>

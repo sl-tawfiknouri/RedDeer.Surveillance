@@ -4,6 +4,7 @@ using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -21,8 +22,9 @@ namespace Surveillance.Rules.HighProfits
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            ICostCalculatorFactory costCalculatorFactory,
             ILogger<HighProfitsRule> logger)
-            : base(currencyConverter, sender, parameters, ruleCtx, true, logger)
+            : base(currencyConverter, sender, parameters, ruleCtx, true, costCalculatorFactory, logger)
         {
             MarketClosureRule = true;
             _messageSender = sender;

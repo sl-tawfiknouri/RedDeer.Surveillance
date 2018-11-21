@@ -10,6 +10,7 @@ using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
@@ -40,6 +41,7 @@ namespace Surveillance.Tests.Scheduler
         private IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
         private IUniverseAlertStreamFactory _alertStreamFactory;
         private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        private IRuleAnalyticsAlertsRepository _alertsRepository;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -62,6 +64,7 @@ namespace Surveillance.Tests.Scheduler
             _ruleAnalyticsRepository = A.Fake<IRuleAnalyticsUniverseRepository>();
             _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
             _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
+            _alertsRepository = A.Fake<IRuleAnalyticsAlertsRepository>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -83,6 +86,7 @@ namespace Surveillance.Tests.Scheduler
                     _ruleAnalyticsRepository,
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
+                    _alertsRepository,
                     _logger));
         }
 
@@ -104,6 +108,7 @@ namespace Surveillance.Tests.Scheduler
                     _ruleAnalyticsRepository,
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
+                    _alertsRepository,
                     _logger));
         }
 
@@ -123,6 +128,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -158,6 +164,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -196,6 +203,7 @@ namespace Surveillance.Tests.Scheduler
                 _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution

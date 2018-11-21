@@ -35,6 +35,7 @@ namespace Surveillance.DataLayer
             For<IReddeerTradeRepository>().Use<ReddeerTradeRepository>().Singleton();
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
             For<IRuleAnalyticsUniverseRepository>().Use<RuleAnalyticsUniverseRepository>();
+            For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
         }
     }
 }

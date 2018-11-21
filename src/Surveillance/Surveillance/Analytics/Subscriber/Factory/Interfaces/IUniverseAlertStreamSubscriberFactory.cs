@@ -4,6 +4,6 @@ namespace Surveillance.Analytics.Subscriber.Factory.Interfaces
 {
     public interface IUniverseAlertStreamSubscriberFactory
     {
-        IUniverseAlertSubscriber Build();
+        IUniverseAlertSubscriber Build(int opCtxId);
     }
 }

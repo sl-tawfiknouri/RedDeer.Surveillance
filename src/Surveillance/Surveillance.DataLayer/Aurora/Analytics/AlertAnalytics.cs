@@ -2,6 +2,12 @@
 {
     public class AlertAnalytics
     {
+        // Primary key
+        public int Id { get; set; }
+
+        // Foreign key - must be set
+        public int SystemProcessOperationId { get; set; }
+
         // raw alerts
         public int CancelledOrderAlertsRaw { get; set; }
         public int HighProfitAlertsRaw { get; set; }

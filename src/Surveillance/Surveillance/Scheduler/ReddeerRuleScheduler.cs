@@ -10,6 +10,7 @@ using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -33,6 +34,7 @@ namespace Surveillance.Scheduler
         private readonly IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
         private readonly IUniverseAlertStreamFactory _alertStreamFactory;
         private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -51,6 +53,7 @@ namespace Surveillance.Scheduler
             IRuleAnalyticsUniverseRepository ruleAnalyticsRepository,
             IUniverseAlertStreamFactory alertStreamFactory,
             IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
+            IRuleAnalyticsAlertsRepository alertsRepository,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -69,6 +72,7 @@ namespace Surveillance.Scheduler
             _ruleAnalyticsRepository = ruleAnalyticsRepository ?? throw new ArgumentNullException(nameof(ruleAnalyticsRepository));
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
+            _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -167,8 +171,8 @@ namespace Surveillance.Scheduler
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
             var subscriber = _analyticsSubscriber.Build(opCtx.Id);
+            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id);
             var alertStream = _alertStreamFactory.Build();
-            var alertSubscriber = _alertStreamSubscriberFactory.Build();
 
             alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
@@ -177,6 +181,8 @@ namespace Surveillance.Scheduler
             player.Play(universe);
 
             await _ruleAnalyticsRepository.Create(subscriber.Analytics);
+            await _alertsRepository.Create(alertSubscriber.Analytics);
+
             opCtx.EndEvent();
         }
     }

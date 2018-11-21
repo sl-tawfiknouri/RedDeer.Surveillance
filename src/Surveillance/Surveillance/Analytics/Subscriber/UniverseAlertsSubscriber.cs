@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
@@ -32,6 +33,7 @@ namespace Surveillance.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         public UniverseAlertsSubscriber(
+            int opCtxId,
             ICancelledOrderRuleCachedMessageSender cancelledOrderMessageSender,
             IHighProfitRuleCachedMessageSender highProfitMessageSender,
             IHighVolumeRuleCachedMessageSender highVolumeMessageSender,
@@ -70,6 +72,7 @@ namespace Surveillance.Analytics.Subscriber
                 ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Analytics = new AlertAnalytics {SystemProcessOperationId = opCtxId};
         }
 
         public void OnCompleted()
@@ -113,19 +116,21 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                _cancelledOrderMessageSender.Flush(alert.Context);
+                Analytics.CancelledOrderAlertsAdjusted = _cancelledOrderMessageSender.Flush(alert.Context);
                 return;
             }
 
             var ruleBreach = (ICancelledOrderRuleBreach)alert.UnderlyingAlert;
             _cancelledOrderMessageSender.Send(ruleBreach);
+
+            Analytics.CancelledOrderAlertsRaw += 1;
         }
 
         private void HighProfits(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _highProfitMessageSender.Flush(alert.Context);
+                Analytics.HighProfitAlertsAdjusted = _highProfitMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -137,30 +142,36 @@ namespace Surveillance.Analytics.Subscriber
 
             var ruleBreach = (IHighProfitRuleBreach) alert.UnderlyingAlert;
             _highProfitMessageSender.Send(ruleBreach);
+
+            Analytics.HighProfitAlertsRaw += 1;
         }
 
         private void HighVolume(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _highVolumeMessageSender.Flush(alert.Context);
+                Analytics.HighVolumeAlertsAdjusted = _highVolumeMessageSender.Flush(alert.Context);
                 return;
             }
 
             var ruleBreach = (IHighVolumeRuleBreach)alert.UnderlyingAlert;
             _highVolumeMessageSender.Send(ruleBreach);
+
+            Analytics.HighVolumeAlertsRaw += 1;
         }
 
         private void Layering(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _layeringCachedMessageSender.Flush(alert.Context);
+                Analytics.LayeringAlertsAdjusted = _layeringCachedMessageSender.Flush(alert.Context);
                 return;
             }
 
             var ruleBreach = (ILayeringRuleBreach)alert.UnderlyingAlert;
             _layeringCachedMessageSender.Send(ruleBreach);
+
+            Analytics.LayeringAlertsRaw += 1;
         }
 
         private void MarkingTheClose(IUniverseAlertEvent alert)
@@ -172,6 +183,9 @@ namespace Surveillance.Analytics.Subscriber
 
             var ruleBreach = (IMarkingTheCloseBreach)alert.UnderlyingAlert;
             _markingTheCloseMessageSender.Send(ruleBreach, alert.Context);
+
+            Analytics.MarkingTheCloseAlertsRaw += 1;
+            Analytics.MarkingTheCloseAlertsAdjusted += 1;
         }
 
         private void Spoofing(IUniverseAlertEvent alert)
@@ -183,18 +197,25 @@ namespace Surveillance.Analytics.Subscriber
 
             var ruleBreach = (ISpoofingRuleBreach)alert.UnderlyingAlert;
             _spoofingMessageSender.Send(ruleBreach, alert.Context);
+
+            Analytics.SpoofingAlertsRaw += 1;
+            Analytics.SpoofingAlertsAdjusted += 1;
         }
 
         private void WashTrade(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _washTradeMessageSender.Flush(alert.Context);
+                Analytics.WashTradeAlertsAdjusted = _washTradeMessageSender.Flush(alert.Context);
                 return;
             }
 
             var ruleBreach = (IWashTradeRuleBreach)alert.UnderlyingAlert;
             _washTradeMessageSender.Send(ruleBreach);
+
+            Analytics.WashTradeAlertsRaw += 1;
         }
+
+        public AlertAnalytics Analytics { get; }
     }
 }

@@ -36,7 +36,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
                 UniqueTradersCount = 30,
                 UniqueSecuritiesCount = 100,
                 UniqueMarketsTradedOnCount = 20,
-                SystemProcessOperationRuleRunId = 1
+                SystemProcessOperationId = 1
             };
 
             var config = new DataLayerConfiguration

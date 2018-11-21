@@ -6,7 +6,7 @@
         public int Id { get; set; }
 
         // foreign key - must be set
-        public int SystemProcessOperationRuleRunId { get; set;}
+        public int SystemProcessOperationId { get; set;}
 
         // event counts
         public int UnknownEventCount { get; set; }

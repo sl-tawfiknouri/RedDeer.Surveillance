@@ -10,6 +10,7 @@ using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
@@ -36,6 +37,7 @@ namespace Surveillance.Tests.Scheduler
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private IUniverseAnalyticsSubscriberFactory _factory;
+        private IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
         private IUniverseAlertStreamFactory _alertStreamFactory;
         private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
 
@@ -57,6 +59,7 @@ namespace Surveillance.Tests.Scheduler
             _ctx = A.Fake<ISystemProcessContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _factory = A.Fake<IUniverseAnalyticsSubscriberFactory>();
+            _ruleAnalyticsRepository = A.Fake<IRuleAnalyticsUniverseRepository>();
             _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
             _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
@@ -77,6 +80,7 @@ namespace Surveillance.Tests.Scheduler
                     _ctx,
                     _universeRuleSubscriber,
                     _factory,
+                    _ruleAnalyticsRepository,
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _logger));
@@ -97,6 +101,7 @@ namespace Surveillance.Tests.Scheduler
                     _ctx,
                     _universeRuleSubscriber,
                     _factory,
+                    _ruleAnalyticsRepository,
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _logger));
@@ -115,6 +120,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _logger);
@@ -149,6 +155,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _logger);
@@ -186,6 +193,7 @@ namespace Surveillance.Tests.Scheduler
                 _ctx,
                 _universeRuleSubscriber,
                 _factory,
+                _ruleAnalyticsRepository,
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _logger);

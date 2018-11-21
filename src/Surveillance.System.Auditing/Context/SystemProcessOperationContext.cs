@@ -200,5 +200,7 @@ namespace Surveillance.System.Auditing.Context
             _systemProcessOperationRepository.Update(_systemProcessOperation);
             return _systemProcessContext;
         }
+
+        public int Id => _systemProcessOperation?.Id ?? 0;
     }
 }

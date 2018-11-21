@@ -63,7 +63,7 @@ namespace Surveillance.Rules.HighProfits
         private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach, decimal absoluteProfit)
         {
             return ruleBreach.HasAbsoluteProfitBreach
-                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
+                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitCurrencyConversionTargetCurrency})."
                 : string.Empty;
         }
     }

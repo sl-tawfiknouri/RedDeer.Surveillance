@@ -68,7 +68,7 @@ namespace Surveillance.Rules.HighProfits
                     || at.OrderStatus == OrderStatus.Fulfilled)
                 .ToList();
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitAbsoluteThresholdCurrency);
+            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
             var costTask = CalculateCostOfPosition(liveTrades, targetCurrency);
             var revenueTask = CalculateRevenueOfPosition(liveTrades, targetCurrency);
@@ -131,7 +131,7 @@ namespace Surveillance.Rules.HighProfits
                 new HighProfitRuleBreach(
                     _parameters,
                     absoluteProfit,
-                    _parameters.HighProfitAbsoluteThresholdCurrency,
+                    _parameters.HighProfitCurrencyConversionTargetCurrency,
                     profitRatio,
                     security,
                     hasHighProfitAbsolute,
@@ -156,7 +156,7 @@ namespace Surveillance.Rules.HighProfits
             }
 
             if (!string.Equals(
-                _parameters.HighProfitAbsoluteThresholdCurrency,
+                _parameters.HighProfitCurrencyConversionTargetCurrency,
                 absoluteProfits.Currency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {

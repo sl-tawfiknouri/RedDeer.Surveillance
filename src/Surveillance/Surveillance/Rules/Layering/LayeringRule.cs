@@ -10,6 +10,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
+using Surveillance.Factories;
 
 namespace Surveillance.Rules.Layering
 {
@@ -30,7 +31,7 @@ namespace Surveillance.Rules.Layering
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
                 Domain.Scheduling.Rules.Layering,
-                Versioner.Version(1, 0),
+                LayeringRuleFactory.Version,
                 "Layering Rule",
                 opCtx,
                 logger)

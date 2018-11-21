@@ -7,6 +7,5 @@ namespace Surveillance.Factories.Interfaces
     public interface ILayeringRuleFactory
     {
         ILayeringRule Build(ILayeringRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx);
-        string RuleVersion { get; }
     }
 }

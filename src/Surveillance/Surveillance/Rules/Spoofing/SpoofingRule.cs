@@ -6,6 +6,7 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
+using Surveillance.Factories;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -29,7 +30,7 @@ namespace Surveillance.Rules.Spoofing
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                   Domain.Scheduling.Rules.Spoofing,
-                  Versioner.Version(2,0),
+                  SpoofingRuleFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
                   logger)

@@ -8,6 +8,7 @@ using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Factories;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -38,7 +39,7 @@ namespace Surveillance.Rules.HighProfits
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
                 Domain.Scheduling.Rules.HighProfits,
-                Versioner.Version(1, 0),
+                HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
                 logger)

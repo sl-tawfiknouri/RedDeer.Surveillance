@@ -45,6 +45,6 @@ namespace Surveillance.Factories
             return new HighProfitsRule(stream, multiverseTransformer);
         }
 
-        public string RuleVersion => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(2, 0);
     }
 }

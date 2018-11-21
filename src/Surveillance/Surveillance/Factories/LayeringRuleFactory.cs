@@ -9,12 +9,12 @@ using Surveillance.Factories.Interfaces;
 
 namespace Surveillance.Factories
 {
-    public class LayeringRuleRuleFactory : ILayeringRuleFactory
+    public class LayeringRuleFactory : ILayeringRuleFactory
     {
         private readonly ILayeringCachedMessageSender _messageSender;
-        private readonly ILogger<LayeringRuleRuleFactory> _logger;
+        private readonly ILogger<LayeringRuleFactory> _logger;
 
-        public LayeringRuleRuleFactory(ILayeringCachedMessageSender messageSender, ILogger<LayeringRuleRuleFactory> logger)
+        public LayeringRuleFactory(ILayeringCachedMessageSender messageSender, ILogger<LayeringRuleFactory> logger)
         {
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -25,6 +25,6 @@ namespace Surveillance.Factories
             return new LayeringRule(parameters, _messageSender, _logger, ruleCtx);
         }
 
-        public string RuleVersion => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(1, 0);
     }
 }

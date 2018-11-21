@@ -6,8 +6,6 @@ namespace Surveillance.Factories.Interfaces
 {
     public interface IHighVolumeRuleFactory
     {
-        string RuleVersion { get; }
-
         IHighVolumeRule Build(IHighVolumeRuleParameters parameters, ISystemProcessOperationRunRuleContext opCtx);
     }
 }

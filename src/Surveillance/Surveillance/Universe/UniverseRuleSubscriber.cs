@@ -11,6 +11,7 @@ using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
 using System.Linq;
 using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Factories;
 
 namespace Surveillance.Universe
 {
@@ -109,7 +110,7 @@ namespace Surveillance.Universe
                     var ruleCtx = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.Spoofing.GetDescription(),
-                            _spoofingRuleFactory.RuleVersion,
+                            SpoofingRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -162,7 +163,7 @@ namespace Surveillance.Universe
                     var ruleCtx = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                            _cancelledOrderRuleFactory.Version,
+                            CancelledOrderRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -216,14 +217,14 @@ namespace Surveillance.Universe
                     var ruleCtxStream = opCtx
                             .CreateAndStartRuleRunContext(
                                 Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                                _highProfitRuleFactory.RuleVersion,
+                                HighProfitRuleFactory.Version,
                                 execution.TimeSeriesInitiation.DateTime,
                                 execution.TimeSeriesTermination.DateTime);
 
                     var ruleCtxMarketClosure = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                            _highProfitRuleFactory.RuleVersion,
+                            HighProfitRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -275,7 +276,7 @@ namespace Surveillance.Universe
                     var ruleCtx = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
-                            _markingTheCloseFactory.RuleVersion,
+                            MarkingTheCloseRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -329,7 +330,7 @@ namespace Surveillance.Universe
                     var ruleCtx = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.Layering.GetDescription(),
-                            _layeringRuleFactory.RuleVersion,
+                            LayeringRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -383,7 +384,7 @@ namespace Surveillance.Universe
                     var ruleCtx = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.HighVolume.GetDescription(),
-                            _highVolumeRuleFactory.RuleVersion,
+                            HighVolumeRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
                             execution.TimeSeriesTermination.DateTime);
 
@@ -435,7 +436,7 @@ namespace Surveillance.Universe
                 {
                     var ctx = opCtx.CreateAndStartRuleRunContext(
                         Domain.Scheduling.Rules.WashTrade.GetDescription(),
-                        _washTradeRuleFactory.RuleVersion,
+                        WashTradeRuleFactory.Version,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime);
 

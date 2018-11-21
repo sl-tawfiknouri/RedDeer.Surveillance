@@ -10,7 +10,5 @@ namespace Surveillance.Factories.Interfaces
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket);
-
-        string RuleVersion { get; }
     }
 }

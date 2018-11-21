@@ -7,6 +7,5 @@ namespace Surveillance.Factories.Interfaces
     public interface ICancelledOrderRuleFactory
     {
         ICancelledOrderRule Build(ICancelledOrderRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx);
-        string Version { get; }
     }
 }

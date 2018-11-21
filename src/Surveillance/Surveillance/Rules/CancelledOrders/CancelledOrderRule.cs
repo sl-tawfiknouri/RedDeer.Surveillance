@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Factories;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -28,7 +29,7 @@ namespace Surveillance.Rules.CancelledOrders
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
                 Domain.Scheduling.Rules.CancelledOrders,
-                Versioner.Version(2, 0),
+                CancelledOrderRuleFactory.Version,
                 "Cancelled Order Rule",
                 opCtx,
                 logger)

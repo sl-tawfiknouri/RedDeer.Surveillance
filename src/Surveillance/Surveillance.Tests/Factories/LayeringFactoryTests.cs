@@ -10,13 +10,13 @@ namespace Surveillance.Tests.Factories
     [TestFixture]
     public class LayeringFactoryTests
     {
-        private ILogger<LayeringRuleRuleFactory> _logger;
+        private ILogger<LayeringRuleFactory> _logger;
         private ILayeringCachedMessageSender _layeringCachedMessageSender;
 
         [SetUp]
         public void Setup()
         {
-            _logger = A.Fake<ILogger<LayeringRuleRuleFactory>>();
+            _logger = A.Fake<ILogger<LayeringRuleFactory>>();
             _layeringCachedMessageSender = A.Fake<ILayeringCachedMessageSender>();
         }
 
@@ -24,14 +24,14 @@ namespace Surveillance.Tests.Factories
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRuleRuleFactory(_layeringCachedMessageSender, null));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRuleFactory(_layeringCachedMessageSender, null));
         }
 
         [Test]
         public void Constructor_ConsidersNullMessageSender_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRuleRuleFactory(null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRuleFactory(null, _logger));
         }
     }
 }

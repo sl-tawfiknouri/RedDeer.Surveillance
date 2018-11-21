@@ -7,6 +7,5 @@ namespace Surveillance.Factories.Interfaces
     public interface ISpoofingRuleFactory
     {
         ISpoofingRule Build(ISpoofingRuleParameters spoofingParameters, ISystemProcessOperationRunRuleContext ctx);
-        string RuleVersion { get; }
     }
 }

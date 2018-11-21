@@ -132,7 +132,7 @@ namespace Surveillance
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
 
             For<ILayeringRule>().Use<LayeringRule>();
-            For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
+            For<ILayeringRuleFactory>().Use<LayeringRuleFactory>();
             For<ILayeringAlertSender>().Use<LayeringAlertSender>();
             For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
 

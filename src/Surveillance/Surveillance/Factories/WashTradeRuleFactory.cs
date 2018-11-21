@@ -18,7 +18,7 @@ namespace Surveillance.Factories
         private readonly IWashTradeClustering _clustering;
         private readonly ILogger _logger;
 
-        public string RuleVersion { get; } = Versioner.Version(1, 0);
+        public static string Version { get; } = Versioner.Version(1, 0);
 
         public WashTradeRuleFactory(
             ICurrencyConverter currencyConverter,

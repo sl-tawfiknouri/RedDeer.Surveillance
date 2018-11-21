@@ -6,7 +6,5 @@ namespace Surveillance.Factories.Interfaces
     public interface IMarkingTheCloseRuleFactory
     {
         IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx);
-
-        string RuleVersion { get; }
     }
 }

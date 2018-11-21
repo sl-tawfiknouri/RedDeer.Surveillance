@@ -129,6 +129,7 @@ namespace Surveillance
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
             For<ICostCalculatorFactory>().Use<CostCalculatorFactory>();
+            For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
             For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();

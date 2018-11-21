@@ -10,6 +10,7 @@ using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Analytics.Subscriber
 {
@@ -113,9 +114,6 @@ namespace Surveillance.Analytics.Subscriber
             if (alert.IsFlushEvent)
             {
                 _cancelledOrderMessageSender.Flush(alert.Context);
-
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 
@@ -128,9 +126,12 @@ namespace Surveillance.Analytics.Subscriber
             if (alert.IsFlushEvent)
             {
                 _highProfitMessageSender.Flush(alert.Context);
+                return;
+            }
 
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
+            if (alert.IsRemoveEvent)
+            {
+                _highProfitMessageSender.Remove((ITradePosition)alert.UnderlyingAlert);
                 return;
             }
 
@@ -143,9 +144,6 @@ namespace Surveillance.Analytics.Subscriber
             if (alert.IsFlushEvent)
             {
                 _highVolumeMessageSender.Flush(alert.Context);
-
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 
@@ -158,9 +156,6 @@ namespace Surveillance.Analytics.Subscriber
             if (alert.IsFlushEvent)
             {
                 _layeringCachedMessageSender.Flush(alert.Context);
-
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 
@@ -172,8 +167,6 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 
@@ -185,8 +178,6 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 
@@ -199,9 +190,6 @@ namespace Surveillance.Analytics.Subscriber
             if (alert.IsFlushEvent)
             {
                 _washTradeMessageSender.Flush(alert.Context);
-
-                // TODO think more about this line
-                alert.Context?.UpdateAlertEvent(0);
                 return;
             }
 

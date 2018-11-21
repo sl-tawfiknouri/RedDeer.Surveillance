@@ -16,8 +16,8 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationRuleRunRepository> _logger;
 
-        private const string CreateSql = "INSERT INTO SystemProcessOperationRuleRun(SystemProcessOperationId, RuleDescription, RuleVersion, ScheduleRuleStart, ScheduleRuleEnd, Alerts, CorrelationId) VALUES(@SystemProcessOperationId, @RuleDescription, @RuleVersion, @ScheduleRuleStart, @ScheduleRuleEnd, @Alerts, @CorrelationId); SELECT LAST_INSERT_ID();";
-        private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd, Alerts = @Alerts WHERE Id = @Id";
+        private const string CreateSql = "INSERT INTO SystemProcessOperationRuleRun(SystemProcessOperationId, RuleDescription, RuleVersion, ScheduleRuleStart, ScheduleRuleEnd, CorrelationId) VALUES(@SystemProcessOperationId, @RuleDescription, @RuleVersion, @ScheduleRuleStart, @ScheduleRuleEnd, @CorrelationId); SELECT LAST_INSERT_ID();";
+        private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd";
         private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationRuleRun ORDER BY Id DESC LIMIT 100;";
 
         public SystemProcessOperationRuleRunRepository(

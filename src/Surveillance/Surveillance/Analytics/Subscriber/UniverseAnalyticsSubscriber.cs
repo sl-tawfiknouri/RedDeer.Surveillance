@@ -105,7 +105,7 @@ namespace Surveillance.Analytics.Subscriber
 
             lock (_securityIdLock)
             {
-                if (exchangeFrame?.Securities?.Count == 0)
+                if (exchangeFrame?.Securities?.Count != 0)
                 {
                     foreach (var sec in exchangeFrame.Securities)
                     {

@@ -6,7 +6,6 @@ namespace Surveillance.System.Auditing.Context.Interfaces
     public interface ISystemProcessOperationRunRuleContext
     {
         void StartEvent(ISystemProcessOperationRuleRun ruleRun);
-        ISystemProcessOperationRunRuleContext UpdateAlertEvent(int alerts);
         ISystemProcessOperationContext EndEvent();
         void EventException(string message);
         void EventException(Exception e);

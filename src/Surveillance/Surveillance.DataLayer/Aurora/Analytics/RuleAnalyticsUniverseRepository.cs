@@ -13,7 +13,7 @@ namespace Surveillance.DataLayer.Aurora.Analytics
         private readonly ILogger _logger;
 
         private const string CreateSql =
-            @"INSERT INTO RuleAnalyticsUniverse(Id, SystemProcessOperationId, GenesisEventCount, EschatonEventCount, TradeReddeerCount, TradeReddeerSubmittedCount, StockTickReddeerCount, StockMarketOpenCount, StockMarketCloseCount, UniqueTradersCount, UniqueSecuritiesCount, UniqueMarketsTradedOnCount) VALUES(@Id, @SystemProcessOperationId, @GenesisEventCount, @EschatonEventCount, @TradeReddeerCount, @TradeReddeerSubmittedCount, @StockTickReddeerCount, @StockMarketOpenCount, @StockMarketCloseCount, @UniqueTradersCount, @UniqueSecuritiesCount, @UniqueMarketsTradedOnCount)";
+            @"INSERT INTO RuleAnalyticsUniverse(SystemProcessOperationId, GenesisEventCount, EschatonEventCount, TradeReddeerCount, TradeReddeerSubmittedCount, StockTickReddeerCount, StockMarketOpenCount, StockMarketCloseCount, UniqueTradersCount, UniqueSecuritiesCount, UniqueMarketsTradedOnCount) VALUES(@SystemProcessOperationId, @GenesisEventCount, @EschatonEventCount, @TradeReddeerCount, @TradeReddeerSubmittedCount, @StockTickReddeerCount, @StockMarketOpenCount, @StockMarketCloseCount, @UniqueTradersCount, @UniqueSecuritiesCount, @UniqueMarketsTradedOnCount)";
 
         public RuleAnalyticsUniverseRepository(
             IConnectionStringFactory dbConnectionFactory,

@@ -33,11 +33,6 @@ namespace Surveillance.System.DataLayer.Processes
         public string RuleVersion { get; set; }
 
         /// <summary>
-        /// The number of alerts raised by this rule run
-        /// </summary>
-        public int Alerts { get; set; }
-
-        /// <summary>
         /// The starting point for the rule run data
         /// </summary>
         public DateTime? ScheduleRuleStart { get; set; }

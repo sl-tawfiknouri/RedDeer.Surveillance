@@ -147,12 +147,9 @@ namespace Surveillance.Analytics.Subscriber
         {
             Analytics.EschatonEventCount += 1;
 
-            lock (_traderIdLock)
-            {
-                Analytics.UniqueTradersCount = _traderIds.Count;
-                Analytics.UniqueMarketsTradedOnCount = _marketIds.Count;
-                Analytics.UniqueSecuritiesCount = _securityIds.Count;
-            }
+            Analytics.UniqueTradersCount = _traderIds.Count;
+            Analytics.UniqueMarketsTradedOnCount = _marketIds.Count;
+            Analytics.UniqueSecuritiesCount = _securityIds.Count;
         }
     }
 }

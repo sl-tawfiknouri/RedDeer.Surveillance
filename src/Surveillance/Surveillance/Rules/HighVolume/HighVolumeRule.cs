@@ -219,8 +219,8 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var thresholdValue =
-                (int)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
+            double thresholdValue =
+                (double)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
                 * security.MarketCap.GetValueOrDefault(0));
 
             if (thresholdValue <= 0)
@@ -230,7 +230,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradedValue = tradedVolume * security.Spread.Price.Value;
+            double tradedValue = tradedVolume * (double)security.Spread.Price.Value;
 
             var breachPercentage =
                 security.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0
@@ -239,8 +239,8 @@ namespace Surveillance.Rules.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount(thresholdValue, security.Spread.Price.Currency);
-                var tradedCurrencyValue = new CurrencyAmount(tradedValue, security.Spread.Price.Currency);
+                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.Spread.Price.Currency);
+                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.Spread.Price.Currency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }

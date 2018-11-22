@@ -133,17 +133,22 @@ namespace Surveillance.Rules.HighProfits
 
         private IRevenueCalculator GetRevenueCalculator()
         {
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-
             if (!_parameters.UseCurrencyConversions)
             {
-                return _revenueCalculatorFactory.RevenueCalculator(targetCurrency);
+                var calculator =
+                    MarketClosureRule
+                        ? _revenueCalculatorFactory.RevenueCalculatorMarkingTheClose()
+                        : _revenueCalculatorFactory.RevenueCalculator();
+
+                return calculator;
             }
 
+            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            
             var currencyConvertingCalculator =
                 MarketClosureRule
-                    ? _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency)
-                    : _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency);
+                    ? _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency)
+                    : _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency);
 
             return currencyConvertingCalculator;
         }

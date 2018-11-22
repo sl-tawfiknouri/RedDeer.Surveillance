@@ -1,9 +1,6 @@
 ﻿using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
-using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
@@ -18,13 +15,20 @@ namespace Surveillance.Rules.HighProfits
         private readonly IHighProfitRuleCachedMessageSender _messageSender;
 
         public HighProfitMarketClosureRule(
-            ICurrencyConverter currencyConverter,
             IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             ICostCalculatorFactory costCalculatorFactory,
+            IRevenueCalculatorFactory revenueCalculatorFactory,
             ILogger<HighProfitsRule> logger)
-            : base(currencyConverter, sender, parameters, ruleCtx, true, costCalculatorFactory, logger)
+            : base(
+                sender,
+                parameters, 
+                ruleCtx,
+                true,
+                costCalculatorFactory,
+                revenueCalculatorFactory,
+                logger)
         {
             MarketClosureRule = true;
             _messageSender = sender;
@@ -63,16 +67,6 @@ namespace Surveillance.Rules.HighProfits
             _messageSender.Remove(position);
 
             return false;
-        }
-
-        protected override Price? SecurityTickToPrice(SecurityTick tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.IntradayPrices.Close ?? tick.Spread.Price;
         }
     }
 }

@@ -6,5 +6,6 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces
     {
         IRevenueCalculator RevenueCalculator(Domain.Finance.Currency currency);
         IRevenueCalculator RevenueCurrencyConvertingCalculator(Domain.Finance.Currency currency);
+        IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Finance.Currency currency);
     }
 }

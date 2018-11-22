@@ -28,5 +28,10 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories
         {
             return new RevenueCurrencyConvertingCalculator(currency, _currencyConverter, _logger);
         }
+
+        public IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Finance.Currency currency)
+        {
+           return new RevenueCurrencyConvertingMarkingCloseCalculator(currency, _currencyConverter, _logger);
+        }
     }
 }

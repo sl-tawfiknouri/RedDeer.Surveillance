@@ -133,11 +133,17 @@ namespace Surveillance.Rules.HighProfits
         {
             var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
-            var revenueCalculator = _parameters.UseCurrencyConversions
-                ? _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency)
-                : _revenueCalculatorFactory.RevenueCalculator(targetCurrency);
+            if (!_parameters.UseCurrencyConversions)
+            {
+                return _revenueCalculatorFactory.RevenueCalculator(targetCurrency);
+            }
 
-            return revenueCalculator;
+            var currencyConvertingCalculator =
+                MarketClosureRule
+                    ? _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency)
+                    : _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency);
+
+            return currencyConvertingCalculator;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

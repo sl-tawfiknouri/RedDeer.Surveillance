@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -23,12 +25,11 @@ namespace Surveillance.Rules.WashTrade
     /// </summary>
     public class WashTradeRule : BaseUniverseRule, IWashTradeRule
     {
-        private int _alerts;
         private readonly ILogger _logger;
         private readonly IWashTradeRuleParameters _parameters;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
-        private readonly IWashTradeCachedMessageSender _messageSender;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ICurrencyConverter _currencyConverter;
 
         public WashTradeRule(
@@ -36,7 +37,7 @@ namespace Surveillance.Rules.WashTrade
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
-            IWashTradeCachedMessageSender messageSender,
+            IUniverseAlertStream alertStream,
             ICurrencyConverter currencyConverter,
             ILogger logger)
             : base(
@@ -50,8 +51,8 @@ namespace Surveillance.Rules.WashTrade
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -102,8 +103,7 @@ namespace Surveillance.Rules.WashTrade
 
             var security = liveTrades?.FirstOrDefault()?.Security;
 
-            _alerts += 1;
-            _logger.LogInformation($"Wash Trade Rule incrementing alert count to {_alerts} because of security {security?.Name} at {UniverseDateTime}");
+            _logger.LogInformation($"Wash Trade Rule incrementing alerts because of security {security?.Name} at {UniverseDateTime}");
 
             var breach =
                 new WashTradeRuleBreach(
@@ -114,7 +114,8 @@ namespace Surveillance.Rules.WashTrade
                     pairingPositionsCheck,
                     clusteringPositionCheck);
 
-            _messageSender?.Send(breach);
+            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
+            _alertStream.Add(universeAlert);
         }
 
         /// <summary>
@@ -327,8 +328,7 @@ namespace Surveillance.Rules.WashTrade
                 return true;
             }
 
-            if (convertedCurrency?.Value >
-                _parameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
+            if (convertedCurrency?.Value > _parameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
             {
                 return false;
             }
@@ -414,12 +414,10 @@ namespace Surveillance.Rules.WashTrade
         protected override void EndOfUniverse()
         {
             _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
-            
-            RuleCtx?.UpdateAlertEvent(_alerts);
-            _messageSender?.Flush(RuleCtx);
-            RuleCtx?.EndEvent();
 
-            _alerts = 0;
+            var alertStream = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, null, RuleCtx, true);
+            _alertStream.Add(alertStream);
+            RuleCtx?.EndEvent();
         }
     }
 }

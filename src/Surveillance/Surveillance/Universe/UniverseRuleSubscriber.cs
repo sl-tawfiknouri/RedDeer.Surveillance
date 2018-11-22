@@ -10,6 +10,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
 using System.Linq;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Universe
@@ -61,6 +62,7 @@ namespace Surveillance.Universe
         public async Task SubscribeRules(
              ScheduledExecution execution,
              IUniversePlayer player,
+             IUniverseAlertStream alertStream,
              ISystemProcessOperationContext opCtx)
         {
             if (execution == null
@@ -71,20 +73,21 @@ namespace Surveillance.Universe
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
-            SpoofingRule(execution, player, ruleParameters, opCtx);
-            CancelledOrdersRule(execution, player, ruleParameters, opCtx);
-            HighProfitsRule(execution, player, ruleParameters, opCtx);
-            MarkingTheCloseRule(execution, player, ruleParameters, opCtx);
-            LayeringRule(execution, player, ruleParameters, opCtx);
-            HighVolumeRule(execution, player, ruleParameters, opCtx);
-            WashTradeRule(execution, player, ruleParameters, opCtx);
+            SpoofingRule(execution, player, ruleParameters, opCtx, alertStream);
+            CancelledOrdersRule(execution, player, ruleParameters, opCtx, alertStream);
+            HighProfitsRule(execution, player, ruleParameters, opCtx, alertStream);
+            MarkingTheCloseRule(execution, player, ruleParameters, opCtx, alertStream);
+            LayeringRule(execution, player, ruleParameters, opCtx, alertStream);
+            HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
+            WashTradeRule(execution, player, ruleParameters, opCtx, alertStream);
         }
 
         private void SpoofingRule(
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Scheduling.Rules.Spoofing)
                 ?? true)
@@ -111,9 +114,10 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.Spoofing.GetDescription(),
                             _spoofingRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx);
+                    var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -138,7 +142,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
             {
@@ -164,9 +169,10 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
                             _cancelledOrderRuleFactory.Version,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx);
+                    var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -191,7 +197,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
             {
@@ -218,16 +225,18 @@ namespace Surveillance.Universe
                                 Domain.Scheduling.Rules.HighProfits.GetDescription(),
                                 _highProfitRuleFactory.RuleVersion,
                                 execution.TimeSeriesInitiation.DateTime,
-                                execution.TimeSeriesTermination.DateTime);
+                                execution.TimeSeriesTermination.DateTime,
+                                execution.CorrelationId);
 
                     var ruleCtxMarketClosure = opCtx
                         .CreateAndStartRuleRunContext(
                             Domain.Scheduling.Rules.HighProfits.GetDescription(),
                             _highProfitRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure);
+                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream);
                     if (param.HasFilters())
                     {
                         var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
@@ -251,7 +260,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.MarkingTheClose) ?? true)
             {
@@ -277,9 +287,10 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
                             _markingTheCloseFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx);
+                    var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -304,7 +315,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.Layering) ?? true)
             {
@@ -331,9 +343,10 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.Layering.GetDescription(),
                             _layeringRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var layering = _layeringRuleFactory.Build(param, ruleCtx);
+                    var layering = _layeringRuleFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -358,7 +371,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighVolume) ?? true)
             {
@@ -385,9 +399,10 @@ namespace Surveillance.Universe
                             Domain.Scheduling.Rules.HighVolume.GetDescription(),
                             _highVolumeRuleFactory.RuleVersion,
                             execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime);
+                            execution.TimeSeriesTermination.DateTime,
+                            execution.CorrelationId);
 
-                    var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx);
+                    var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream);
 
                     if (param.HasFilters())
                     {
@@ -412,7 +427,8 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx)
+            ISystemProcessOperationContext opCtx,
+            IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.WashTrade) ?? true)
             {
@@ -437,9 +453,10 @@ namespace Surveillance.Universe
                         Domain.Scheduling.Rules.WashTrade.GetDescription(),
                         _washTradeRuleFactory.RuleVersion,
                         execution.TimeSeriesInitiation.DateTime,
-                        execution.TimeSeriesTermination.DateTime);
+                        execution.TimeSeriesTermination.DateTime,
+                        execution.CorrelationId);
 
-                    var washTrade = _washTradeRuleFactory.Build(param, ctx);
+                    var washTrade = _washTradeRuleFactory.Build(param, ctx, alertStream);
 
                     if (param.HasFilters())
                     {

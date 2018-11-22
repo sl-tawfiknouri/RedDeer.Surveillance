@@ -24,7 +24,8 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             string ruleDescription,
             string ruleVersion,
             DateTime ruleScheduleBegin,
-            DateTime ruleScheduleEnd);
+            DateTime ruleScheduleEnd,
+            string correlationId);
 
         ISystemProcessContext EndEvent();
         ISystemProcessContext EndEventWithError(string message);
@@ -33,5 +34,6 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         ISystemProcessOperationContext UpdateEventState(OperationState state);
         void EventError(string message);
         void EventError(Exception e);
+        int Id { get; }
     }
 }

@@ -4,6 +4,8 @@ using Domain.Equity;
 using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -17,16 +19,15 @@ namespace Surveillance.Rules.HighVolume
     {
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IHighVolumeRuleCachedMessageSender _messageSender;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ILogger _logger;
 
-        private int _alertCount = 0;
         private bool _hadMissingData = false;
 
         public HighVolumeRule(
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
-            IHighVolumeRuleCachedMessageSender messageSender,
+            IUniverseAlertStream alertStream,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -38,7 +39,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -98,8 +99,8 @@ namespace Surveillance.Rules.HighVolume
                     marketCapBreach,
                     tradedVolume);
 
-            _messageSender.Send(breach, _ruleCtx);
-            _alertCount += 1;
+            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
+            _alertStream.Add(message);
         }
 
         private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
@@ -218,8 +219,8 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var thresholdValue =
-                (int)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
+            double thresholdValue =
+                (double)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
                 * security.MarketCap.GetValueOrDefault(0));
 
             if (thresholdValue <= 0)
@@ -229,7 +230,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradedValue = tradedVolume * security.Spread.Price.Value;
+            double tradedValue = tradedVolume * (double)security.Spread.Price.Value;
 
             var breachPercentage =
                 security.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0
@@ -238,8 +239,8 @@ namespace Surveillance.Rules.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount(thresholdValue, security.Spread.Price.Currency);
-                var tradedCurrencyValue = new CurrencyAmount(tradedValue, security.Spread.Price.Currency);
+                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.Spread.Price.Currency);
+                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.Spread.Price.Currency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }
@@ -268,8 +269,9 @@ namespace Surveillance.Rules.HighVolume
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
-            _ruleCtx.UpdateAlertEvent(_alertCount);
-            _messageSender.Flush(_ruleCtx);
+
+            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
+            _alertStream.Add(alert);
 
             if (_hadMissingData)
             {
@@ -279,8 +281,6 @@ namespace Surveillance.Rules.HighVolume
             {
                 _ruleCtx?.EndEvent();
             }
-
-            _alertCount = 0;
         }
     }
 }

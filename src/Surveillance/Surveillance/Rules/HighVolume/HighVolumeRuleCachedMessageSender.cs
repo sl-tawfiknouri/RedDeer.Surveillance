@@ -26,7 +26,7 @@ namespace Surveillance.Rules.HighVolume
         /// <summary>
         /// Receive and cache rule breach in memory
         /// </summary>
-        public void Send(IHighVolumeRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx)
+        public void Send(IHighVolumeRuleBreach ruleBreach)
         {
             if (ruleBreach == null)
             {

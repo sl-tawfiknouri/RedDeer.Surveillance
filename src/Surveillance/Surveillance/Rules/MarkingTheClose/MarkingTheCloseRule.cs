@@ -4,6 +4,8 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -15,17 +17,16 @@ namespace Surveillance.Rules.MarkingTheClose
     public class MarkingTheCloseRule : BaseUniverseRule, IMarkingTheCloseRule
     {
         private readonly IMarkingTheCloseParameters _parameters;
-        private readonly IMarkingTheCloseMessageSender _messageSender;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
-        private int _alertCount;
         private bool _hadMissingData = false;
 
         public MarkingTheCloseRule(
             IMarkingTheCloseParameters parameters,
-            IMarkingTheCloseMessageSender messageSender,
+            IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
             ILogger<MarkingTheCloseRule> logger)
             : base(
@@ -37,7 +38,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -110,8 +111,8 @@ namespace Surveillance.Rules.MarkingTheClose
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
-            _alertCount += 1;
-            _messageSender.Send(breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
+            _alertStream.Add(alertEvent);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
@@ -256,7 +257,6 @@ namespace Surveillance.Rules.MarkingTheClose
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred in the Marking The Close Rule");
-            _alertCount = 0;
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -277,15 +277,12 @@ namespace Surveillance.Rules.MarkingTheClose
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Marking The Close Rule");
-            _ruleCtx.UpdateAlertEvent(_alertCount);
             var opCtx = _ruleCtx?.EndEvent();
 
             if (_hadMissingData)
             {
                 opCtx.EndEventWithMissingDataError();
             }
-
-            _alertCount = 0;
         }
     }
 }

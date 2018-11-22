@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.Spoofing;
@@ -11,23 +12,22 @@ namespace Surveillance.Factories
 {
     public class SpoofingRuleFactory : ISpoofingRuleFactory
     {
-        private readonly ISpoofingRuleMessageSender _ruleMessageSender;
         private readonly ILogger<SpoofingRule> _logger;
 
-        public SpoofingRuleFactory(
-            ILogger<SpoofingRule> logger,
-            ISpoofingRuleMessageSender ruleMessageSender)
+        public SpoofingRuleFactory(ILogger<SpoofingRule> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _ruleMessageSender = ruleMessageSender ?? throw new ArgumentNullException(nameof(ruleMessageSender));
         }
 
-        public ISpoofingRule Build(ISpoofingRuleParameters spoofingParameters, ISystemProcessOperationRunRuleContext ruleCtx)
+        public ISpoofingRule Build(
+            ISpoofingRuleParameters spoofingParameters,
+            ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream)
         {
             return new SpoofingRule(
                 spoofingParameters,
-                _ruleMessageSender,
                 ruleCtx,
+                alertStream,
                 _logger);
         }
 

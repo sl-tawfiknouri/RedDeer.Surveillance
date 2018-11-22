@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighVolume;
@@ -11,18 +12,19 @@ namespace Surveillance.Factories
 {
     public class HighVolumeRuleFactory : IHighVolumeRuleFactory
     {
-        private readonly IHighVolumeRuleCachedMessageSender _messageSender;
         private readonly ILogger<IHighVolumeRule> _logger;
 
-        public HighVolumeRuleFactory(IHighVolumeRuleCachedMessageSender messageSender, ILogger<IHighVolumeRule> logger)
+        public HighVolumeRuleFactory(ILogger<IHighVolumeRule> logger)
         {
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IHighVolumeRule Build(IHighVolumeRuleParameters parameters, ISystemProcessOperationRunRuleContext opCtx)
+        public IHighVolumeRule Build(
+            IHighVolumeRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext opCtx,
+            IUniverseAlertStream alertStream)
         {
-            return new HighVolumeRule(parameters, opCtx, _messageSender, _logger);
+            return new HighVolumeRule(parameters, opCtx, alertStream, _logger);
         }
 
         public string RuleVersion => Versioner.Version(1, 0);

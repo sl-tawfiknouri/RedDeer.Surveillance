@@ -105,7 +105,8 @@ namespace Surveillance.System.Auditing.Context
             string ruleDescription,
             string ruleVersion,
             DateTime ruleScheduleBegin,
-            DateTime ruleScheduleEnd)
+            DateTime ruleScheduleEnd,
+            string correlationId)
         {
             var ctx = _runRuleContextFactory.Build(this);
             var startEvent = new SystemProcessOperationRuleRun
@@ -115,7 +116,8 @@ namespace Surveillance.System.Auditing.Context
                 RuleDescription = ruleDescription,
                 RuleVersion = ruleVersion,
                 ScheduleRuleStart = ruleScheduleBegin,
-                ScheduleRuleEnd = ruleScheduleEnd
+                ScheduleRuleEnd = ruleScheduleEnd,
+                CorrelationId = correlationId
             };
 
             ctx.StartEvent(startEvent);
@@ -198,5 +200,7 @@ namespace Surveillance.System.Auditing.Context
             _systemProcessOperationRepository.Update(_systemProcessOperation);
             return _systemProcessContext;
         }
+
+        public int Id => _systemProcessOperation?.Id ?? 0;
     }
 }

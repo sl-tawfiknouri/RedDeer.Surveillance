@@ -1,6 +1,9 @@
 ﻿using System.Linq;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
@@ -12,26 +15,23 @@ namespace Surveillance.Rules.HighProfits
 {
     public class HighProfitMarketClosureRule : HighProfitStreamRule, IHighProfitMarketClosureRule
     {
-        private readonly IHighProfitRuleCachedMessageSender _messageSender;
-
         public HighProfitMarketClosureRule(
-            IHighProfitRuleCachedMessageSender sender,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             ILogger<HighProfitsRule> logger)
             : base(
-                sender,
                 parameters, 
                 ruleCtx,
+                alertStream,
                 true,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 logger)
         {
             MarketClosureRule = true;
-            _messageSender = sender;
         }
 
         protected override bool RunRuleGuard(ITradingHistoryStack history)
@@ -64,7 +64,9 @@ namespace Surveillance.Rules.HighProfits
             }
 
             var position = new TradePosition(activeWindow.ToList());
-            _messageSender.Remove(position);
+
+            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
+            _alertStream.Add(message);
 
             return false;
         }

@@ -6,7 +6,9 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using Domain.Trades.Orders;
+using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -17,15 +19,14 @@ namespace Surveillance.Rules.Spoofing
     public class SpoofingRule : BaseUniverseRule, ISpoofingRule
     {
         private readonly ISpoofingRuleParameters _parameters;
-        private readonly ISpoofingRuleMessageSender _spoofingRuleMessageSender;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ILogger _logger;
-        private int _alertCount;
 
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
-            ISpoofingRuleMessageSender spoofingRuleMessageSender,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream,
             ILogger logger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
@@ -36,8 +37,8 @@ namespace Surveillance.Rules.Spoofing
                   logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _spoofingRuleMessageSender = spoofingRuleMessageSender ?? throw new ArgumentNullException(nameof(spoofingRuleMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
@@ -171,8 +172,8 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade.Security, 
                     mostRecentTrade);
 
-            _alertCount += 1;
-            _spoofingRuleMessageSender.Send(ruleBreach, _ruleCtx);
+            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
+            _alertStream.Add(alert);
         }
 
         protected override void RunRule(ITradingHistoryStack history)
@@ -183,7 +184,6 @@ namespace Surveillance.Rules.Spoofing
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred in the Spoofing Rule");
-            _alertCount = 0;
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -199,9 +199,9 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Spoofing Rule");
-            _ruleCtx.UpdateAlertEvent(_alertCount);
+            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
+            _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
-            _alertCount = 0;
         }
     }
 }

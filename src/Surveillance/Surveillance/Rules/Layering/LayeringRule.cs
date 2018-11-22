@@ -4,6 +4,8 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -18,14 +20,13 @@ namespace Surveillance.Rules.Layering
     {
         private readonly ILogger _logger;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly ILayeringCachedMessageSender _messageSender;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ILayeringRuleParameters _parameters;
-        private int _alertCount = 0;
         private bool _hadMissingData = false;
 
         public LayeringRule(
             ILayeringRuleParameters parameters,
-            ILayeringCachedMessageSender messageSender,
+            IUniverseAlertStream alertStream,
             ILogger logger,
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
@@ -39,7 +40,7 @@ namespace Surveillance.Rules.Layering
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
-            _messageSender = messageSender;
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
@@ -90,8 +91,8 @@ namespace Surveillance.Rules.Layering
 
             if (layeringRuleBreach != null)
             {
-                _messageSender.Send(layeringRuleBreach);
-                _alertCount += 1;
+                var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
+                _alertStream.Add(universeAlert);
             }
         }
 
@@ -477,8 +478,9 @@ namespace Surveillance.Rules.Layering
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
-            _ruleCtx.UpdateAlertEvent(_alertCount);
-            _messageSender.Flush(_ruleCtx);
+
+            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, null, _ruleCtx, true);
+            _alertStream.Add(universeAlert);
 
             if (_hadMissingData)
             {
@@ -488,8 +490,6 @@ namespace Surveillance.Rules.Layering
             {
                 _ruleCtx?.EndEvent();
             }
-
-            _alertCount = 0;
         }
     }
 }

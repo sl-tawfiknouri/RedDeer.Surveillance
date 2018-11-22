@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Factory.Interfaces;
+using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
+using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
@@ -26,6 +30,11 @@ namespace Surveillance.Scheduler
         private readonly IApiHeartbeat _apiHeartbeat;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IUniverseRuleSubscriber _ruleSubscriber;
+        private readonly IUniverseAnalyticsSubscriberFactory _analyticsSubscriber;
+        private readonly IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
+        private readonly IUniverseAlertStreamFactory _alertStreamFactory;
+        private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -40,6 +49,11 @@ namespace Surveillance.Scheduler
             IApiHeartbeat apiHeartbeat,
             ISystemProcessContext systemProcessContext,
             IUniverseRuleSubscriber ruleSubscriber,
+            IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
+            IRuleAnalyticsUniverseRepository ruleAnalyticsRepository,
+            IUniverseAlertStreamFactory alertStreamFactory,
+            IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
+            IRuleAnalyticsAlertsRepository alertsRepository,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -54,6 +68,11 @@ namespace Surveillance.Scheduler
             _apiHeartbeat = apiHeartbeat ?? throw new ArgumentNullException(nameof(apiHeartbeat));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _ruleSubscriber = ruleSubscriber ?? throw new ArgumentNullException(nameof(ruleSubscriber));
+            _analyticsSubscriber = analyticsSubscriber ?? throw new ArgumentNullException(nameof(analyticsSubscriber));
+            _ruleAnalyticsRepository = ruleAnalyticsRepository ?? throw new ArgumentNullException(nameof(ruleAnalyticsRepository));
+            _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
+            _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
+            _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -81,51 +100,58 @@ namespace Surveillance.Scheduler
         {
             var opCtx = _systemProcessContext.CreateAndStartOperationContext();
 
-            _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
-            
-            var servicesRunning = await _apiHeartbeat.HeartsBeating();
-
-            if (!servicesRunning)
+            try
             {
-                _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
-                // set status here
-                opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
-                opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
-            }
+                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-            int servicesDownMinutes = 0;
-            var exitClientServiceBlock = servicesRunning;
-            while (!exitClientServiceBlock)
-            {
-                Thread.Sleep(30 * 1000);
-                var apiHeartBeat = _apiHeartbeat.HeartsBeating();
-                apiHeartBeat.Wait();
-                exitClientServiceBlock = apiHeartBeat.Result;
-                servicesDownMinutes += 1;
+                var servicesRunning = await _apiHeartbeat.HeartsBeating();
 
-                if (servicesDownMinutes == 60)
+                if (!servicesRunning)
                 {
-                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
-                    opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                    _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+                    // set status here
+                    opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
+                    opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
                 }
-            }
 
-            if (!servicesRunning)
+                int servicesDownMinutes = 0;
+                var exitClientServiceBlock = servicesRunning;
+                while (!exitClientServiceBlock)
+                {
+                    Thread.Sleep(30 * 1000);
+                    var apiHeartBeat = _apiHeartbeat.HeartsBeating();
+                    apiHeartBeat.Wait();
+                    exitClientServiceBlock = apiHeartBeat.Result;
+                    servicesDownMinutes += 1;
+
+                    if (servicesDownMinutes == 60)
+                    {
+                        _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                        opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                    }
+                }
+
+                if (!servicesRunning)
+                {
+                    _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
+                    opCtx.UpdateEventState(OperationState.InProcess);
+                }
+
+                var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
+
+                if (execution == null)
+                {
+                    _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    return;
+                }
+
+                await Execute(execution, opCtx);
+            }
+            catch (Exception e)
             {
-                _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
-                opCtx.UpdateEventState(OperationState.InProcess);
+                opCtx.EndEventWithError(e.Message);
             }
-
-            var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
-
-            if (execution == null)
-            {
-                _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                return;
-            }
-
-            await Execute(execution, opCtx);
         }
 
         /// <summary>
@@ -144,9 +170,19 @@ namespace Surveillance.Scheduler
 
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
+            var subscriber = _analyticsSubscriber.Build(opCtx.Id);
+            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id);
+            var alertStream = _alertStreamFactory.Build();
 
-            await _ruleSubscriber.SubscribeRules(execution, player, opCtx);
+            alertStream.Subscribe(alertSubscriber);
+            await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
+
+            player.Subscribe(subscriber);
             player.Play(universe);
+
+            await _ruleAnalyticsRepository.Create(subscriber.Analytics);
+            await _alertsRepository.Create(alertSubscriber.Analytics);
+
             opCtx.EndEvent();
         }
     }

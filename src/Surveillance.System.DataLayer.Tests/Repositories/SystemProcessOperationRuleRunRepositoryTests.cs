@@ -63,7 +63,6 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 SystemProcessOperationId = systemProcessOperation.Id,
                 RuleDescription = "High Profits",
                 RuleVersion = "1.0",
-                Alerts = 3,
                 ScheduleRuleStart = DateTime.Now,
                 ScheduleRuleEnd = DateTime.Now.AddMinutes(1)
             };
@@ -108,15 +107,11 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 SystemProcessOperationId = systemProcessOperation.Id,
                 RuleDescription = "High Profits",
                 RuleVersion = "1.0",
-                Alerts = 3,
                 ScheduleRuleStart = DateTime.Now,
                 ScheduleRuleEnd = DateTime.Now.AddMinutes(1)
             };
 
             await ruleRunRepository.Create(systemProcessOperationRuleRun);
-
-            systemProcessOperationRuleRun.Alerts = 5;
-
             await ruleRunRepository.Update(systemProcessOperationRuleRun);
 
             Assert.IsTrue(true);

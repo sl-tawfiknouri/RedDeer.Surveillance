@@ -7,8 +7,8 @@ using Domain.Trades.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.Layering;
-using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rule_Parameters;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -21,7 +21,7 @@ namespace Surveillance.Tests.Rules.Layering
     public class LayeringRuleTests
     {
         private ILogger _logger;
-        private ILayeringCachedMessageSender _messageSender;
+        private IUniverseAlertStream _alertStream;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _operationCtx;
         private ILayeringRuleParameters _parameters;
@@ -30,7 +30,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void Setup()
         {
             _logger = A.Fake<ILogger>();
-            _messageSender = A.Fake<ILayeringCachedMessageSender>();
+            _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _operationCtx = A.Fake<ISystemProcessOperationContext>();
             _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null, null);
@@ -42,40 +42,39 @@ namespace Surveillance.Tests.Rules.Layering
         public void Constructor_NullParametersConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _messageSender, _logger, _ruleCtx));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _logger, _ruleCtx));
         }
 
         [Test]
         public void Constructor_NullLoggerConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _messageSender, null, _ruleCtx));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, null, _ruleCtx));
         }
 
         [Test]
         public void Constructor_NullRuleContextConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _messageSender, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _logger, null));
         }
 
         [Test]
         public void EndOfUniverse_RecordUpdateAlertAndEndEvent()
         {
-            var rule = new LayeringRule(_parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(A<int>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -93,14 +92,14 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
         }
 
         [Test]
         public void RunRule_NoRaisedAlertInEschaton_WhenBidirectionalTradeAndExceedsDailyThreshold_ButNoMarketData()
         {
             
-            var rule = new LayeringRule(_parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -118,14 +117,14 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
-            var rule = new LayeringRule(_parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -143,14 +142,14 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -185,7 +184,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -193,7 +192,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -228,7 +227,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -237,7 +236,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -272,7 +271,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -281,7 +280,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -316,7 +315,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -325,7 +324,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -360,7 +359,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
@@ -369,7 +368,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -423,7 +422,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -432,7 +431,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -486,7 +485,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -495,7 +494,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Sell;
@@ -549,7 +548,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(1)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
@@ -558,7 +557,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
-            var rule = new LayeringRule(parameters, _messageSender, _logger, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
             tradeBuy.Position = OrderPosition.Buy;
@@ -594,7 +593,7 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(marketDataEvent6);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _ruleCtx.UpdateAlertEvent(0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }

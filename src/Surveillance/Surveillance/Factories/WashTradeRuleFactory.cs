@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
@@ -13,7 +14,6 @@ namespace Surveillance.Factories
     public class WashTradeRuleFactory : IWashTradeRuleFactory
     {
         private readonly ICurrencyConverter _currencyConverter;
-        private readonly IWashTradeCachedMessageSender _cachedMessageSender;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
         private readonly ILogger _logger;
@@ -22,19 +22,17 @@ namespace Surveillance.Factories
 
         public WashTradeRuleFactory(
             ICurrencyConverter currencyConverter,
-            IWashTradeCachedMessageSender cachedMessageSender,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
             ILogger<WashTradeRule> logger)
         {
-            _cachedMessageSender = cachedMessageSender ?? throw new ArgumentNullException(nameof(cachedMessageSender));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IWashTradeRule Build(IWashTradeRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
+        public IWashTradeRule Build(IWashTradeRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx, IUniverseAlertStream alertStream)
         {
             if (ruleCtx == null)
             {
@@ -46,7 +44,7 @@ namespace Surveillance.Factories
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            return new WashTradeRule(parameters, ruleCtx, _positionPairer, _clustering, _cachedMessageSender, _currencyConverter, _logger);
+            return new WashTradeRule(parameters, ruleCtx, _positionPairer, _clustering, alertStream, _currencyConverter, _logger);
         }
     }
 }

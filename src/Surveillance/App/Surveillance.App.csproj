@@ -57,6 +57,12 @@
     <None Update="Migrations\1 - Initial.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\10 - CorrelationId.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\11 - Analytics.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\2 - Trade.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

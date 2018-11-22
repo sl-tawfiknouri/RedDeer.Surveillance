@@ -6,6 +6,12 @@ using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Analytics.Streams.Factory.Interfaces;
+using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Analytics.Subscriber.Factory;
+using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.DataLayer.Aurora.Analytics;
+using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
@@ -31,6 +37,11 @@ namespace Surveillance.Tests.Scheduler
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+        private IUniverseAnalyticsSubscriberFactory _factory;
+        private IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
+        private IUniverseAlertStreamFactory _alertStreamFactory;
+        private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        private IRuleAnalyticsAlertsRepository _alertsRepository;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -49,6 +60,11 @@ namespace Surveillance.Tests.Scheduler
             _apiHeartbeat = A.Fake<IApiHeartbeat>();
             _ctx = A.Fake<ISystemProcessContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
+            _factory = A.Fake<IUniverseAnalyticsSubscriberFactory>();
+            _ruleAnalyticsRepository = A.Fake<IRuleAnalyticsUniverseRepository>();
+            _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
+            _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
+            _alertsRepository = A.Fake<IRuleAnalyticsAlertsRepository>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -66,6 +82,11 @@ namespace Surveillance.Tests.Scheduler
                     _apiHeartbeat,
                     _ctx,
                     _universeRuleSubscriber,
+                    _factory,
+                    _ruleAnalyticsRepository,
+                    _alertStreamFactory,
+                    _alertStreamSubscriberFactory,
+                    _alertsRepository,
                     _logger));
         }
 
@@ -83,6 +104,11 @@ namespace Surveillance.Tests.Scheduler
                     _apiHeartbeat,
                     _ctx,
                     _universeRuleSubscriber,
+                    _factory,
+                    _ruleAnalyticsRepository,
+                    _alertStreamFactory,
+                    _alertStreamSubscriberFactory,
+                    _alertsRepository,
                     _logger));
         }
 
@@ -98,6 +124,11 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
+                _ruleAnalyticsRepository,
+                _alertStreamFactory,
+                _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -113,7 +144,7 @@ namespace Surveillance.Tests.Scheduler
            await scheduler.Execute(schedule, _opCtx);
 
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Play(A<IUniverse>.Ignored)).MustHaveHappened();
         }
 
@@ -129,6 +160,11 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
+                _ruleAnalyticsRepository,
+                _alertStreamFactory,
+                _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -163,6 +199,11 @@ namespace Surveillance.Tests.Scheduler
                 _apiHeartbeat,
                 _ctx,
                 _universeRuleSubscriber,
+                _factory,
+                _ruleAnalyticsRepository,
+                _alertStreamFactory,
+                _alertStreamSubscriberFactory,
+                _alertsRepository,
                 _logger);
 
             var schedule = new ScheduledExecution

@@ -1,6 +1,7 @@
 ﻿using System;
 using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighProfits;
@@ -15,20 +16,17 @@ namespace Surveillance.Factories
 {
     public class HighProfitRuleFactory : IHighProfitRuleFactory
     {
-        private readonly IHighProfitRuleCachedMessageSender _messageSender;
         private readonly IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
-            IHighProfitRuleCachedMessageSender messageSender,
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             ILogger<HighProfitsRule> logger)
         {
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
@@ -38,21 +36,22 @@ namespace Surveillance.Factories
         public IHighProfitRule Build(
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
-            ISystemProcessOperationRunRuleContext ruleCtxMarket)
+            ISystemProcessOperationRunRuleContext ruleCtxMarket,
+            IUniverseAlertStream alertStream)
         {
             var stream = new HighProfitStreamRule(
-                _messageSender,
                 parameters,
                 ruleCtxStream,
+                alertStream,
                 false,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _logger);
 
             var marketClosure = new HighProfitMarketClosureRule(
-                _messageSender,
                 parameters,
                 ruleCtxMarket,
+                alertStream,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _logger);

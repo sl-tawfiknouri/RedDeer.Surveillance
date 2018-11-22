@@ -13,6 +13,8 @@ namespace Surveillance.System.DataLayer.Processes
         /// </summary>
         public int Id { get; set; }
 
+        public string CorrelationId { get; set; }
+
         public string SystemProcessId { get; set; }
 
         /// <summary>
@@ -29,11 +31,6 @@ namespace Surveillance.System.DataLayer.Processes
         /// The version of the rule being executed
         /// </summary>
         public string RuleVersion { get; set; }
-
-        /// <summary>
-        /// The number of alerts raised by this rule run
-        /// </summary>
-        public int Alerts { get; set; }
 
         /// <summary>
         /// The starting point for the rule run data

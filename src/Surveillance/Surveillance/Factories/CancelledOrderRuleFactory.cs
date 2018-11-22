@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.CancelledOrders;
@@ -11,20 +12,20 @@ namespace Surveillance.Factories
 {
     public class CancelledOrderRuleFactory : ICancelledOrderRuleFactory
     {
-        private readonly ICancelledOrderRuleCachedMessageSender _messageSender;
         private readonly ILogger<CancelledOrderRule> _logger;
 
         public CancelledOrderRuleFactory(
-            ICancelledOrderRuleCachedMessageSender messageSender,
             ILogger<CancelledOrderRule> logger)
         {
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ICancelledOrderRule Build(ICancelledOrderRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx)
+        public ICancelledOrderRule Build(
+            ICancelledOrderRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream)
         {
-            return new CancelledOrderRule(parameters, _messageSender, ruleCtx, _logger);
+            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _logger);
         }
 
         public static string Version => Versioner.Version(2, 0);

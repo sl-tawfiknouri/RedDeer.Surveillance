@@ -33,8 +33,10 @@ using Surveillance.Recorders;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Calculators;
 using Surveillance.Rules.HighProfits.Calculators.Factories;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -166,6 +168,8 @@ namespace Surveillance
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
+            For<IExchangeRates>().Use<ExchangeRates>();
+            For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();

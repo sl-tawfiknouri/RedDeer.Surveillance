@@ -28,6 +28,7 @@ namespace Surveillance.Rules.HighProfits
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
+        private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
 
         protected bool MarketClosureRule = false;
 
@@ -38,6 +39,7 @@ namespace Surveillance.Rules.HighProfits
             bool submitRuleBreaches,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
+            IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -53,6 +55,9 @@ namespace Surveillance.Rules.HighProfits
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
+            _exchangeRateProfitCalculator =
+                exchangeRateProfitCalculator 
+                ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -75,7 +80,6 @@ namespace Surveillance.Rules.HighProfits
                     at.OrderStatus == OrderStatus.PartialFulfilled
                     || at.OrderStatus == OrderStatus.Fulfilled)
                 .ToList();
-
 
             var costCalculator = GetCostCalculator();
             var revenueCalculator = GetRevenueCalculator();
@@ -113,10 +117,34 @@ namespace Surveillance.Rules.HighProfits
             var hasHighProfitAbsolute = HasHighProfitAbsolute(absoluteProfit);
             var hasHighProfitPercentage = HasHighProfitPercentage(profitRatio);
 
+            IExchangeRateProfitBreakdown exchangeRateProfits = null;
+            if (_parameters.UseCurrencyConversions)
+            {
+                var currency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+                var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
+                var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
+
+                var exchangeRateProfitsTask = 
+                    _exchangeRateProfitCalculator.ExchangeRateMovement(
+                        buys,
+                        sells,
+                        currency,
+                        _ruleCtx);
+
+                exchangeRateProfitsTask.Wait();
+                exchangeRateProfits = exchangeRateProfitsTask.Result;
+            }
+
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
-                WriteAlertToMessageSender(activeTrades, absoluteProfit.Value, profitRatio, hasHighProfitAbsolute, hasHighProfitPercentage);
+                WriteAlertToMessageSender(
+                    activeTrades,
+                    absoluteProfit.Value,
+                    profitRatio,
+                    hasHighProfitAbsolute,
+                    hasHighProfitPercentage,
+                    exchangeRateProfits);
             }
         }
 
@@ -163,7 +191,8 @@ namespace Surveillance.Rules.HighProfits
             decimal absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
-            bool hasHighProfitPercentage)
+            bool hasHighProfitPercentage,
+            IExchangeRateProfitBreakdown breakdown)
         {
             var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
 
@@ -180,7 +209,8 @@ namespace Surveillance.Rules.HighProfits
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
                     position,
-                    MarketClosureRule);
+                    MarketClosureRule,
+                    breakdown);
 
             var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);

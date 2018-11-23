@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Trades.Orders;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades;
@@ -20,7 +21,8 @@ namespace Surveillance.Rules.HighProfits
             bool hasAbsoluteProfitBreach,
             bool hasRelativeProfitBreach,
             ITradePosition trades,
-            bool marketClosureVirtualProfitComponent)
+            bool marketClosureVirtualProfitComponent,
+            IExchangeRateProfitBreakdown profitBreakdown)
         {
             Window = parameters.WindowSize;
             Parameters = parameters;
@@ -32,6 +34,7 @@ namespace Surveillance.Rules.HighProfits
             HasRelativeProfitBreach = hasRelativeProfitBreach;
             Trades = trades ?? new TradePosition(new List<TradeOrderFrame>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
+            ProfitBreakdown = profitBreakdown;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -44,5 +47,6 @@ namespace Surveillance.Rules.HighProfits
         public Security Security { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
+        public IExchangeRateProfitBreakdown ProfitBreakdown { get; }
     }
 }

@@ -38,6 +38,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         }
 
         [Test]
+        [Explicit]
         public void DoesSendExchangeRateMessage_AsExpected()
         {
             var messageSender = new HighProfitMessageSender(

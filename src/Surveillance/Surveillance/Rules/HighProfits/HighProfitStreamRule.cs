@@ -237,7 +237,8 @@ namespace Surveillance.Rules.HighProfits
                 return false;
             }
 
-            if (!string.Equals(
+            if (_parameters.UseCurrencyConversions
+                && !string.Equals(
                 _parameters.HighProfitCurrencyConversionTargetCurrency,
                 absoluteProfits.Currency.Value,
                 StringComparison.InvariantCultureIgnoreCase))

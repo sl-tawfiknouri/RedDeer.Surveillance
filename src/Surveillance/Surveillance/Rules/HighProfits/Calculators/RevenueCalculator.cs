@@ -117,6 +117,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
                         afto.OrderCurrency))
                 .ToList();
 
+            if (!filledOrders.Any())
+            {
+                return null;
+            }
+
             var summedCurrency = filledOrders.Aggregate((x, y) => new CurrencyAmount(x.Value + y.Value, x.Currency));
 
             return summedCurrency;

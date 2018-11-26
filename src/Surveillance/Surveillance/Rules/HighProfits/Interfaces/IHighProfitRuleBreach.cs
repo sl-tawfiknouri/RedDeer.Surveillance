@@ -13,6 +13,6 @@ namespace Surveillance.Rules.HighProfits.Interfaces
         string AbsoluteProfitCurrency { get; }
         decimal? RelativeProfits { get; }
         bool MarketClosureVirtualProfitComponent { get; }
-        IExchangeRateProfitBreakdown ProfitBreakdown { get; }
+        IExchangeRateProfitBreakdown ExchangeRateProfits { get; }
     }
 }

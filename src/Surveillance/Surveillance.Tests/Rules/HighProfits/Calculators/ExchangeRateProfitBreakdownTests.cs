@@ -21,7 +21,7 @@ namespace Surveillance.Tests.Rules.HighProfits.Calculators
             var revenueTwo = (new TradeOrderFrame()).Random();
             var revenuePosition = new TradePosition(new List<TradeOrderFrame> { revenueOne, revenueTwo });
 
-            var breakdown = new ExchangeRateProfitBreakdown(costPosition, revenuePosition, 2, 1.5m);
+            var breakdown = new ExchangeRateProfitBreakdown(costPosition, revenuePosition, 2, 1.5m, "USD", "GBP");
 
             var x = breakdown.AbsoluteAmountDueToWer();
             var y = breakdown.RelativePercentageDueToWer();

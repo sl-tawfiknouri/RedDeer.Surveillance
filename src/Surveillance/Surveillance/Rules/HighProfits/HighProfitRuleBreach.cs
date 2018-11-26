@@ -34,7 +34,7 @@ namespace Surveillance.Rules.HighProfits
             HasRelativeProfitBreach = hasRelativeProfitBreach;
             Trades = trades ?? new TradePosition(new List<TradeOrderFrame>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
-            ProfitBreakdown = profitBreakdown;
+            ExchangeRateProfits = profitBreakdown;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -47,6 +47,6 @@ namespace Surveillance.Rules.HighProfits
         public Security Security { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public IExchangeRateProfitBreakdown ProfitBreakdown { get; }
+        public IExchangeRateProfitBreakdown ExchangeRateProfits { get; }
     }
 }

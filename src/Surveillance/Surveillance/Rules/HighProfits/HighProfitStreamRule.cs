@@ -118,21 +118,10 @@ namespace Surveillance.Rules.HighProfits
             var hasHighProfitPercentage = HasHighProfitPercentage(profitRatio);
 
             IExchangeRateProfitBreakdown exchangeRateProfits = null;
+
             if (_parameters.UseCurrencyConversions)
             {
-                var currency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-                var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
-                var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
-
-                var exchangeRateProfitsTask = 
-                    _exchangeRateProfitCalculator.ExchangeRateMovement(
-                        buys,
-                        sells,
-                        currency,
-                        _ruleCtx);
-
-                exchangeRateProfitsTask.Wait();
-                exchangeRateProfits = exchangeRateProfitsTask.Result;
+                exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
 
             if (hasHighProfitAbsolute
@@ -146,6 +135,25 @@ namespace Surveillance.Rules.HighProfits
                     hasHighProfitPercentage,
                     exchangeRateProfits);
             }
+        }
+
+        private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<TradeOrderFrame> liveTrades)
+        {
+            var currency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
+            var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
+
+            var exchangeRateProfitsTask =
+                _exchangeRateProfitCalculator.ExchangeRateMovement(
+                    buys,
+                    sells,
+                    currency,
+                    _ruleCtx);
+
+            exchangeRateProfitsTask.Wait();
+            var exchangeRateProfits = exchangeRateProfitsTask.Result;
+
+            return exchangeRateProfits;
         }
 
         private ICostCalculator GetCostCalculator()

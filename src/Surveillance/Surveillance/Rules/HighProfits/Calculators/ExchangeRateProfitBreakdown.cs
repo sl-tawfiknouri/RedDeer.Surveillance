@@ -10,12 +10,16 @@ namespace Surveillance.Rules.HighProfits.Calculators
             ITradePosition positionCost,
             ITradePosition positionRevenue,
             decimal positionCostWer,
-            decimal positionRevenueWer)
+            decimal positionRevenueWer,
+            string fixedCurrency,
+            string variableCurrency)
         {
             PositionCost = positionCost;
             PositionRevenue = positionRevenue;
             PositionCostWer = positionCostWer;
             PositionRevenueWer = positionRevenueWer;
+            FixedCurrency = fixedCurrency;
+            VariableCurrency = variableCurrency;
         }
 
         public ITradePosition PositionCost { get; }
@@ -23,6 +27,9 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
         public decimal PositionCostWer { get; }
         public decimal PositionRevenueWer { get; }
+
+        public string FixedCurrency { get; }
+        public string VariableCurrency { get; }
 
         public decimal RelativePercentageDueToWer()
         {

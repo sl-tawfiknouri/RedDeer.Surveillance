@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -24,10 +25,27 @@ namespace Surveillance.Rules.HighProfits.Calculators
             Domain.Finance.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
+            var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency))?.OrderCurrency;
+
+            if (string.IsNullOrWhiteSpace(orderCurrency))
+            {
+                orderCurrency =
+                    positionRevenue
+                        .Get()
+                        .FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency))
+                        ?.OrderCurrency;
+            }
+
             var costRates = await _werExchangeRateCalculator.WeightedExchangeRate(positionCost, variableCurrency, ruleCtx);
             var revenueRates =  await _werExchangeRateCalculator.WeightedExchangeRate(positionRevenue, variableCurrency, ruleCtx);
 
-            return new ExchangeRateProfitBreakdown(positionCost, positionRevenue, costRates, revenueRates);
+            return new ExchangeRateProfitBreakdown(
+                positionCost,
+                positionRevenue,
+                costRates,
+                revenueRates,
+                orderCurrency,
+                variableCurrency.Value);
         }
     }
 }

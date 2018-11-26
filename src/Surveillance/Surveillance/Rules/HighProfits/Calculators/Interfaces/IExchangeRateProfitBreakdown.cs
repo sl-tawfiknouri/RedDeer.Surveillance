@@ -9,6 +9,9 @@ namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
         ITradePosition PositionRevenue { get; }
         decimal PositionRevenueWer { get; }
 
+        string FixedCurrency { get; }
+        string VariableCurrency { get; }
+
         decimal AbsoluteAmountDueToWer();
         decimal RelativePercentageDueToWer();
     }

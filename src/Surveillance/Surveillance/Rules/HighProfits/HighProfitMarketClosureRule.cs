@@ -5,6 +5,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -21,6 +22,7 @@ namespace Surveillance.Rules.HighProfits
             IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
+            IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters, 
@@ -29,6 +31,7 @@ namespace Surveillance.Rules.HighProfits
                 true,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
+                exchangeRateProfitCalculator,
                 logger)
         {
             MarketClosureRule = true;

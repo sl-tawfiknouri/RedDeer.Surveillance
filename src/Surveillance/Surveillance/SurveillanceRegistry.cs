@@ -107,7 +107,9 @@ namespace Surveillance
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
 
             For<ISpoofingSubscriber>().Use<SpoofingSubscriber>();
-
+            For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();
+            For<IHighProfitsSubscriber>().Use<HighProfitsSubscriber>();
+            For<IHighVolumeSubscriber>().Use<HighVolumeSubscriber>();
 
 
 

@@ -20,9 +20,9 @@ namespace Surveillance.Universe
     public class UniverseRuleSubscriber : IUniverseRuleSubscriber
     {
         private readonly ISpoofingSubscriber _spoofingSubscriber;
-        private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
-        private readonly IHighProfitRuleFactory _highProfitRuleFactory;
-        private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
+        private readonly ICancelledOrderSubscriber _cancelledOrderSubscriber;
+        private readonly IHighProfitsSubscriber _highProfitSubscriber;
+        private readonly IHighVolumeSubscriber _highVolumeSubscriber;
         private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
         private readonly ILayeringRuleFactory _layeringRuleFactory;
         private readonly IWashTradeRuleFactory _washTradeRuleFactory;
@@ -34,11 +34,11 @@ namespace Surveillance.Universe
 
         public UniverseRuleSubscriber(
             ISpoofingSubscriber spoofingSubscriber,
-            ICancelledOrderRuleFactory cancelledOrderRuleFactory,
-            IHighProfitRuleFactory highProfitRuleFactory,
+            ICancelledOrderSubscriber cancelledOrderSubscriber,
+            IHighProfitsSubscriber highProfitSubscriber,
+            IHighVolumeSubscriber highVolumeSubscriber,
             IMarkingTheCloseRuleFactory markingTheCloseFactory,
             ILayeringRuleFactory layeringRuleFactory,
-            IHighVolumeRuleFactory highVolumeRuleFactory,
             IRuleParameterApiRepository ruleParameterApiRepository,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
@@ -46,11 +46,9 @@ namespace Surveillance.Universe
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingSubscriber = spoofingSubscriber ?? throw new ArgumentNullException(nameof(spoofingSubscriber));
-            _cancelledOrderRuleFactory = cancelledOrderRuleFactory ?? throw new ArgumentNullException(nameof(cancelledOrderRuleFactory));
-            _highProfitRuleFactory = highProfitRuleFactory ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
-            _highVolumeRuleFactory =
-                highVolumeRuleFactory
-                ?? throw new ArgumentNullException(nameof(highVolumeRuleFactory));
+            _cancelledOrderSubscriber = cancelledOrderSubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderSubscriber));
+            _highProfitSubscriber = highProfitSubscriber ?? throw new ArgumentNullException(nameof(highProfitSubscriber));
+            _highVolumeSubscriber = highVolumeSubscriber ?? throw new ArgumentNullException(nameof(highVolumeSubscriber));
             _markingTheCloseFactory = markingTheCloseFactory ?? throw new ArgumentNullException(nameof(markingTheCloseFactory));
             _layeringRuleFactory = layeringRuleFactory ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
             _ruleParameterApiRepository = ruleParameterApiRepository
@@ -76,130 +74,12 @@ namespace Surveillance.Universe
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
             _spoofingSubscriber.SpoofingRule(execution, player, ruleParameters, opCtx, alertStream);
-            CancelledOrdersRule(execution, player, ruleParameters, opCtx, alertStream);
-            HighProfitsRule(execution, player, ruleParameters, opCtx, alertStream);
+            _cancelledOrderSubscriber.CancelledOrdersRule(execution, player, ruleParameters, opCtx, alertStream);
+            _highProfitSubscriber.HighProfitsRule(execution, player, ruleParameters, opCtx, alertStream);
+            _highVolumeSubscriber.HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx, alertStream);
             LayeringRule(execution, player, ruleParameters, opCtx, alertStream);
-            HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
             WashTradeRule(execution, player, ruleParameters, opCtx, alertStream);
-        }
-
-        private void CancelledOrdersRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream)
-        {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
-            {
-                return;
-            }
-
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .CancelledOrders
-                    .Where(co => filteredParameters.Contains(co.Id, StringComparer.InvariantCultureIgnoreCase))
-                    .ToList();
-
-            var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
-
-            if (cancelledOrderParameters != null
-                && cancelledOrderParameters.Any())
-            {
-                foreach (var param in cancelledOrderParameters)
-                {
-                    var ruleCtx = opCtx
-                        .CreateAndStartRuleRunContext(
-                            Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                            CancelledOrderRuleFactory.Version,
-                            execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime,
-                            execution.CorrelationId);
-
-                    var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx, alertStream);
-
-                    if (param.HasFilters())
-                    {
-                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                        filteredUniverse.Subscribe(cancelledOrderRule);
-                        player.Subscribe(filteredUniverse);
-                    }
-                    else
-                    {
-                        player.Subscribe(cancelledOrderRule);
-                    }
-                }
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-            }
-        }
-
-        private void HighProfitsRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream)
-        {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
-            {
-                return;
-            }
-
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .HighProfits
-                    .Where(hp => filteredParameters.Contains(hp.Id, StringComparer.InvariantCultureIgnoreCase))
-                    .ToList();
-            
-            var highProfitParameters = _ruleParameterMapper.Map(dtos);
-
-            if (highProfitParameters != null
-                && highProfitParameters.Any())
-            {
-                foreach (var param in highProfitParameters)
-                {
-
-                    var ruleCtxStream = opCtx
-                            .CreateAndStartRuleRunContext(
-                                Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                                HighProfitRuleFactory.Version,
-                                execution.TimeSeriesInitiation.DateTime,
-                                execution.TimeSeriesTermination.DateTime,
-                                execution.CorrelationId);
-
-                    var ruleCtxMarketClosure = opCtx
-                        .CreateAndStartRuleRunContext(
-                            Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                            HighProfitRuleFactory.Version,
-                            execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime,
-                            execution.CorrelationId);
-
-                    var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream);
-                    if (param.HasFilters())
-                    {
-                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                        filteredUniverse.Subscribe(highProfitsRule);
-                        player.Subscribe(filteredUniverse);
-                    }
-                    else
-                    {
-                        player.Subscribe(highProfitsRule);
-                    }
-                }
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
-            }
         }
 
         private void MarkingTheCloseRule(
@@ -310,62 +190,6 @@ namespace Surveillance.Universe
             {
                 _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
-            }
-        }
-
-        private void HighVolumeRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream)
-        {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighVolume) ?? true)
-            {
-                return;
-            }
-
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .HighVolumes
-                    .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
-                    .ToList();
-
-            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (highVolumeParameters != null
-                && highVolumeParameters.Any())
-            {
-                foreach (var param in highVolumeParameters)
-                {
-                    var ruleCtx = opCtx
-                        .CreateAndStartRuleRunContext(
-                            Domain.Scheduling.Rules.HighVolume.GetDescription(),
-                            HighVolumeRuleFactory.Version,
-                            execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime,
-                            execution.CorrelationId);
-
-                    var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream);
-
-                    if (param.HasFilters())
-                    {
-                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                        filteredUniverse.Subscribe(highVolume);
-                        player.Subscribe(filteredUniverse);
-                    }
-                    else
-                    {
-                        player.Subscribe(highVolume);
-                    }
-                }
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
             }
         }
 

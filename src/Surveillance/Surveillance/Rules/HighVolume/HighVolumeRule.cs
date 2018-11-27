@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Finance;
 using Domain.Trades.Orders;
@@ -52,12 +53,16 @@ namespace Surveillance.Rules.HighVolume
             {
                 return;
             }
-            
-            var tradedVolume =
+
+            var tradedSecurities =
                 tradeWindow
                     .Where(tr =>
                         tr.OrderStatus == OrderStatus.Fulfilled
                         || tr.OrderStatus == OrderStatus.PartialFulfilled)
+                    .ToList();
+
+            var tradedVolume =
+                tradedSecurities
                     .Sum(tr => tr.FulfilledVolume);
 
             var tradePosition = new TradePosition(tradeWindow.ToList());
@@ -78,7 +83,7 @@ namespace Surveillance.Rules.HighVolume
             HighVolumeRuleBreach.BreachDetails marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
             if (_parameters.HighVolumePercentageMarketCap.HasValue)
             {
-                marketCapBreach = MarketCapCheck(mostRecentTrade, tradedVolume);
+                marketCapBreach = MarketCapCheck(mostRecentTrade, tradedSecurities);
             }
 
             if ((!dailyBreach?.HasBreach ?? true)
@@ -193,8 +198,14 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private HighVolumeRuleBreach.BreachDetails MarketCapCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails MarketCapCheck(TradeOrderFrame mostRecentTrade, List<TradeOrderFrame> trades)
         {
+            if (trades == null
+                || !trades.Any())
+            {
+                return HighVolumeRuleBreach.BreachDetails.None();
+            }
+
             if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
             {
                 _hadMissingData = true;
@@ -230,7 +241,10 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            double tradedValue = tradedVolume * (double)security.Spread.Price.Value;
+            var tradedValue =
+                (double)trades
+                    .Select(tr => tr.FulfilledVolume * (tr.ExecutedPrice.GetValueOrDefault().Value))
+                    .Sum();
 
             var breachPercentage =
                 security.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0

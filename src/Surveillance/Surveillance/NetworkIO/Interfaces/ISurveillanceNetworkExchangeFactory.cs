@@ -1,6 +1,6 @@
 ﻿using Utilities.Network_IO.Websocket_Hosts;
 
-namespace Surveillance.Network_IO.Interfaces
+namespace Surveillance.NetworkIO.Interfaces
 {
     public interface ISurveillanceNetworkExchangeFactory
     {

@@ -110,7 +110,9 @@ namespace Surveillance
             For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();
             For<IHighProfitsSubscriber>().Use<HighProfitsSubscriber>();
             For<IHighVolumeSubscriber>().Use<HighVolumeSubscriber>();
-
+            For<IMarkingTheCloseSubscriber>().Use<MarkingTheCloseSubscriber>();
+            For<ILayeringSubscriber>().Use<LayeringSubscriber>();
+            For<IWashTradeSubscriber>().Use<WashTradeSubscriber>();
 
 
             For<IUniverse>().Use<Universe.Universe>();

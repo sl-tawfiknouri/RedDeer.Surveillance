@@ -60,13 +60,12 @@ namespace Surveillance.Rules.WashTrade
         {
             var activeTrades = history.ActiveTradeHistory();
 
-            var liveTrades =
-                activeTrades
-                    .Where(at =>
-                        at.OrderStatus == OrderStatus.Fulfilled
-                        || at.OrderStatus == OrderStatus.PartialFulfilled)
-                    .Where(at => at.ExecutedPrice != null)
-                    .ToList();
+            if (!activeTrades.Any())
+            {
+                return;
+            }
+            
+            var liveTrades = FilterByClientAccount(history.ActiveTradeHistory().Pop(), history.ActiveTradeHistory());
 
             if (!liveTrades?.Any() ?? true)
             {
@@ -74,12 +73,9 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var tradePosition = new TradePosition(
-                activeTrades
-                    .Where(at =>
-                        at.OrderStatus == OrderStatus.Fulfilled
-                        || at.OrderStatus == OrderStatus.PartialFulfilled)
-                    .Where(at => at.ExecutedPrice != null)
-                    .ToList());
+                FilterByClientAccount(
+                    history.ActiveTradeHistory().Pop(),
+                    history.ActiveTradeHistory()));
 
             // Net change analysis
             var averagePositionCheckTask = NettingTrades(liveTrades);
@@ -116,6 +112,35 @@ namespace Surveillance.Rules.WashTrade
 
             var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
             _alertStream.Add(universeAlert);
+        }
+
+        private List<TradeOrderFrame> FilterByClientAccount(TradeOrderFrame mostRecentFrame, Stack<TradeOrderFrame> frames)
+        {
+            if (frames == null)
+            {
+                return new List<TradeOrderFrame>();
+            }
+
+            var liveTrades =
+                frames
+                    .Where(at =>
+                        at.OrderStatus == OrderStatus.Fulfilled
+                        || at.OrderStatus == OrderStatus.PartialFulfilled)
+                    .Where(at => at.ExecutedPrice != null)
+                    .ToList();
+
+            if (!string.IsNullOrWhiteSpace(mostRecentFrame?.TradeClientAttributionId))
+            {
+                liveTrades = liveTrades
+                    .Where(lt => 
+                        string.Equals(
+                            lt.TradeClientAttributionId,
+                            mostRecentFrame.TradeClientAttributionId,
+                            StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
+            }
+
+            return liveTrades;
         }
 
         /// <summary>

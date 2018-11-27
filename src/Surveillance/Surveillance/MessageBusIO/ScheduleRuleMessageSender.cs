@@ -1,13 +1,13 @@
-﻿using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
-using Microsoft.Extensions.Logging;
-using Surveillance.MessageBus_IO.Interfaces;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
+using Microsoft.Extensions.Logging;
+using Surveillance.MessageBusIO.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.MessageBus_IO
+namespace Surveillance.MessageBusIO
 {
     public class ScheduleRuleMessageSender : IScheduleRuleMessageSender
     {

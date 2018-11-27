@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
-using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

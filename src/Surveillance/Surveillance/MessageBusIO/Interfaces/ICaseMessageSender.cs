@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 
-namespace Surveillance.MessageBus_IO.Interfaces
+namespace Surveillance.MessageBusIO.Interfaces
 {
     public interface ICaseMessageSender
     {

@@ -7,7 +7,7 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Recorders.Interfaces;
 
 namespace Surveillance.Recorders

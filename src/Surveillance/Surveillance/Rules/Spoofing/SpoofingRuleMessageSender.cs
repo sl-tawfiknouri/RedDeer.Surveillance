@@ -1,7 +1,7 @@
 ﻿using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Mappers.Interfaces;
-using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Extensions;

@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.MessageBus_IO
+namespace Surveillance.MessageBusIO
 {
     public class CaseMessageSender : ICaseMessageSender
     {

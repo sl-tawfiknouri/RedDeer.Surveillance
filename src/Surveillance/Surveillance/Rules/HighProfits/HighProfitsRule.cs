@@ -1,4 +1,5 @@
 ﻿using System;
+using Surveillance.Factories;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Multiverse.Interfaces;
@@ -43,6 +44,6 @@ namespace Surveillance.Rules.HighProfits
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
-        public string Version { get; } = Versioner.Version(2, 0);
+        public string Version { get; } = HighProfitRuleFactory.Version;
     }
 }

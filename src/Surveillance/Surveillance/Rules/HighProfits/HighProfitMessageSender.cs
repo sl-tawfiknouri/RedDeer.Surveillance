@@ -13,7 +13,12 @@ namespace Surveillance.Rules.HighProfits
             ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<HighProfitMessageSender> logger,
             ICaseMessageSender caseMessageSender)
-            : base(dtoMapper, "Automated High Profit Rule Breach Detected", "High Profit Message Sender", logger, caseMessageSender)
+            : base(
+                dtoMapper,
+                "Automated High Profit Rule Breach Detected",
+                "High Profit Message Sender",
+                logger,
+                caseMessageSender)
         { }
 
         public void Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
@@ -46,8 +51,9 @@ namespace Surveillance.Rules.HighProfits
                 HighRelativeProfitText(ruleBreach, highRelativeProfitAsPercentage, highRelativeProfitAsPercentageSetByUser);
 
             var highAbsoluteProfitSection = HighAbsoluteProfitText(ruleBreach, highAbsoluteProfit);
+            var highProfitExchangeRatesSection = HighProfitExchangeRateText(ruleBreach);
 
-            return $"High profit rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}).{highRelativeProfitSection}{highAbsoluteProfitSection}";
+            return $"High profit rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}).{highRelativeProfitSection}{highAbsoluteProfitSection}{highProfitExchangeRatesSection}";
         }
 
         private string HighRelativeProfitText(
@@ -63,8 +69,39 @@ namespace Surveillance.Rules.HighProfits
         private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach, decimal absoluteProfit)
         {
             return ruleBreach.HasAbsoluteProfitBreach
-                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitAbsoluteThresholdCurrency})."
+                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitCurrencyConversionTargetCurrency})."
                 : string.Empty;
+        }
+
+        private string HighProfitExchangeRateText(IHighProfitRuleBreach ruleBreach)
+        {
+            if (!ruleBreach.Parameters.UseCurrencyConversions
+                || ruleBreach.ExchangeRateProfits == null)
+            {
+                return string.Empty;
+            }
+
+            var absAmount = Math.Round(
+                ruleBreach.ExchangeRateProfits.AbsoluteAmountDueToWer(),
+                2,
+                MidpointRounding.AwayFromZero);
+
+            var costWer = Math.Round(
+                ruleBreach.ExchangeRateProfits.PositionCostWer,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            var revenueWer = Math.Round(
+                ruleBreach.ExchangeRateProfits.PositionRevenueWer,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            var relativePercentage = Math.Round(
+                ruleBreach.ExchangeRateProfits.RelativePercentageDueToWer() * 100,
+                2,
+                MidpointRounding.AwayFromZero);
+
+            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency}/ {ruleBreach.ExchangeRateProfits.VariableCurrency}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
         }
     }
 }

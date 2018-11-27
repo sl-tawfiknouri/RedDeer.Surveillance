@@ -23,6 +23,6 @@ namespace Surveillance.Factories
             return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _logger);
         }
 
-        public string RuleVersion => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(1, 0);
     }
 }

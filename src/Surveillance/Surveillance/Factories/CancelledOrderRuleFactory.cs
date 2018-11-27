@@ -28,6 +28,6 @@ namespace Surveillance.Factories
             return new CancelledOrderRule(parameters, ruleCtx, alertStream, _logger);
         }
 
-        public string Version => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(2, 0);
     }
 }

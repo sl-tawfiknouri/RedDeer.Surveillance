@@ -10,20 +10,23 @@ using Surveillance.Factories.Interfaces;
 
 namespace Surveillance.Factories
 {
-    public class LayeringRuleRuleFactory : ILayeringRuleFactory
+    public class LayeringRuleFactory : ILayeringRuleFactory
     {
-        private readonly ILogger<LayeringRuleRuleFactory> _logger;
+        private readonly ILogger<LayeringRuleFactory> _logger;
 
-        public LayeringRuleRuleFactory(ILogger<LayeringRuleRuleFactory> logger)
+        public LayeringRuleFactory(ILogger<LayeringRuleFactory> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public ILayeringRule Build(ILayeringRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx, IUniverseAlertStream alertStream)
+        public ILayeringRule Build(
+            ILayeringRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream)
         {
             return new LayeringRule(parameters, alertStream, _logger, ruleCtx);
         }
 
-        public string RuleVersion => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(1, 0);
     }
 }

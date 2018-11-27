@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Factories;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -43,7 +44,7 @@ namespace Surveillance.Rules.WashTrade
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.WashTrade,
-                Versioner.Version(1, 0),
+                WashTradeRuleFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
                 logger)

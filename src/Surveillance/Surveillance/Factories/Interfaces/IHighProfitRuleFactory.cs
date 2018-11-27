@@ -12,7 +12,5 @@ namespace Surveillance.Factories.Interfaces
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
             IUniverseAlertStream alertStream);
-
-        string RuleVersion { get; }
     }
 }

@@ -7,6 +7,7 @@ namespace Surveillance.Rule_Parameters.Interfaces
         TimeSpan WindowSize { get; }
         decimal? HighProfitPercentageThreshold { get; }
         decimal? HighProfitAbsoluteThreshold { get; }
-        string HighProfitAbsoluteThresholdCurrency { get; }
+        bool UseCurrencyConversions { get; }
+        string HighProfitCurrencyConversionTargetCurrency { get; }
     }
 }

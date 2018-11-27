@@ -8,6 +8,5 @@ namespace Surveillance.Factories.Interfaces
     public interface IWashTradeRuleFactory
     {
         IWashTradeRule Build(IWashTradeRuleParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx, IUniverseAlertStream alertStream);
-        string RuleVersion { get; }
     }
 }

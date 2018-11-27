@@ -131,7 +131,7 @@ namespace TestHarness.Engine.OrderGenerator
             var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
 
             // select a suitably low % of the traded volume so we don't fire a huge amount of other rules =)
-            tradedVolume = (int)((decimal)tradedVolume * 0.001m);
+            tradedVolume = (int)((decimal)tradedVolume * 0.05m);
             var tradeTime = latestFrame.TimeStamp;
 
             var volumeFrame = new TradeOrderFrame(

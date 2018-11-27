@@ -11,7 +11,7 @@ namespace Surveillance.Tests.Factories
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRuleRuleFactory(null));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRuleFactory(null));
         }
     }
 }

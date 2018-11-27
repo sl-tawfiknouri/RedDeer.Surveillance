@@ -33,6 +33,10 @@ using Surveillance.Recorders;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Calculators;
+using Surveillance.Rules.HighProfits.Calculators.Factories;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -118,6 +122,8 @@ namespace Surveillance
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
 
+            For<IExchangeRateProfitCalculator>().Use<ExchangeRateProfitCalculator>();
+
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
 
@@ -134,13 +140,15 @@ namespace Surveillance
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
+            For<ICostCalculatorFactory>().Use<CostCalculatorFactory>();
+            For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
             For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
 
             For<ILayeringRule>().Use<LayeringRule>();
-            For<ILayeringRuleFactory>().Use<LayeringRuleRuleFactory>();
+            For<ILayeringRuleFactory>().Use<LayeringRuleFactory>();
             For<ILayeringAlertSender>().Use<LayeringAlertSender>();
             For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
 
@@ -148,7 +156,7 @@ namespace Surveillance
             For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
-
+            
             For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
             For<IMarketCloseMultiverseTransformer>()
                 .Use<MarketCloseMultiverseTransformer>();
@@ -162,6 +170,8 @@ namespace Surveillance
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
+            For<IExchangeRates>().Use<ExchangeRates>();
+            For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();

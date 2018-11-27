@@ -10,12 +10,14 @@ namespace Surveillance.Rule_Parameters
             TimeSpan windowSize,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
-            string highProfitAbsoluteThresholdCurrency)
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency)
         {
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
-            HighProfitAbsoluteThresholdCurrency = highProfitAbsoluteThresholdCurrency ?? string.Empty;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -26,7 +28,8 @@ namespace Surveillance.Rule_Parameters
             TimeSpan windowSize,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
-            string highProfitAbsoluteThresholdCurrency,
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets)
@@ -34,7 +37,8 @@ namespace Surveillance.Rule_Parameters
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
-            HighProfitAbsoluteThresholdCurrency = highProfitAbsoluteThresholdCurrency ?? string.Empty;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -50,11 +54,15 @@ namespace Surveillance.Rule_Parameters
         public decimal? HighProfitAbsoluteThreshold { get; }
 
         /// <summary>
-        /// Additional field so we can double check that the currency the absolute threshold was entered in matches the currency
-        /// we're trading in. If not - just ignore it for now.
-        /// In the future use the exchange rate to figure out whether it exceeded the absolute value or not.
+        /// If true we will use the target currency provided.
+        /// Using absolute profits is implicitly always a yes on use currency conversions
         /// </summary>
-        public string HighProfitAbsoluteThresholdCurrency { get; }
+        public bool UseCurrencyConversions { get; }
+
+        /// <summary>
+        /// Target currency if using currency conversions and also used for high profit absolute threshold
+        /// </summary>
+        public string HighProfitCurrencyConversionTargetCurrency { get; }
 
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }

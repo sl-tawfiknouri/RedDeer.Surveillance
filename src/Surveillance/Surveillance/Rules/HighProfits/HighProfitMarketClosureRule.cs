@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -16,18 +16,25 @@ namespace Surveillance.Rules.HighProfits
 {
     public class HighProfitMarketClosureRule : HighProfitStreamRule, IHighProfitMarketClosureRule
     {
-        private ISystemProcessOperationRunRuleContext _ruleCtx;
-
         public HighProfitMarketClosureRule(
-            ICurrencyConverter currencyConverter,
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
+            ICostCalculatorFactory costCalculatorFactory,
+            IRevenueCalculatorFactory revenueCalculatorFactory,
+            IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             ILogger<HighProfitsRule> logger)
-            : base(currencyConverter, parameters, ruleCtx, alertStream, true, logger)
+            : base(
+                parameters, 
+                ruleCtx,
+                alertStream,
+                true,
+                costCalculatorFactory,
+                revenueCalculatorFactory,
+                exchangeRateProfitCalculator,
+                logger)
         {
             MarketClosureRule = true;
-            _ruleCtx = ruleCtx;
         }
 
         protected override bool RunRuleGuard(ITradingHistoryStack history)
@@ -65,16 +72,6 @@ namespace Surveillance.Rules.HighProfits
             _alertStream.Add(message);
 
             return false;
-        }
-
-        protected override Price? SecurityTickToPrice(SecurityTick tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.IntradayPrices.Close ?? tick.Spread.Price;
         }
     }
 }

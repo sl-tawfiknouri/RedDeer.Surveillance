@@ -27,6 +27,6 @@ namespace Surveillance.Factories
             return new HighVolumeRule(parameters, opCtx, alertStream, _logger);
         }
 
-        public string RuleVersion => Versioner.Version(1, 0);
+        public static string Version => Versioner.Version(1, 0);
     }
 }

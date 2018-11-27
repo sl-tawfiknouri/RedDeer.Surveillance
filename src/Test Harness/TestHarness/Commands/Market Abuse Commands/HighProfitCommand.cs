@@ -267,7 +267,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
 
             var result = new List<DataGenerationPlan>();
 
-            var i = 0;
+            var i = 1;
             foreach (var sedol in sedols)
             {
                 var openTime = from.Add(dto.MarketOpenTime).AddMinutes(i * 60);

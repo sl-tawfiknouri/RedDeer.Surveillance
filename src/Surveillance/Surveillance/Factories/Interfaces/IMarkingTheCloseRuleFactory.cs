@@ -10,7 +10,5 @@ namespace Surveillance.Factories.Interfaces
             IMarkingTheCloseParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream);
-
-        string RuleVersion { get; }
     }
 }

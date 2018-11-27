@@ -73,7 +73,8 @@ namespace Surveillance.Rule_Parameters
                         dto.WindowSize,
                         dto.HighProfitPercentageThreshold,
                         dto.HighProfitAbsoluteThreshold,
-                        dto.HighProfitAbsoluteThresholdCurrency,
+                        dto.UseCurrencyConversions,
+                        dto.HighProfitCurrencyConversionTargetCurrency,
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
                         _ruleProjector.Project(dto.Markets)))

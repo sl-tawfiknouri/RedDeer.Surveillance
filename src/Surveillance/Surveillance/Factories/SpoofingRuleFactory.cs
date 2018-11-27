@@ -31,6 +31,6 @@ namespace Surveillance.Factories
                 _logger);
         }
 
-        public string RuleVersion => Versioner.Version(2, 0);
+        public static string Version => Versioner.Version(2, 0);
     }
 }

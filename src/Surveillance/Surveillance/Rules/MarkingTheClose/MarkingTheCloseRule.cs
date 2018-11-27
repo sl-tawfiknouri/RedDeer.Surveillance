@@ -6,6 +6,8 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -32,7 +34,7 @@ namespace Surveillance.Rules.MarkingTheClose
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.MarkingTheClose,
-                Versioner.Version(1, 0),
+                MarkingTheCloseRuleFactory.Version,
                 "Marking The Close",
                 ruleCtx,
                 logger)

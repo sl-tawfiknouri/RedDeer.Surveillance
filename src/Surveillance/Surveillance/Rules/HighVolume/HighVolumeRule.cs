@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
 using Domain.Finance;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
+using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rule_Parameters.Interfaces;
@@ -33,7 +33,7 @@ namespace Surveillance.Rules.HighVolume
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.HighVolume,
-                Versioner.Version(1, 0),
+                HighVolumeRuleFactory.Version,
                 "High Volume Rule",
                 opCtx,
                 logger)

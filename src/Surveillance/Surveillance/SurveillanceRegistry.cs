@@ -117,6 +117,7 @@ namespace Surveillance
             For<IUniverseAlertStreamSubscriberFactory>().Use<UniverseAlertStreamSubscriberFactory>();
 
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
+            For<IClientOrganisationalFactorMapper>().Use<ClientOrganisationalFactorMapper>();
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

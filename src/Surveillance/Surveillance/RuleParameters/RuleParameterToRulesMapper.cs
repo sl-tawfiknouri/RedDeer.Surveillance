@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Mappers.Interfaces;
 using Surveillance.RuleParameters.Filter.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
@@ -11,10 +12,16 @@ namespace Surveillance.RuleParameters
     public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
     {
         private readonly IRuleProjector _ruleProjector;
+        private readonly IClientOrganisationalFactorMapper _organisationalFactorMapper;
 
-        public RuleParameterToRulesMapper(IRuleProjector ruleProjector)
+        public RuleParameterToRulesMapper(
+            IRuleProjector ruleProjector,
+            IClientOrganisationalFactorMapper organisationalFactorMapper)
         {
             _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
+            _organisationalFactorMapper =
+                organisationalFactorMapper
+                ?? throw new ArgumentNullException(nameof(organisationalFactorMapper));
         }
 
         public IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos)

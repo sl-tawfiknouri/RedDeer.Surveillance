@@ -59,14 +59,12 @@ namespace Surveillance.Tests.Currency
                 tradeThree
             });
 
-            var usd = new Domain.Finance.Currency("cny");
+            var usd = new Domain.Finance.Currency("usd");
 
             var wer = await calculator.WeightedExchangeRate(
                 position,
                 usd,
                 _ruleCtx);
-
-            Assert.AreEqual(0, 0);
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
-using Surveillance.Rule_Parameters.Filter;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Filter;
+using Surveillance.RuleParameters.Interfaces;
 
-namespace Surveillance.Rule_Parameters
+namespace Surveillance.RuleParameters
 {
     public class HighProfitsRuleParameters : IHighProfitsRuleParameters
     {

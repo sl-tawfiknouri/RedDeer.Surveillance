@@ -1,6 +1,6 @@
 ﻿using System;
 using Domain.Equity.Streams.Interfaces;
-using Surveillance.Rule_Parameters.Filter;
+using Surveillance.RuleParameters.Filter;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 

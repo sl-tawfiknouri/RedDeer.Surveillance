@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.RuleParameters.Filter.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.Rule_Parameters.Filter.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 
-namespace Surveillance.Rule_Parameters
+namespace Surveillance.RuleParameters
 {
     public class RuleParameterToRulesMapper : IRuleParameterToRulesMapper
     {

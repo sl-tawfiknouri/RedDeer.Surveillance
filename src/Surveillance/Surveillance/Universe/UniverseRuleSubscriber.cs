@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Utilities.Extensions;
@@ -13,6 +12,7 @@ using System.Linq;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Factories;
+using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Universe
 {

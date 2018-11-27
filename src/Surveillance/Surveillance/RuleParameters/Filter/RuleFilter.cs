@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Surveillance.Rule_Parameters.Filter
+namespace Surveillance.RuleParameters.Filter
 {
     public class RuleFilter
     {

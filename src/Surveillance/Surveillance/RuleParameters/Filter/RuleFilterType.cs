@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Rule_Parameters.Filter
+﻿namespace Surveillance.RuleParameters.Filter
 {
     public enum RuleFilterType
     {

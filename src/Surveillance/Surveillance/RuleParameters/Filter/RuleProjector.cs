@@ -1,7 +1,7 @@
 ﻿using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
-using Surveillance.Rule_Parameters.Filter.Interfaces;
+using Surveillance.RuleParameters.Filter.Interfaces;
 
-namespace Surveillance.Rule_Parameters.Filter
+namespace Surveillance.RuleParameters.Filter
 {
     public class RuleProjector : IRuleProjector
     {

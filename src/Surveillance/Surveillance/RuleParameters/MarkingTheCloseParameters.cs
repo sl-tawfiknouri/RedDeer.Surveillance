@@ -1,8 +1,8 @@
 ﻿using System;
+using Surveillance.RuleParameters.Filter;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.Rule_Parameters.Filter;
 
-namespace Surveillance.Rule_Parameters
+namespace Surveillance.RuleParameters
 {
     public class MarkingTheCloseParameters : IMarkingTheCloseParameters
     {

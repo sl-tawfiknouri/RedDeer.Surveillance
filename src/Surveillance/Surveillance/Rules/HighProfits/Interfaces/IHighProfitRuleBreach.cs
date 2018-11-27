@@ -1,6 +1,6 @@
-﻿using Surveillance.Rules.HighProfits.Calculators.Interfaces;
+﻿using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Interfaces
 {

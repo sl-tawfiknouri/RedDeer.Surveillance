@@ -1,5 +1,5 @@
-﻿using Surveillance.Rules.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
+﻿using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules.Interfaces;
 using static Surveillance.Rules.WashTrade.WashTradeRuleBreach;
 
 namespace Surveillance.Rules.WashTrade.Interfaces

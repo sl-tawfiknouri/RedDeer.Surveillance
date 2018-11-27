@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Equity;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.Layering

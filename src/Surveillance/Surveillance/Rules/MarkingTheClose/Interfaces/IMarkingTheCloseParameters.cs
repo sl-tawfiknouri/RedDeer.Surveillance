@@ -1,5 +1,5 @@
 ﻿using System;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 
 // ReSharper disable UnusedMember.Global
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Domain.Trades.Orders;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Rules.WashTrade.Interfaces
 {

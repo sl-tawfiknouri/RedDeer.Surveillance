@@ -5,7 +5,7 @@ using Domain.Market;
 using Domain.Trades.Orders;
 using FakeItEasy;
 using NUnit.Framework;
-using Surveillance.Rule_Parameters.Filter;
+using Surveillance.RuleParameters.Filter;
 using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter;

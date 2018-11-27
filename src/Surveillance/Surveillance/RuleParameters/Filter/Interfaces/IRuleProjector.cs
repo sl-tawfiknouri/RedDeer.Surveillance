@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Rule_Parameters.Filter.Interfaces
+﻿namespace Surveillance.RuleParameters.Filter.Interfaces
 {
     public interface IRuleProjector
     {

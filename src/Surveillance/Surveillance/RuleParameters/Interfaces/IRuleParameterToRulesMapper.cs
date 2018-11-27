@@ -2,7 +2,7 @@
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 
-namespace Surveillance.Rule_Parameters.Interfaces
+namespace Surveillance.RuleParameters.Interfaces
 {
     public interface IRuleParameterToRulesMapper
     {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Finance;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.WashTrade

@@ -4,7 +4,7 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
-using Surveillance.Rule_Parameters.Filter;
+using Surveillance.RuleParameters.Filter;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 

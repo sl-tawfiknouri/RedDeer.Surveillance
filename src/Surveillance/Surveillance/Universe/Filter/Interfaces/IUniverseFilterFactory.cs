@@ -1,4 +1,4 @@
-﻿using Surveillance.Rule_Parameters.Filter;
+﻿using Surveillance.RuleParameters.Filter;
 
 namespace Surveillance.Universe.Filter.Interfaces
 {

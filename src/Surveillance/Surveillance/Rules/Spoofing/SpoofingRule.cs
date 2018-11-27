@@ -9,7 +9,7 @@ using Domain.Trades.Orders;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;

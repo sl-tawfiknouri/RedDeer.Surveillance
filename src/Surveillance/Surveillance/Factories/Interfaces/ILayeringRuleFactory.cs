@@ -1,5 +1,5 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

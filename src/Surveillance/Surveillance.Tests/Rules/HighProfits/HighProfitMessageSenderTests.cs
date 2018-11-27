@@ -8,9 +8,9 @@ using NUnit.Framework;
 using Surveillance.Mappers;
 using Surveillance.MessageBus_IO;
 using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
 using Surveillance.Rules.HighProfits.Calculators;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 

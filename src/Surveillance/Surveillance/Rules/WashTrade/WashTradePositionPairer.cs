@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Domain.Trades.Orders;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades;
 
 namespace Surveillance.Rules.WashTrade

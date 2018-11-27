@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surveillance.Rule_Parameters.Interfaces
+namespace Surveillance.RuleParameters.Interfaces
 {
     public interface IWashTradeRuleParameters : IFilterableRule
     {

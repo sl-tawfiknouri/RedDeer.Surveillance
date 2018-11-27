@@ -1,8 +1,8 @@
 ﻿using System;
 using Domain.Equity;
 using Domain.Finance;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.HighVolume

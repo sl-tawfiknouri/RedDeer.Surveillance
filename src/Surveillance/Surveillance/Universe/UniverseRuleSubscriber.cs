@@ -13,12 +13,13 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Factories;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Universe
 {
     public class UniverseRuleSubscriber : IUniverseRuleSubscriber
     {
-        private readonly ISpoofingRuleFactory _spoofingRuleFactory;
+        private readonly ISpoofingSubscriber _spoofingSubscriber;
         private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private readonly IHighProfitRuleFactory _highProfitRuleFactory;
         private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
@@ -32,7 +33,7 @@ namespace Surveillance.Universe
         private readonly ILogger _logger;
 
         public UniverseRuleSubscriber(
-            ISpoofingRuleFactory spoofingRuleFactory,
+            ISpoofingSubscriber spoofingSubscriber,
             ICancelledOrderRuleFactory cancelledOrderRuleFactory,
             IHighProfitRuleFactory highProfitRuleFactory,
             IMarkingTheCloseRuleFactory markingTheCloseFactory,
@@ -44,7 +45,7 @@ namespace Surveillance.Universe
             IWashTradeRuleFactory washTradeRuleFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
-            _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
+            _spoofingSubscriber = spoofingSubscriber ?? throw new ArgumentNullException(nameof(spoofingSubscriber));
             _cancelledOrderRuleFactory = cancelledOrderRuleFactory ?? throw new ArgumentNullException(nameof(cancelledOrderRuleFactory));
             _highProfitRuleFactory = highProfitRuleFactory ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
             _highVolumeRuleFactory =
@@ -74,69 +75,13 @@ namespace Surveillance.Universe
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
-            SpoofingRule(execution, player, ruleParameters, opCtx, alertStream);
+            _spoofingSubscriber.SpoofingRule(execution, player, ruleParameters, opCtx, alertStream);
             CancelledOrdersRule(execution, player, ruleParameters, opCtx, alertStream);
             HighProfitsRule(execution, player, ruleParameters, opCtx, alertStream);
             MarkingTheCloseRule(execution, player, ruleParameters, opCtx, alertStream);
             LayeringRule(execution, player, ruleParameters, opCtx, alertStream);
             HighVolumeRule(execution, player, ruleParameters, opCtx, alertStream);
             WashTradeRule(execution, player, ruleParameters, opCtx, alertStream);
-        }
-
-        private void SpoofingRule(
-            ScheduledExecution execution,
-            IUniversePlayer player,
-            RuleParameterDto ruleParameters,
-            ISystemProcessOperationContext opCtx,
-            IUniverseAlertStream alertStream)
-        {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Scheduling.Rules.Spoofing)
-                ?? true)
-            {
-                return;
-            }
-
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .Spoofings
-                    .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
-                    .ToList();
-
-            var spoofingParameters = _ruleParameterMapper.Map(dtos);
-
-            if (spoofingParameters != null
-                && spoofingParameters.Any())
-            {
-                foreach (var param in spoofingParameters)
-                {
-                    var ruleCtx = opCtx
-                        .CreateAndStartRuleRunContext(
-                            Domain.Scheduling.Rules.Spoofing.GetDescription(),
-                            SpoofingRuleFactory.Version,
-                            execution.TimeSeriesInitiation.DateTime,
-                            execution.TimeSeriesTermination.DateTime,
-                            execution.CorrelationId);
-
-                    var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream);
-
-                    if (param.HasFilters())
-                    {
-                        var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                        filteredUniverse.Subscribe(spoofingRule);
-                        player.Subscribe(filteredUniverse);
-                    }
-                    else
-                    {
-                        player.Subscribe(spoofingRule);
-                    }
-                }
-            }
-            else
-            {
-                _logger.LogError("Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
-            }
         }
 
         private void CancelledOrdersRule(

@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rules.WashTrade.Interfaces
 {
-    public interface IWashTradeRule : IUniverseRule
+    public interface IWashTradeRule : IUniverseCloneableRule
     {
     }
 }

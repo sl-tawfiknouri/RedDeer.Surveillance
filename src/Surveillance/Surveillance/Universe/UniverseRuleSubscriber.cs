@@ -5,6 +5,7 @@ using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Universe.OrganisationalFactors;
 using Surveillance.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Universe
@@ -56,6 +57,19 @@ namespace Surveillance.Universe
             }
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
+
+            var test = new OrganisationalFactorBroker(null, null, true, null);
+
+
+            
+            // ok so the best way to handle this is to pass back the subscription requests from the new objects
+            // then we can wrap them in here
+            // it could just be get rule parameters for obj, check if has org factors or not =)
+            // sure but then we have a new switch to get the rule org factors back out
+            // just stick it on the subscriber
+            // or we could just pass the broker into the subscriber ?
+            // would be nice to have it inside of the subscriber but I think it gives us a lot of complex objects
+            // lets cut across the beam a bit...
 
             _spoofingSubscriber.SpoofingRule(execution, player, ruleParameters, opCtx, alertStream);
             _cancelledOrderSubscriber.CancelledOrdersRule(execution, player, ruleParameters, opCtx, alertStream);

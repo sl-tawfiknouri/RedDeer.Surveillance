@@ -168,5 +168,10 @@ namespace Surveillance.Rules.CancelledOrders
             _alertStream.Add(alertMessage);
             _opCtx?.EndEvent();
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

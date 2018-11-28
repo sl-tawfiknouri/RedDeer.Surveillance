@@ -286,5 +286,10 @@ namespace Surveillance.Rules.MarkingTheClose
                 opCtx.EndEventWithMissingDataError();
             }
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

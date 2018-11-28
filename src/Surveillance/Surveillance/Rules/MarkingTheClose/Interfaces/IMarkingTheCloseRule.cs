@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rules.MarkingTheClose.Interfaces
 {
-    public interface IMarkingTheCloseRule : IUniverseRule
+    public interface IMarkingTheCloseRule : IUniverseCloneableRule
     {
     }
 }

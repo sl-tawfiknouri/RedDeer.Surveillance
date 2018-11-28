@@ -296,5 +296,10 @@ namespace Surveillance.Rules.HighVolume
                 _ruleCtx?.EndEvent();
             }
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

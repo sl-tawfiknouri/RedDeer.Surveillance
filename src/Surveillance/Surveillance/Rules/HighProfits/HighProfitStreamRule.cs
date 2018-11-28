@@ -281,5 +281,10 @@ namespace Surveillance.Rules.HighProfits
 
             _ruleCtx?.EndEvent();
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

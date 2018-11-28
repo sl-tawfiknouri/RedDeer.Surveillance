@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rules.Spoofing.Interfaces
 {
-    public interface ISpoofingRule : IUniverseRule
+    public interface ISpoofingRule : IUniverseCloneableRule
     {
     }
 }

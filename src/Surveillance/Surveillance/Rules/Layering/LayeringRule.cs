@@ -491,5 +491,10 @@ namespace Surveillance.Rules.Layering
                 _ruleCtx?.EndEvent();
             }
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

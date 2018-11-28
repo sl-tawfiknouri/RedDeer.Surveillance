@@ -445,5 +445,10 @@ namespace Surveillance.Rules.WashTrade
             _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

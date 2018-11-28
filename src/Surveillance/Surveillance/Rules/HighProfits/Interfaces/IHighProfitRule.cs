@@ -2,7 +2,7 @@
 
 namespace Surveillance.Rules.HighProfits.Interfaces
 {
-    public interface IHighProfitRule : IUniverseRule
+    public interface IHighProfitRule : IUniverseCloneableRule
     {
     }
 }

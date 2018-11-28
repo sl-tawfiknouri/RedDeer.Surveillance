@@ -103,7 +103,7 @@ namespace Surveillance.Universe.Subscribers
                     execution.CorrelationId);
 
             var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream);
-
+            // so wrap teh spoofing rule here...
             if (param.HasFilters())
             {
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);

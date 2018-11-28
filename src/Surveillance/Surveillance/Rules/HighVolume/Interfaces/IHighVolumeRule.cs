@@ -2,6 +2,6 @@
 
 namespace Surveillance.Rules.HighVolume.Interfaces
 {
-    public interface IHighVolumeRule : IUniverseRule
+    public interface IHighVolumeRule : IUniverseCloneableRule
     { }
 }

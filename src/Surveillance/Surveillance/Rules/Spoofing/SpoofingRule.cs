@@ -203,5 +203,10 @@ namespace Surveillance.Rules.Spoofing
             _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
         }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

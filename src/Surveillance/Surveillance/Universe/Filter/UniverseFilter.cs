@@ -5,6 +5,7 @@ using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
 using Surveillance.RuleParameters.Filter;
+using Surveillance.Rules;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 
@@ -260,6 +261,15 @@ namespace Surveillance.Universe.Filter
             }
 
             return false;
+        }
+
+        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
+        public string Version { get; } = Versioner.Version(0, 0);
+
+        public object Clone()
+        {
+            // we will want to keep the same universe observers here
+            return this.MemberwiseClone();
         }
     }
 }

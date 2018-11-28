@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,11 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Utilities.Extensions;
 
@@ -20,30 +23,32 @@ namespace Surveillance.Universe.Subscribers
         private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
+        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<CancelledOrderSubscriber> _logger;
 
         public CancelledOrderSubscriber(
             ICancelledOrderRuleFactory cancelledOrderRuleFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<CancelledOrderSubscriber> logger)
         {
             _cancelledOrderRuleFactory = cancelledOrderRuleFactory;
             _ruleParameterMapper = ruleParameterMapper;
             _universeFilterFactory = universeFilterFactory;
+            _brokerFactory = brokerFactory;
             _logger = logger;
         }
 
-        public void CancelledOrdersRule(
+        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
-            IUniversePlayer player,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
             {
-                return;
+                return new IObserver<IUniverseEvent>[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -55,22 +60,26 @@ namespace Surveillance.Universe.Subscribers
 
             var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
 
-            SubscribeToUniverse(execution, player, opCtx, alertStream, cancelledOrderParameters);
+            return SubscribeToUniverse(execution, opCtx, alertStream, cancelledOrderParameters);
         }
 
-        private void SubscribeToUniverse(
+        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
-            IUniversePlayer player,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            global::System.Collections.Generic.IReadOnlyCollection<ICancelledOrderRuleParameters> cancelledOrderParameters)
+            IReadOnlyCollection<ICancelledOrderRuleParameters> cancelledOrderParameters)
         {
+            var subscriptions = new List<IObserver<IUniverseEvent>>();
+
             if (cancelledOrderParameters != null
                 && cancelledOrderParameters.Any())
             {
                 foreach (var param in cancelledOrderParameters)
                 {
-                    SubscribeParamToUniverse(execution, player, opCtx, alertStream, param);
+                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
+                    var broker = _brokerFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
+
+                    subscriptions.Add(broker);
                 }
             }
             else
@@ -78,11 +87,12 @@ namespace Surveillance.Universe.Subscribers
                 _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
             }
+
+            return subscriptions;
         }
 
-        private void SubscribeParamToUniverse(
+        private IUniverseCloneableRule SubscribeParamToUniverse(
             ScheduledExecution execution,
-            IUniversePlayer player,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             ICancelledOrderRuleParameters param)
@@ -101,12 +111,11 @@ namespace Surveillance.Universe.Subscribers
             {
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(cancelledOrderRule);
-                player.Subscribe(filteredUniverse);
+
+                return filteredUniverse;
             }
-            else
-            {
-                player.Subscribe(cancelledOrderRule);
-            }
+
+            return cancelledOrderRule;
         }
     }
 }

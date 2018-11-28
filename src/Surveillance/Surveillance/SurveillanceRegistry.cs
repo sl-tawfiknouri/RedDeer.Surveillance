@@ -64,6 +64,8 @@ using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Universe.Multiverse;
 using Surveillance.Universe.Multiverse.Interfaces;
+using Surveillance.Universe.OrganisationalFactors;
+using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
@@ -105,6 +107,7 @@ namespace Surveillance
             For<IReddeerRuleScheduler>().Use<ReddeerRuleScheduler>();
             For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
+            For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
 
             For<ISpoofingSubscriber>().Use<SpoofingSubscriber>();
             For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();

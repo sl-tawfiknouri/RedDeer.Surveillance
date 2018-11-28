@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
@@ -26,5 +28,8 @@ namespace Surveillance.RuleParameters.Interfaces
         // Parameter set three
         int? ClusteringPositionMinimumNumberOfTrades { get; }
         decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+
+        IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        bool AggregateNonFactorableIntoOwnCategory { get; set; }
     }
 }

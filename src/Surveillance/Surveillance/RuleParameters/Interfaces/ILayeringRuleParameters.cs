@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
@@ -8,5 +10,7 @@ namespace Surveillance.RuleParameters.Interfaces
         decimal? PercentageOfMarketDailyVolume { get; }
         decimal? PercentageOfMarketWindowVolume { get; }
         bool? CheckForCorrespondingPriceMovement { get; }
+        IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; }
+        bool AggregateNonFactorableIntoOwnCategory { get; }
     }
 }

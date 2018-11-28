@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,11 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Utilities.Extensions;
 
@@ -20,30 +23,32 @@ namespace Surveillance.Universe.Subscribers
         private readonly ILayeringRuleFactory _layeringRuleFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
+        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<LayeringSubscriber> _logger;
 
         public LayeringSubscriber(
             ILayeringRuleFactory layeringRuleFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<LayeringSubscriber> logger)
         {
             _layeringRuleFactory = layeringRuleFactory ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void LayeringRule(
+        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
-            IUniversePlayer player,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.Layering) ?? true)
             {
-                return;
+                return new IObserver<IUniverseEvent>[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -54,24 +59,33 @@ namespace Surveillance.Universe.Subscribers
                     .ToList();
 
             var layeringParameters = _ruleParameterMapper.Map(dtos);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, layeringParameters);
 
-            SubscribeToUniverse(execution, player, opCtx, alertStream, layeringParameters);
+            return subscriptions;
         }
 
-        private void SubscribeToUniverse(
+        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
-            IUniversePlayer player,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            global::System.Collections.Generic.IReadOnlyCollection<ILayeringRuleParameters> layeringParameters)
+            IReadOnlyCollection<ILayeringRuleParameters> layeringParameters)
         {
+            var subscriptions = new List<IObserver<IUniverseEvent>>();
+
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (layeringParameters != null
                 && layeringParameters.Any())
             {
                 foreach (var param in layeringParameters)
                 {
-                    SubscribeToParameters(execution, player, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
+                    var brokers =
+                        _brokerFactory.Build(
+                            paramSubscriptions,
+                            param.Factors,
+                            param.AggregateNonFactorableIntoOwnCategory);
+
+                    subscriptions.Add(brokers);
                 }
             }
             else
@@ -79,11 +93,12 @@ namespace Surveillance.Universe.Subscribers
                 _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
             }
+
+            return subscriptions;
         }
 
-        private void SubscribeToParameters(
+        private IUniverseCloneableRule SubscribeToParameters(
             ScheduledExecution execution,
-            IUniversePlayer player,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             ILayeringRuleParameters param)
@@ -102,11 +117,12 @@ namespace Surveillance.Universe.Subscribers
             {
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(layering);
-                player.Subscribe(filteredUniverse);
+
+                return filteredUniverse;
             }
             else
             {
-                player.Subscribe(layering);
+                return layering;
             }
         }
     }

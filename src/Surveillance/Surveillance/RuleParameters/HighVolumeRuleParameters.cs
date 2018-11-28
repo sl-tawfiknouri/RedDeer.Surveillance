@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters
 {
@@ -48,6 +50,8 @@ namespace Surveillance.RuleParameters
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
+        public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 
         public bool HasFilters()
         {

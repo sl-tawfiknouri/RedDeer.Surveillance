@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,11 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Utilities.Extensions;
 
@@ -19,6 +22,7 @@ namespace Surveillance.Universe.Subscribers
     {
         private readonly IHighProfitRuleFactory _highProfitRuleFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
+        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
@@ -26,24 +30,25 @@ namespace Surveillance.Universe.Subscribers
             IHighProfitRuleFactory highProfitRuleFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
+            IOrganisationalFactorBrokerFactory brokerFactor,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _highProfitRuleFactory = highProfitRuleFactory ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _brokerFactory = brokerFactor ?? throw new ArgumentNullException(nameof(brokerFactor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void HighProfitsRule(
+        public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
-            IUniversePlayer player,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
             {
-                return;
+                return new IObserver<IUniverseEvent>[0];
             }
 
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
@@ -55,22 +60,30 @@ namespace Surveillance.Universe.Subscribers
 
             var highProfitParameters = _ruleParameterMapper.Map(dtos);
 
-            SubscribeToUniverse(execution, player, opCtx, alertStream, highProfitParameters);
+            return SubscribeToUniverse(execution, opCtx, alertStream, highProfitParameters);
         }
 
-        private void SubscribeToUniverse(
+        private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
-            IUniversePlayer player,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            global::System.Collections.Generic.IReadOnlyCollection<IHighProfitsRuleParameters> highProfitParameters)
+            IReadOnlyCollection<IHighProfitsRuleParameters> highProfitParameters)
         {
+            var subscriptions = new List<IObserver<IUniverseEvent>>();
+
             if (highProfitParameters != null
                 && highProfitParameters.Any())
             {
                 foreach (var param in highProfitParameters)
                 {
-                    SubscribeParameters(execution, player, opCtx, alertStream, param);
+                    var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, param);
+                    var broker =
+                        _brokerFactory.Build(
+                            cloneableRule,
+                            param.Factors,
+                            param.AggregateNonFactorableIntoOwnCategory);
+
+                    subscriptions.Add(broker);
                 }
             }
             else
@@ -78,11 +91,12 @@ namespace Surveillance.Universe.Subscribers
                 _logger.LogError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
                 opCtx.EventError("Rule Scheduler - tried to schedule a high profit rule execution with no parameters set");
             }
+
+            return subscriptions;
         }
 
-        private void SubscribeParameters(
+        private IUniverseCloneableRule SubscribeParameters(
             ScheduledExecution execution,
-            IUniversePlayer player, 
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IHighProfitsRuleParameters param)
@@ -109,11 +123,12 @@ namespace Surveillance.Universe.Subscribers
             {
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(highProfitsRule);
-                player.Subscribe(filteredUniverse);
+
+                return filteredUniverse;
             }
             else
             {
-                player.Subscribe(highProfitsRule);
+                return highProfitsRule;
             }
         }
     }

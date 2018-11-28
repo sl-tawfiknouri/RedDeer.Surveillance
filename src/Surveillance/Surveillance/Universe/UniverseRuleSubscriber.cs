@@ -70,6 +70,27 @@ namespace Surveillance.Universe
             var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
 
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+
+            foreach (var sub in spoofingSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in cancelledSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in highProfitSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in highVolumeSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in markingTheCloseSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in layeringSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in washTradeSubscriptions)
+                player.Subscribe(sub);
         }
     }
 }

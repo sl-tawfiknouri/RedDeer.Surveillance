@@ -13,6 +13,8 @@ namespace Surveillance.Universe.OrganisationalFactors
     public class OrganisationalFactorBroker : IOrganisationalFactorBroker
     {
         private readonly object _traderLock = new object();
+        private readonly object _strategyLock = new object();
+        private readonly object _accountLock = new object();
 
         /// <summary>
         /// don't pass trades into the clone source
@@ -111,17 +113,17 @@ namespace Surveillance.Universe.OrganisationalFactors
 
             if (_factors.Contains(ClientOrganisationalFactors.Fund))
             {
-                _logger.LogInformation("OrganisationalFactorBroker passed a fund organisational factor which is not currently supported");
+                FundFactor(value);
+            }
+
+            if (_factors.Contains(ClientOrganisationalFactors.Strategy))
+            {
+                StrategyFactor(value);
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.PortfolioManager))
             {
                 _logger.LogInformation("OrganisationalFactorBroker passed a portfolio manager organisational factor which is not currently supported");
-            }
-
-            if (_factors.Contains(ClientOrganisationalFactors.Strategy))
-            {
-                _logger.LogInformation("OrganisationalFactorBroker passed a strategy organisational factor which is not currently supported");
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.Unknown))
@@ -161,6 +163,78 @@ namespace Surveillance.Universe.OrganisationalFactors
                 if (_traderFactors.ContainsKey(data.TraderId))
                 {
                     _traderFactors.TryGetValue(data.TraderId, out var rule);
+                    rule?.OnNext(value);
+                }
+            }
+        }
+
+        private void StrategyFactor(IUniverseEvent value)
+        {
+            var data = (TradeOrderFrame)value.UnderlyingEvent;
+
+            if (data == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(data.TradeStrategy)
+                && !_aggregateNonFactorableIntoOwnCategory)
+            {
+                return;
+            }
+
+            lock (_strategyLock)
+            {
+                if (string.IsNullOrWhiteSpace(data.TradeStrategy))
+                {
+                    data.TradeStrategy = string.Empty;
+                }
+
+                if (!_strategyFactors.ContainsKey(data.TradeStrategy))
+                {
+                    var kvp = new KeyValuePair<string, IUniverseRule>(data.TradeStrategy, (IUniverseRule)_cloneSource.Clone());
+                    _strategyFactors.Add(kvp);
+                }
+
+                if (_strategyFactors.ContainsKey(data.TradeStrategy))
+                {
+                    _strategyFactors.TryGetValue(data.TradeStrategy, out var rule);
+                    rule?.OnNext(value);
+                }
+            }
+        }
+
+        private void FundFactor(IUniverseEvent value)
+        {
+            var data = (TradeOrderFrame)value.UnderlyingEvent;
+
+            if (data == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(data.AccountId)
+                && !_aggregateNonFactorableIntoOwnCategory)
+            {
+                return;
+            }
+
+            lock (_accountLock)
+            {
+                if (string.IsNullOrWhiteSpace(data.AccountId))
+                {
+                    data.AccountId = string.Empty;
+                }
+
+                if (!_fundFactors.ContainsKey(data.AccountId))
+                {
+                    var kvp = new KeyValuePair<string, IUniverseRule>(data.AccountId, (IUniverseRule)_cloneSource.Clone());
+                    _fundFactors.Add(kvp);
+                }
+
+                if (_fundFactors.ContainsKey(data.AccountId))
+                {
+                    _fundFactors.TryGetValue(data.AccountId, out var rule);
                     rule?.OnNext(value);
                 }
             }

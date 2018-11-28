@@ -12,7 +12,9 @@ namespace Surveillance.RuleParameters
             TimeSpan windowSize,
             decimal? percentageOfMarketDailyVolume,
             decimal? percentOfMarketWindowVolume,
-            bool? checkForCorrespondingPriceMovement)
+            bool? checkForCorrespondingPriceMovement,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
@@ -22,6 +24,9 @@ namespace Surveillance.RuleParameters
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public LayeringRuleParameters(
@@ -31,7 +36,9 @@ namespace Surveillance.RuleParameters
             bool? checkForCorrespondingPriceMovement,
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets)
+            RuleFilter markets,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
@@ -41,6 +48,9 @@ namespace Surveillance.RuleParameters
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public TimeSpan WindowSize { get; }

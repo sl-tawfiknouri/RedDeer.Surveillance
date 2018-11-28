@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Mappers.Interfaces;
@@ -13,6 +15,18 @@ namespace Surveillance.Mappers
         public ClientOrganisationalFactorMapper(ILogger<ClientOrganisationalFactorMapper> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public IReadOnlyCollection<ClientOrganisationalFactors> Map(
+            IReadOnlyCollection<OrganisationalFactors> factors)
+        {
+            if (factors == null
+                || !factors.Any())
+            {
+                return new ClientOrganisationalFactors[0];
+            }
+
+            return factors.Select(Map).ToList();
         }
 
         public ClientOrganisationalFactors Map(OrganisationalFactors factor)

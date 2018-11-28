@@ -16,7 +16,9 @@ namespace Surveillance.RuleParameters
             int? maximumNumberOfTradesToApplyRuleTo,
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets)
+            RuleFilter markets,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
@@ -27,6 +29,9 @@ namespace Surveillance.RuleParameters
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public CancelledOrderRuleParameters(
@@ -34,7 +39,9 @@ namespace Surveillance.RuleParameters
             decimal? cancelledOrderPositionPercentageThreshold,
             decimal? cancelledOrderCountPercentageThreshold,
             int minimumNumberOfTradesToApplyRuleTo,
-            int? maximumNumberOfTradesToApplyRuleTo)
+            int? maximumNumberOfTradesToApplyRuleTo,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
@@ -45,6 +52,9 @@ namespace Surveillance.RuleParameters
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public TimeSpan WindowSize { get; }

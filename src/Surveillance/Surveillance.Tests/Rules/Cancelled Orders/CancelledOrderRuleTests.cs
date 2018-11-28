@@ -75,7 +75,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
 
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _logger);
 
@@ -122,7 +122,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
@@ -160,7 +160,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
@@ -199,7 +199,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _logger);
 
@@ -234,7 +234,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 TradeFrame(OrderStatus.Fulfilled),
             };
 
-            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10);
+            var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _logger);
 

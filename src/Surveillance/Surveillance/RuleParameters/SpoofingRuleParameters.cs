@@ -11,7 +11,9 @@ namespace Surveillance.RuleParameters
         public SpoofingRuleParameters(
             TimeSpan windowSize,
             decimal cancellationThreshold,
-            decimal relativeSizeMultipleForSpoofingExceedingReal)
+            decimal relativeSizeMultipleForSpoofingExceedingReal,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             CancellationThreshold = cancellationThreshold;
@@ -20,6 +22,9 @@ namespace Surveillance.RuleParameters
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public SpoofingRuleParameters(
@@ -28,7 +33,9 @@ namespace Surveillance.RuleParameters
             decimal relativeSizeMultipleForSpoofingExceedingReal,
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets)
+            RuleFilter markets,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             CancellationThreshold = cancellationThreshold;
@@ -37,6 +44,9 @@ namespace Surveillance.RuleParameters
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public TimeSpan WindowSize { get; }

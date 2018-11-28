@@ -13,7 +13,9 @@ namespace Surveillance.RuleParameters
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
             bool useCurrencyConversions,
-            string highProfitCurrencyConversionTargetCurrency)
+            string highProfitCurrencyConversionTargetCurrency,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
@@ -24,6 +26,9 @@ namespace Surveillance.RuleParameters
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public HighProfitsRuleParameters(
@@ -34,7 +39,9 @@ namespace Surveillance.RuleParameters
             string highProfitCurrencyConversionTargetCurrency,
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets)
+            RuleFilter markets,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
@@ -45,6 +52,9 @@ namespace Surveillance.RuleParameters
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public TimeSpan WindowSize { get; }

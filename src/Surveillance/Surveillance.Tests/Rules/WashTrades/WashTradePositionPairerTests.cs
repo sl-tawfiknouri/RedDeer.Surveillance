@@ -34,7 +34,9 @@ namespace Surveillance.Tests.Rules.WashTrades
                 10000,
                 "GBP",
                 10,
-                0.03m);
+                0.03m,
+                null,
+                false);
         }
 
         [Test]

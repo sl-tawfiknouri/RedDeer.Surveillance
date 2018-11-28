@@ -23,7 +23,9 @@ namespace Surveillance.RuleParameters
             decimal? pairingPositionMaximumAbsoluteCurrencyAmount,
             string pairingPositionMaximumAbsoluteCurrency,
             int? clusteringPositionMinimumNumberOfTrades,
-            decimal? clusteringPercentageValueDifferenceThreshold)
+            decimal? clusteringPercentageValueDifferenceThreshold,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
 
@@ -48,6 +50,9 @@ namespace Surveillance.RuleParameters
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public WashTradeRuleParameters(
@@ -68,7 +73,9 @@ namespace Surveillance.RuleParameters
             decimal? clusteringPercentageValueDifferenceThreshold,
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets)
+            RuleFilter markets,
+            IReadOnlyCollection<ClientOrganisationalFactors> factors,
+            bool aggregateNonFactorableIntoOwnCategory)
         {
             WindowSize = windowSize;
 
@@ -93,6 +100,9 @@ namespace Surveillance.RuleParameters
             Accounts = accounts;
             Traders = traders;
             Markets = markets;
+
+            Factors = factors ?? new ClientOrganisationalFactors[0];
+            AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
         public TimeSpan WindowSize { get; set; }

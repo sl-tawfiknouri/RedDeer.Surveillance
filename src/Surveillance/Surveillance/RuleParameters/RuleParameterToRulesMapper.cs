@@ -40,7 +40,9 @@ namespace Surveillance.RuleParameters
                     dto.RelativeSizeMultipleForSpoofExceedingReal,
                     _ruleProjector.Project(dto.Accounts),
                     _ruleProjector.Project(dto.Traders),
-                    _ruleProjector.Project(dto.Markets)))
+                    _ruleProjector.Project(dto.Markets),
+                    _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                    dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
         }
 
@@ -62,7 +64,9 @@ namespace Surveillance.RuleParameters
                         dto.MaximumNumberOfTradesToApplyRuleTo,
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets)))
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
         }
 
@@ -84,7 +88,9 @@ namespace Surveillance.RuleParameters
                         dto.HighProfitCurrencyConversionTargetCurrency,
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets)))
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
         }
 
@@ -105,7 +111,9 @@ namespace Surveillance.RuleParameters
                         dto.PercentThresholdOffTouch,
                         _ruleProjector.Project(dto.Accounts),
                         _ruleProjector.Project(dto.Traders),
-                        _ruleProjector.Project(dto.Markets)))
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
                 .ToList();
         }
 
@@ -127,7 +135,9 @@ namespace Surveillance.RuleParameters
                             dto.CheckForCorrespondingPriceMovement,
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets)))
+                            _ruleProjector.Project(dto.Markets),
+                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                            dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
         }
 
@@ -149,7 +159,9 @@ namespace Surveillance.RuleParameters
                             dto.HighVolumePercentageMarketCap,
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets)))
+                            _ruleProjector.Project(dto.Markets),
+                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                            dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
         }
 
@@ -182,7 +194,9 @@ namespace Surveillance.RuleParameters
                             dto.ClusteringPercentageValueDifferenceThreshold,
                             _ruleProjector.Project(dto.Accounts),
                             _ruleProjector.Project(dto.Traders),
-                            _ruleProjector.Project(dto.Markets)))
+                            _ruleProjector.Project(dto.Markets),
+                            _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                            dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
         }
     }

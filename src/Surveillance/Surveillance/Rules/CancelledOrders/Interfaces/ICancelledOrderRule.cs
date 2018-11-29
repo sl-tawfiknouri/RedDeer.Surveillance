@@ -2,6 +2,6 @@
 
 namespace Surveillance.Rules.CancelledOrders.Interfaces
 {
-    public interface ICancelledOrderRule : IUniverseRule
+    public interface ICancelledOrderRule : IUniverseCloneableRule
     { }
 }

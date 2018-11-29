@@ -1,5 +1,7 @@
 ﻿using System;
-using Surveillance.Rule_Parameters.Interfaces;
+using System.Collections.Generic;
+using Surveillance.RuleParameters.Interfaces;
+using Surveillance.RuleParameters.OrganisationalFactors;
 
 // ReSharper disable UnusedMember.Global
 
@@ -11,5 +13,7 @@ namespace Surveillance.Rules.MarkingTheClose.Interfaces
         decimal? PercentageThresholdWindowVolume { get; }
         decimal? PercentThresholdOffTouch { get; }
         TimeSpan Window { get; }
+        IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
+        bool AggregateNonFactorableIntoOwnCategory { get; set; }
     }
 }

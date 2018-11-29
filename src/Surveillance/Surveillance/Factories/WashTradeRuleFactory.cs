@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Factories

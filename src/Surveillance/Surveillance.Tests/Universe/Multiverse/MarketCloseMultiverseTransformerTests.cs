@@ -6,6 +6,7 @@ using Domain.Scheduling;
 using Domain.Streams;
 using FakeItEasy;
 using NUnit.Framework;
+using Surveillance.Rules.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -64,6 +65,32 @@ namespace Surveillance.Tests.Universe.Multiverse
 
             transformer.OnCompleted();
             A.CallTo(() => _observer.OnCompleted()).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [Explicit]
+        public void Subscribe_WithObserverAndUniverseCloneableRule_CallsMostSpecificMethods()
+        {
+            var otherSub = A.Fake<IUniverseCloneableRule>();
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+
+            var sub = transformer.Subscribe(_observer);
+            var sub2 = transformer.Subscribe(otherSub);
+        }
+
+        [Test]
+        [Explicit]
+        public void Clone_SetsUpNewCloneWithSomeSharedSomeClonedDependencies()
+        {
+            var otherSub = A.Fake<IUniverseCloneableRule>();
+            var cloneSub = A.Fake<IUniverseCloneableRule>();
+            A.CallTo(() => otherSub.Clone()).Returns(cloneSub);
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+
+            var sub = transformer.Subscribe(_observer);
+            var sub2 = transformer.Subscribe(otherSub);
+
+            var transformerClone = (MarketCloseMultiverseTransformer)transformer.Clone();
         }
 
         [Test]

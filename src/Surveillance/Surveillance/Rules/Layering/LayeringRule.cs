@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
+using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Rules.Layering
 {
@@ -490,6 +490,11 @@ namespace Surveillance.Rules.Layering
             {
                 _ruleCtx?.EndEvent();
             }
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

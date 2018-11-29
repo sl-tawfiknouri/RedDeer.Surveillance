@@ -1,6 +1,4 @@
-﻿using Surveillance.Network_IO;
-using Surveillance.Network_IO.Interfaces;
-using Surveillance.Recorders.Interfaces;
+﻿using Surveillance.Recorders.Interfaces;
 using Surveillance.Services.Interfaces;
 using System;
 using Domain.Equity.Frames;
@@ -9,6 +7,8 @@ using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
 using Surveillance.Configuration.Interfaces;
+using Surveillance.NetworkIO;
+using Surveillance.NetworkIO.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace Surveillance.Services

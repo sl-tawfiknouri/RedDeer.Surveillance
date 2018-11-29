@@ -45,5 +45,12 @@ namespace Surveillance.Rules.HighProfits
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
         public string Version { get; } = HighProfitRuleFactory.Version;
+
+        public object Clone()
+        {
+            return new HighProfitsRule(
+                (IHighProfitStreamRule)_streamRule.Clone(),
+                (IMarketCloseMultiverseTransformer)_multiverseTransformer.Clone());
+        }
     }
 }

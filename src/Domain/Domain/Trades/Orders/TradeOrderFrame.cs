@@ -146,7 +146,7 @@ namespace Domain.Trades.Orders
         public string TradeClientAttributionId { get; set; }
 
         /// <summary>
-        /// The client account traded for
+        /// The client account traded for i.e. fund
         /// </summary>
         public string AccountId { get; set; }
 

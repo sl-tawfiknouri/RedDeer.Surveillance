@@ -5,8 +5,8 @@ using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -167,6 +167,11 @@ namespace Surveillance.Rules.CancelledOrders
             var alertMessage = new UniverseAlertEvent(Domain.Scheduling.Rules.CancelledOrders, null, _opCtx, true);
             _alertStream.Add(alertMessage);
             _opCtx?.EndEvent();
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

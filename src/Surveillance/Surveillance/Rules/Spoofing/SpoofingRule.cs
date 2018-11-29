@@ -9,7 +9,7 @@ using Domain.Trades.Orders;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using OrderStatus = Domain.Trades.Orders.OrderStatus;
@@ -202,6 +202,11 @@ namespace Surveillance.Rules.Spoofing
             var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
             _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

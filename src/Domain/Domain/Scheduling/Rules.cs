@@ -18,5 +18,7 @@ namespace Domain.Scheduling
         HighVolume,
         [Description("Wash Trades")]
         WashTrade,
+        [Description("Universe Filter")]
+        UniverseFilter,
     }
 }

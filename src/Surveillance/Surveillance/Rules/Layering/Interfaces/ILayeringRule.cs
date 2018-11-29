@@ -2,6 +2,6 @@
 
 namespace Surveillance.Rules.Layering.Interfaces
 {
-    public interface ILayeringRule : IUniverseRule
+    public interface ILayeringRule : IUniverseCloneableRule
     { }
 }

@@ -18,18 +18,22 @@ using Surveillance.Services;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
-using Surveillance.Network_IO;
-using Surveillance.Network_IO.Interfaces;
 using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Interfaces;
 using Surveillance.Mappers;
 using Surveillance.Mappers.Interfaces;
-using Surveillance.MessageBus_IO;
-using Surveillance.MessageBus_IO.Interfaces;
+using Surveillance.MessageBusIO;
+using Surveillance.MessageBusIO.Interfaces;
+using Surveillance.NetworkIO;
+using Surveillance.NetworkIO.Interfaces;
 using Surveillance.Recorders.Interfaces;
 using Surveillance.Recorders;
+using Surveillance.RuleParameters;
+using Surveillance.RuleParameters.Filter;
+using Surveillance.RuleParameters.Filter.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits;
@@ -50,10 +54,6 @@ using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.Rule_Parameters;
-using Surveillance.Rule_Parameters.Filter;
-using Surveillance.Rule_Parameters.Filter.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe;
@@ -64,6 +64,10 @@ using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Universe.Multiverse;
 using Surveillance.Universe.Multiverse.Interfaces;
+using Surveillance.Universe.OrganisationalFactors;
+using Surveillance.Universe.OrganisationalFactors.Interfaces;
+using Surveillance.Universe.Subscribers;
+using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 
@@ -103,6 +107,16 @@ namespace Surveillance
             For<IReddeerRuleScheduler>().Use<ReddeerRuleScheduler>();
             For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
+            For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
+
+            For<ISpoofingSubscriber>().Use<SpoofingSubscriber>();
+            For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();
+            For<IHighProfitsSubscriber>().Use<HighProfitsSubscriber>();
+            For<IHighVolumeSubscriber>().Use<HighVolumeSubscriber>();
+            For<IMarkingTheCloseSubscriber>().Use<MarkingTheCloseSubscriber>();
+            For<ILayeringSubscriber>().Use<LayeringSubscriber>();
+            For<IWashTradeSubscriber>().Use<WashTradeSubscriber>();
+
 
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();
@@ -117,6 +131,7 @@ namespace Surveillance
             For<IUniverseAlertStreamSubscriberFactory>().Use<UniverseAlertStreamSubscriberFactory>();
 
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
+            For<IClientOrganisationalFactorMapper>().Use<ClientOrganisationalFactorMapper>();
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

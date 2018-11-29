@@ -8,9 +8,9 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.RuleParameters;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering;
-using Surveillance.Rule_Parameters;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
@@ -33,7 +33,7 @@ namespace Surveillance.Tests.Rules.Layering
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _operationCtx = A.Fake<ISystemProcessOperationContext>();
-            _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null, null);
+            _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null, null, null, false);
 
             A.CallTo(() => _ruleCtx.EndEvent()).Returns(_operationCtx);
         }
@@ -73,7 +73,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -235,7 +235,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -279,7 +279,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -323,7 +323,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -367,7 +367,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotCausePriceMovement_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -430,7 +430,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -493,7 +493,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();
@@ -556,7 +556,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true);
+            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
             var tradeBuy = ((TradeOrderFrame)null).Random();
             var tradeSell = ((TradeOrderFrame)null).Random();

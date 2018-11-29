@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Equity;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
-using Surveillance.Rule_Parameters.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.CancelledOrders

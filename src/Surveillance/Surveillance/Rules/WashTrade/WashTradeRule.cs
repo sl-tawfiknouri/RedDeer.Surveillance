@@ -9,7 +9,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories;
-using Surveillance.Rule_Parameters.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -444,6 +444,11 @@ namespace Surveillance.Rules.WashTrade
             var alertStream = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, null, RuleCtx, true);
             _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

@@ -7,7 +7,6 @@ After=network.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/dotnet /reddeer/relayservice/RedDeer.DataImport.DataImport.App.dll --systemd-service
-SyslogIdentifier=reddeer-relayservice
 Restart=on-failure
 RestartSec=5
 User=reddeer

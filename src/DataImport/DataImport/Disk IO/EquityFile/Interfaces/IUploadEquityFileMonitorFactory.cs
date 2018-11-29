@@ -1,6 +1,6 @@
 ﻿using Domain.Equity.Streams.Interfaces;
 
-namespace Relay.Disk_IO.EquityFile.Interfaces
+namespace DataImport.Disk_IO.EquityFile.Interfaces
 {
     public interface IUploadEquityFileMonitorFactory
     {

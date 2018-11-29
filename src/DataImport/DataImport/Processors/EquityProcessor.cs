@@ -1,10 +1,10 @@
 ﻿using System;
+using DataImport.Processors.Interfaces;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Processors.Interfaces;
 
-namespace Relay.Processors
+namespace DataImport.Processors
 {
     public class EquityProcessor : IEquityProcessor<ExchangeFrame>
     {

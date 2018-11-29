@@ -9,7 +9,7 @@ using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 using Surveillance.Utility.Interfaces;
 
-namespace Surveillance.App.Pages
+namespace RedDeer.Surveillance.App.Pages
 {
     public class DashboardModel : PageModel
     {

@@ -1,10 +1,10 @@
 ﻿using System;
+using DataImport.Processors.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Processors.Interfaces;
 
-namespace Relay.Processors
+namespace DataImport.Processors
 {
     /// <summary>
     /// Internal logic for the relay acting on the trades stream

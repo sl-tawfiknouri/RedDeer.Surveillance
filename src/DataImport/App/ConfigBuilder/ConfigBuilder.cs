@@ -7,8 +7,8 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
+using DataImport.Configuration;
 using Microsoft.Extensions.Configuration;
-using Relay.Configuration;
 
 // ReSharper disable InconsistentlySynchronizedField
 

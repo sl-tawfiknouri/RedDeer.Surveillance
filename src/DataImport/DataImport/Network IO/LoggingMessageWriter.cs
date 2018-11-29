@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Interfaces;
 
-namespace Relay.Network_IO
+namespace DataImport.Network_IO
 {
     public class LoggingMessageWriter : IMessageWriter
     {

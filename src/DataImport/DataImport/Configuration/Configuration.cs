@@ -1,8 +1,8 @@
-﻿using Domain.Equity.Frames.Interfaces;
+﻿using DataImport.Configuration.Interfaces;
+using Domain.Equity.Frames.Interfaces;
 using Domain.Trades.Orders.Interfaces;
-using Relay.Configuration.Interfaces;
 
-namespace Relay.Configuration
+namespace DataImport.Configuration
 {
     public class Configuration : INetworkConfiguration, IUploadConfiguration, ITradeOrderCsvConfig, ISecurityTickCsvConfig
     {

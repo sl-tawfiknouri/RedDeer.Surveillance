@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DataImport.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using Relay.Configuration;
 using StructureMap;
 using Surveillance.System.DataLayer.Interfaces;
 

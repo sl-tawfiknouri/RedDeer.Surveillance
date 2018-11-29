@@ -1,4 +1,20 @@
-﻿using Domain.Equity.Frames;
+﻿using DataImport.Disk_IO.EquityFile;
+using DataImport.Disk_IO.EquityFile.Interfaces;
+using DataImport.Disk_IO.Interfaces;
+using DataImport.Disk_IO.TradeFile;
+using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.Interfaces;
+using DataImport.Managers;
+using DataImport.Managers.Interfaces;
+using DataImport.Network_IO;
+using DataImport.Network_IO.Interfaces;
+using DataImport.Network_IO.RelaySubscribers;
+using DataImport.Network_IO.RelaySubscribers.Interfaces;
+using DataImport.Processors;
+using DataImport.Processors.Interfaces;
+using DataImport.S3_IO;
+using DataImport.S3_IO.Interfaces;
+using Domain.Equity.Frames;
 using Domain.Equity.Frames.Interfaces;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
@@ -9,22 +25,6 @@ using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using Relay.Disk_IO.EquityFile;
-using Relay.Disk_IO.EquityFile.Interfaces;
-using Relay.Disk_IO.Interfaces;
-using Relay.Disk_IO.TradeFile;
-using Relay.Disk_IO.TradeFile.Interfaces;
-using Relay.Interfaces;
-using Relay.Managers;
-using Relay.Managers.Interfaces;
-using Relay.Network_IO;
-using Relay.Network_IO.Interfaces;
-using Relay.Network_IO.RelaySubscribers;
-using Relay.Network_IO.RelaySubscribers.Interfaces;
-using Relay.Processors;
-using Relay.Processors.Interfaces;
-using Relay.S3_IO;
-using Relay.S3_IO.Interfaces;
 using StructureMap;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -36,7 +36,7 @@ using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
-namespace Relay
+namespace DataImport
 {
     public class RelayRegistry : Registry
     {

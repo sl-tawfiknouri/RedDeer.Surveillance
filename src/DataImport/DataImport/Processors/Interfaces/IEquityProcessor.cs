@@ -1,4 +1,4 @@
-﻿namespace Relay.Processors.Interfaces
+﻿namespace DataImport.Processors.Interfaces
 {
     public interface IEquityProcessor<T> : IProcessor<T>
     {

@@ -1,19 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using Relay.Managers.Interfaces;
-using Relay.Network_IO;
-using Relay.Network_IO.RelaySubscribers.Interfaces;
-using System;
+﻿using System;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.Interfaces;
+using DataImport.Managers.Interfaces;
+using DataImport.Network_IO;
+using DataImport.Network_IO.RelaySubscribers.Interfaces;
+using DataImport.Processors;
 using Domain.Streams;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.Interfaces;
-using Relay.Processors;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
-namespace Relay.Managers
+namespace DataImport.Managers
 {
     public class TradeOrderStreamManager : ITradeOrderStreamManager
     {

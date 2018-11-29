@@ -1,7 +1,7 @@
-﻿using Relay.Disk_IO.EquityFile.Interfaces;
-using Relay.Disk_IO.Interfaces;
+﻿using DataImport.Disk_IO.EquityFile.Interfaces;
+using DataImport.Disk_IO.Interfaces;
 
-namespace Relay.S3_IO.Interfaces
+namespace DataImport.S3_IO.Interfaces
 {
     public interface IS3FileUploadMonitoringProcess
     {

@@ -1,4 +1,4 @@
-﻿namespace Relay.Configuration.Interfaces
+﻿namespace DataImport.Configuration.Interfaces
 {
     public interface IUploadConfiguration
     {

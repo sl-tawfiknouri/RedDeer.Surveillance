@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using DataImport.Disk_IO.TradeFile.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Disk_IO.TradeFile.Interfaces;
 
-namespace Relay.Disk_IO.TradeFile
+namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeOrderFrameCsv, TradeOrderFrame>, IUploadTradeFileProcessor
     {

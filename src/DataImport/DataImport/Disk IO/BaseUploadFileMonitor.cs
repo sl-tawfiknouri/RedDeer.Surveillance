@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataImport.Disk_IO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Disk_IO.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
-namespace Relay.Disk_IO
+namespace DataImport.Disk_IO
 {
     public abstract class BaseUploadFileMonitor : IBaseUploadFileMonitor
     {

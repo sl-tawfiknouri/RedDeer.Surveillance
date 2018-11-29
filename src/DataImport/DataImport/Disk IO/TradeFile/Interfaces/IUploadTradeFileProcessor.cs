@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Domain.Trades.Orders;
 
-namespace Relay.Disk_IO.TradeFile.Interfaces
+namespace DataImport.Disk_IO.TradeFile.Interfaces
 {
     public interface IUploadTradeFileProcessor 
     {

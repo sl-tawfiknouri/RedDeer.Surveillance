@@ -1,4 +1,7 @@
 ﻿using System;
+using DataImport;
+using DataImport.Configuration;
+using DataImport.Configuration.Interfaces;
 using Domain.Equity.Frames.Interfaces;
 using Domain.Trades.Orders.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -6,9 +9,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Relay;
-using Relay.Configuration;
-using Relay.Configuration.Interfaces;
 using StructureMap;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;

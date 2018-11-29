@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DataImport.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {

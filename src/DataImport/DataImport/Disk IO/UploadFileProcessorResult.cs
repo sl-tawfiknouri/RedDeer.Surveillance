@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Relay.Disk_IO
+namespace DataImport.Disk_IO
 {
     public class UploadFileProcessorResult<TCsv, TFrame>
     {

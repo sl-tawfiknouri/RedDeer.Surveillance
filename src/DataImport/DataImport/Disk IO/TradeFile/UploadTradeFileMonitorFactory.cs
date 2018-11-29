@@ -1,13 +1,13 @@
-﻿using Domain.Trades.Orders;
+﻿using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.Interfaces;
+using DataImport.Disk_IO.TradeFile.Interfaces;
+using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.Interfaces;
-using Relay.Disk_IO.TradeFile.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
-namespace Relay.Disk_IO.TradeFile
+namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitorFactory : IUploadTradeFileMonitorFactory
     {

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Analytics

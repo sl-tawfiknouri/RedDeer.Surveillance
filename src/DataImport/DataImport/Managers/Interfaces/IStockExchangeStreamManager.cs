@@ -1,6 +1,6 @@
-﻿using Relay.Disk_IO.EquityFile.Interfaces;
+﻿using DataImport.Disk_IO.EquityFile.Interfaces;
 
-namespace Relay.Managers.Interfaces
+namespace DataImport.Managers.Interfaces
 {
     public interface IStockExchangeStreamManager
     {

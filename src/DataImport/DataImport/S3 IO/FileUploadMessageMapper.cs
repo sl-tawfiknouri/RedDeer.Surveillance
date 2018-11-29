@@ -1,9 +1,9 @@
 ﻿using System.Dynamic;
+using DataImport.S3_IO.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Relay.S3_IO.Interfaces;
 
-namespace Relay.S3_IO
+namespace DataImport.S3_IO
 {
     public class FileUploadMessageMapper : IFileUploadMessageMapper
     {

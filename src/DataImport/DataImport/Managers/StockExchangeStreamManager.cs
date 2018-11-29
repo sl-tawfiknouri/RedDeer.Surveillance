@@ -1,19 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using Relay.Managers.Interfaces;
-using Relay.Network_IO;
-using Relay.Network_IO.RelaySubscribers.Interfaces;
-using System;
+﻿using System;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.EquityFile.Interfaces;
+using DataImport.Managers.Interfaces;
+using DataImport.Network_IO;
+using DataImport.Network_IO.RelaySubscribers.Interfaces;
+using DataImport.Processors;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Streams;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.EquityFile.Interfaces;
-using Relay.Processors;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
-namespace Relay.Managers
+namespace DataImport.Managers
 {
     public class StockExchangeStreamManager : IStockExchangeStreamManager
     {

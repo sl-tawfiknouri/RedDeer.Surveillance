@@ -1,6 +1,6 @@
 ﻿using Surveillance.System.DataLayer.Interfaces;
 
-namespace Relay.Configuration.Interfaces
+namespace DataImport.Configuration.Interfaces
 {
     public interface INetworkConfiguration : ISystemDataLayerConfig
     {

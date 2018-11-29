@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using DataImport.Disk_IO.EquityFile.Interfaces;
 using Domain.Equity.Frames;
 using Domain.Equity.Frames.Interfaces;
 using Domain.Market;
 using Microsoft.Extensions.Logging;
-using Relay.Disk_IO.EquityFile.Interfaces;
 
-namespace Relay.Disk_IO.EquityFile
+namespace DataImport.Disk_IO.EquityFile
 {
     public class UploadEquityFileProcessor : BaseUploadFileProcessor<SecurityTickCsv, ExchangeFrame>, IUploadEquityFileProcessor
     {

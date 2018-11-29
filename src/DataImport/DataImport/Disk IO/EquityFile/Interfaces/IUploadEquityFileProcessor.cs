@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using DataImport.Disk_IO.Interfaces;
 using Domain.Equity.Frames;
-using Relay.Disk_IO.Interfaces;
 
-namespace Relay.Disk_IO.EquityFile.Interfaces
+namespace DataImport.Disk_IO.EquityFile.Interfaces
 {
     public interface IUploadEquityFileProcessor : IBaseUploadFileProcessor<SecurityTickCsv, ExchangeFrame>
     {

@@ -1,4 +1,4 @@
-﻿namespace Relay.S3_IO
+﻿namespace DataImport.S3_IO
 {
     /// <summary>
     /// This is a DTO from a message bus - don't change without chatting to dev ops

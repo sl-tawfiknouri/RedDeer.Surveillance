@@ -1,4 +1,4 @@
-﻿namespace Relay.S3_IO.Interfaces
+﻿namespace DataImport.S3_IO.Interfaces
 {
     public interface IFileUploadMessageMapper
     {

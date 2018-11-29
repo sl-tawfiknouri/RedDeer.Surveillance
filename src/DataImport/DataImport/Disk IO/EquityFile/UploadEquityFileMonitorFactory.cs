@@ -1,12 +1,12 @@
 ﻿using System;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.EquityFile.Interfaces;
 using Domain.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.EquityFile.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
-namespace Relay.Disk_IO.EquityFile
+namespace DataImport.Disk_IO.EquityFile
 {
     public class UploadEquityFileMonitorFactory : IUploadEquityFileMonitorFactory
     {

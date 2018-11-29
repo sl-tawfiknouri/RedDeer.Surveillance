@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using Relay.Managers.Interfaces;
-using System;
-using Relay.Interfaces;
-using Relay.S3_IO.Interfaces;
+﻿using System;
+using DataImport.Interfaces;
+using DataImport.Managers.Interfaces;
+using DataImport.S3_IO.Interfaces;
+using Microsoft.Extensions.Logging;
 
-namespace Relay
+namespace DataImport
 {
     public class Mediator : IMediator
     {

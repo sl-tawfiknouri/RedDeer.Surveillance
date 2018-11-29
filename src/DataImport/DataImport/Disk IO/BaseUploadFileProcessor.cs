@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using CsvHelper;
-using Relay.Disk_IO.Interfaces;
+using DataImport.Disk_IO.Interfaces;
+using Microsoft.Extensions.Logging;
 
-namespace Relay.Disk_IO
+namespace DataImport.Disk_IO
 {
     public abstract class BaseUploadFileProcessor<TCsv, TFrame> : IBaseUploadFileProcessor<TCsv, TFrame>
     {

@@ -1,6 +1,6 @@
-﻿using Relay.Disk_IO.Interfaces;
+﻿using DataImport.Disk_IO.Interfaces;
 
-namespace Relay.Managers.Interfaces
+namespace DataImport.Managers.Interfaces
 {
     public interface ITradeOrderStreamManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Trades.Orders;
 
-namespace Relay.Network_IO.RelaySubscribers.Interfaces
+namespace DataImport.Network_IO.RelaySubscribers.Interfaces
 {
     public interface ITradeRelaySubscriber : IObserver<TradeOrderFrame>
     {

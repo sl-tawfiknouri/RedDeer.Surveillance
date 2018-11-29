@@ -3,15 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.EquityFile.Interfaces;
+using DataImport.Disk_IO.Interfaces;
+using DataImport.S3_IO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.EquityFile.Interfaces;
-using Relay.Disk_IO.Interfaces;
-using Relay.S3_IO.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Relay.S3_IO
+namespace DataImport.S3_IO
 {
     public class S3FileUploadMonitoringProcess : IS3FileUploadMonitoringProcess
     {

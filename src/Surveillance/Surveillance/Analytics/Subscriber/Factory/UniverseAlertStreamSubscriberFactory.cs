@@ -5,6 +5,7 @@ using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
+using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;

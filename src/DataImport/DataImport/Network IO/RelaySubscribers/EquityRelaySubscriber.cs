@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-using Relay.Network_IO.RelaySubscribers.Interfaces;
-using System;
+﻿using System;
 using System.Threading;
+using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using Domain.Equity.Frames;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
-namespace Relay.Network_IO.RelaySubscribers
+namespace DataImport.Network_IO.RelaySubscribers
 {
     public class EquityRelaySubscriber : IEquityRelaySubscriber
     {

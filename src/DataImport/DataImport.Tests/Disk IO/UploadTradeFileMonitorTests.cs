@@ -1,12 +1,12 @@
 ﻿using System;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.TradeFile;
+using DataImport.Disk_IO.TradeFile.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Relay.Configuration.Interfaces;
-using Relay.Disk_IO.TradeFile;
-using Relay.Disk_IO.TradeFile.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 

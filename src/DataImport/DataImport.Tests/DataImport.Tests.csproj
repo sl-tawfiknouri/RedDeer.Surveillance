@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <AssemblyName>DataImport.Tests</AssemblyName>
+
+    <RootNamespace>DataImport.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Relay\DataImport.csproj" />
+    <ProjectReference Include="..\DataImport\DataImport.csproj" />
   </ItemGroup>
 
 </Project>

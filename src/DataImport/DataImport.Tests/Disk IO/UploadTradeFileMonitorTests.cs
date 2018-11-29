@@ -10,7 +10,7 @@ using Relay.Disk_IO.TradeFile.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
-namespace Relay.Tests.Disk_IO
+namespace DataImport.Tests.Disk_IO
 {
     [TestFixture]
     public class UploadTradeFileMonitorTests

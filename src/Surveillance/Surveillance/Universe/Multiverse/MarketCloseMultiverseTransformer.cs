@@ -5,6 +5,7 @@ using System.Linq;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Market;
+using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Universe.Multiverse.Interfaces;
@@ -23,12 +24,16 @@ namespace Surveillance.Universe.Multiverse
         private readonly Queue<IUniverseEvent> _universeEvents;
         private readonly object _lock = new object();
 
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private IList<IUniverseCloneableRule> _subscribedRules;
+
         public MarketCloseMultiverseTransformer(IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory)
         {
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _exchangeFrame = new Dictionary<Market.MarketId, List<FrameToDate>>();
             _universeEvents = new Queue<IUniverseEvent>();
+            _subscribedRules = new List<IUniverseCloneableRule>();
         }
 
         public void OnCompleted()
@@ -179,6 +184,13 @@ namespace Surveillance.Universe.Multiverse
                 : new UniverseEvent(universeEvent.StateChange, universeEvent.EventTime, updateFrame);
         }
 
+        public IDisposable Subscribe(IUniverseCloneableRule rule)
+        {
+            _subscribedRules?.Add(rule);
+
+            return Subscribe(rule as IObserver<IUniverseEvent>);
+        }
+
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
             if (observer == null)
@@ -194,6 +206,31 @@ namespace Surveillance.Universe.Multiverse
             return _universeUnsubscriberFactory.Create(_universeObservers, observer);
         }
 
+        public void RemoveSubscribers(IList<IUniverseCloneableRule> rules)
+        {
+            if (rules == null
+                || !rules.Any())
+            {
+                return;
+            }
+
+            foreach (var rule in rules)
+            {
+                _universeObservers.TryRemove(rule, out var obs);
+            }
+        }
+
+        public void ResetRuleSubscribers()
+        {
+            if (_subscribedRules == null
+                || !_subscribedRules.Any())
+            {
+                return;
+            }
+
+            _subscribedRules.Clear();
+        }
+
         private class FrameToDate
         {
             /// <summary>
@@ -202,6 +239,25 @@ namespace Surveillance.Universe.Multiverse
             public DateTime OpenDate { get; set; }
             
             public ExchangeFrame Frame { get; set; }
+        }
+        
+        public object Clone()
+        {
+            var initialClone = (MarketCloseMultiverseTransformer)this.MemberwiseClone();
+
+            _subscribedRules = new List<IUniverseCloneableRule>(_subscribedRules); // change the list by reference
+            initialClone.RemoveSubscribers(_subscribedRules);
+            initialClone.ResetRuleSubscribers();
+
+            var subscriberClones =
+                _subscribedRules
+                    .Select(subs => (IUniverseCloneableRule)subs.Clone())
+                    .ToList();
+
+            foreach (var subClone in subscriberClones)
+                initialClone.Subscribe(subClone);
+
+            return initialClone;
         }
     }
 }

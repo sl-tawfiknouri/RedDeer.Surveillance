@@ -48,7 +48,9 @@ namespace Surveillance.Rules.HighProfits
 
         public object Clone()
         {
-            return new HighProfitsRule((IHighProfitStreamRule)_streamRule.Clone(), _multiverseTransformer);
+            return new HighProfitsRule(
+                (IHighProfitStreamRule)_streamRule.Clone(),
+                (IMarketCloseMultiverseTransformer)_multiverseTransformer.Clone());
         }
     }
 }

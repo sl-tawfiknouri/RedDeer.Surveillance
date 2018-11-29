@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Relay.Interfaces;
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public class WebSocketRunner : IStartUpTaskRunner
     {

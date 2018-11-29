@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>DataImport</AssemblyName>
+    <RootNamespace>DataImport</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

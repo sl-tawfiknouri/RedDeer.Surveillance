@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public class Service : IWin32Service
     {

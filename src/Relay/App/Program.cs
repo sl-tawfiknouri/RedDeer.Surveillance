@@ -21,7 +21,7 @@ using Surveillance.System.DataLayer.Processes;
 
 // ReSharper disable UnusedParameter.Local
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public class Program
     {

@@ -1,1 +1,1 @@
-dotnet RedDeer.Relay.Relay.App.dll --register-service
+dotnet RedDeer.DataImport.DataImport.App.dll --register-service

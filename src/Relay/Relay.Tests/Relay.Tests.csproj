@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Relay\Relay.csproj" />
+    <ProjectReference Include="..\Relay\DataImport.csproj" />
   </ItemGroup>
 
 </Project>

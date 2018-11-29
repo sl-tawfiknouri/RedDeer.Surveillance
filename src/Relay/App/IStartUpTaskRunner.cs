@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public interface IStartUpTaskRunner
     {

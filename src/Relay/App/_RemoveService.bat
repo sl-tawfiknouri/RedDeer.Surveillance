@@ -1,1 +1,1 @@
-dotnet RedDeer.Relay.Relay.App.dll --unregister-service
+dotnet RedDeer.DataImport.DataImport.App.dll --unregister-service

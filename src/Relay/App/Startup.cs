@@ -16,7 +16,7 @@ using Surveillance.System.DataLayer;
 using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public class Startup
     {

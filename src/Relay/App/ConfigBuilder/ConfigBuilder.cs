@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
-using Relay.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,9 +7,12 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
+using Microsoft.Extensions.Configuration;
+using Relay.Configuration;
+
 // ReSharper disable InconsistentlySynchronizedField
 
-namespace RedDeer.Relay.Relay.App.ConfigBuilder
+namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 {
     public class ConfigBuilder
     {

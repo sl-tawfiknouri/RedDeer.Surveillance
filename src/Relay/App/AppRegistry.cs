@@ -4,7 +4,7 @@ using Relay.Configuration;
 using StructureMap;
 using Surveillance.System.DataLayer.Interfaces;
 
-namespace RedDeer.Relay.Relay.App
+namespace RedDeer.DataImport.DataImport.App
 {
     public class AppRegistry : Registry
     {

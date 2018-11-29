@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain\Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "Domain\Domain.Tests\Domain.Tests.csproj", "{B062B866-DDFE-438A-A3E5-6038DFC89C38}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Relay.App", "Relay\App\Relay.App.csproj", "{C900B4F4-C527-4F69-B034-2510C5AFBB78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport.App", "Relay\App\DataImport.App.csproj", "{C900B4F4-C527-4F69-B034-2510C5AFBB78}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Relay", "Relay\Relay\Relay.csproj", "{42E7A5DB-8F0B-4305-B302-2337D2A28934}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport", "Relay\Relay\DataImport.csproj", "{42E7A5DB-8F0B-4305-B302-2337D2A28934}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject

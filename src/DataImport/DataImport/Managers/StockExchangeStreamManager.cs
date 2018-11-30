@@ -5,6 +5,7 @@ using DataImport.Managers.Interfaces;
 using DataImport.Network_IO;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using DataImport.Processors;
+using DataImport.Recorders.Interfaces;
 using Domain.Equity.Frames;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
@@ -22,6 +23,7 @@ namespace DataImport.Managers
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
         private readonly IUploadEquityFileMonitorFactory _equityFileMonitorFactory;
+        private readonly IRedDeerAuroraStockExchangeRecorder _stockExchangeRecorder;
 
         private readonly ILogger<EquityProcessor> _epLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
@@ -32,6 +34,7 @@ namespace DataImport.Managers
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
             IUploadEquityFileMonitorFactory equityFileMonitorFactory,
+            IRedDeerAuroraStockExchangeRecorder stockExchangeRecorder,
             ILogger<EquityProcessor> epLogger,
             ILogger<NetworkExchange> exchangeLogger)
         {
@@ -41,6 +44,7 @@ namespace DataImport.Managers
             _networkConfiguration = networkConfiguration ?? throw new ArgumentNullException(nameof(networkConfiguration));
             _epLogger = epLogger ?? throw new ArgumentNullException(nameof(epLogger));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
+            _stockExchangeRecorder = stockExchangeRecorder ?? throw new ArgumentNullException(nameof(stockExchangeRecorder));
             _equityFileMonitorFactory =
                 equityFileMonitorFactory
                 ?? throw new ArgumentNullException(nameof(equityFileMonitorFactory));
@@ -53,13 +57,16 @@ namespace DataImport.Managers
             var equityProcessor = new EquityProcessor(_epLogger, stockExchangeStream);
             stockExchangeStream.Subscribe(_equityRelaySubscriber);
 
+            // hook the equity processor to receive the incoming network stream
+            _stockExchangeStream.Subscribe(equityProcessor);
+
+            // hook up the data recorder
+            _stockExchangeStream.Subscribe(_stockExchangeRecorder);
+
             //Initiate communication with downstream process (surveillance service)
             _equityRelaySubscriber.Initiate(
                 _networkConfiguration.SurveillanceServiceEquityDomain,
                 _networkConfiguration.SurveillanceServiceEquityPort);
-
-            // hook the equity processor to receive the incoming network stream
-            _stockExchangeStream.Subscribe(equityProcessor);
 
             // begin hosting connection for upstream processes (i.e. test harness etc)
             HostOverWebsockets();

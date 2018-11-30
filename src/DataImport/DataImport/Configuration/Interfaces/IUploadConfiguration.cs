@@ -9,5 +9,7 @@
         string RelayEquityFileFtpDirectoryPath { get; }
 
         string RelayS3UploadQueueName { get; }
+
+        bool AutoSchedule { get; }
     }
 }

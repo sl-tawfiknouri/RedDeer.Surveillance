@@ -4,7 +4,11 @@ using Domain.Trades.Orders.Interfaces;
 
 namespace DataImport.Configuration
 {
-    public class Configuration : INetworkConfiguration, IUploadConfiguration, ITradeOrderCsvConfig, ISecurityTickCsvConfig
+    public class Configuration : 
+        INetworkConfiguration,
+        IUploadConfiguration,
+        ITradeOrderCsvConfig,
+        ISecurityTickCsvConfig
     {
         public string SurveillanceServiceEquityDomain { get; set; }
         public string SurveillanceServiceEquityPort { get; set; }
@@ -21,6 +25,8 @@ namespace DataImport.Configuration
 
         public string RelayEquityFileUploadDirectoryPath { get; set; }
         public string RelayS3UploadQueueName { get; set; }
+        public bool AutoSchedule { get; set; }
+
         public string SurveillanceAuroraConnectionString { get; set; }
 
         public string IsDeployedOnClientMachine { get; set; }
@@ -101,5 +107,14 @@ namespace DataImport.Configuration
         public string SecurityLeiFieldName { get; set; }
         public string SecurityBloombergTicker { get; set; }
         public string SecurityDailyVolumeFieldName { get; set; }
+
+
+        // data layer
+        public string ScheduledRuleQueueName { get; set; }
+        public string CaseMessageQueueName { get; set; }
+        public string ScheduleRuleDistributedWorkQueueName { get; set; }
+        public string AuroraConnectionString { get; set; }
+        public string SurveillanceUserApiAccessToken { get; set; }
+        public string ClientServiceUrl { get; set; }
     }
 }

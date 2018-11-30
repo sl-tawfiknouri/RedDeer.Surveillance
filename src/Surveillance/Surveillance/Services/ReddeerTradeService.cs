@@ -62,15 +62,18 @@ namespace Surveillance.Services
             var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
 
             // T R A D E S
-            _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);
-
-            _tradeNetworkExchange.Initialise(
-                $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
 
             // E Q U I T Y
             _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
             _equityNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
+        }
+
+        private void HostTradeNetworkExchanges(SurveillanceNetworkDuplexer duplexer)
+        {
+            _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);
+            _tradeNetworkExchange.Initialise(
+                $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
         }
 
         public void Dispose()

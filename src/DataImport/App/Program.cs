@@ -13,11 +13,14 @@ using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
 using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
+using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 
@@ -52,15 +55,21 @@ namespace RedDeer.DataImport.DataImport.App
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 
+                var builtDataLayerConfig = BuildDataLayerConfiguration();
+                Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
+                Container.Inject(typeof(IDataLayerConfiguration), builtDataLayerConfig);
+
                 Container.Configure(config =>
                 {
                     config.IncludeRegistry<RelayRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                     config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                    config.IncludeRegistry<DataLayerRegistry>();
                 });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
 
@@ -82,6 +91,17 @@ namespace RedDeer.DataImport.DataImport.App
             var builder = new ConfigBuilder.ConfigBuilder();
 
             return builder.Build(configurationBuilder);
+        }
+
+        private static IDataLayerConfiguration BuildDataLayerConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+
+            return builder.BuildData(configurationBuilder);
         }
 
         private static void ProcessArguments(string[] args)

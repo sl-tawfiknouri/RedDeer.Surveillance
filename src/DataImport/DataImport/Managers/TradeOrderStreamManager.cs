@@ -5,6 +5,7 @@ using DataImport.Managers.Interfaces;
 using DataImport.Network_IO;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using DataImport.Processors;
+using DataImport.Recorders.Interfaces;
 using Domain.Streams;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
@@ -22,6 +23,7 @@ namespace DataImport.Managers
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
         private readonly IUploadTradeFileMonitorFactory _fileMonitorFactory;
+        private readonly IRedDeerAuroraTradeRecorderAutoSchedule _tradeRecorder;
 
         private readonly ILogger<TradeProcessor<TradeOrderFrame>> _tpLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
@@ -32,6 +34,7 @@ namespace DataImport.Managers
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
             IUploadTradeFileMonitorFactory fileMonitorFactory,
+            IRedDeerAuroraTradeRecorderAutoSchedule tradeRecorder,
             ILogger<TradeProcessor<TradeOrderFrame>> tpLogger,
             ILogger<NetworkExchange> exchangeLogger)
         {
@@ -44,6 +47,7 @@ namespace DataImport.Managers
                 ?? throw new ArgumentNullException(nameof(networkConfiguration));
 
             _fileMonitorFactory = fileMonitorFactory ?? throw new ArgumentNullException(nameof(fileMonitorFactory));
+            _tradeRecorder = tradeRecorder ?? throw new ArgumentNullException(nameof(tradeRecorder));
 
             _tpLogger = tpLogger ?? throw new ArgumentNullException(nameof(tpLogger));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
@@ -56,25 +60,35 @@ namespace DataImport.Managers
             var tradeProcessor = new TradeProcessor<TradeOrderFrame>(_tpLogger, tradeProcessorOrderStream);
             tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
 
+            // hook the trade processor to receive the incoming network stream
+            _tradeOrderStream.Subscribe(tradeProcessor);
+
+            // hook up the data recorder
+            _tradeOrderStream.Subscribe(_tradeRecorder);
+
             // hook the relay subscriber to begin communications with the outgoing network stream
             _tradeRelaySubscriber.Initiate(
                 _networkConfiguration.SurveillanceServiceTradeDomain,
                 _networkConfiguration.SurveillanceServiceTradePort);
 
-            // hook the trade processor to receive the incoming network stream
-            _tradeOrderStream.Subscribe(tradeProcessor);
-
-            // begin hosting connection for downstream processes (i.e. surveillance service)
-            var networkDuplexer = new RelayTradeNetworkDuplexer(_tradeOrderStream);
-            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
-
-            exchange.Initialise(
-                $"ws://{_networkConfiguration.RelayServiceTradeDomain}:{_networkConfiguration.RelayServiceTradePort}");
+            HostOverWebsockets();
 
             var fileMonitor = _fileMonitorFactory.Create(tradeProcessorOrderStream);
             fileMonitor.Initiate();
 
             return fileMonitor;
+        }
+
+        /// <summary>
+        /// Save this function for when we do b pipe and want client vs cloud mode
+        /// </summary>
+        private void HostOverWebsockets()
+        {
+            // begin hosting connection for downstream processes (i.e. surveillance service)
+            var networkDuplexer = new RelayTradeNetworkDuplexer(_tradeOrderStream);
+            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
+
+            exchange.Initialise($"ws://{_networkConfiguration.RelayServiceTradeDomain}:{_networkConfiguration.RelayServiceTradePort}");
         }
     }
 }

@@ -9,17 +9,18 @@ using Amazon.EC2;
 using Amazon.EC2.Model;
 using DataImport.Configuration;
 using Microsoft.Extensions.Configuration;
+using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
-
 namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 {
     public class ConfigBuilder
     {
         private IDictionary<string, string> _dynamoConfig;
         private bool _hasFetchedEc2Data;
-        private readonly object _lock = new object();
 
+        private readonly object _lock = new object();
 
         public static bool IsEC2Instance { get; private set; }
         public static bool IsUnitTest { get; private set; }
@@ -61,8 +62,11 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 }
             }
 
+            bool.TryParse(GetSetting("RelayServiceAutoSchedule", configurationBuilder), out var autoSchedule);
+
             var networkConfiguration = new Configuration
             {
+
                 RelayServiceEquityDomain = GetSetting("RelayServiceEquityDomain", configurationBuilder),
                 RelayServiceEquityPort = GetSetting("RelayServiceEquityPort", configurationBuilder),
                 SurveillanceServiceEquityDomain = GetSetting("SurveillanceServiceEquityDomain", configurationBuilder),
@@ -79,6 +83,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 RelayS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
                 RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
                 RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
+                AutoSchedule = autoSchedule,
 
                 // TRADE CONFIG
                 OrderTypeFieldName = GetSetting("OrderTypeFieldName", configurationBuilder),
@@ -155,6 +160,49 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
             };
 
             return networkConfiguration;
+        }
+
+        public IDataLayerConfiguration BuildData(IConfigurationRoot configurationBuilder)
+        {
+            lock (_lock)
+            {
+                IsUnitTest = AppDomain
+                    .CurrentDomain
+                    .GetAssemblies()
+                    .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
+
+                IsEC2Instance =
+                    IsUnitTest == false &&
+                    Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+
+                if (IsEC2Instance)
+                {
+                    var environment = GetTag("Environment");
+                    var dynamoDBName = $"{environment}-relay-{GetTag("Customer")}".ToLower();
+                    _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
+
+                    var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
+                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
+                    var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
+                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
+
+                    foreach (var kvp in marketAttributes)
+                        _dynamoConfig.Add(kvp);
+
+                    foreach (var kvp in tradeAttributes)
+                        _dynamoConfig.Add(kvp);
+                }
+            }
+
+            return new DataLayerConfiguration
+            {
+                ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
+            };
         }
 
         private string GetSetting(string name, IConfigurationRoot config)

@@ -6,18 +6,24 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.Interfaces;
 using DataImport.Managers;
 using DataImport.Managers.Interfaces;
+using DataImport.MessageBusIO;
+using DataImport.MessageBusIO.Interfaces;
 using DataImport.Network_IO;
 using DataImport.Network_IO.Interfaces;
 using DataImport.Network_IO.RelaySubscribers;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using DataImport.Processors;
 using DataImport.Processors.Interfaces;
+using DataImport.Recorders;
+using DataImport.Recorders.Interfaces;
 using DataImport.S3_IO;
 using DataImport.S3_IO.Interfaces;
 using Domain.Equity.Frames;
 using Domain.Equity.Frames.Interfaces;
 using Domain.Equity.Streams;
 using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Domain.Streams;
 using Domain.Trades.Orders;
 using Domain.Trades.Orders.Interfaces;
@@ -92,6 +98,10 @@ namespace DataImport
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IFileUploadMessageMapper>().Use<FileUploadMessageMapper>();
             For<IAwsS3Client>().Use<AwsS3Client>();
+
+            For<IRedDeerAuroraTradeRecorderAutoSchedule>().Use<RedDeerAuroraTradeRecorderAutoSchedule>();
+            For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
+            For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
         }
     }
 }

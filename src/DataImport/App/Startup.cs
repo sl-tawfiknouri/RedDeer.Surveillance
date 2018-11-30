@@ -10,11 +10,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StructureMap;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
 using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
+using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {
@@ -34,12 +37,17 @@ namespace RedDeer.DataImport.DataImport.App
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 
+            var builtDataConfig = BuildDataConfiguration();
+            container.Inject(typeof(IAwsConfiguration), builtDataConfig);
+            container.Inject(typeof(IDataLayerConfiguration), builtDataConfig);
+
             container.Configure(config =>
             {
                 config.IncludeRegistry<RelayRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                config.IncludeRegistry<DataLayerRegistry>();
                 config.Populate(services);
             });
 
@@ -58,7 +66,7 @@ namespace RedDeer.DataImport.DataImport.App
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Red Deer Surveillance Relay App");
+                await context.Response.WriteAsync("Red Deer Surveillance Data Import Application");
             });
         }
 
@@ -70,6 +78,16 @@ namespace RedDeer.DataImport.DataImport.App
 
             var builder = new ConfigBuilder.ConfigBuilder();
             return builder.Build(configurationBuilder);
+        }
+
+        private static IDataLayerConfiguration BuildDataConfiguration()
+        {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+
+            var builder = new ConfigBuilder.ConfigBuilder();
+            return builder.BuildData(configurationBuilder);
         }
     }
 }

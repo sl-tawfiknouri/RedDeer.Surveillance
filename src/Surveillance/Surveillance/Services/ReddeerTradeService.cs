@@ -59,14 +59,10 @@ namespace Surveillance.Services
             var exchangeStream = new StockExchangeStream(_equityUnsubscriberFactory);
             exchangeStream.Subscribe(_reddeerStockExchangeRecorder);
 
-            var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
+            // var duplexer = new SurveillanceNetworkDuplexer(tradeStream, exchangeStream);
 
             // T R A D E S
-
             // E Q U I T Y
-            _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
-            _equityNetworkExchange.Initialise(
-                $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
         }
 
         private void HostTradeNetworkExchanges(SurveillanceNetworkDuplexer duplexer)
@@ -74,6 +70,13 @@ namespace Surveillance.Services
             _tradeNetworkExchange = _networkExchangeFactory.Create(duplexer);
             _tradeNetworkExchange.Initialise(
                 $"ws://{_configuration.SurveillanceServiceTradeDomain}:{_configuration.SurveillanceServiceTradePort}");
+        }
+
+        private void HostEquityExchanges(SurveillanceNetworkDuplexer duplexer)
+        {
+            _equityNetworkExchange = _networkExchangeFactory.Create(duplexer);
+            _equityNetworkExchange.Initialise(
+                $"ws://{_configuration.SurveillanceServiceEquityDomain}:{_configuration.SurveillanceServiceEquityPort}");
         }
 
         public void Dispose()

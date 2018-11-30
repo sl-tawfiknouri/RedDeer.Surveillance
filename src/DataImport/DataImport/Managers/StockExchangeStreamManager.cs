@@ -62,16 +62,21 @@ namespace DataImport.Managers
             _stockExchangeStream.Subscribe(equityProcessor);
 
             // begin hosting connection for upstream processes (i.e. test harness etc)
-            var networkDuplexer = new RelayEquityNetworkDuplexer(_stockExchangeStream);
-            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
-            exchange.Initialise(
-                $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");
+            HostOverWebsockets();
 
             // set up trading file monitor and wire it into the stream
             var fileMonitor = _equityFileMonitorFactory.Build(stockExchangeStream);
             fileMonitor.Initiate();
 
             return fileMonitor;
+        }
+
+        private void HostOverWebsockets()
+        {
+            var networkDuplexer = new RelayEquityNetworkDuplexer(_stockExchangeStream);
+            var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
+            exchange.Initialise(
+                $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");
         }
     }
 }

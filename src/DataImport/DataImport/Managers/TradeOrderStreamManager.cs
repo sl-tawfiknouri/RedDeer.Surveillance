@@ -58,7 +58,9 @@ namespace DataImport.Managers
             var unsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
             var tradeProcessorOrderStream = new TradeOrderStream<TradeOrderFrame>(unsubscriberFactory);
             var tradeProcessor = new TradeProcessor<TradeOrderFrame>(_tpLogger, tradeProcessorOrderStream);
-            tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
+
+            // hook the relay subscriber to begin communications with the outgoing network stream
+            // //tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
 
             // hook the trade processor to receive the incoming network stream
             _tradeOrderStream.Subscribe(tradeProcessor);
@@ -66,10 +68,8 @@ namespace DataImport.Managers
             // hook up the data recorder
             _tradeOrderStream.Subscribe(_tradeRecorder);
 
-            // hook the relay subscriber to begin communications with the outgoing network stream
-            _tradeRelaySubscriber.Initiate(
-                _networkConfiguration.SurveillanceServiceTradeDomain,
-                _networkConfiguration.SurveillanceServiceTradePort);
+            // hook the relay subscriber to begin communications with the outgoing network stream           
+            //_tradeRelaySubscriber.Initiate(_networkConfiguration.SurveillanceServiceTradeDomain,_networkConfiguration.SurveillanceServiceTradePort);
 
             HostOverWebsockets();
 

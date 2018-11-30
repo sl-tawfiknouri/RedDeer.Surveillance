@@ -55,7 +55,9 @@ namespace DataImport.Managers
             var unsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
             var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO relay
             var equityProcessor = new EquityProcessor(_epLogger, stockExchangeStream);
-            stockExchangeStream.Subscribe(_equityRelaySubscriber);
+
+            //Initiate communication with downstream process (surveillance service)
+            //stockExchangeStream.Subscribe(_equityRelaySubscriber);
 
             // hook the equity processor to receive the incoming network stream
             _stockExchangeStream.Subscribe(equityProcessor);
@@ -64,9 +66,9 @@ namespace DataImport.Managers
             _stockExchangeStream.Subscribe(_stockExchangeRecorder);
 
             //Initiate communication with downstream process (surveillance service)
-            _equityRelaySubscriber.Initiate(
-                _networkConfiguration.SurveillanceServiceEquityDomain,
-                _networkConfiguration.SurveillanceServiceEquityPort);
+            //_equityRelaySubscriber.Initiate(
+            //    _networkConfiguration.SurveillanceServiceEquityDomain,
+            //    _networkConfiguration.SurveillanceServiceEquityPort);
 
             // begin hosting connection for upstream processes (i.e. test harness etc)
             HostOverWebsockets();

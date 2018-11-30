@@ -86,9 +86,6 @@ namespace Surveillance
             For<ISpoofingRule>().Use<SpoofingRule>();
 
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
-
-            For<IReddeerTradeService>().Use<ReddeerTradeService>();
-
             For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
             For<IRedDeerAuroraTradeRecorder>().Use<RedDeerAuroraTradeRecorder>();

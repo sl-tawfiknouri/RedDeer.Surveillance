@@ -1,11 +1,13 @@
-﻿namespace Domain.Equity
+﻿using Domain.Finance;
+
+namespace Domain.Equity
 {
     /// <summary>
     /// bid / ask / market clearing price
     /// </summary>
     public struct Spread
     {
-        public Spread(Price bid, Price ask, Price price)
+        public Spread(CurrencyAmount bid, CurrencyAmount ask, CurrencyAmount price)
         {
             Bid = bid;
             Ask = ask;
@@ -15,16 +17,16 @@
         /// <summary>
         /// Last buy price
         /// </summary>
-        public Price Bid { get; }
+        public CurrencyAmount Bid { get; }
 
         /// <summary>
         /// Last sell price
         /// </summary>
-        public Price Ask { get; }
+        public CurrencyAmount Ask { get; }
 
         /// <summary>
         /// The price the market resolved to
         /// </summary>
-        public Price Price { get; }
+        public CurrencyAmount Price { get; }
     }
 }

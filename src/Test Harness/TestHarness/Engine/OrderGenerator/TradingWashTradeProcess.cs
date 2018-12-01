@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using NLog;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -113,8 +114,8 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderType.Limit,
                     value.Exchange,
                     security.Security,
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                     (int)(security.DailyVolume.Traded * 0.001m),
                     (int)(security.DailyVolume.Traded * 0.001m),
                     i < splitSize ? OrderPosition.Sell : OrderPosition.Buy,
@@ -129,7 +130,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency);
+                    security.Spread.Price.Currency.Value);
 
                 frames.Add(frame);
             }

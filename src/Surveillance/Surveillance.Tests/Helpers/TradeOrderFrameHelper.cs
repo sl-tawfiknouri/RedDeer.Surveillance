@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
 
@@ -20,7 +21,7 @@ namespace Surveillance.Tests.Helpers
                     "ENTSPB",
                     "Random Inc"),
                 null,
-                new Price(price.GetValueOrDefault(20), "GBP"), 
+                new CurrencyAmount(price.GetValueOrDefault(20), "GBP"), 
                 1000,
                 1000,
                 OrderPosition.Buy,

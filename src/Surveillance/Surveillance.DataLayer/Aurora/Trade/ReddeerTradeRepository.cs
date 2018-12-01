@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
 using Microsoft.Extensions.Logging;
@@ -205,13 +206,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
         {
             var limit =
                 dto.LimitPrice.HasValue
-                    ? new Price(dto.LimitPrice.Value, dto.LimitCurrency)
-                    : (Price?)null;
+                    ? new CurrencyAmount(dto.LimitPrice.Value, dto.LimitCurrency)
+                    : (CurrencyAmount?)null;
 
             var executedPrice =
                 dto.ExecutedPrice.HasValue
-                    ? new Price(dto.ExecutedPrice.Value, dto.OrderCurrency)
-                    : (Price?) null; 
+                    ? new CurrencyAmount(dto.ExecutedPrice.Value, dto.OrderCurrency)
+                    : (CurrencyAmount?) null; 
 
             return new TradeOrderFrame(
                 dto.Id,
@@ -290,7 +291,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 SecurityCfi = frame.Security?.Cfi;
                 SecurityIssuerIdentifier = frame.Security?.IssuerIdentifier;
                 LimitPrice = frame.Limit?.Value;
-                LimitCurrency = frame.Limit?.Currency;
+                LimitCurrency = frame.Limit?.Currency.Value;
                 TradeSubmittedOn = frame.TradeSubmittedOn;
                 StatusChangedOn = frame.StatusChangedOn;
                 OrderedVolume = frame.OrderedVolume;

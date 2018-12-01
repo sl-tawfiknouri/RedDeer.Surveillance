@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 
@@ -38,7 +39,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new SecurityIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
-            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
+            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 
             var tick =
                 new SecurityTick(
@@ -70,7 +71,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new SecurityIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
-            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
+            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 
             var tick =
                 new SecurityTick(

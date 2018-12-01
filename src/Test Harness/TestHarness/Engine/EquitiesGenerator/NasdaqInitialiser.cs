@@ -6,6 +6,7 @@ using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using Domain.Finance;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -47,18 +48,18 @@ namespace TestHarness.Engine.EquitiesGenerator
                         "CFI",
                         raw.Symbol),
                      new Spread(
-                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency)),
+                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency)),
                     new Volume(volume),
                     new Volume(volume),
                     DateTime.UtcNow,
                     decimal.Parse(raw.Buy) * volume,
                     new IntradayPrices(
-                        new Price(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new Price(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new Price(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
-                        new Price(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
+                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                        new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
+                        new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
                     volume * 3,
                     new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ")))
                 .ToList();

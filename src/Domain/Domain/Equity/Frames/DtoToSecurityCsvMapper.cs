@@ -35,7 +35,7 @@ namespace Domain.Equity.Frames
                 MarketCap = securityTick.MarketCap?.ToString(),
                 ListedSecurities = securityTick.ListedSecurities?.ToString(),
 
-                Currency = securityTick.Spread.Price.Currency, // TODO: check currency field. Ask || Bid || Price? 
+                Currency = securityTick.Spread.Price.Currency.Value,
                 
                 // Spread
                 Ask = securityTick.Spread.Ask.Value.ToString(),

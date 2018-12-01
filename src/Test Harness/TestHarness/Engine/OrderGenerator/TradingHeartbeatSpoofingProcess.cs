@@ -5,6 +5,7 @@ using MathNet.Numerics.Distributions;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -98,7 +99,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
             var limitPriceValue = security.Spread.Bid.Value * priceOffset;
-            var limitPrice = new Price(limitPriceValue, security.Spread.Bid.Currency);
+            var limitPrice = new CurrencyAmount(limitPriceValue, security.Spread.Bid.Currency);
 
             var individualTradeVolumeLimit = (100 / totalSpoofedOrders);
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;

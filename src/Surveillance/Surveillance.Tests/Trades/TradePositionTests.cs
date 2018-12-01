@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
 using FakeItEasy;
@@ -141,7 +142,7 @@ namespace Surveillance.Tests.Trades
                 new StockExchange(new Market.MarketId("XLON"), "XLON"),
                 security,
                 null,
-                new Price(1000, "GBP"), 
+                new CurrencyAmount(1000, "GBP"), 
                 1000,
                 1000,
                 OrderPosition.Buy,

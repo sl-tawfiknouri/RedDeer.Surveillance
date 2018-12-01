@@ -1,4 +1,6 @@
-﻿namespace Domain.Equity
+﻿using Domain.Finance;
+
+namespace Domain.Equity
 {
     /// <summary>
     /// Daily high/lows open/close
@@ -6,10 +8,10 @@
     public class IntradayPrices
     {
         public IntradayPrices(
-            Price? open,
-            Price? close,
-            Price? high,
-            Price? low)
+            CurrencyAmount? open,
+            CurrencyAmount? close,
+            CurrencyAmount? high,
+            CurrencyAmount? low)
         {
             Open = open;
             Close = close;
@@ -20,21 +22,21 @@
         /// <summary>
         /// Opening trading price
         /// </summary>
-        public Price? Open { get; }
+        public CurrencyAmount? Open { get; }
 
         /// <summary>
         /// Closing trading price
         /// </summary>
-        public Price? Close { get; }
+        public CurrencyAmount? Close { get; }
 
         /// <summary>
         /// Intraday high trading price
         /// </summary>
-        public Price? High { get; }
+        public CurrencyAmount? High { get; }
 
         /// <summary>
         /// Intraday low trading price
         /// </summary>
-        public Price? Low { get; }
+        public CurrencyAmount? Low { get; }
     }
 }

@@ -3,6 +3,7 @@ using Domain.Market;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using Domain.Finance;
 using Domain.Trades.Orders;
 
 namespace TestHarness.Tests.Display
@@ -54,8 +55,8 @@ namespace TestHarness.Tests.Display
                     OrderType.Limit,
                     stock,
                     sec,
-                    new Price(20.2m, "GBP"),
-                    new Price(20.2m, "GBP"),
+                    new CurrencyAmount(20.2m, "GBP"),
+                    new CurrencyAmount(20.2m, "GBP"),
                     100 * vol,
                     100 * vol,
                     OrderPosition.Buy,

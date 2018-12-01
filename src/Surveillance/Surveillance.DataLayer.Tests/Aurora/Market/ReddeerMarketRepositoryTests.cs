@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -80,12 +81,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             {
                 new SecurityTick(
                     security,
-                    new Spread(new Price(100, "GBP"), new Price(101, "GBP"), new Price(100.5m, "GBP")),
+                    new Spread(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP")),
                     new Volume(1000),
                     new Volume(10000),
                     DateTime.UtcNow,
                     1000000,
-                    new IntradayPrices(new Price(90, "GBP"), new Price(85, "GBP"), new Price(105, "GBP"), new Price(84, "GBP")),
+                    new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
                     1000,
                     stockExchange)
             };

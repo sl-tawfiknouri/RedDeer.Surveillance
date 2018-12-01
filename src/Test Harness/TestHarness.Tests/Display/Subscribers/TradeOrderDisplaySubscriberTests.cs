@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
@@ -50,7 +51,7 @@ namespace TestHarness.Tests.Display.Subscribers
                     null,
                     null,
                     null,
-                    new Price(10, "GBX"), 
+                    new CurrencyAmount(10, "GBX"), 
                     10,
                     10,
                     OrderPosition.Buy,

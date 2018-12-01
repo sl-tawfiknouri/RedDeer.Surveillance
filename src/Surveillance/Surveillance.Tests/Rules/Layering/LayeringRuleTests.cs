@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
 using FakeItEasy;
@@ -610,7 +611,7 @@ namespace Surveillance.Tests.Rules.Layering
                 {
                     new SecurityTick(baseBuyFrame.Security,
                         new Spread(baseBuyFrame.ExecutedPrice.Value, baseSellFrame.ExecutedPrice.Value,
-                            new Price(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
+                            new CurrencyAmount(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
                         timestamp, 100000,
                         new IntradayPrices(baseBuyFrame.ExecutedPrice.Value, baseBuyFrame.ExecutedPrice.Value,
                             baseBuyFrame.ExecutedPrice.Value, baseBuyFrame.ExecutedPrice.Value), 5000, market)

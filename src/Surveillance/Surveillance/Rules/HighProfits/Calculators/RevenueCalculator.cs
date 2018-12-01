@@ -183,7 +183,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return realisedRevenue + currencyAmount;
         }
 
-        protected virtual Price? SecurityTickToPrice(SecurityTick tick)
+        protected virtual CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
         {
             if (tick == null)
             {

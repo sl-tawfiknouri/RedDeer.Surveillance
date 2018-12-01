@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
 using FakeItEasy;
@@ -95,8 +96,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 OrderType.Limit,
                 exch,
                 security,
-                new Price(100, "GBX"),
-                new Price(100, "GBX"),
+                new CurrencyAmount(100, "GBX"),
+                new CurrencyAmount(100, "GBX"),
                 1000,
                 1000,
                 OrderPosition.Buy,

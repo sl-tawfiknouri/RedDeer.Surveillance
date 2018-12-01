@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Market.Interfaces;
 using Domain.Trades.Orders;
@@ -154,8 +155,8 @@ namespace TestHarness.Engine.OrderGenerator
                     i == 0 ? OrderType.Market : OrderType.Limit,
                     headSecurity.Market,
                     headSecurity.Security,
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
                     i == 0 ? (int)tradedVolume : 0,
                     (int)tradedVolume,
                     i == 0 ? OrderPosition.Buy : OrderPosition.Sell,
@@ -170,7 +171,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency);
+                    headSecurity.Spread.Price.Currency.Value);
 
                 TradeStream.Add(volumeFrame);
             }

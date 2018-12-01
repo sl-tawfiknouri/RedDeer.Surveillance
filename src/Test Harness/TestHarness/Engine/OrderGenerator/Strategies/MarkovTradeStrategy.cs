@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using MathNet.Numerics.Distributions;
@@ -124,7 +125,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var counterPartyBrokerId = GenerateIdString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
-            var orderCurrency = tick?.Spread.Price.Currency ?? string.Empty;
+            var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
 
             return new TradeOrderFrame(
                 null,
@@ -192,7 +193,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private Price? CalculateLimit(SecurityTick tick, OrderPosition buyOrSell, OrderType tradeOrderType)
+        private CurrencyAmount? CalculateLimit(SecurityTick tick, OrderPosition buyOrSell, OrderType tradeOrderType)
         {
             if (tradeOrderType != OrderType.Limit)
             {
@@ -204,14 +205,14 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new Price(adjustedPrice, tick.Spread.Bid.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.Spread.Bid.Currency);
             }
             else if (buyOrSell == OrderPosition.Sell)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new Price(adjustedPrice, tick.Spread.Ask.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.Spread.Ask.Currency);
             }
 
             return null;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using Domain.Market.Interfaces;
 using Domain.Trades.Orders;
@@ -144,8 +145,8 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderType.Market,
                     headSecurity.Market,
                     headSecurity.Security,
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
                     (int)volumeForBreachesToTrade,
                     (int)volumeForBreachesToTrade,
                     OrderPosition.Buy,
@@ -160,7 +161,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency);
+                    headSecurity.Spread.Price.Currency.Value);
 
                 TradeStream.Add(volumeFrame);
             }
@@ -218,8 +219,8 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderType.Market,
                     securities.Market,
                     securities.Security,
-                    new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
                     (int)finalVolumeForBreachestoTrade,
                     (int)finalVolumeForBreachestoTrade,
                     OrderPosition.Buy,
@@ -234,7 +235,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    securities.Spread.Price.Currency);
+                    securities.Spread.Price.Currency.Value);
 
                 TradeStream.Add(volumeFrame);
             }

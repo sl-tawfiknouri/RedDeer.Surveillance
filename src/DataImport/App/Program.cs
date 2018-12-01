@@ -51,7 +51,6 @@ namespace RedDeer.DataImport.DataImport.App
                 Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 Container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
-                Container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 

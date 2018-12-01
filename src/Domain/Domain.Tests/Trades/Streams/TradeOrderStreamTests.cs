@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using Domain.Equity;
 using Domain.Equity.Streams.Interfaces;
+using Domain.Finance;
 using Domain.Tests.Domain.Market;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams;
@@ -93,8 +94,8 @@ namespace Domain.Tests.Trades.Streams
                 OrderType.Limit,
                 exch,
                 security,
-                new Price(100, "GBX"),
-                new Price(100, "GBX"),
+                new CurrencyAmount(100, "GBX"),
+                new CurrencyAmount(100, "GBX"),
                 1000,
                 1000,
                 OrderPosition.Buy,
@@ -117,7 +118,7 @@ namespace Domain.Tests.Trades.Streams
                 exch,
                 security,
                 null,
-                new Price(100, "GBX"),
+                new CurrencyAmount(100, "GBX"),
                 10,
                 10,
                 OrderPosition.Sell,
@@ -139,8 +140,8 @@ namespace Domain.Tests.Trades.Streams
                 OrderType.Limit,
                 exch,
                 security,
-                new Price(10, "GBX"),
-                new Price(10, "GBX"),
+                new CurrencyAmount(10, "GBX"),
+                new CurrencyAmount(10, "GBX"),
                 1000,
                 1000,
                 OrderPosition.Sell,

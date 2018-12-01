@@ -155,7 +155,7 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
-                headSecurity.Spread.Price.Currency);
+                headSecurity.Spread.Price.Currency.Value);
 
             TradeStream.Add(volumeFrame);
         }

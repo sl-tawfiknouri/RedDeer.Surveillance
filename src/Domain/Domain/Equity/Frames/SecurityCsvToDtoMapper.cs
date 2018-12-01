@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity.Frames.Interfaces;
+using Domain.Finance;
 using Domain.Market;
 using Microsoft.Extensions.Logging;
 
@@ -169,9 +170,9 @@ namespace Domain.Equity.Frames
             decimal spreadPrice)
         {
             return new Spread(
-                new Price(spreadAsk, csv.Currency),
-                new Price(spreadBid, csv.Currency),
-                new Price(spreadPrice, csv.Currency));
+                new CurrencyAmount(spreadAsk, csv.Currency),
+                new CurrencyAmount(spreadBid, csv.Currency),
+                new CurrencyAmount(spreadPrice, csv.Currency));
         }
 
         private IntradayPrices BuildIntradayPrices(
@@ -183,22 +184,22 @@ namespace Domain.Equity.Frames
         {
             var openPrice =
                 open != 0
-                ? (Price?)new Price(open, csv.Currency)
+                ? (CurrencyAmount?)new CurrencyAmount(open, csv.Currency)
                 : null;
 
             var closePrice =
                 close != 0
-                ? (Price?)new Price(close, csv.Currency)
+                ? (CurrencyAmount?)new CurrencyAmount(close, csv.Currency)
                 : null;
 
             var highPrice =
                 high != 0
-                ? (Price?)new Price(high, csv.Currency)
+                ? (CurrencyAmount?)new CurrencyAmount(high, csv.Currency)
                 : null;
 
             var lowPrice =
                 low != 0
-                ? (Price?)new Price(low, csv.Currency)
+                ? (CurrencyAmount?)new CurrencyAmount(low, csv.Currency)
                 : null;
 
             var intradayPrices = new IntradayPrices(

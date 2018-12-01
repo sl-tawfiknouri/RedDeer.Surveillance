@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
@@ -65,13 +66,13 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     sm.Cfi,
                                     sm.IssuerIdentifier),
                                 new Spread(
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency)),
                                 new Volume(volume((double)CalculateADailyVolume(smp.Value))),
@@ -79,16 +80,16 @@ namespace TestHarness.Engine.EquitiesGenerator
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
                                 smp.Value.MarketCapUsd,
                                 new IntradayPrices(
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.ClosePrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.HighIntradayPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.LowIntradayPrice,
                                         sm.SecurityCurrency)),
                                 null,

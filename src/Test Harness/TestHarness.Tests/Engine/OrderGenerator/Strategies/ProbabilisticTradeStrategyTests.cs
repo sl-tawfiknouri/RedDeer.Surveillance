@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
@@ -121,7 +122,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                     new Security(
                         new SecurityIdentifiers(string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"),
                         "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"),
-                    new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
+                    new Spread(new CurrencyAmount((decimal)buyPrice, "GBP"), new CurrencyAmount((decimal)sellPrice, "GBP"), new CurrencyAmount((decimal)buyPrice, "GBP")),
                     new Volume(volume),
                     new Volume(volume),
                     DateTime.UtcNow,

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity;
+using Domain.Finance;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -125,7 +126,7 @@ namespace TestHarness.Engine.OrderGenerator
                 OrderType.Limit,
                 value.Exchange,
                 security.Security,
-                new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                 null,
                 (int)initialBuyShare,
                 (int)initialBuyShare,
@@ -141,7 +142,7 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
-                security.Spread.Price.Currency);
+                security.Spread.Price.Currency.Value);
 
             frames.Add(cancelledFrame);
 
@@ -152,7 +153,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderType.Limit,
                     value.Exchange,
                     security.Security,
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                     null,
                     (int)splitShare,
                     (int)splitShare,
@@ -168,7 +169,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency);
+                    security.Spread.Price.Currency.Value);
 
                 frames.Add(frame);
             }
@@ -211,7 +212,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderType.Limit,
                     value.Exchange,
                     security.Security,
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                     null,
                     i < amountToCancel ? 0 : (int)(security.DailyVolume.Traded * 0.01m),
                     (int)(security.DailyVolume.Traded * 0.01m),
@@ -227,7 +228,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency);
+                    security.Spread.Price.Currency.Value);
 
                 frames.Add(frame);
             }

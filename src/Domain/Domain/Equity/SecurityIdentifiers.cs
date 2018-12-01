@@ -98,18 +98,6 @@ namespace Domain.Equity
                 return true;
             }
 
-            if (!string.IsNullOrWhiteSpace(ExchangeSymbol)
-                && string.Equals(ExchangeSymbol, otherId.ExchangeSymbol, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true; // risk across multiple exchange data sets that have intersecting symbol lists
-            }
-
-            if (!string.IsNullOrWhiteSpace(Lei)
-                && string.Equals(Lei, otherId.Lei, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
-
             if (!string.IsNullOrWhiteSpace(BloombergTicker)
                 && string.Equals(BloombergTicker, otherId.BloombergTicker, StringComparison.InvariantCultureIgnoreCase))
             {

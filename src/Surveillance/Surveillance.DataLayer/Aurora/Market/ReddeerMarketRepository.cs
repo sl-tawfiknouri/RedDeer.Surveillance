@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Domain.Market;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
@@ -442,16 +443,16 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var spread =
                 new Spread(
-                    new Price(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var intradayPrices =
                 new IntradayPrices(
-                    new Price(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var tick =
                 new SecurityTick(
@@ -524,12 +525,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency
-                    ?? entity.Spread.Ask.Currency
-                    ?? entity.Spread.Bid.Currency;
-
-
-
+                    entity.Spread.Price.Currency.Value
+                    ?? entity.Spread.Ask.Currency.Value
+                    ?? entity.Spread.Bid.Currency.Value;
 
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.Spread.Bid.Value;
@@ -641,9 +639,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency
-                    ?? entity.Spread.Ask.Currency
-                    ?? entity.Spread.Bid.Currency;
+                    entity.Spread.Price.Currency.Value
+                    ?? entity.Spread.Ask.Currency.Value
+                    ?? entity.Spread.Bid.Currency.Value;
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.Spread.Bid.Value;
                 AskPrice = entity.Spread.Ask.Value;

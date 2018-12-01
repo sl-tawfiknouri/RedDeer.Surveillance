@@ -1,5 +1,6 @@
 ﻿using Domain.Equity;
 using Domain.Equity.Frames;
+using Domain.Finance;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 
@@ -14,7 +15,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             : base(targetCurrency, currencyConverter, logger)
         { }
 
-        protected override Price? SecurityTickToPrice(SecurityTick tick)
+        protected override CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
         {
             if (tick == null)
             {

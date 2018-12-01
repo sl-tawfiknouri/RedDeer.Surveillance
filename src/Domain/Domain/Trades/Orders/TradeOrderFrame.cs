@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Equity;
+using Domain.Finance;
 using Domain.Market;
 
 namespace Domain.Trades.Orders
@@ -14,8 +15,7 @@ namespace Domain.Trades.Orders
         /// Used by Dapper
         /// </summary>
         public TradeOrderFrame()
-        {
-            
+        {           
         }
 
         public TradeOrderFrame(
@@ -23,8 +23,8 @@ namespace Domain.Trades.Orders
             OrderType orderType,
             StockExchange market,
             Security security,
-            Price? limit,
-            Price? executedPrice,
+            CurrencyAmount? limit,
+            CurrencyAmount? executedPrice,
             int fulfilledVolume,
             int orderedVolume,
             OrderPosition position,
@@ -93,7 +93,7 @@ namespace Domain.Trades.Orders
         /// <summary>
         /// If its a limit order, the limit price
         /// </summary>
-        public Price? Limit { get; set; }
+        public CurrencyAmount? Limit { get; set; }
 
         /// <summary>
         /// Trade initially submitted on
@@ -118,7 +118,7 @@ namespace Domain.Trades.Orders
         /// <summary>
         /// This is the price the trade was executed at; if several prices use the weighted average
         /// </summary>
-        public Price? ExecutedPrice { get; set; }
+        public CurrencyAmount? ExecutedPrice { get; set; }
 
         /// <summary>
         /// The currency for the executed price

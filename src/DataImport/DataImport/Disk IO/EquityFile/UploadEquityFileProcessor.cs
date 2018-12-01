@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.EquityFile.Interfaces;
@@ -115,73 +114,6 @@ namespace DataImport.Disk_IO.EquityFile
             }
 
             _csvToDtoMapper.FailedParseTotal = 0;
-        }
-
-        public void WriteFailedReadsToDisk(
-            string path,
-            string originalFileName,
-            IReadOnlyCollection<SecurityTickCsv> failedReads)
-        {
-            if (failedReads == null
-                || !failedReads.Any())
-            {
-                Logger.LogInformation("UploadEquityFileProcessor had no failed reads to write to disk.");
-
-                return;
-            }
-
-            var failedFileName = $"{originalFileName}-failed-read-{Guid.NewGuid()}.csv";
-            var target = Path.Combine(path, failedFileName);
-
-            using (TextWriter twriter = new StreamWriter(target))
-            {
-                var csv = new CsvWriter(twriter);
-
-                // write out headers
-                csv.WriteField("Timestamp");
-                csv.WriteField("MarketIdentifierCode");
-                csv.WriteField("MarketName");
-
-                csv.WriteField("SecurityClientIdentifier");
-                csv.WriteField("Sedol");
-                csv.WriteField("Isin");
-                csv.WriteField("Figi");
-                csv.WriteField("Cusip");
-                csv.WriteField("ExchangeSymbol");
-
-                csv.WriteField("Cfi");
-                csv.WriteField("SecurityName");
-                csv.WriteField("Ask");
-                csv.WriteField("Bid");
-                csv.WriteField("Price");
-                csv.WriteField("Currency");
-                csv.WriteField("Volume");
-                csv.WriteField("MarketCap");
-                csv.WriteField("ListedSecurities");
-
-                csv.WriteField("Open");
-                csv.WriteField("Close");
-                csv.WriteField("High");
-                csv.WriteField("Low");
-
-                csv.WriteField("IssuerIdentifier");
-                csv.WriteField("Lei");
-                csv.WriteField("BloombergTicker");
-                csv.WriteField("DailyVolume");
-
-                csv.NextRecord();
-
-                foreach (var rec in failedReads)
-                {
-                    if (rec == null)
-                    {
-                        continue;
-                    }
-
-                    csv.WriteRecord(rec);
-                    csv.NextRecord();
-                }
-            }
         }
     }
 }

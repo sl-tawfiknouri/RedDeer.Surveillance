@@ -130,7 +130,6 @@ namespace DataImport.Disk_IO.TradeFile
             _logger.LogInformation($"Upload Trade File for {path} has deleted the file. Now about to check for unsuccessful reads.");
 
             _logger.LogInformation($"Upload Trade File successfully processed file for {path}. Did not find any unsuccessful reads.");
-            fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
             fileUpload.EndEvent().EndEvent();
         }
     }

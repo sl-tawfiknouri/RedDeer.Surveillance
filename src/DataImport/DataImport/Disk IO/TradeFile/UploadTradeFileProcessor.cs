@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using Domain.Trades.Orders;
@@ -99,65 +97,6 @@ namespace DataImport.Disk_IO.TradeFile
 
                 RowId = rowId
             };
-        }
-
-        public void WriteFailedReadsToDisk(string failedReadsPath, string failedReadFileName, IReadOnlyCollection<TradeOrderFrameCsv> failedReads)
-        {
-            if (failedReads == null
-                || !failedReads.Any())
-            {
-                return;
-            }
-
-            var failedFileName = $"{failedReadFileName}-failed-read-{Guid.NewGuid()}.csv";
-            var target = Path.Combine(failedReadsPath, failedFileName);
-
-            using (TextWriter twriter = new StreamWriter(target))
-            {
-                var csv = new CsvWriter(twriter);
-
-                // write out headers
-                csv.WriteField(_mappingConfig.StatusChangedOnFieldName);
-                csv.WriteField(_mappingConfig.MarketIdentifierCodeFieldName);
-                csv.WriteField(_mappingConfig.MarketNameFieldName);
-
-                csv.WriteField(_mappingConfig.SecurityClientIdentifierFieldName);
-                csv.WriteField(_mappingConfig.SecurityFigiFieldName);
-                csv.WriteField(_mappingConfig.SecurityIsinFieldName);
-                csv.WriteField(_mappingConfig.SecuritySedolFieldName);
-                csv.WriteField(_mappingConfig.SecurityCusipFieldName);
-                csv.WriteField(_mappingConfig.SecurityExchangeSymbolFieldName);
-
-
-                csv.WriteField(_mappingConfig.SecurityNameFieldName);
-                csv.WriteField(_mappingConfig.SecurityCfiFieldName);
-
-                csv.WriteField(_mappingConfig.OrderTypeFieldName);
-                csv.WriteField(_mappingConfig.OrderPositionFieldName);
-                csv.WriteField(_mappingConfig.OrderStatusFieldName);
-                csv.WriteField(_mappingConfig.FulfilledVolumeFieldName);
-                csv.WriteField(_mappingConfig.LimitPriceFieldName);
-
-                csv.WriteField(_mappingConfig.TraderIdFieldName);
-                csv.WriteField(_mappingConfig.CurrencyFieldName);
-                csv.WriteField(_mappingConfig.PartyBrokerIdFieldName);
-                csv.WriteField(_mappingConfig.CounterPartyBrokerIdFieldName);
-                csv.WriteField(_mappingConfig.TradeSubmittedOnFieldName);
-                csv.WriteField(_mappingConfig.TraderClientAttributionIdFieldName);
-
-                csv.NextRecord();
-
-                foreach (var rec in failedReads)
-                {
-                    if (rec == null)
-                    {
-                        continue;
-                    }
-
-                    csv.WriteRecord(rec);
-                    csv.NextRecord();
-                }
-            }
         }
     }
 }

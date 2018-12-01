@@ -69,12 +69,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 
                 RelayServiceEquityDomain = GetSetting("RelayServiceEquityDomain", configurationBuilder),
                 RelayServiceEquityPort = GetSetting("RelayServiceEquityPort", configurationBuilder),
-                SurveillanceServiceEquityDomain = GetSetting("SurveillanceServiceEquityDomain", configurationBuilder),
-                SurveillanceServiceEquityPort = GetSetting("SurveillanceServiceEquityPort", configurationBuilder),
                 RelayServiceTradeDomain = GetSetting("RelayServiceTradeDomain", configurationBuilder),
                 RelayServiceTradePort = GetSetting("RelayServiceTradePort", configurationBuilder),
-                SurveillanceServiceTradeDomain = GetSetting("SurveillanceServiceTradeDomain", configurationBuilder),
-                SurveillanceServiceTradePort = GetSetting("SurveillanceServiceTradePort", configurationBuilder),
                 RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
                 RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
                     GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
@@ -84,79 +80,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
                 RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
                 AutoSchedule = autoSchedule,
-
-                // TRADE CONFIG
-                OrderTypeFieldName = GetSetting("OrderTypeFieldName", configurationBuilder),
-
-                MarketIdentifierCodeFieldName = GetSetting("MarketIdentifierCodeFieldName", configurationBuilder),
-                MarketNameFieldName = GetSetting("MarketNameFieldName", configurationBuilder),
-
-                SecurityNameFieldName = GetSetting("SecurityNameFieldName", configurationBuilder),
-                SecurityCfiFieldName = GetSetting("SecurityCfiFieldName", configurationBuilder),
-
-                SecurityClientIdentifierFieldName = GetSetting("SecurityClientIdentifierFieldName", configurationBuilder),
-                SecuritySedolFieldName = GetSetting("SecuritySedolFieldName", configurationBuilder),
-                SecurityIsinFieldName = GetSetting("SecurityIsinFieldName", configurationBuilder),
-                SecurityFigiFieldName = GetSetting("SecurityFigiFieldName", configurationBuilder),
-                SecurityCusipFieldName = GetSetting("SecurityCusipFieldName", configurationBuilder),
-                SecurityExchangeSymbolFieldName = GetSetting("SecurityExchangeSymbolFieldName", configurationBuilder),
-                
-                LimitPriceFieldName = GetSetting("LimitPriceFieldName", configurationBuilder),
-                TradeSubmittedOnFieldName = GetSetting("SecurityTradeSubmittedOnFieldName", configurationBuilder),
-                StatusChangedOnFieldName = GetSetting("StatusChangedOnFieldName", configurationBuilder),
-                FulfilledVolumeFieldName = GetSetting("FulfilledVolumeFieldName", configurationBuilder),
-                OrderPositionFieldName = GetSetting("OrderPositionFieldName", configurationBuilder),
-
-                TraderIdFieldName = GetSetting("TraderIdFieldName", configurationBuilder),
-                TraderClientAttributionIdFieldName = GetSetting("TraderClientAttributionIdFieldName", configurationBuilder),
-                PartyBrokerIdFieldName = GetSetting("PartyBrokerIdFieldName", configurationBuilder),
-                CounterPartyBrokerIdFieldName = GetSetting("CounterPartyBrokerIdFieldName", configurationBuilder),
-
-                OrderStatusFieldName = GetSetting("OrderStatusFieldName", configurationBuilder),
-                CurrencyFieldName = GetSetting("CurrencyFieldName", configurationBuilder),
-
-                SecurityLei = GetSetting("SecurityLei", configurationBuilder),
-                SecurityBloombergTickerFieldName = GetSetting("SecurityBloombergTickerFieldName", configurationBuilder),
-                ExecutedPriceFieldName = GetSetting("ExecutedPriceFieldName", configurationBuilder),
-                OrderedVolumeFieldName = GetSetting("OrderedVolumeFieldName", configurationBuilder),
-                AccountIdFieldName = GetSetting("AccountIdFieldName", configurationBuilder),
-                DealerInstructionsFieldName = GetSetting("DealerInstructionsFieldName", configurationBuilder),
-                TradeRationaleFieldName = GetSetting("TradeRationaleFieldName", configurationBuilder),
-                TradeStrategyFieldName = GetSetting("TradeStrategyFieldName", configurationBuilder),
-                SecurityIssuerIdentifier = GetSetting("SecurityIssuerIdentifier", configurationBuilder),
-
-                // TICK CONFIG
-                SecurityTickTimestampFieldName = GetSetting("SecurityTickTimestampFieldName", configurationBuilder),
-                SecurityTickMarketIdentifierCodeFieldName = GetSetting("SecurityTickMarketIdentifierCodeFieldName", configurationBuilder),
-                SecurityTickMarketNameFieldName = GetSetting("SecurityTickMarketNameFieldName", configurationBuilder),
-
-                SecurityTickClientIdentifierFieldName = GetSetting("SecurityTickClientIdentifierFieldName", configurationBuilder),
-                SecurityTickSedolFieldName = GetSetting("SecurityTickSedolFieldName", configurationBuilder),
-                SecurityTickIsinFieldName = GetSetting("SecurityTickIsinFieldName", configurationBuilder),
-                SecurityTickFigiFieldName = GetSetting("SecurityTickFigiFieldName", configurationBuilder),
-                SecurityTickExchangeSymbolFieldName = GetSetting("SecurityTickExchangeSymbolFieldName", configurationBuilder),
-                SecurityTickCusipFieldName = GetSetting("SecurityTickCusipFieldName", configurationBuilder),
-
-                SecurityTickCfiFieldName = GetSetting("SecurityTickCifiFieldName", configurationBuilder),
-                SecurityTickSecurityNameFieldName = GetSetting("SecurityTickSecurityNameFieldName", configurationBuilder),
-                SecurityTickSpreadAskFieldName = GetSetting("SecurityTickSpreadAskFieldName", configurationBuilder),
-                SecurityTickSpreadBidFieldName = GetSetting("SecurityTickSpreadBidFieldName", configurationBuilder),
-                SecurityTickSpreadPriceFieldName = GetSetting("SecurityTickSpreadPriceFieldName", configurationBuilder),
-
-                SecurityTickVolumeTradedFieldName = GetSetting("SecurityTickVolumeTradedFieldName", configurationBuilder),
-                SecurityTickCurrencyFieldName = GetSetting("SecurityTickSecurityCurrencyFieldName", configurationBuilder),
-                SecurityTickMarketCapFieldName = GetSetting("SecurityTickMarketCapFieldName", configurationBuilder),
-                SecurityTickListedSecuritiesFieldName = GetSetting("SecurityTickListedSecuritiesFieldName", configurationBuilder),
-
-                SecurityTickOpenPriceFieldName = GetSetting("SecurityTickOpenPriceFieldName", configurationBuilder),
-                SecurityTickClosePriceFieldName = GetSetting("SecurityTickClosePriceFieldName", configurationBuilder),
-                SecurityTickHighPriceFieldName = GetSetting("SecurityTickHighPriceFieldName", configurationBuilder),
-                SecurityTickLowPriceFieldName = GetSetting("SecurityTickLowPriceFieldName", configurationBuilder),
-
-                SecurityIssuerIdentifierFieldName = GetSetting("SecurityIssuerIdentifierFieldName", configurationBuilder),
-                SecurityLeiFieldName = GetSetting("SecurityLeiFieldName", configurationBuilder),
-                SecurityBloombergTicker = GetSetting("SecurityBloombergTicker", configurationBuilder),
-                SecurityDailyVolumeFieldName = GetSetting("SecurityDailyVolumeFieldName", configurationBuilder)
             };
 
             return networkConfiguration;

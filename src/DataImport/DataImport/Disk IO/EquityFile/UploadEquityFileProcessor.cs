@@ -14,16 +14,13 @@ namespace DataImport.Disk_IO.EquityFile
     public class UploadEquityFileProcessor : BaseUploadFileProcessor<SecurityTickCsv, ExchangeFrame>, IUploadEquityFileProcessor
     {
         private readonly ISecurityCsvToDtoMapper _csvToDtoMapper;
-        private readonly ISecurityTickCsvConfig _csvConfig;
 
         public UploadEquityFileProcessor(
             ISecurityCsvToDtoMapper csvToDtoMapper,
-            ISecurityTickCsvConfig csvConfig,
             ILogger<UploadEquityFileProcessor> logger)
             : base(logger, "Upload Equity File Processor")
         {
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
-            _csvConfig = csvConfig ?? throw new ArgumentNullException(nameof(csvConfig));
         }
         
         protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
@@ -35,39 +32,39 @@ namespace DataImport.Disk_IO.EquityFile
 
             return new SecurityTickCsv
             {
-                Timestamp = rawRecord[_csvConfig.SecurityTickTimestampFieldName],
-                MarketIdentifierCode = rawRecord[_csvConfig.SecurityTickMarketIdentifierCodeFieldName],
-                MarketName = rawRecord[_csvConfig.SecurityTickMarketNameFieldName],
+                Timestamp = rawRecord["Timestamp"],
+                MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
+                MarketName = rawRecord["MarketName"],
 
-                SecurityName = rawRecord[_csvConfig.SecurityTickSecurityNameFieldName],
-                Currency = rawRecord[_csvConfig.SecurityTickCurrencyFieldName],
+                SecurityName = rawRecord["SecurityClientIdentifier"],
+                Currency = rawRecord["Currency"],
 
-                SecurityClientIdentifier = rawRecord[_csvConfig.SecurityTickClientIdentifierFieldName],
-                Sedol = rawRecord[_csvConfig.SecurityTickSedolFieldName],
-                Isin =  rawRecord[_csvConfig.SecurityTickIsinFieldName],
-                Figi = rawRecord[_csvConfig.SecurityTickFigiFieldName],
-                ExchangeSymbol = rawRecord[_csvConfig.SecurityTickExchangeSymbolFieldName],
-                Cusip = rawRecord[_csvConfig.SecurityTickCusipFieldName],
+                SecurityClientIdentifier = rawRecord["SecurityClientIdentifier"],
+                Sedol = rawRecord["Sedol"],
+                Isin =  rawRecord["Isin"],
+                Figi = rawRecord["Figi"],
+                ExchangeSymbol = rawRecord["ExchangeSymbol"],
+                Cusip = rawRecord["Cusip"],
 
-                Cfi = rawRecord[_csvConfig.SecurityTickCfiFieldName],
+                Cfi = rawRecord["Cfi"],
 
-                Ask = rawRecord[_csvConfig.SecurityTickSpreadAskFieldName],
-                Bid = rawRecord[_csvConfig.SecurityTickSpreadBidFieldName],
-                Price = rawRecord[_csvConfig.SecurityTickSpreadPriceFieldName],
+                Ask = rawRecord["Ask"],
+                Bid = rawRecord["Bid"],
+                Price = rawRecord["Price"],
 
-                Open = rawRecord[_csvConfig.SecurityTickOpenPriceFieldName],
-                Close = rawRecord[_csvConfig.SecurityTickClosePriceFieldName],
-                High = rawRecord[_csvConfig.SecurityTickHighPriceFieldName],
-                Low = rawRecord[_csvConfig.SecurityTickLowPriceFieldName],
+                Open = rawRecord["Open"],
+                Close = rawRecord["Close"],
+                High = rawRecord["High"],
+                Low = rawRecord["Low"],
 
-                Volume = rawRecord[_csvConfig.SecurityTickVolumeTradedFieldName],
-                ListedSecurities = rawRecord[_csvConfig.SecurityTickListedSecuritiesFieldName],
-                MarketCap = rawRecord[_csvConfig.SecurityTickMarketCapFieldName],
+                Volume = rawRecord["Volume"],
+                ListedSecurities = rawRecord["ListedSecurities"],
+                MarketCap = rawRecord["MarketCap"],
 
-                IssuerIdentifier = rawRecord[_csvConfig.SecurityIssuerIdentifierFieldName],
-                Lei = rawRecord[_csvConfig.SecurityLeiFieldName],
-                BloombergTicker = rawRecord[_csvConfig.SecurityBloombergTicker],
-                DailyVolume = rawRecord[_csvConfig.SecurityDailyVolumeFieldName],
+                IssuerIdentifier = rawRecord["IssuerIdentifier"],
+                Lei = rawRecord["Lei"],
+                BloombergTicker = rawRecord["BloombergTicker"],
+                DailyVolume = rawRecord["DailyVolume"],
 
                 RowId = rowId
             };
@@ -141,36 +138,36 @@ namespace DataImport.Disk_IO.EquityFile
                 var csv = new CsvWriter(twriter);
 
                 // write out headers
-                csv.WriteField(_csvConfig.SecurityTickTimestampFieldName);
-                csv.WriteField(_csvConfig.SecurityTickMarketIdentifierCodeFieldName);
-                csv.WriteField(_csvConfig.SecurityTickMarketNameFieldName);
+                csv.WriteField("Timestamp");
+                csv.WriteField("MarketIdentifierCode");
+                csv.WriteField("MarketName");
 
-                csv.WriteField(_csvConfig.SecurityTickClientIdentifierFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSedolFieldName);
-                csv.WriteField(_csvConfig.SecurityTickIsinFieldName);
-                csv.WriteField(_csvConfig.SecurityTickFigiFieldName);
-                csv.WriteField(_csvConfig.SecurityTickCusipFieldName);
-                csv.WriteField(_csvConfig.SecurityTickExchangeSymbolFieldName);
+                csv.WriteField("SecurityClientIdentifier");
+                csv.WriteField("Sedol");
+                csv.WriteField("Isin");
+                csv.WriteField("Figi");
+                csv.WriteField("Cusip");
+                csv.WriteField("ExchangeSymbol");
 
-                csv.WriteField(_csvConfig.SecurityTickCfiFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSecurityNameFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSpreadAskFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSpreadBidFieldName);
-                csv.WriteField(_csvConfig.SecurityTickSpreadPriceFieldName);
-                csv.WriteField(_csvConfig.SecurityTickCurrencyFieldName);
-                csv.WriteField(_csvConfig.SecurityTickVolumeTradedFieldName);
-                csv.WriteField(_csvConfig.SecurityTickMarketCapFieldName);
+                csv.WriteField("Cfi");
+                csv.WriteField("SecurityName");
+                csv.WriteField("Ask");
+                csv.WriteField("Bid");
+                csv.WriteField("Price");
+                csv.WriteField("Currency");
+                csv.WriteField("Volume");
+                csv.WriteField("MarketCap");
+                csv.WriteField("ListedSecurities");
 
-                csv.WriteField(_csvConfig.SecurityTickListedSecuritiesFieldName);
-                csv.WriteField(_csvConfig.SecurityTickOpenPriceFieldName);
-                csv.WriteField(_csvConfig.SecurityTickClosePriceFieldName);
-                csv.WriteField(_csvConfig.SecurityTickHighPriceFieldName);
-                csv.WriteField(_csvConfig.SecurityTickLowPriceFieldName);
+                csv.WriteField("Open");
+                csv.WriteField("Close");
+                csv.WriteField("High");
+                csv.WriteField("Low");
 
-                csv.WriteField(_csvConfig.SecurityIssuerIdentifierFieldName);
-                csv.WriteField(_csvConfig.SecurityLeiFieldName);
-                csv.WriteField(_csvConfig.SecurityBloombergTicker);
-                csv.WriteField(_csvConfig.SecurityDailyVolumeFieldName);
+                csv.WriteField("IssuerIdentifier");
+                csv.WriteField("Lei");
+                csv.WriteField("BloombergTicker");
+                csv.WriteField("DailyVolume");
 
                 csv.NextRecord();
 

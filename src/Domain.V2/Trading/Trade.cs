@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.V2.Financial.Interfaces;
 
 namespace Domain.V2.Trading
@@ -26,7 +27,8 @@ namespace Domain.V2.Trading
             long? tradeFilledVolume,
             decimal? tradeOptionStrikePrice,
             DateTime? tradeOptionExpirationDate,
-            string tradeOptionEuropeanAmerican)
+            string tradeOptionEuropeanAmerican,
+            IReadOnlyCollection<Transaction> transaction)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             ReddeerTradeId = reddeerTradeId ?? string.Empty;
@@ -49,6 +51,7 @@ namespace Domain.V2.Trading
             TradeOptionStrikePrice = tradeOptionStrikePrice;
             TradeOptionExpirationDate = tradeOptionExpirationDate;
             TradeOptionEuropeanAmerican = tradeOptionEuropeanAmerican ?? string.Empty;
+            Transactions = transaction ?? new Transaction[0];
         }
 
         public IFinancialInstrument Instrument { get; }
@@ -72,5 +75,7 @@ namespace Domain.V2.Trading
         public decimal? TradeOptionStrikePrice { get; }
         public DateTime? TradeOptionExpirationDate { get; }
         public string TradeOptionEuropeanAmerican { get; }
+        public IReadOnlyCollection<Transaction> Transactions { get; }
+        public Order ParentOrder { get; set; }
     }
 }

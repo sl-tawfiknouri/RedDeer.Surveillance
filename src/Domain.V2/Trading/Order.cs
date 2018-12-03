@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.V2.Financial.Interfaces;
 
 namespace Domain.V2.Trading
@@ -29,7 +30,8 @@ namespace Domain.V2.Trading
             string orderStrategy,
             string orderRationale,
             string orderFund,
-            string orderClientAccountAttributionId)
+            string orderClientAccountAttributionId,
+            IReadOnlyCollection<Trade> trades)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             ReddeerOrderId = reddeerOrderId ?? string.Empty;
@@ -55,6 +57,7 @@ namespace Domain.V2.Trading
             OrderRationale = orderRationale ?? string.Empty;
             OrderFund = orderFund ?? string.Empty;
             OrderClientAccountAttributionId = orderClientAccountAttributionId ?? string.Empty;
+            Trades = trades ?? new Trade[0];
         }
 
         public IFinancialInstrument Instrument { get; }
@@ -82,5 +85,6 @@ namespace Domain.V2.Trading
         public string OrderRationale { get; }
         public string OrderFund { get; }
         public string OrderClientAccountAttributionId { get; }
+        public IReadOnlyCollection<Trade> Trades { get; }
     }
 }

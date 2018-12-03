@@ -63,5 +63,6 @@ namespace Domain.V2.Trading
         public decimal? TransactionAveragePrice { get; }
         public long? TransactionOrderedVolume { get; }
         public long? TransactionFilledVolume { get; }
+        public Trade ParentTrade { get; set; } // parent trade the transaction is a part of can be null
     }
 }

@@ -7,10 +7,11 @@ namespace Domain.V2.Files
     /// </summary>
     public class TradeFileCsv
     {
-        /* SECURITY IDENTIFICATION */
+        /* MARKET IDENTIFICATION */
         public string MarketType { get; set; }
         public string MarketIdentifierCode { get; set; }
         public string MarketName { get; set; }
+        /* SECURITY IDENTIFICATION */
         public string InstrumentName { get; set; }
         public string InstrumentCfi { get; set; }
         public string InstrumentIssuerIdentifier { get; set; }
@@ -37,7 +38,7 @@ namespace Domain.V2.Files
 
 
         /* ORDER LEVEL */
-        public string OrderId { get; set; }
+        public string OrderId { get; set; } // the client id for the order
         public DateTime? OrderPlacedDate { get; set; }
         public DateTime? OrderBookedDate { get; set; }
         public DateTime? OrderAmendedDate { get; set; }
@@ -62,7 +63,7 @@ namespace Domain.V2.Files
 
 
         /* TRADE LEVEL */
-        public string TradeId { get; set; }
+        public string TradeId { get; set; } // the client id for the trade
         public DateTime? TradePlacedDate { get; set; }
         public DateTime? TradeBookedDate { get; set; }
         public DateTime? TradeAmendedDate { get; set; }
@@ -84,7 +85,7 @@ namespace Domain.V2.Files
 
         
         /* TRANSACTION LEVEL */
-        public string TransactionId { get; set; }
+        public string TransactionId { get; set; } // the client id for the transaction
         public DateTime? TransactionPlacedDate { get; set; }
         public DateTime? TransactionBookedDate { get; set; }
         public DateTime? TransactionAmendedDate { get; set; }

@@ -5,7 +5,9 @@
         Equity,
         SovereignBond,
         CorporateBond,
+        CorporateCredit,
         OptionCall,
-        OptionPut
+        OptionPut,
+        FxSpot
     }
 }

@@ -102,6 +102,37 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderFilledVolume = rawRecord["OrderFilledVolume"],
                 OrderPortfolioManager = rawRecord["OrderPortfolioManager"],
                 OrderExecutingBroker = rawRecord["OrderExecutingBroker"],
+                OrderClearingAgent = rawRecord["OrderClearingAgent"],
+                OrderDealingInstructions = rawRecord["OrderDealingInstructions"],
+                OrderStrategy = rawRecord["OrderStrategy"],
+                OrderRationale = rawRecord["OrderRationale"],
+                OrderFund = rawRecord["OrderFund"],
+                OrderClientAccountAttributionId = rawRecord["OrderClientAccountAttributionId"],
+
+
+
+                TradeId = rawRecord["TradeId"],
+                TradePlacedDate = rawRecord["TradePlacedDate"],
+                TradeBookedDate = rawRecord["TradeBookedDate"],
+                TradeAmendedDate = rawRecord["TradeAmendedDate"],
+                TradeRejectedDate = rawRecord["TradeRejectedDate"],
+                TradeCancelledDate = rawRecord["TradeCancelledDate"],
+                TradeFilledDate = rawRecord["TradeFilledDate"],
+                TraderId = rawRecord["TraderId"],
+                TradeCounterParty = rawRecord["TradeCounterParty"],
+                TradeType = rawRecord["TradeType"],
+                TradePosition = rawRecord["TradePosition"],
+                TradeCurrency = rawRecord["TradeCurrency"],
+                TradeLimitPrice = rawRecord["TradeLimitPrice"],
+                TradeAveragePrice = rawRecord["TradeAveragePrice"],
+                TradeOrderedVolume = rawRecord["TradeOrderedVolume"],
+                TradeFilledVolume = rawRecord["TradeFilledVolume"],
+                TradeOptionStrikePrice = rawRecord["TradeOptionStrikePrice"],
+                TradeOptionExpirationDate = rawRecord["TradeOptionExpirationDate"],
+                TradeOptionEuropeanAmerican = rawRecord["TradeOptionEuropeanAmerican"],
+
+
+
 
 
 

@@ -108,9 +108,7 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderRationale = rawRecord["OrderRationale"],
                 OrderFund = rawRecord["OrderFund"],
                 OrderClientAccountAttributionId = rawRecord["OrderClientAccountAttributionId"],
-
-
-
+                
                 TradeId = rawRecord["TradeId"],
                 TradePlacedDate = rawRecord["TradePlacedDate"],
                 TradeBookedDate = rawRecord["TradeBookedDate"],
@@ -131,43 +129,22 @@ namespace DataImport.Disk_IO.TradeFile
                 TradeOptionExpirationDate = rawRecord["TradeOptionExpirationDate"],
                 TradeOptionEuropeanAmerican = rawRecord["TradeOptionEuropeanAmerican"],
 
-
-
-
-
-
-
-                StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
-
-                SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
-                SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],
-                SecurityIsin = rawRecord[_mappingConfig.SecurityIsinFieldName],
-                SecuritySedol = rawRecord[_mappingConfig.SecuritySedolFieldName],
-                SecurityCusip = rawRecord[_mappingConfig.SecurityCusipFieldName],
-                SecurityExchangeSymbol = rawRecord[_mappingConfig.SecurityExchangeSymbolFieldName],
-
-                SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
-                SecurityCfi = rawRecord[_mappingConfig.SecurityCfiFieldName],
-
-                OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
-                FulfilledVolume = rawRecord[_mappingConfig.FulfilledVolumeFieldName],
-                LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
-
-                TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
-                ClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
-                PartyBrokerId = rawRecord[_mappingConfig.PartyBrokerIdFieldName],
-                CounterPartyBrokerId = rawRecord[_mappingConfig.CounterPartyBrokerIdFieldName],
-
-
-                SecurityLei = rawRecord[_mappingConfig.SecurityLei],
-                SecurityBloombergTicker = rawRecord[_mappingConfig.SecurityBloombergTickerFieldName],
-                ExecutedPrice = rawRecord[_mappingConfig.ExecutedPriceFieldName],
-                OrderedVolume = rawRecord[_mappingConfig.OrderedVolumeFieldName],
-                AccountId = rawRecord[_mappingConfig.AccountIdFieldName],
-                DealerInstructions = rawRecord[_mappingConfig.DealerInstructionsFieldName],
-                TradeRationale = rawRecord[_mappingConfig.TradeRationaleFieldName],
-                TradeStrategy = rawRecord[_mappingConfig.TradeStrategyFieldName],
-                SecurityIssuerIdentifier = rawRecord[_mappingConfig.SecurityIssuerIdentifier],
+                TransactionId = rawRecord["TransactionId"],
+                TransactionPlacedDate = rawRecord["TransactionPlacedDate"],
+                TransactionBookedDate = rawRecord["TransactionBookedDate"],
+                TransactionAmendedDate = rawRecord["TransactionAmendedDate"],
+                TransactionRejectedDate = rawRecord["TransactionRejectedDate"],
+                TransactionCancelledDate = rawRecord["TransactionCancelledDate"],
+                TransactionFilledDate = rawRecord["TransactionFilledDate"],
+                TransactionTraderId = rawRecord["TransactionTraderId"],
+                TransactionCounterParty = rawRecord["TransactionCounterParty"],
+                TransactionType = rawRecord["TransactionType"],
+                TransactionPosition = rawRecord["TransactionPosition"],
+                TransactionCurrency = rawRecord["TransactionCurrency"],
+                TransactionLimitPrice = rawRecord["TransactionLimitPrice"],
+                TransactionAveragePrice = rawRecord["TransactionAveragePrice"],
+                TransactionOrderedVolume = rawRecord["TransactionOrderedVolume"],
+                TransactionFilledVolume = rawRecord["TransactionFilledVolume"],
 
                 RowId = rowId
             };

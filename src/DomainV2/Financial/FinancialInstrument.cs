@@ -1,6 +1,6 @@
-﻿using Domain.V2.Financial.Interfaces;
+﻿using DomainV2.Financial.Interfaces;
 
-namespace Domain.V2.Financial
+namespace DomainV2.Financial
 {
     public class FinancialInstrument : IFinancialInstrument
     {

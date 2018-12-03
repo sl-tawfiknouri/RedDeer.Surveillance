@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Domain.V2.Files
+﻿namespace DomainV2.Files
 {
     /// <summary>
     /// Version 0.2 of the Trade File
@@ -39,19 +37,19 @@ namespace Domain.V2.Files
 
         /* ORDER LEVEL */
         public string OrderId { get; set; } // the client id for the order
-        public DateTime? OrderPlacedDate { get; set; }
-        public DateTime? OrderBookedDate { get; set; }
-        public DateTime? OrderAmendedDate { get; set; }
-        public DateTime? OrderRejectedDate { get; set; }
-        public DateTime? OrderCancelledDate { get; set; }
-        public DateTime? OrderFilledDate { get; set; }       
+        public string OrderPlacedDate { get; set; }
+        public string OrderBookedDate { get; set; }
+        public string OrderAmendedDate { get; set; }
+        public string OrderRejectedDate { get; set; }
+        public string OrderCancelledDate { get; set; }
+        public string OrderFilledDate { get; set; }       
         public string OrderType { get; set; }
         public string OrderPosition { get; set; }
         public string OrderCurrency { get; set; }
-        public decimal? OrderLimitPrice { get; set; }
-        public decimal? OrderAveragePrice { get; set; }
-        public long? OrderOrderedVolume { get; set; }
-        public long? OrderFilledVolume { get; set; }
+        public string OrderLimitPrice { get; set; }
+        public string OrderAveragePrice { get; set; }
+        public string OrderOrderedVolume { get; set; }
+        public string OrderFilledVolume { get; set; }
         public string OrderPortfolioManager { get; set; }
         public string OrderExecutingBroker { get; set; }
         public string OrderClearingAgent { get; set; }
@@ -64,42 +62,45 @@ namespace Domain.V2.Files
 
         /* TRADE LEVEL */
         public string TradeId { get; set; } // the client id for the trade
-        public DateTime? TradePlacedDate { get; set; }
-        public DateTime? TradeBookedDate { get; set; }
-        public DateTime? TradeAmendedDate { get; set; }
-        public DateTime? TradeRejectedDate { get; set; }
-        public DateTime? TradeCancelledDate { get; set; }
-        public DateTime? TradeFilledDate { get; set; }
+        public string TradePlacedDate { get; set; }
+        public string TradeBookedDate { get; set; }
+        public string TradeAmendedDate { get; set; }
+        public string TradeRejectedDate { get; set; }
+        public string TradeCancelledDate { get; set; }
+        public string TradeFilledDate { get; set; }
         public string TraderId { get; set; }
         public string TradeCounterParty { get; set; }
         public string TradeType { get; set; }
         public string TradePosition { get; set; }
         public string TradeCurrency { get; set; }
-        public decimal? TradeLimitPrice { get; set; }
-        public decimal? TradeAveragePrice { get; set; }
-        public long? TradeOrderedVolume { get; set; }
-        public long? TradeFilledVolume { get; set; }
-        public decimal? TradeOptionStrikePrice { get; set; }
-        public DateTime? TradeOptionExpirationDate { get; set; }
+        public string TradeLimitPrice { get; set; }
+        public string TradeAveragePrice { get; set; }
+        public string TradeOrderedVolume { get; set; }
+        public string TradeFilledVolume { get; set; }
+        public string TradeOptionStrikePrice { get; set; }
+        public string TradeOptionExpirationDate { get; set; }
         public string TradeOptionEuropeanAmerican { get; set; }
 
         
         /* TRANSACTION LEVEL */
         public string TransactionId { get; set; } // the client id for the transaction
-        public DateTime? TransactionPlacedDate { get; set; }
-        public DateTime? TransactionBookedDate { get; set; }
-        public DateTime? TransactionAmendedDate { get; set; }
-        public DateTime? TransactionRejectedDate { get; set; }
-        public DateTime? TransactionCancelledDate { get; set; }
-        public DateTime? TransactionFilledDate { get; set; }
+        public string TransactionPlacedDate { get; set; }
+        public string TransactionBookedDate { get; set; }
+        public string TransactionAmendedDate { get; set; }
+        public string TransactionRejectedDate { get; set; }
+        public string TransactionCancelledDate { get; set; }
+        public string TransactionFilledDate { get; set; }
         public string TransactionTraderId { get; set; }
         public string TransactionCounterParty { get; set; }
         public string TransactionType { get; set; }
         public string TransactionPosition { get; set; }
         public string TransactionCurrency { get; set; }
-        public decimal? TransactionLimitPrice { get; set; }
-        public decimal? TransactionAveragePrice { get; set; }
-        public long? TransactionOrderedVolume { get; set; }
-        public long? TransactionFilledVolume { get; set; }
+        public string TransactionLimitPrice { get; set; }
+        public string TransactionAveragePrice { get; set; }
+        public string TransactionOrderedVolume { get; set; }
+        public string TransactionFilledVolume { get; set; }
+
+
+        public int RowId { get; set; }
     }
 }

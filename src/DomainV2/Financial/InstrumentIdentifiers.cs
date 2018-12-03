@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.V2.Financial
+namespace DomainV2.Financial
 {
     public struct InstrumentIdentifiers
     {

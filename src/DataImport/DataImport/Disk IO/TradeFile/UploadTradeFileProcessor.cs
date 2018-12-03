@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Orders;
 using Domain.Trades.Orders.Interfaces;
+using DomainV2.Files;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.TradeFile
 {
-    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeOrderFrameCsv, TradeOrderFrame>, IUploadTradeFileProcessor
+    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeFileCsv, Order>, IUploadTradeFileProcessor
     {
         private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
         private readonly ITradeOrderCsvConfig _mappingConfig;
@@ -24,9 +25,9 @@ namespace DataImport.Disk_IO.TradeFile
         }
 
         protected override void MapRecord(
-            TradeOrderFrameCsv record,
-            List<TradeOrderFrame> marketUpdates,
-            List<TradeOrderFrameCsv> failedMarketUpdateReads)
+            TradeFileCsv record,
+            List<Order> marketUpdates,
+            List<TradeFileCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
             if (mappedRecord != null)
@@ -49,18 +50,63 @@ namespace DataImport.Disk_IO.TradeFile
             _csvToDtoMapper.FailedParseTotal = 0;
         }
 
-        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override TradeFileCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
                 return null;
             }
 
-            return new TradeOrderFrameCsv
+            return new TradeFileCsv
             {
+                MarketType = rawRecord["MarketType"],
+                MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
+                MarketName = rawRecord["MarketName"],
+
+                InstrumentName = rawRecord["InstrumentName"],
+                InstrumentCfi = rawRecord["InstrumentCfi"],
+                InstrumentIssuerIdentifier = rawRecord["InstrumentIssuerIdentifier"],
+                InstrumentClientIdentifier = rawRecord["InstrumentClientIdentifier"],
+                InstrumentSedol = rawRecord["InstrumentSedol"],
+                InstrumentIsin = rawRecord["InstrumentIsin"],
+                InstrumentFigi = rawRecord["InstrumentFigi"],
+                InstrumentCusip = rawRecord["InstrumentCusip"],
+                InstrumentLei = rawRecord["InstrumentLei"],
+                InstrumentExchangeSymbol = rawRecord["InstrumentExchangeSymbol"],
+                InstrumentBloombergTicker = rawRecord["InstrumentBloombergTicker"],
+                InstrumentUnderlyingName = rawRecord["InstrumentUnderlyingName"],
+                InstrumentUnderlyingCfi = rawRecord["InstrumentUnderlyingCfi"],
+                InstrumentUnderlyingIssuerIdentifier = rawRecord["InstrumentUnderlyingIssuerIdentifier"],
+                InstrumentUnderlyingClientIdentifier = rawRecord["InstrumentUnderlyingClientIdentifier"],
+                InstrumentUnderlyingSedol = rawRecord["InstrumentUnderlyingSedol"],
+                InstrumentUnderlyingIsin = rawRecord["InstrumentUnderlyingIsin"],
+                InstrumentUnderlyingFigi = rawRecord["InstrumentUnderlyingFigi"],
+                InstrumentUnderlyingCusip = rawRecord["InstrumentUnderlyingCusip"],
+                InstrumentUnderlyingLei = rawRecord["InstrumentUnderlyingLei"],
+                InstrumentUnderlyingExchangeSymbol = rawRecord["InstrumentUnderlyingExchangeSymbol"],
+                InstrumentUnderlyingBloombergTicker = rawRecord["InstrumentUnderlyingBloombergTicker"],
+                
+                OrderId = rawRecord["OrderId"],
+                OrderPlacedDate = rawRecord["OrderPlacedDate"],
+                OrderBookedDate = rawRecord["OrderBookedDate"],
+                OrderAmendedDate = rawRecord["OrderAmendedDate"],
+                OrderRejectedDate = rawRecord["OrderRejectedDate"],
+                OrderCancelledDate = rawRecord["OrderCancelledDate"],
+                OrderFilledDate = rawRecord["OrderFilledDate"],
+                OrderType = rawRecord["OrderType"],
+                OrderPosition = rawRecord["OrderPosition"],
+                OrderCurrency = rawRecord["OrderCurrency"],
+                OrderLimitPrice = rawRecord["OrderLimitPrice"],
+                OrderAveragePrice = rawRecord["OrderAveragePrice"],
+                OrderOrderedVolume = rawRecord["OrderOrderedVolume"],
+                OrderFilledVolume = rawRecord["OrderFilledVolume"],
+                OrderPortfolioManager = rawRecord["OrderPortfolioManager"],
+                OrderExecutingBroker = rawRecord["OrderExecutingBroker"],
+
+
+
+
                 StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
-                MarketIdentifierCode = rawRecord[_mappingConfig.MarketIdentifierCodeFieldName],
-                MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
 
                 SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
                 SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],
@@ -72,19 +118,16 @@ namespace DataImport.Disk_IO.TradeFile
                 SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
                 SecurityCfi = rawRecord[_mappingConfig.SecurityCfiFieldName],
 
-                OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
-                OrderPosition = rawRecord[_mappingConfig.OrderPositionFieldName],
                 OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
                 FulfilledVolume = rawRecord[_mappingConfig.FulfilledVolumeFieldName],
                 LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
 
                 TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
-                TraderId = rawRecord[_mappingConfig.TraderIdFieldName],
                 ClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
                 PartyBrokerId = rawRecord[_mappingConfig.PartyBrokerIdFieldName],
                 CounterPartyBrokerId = rawRecord[_mappingConfig.CounterPartyBrokerIdFieldName],
 
-                OrderCurrency = rawRecord[_mappingConfig.CurrencyFieldName],
+
                 SecurityLei = rawRecord[_mappingConfig.SecurityLei],
                 SecurityBloombergTicker = rawRecord[_mappingConfig.SecurityBloombergTickerFieldName],
                 ExecutedPrice = rawRecord[_mappingConfig.ExecutedPriceFieldName],

@@ -1,4 +1,4 @@
-﻿namespace Domain.V2.Financial
+﻿namespace DomainV2.Financial
 {
     public enum MarketTypes
     {

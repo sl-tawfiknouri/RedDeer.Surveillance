@@ -6,6 +6,8 @@ using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
+using DomainV2.Files;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -15,7 +17,7 @@ namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitor : BaseUploadFileMonitor, IUploadTradeFileMonitor
     {
-        private readonly ITradeOrderStream<TradeOrderFrame> _stream;
+        private readonly ITradeOrderStream<Order> _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadTradeFileProcessor _fileProcessor;
         private readonly ISystemProcessContext _systemProcessContext;
@@ -23,7 +25,7 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
-            ITradeOrderStream<TradeOrderFrame> stream,
+            ITradeOrderStream<Order> stream,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IUploadTradeFileProcessor fileProcessor,
@@ -111,7 +113,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void SuccessfulRead(
             string path,
-            UploadFileProcessorResult<TradeOrderFrameCsv, TradeOrderFrame> csvReadResults,
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();

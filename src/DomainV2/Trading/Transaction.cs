@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.V2.Financial.Interfaces;
+using DomainV2.Financial.Interfaces;
 
-namespace Domain.V2.Trading
+namespace DomainV2.Trading
 {
     public class Transaction
     {

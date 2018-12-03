@@ -1,9 +1,10 @@
-﻿using Domain.Trades.Orders;
+﻿using DomainV2.Files;
+using DomainV2.Trading;
 
 namespace DataImport.Disk_IO.TradeFile.Interfaces
 {
     public interface IUploadTradeFileProcessor 
     {
-        UploadFileProcessorResult<TradeOrderFrameCsv, TradeOrderFrame> Process(string path);
+        UploadFileProcessorResult<TradeFileCsv, Order> Process(string path);
     }
 }

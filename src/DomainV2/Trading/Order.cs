@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.V2.Financial.Interfaces;
+using DomainV2.Financial.Interfaces;
 
-namespace Domain.V2.Trading
+namespace DomainV2.Trading
 {
     public class Order
     {
@@ -86,5 +86,10 @@ namespace Domain.V2.Trading
         public string OrderFund { get; }
         public string OrderClientAccountAttributionId { get; }
         public IReadOnlyCollection<Trade> Trades { get; }
+
+        // Batch properties
+        public bool IsInputBatch { get; set; }
+        public int BatchSize { get; set; }
+        public string InputBatchId { get; set; }
     }
 }

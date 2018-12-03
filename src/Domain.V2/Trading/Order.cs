@@ -1,12 +1,12 @@
 ﻿using System;
-using Domain.V2.Financial;
+using Domain.V2.Financial.Interfaces;
 
 namespace Domain.V2.Trading
 {
     public class Order
     {
         public Order(
-            FinancialInstrument instrument,
+            IFinancialInstrument instrument,
             string reddeerOrderId,
             string orderId,
             DateTime? orderPlacedDate,
@@ -57,9 +57,9 @@ namespace Domain.V2.Trading
             OrderClientAccountAttributionId = orderClientAccountAttributionId ?? string.Empty;
         }
 
-        public FinancialInstrument Instrument { get; }
+        public IFinancialInstrument Instrument { get; }
 
-        public string ReddeerOrderId { get; }
+        public string ReddeerOrderId { get; } // primary key
         public string OrderId { get; } // the client id for the order
         public DateTime? OrderPlacedDate { get; }
         public DateTime? OrderBookedDate { get; }

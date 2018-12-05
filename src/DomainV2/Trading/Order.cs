@@ -8,9 +8,9 @@ namespace DomainV2.Trading
     public class Order
     {
         public Order(
-            IFinancialInstrument instrument,
+            FinancialInstrument instrument,
             Market market,
-            string reddeerOrderId,
+            int? reddeerOrderId,
             string orderId,
             DateTime? orderPlacedDate,
             DateTime? orderBookedDate,
@@ -37,7 +37,7 @@ namespace DomainV2.Trading
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             Market = market ?? throw new ArgumentNullException(nameof(market));
-            ReddeerOrderId = reddeerOrderId ?? string.Empty;
+            ReddeerOrderId = reddeerOrderId;
             OrderId = orderId ?? string.Empty;
             OrderPlacedDate = orderPlacedDate;
             OrderBookedDate = orderBookedDate;
@@ -63,10 +63,10 @@ namespace DomainV2.Trading
             Trades = trades ?? new Trade[0];
         }
 
-        public IFinancialInstrument Instrument { get; }
+        public FinancialInstrument Instrument { get; }
         public Market Market { get; }
 
-        public string ReddeerOrderId { get; } // primary key
+        public int? ReddeerOrderId { get; } // primary key
         public string OrderId { get; } // the client id for the order
         public DateTime? OrderPlacedDate { get; }
         public DateTime? OrderBookedDate { get; }

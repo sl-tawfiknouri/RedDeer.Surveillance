@@ -7,7 +7,7 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces
         IRevenueCalculator RevenueCalculator();
         IRevenueCalculator RevenueCalculatorMarkingTheClose();
 
-        IRevenueCalculator RevenueCurrencyConvertingCalculator(Domain.Finance.Currency currency);
-        IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Finance.Currency currency);
+        IRevenueCalculator RevenueCurrencyConvertingCalculator(DomainV2.Financial.Currency currency);
+        IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(DomainV2.Financial.Currency currency);
     }
 }

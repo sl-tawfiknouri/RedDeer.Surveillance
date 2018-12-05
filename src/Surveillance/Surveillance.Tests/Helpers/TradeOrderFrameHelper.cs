@@ -1,8 +1,7 @@
 ﻿using System;
-using Domain.Equity;
-using Domain.Finance;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Financial;
 
 namespace Surveillance.Tests.Helpers
 {
@@ -13,7 +12,7 @@ namespace Surveillance.Tests.Helpers
             return new TradeOrderFrame(
                 null,
                 OrderType.Market,
-                new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"),
+                new Market(new Market.MarketId("XLON"), "London Stock Exchange"),
                 new Security(
                     new SecurityIdentifiers(string.Empty, "reddeer-id", "client-identifier", "sedol", "isin", "figi", "cusip", "xlon", "lei",
                         "bloomberg"),

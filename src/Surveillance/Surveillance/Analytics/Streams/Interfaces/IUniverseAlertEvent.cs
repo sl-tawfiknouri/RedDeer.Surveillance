@@ -4,7 +4,7 @@ namespace Surveillance.Analytics.Streams.Interfaces
 {
     public interface IUniverseAlertEvent
     {
-        Domain.Scheduling.Rules Rule { get; }
+        DomainV2.Scheduling.Rules Rule { get; }
         bool IsFlushEvent { get; set; }
         bool IsRemoveEvent { get; set; }
         object UnderlyingAlert { get; }

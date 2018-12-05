@@ -51,7 +51,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
-                new StockExchange(
+                new Market(
                     new Market.MarketId("LSE"), "London Stock Exchange"), 
                 DateTime.UtcNow,
                 null);
@@ -64,7 +64,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
-                new StockExchange(
+                new Market(
                     new Market.MarketId("LSE"), "London Stock Exchange"),
                 DateTime.UtcNow,
                 new List<SecurityTick>());
@@ -102,7 +102,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var frames = GenerateSecurityFrames(securityFrames);
             var exchFrame = new ExchangeFrame(
-                new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange"),
+                new Market(new Market.MarketId("LSE"), "London Stock Exchange"),
                 DateTime.UtcNow,
                 frames);
 
@@ -129,7 +129,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                     3000,
                     null,
                     1000,
-                    new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"));
+                    new Market(new Market.MarketId("XLON"), "London Stock Exchange"));
 
                 results.Add(frame);
             }

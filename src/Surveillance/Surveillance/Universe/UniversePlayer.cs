@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
 using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Universe

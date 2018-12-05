@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity;
+using DomainV2.Equity;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Trades.Interfaces;

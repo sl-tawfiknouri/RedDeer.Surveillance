@@ -22,7 +22,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            Domain.Finance.Currency variableCurrency, 
+            DomainV2.Financial.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency))?.OrderCurrency;

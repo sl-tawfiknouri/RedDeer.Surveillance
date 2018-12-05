@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -160,7 +159,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             tradeBuy.FulfilledVolume = 987;
             tradeSell.FulfilledVolume = 1019;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
             
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
@@ -203,7 +202,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             tradeBuy.FulfilledVolume = 100;
             tradeSell.FulfilledVolume = 100;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
@@ -247,7 +246,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             tradeBuy.FulfilledVolume = 300;
             tradeSell.FulfilledVolume = 5;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
@@ -291,7 +290,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             tradeBuy.FulfilledVolume = 100;
             tradeSell.FulfilledVolume = 100;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
@@ -335,7 +334,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             tradeBuy.FulfilledVolume = 100;
             tradeSell.FulfilledVolume = 100;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
@@ -383,7 +382,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
 
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var initialPrice = tradeBuy.ExecutedPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.TradeSubmittedOn.AddSeconds(-55));
@@ -446,7 +445,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
 
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var initialPrice = tradeBuy.ExecutedPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.TradeSubmittedOn.AddSeconds(-55));
@@ -509,7 +508,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
 
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var initialPrice = tradeBuy.ExecutedPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.TradeSubmittedOn.AddSeconds(-55));
@@ -572,7 +571,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
 
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
             var initialPrice = tradeBuy.ExecutedPrice.Value.Value;
             var marketData5 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 1.2m, tradeSell.TradeSubmittedOn.AddSeconds(5));
             var marketData6 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 1.25m, tradeSell.TradeSubmittedOn.AddSeconds(10));
@@ -600,7 +599,7 @@ namespace Surveillance.Tests.Rules.Layering
         }
 
         private ExchangeFrame SetExchangeFrameToPrice(
-            StockExchange market,
+            Market market,
             TradeOrderFrame baseBuyFrame,
             TradeOrderFrame baseSellFrame,
             decimal price,

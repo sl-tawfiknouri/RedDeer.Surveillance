@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Scheduling;
 using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
@@ -181,12 +180,12 @@ namespace Surveillance.Tests.Universe
             var exchangeFrames = new[]
             {
                 new ExchangeFrame(
-                    new StockExchange(
+                    new Market(
                         new Market.MarketId("xlon"), "London Stock Exchange"),
                     timeSeriesInitiation,
                     new List<SecurityTick>()),
                 new ExchangeFrame(
-                    new StockExchange(
+                    new Market(
                         new Market.MarketId("xlon"), "London Stock Exchange"),
                     timeSeriesTermination,
                     new List<SecurityTick>())

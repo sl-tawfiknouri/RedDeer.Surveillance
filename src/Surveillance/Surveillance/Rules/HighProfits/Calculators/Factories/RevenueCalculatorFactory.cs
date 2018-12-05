@@ -32,12 +32,12 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories
             return new RevenueMarkingCloseCalculator(_logger);
         }
 
-        public IRevenueCalculator RevenueCurrencyConvertingCalculator(Domain.Finance.Currency currency)
+        public IRevenueCalculator RevenueCurrencyConvertingCalculator(DomainV2.Financial.Currency currency)
         {
             return new RevenueCurrencyConvertingCalculator(currency, _currencyConverter, _currencyConvertingLogger);
         }
 
-        public IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(Domain.Finance.Currency currency)
+        public IRevenueCalculator RevenueCurrencyConvertingMarketClosureCalculator(DomainV2.Financial.Currency currency)
         {
            return new RevenueCurrencyConvertingMarkingCloseCalculator(currency, _currencyConverter, _currencyConvertingLogger);
         }

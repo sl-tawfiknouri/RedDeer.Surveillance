@@ -1,8 +1,7 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.RuleParameters.Filter;
@@ -223,17 +222,17 @@ namespace Surveillance.Tests.Universe.Filter
             filter.Subscribe(_observer);
 
             var accOne = ((TradeOrderFrame)null).Random();
-            accOne.Market = new StockExchange(new Market.MarketId("abc"), "abc");
+            accOne.Market = new Market(new Market.MarketId("abc"), "abc");
             var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
 
             var accTwo = ((TradeOrderFrame)null).Random();
-            accTwo.Market = new StockExchange(new Market.MarketId("def"), "def");
+            accTwo.Market = new Market(new Market.MarketId("def"), "def");
             var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new ExchangeFrame(new StockExchange(new Market.MarketId("ghi"), "ghi"), DateTime.UtcNow, new SecurityTick[0]);
+            var exchangeOne = new ExchangeFrame(new Market(new Market.MarketId("ghi"), "ghi"), DateTime.UtcNow, new SecurityTick[0]);
             var eventThree = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new ExchangeFrame(new StockExchange(new Market.MarketId("jkl"), "jkl"), DateTime.UtcNow, new SecurityTick[0]);
+            var exchangeTwo = new ExchangeFrame(new Market(new Market.MarketId("jkl"), "jkl"), DateTime.UtcNow, new SecurityTick[0]);
             var eventFour = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);
@@ -261,17 +260,17 @@ namespace Surveillance.Tests.Universe.Filter
             filter.Subscribe(_observer);
 
             var accOne = ((TradeOrderFrame)null).Random();
-            accOne.Market = new StockExchange(new Market.MarketId("abc"), "abc");
+            accOne.Market = new Market(new Market.MarketId("abc"), "abc");
             var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
 
             var accTwo = ((TradeOrderFrame)null).Random();
-            accTwo.Market = new StockExchange(new Market.MarketId("def"), "def");
+            accTwo.Market = new Market(new Market.MarketId("def"), "def");
             var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new ExchangeFrame(new StockExchange(new Market.MarketId("ghi"), "ghi"), DateTime.UtcNow, new SecurityTick[0]);
+            var exchangeOne = new ExchangeFrame(new Market(new Market.MarketId("ghi"), "ghi"), DateTime.UtcNow, new SecurityTick[0]);
             var eventThree = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new ExchangeFrame(new StockExchange(new Market.MarketId("jkl"), "jkl"), DateTime.UtcNow, new SecurityTick[0]);
+            var exchangeTwo = new ExchangeFrame(new Market(new Market.MarketId("jkl"), "jkl"), DateTime.UtcNow, new SecurityTick[0]);
             var eventFour = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);

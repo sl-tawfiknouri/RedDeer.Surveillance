@@ -93,7 +93,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         smp.Value.LowIntradayPrice,
                                         sm.SecurityCurrency)),
                                 null,
-                                new StockExchange(
+                                new Market(
                                     new Market.MarketId(_market.Code),
                                     _market.Name))))
                     .GroupBy(x => x.TimeStamp)
@@ -104,7 +104,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 initialTicks
                     .Select(it =>
                         new ExchangeFrame(
-                            new StockExchange(
+                            new Market(
                                 new Market.MarketId(_market.Code),
                                 _market.Name),
                             it.Key,

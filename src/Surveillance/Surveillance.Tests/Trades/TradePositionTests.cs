@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Finance;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -139,7 +138,7 @@ namespace Surveillance.Tests.Trades
             return new TradeOrderFrame(
                 null,
                 OrderType.Market,
-                new StockExchange(new Market.MarketId("XLON"), "XLON"),
+                new Market(new Market.MarketId("XLON"), "XLON"),
                 security,
                 null,
                 new CurrencyAmount(1000, "GBP"), 

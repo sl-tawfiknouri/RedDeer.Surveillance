@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -46,7 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(DomainV2.Scheduling.Rules.HighProfits) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -103,7 +103,7 @@ namespace Surveillance.Universe.Subscribers
         {
             var ruleCtxStream = opCtx
                     .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                        DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                         HighProfitRuleFactory.Version,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
@@ -111,7 +111,7 @@ namespace Surveillance.Universe.Subscribers
 
             var ruleCtxMarketClosure = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                    DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                     HighProfitRuleFactory.Version,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

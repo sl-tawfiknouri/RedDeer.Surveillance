@@ -68,7 +68,7 @@ namespace Surveillance.Rules.HighProfits
 
             var position = new TradePosition(activeWindow.ToList());
 
-            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
+            var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
             _alertStream.Add(message);
 
             return false;

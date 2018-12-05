@@ -51,7 +51,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     3000,
                     null,
                     100,
-                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
+                    new Market(new Market.MarketId("NASDAQ"), "NASDAQ"));
 
             var result = strategy.AdvanceFrame(tick, DateTime.UtcNow, true);
 
@@ -83,7 +83,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     3000,
                     null,
                     100,
-                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
+                    new Market(new Market.MarketId("NASDAQ"), "NASDAQ"));
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);

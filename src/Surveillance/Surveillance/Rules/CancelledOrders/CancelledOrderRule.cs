@@ -29,7 +29,7 @@ namespace Surveillance.Rules.CancelledOrders
             ILogger<CancelledOrderRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
-                Domain.Scheduling.Rules.CancelledOrders,
+                DomainV2.Scheduling.Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 opCtx,
@@ -65,7 +65,7 @@ namespace Surveillance.Rules.CancelledOrders
 
             if (ruleBreach.HasBreachedRule())
             {
-                var message = new UniverseAlertEvent(Domain.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
+                var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
                 _alertStream.Add(message);
             }
         }
@@ -164,7 +164,7 @@ namespace Surveillance.Rules.CancelledOrders
         {
             _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
 
-            var alertMessage = new UniverseAlertEvent(Domain.Scheduling.Rules.CancelledOrders, null, _opCtx, true);
+            var alertMessage = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, null, _opCtx, true);
             _alertStream.Add(alertMessage);
             _opCtx?.EndEvent();
         }

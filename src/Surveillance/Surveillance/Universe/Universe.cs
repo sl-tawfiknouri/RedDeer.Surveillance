@@ -1,8 +1,8 @@
 ﻿using Domain.Trades.Orders;
 using System.Collections.Generic;
 using System.Linq;
+using DomainV2.Equity.Frames;
 using Surveillance.Universe.Interfaces;
-using Domain.Equity.Frames;
 
 namespace Surveillance.Universe
 {

@@ -94,7 +94,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 .SelectMany(io =>
                     io.Select(iio =>
                         new ExchangeFrame(
-                            new StockExchange(
+                            new Market(
                                 iio.FirstOrDefault()?.Market.Id,
                                 iio.FirstOrDefault()?.Market.Name),
                         iio.Key,

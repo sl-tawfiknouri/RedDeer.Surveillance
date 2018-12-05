@@ -1,8 +1,8 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Newtonsoft.Json;
 using Surveillance.NetworkIO.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;

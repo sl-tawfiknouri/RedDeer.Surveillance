@@ -1,5 +1,5 @@
 ﻿using DataImport.Disk_IO.Interfaces;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 
 namespace DataImport.Disk_IO.EquityFile.Interfaces
 {

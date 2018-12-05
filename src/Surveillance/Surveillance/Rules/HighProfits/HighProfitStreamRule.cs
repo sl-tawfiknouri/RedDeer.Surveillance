@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Finance;
 using Domain.Trades.Orders;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -43,7 +43,7 @@ namespace Surveillance.Rules.HighProfits
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
-                Domain.Scheduling.Rules.HighProfits,
+                DomainV2.Scheduling.Rules.HighProfits,
                 HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
@@ -139,7 +139,7 @@ namespace Surveillance.Rules.HighProfits
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<TradeOrderFrame> liveTrades)
         {
-            var currency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
             var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
 
@@ -158,7 +158,7 @@ namespace Surveillance.Rules.HighProfits
 
         private ICostCalculator GetCostCalculator()
         {
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
             var costCalculator = _parameters.UseCurrencyConversions
                 ? _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency)
@@ -179,7 +179,7 @@ namespace Surveillance.Rules.HighProfits
                 return calculator;
             }
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             
             var currencyConvertingCalculator =
                 MarketClosureRule
@@ -220,7 +220,7 @@ namespace Surveillance.Rules.HighProfits
                     MarketClosureRule,
                     breakdown);
 
-            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -275,7 +275,7 @@ namespace Surveillance.Rules.HighProfits
 
             if (_submitRuleBreaches)
             {
-                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
                 _alertStream.Add(alert);
             }
 

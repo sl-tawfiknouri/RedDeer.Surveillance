@@ -1,6 +1,6 @@
 ﻿using System;
 using DataImport.Recorders.Interfaces;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 
 namespace DataImport.Recorders
 {

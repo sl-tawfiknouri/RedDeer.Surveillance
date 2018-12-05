@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;

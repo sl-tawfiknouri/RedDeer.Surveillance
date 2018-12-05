@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -67,7 +66,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private ExchangeFrame Frame()
         {
-            var stockExchange = new StockExchange(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
+            var stockExchange = new Market(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
 
             var securityIdentifiers = new SecurityIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 

@@ -59,7 +59,7 @@ namespace Surveillance.Tests.Currency
                 tradeThree
             });
 
-            var usd = new Domain.Finance.Currency("usd");
+            var usd = new DomainV2.Financial.Currency("usd");
 
             var wer = await calculator.WeightedExchangeRate(
                 position,

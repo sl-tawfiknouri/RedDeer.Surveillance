@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using MathNet.Numerics.Distributions;
-using NLog;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {
-    public class MarkovTradeStrategy : ITradeStrategy<TradeOrderFrame>
+    public class MarkovTradeStrategy : ITradeStrategy<Order>
     {
         private readonly ILogger _logger;
         private readonly ITradeVolumeStrategy _tradeVolumeStrategy;

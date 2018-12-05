@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 
 namespace Surveillance.Trades.Interfaces
 {
     public interface ITradingHistoryStack
     {
-        Stack<TradeOrderFrame> ActiveTradeHistory();
-        void Add(TradeOrderFrame frame, DateTime currentTime);
+        Stack<Order> ActiveTradeHistory();
+        void Add(Order frame, DateTime currentTime);
         void ArchiveExpiredActiveItems(DateTime currentTime);
-        StockExchange Exchange();
+        Market Exchange();
     }
 }

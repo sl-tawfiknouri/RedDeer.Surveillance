@@ -4,8 +4,8 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Recorders.Interfaces;
-using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Scheduling;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
@@ -114,12 +114,12 @@ namespace DataImport.Recorders
 
         private List<RuleIdentifier> GetAllRules()
         {
-            var allRules = Enum.GetValues(typeof(Domain.Scheduling.Rules));
-            var allRulesList = new List<Domain.Scheduling.Rules>();
+            var allRules = Enum.GetValues(typeof(Rules));
+            var allRulesList = new List<Rules>();
 
             foreach (var item in allRules)
             {
-                allRulesList.Add((Domain.Scheduling.Rules)item);
+                allRulesList.Add((Rules)item);
             }
 
             return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();

@@ -30,7 +30,7 @@ namespace Surveillance.Rules.Spoofing
             ILogger logger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                  Domain.Scheduling.Rules.Spoofing,
+                  DomainV2.Scheduling.Rules.Spoofing,
                   SpoofingRuleFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
@@ -172,7 +172,7 @@ namespace Surveillance.Rules.Spoofing
                     mostRecentTrade.Security, 
                     mostRecentTrade);
 
-            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
+            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);
         }
 
@@ -199,7 +199,7 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Spoofing Rule");
-            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
+            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
             _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
         }

@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -16,12 +14,12 @@ namespace Surveillance.Rules.HighProfits.Calculators
 {
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
-        private readonly Domain.Finance.Currency _targetCurrency;
+        private readonly DomainV2.Financial.Currency _targetCurrency;
         private readonly ICurrencyConverter _currencyConverter;
         private readonly ILogger _logger;
 
         public RevenueCurrencyConvertingCalculator(
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
         {
@@ -129,7 +127,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
         private async Task<CurrencyAmount?> CalculateRealisedRevenue
             (IList<TradeOrderFrame> activeFulfilledTradeOrders,
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -184,7 +182,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<TradeOrderFrame> activeFulfilledTradeOrders,
             CurrencyAmount? realisedRevenue,
             int sizeOfVirtualPosition,
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {

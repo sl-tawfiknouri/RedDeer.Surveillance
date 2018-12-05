@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 
 namespace DataImport.Recorders.Interfaces
 {

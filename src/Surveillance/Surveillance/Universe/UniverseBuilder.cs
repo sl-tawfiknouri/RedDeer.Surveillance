@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Equity.Frames;
-using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Scheduling;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;

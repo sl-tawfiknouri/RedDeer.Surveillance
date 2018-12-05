@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.EquityFile.Interfaces;
-using Domain.Equity.Frames;
-using Domain.Equity.Frames.Interfaces;
-using Domain.Market;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Frames.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.EquityFile
@@ -100,7 +99,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
             else
             {
-                var exchange = new StockExchange(new Market.MarketId(record.MarketIdentifierCode), record.MarketName);
+                var exchange = new Market(new Market.MarketId(record.MarketIdentifierCode), record.MarketName);
                 var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
                 marketUpdates.Add(exchangeFrame);
             }

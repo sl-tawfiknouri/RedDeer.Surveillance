@@ -72,7 +72,7 @@ namespace Domain.Tests.Trades.Streams
             var stream = new TradeOrderStream<TradeOrderFrame>(_factory);
             var obs1 = A.Fake<IObserver<TradeOrderFrame>>();
             var obs2 = A.Fake<IObserver<TradeOrderFrame>>();
-            var exch = new StockExchange(new MarketId("id"), "LSE");
+            var exch = new Market(new MarketId("id"), "LSE");
             var orderDates = DateTime.Now;
             const string traderId = "Trader Joe";
             const string partyBrokerId = "Broker-1";

@@ -8,7 +8,6 @@ using DasMulli.Win32.ServiceUtils;
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
-using Domain.Equity.Frames.Interfaces;
 using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;

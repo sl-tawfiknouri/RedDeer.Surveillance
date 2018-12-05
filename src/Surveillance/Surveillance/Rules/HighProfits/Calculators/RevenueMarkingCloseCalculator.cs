@@ -1,6 +1,5 @@
-﻿using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
+﻿using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 
 namespace Surveillance.Rules.HighProfits.Calculators

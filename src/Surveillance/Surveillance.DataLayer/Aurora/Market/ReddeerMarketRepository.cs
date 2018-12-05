@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -311,7 +310,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                 })
                             .Select(i =>
                             {
-                                var market = new StockExchange(new Domain.Market.Market.MarketId(i.Key1), i.Key2);
+                                var market = new DomainV2.Financial.Market(i.Key1, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new ExchangeFrame(
                                         market,
@@ -358,7 +357,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
 
             if (pair.Exchange == null
-                || string.IsNullOrWhiteSpace(pair.Exchange?.Id.Id))
+                || string.IsNullOrWhiteSpace(pair.Exchange?.MarketIdentifierCode))
             {
                 _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId either received a null exchange object or an empty market id for a trade. Not able to continue.");
                 return string.Empty;
@@ -405,9 +404,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketUpdateDto()
             { }
 
-            public MarketUpdateDto(Domain.Market.Market market)
+            public MarketUpdateDto(DomainV2.Financial.Market market)
             {
-                MarketId = market.Id.Id;
+                MarketId = market.MarketIdentifierCode;
                 MarketName = market.Name;
             }
 
@@ -417,7 +416,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, StockExchange market)
+        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
         {
             if (dto == null)
             {
@@ -425,8 +424,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
 
             var security =
-                new Security(
-                    new SecurityIdentifiers(
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers(
                         dto.Id,
                         dto.ReddeerId,
                         dto.ClientIdentifier,
@@ -488,7 +488,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     return;
                 }
 
-                MarketId = entity?.Exchange?.Id?.Id;
+                MarketId = entity?.Exchange?.MarketIdentifierCode;
                 MarketName = entity?.Exchange?.Name;
             }
 
@@ -624,7 +624,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 }
 
                 Id = entity?.Security?.Identifiers.Id ?? string.Empty;
-                MarketId = entity.Market?.Id?.Id;
+                MarketId = entity.Market?.MarketIdentifierCode;
                 MarketName = entity.Market?.Name;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
@@ -656,7 +656,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
             }
 
-            public InsertSecurityDto(Security security, string marketIdForeignKey)
+            public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey)
             {
                 MarketIdPrimaryKey = marketIdForeignKey;
 

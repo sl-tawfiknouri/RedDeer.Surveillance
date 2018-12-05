@@ -19,7 +19,7 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories
             return new CostCalculator();
         }
 
-        public ICostCalculator CurrencyConvertingCalculator(Domain.Finance.Currency currency)
+        public ICostCalculator CurrencyConvertingCalculator(DomainV2.Financial.Currency currency)
         {
             return new CostCurrencyConvertingCalculator(_currencyConverter, currency);
         }

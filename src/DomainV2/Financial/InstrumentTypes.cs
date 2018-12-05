@@ -2,11 +2,11 @@
 {
     public enum InstrumentTypes
     {
-        None,
-        Unknown,
-        Equity,
-        Bond,
-        OptionCall,
-        OptionPut,
+        None = 0,
+        Unknown = 1,
+        Equity = 2,
+        Bond = 3,
+        OptionCall = 4,
+        OptionPut = 5,
     }
 }

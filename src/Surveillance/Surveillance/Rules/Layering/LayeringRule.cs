@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -31,7 +31,7 @@ namespace Surveillance.Rules.Layering
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
-                Domain.Scheduling.Rules.Layering,
+                DomainV2.Scheduling.Rules.Layering,
                 LayeringRuleFactory.Version,
                 "Layering Rule",
                 opCtx,
@@ -91,7 +91,7 @@ namespace Surveillance.Rules.Layering
 
             if (layeringRuleBreach != null)
             {
-                var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
+                var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
         }
@@ -479,7 +479,7 @@ namespace Surveillance.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, null, _ruleCtx, true);
+            var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, null, _ruleCtx, true);
             _alertStream.Add(universeAlert);
 
             if (_hadMissingData)

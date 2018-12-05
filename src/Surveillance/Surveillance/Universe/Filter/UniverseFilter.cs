@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.Rules;
 using Surveillance.Universe.Filter.Interfaces;
@@ -263,7 +263,7 @@ namespace Surveillance.Universe.Filter
             return false;
         }
 
-        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
+        public DomainV2.Scheduling.Rules Rule { get; } = DomainV2.Scheduling.Rules.UniverseFilter;
         public string Version { get; } = Versioner.Version(0, 0);
 
         public object Clone()

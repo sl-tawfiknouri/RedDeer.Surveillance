@@ -2,9 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Market;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;

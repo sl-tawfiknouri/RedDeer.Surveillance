@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Finance;
 using Domain.Trades.Orders;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -43,7 +43,7 @@ namespace Surveillance.Rules.WashTrade
             ILogger logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.WashTrade,
+                DomainV2.Scheduling.Rules.WashTrade,
                 WashTradeRuleFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
@@ -111,7 +111,7 @@ namespace Surveillance.Rules.WashTrade
                     pairingPositionsCheck,
                     clusteringPositionCheck);
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
+            var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, breach, RuleCtx);
             _alertStream.Add(universeAlert);
         }
 
@@ -201,10 +201,10 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -341,10 +341,10 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -441,7 +441,7 @@ namespace Surveillance.Rules.WashTrade
         {
             _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
 
-            var alertStream = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, null, RuleCtx, true);
+            var alertStream = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, null, RuleCtx, true);
             _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
         }

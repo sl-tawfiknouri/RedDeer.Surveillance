@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Finance;
 using Domain.Trades.Orders;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
@@ -32,7 +32,7 @@ namespace Surveillance.Rules.HighVolume
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.HighVolume,
+                DomainV2.Scheduling.Rules.HighVolume,
                 HighVolumeRuleFactory.Version,
                 "High Volume Rule",
                 opCtx,
@@ -104,7 +104,7 @@ namespace Surveillance.Rules.HighVolume
                     marketCapBreach,
                     tradedVolume);
 
-            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
+            var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }
 
@@ -284,7 +284,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
 
-            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
+            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
             _alertStream.Add(alert);
 
             if (_hadMissingData)

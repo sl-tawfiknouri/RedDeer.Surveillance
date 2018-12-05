@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

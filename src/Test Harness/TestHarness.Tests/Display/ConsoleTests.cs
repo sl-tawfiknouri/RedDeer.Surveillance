@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Display
 
         private TradeOrderFrame GenerateFrame(int vol)
         {
-            var stock = new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange");
+            var stock = new Market(new Market.MarketId("LSE"), "London Stock Exchange");
             var securityIdentifiers =
                 new SecurityIdentifiers(
                     string.Empty,

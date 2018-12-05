@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
@@ -115,12 +115,12 @@ namespace Surveillance.Recorders
 
         private List<RuleIdentifier> GetAllRules()
         {
-            var allRules = Enum.GetValues(typeof(Domain.Scheduling.Rules));
-            var allRulesList = new List<Domain.Scheduling.Rules>();
+            var allRules = Enum.GetValues(typeof(DomainV2.Scheduling.Rules));
+            var allRulesList = new List<DomainV2.Scheduling.Rules>();
 
             foreach (var item in allRules)
             {
-                allRulesList.Add((Domain.Scheduling.Rules)item);
+                allRulesList.Add((DomainV2.Scheduling.Rules)item);
             }
 
             return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();

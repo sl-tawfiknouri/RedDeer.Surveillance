@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Finance;
 using Domain.Trades.Orders;
+using DomainV2.Financial;
 using NUnit.Framework;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;

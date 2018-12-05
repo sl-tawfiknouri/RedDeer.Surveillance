@@ -204,7 +204,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private TradeOrderFrame[] SingularCancelledOrder(SecurityTick security, StockExchange exchange)
+        private TradeOrderFrame[] SingularCancelledOrder(SecurityTick security, Market exchange)
         {
             var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
@@ -212,7 +212,7 @@ namespace TestHarness.Engine.OrderGenerator
             return new[] { order };
         }
 
-        private TradeOrderFrame OrderForValue(OrderStatus status, decimal value, SecurityTick security, StockExchange exchange)
+        private TradeOrderFrame OrderForValue(OrderStatus status, decimal value, SecurityTick security, Market exchange)
         {
             var volume = (int)((value / security.Spread.Ask.Value) + 1);
             var orderPosition = (OrderPosition)DiscreteUniform.Sample(0, 3);

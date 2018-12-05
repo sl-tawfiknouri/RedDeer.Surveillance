@@ -1,6 +1,6 @@
 ﻿using DomainV2.Trading;
 
-namespace DomainV2.Files
+namespace DomainV2.Files.Interfaces
 {
     public interface ITradeFileCsvToOrderMapper
     {

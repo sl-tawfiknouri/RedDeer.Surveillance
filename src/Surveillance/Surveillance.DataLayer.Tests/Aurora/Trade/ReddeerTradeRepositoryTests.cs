@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Equity;
-using Domain.Finance;
-using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -74,7 +73,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         private TradeOrderFrame Frame()
         {
-            var exch = new StockExchange(new Domain.Market.Market.MarketId("id"), "LSE");
+            var exch = new Market(new Domain.Market.Market.MarketId("id"), "LSE");
             var orderDates = DateTime.Now;
             const string traderId = "Trader Joe";
             const string partyBrokerId = "Broker-1";

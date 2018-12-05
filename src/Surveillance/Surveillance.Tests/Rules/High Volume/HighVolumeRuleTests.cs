@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -96,7 +95,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
             underlyingTrade.FulfilledVolume = 10;
             underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
             var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
                 {
@@ -133,7 +132,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
             underlyingTrade.FulfilledVolume = 300;
             underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
             var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
                 {
@@ -170,7 +169,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
             underlyingTrade.FulfilledVolume = 300;
             underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange");
+            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
             var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
                 new List<SecurityTick>
                 {

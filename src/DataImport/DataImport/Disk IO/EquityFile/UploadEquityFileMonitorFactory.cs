@@ -1,7 +1,7 @@
 ﻿using System;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;

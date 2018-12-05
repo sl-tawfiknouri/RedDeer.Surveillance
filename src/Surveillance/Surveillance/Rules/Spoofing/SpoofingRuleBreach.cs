@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Domain.Equity;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -135,7 +135,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0]}},
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0]}},
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 06)
                 };
@@ -174,7 +174,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 15)
                 };
@@ -216,7 +216,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 01)
                 };
@@ -258,7 +258,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 07)
                 };
@@ -301,7 +301,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 10)
                 };
@@ -344,7 +344,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 8)
                 };
@@ -388,7 +388,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 14)
                 };
@@ -432,7 +432,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -476,7 +476,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -524,7 +524,7 @@ namespace Surveillance.Tests.Scheduler
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Domain.Scheduling.Rules.HighProfits, Ids = new string[0] }, new RuleIdentifier { Rule = Domain.Scheduling.Rules.CancelledOrders, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] }, new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.CancelledOrders, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };

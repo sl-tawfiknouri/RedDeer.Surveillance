@@ -19,7 +19,7 @@ namespace Surveillance.Currency
 
         public async Task<decimal> WeightedExchangeRate(
             ITradePosition position,
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (position == null
@@ -38,7 +38,7 @@ namespace Surveillance.Currency
 
                 var weight = (decimal)trad.FulfilledVolume / (decimal)totalVolume;
 
-                var orderCurrency = new Domain.Finance.Currency(trad.OrderCurrency);
+                var orderCurrency = new DomainV2.Financial.Currency(trad.OrderCurrency);
                 var rate = await _exchangeRates.GetRate(
                     orderCurrency,
                     targetCurrency,

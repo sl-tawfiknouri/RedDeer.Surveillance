@@ -2,12 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Scheduling;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -24,16 +23,16 @@ namespace Surveillance.Rules
         private readonly string _name;
 
         protected readonly TimeSpan WindowSize;
-        protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingHistory;
-        protected readonly ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
 
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
-        protected IDictionary<Market.MarketId, ExchangeFrame> LatestExchangeFrameBook;
+        protected IDictionary<string, ExchangeFrame> LatestExchangeFrameBook;
 
-        protected ConcurrentDictionary<Market.MarketId, IMarketHistoryStack> MarketHistory;
+        protected ConcurrentDictionary<string, IMarketHistoryStack> MarketHistory;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
@@ -41,7 +40,7 @@ namespace Surveillance.Rules
 
         protected BaseUniverseRule(
             TimeSpan windowSize,
-            Domain.Scheduling.Rules rules,
+            DomainV2.Scheduling.Rules rules,
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -50,10 +49,10 @@ namespace Surveillance.Rules
             WindowSize = windowSize;
             Rule = rules;
             Version = version ?? string.Empty;
-            TradingHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
-            TradingInitialHistory = new ConcurrentDictionary<SecurityIdentifiers, ITradingHistoryStack>();
-            MarketHistory = new ConcurrentDictionary<Market.MarketId, IMarketHistoryStack>();
-            LatestExchangeFrameBook = new ConcurrentDictionary<Market.MarketId, ExchangeFrame>();
+            TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            MarketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>();
+            LatestExchangeFrameBook = new ConcurrentDictionary<string, ExchangeFrame>();
 
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
@@ -129,27 +128,27 @@ namespace Surveillance.Rules
                 return;
             }
 
-            if (LatestExchangeFrameBook.ContainsKey(value.Exchange.Id))
+            if (LatestExchangeFrameBook.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
-                LatestExchangeFrameBook.Remove(value.Exchange.Id);
-                LatestExchangeFrameBook.Add(value.Exchange.Id, value);
+                LatestExchangeFrameBook.Remove(value.Exchange.MarketIdentifierCode);
+                LatestExchangeFrameBook.Add(value.Exchange.MarketIdentifierCode, value);
             }
             else
             {
-                LatestExchangeFrameBook.Add(value.Exchange.Id, value);
+                LatestExchangeFrameBook.Add(value.Exchange.MarketIdentifierCode, value);
             }
 
             UniverseDateTime = universeEvent.EventTime;
 
-            if (!MarketHistory.ContainsKey(value.Exchange.Id))
+            if (!MarketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
                 var history = new MarketHistoryStack(WindowSize);
                 history.Add(value, value.TimeStamp);
-                MarketHistory.TryAdd(value.Exchange.Id, history);
+                MarketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
             }
             else
             {
-                MarketHistory.TryGetValue(value.Exchange.Id, out var history);
+                MarketHistory.TryGetValue(value.Exchange.MarketIdentifierCode, out var history);
 
                 history?.Add(value, value.TimeStamp);
                 history?.ArchiveExpiredActiveItems(value.TimeStamp);
@@ -158,17 +157,17 @@ namespace Surveillance.Rules
 
         private void TradeSubmitted(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is TradeOrderFrame value))
+            if (!(universeEvent.UnderlyingEvent is Order value))
             {
                 return;
             }
 
             UniverseDateTime = universeEvent.EventTime;
 
-            if (!TradingInitialHistory.ContainsKey(value.Security.Identifiers))
+            if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
             {
                 var history = new TradingHistoryStack(WindowSize, i => i.TradeSubmittedOn);
-                history.Add(value, value.TradeSubmittedOn);
+                history.Add(value, value.OrderPlacedDate);
                 TradingInitialHistory.TryAdd(value.Security.Identifiers, history);
             }
             else
@@ -303,7 +302,7 @@ namespace Surveillance.Rules
         protected abstract void MarketClose(MarketOpenClose exchange);
         protected abstract void EndOfUniverse();
 
-        public Domain.Scheduling.Rules Rule { get; }
+        public DomainV2.Scheduling.Rules Rule { get; }
         public string Version { get; }
     }
 }

@@ -16,7 +16,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         public ExchangeFrame InitialFrame()
         {
-            var exchange = new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ");
+            var exchange = new Market(new Market.MarketId("NASDAQ"), "NASDAQ");
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
@@ -61,7 +61,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                         new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
                         new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
                     volume * 3,
-                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ")))
+                    new Market(new Market.MarketId("NASDAQ"), "NASDAQ")))
                 .ToList();
         }
 

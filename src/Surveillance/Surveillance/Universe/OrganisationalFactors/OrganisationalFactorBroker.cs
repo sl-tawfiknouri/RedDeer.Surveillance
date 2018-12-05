@@ -240,7 +240,7 @@ namespace Surveillance.Universe.OrganisationalFactors
             }
         }
 
-        public Domain.Scheduling.Rules Rule => _cloneSource.Rule;
+        public DomainV2.Scheduling.Rules Rule => _cloneSource.Rule;
         public string Version => _cloneSource.Version;
     }
 }

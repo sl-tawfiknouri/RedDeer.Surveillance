@@ -5,7 +5,7 @@ namespace Surveillance.Rules.Interfaces
 {
     public interface IUniverseRule : IObserver<IUniverseEvent>
     {
-        Domain.Scheduling.Rules Rule { get; }
+        DomainV2.Scheduling.Rules Rule { get; }
         string Version { get; }
     }
 }

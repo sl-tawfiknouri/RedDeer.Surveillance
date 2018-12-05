@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Equity.Frames;
 using Domain.Trades.Orders;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
 using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Universe;

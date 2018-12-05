@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
 using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -33,7 +33,7 @@ namespace Surveillance.Rules.MarkingTheClose
             ILogger<MarkingTheCloseRule> logger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
-                Domain.Scheduling.Rules.MarkingTheClose,
+                DomainV2.Scheduling.Rules.MarkingTheClose,
                 MarkingTheCloseRuleFactory.Version,
                 "Marking The Close",
                 ruleCtx,
@@ -113,7 +113,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
-            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 

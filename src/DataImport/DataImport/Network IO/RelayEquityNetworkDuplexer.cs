@@ -1,7 +1,7 @@
 ﻿using System;
 using DataImport.Network_IO.Interfaces;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Newtonsoft.Json;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;

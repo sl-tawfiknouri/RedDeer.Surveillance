@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;

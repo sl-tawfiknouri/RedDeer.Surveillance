@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DomainV2.Files.Interfaces;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -55,7 +56,7 @@ namespace DomainV2.Files
             return new Order(
                 instrument,
                 market,
-                string.Empty,
+                null,
                 csv.OrderId,
                 placedDate,
                 bookedDate,
@@ -214,7 +215,7 @@ namespace DomainV2.Files
             return null;
         }
 
-        private IFinancialInstrument MapInstrument(TradeFileCsv csv)
+        private FinancialInstrument MapInstrument(TradeFileCsv csv)
         {
             var identifiers =
                 new InstrumentIdentifiers(
@@ -236,15 +237,15 @@ namespace DomainV2.Files
                     csv.InstrumentUnderlyingExchangeSymbol,
                     csv.InstrumentUnderlyingBloombergTicker);
 
-            return new FinancialInstrument
-            {
-                Name = csv.InstrumentName ?? string.Empty,
-                Identifiers = identifiers,
-                Type = MapCfi(csv.InstrumentCfi),
-                Cfi = csv.InstrumentCfi ?? string.Empty,
-                UnderlyingName = csv.InstrumentUnderlyingName ?? string.Empty,
-                UnderlyingCfi = csv.InstrumentUnderlyingCfi ?? string.Empty,
-            };
+            return new FinancialInstrument(
+                MapCfi(csv.InstrumentCfi),
+                identifiers,
+                csv.InstrumentName ?? string.Empty,
+                csv.InstrumentCfi ?? string.Empty,
+                csv.InstrumentIssuerIdentifier ?? string.Empty,
+                csv.InstrumentUnderlyingName ?? string.Empty,
+                csv.InstrumentUnderlyingCfi ?? string.Empty,
+                csv.InstrumentUnderlyingIssuerIdentifier ?? string.Empty);
         }
 
         private Market MapMarket(TradeFileCsv csv)

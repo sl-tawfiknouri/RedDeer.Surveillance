@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Orders.Interfaces;
 using DomainV2.Files;
+using DomainV2.Files.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 
@@ -11,17 +12,18 @@ namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeFileCsv, Order>, IUploadTradeFileProcessor
     {
-        private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
-        private readonly ITradeOrderCsvConfig _mappingConfig;
+        private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
+        private readonly ITradeFileCsvValidator _tradeFileCsvValidator;
+
 
         public UploadTradeFileProcessor(
-            ITradeOrderCsvToDtoMapper csvToDtoMapper,
-            ITradeOrderCsvConfig mappingConfig,
+            ITradeFileCsvToOrderMapper csvToDtoMapper,
+            ITradeFileCsvValidator tradeFileCsvValidator,
             ILogger<UploadTradeFileProcessor> logger)
             : base(logger, "Upload Trade File Processor")
         {
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
-            _mappingConfig = mappingConfig ?? throw new ArgumentNullException(nameof(mappingConfig));
+            _tradeFileCsvValidator = tradeFileCsvValidator ?? throw new ArgumentNullException(nameof(tradeFileCsvValidator));
         }
 
         protected override void MapRecord(
@@ -29,14 +31,26 @@ namespace DataImport.Disk_IO.TradeFile
             List<Order> marketUpdates,
             List<TradeFileCsv> failedMarketUpdateReads)
         {
+            var validationResult = _tradeFileCsvValidator.Validate(record);
+
+            if (!validationResult.IsValid)
+            {
+                _csvToDtoMapper.FailedParseTotal += 1;
+                failedMarketUpdateReads.Add(record);
+
+                if (validationResult.Errors.Any())
+                {
+                    var consolidatedErrorMessage = validationResult.Errors.Aggregate(string.Empty, (a, b) => a + " " + b.ErrorMessage);
+                    Logger.LogWarning(consolidatedErrorMessage);
+                }
+
+                return;
+            }
+
             var mappedRecord = _csvToDtoMapper.Map(record);
             if (mappedRecord != null)
             {
                 marketUpdates.Add(mappedRecord);
-            }
-            else
-            {
-                failedMarketUpdateReads.Add(record);
             }
         }
 

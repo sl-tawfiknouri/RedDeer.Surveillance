@@ -6,6 +6,7 @@ using DataImport.MessageBusIO.Interfaces;
 using DataImport.Recorders.Interfaces;
 using Domain.Scheduling;
 using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 
@@ -42,7 +43,7 @@ namespace DataImport.Recorders
             _logger.LogError($"An exception occured in the reddeer trade recorder {error}");
         }
 
-        public async void OnNext(TradeOrderFrame value)
+        public async void OnNext(Order value)
         {
             if (value == null)
             {
@@ -57,7 +58,7 @@ namespace DataImport.Recorders
             }
         }
 
-        private void UpdateBatch(TradeOrderFrame value)
+        private void UpdateBatch(Order value)
         {
             if (value == null)
             {

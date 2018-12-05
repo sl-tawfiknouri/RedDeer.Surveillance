@@ -29,6 +29,8 @@ using Domain.Trades.Orders;
 using Domain.Trades.Orders.Interfaces;
 using Domain.Trades.Streams;
 using Domain.Trades.Streams.Interfaces;
+using DomainV2.Files;
+using DomainV2.Files.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
@@ -103,6 +105,9 @@ namespace DataImport
             For<IRedDeerAuroraStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+
+            For<ITradeFileCsvValidator>().Use<TradeFileCsvValidator>();
+            For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();
         }
     }
 }

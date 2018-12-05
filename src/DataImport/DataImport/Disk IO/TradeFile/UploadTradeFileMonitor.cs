@@ -92,7 +92,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void FailedRead(
             string path,
-            UploadFileProcessorResult<TradeOrderFrameCsv, TradeOrderFrame> csvReadResults,
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);

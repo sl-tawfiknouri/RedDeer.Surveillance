@@ -1,4 +1,6 @@
-﻿namespace DomainV2.Files
+﻿using System;
+
+namespace DomainV2.Files
 {
     /// <summary>
     /// Version 0.2 of the Trade File

@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport.Tests", "DataImp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport", "DataImport\DataImport\DataImport.csproj", "{CB72ECF0-CEA7-4378-B78A-8C70C79216BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainV2", "DomainV2\DomainV2.csproj", "{3D26B265-C824-49C4-B186-70A2D4876FA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainV2", "DomainV2\DomainV2.csproj", "{3D26B265-C824-49C4-B186-70A2D4876FA4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Trading
@@ -8,6 +9,7 @@ namespace DomainV2.Trading
     {
         public Order(
             IFinancialInstrument instrument,
+            Market market,
             string reddeerOrderId,
             string orderId,
             DateTime? orderPlacedDate,
@@ -34,6 +36,7 @@ namespace DomainV2.Trading
             IReadOnlyCollection<Trade> trades)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
+            Market = market ?? throw new ArgumentNullException(nameof(market));
             ReddeerOrderId = reddeerOrderId ?? string.Empty;
             OrderId = orderId ?? string.Empty;
             OrderPlacedDate = orderPlacedDate;
@@ -61,6 +64,7 @@ namespace DomainV2.Trading
         }
 
         public IFinancialInstrument Instrument { get; }
+        public Market Market { get; }
 
         public string ReddeerOrderId { get; } // primary key
         public string OrderId { get; } // the client id for the order

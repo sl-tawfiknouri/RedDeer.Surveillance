@@ -1,10 +1,10 @@
-﻿using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+﻿using Domain.Trades.Streams.Interfaces;
+using DomainV2.Trading;
 
 namespace DataImport.Disk_IO.Interfaces
 {
     public interface IUploadTradeFileMonitorFactory
     {
-        IUploadTradeFileMonitor Create(ITradeOrderStream<TradeOrderFrame> stream);
+        IUploadTradeFileMonitor Create(ITradeOrderStream<Order> stream);
     }
 }

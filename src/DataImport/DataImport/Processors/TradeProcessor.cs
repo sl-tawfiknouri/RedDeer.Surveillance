@@ -1,7 +1,7 @@
 ﻿using System;
 using DataImport.Processors.Interfaces;
-using Domain.Trades.Orders;
 using Domain.Trades.Streams.Interfaces;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Processors
@@ -16,7 +16,7 @@ namespace DataImport.Processors
         private readonly ITradeOrderStream<T> _tradeOrderStream;
 
         public TradeProcessor(
-            ILogger<TradeProcessor<TradeOrderFrame>> logger,
+            ILogger<TradeProcessor<Order>> logger,
             ITradeOrderStream<T> tradeOrderStream)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

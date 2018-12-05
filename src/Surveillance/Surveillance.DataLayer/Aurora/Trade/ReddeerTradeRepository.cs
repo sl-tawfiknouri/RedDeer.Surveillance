@@ -7,6 +7,7 @@ using Domain.Equity;
 using Domain.Finance;
 using Domain.Market;
 using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
@@ -126,7 +127,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(TradeOrderFrame entity)
+        public async Task Create(Order entity)
         {
             if (entity == null)
             {
@@ -139,7 +140,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             {
                 dbConnection.Open();
 
-                var dto = new TradeOrderFrameDto(entity);
+                var dto = new OrderDto(entity);
 
                 if (string.IsNullOrWhiteSpace(dto.SecurityId))
                 {
@@ -164,14 +165,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
             }
         }
 
-        public async Task<IReadOnlyCollection<TradeOrderFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date.AddDays(1).AddMilliseconds(-1);
 
             if (end < start)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
@@ -181,7 +182,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Open();
 
                 var query = new GetQuery {Start = start, End = end};
-                using (var conn = dbConnection.QueryAsync<TradeOrderFrameDto>(GetSql, query))
+                using (var conn = dbConnection.QueryAsync<OrderDto>(GetSql, query))
                 {
                     var rawResult = await conn;
 
@@ -199,10 +200,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Dispose();
             }
 
-            return new TradeOrderFrame[0];
+            return new Order[0];
         }
 
-        private TradeOrderFrame Project(TradeOrderFrameDto dto)
+        private Order Project(OrderDto dto)
         {
             var limit =
                 dto.LimitPrice.HasValue
@@ -214,7 +215,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     ? new CurrencyAmount(dto.ExecutedPrice.Value, dto.OrderCurrency)
                     : (CurrencyAmount?) null; 
 
-            return new TradeOrderFrame(
+            return new Order(
                 dto.Id,
                 (OrderType)dto.OrderTypeId.GetValueOrDefault(0),
                 new StockExchange(
@@ -260,13 +261,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime End { get; set; }
         }
 
-        private class TradeOrderFrameDto
+        private class OrderDto
         {
-            public TradeOrderFrameDto()
+            public OrderDto()
             {
             }
 
-            public TradeOrderFrameDto(TradeOrderFrame frame)
+            public OrderDto(Order frame)
             {
                 if (frame == null)
                 {

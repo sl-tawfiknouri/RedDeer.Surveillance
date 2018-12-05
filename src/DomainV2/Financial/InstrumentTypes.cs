@@ -2,12 +2,11 @@
 {
     public enum InstrumentTypes
     {
+        None,
+        Unknown,
         Equity,
-        SovereignBond,
-        CorporateBond,
-        CorporateCredit,
+        Bond,
         OptionCall,
         OptionPut,
-        FxSpot
     }
 }

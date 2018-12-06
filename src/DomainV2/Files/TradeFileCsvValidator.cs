@@ -111,21 +111,53 @@ namespace DomainV2.Files
 
         private void RulesForTradeProperties()
         {
-            RuleFor(x => x.TradeId).NotEmpty();
-            RuleFor(x => x.TraderId).NotEmpty();
-            RuleFor(x => x.TradeCurrency).NotEmpty().Length(3);
-            RuleFor(x => x.TradeType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>());
-            RuleFor(x => x.TradePosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>());
+            RuleFor(x => x.TradeId).NotEmpty().When(HasTradeOrTransactionData);
+            RuleFor(x => x.TraderId).NotEmpty().When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeCurrency).NotEmpty().When(HasTradeOrTransactionData).Length(3).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradePosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>()).When(HasTradeOrTransactionData);
+
             RuleFor(x => x.TradeLimitPrice)
                 .NotEmpty()
-                .When(x => string.Equals(x.TradeType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
+                .When(x => 
+                    string.Equals(x.TradeType, "LIMIT", StringComparison.InvariantCultureIgnoreCase)
+                    && HasTransactionData(x));
 
-            RuleFor(x => x.TradeLimitPrice).SetValidator(new DecimalParseableValidator());
-            RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator());
-            RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator());
-            RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator());
+            RuleFor(x => x.TradeLimitPrice).SetValidator(new DecimalParseableValidator()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator()).When(HasTradeOrTransactionData);
 
             RulesForTradeOptionsProperties();
+        }
+
+        private bool HasTradeOrTransactionData(TradeFileCsv csv)
+        {
+            if (HasTransactionData(csv))
+            {
+                return true;
+            }
+
+            if (HasOptionFieldSet(csv))
+            {
+                return true;
+            }
+
+            return !string.IsNullOrWhiteSpace(csv.TraderId)
+                   || !string.IsNullOrWhiteSpace(csv.TradePlacedDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeBookedDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeAmendedDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeRejectedDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeCancelledDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeFilledDate)
+                   || !string.IsNullOrWhiteSpace(csv.TradeCounterParty)
+                   || !string.IsNullOrWhiteSpace(csv.TradeType)
+                   || !string.IsNullOrWhiteSpace(csv.TradePosition)
+                   || !string.IsNullOrWhiteSpace(csv.TradeCurrency)
+                   || !string.IsNullOrWhiteSpace(csv.TradeLimitPrice)
+                   || !string.IsNullOrWhiteSpace(csv.TradeAveragePrice)
+                   || !string.IsNullOrWhiteSpace(csv.TradeOrderedVolume)
+                   || !string.IsNullOrWhiteSpace(csv.TradeFilledVolume);
         }
 
         private void RulesForTradeOptionsProperties()

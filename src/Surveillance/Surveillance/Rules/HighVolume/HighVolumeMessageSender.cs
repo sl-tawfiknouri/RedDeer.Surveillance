@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -10,11 +9,9 @@ namespace Surveillance.Rules.HighVolume
     public class HighVolumeMessageSender : BaseMessageSender, IHighVolumeMessageSender
     {
         public HighVolumeMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<IHighVolumeMessageSender> logger,
             ICaseMessageSender caseMessageSender)
             : base(
-                dtoMapper,
                 "Automated High Volume Rule Breach Detected",
                 "High Volume Message Sender",
                 logger,

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
 
 namespace DomainV2.Streams
 {
-    public class OrderStream<T>
+    public class OrderStream<T> : IOrderStream<T>
     {
         private readonly ConcurrentDictionary<IObserver<T>, IObserver<T>> _observers;
         private readonly IUnsubscriberFactory<T> _unsubscriberFactory;

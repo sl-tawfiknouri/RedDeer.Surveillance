@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.RuleParameters.OrganisationalFactors;
 using Surveillance.Rules.Interfaces;
@@ -134,14 +134,14 @@ namespace Surveillance.Universe.OrganisationalFactors
 
         private void TraderFactor(IUniverseEvent value)
         {
-            var data = (TradeOrderFrame)value.UnderlyingEvent;
+            var data = (Order)value.UnderlyingEvent;
 
             if (data == null)
             {
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(data.TraderId)
+            if (string.IsNullOrWhiteSpace(data.OrderTraderId)
                 && !_aggregateNonFactorableIntoOwnCategory)
             {
                 return;
@@ -170,14 +170,14 @@ namespace Surveillance.Universe.OrganisationalFactors
 
         private void StrategyFactor(IUniverseEvent value)
         {
-            var data = (TradeOrderFrame)value.UnderlyingEvent;
+            var data = (Order)value.UnderlyingEvent;
 
             if (data == null)
             {
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(data.TradeStrategy)
+            if (string.IsNullOrWhiteSpace(data.OrderStrategy)
                 && !_aggregateNonFactorableIntoOwnCategory)
             {
                 return;
@@ -185,20 +185,21 @@ namespace Surveillance.Universe.OrganisationalFactors
 
             lock (_strategyLock)
             {
-                if (string.IsNullOrWhiteSpace(data.TradeStrategy))
+                var orderStrategy = data.OrderStrategy;
+                if (string.IsNullOrWhiteSpace(orderStrategy))
                 {
-                    data.TradeStrategy = string.Empty;
+                    orderStrategy = string.Empty;
                 }
 
-                if (!_strategyFactors.ContainsKey(data.TradeStrategy))
+                if (!_strategyFactors.ContainsKey(orderStrategy))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(data.TradeStrategy, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(orderStrategy, (IUniverseRule)_cloneSource.Clone());
                     _strategyFactors.Add(kvp);
                 }
 
-                if (_strategyFactors.ContainsKey(data.TradeStrategy))
+                if (_strategyFactors.ContainsKey(orderStrategy))
                 {
-                    _strategyFactors.TryGetValue(data.TradeStrategy, out var rule);
+                    _strategyFactors.TryGetValue(orderStrategy, out var rule);
                     rule?.OnNext(value);
                 }
             }
@@ -206,7 +207,7 @@ namespace Surveillance.Universe.OrganisationalFactors
 
         private void FundFactor(IUniverseEvent value)
         {
-            var data = (TradeOrderFrame)value.UnderlyingEvent;
+            var data = (Order)value.UnderlyingEvent;
 
             if (data == null)
             {

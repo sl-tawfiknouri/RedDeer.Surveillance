@@ -5,6 +5,7 @@ using CsvHelper;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DomainV2.Equity.Frames;
 using DomainV2.Equity.Frames.Interfaces;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.EquityFile
@@ -83,7 +84,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
 
             var matchingExchange = marketUpdates
-                .Where(to => to.Exchange?.Id?.Id == mappedRecord.Market?.Id.Id)
+                .Where(to => to.Exchange?.MarketIdentifierCode == mappedRecord.Market?.MarketIdentifierCode)
                 .Where(to => to.TimeStamp == mappedRecord.TimeStamp)
                 .ToList();
 
@@ -99,7 +100,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
             else
             {
-                var exchange = new Market(new Market.MarketId(record.MarketIdentifierCode), record.MarketName);
+                var exchange = new Market(record.MarketIdentifierCode, record.MarketName, MarketTypes.STOCKEXCHANGE);
                 var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
                 marketUpdates.Add(exchangeFrame);
             }

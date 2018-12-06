@@ -12,7 +12,7 @@ namespace Surveillance.Rules.HighVolume
         public HighVolumeRuleBreach(
             TimeSpan window,
             ITradePosition trades,
-            Security security,
+            FinancialInstrument security,
             IHighVolumeRuleParameters parameters,
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
@@ -33,7 +33,7 @@ namespace Surveillance.Rules.HighVolume
 
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         public IHighVolumeRuleParameters Parameters { get; }
 

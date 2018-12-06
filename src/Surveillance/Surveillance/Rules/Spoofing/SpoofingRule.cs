@@ -5,14 +5,14 @@ using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
-using OrderStatus = Domain.Trades.Orders.OrderStatus;
 
 namespace Surveillance.Rules.Spoofing
 {
@@ -52,29 +52,29 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.Position == tradeWindow.First().Position))
+            if (tradeWindow.All(trades => trades.OrderPosition == tradeWindow.First().OrderPosition))
             {
                 return;
             }
 
             var mostRecentTrade = tradeWindow.Pop();
 
-            if (mostRecentTrade.OrderStatus != OrderStatus.Fulfilled)
+            if (mostRecentTrade.OrderStatus != OrderStatus.Filled)
             {
-                // we need to start from a fulfilled order
+                // we need to start from a filled order
                 return;
             }
 
             var buyPosition =
                 new TradePositionCancellations(
-                    new List<TradeOrderFrame>(),
+                    new List<Order>(),
                     _parameters.CancellationThreshold,
                     _parameters.CancellationThreshold,
                     _logger);
 
             var sellPosition =
                 new TradePositionCancellations(
-                    new List<TradeOrderFrame>(),
+                    new List<Order>(),
                     _parameters.CancellationThreshold,
                     _parameters.CancellationThreshold,
                     _logger);
@@ -82,12 +82,12 @@ namespace Surveillance.Rules.Spoofing
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.Position == OrderPosition.Buy
+                mostRecentTrade.OrderPosition == OrderPositions.BUY
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.Position == OrderPosition.Sell
+                mostRecentTrade.OrderPosition == OrderPositions.SELL
                     ? buyPosition
                     : sellPosition;
 
@@ -100,7 +100,7 @@ namespace Surveillance.Rules.Spoofing
         }
         
         private bool CheckPositionForSpoofs(
-            Stack<TradeOrderFrame> tradeWindow,
+            Stack<Order> tradeWindow,
             ITradePositionCancellations buyPosition,
             ITradePositionCancellations sellPosition,
             ITradePositionCancellations tradingPosition,
@@ -130,7 +130,7 @@ namespace Surveillance.Rules.Spoofing
                 }
 
                 var adjustedFulfilledOrders =
-                    (tradingPosition.VolumeInStatus(OrderStatus.Fulfilled)
+                    (tradingPosition.VolumeInStatus(OrderStatus.Filled)
                      * _parameters.RelativeSizeMultipleForSpoofExceedingReal);
 
                 var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
@@ -140,7 +140,7 @@ namespace Surveillance.Rules.Spoofing
             return hasBreachedSpoofingRule;
         }
 
-        private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, TradeOrderFrame nextTrade)
+        private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, Order nextTrade)
         {
             switch (nextTrade.Position)
             {
@@ -158,18 +158,18 @@ namespace Surveillance.Rules.Spoofing
         }
 
         private void RecordRuleBreach(
-            TradeOrderFrame mostRecentTrade,
+            Order mostRecentTrade,
             ITradePosition tradingPosition,
             ITradePosition opposingPosition)
         {
-            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Security?.Identifiers}");
+            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Instrument?.Identifiers}");
 
             var ruleBreach =
                 new SpoofingRuleBreach(
                     _parameters.WindowSize,
                     tradingPosition,
                     opposingPosition,
-                    mostRecentTrade.Security, 
+                    mostRecentTrade.Instrument, 
                     mostRecentTrade);
 
             var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);

@@ -1,7 +1,7 @@
-﻿using Domain.Trades.Orders;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity.Frames;
+using DomainV2.Trading;
 using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Universe
@@ -9,11 +9,11 @@ namespace Surveillance.Universe
     public class Universe : IUniverse
     {
         public Universe(
-            IReadOnlyCollection<TradeOrderFrame> trades,
+            IReadOnlyCollection<Order> trades,
             IReadOnlyCollection<ExchangeFrame> marketEquityData,
             IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
-            Trades = trades ?? new List<TradeOrderFrame>();
+            Trades = trades ?? new List<Order>();
             MarketEquityData = marketEquityData ?? new List<ExchangeFrame>();
             UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
 
@@ -31,7 +31,7 @@ namespace Surveillance.Universe
             UniverseEvents = UniverseEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
-        public IReadOnlyCollection<TradeOrderFrame> Trades { get; private set; }
+        public IReadOnlyCollection<Order> Trades { get; private set; }
 
         public IReadOnlyCollection<ExchangeFrame> MarketEquityData { get; private set; }
 

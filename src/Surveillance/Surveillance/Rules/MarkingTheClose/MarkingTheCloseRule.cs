@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
 using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
-using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -62,7 +62,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 return;
             }
 
-            var marketId = securities.FirstOrDefault()?.Market?.Id;
+            var marketId = securities.FirstOrDefault()?.Market?.MarketIdentifierCode;
             if (marketId == null)
             {
                 return;
@@ -78,7 +78,7 @@ namespace Surveillance.Rules.MarkingTheClose
             var tradedSecurity =
                 frame
                     ?.Securities
-                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities.FirstOrDefault()?.Security.Identifiers));
+                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, securities.FirstOrDefault()?.Instrument.Identifiers));
 
             if (tradedSecurity == null)
             {
@@ -123,17 +123,17 @@ namespace Surveillance.Rules.MarkingTheClose
         }
 
         private VolumeBreach CheckWindowVolumeTraded(
-            Stack<TradeOrderFrame> securities,
+            Stack<Order> securities,
             SecurityTick tradedSecurity)
         {
-            if (tradedSecurity.Market?.Id == null 
-                || !MarketHistory.ContainsKey(tradedSecurity.Market?.Id))
+            if (tradedSecurity.Market?.MarketIdentifierCode == null 
+                || !MarketHistory.ContainsKey(tradedSecurity.Market?.MarketIdentifierCode))
             {
                 _hadMissingData = true;
                 return new VolumeBreach();
             }
 
-            MarketHistory.TryGetValue(tradedSecurity.Market.Id, out var marketHistoryStack);
+            MarketHistory.TryGetValue(tradedSecurity.Market.MarketIdentifierCode, out var marketHistoryStack);
 
             if (marketHistoryStack == null)
             {
@@ -169,7 +169,7 @@ namespace Surveillance.Rules.MarkingTheClose
         }
 
         private VolumeBreach CheckDailyVolumeTraded(
-            Stack<TradeOrderFrame> securities,
+            Stack<Order> securities,
             SecurityTick tradedSecurity)
         {
             var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
@@ -191,7 +191,7 @@ namespace Surveillance.Rules.MarkingTheClose
         }
 
         private VolumeBreach CalculateVolumeBreaches(
-            Stack<TradeOrderFrame> securities,
+            Stack<Order> securities,
             SecurityTick tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
@@ -205,13 +205,13 @@ namespace Surveillance.Rules.MarkingTheClose
 
             var volumeTradedBuy =
                 securities
-                    .Where(sec => sec.Position == OrderPosition.Buy)
-                    .Sum(sec => sec.FulfilledVolume);
+                    .Where(sec => sec.OrderPosition == OrderPositions.BUY)
+                    .Sum(sec => sec.OrderFilledVolume);
 
             var volumeTradedSell =
                 securities
-                    .Where(sec => sec.Position == OrderPosition.Sell)
-                    .Sum(sec => sec.FulfilledVolume);
+                    .Where(sec => sec.OrderPosition == OrderPositions.SELL)
+                    .Sum(sec => sec.OrderFilledVolume);
 
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;
             var buyDailyPercentageBreach = CalculateBuyBreach(volumeTradedBuy, marketVolumeTraded, hasBuyDailyVolumeBreach);

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -55,7 +56,7 @@ namespace Surveillance.Rules.CancelledOrders
 
             var tradingPosition =
                 new TradePositionCancellations(
-                    new List<TradeOrderFrame>(),
+                    new List<Order>(),
                     _parameters.CancelledOrderPercentagePositionThreshold,
                     _parameters.CancelledOrderCountPercentageThreshold,
                     _logger);
@@ -71,8 +72,8 @@ namespace Surveillance.Rules.CancelledOrders
         }
 
         private ICancelledOrderRuleBreach CheckPositionForCancellations(
-            Stack<TradeOrderFrame> tradeWindow,
-            TradeOrderFrame mostRecentTrade,
+            Stack<Order> tradeWindow,
+            Order mostRecentTrade,
             ITradePositionCancellations tradingPosition)
         {
             var hasBreachedRuleByOrderCount = false;
@@ -93,7 +94,7 @@ namespace Surveillance.Rules.CancelledOrders
                 }
 
                 var nextTrade = tradeWindow.Pop();
-                if (nextTrade.Position != mostRecentTrade.Position)
+                if (nextTrade.OrderPosition != mostRecentTrade.OrderPosition)
                 {
                     continue;
                 }
@@ -122,16 +123,14 @@ namespace Surveillance.Rules.CancelledOrders
                 }
             }
 
-            var cancelledPositionOrders = tradingPosition.Get().Count(tp =>
-                tp.OrderStatus == OrderStatus.Cancelled
-                || tp.OrderStatus == OrderStatus.CancelledPostBooking);
+            var cancelledPositionOrders = tradingPosition.Get().Count(tp => tp.OrderStatus == OrderStatus.Cancelled);
 
             var totalPositionOrders = tradingPosition.Get().Count;
 
             return new CancelledOrderRuleBreach(
                 _parameters,
                 tradingPosition,
-                tradingPosition?.Get()?.FirstOrDefault()?.Security,
+                tradingPosition?.Get()?.FirstOrDefault()?.Instrument,
                 hasBreachedRuleByPositionSize,
                 cancellationRatioByPositionSize,
                 cancelledPositionOrders,

@@ -1,4 +1,4 @@
-﻿using Domain.Trades.Orders;
+﻿using DomainV2.Trading;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Trades.Interfaces;
 // ReSharper disable UnusedMember.Global
@@ -9,6 +9,6 @@ namespace Surveillance.Rules.Spoofing.Interfaces
     {
         ITradePosition TradesInFulfilledPosition { get; }
         ITradePosition CancelledTrades { get; }
-        TradeOrderFrame MostRecentTrade { get; }
+        Order MostRecentTrade { get; }
     }
 }

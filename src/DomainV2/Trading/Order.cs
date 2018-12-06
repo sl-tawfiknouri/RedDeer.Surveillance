@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Trading
 {
@@ -95,5 +95,27 @@ namespace DomainV2.Trading
         public bool IsInputBatch { get; set; }
         public int BatchSize { get; set; }
         public string InputBatchId { get; set; }
+
+        public DateTime MostRecentDateEvent()
+        {
+            var dates = new[]
+            {
+                OrderPlacedDate,
+                OrderBookedDate,
+                OrderAmendedDate,
+                OrderRejectedDate,
+                OrderCancelledDate,
+                OrderFilledDate
+            };
+
+            var filteredDates = dates.Where(dat => dat != null).ToList();
+            if (!filteredDates.Any())
+            {
+                return DateTime.Now;
+            }
+
+            // placed should never be null i.e. this shouldn't call datetime.now
+            return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.Now; 
+        }
     }
 }

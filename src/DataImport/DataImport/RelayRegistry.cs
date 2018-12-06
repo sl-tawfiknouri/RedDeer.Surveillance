@@ -18,10 +18,6 @@ using DataImport.Recorders;
 using DataImport.Recorders.Interfaces;
 using DataImport.S3_IO;
 using DataImport.S3_IO.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Orders.Interfaces;
-using Domain.Trades.Streams;
-using Domain.Trades.Streams.Interfaces;
 using DomainV2.Equity.Frames;
 using DomainV2.Equity.Frames.Interfaces;
 using DomainV2.Equity.Streams;
@@ -31,6 +27,7 @@ using DomainV2.Files.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using DomainV2.Streams;
+using DomainV2.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
@@ -59,7 +56,7 @@ namespace DataImport
             For(typeof(ITradeProcessor<>)).Use(typeof(TradeProcessor<>));
             For<IEquityProcessor<ExchangeFrame>>().Use<EquityProcessor>();
 
-            For(typeof(ITradeOrderStream<>)).Use(typeof(TradeOrderStream<>));
+            For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<StockExchangeStream>();
 
             For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
@@ -87,7 +84,6 @@ namespace DataImport
             For<IReddeerDirectory>().Use<ReddeerDirectory>();
 
             For<IUploadTradeFileProcessor>().Use<UploadTradeFileProcessor>();
-            For<ITradeOrderCsvToDtoMapper>().Use<TradeOrderCsvToDtoMapper>();
             For<IUploadTradeFileMonitor>().Use<UploadTradeFileMonitor>();
             For<IUploadTradeFileMonitorFactory>().Use<UploadTradeFileMonitorFactory>();
 

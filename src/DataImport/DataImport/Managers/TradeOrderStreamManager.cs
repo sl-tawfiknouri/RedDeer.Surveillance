@@ -6,9 +6,6 @@ using DataImport.Network_IO;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using DataImport.Processors;
 using DataImport.Recorders.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams;
-using Domain.Trades.Streams.Interfaces;
 using DomainV2.Streams;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -19,7 +16,7 @@ namespace DataImport.Managers
 {
     public class TradeOrderStreamManager : ITradeOrderStreamManager
     {
-        private readonly ITradeOrderStream<Order> _tradeOrderStream;
+        private readonly OrderStream<Order> _tradeOrderStream;
         private readonly ITradeRelaySubscriber _tradeRelaySubscriber;
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
@@ -30,7 +27,7 @@ namespace DataImport.Managers
         private readonly ILogger<NetworkExchange> _exchangeLogger;
 
         public TradeOrderStreamManager(
-            ITradeOrderStream<Order> tradeOrderStream,
+            OrderStream<Order> tradeOrderStream,
             ITradeRelaySubscriber tradeRelaySubscriber,
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
@@ -57,7 +54,7 @@ namespace DataImport.Managers
         public IUploadTradeFileMonitor Initialise()
         {
             var unsubscriberFactory = new UnsubscriberFactory<Order>();
-            var tradeProcessorOrderStream = new TradeOrderStream<Order>(unsubscriberFactory);
+            var tradeProcessorOrderStream = new OrderStream<Order>(unsubscriberFactory);
             var tradeProcessor = new TradeProcessor<Order>(_tpLogger, tradeProcessorOrderStream);
 
             // hook the relay subscriber to begin communications with the outgoing network stream

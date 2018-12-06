@@ -1,7 +1,7 @@
 ﻿using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Streams;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -31,7 +31,7 @@ namespace DataImport.Disk_IO.TradeFile
             _logger = logger;
         }
 
-        public IUploadTradeFileMonitor Create(ITradeOrderStream<Order> stream)
+        public IUploadTradeFileMonitor Create(OrderStream<Order> stream)
         {
             return new UploadTradeFileMonitor(
                 stream,

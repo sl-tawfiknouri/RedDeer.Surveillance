@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity;
+using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -12,7 +12,7 @@ namespace Surveillance.Rules.Layering
             ILayeringRuleParameters parameters,
             TimeSpan window,
             ITradePosition trades,
-            Security security,
+            FinancialInstrument security,
             RuleBreachDescription bidirectionalTradeBreach, 
             RuleBreachDescription dailyVolumeTradeBreach,
             RuleBreachDescription windowVolumeTradeBreach,
@@ -31,7 +31,7 @@ namespace Surveillance.Rules.Layering
         public ILayeringRuleParameters Parameters { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         public RuleBreachDescription BidirectionalTradeBreach { get; }
         public RuleBreachDescription DailyVolumeTradeBreach { get; }

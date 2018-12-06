@@ -1,37 +1,37 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Trades.Interfaces;
-using NotImplementedException = System.NotImplementedException;
 
 namespace Surveillance.Trades
 {
     public class TradePositionCancellations : ITradePositionCancellations
     {
-        private readonly IList<TradeOrderFrame> _trades;
+        private readonly IList<Order> _trades;
         private readonly decimal? _cancellationRatioPercentagePosition;
         private readonly decimal? _cancellationRatioPercentageOrderCount;
         private readonly ILogger _logger;
 
         public TradePositionCancellations(
-            IList<TradeOrderFrame> trades,
+            IList<Order> trades,
             decimal? cancellationRatioPercentagePosition,
             decimal? cancellationRatioPercentageOrderCount,
             ILogger logger)
         {
-            _trades = trades?.Where(trad => trad != null).ToList() ?? new List<TradeOrderFrame>();
+            _trades = trades?.Where(trad => trad != null).ToList() ?? new List<Order>();
             _cancellationRatioPercentagePosition = cancellationRatioPercentagePosition;
             _cancellationRatioPercentageOrderCount = cancellationRatioPercentageOrderCount;
             _logger = logger;
         }
 
-        public IList<TradeOrderFrame> Get()
+        public IList<Order> Get()
         {
-            return new List<TradeOrderFrame>(_trades);
+            return new List<Order>(_trades);
         }
 
-        public void Add(TradeOrderFrame item)
+        public void Add(Order item)
         {
             _trades.Add(item);
         }
@@ -119,21 +119,24 @@ namespace Surveillance.Trades
             return cancelledOrderVolumeRatio;
         }
 
-        public int TotalVolume()
+        public long TotalVolume()
+        {
+            return _trades
+                .Where(trad => trad != null)
+                .Sum(trad =>
+                    trad.OrderFilledVolume == 0 
+                        ? trad.OrderOrderedVolume.GetValueOrDefault(0) 
+                        : (trad.OrderFilledVolume.GetValueOrDefault(0)));
+        }
+
+        public long TotalVolumeOrderedOrFilled()
         {
             return _trades
                 .Where(trad => trad != null)
                 .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
         }
 
-        public int TotalVolumeOrderedOrFilled()
-        {
-            return _trades
-                .Where(trad => trad != null)
-                .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
-        }
-
-        public int VolumeInStatus(OrderStatus status)
+        public long VolumeInStatus(OrderStatus status)
         {
             return
                 _trades
@@ -141,7 +144,7 @@ namespace Surveillance.Trades
                 .Sum(trad => trad.FulfilledVolume != 0 ? trad.FulfilledVolume : trad.OrderedVolume);
         }
 
-        public int VolumeNotInStatus(OrderStatus status)
+        public long VolumeNotInStatus(OrderStatus status)
         {
             return
                 _trades

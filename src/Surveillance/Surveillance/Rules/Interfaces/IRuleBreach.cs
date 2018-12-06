@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity;
+using DomainV2.Financial;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.Interfaces
@@ -8,6 +8,6 @@ namespace Surveillance.Rules.Interfaces
     {
         TimeSpan Window { get; }
         ITradePosition Trades { get; }
-        Security Security { get; }
+        FinancialInstrument Security { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
-using DomainV2.Equity;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
@@ -17,7 +17,7 @@ namespace Surveillance.Rules.HighProfits
             decimal? absoluteProfits,
             string absoluteProfitCurrency,
             decimal? relativeProfits,
-            Security security,
+            FinancialInstrument security,
             bool hasAbsoluteProfitBreach,
             bool hasRelativeProfitBreach,
             ITradePosition trades,
@@ -32,7 +32,7 @@ namespace Surveillance.Rules.HighProfits
             Security = security;
             HasAbsoluteProfitBreach = hasAbsoluteProfitBreach;
             HasRelativeProfitBreach = hasRelativeProfitBreach;
-            Trades = trades ?? new TradePosition(new List<TradeOrderFrame>());
+            Trades = trades ?? new TradePosition(new List<Order>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
             ExchangeRateProfits = profitBreakdown;
         }
@@ -44,7 +44,7 @@ namespace Surveillance.Rules.HighProfits
         public string AbsoluteProfitCurrency { get; }
         public decimal? RelativeProfits { get; }
         public bool MarketClosureVirtualProfitComponent { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; }

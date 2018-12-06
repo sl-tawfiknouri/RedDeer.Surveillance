@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Currency.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -49,17 +48,17 @@ namespace Surveillance.Rules.HighProfits
             var tradeBuy =
                 activeWindow
                     .Where(aw => aw != null)
-                    .Where(aw => aw.Position == OrderPosition.Buy)
+                    .Where(aw => aw.OrderPosition == OrderPositions.BUY)
                     .ToList();
 
             var tradeSell =
                 activeWindow
                     .Where(aw => aw != null)
-                    .Where(aw => aw.Position == OrderPosition.Sell)
+                    .Where(aw => aw.OrderPosition == OrderPositions.SELL)
                     .ToList();
 
-            var securitiesBrought = tradeBuy.Sum(tb => tb.FulfilledVolume);
-            var securitiesSold = tradeSell.Sum(tb => tb.FulfilledVolume);
+            var securitiesBrought = tradeBuy.Sum(tb => tb.OrderFilledVolume);
+            var securitiesSold = tradeSell.Sum(tb => tb.OrderFilledVolume);
 
             if (securitiesBrought > securitiesSold)
             {

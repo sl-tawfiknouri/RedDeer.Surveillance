@@ -4,7 +4,6 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Recorders.Interfaces;
-using Domain.Trades.Orders;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -79,8 +78,8 @@ namespace DataImport.Recorders
                     var schedule = new ScheduledExecution
                     {
                         Rules = GetAllRules(),
-                        TimeSeriesInitiation = value.StatusChangedOn,
-                        TimeSeriesTermination = value.StatusChangedOn
+                        TimeSeriesInitiation = value.OrderPlacedDate.GetValueOrDefault(),
+                        TimeSeriesTermination = value.MostRecentDateEvent()
                     };
 
                     schedulePair = new SchedulePair
@@ -94,14 +93,14 @@ namespace DataImport.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.StatusChangedOn < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.MostRecentDateEvent() < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    schedulePair.Schedule.TimeSeriesInitiation = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesInitiation = value.MostRecentDateEvent();
                 }
 
-                if (value.StatusChangedOn > schedulePair.Schedule.TimeSeriesTermination)
+                if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)
                 {
-                    schedulePair.Schedule.TimeSeriesTermination = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesTermination = value.MostRecentDateEvent();
                 }
 
                 if (schedulePair.Count == value.BatchSize)

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
 using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -76,9 +76,7 @@ namespace Surveillance.Rules.HighProfits
             var activeTrades = history.ActiveTradeHistory();
 
             var liveTrades = activeTrades
-                .Where(at =>
-                    at.OrderStatus == OrderStatus.PartialFulfilled
-                    || at.OrderStatus == OrderStatus.Fulfilled)
+                .Where(at => at.OrderStatus == OrderStatus.Filled)
                 .ToList();
 
             var costCalculator = GetCostCalculator();
@@ -137,11 +135,11 @@ namespace Surveillance.Rules.HighProfits
             }
         }
 
-        private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<TradeOrderFrame> liveTrades)
+        private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
             var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-            var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
-            var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
+            var buys = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.BUY).ToList());
+            var sells = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.SELL).ToList());
 
             var exchangeRateProfitsTask =
                 _exchangeRateProfitCalculator.ExchangeRateMovement(
@@ -195,14 +193,14 @@ namespace Surveillance.Rules.HighProfits
         }
 
         private void WriteAlertToMessageSender(
-            Stack<TradeOrderFrame> activeTrades,
+            Stack<Order> activeTrades,
             decimal absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
             IExchangeRateProfitBreakdown breakdown)
         {
-            var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
+            var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
 
             _logger.LogInformation($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
 

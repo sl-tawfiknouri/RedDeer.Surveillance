@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
-using DomainV2.Equity;
+using System.Linq;
 using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Universe;
@@ -15,7 +16,7 @@ namespace Surveillance.Analytics.Subscriber
     {
         private readonly IDictionary<string, string> _traderIds;
         private readonly IDictionary<string, string> _marketIds;
-        private readonly IDictionary<SecurityIdentifiers, Security> _securityIds;
+        private readonly IDictionary<InstrumentIdentifiers, FinancialInstrument> _securityIds;
 
         private readonly object _traderIdLock = new object();
         private readonly object _marketIdLock = new object();
@@ -26,7 +27,7 @@ namespace Surveillance.Analytics.Subscriber
             Analytics = new UniverseAnalytics {SystemProcessOperationId = operationContextId};
             _traderIds = new Dictionary<string, string>();
             _marketIds = new Dictionary<string, string>();
-            _securityIds = new Dictionary<SecurityIdentifiers, Security>();
+            _securityIds = new Dictionary<InstrumentIdentifiers, FinancialInstrument>();
         }
 
         public UniverseAnalytics Analytics { get; }
@@ -116,7 +117,7 @@ namespace Surveillance.Analytics.Subscriber
 
                         if (!_securityIds.ContainsKey(sec.Security.Identifiers))
                         {
-                            _securityIds.Add(new KeyValuePair<SecurityIdentifiers, Security>(sec.Security.Identifiers, sec.Security));
+                            _securityIds.Add(new KeyValuePair<InstrumentIdentifiers, FinancialInstrument>(sec.Security.Identifiers, sec.Security));
                         }
                     }
                 }
@@ -127,18 +128,21 @@ namespace Surveillance.Analytics.Subscriber
         {
             Analytics.TradeReddeerCount += 1;
 
-            var tradeFrame = (TradeOrderFrame)value.UnderlyingEvent;
+            var tradeFrame = (Order)value.UnderlyingEvent;
 
-            if (string.IsNullOrWhiteSpace(tradeFrame?.TraderId))
+            if (tradeFrame.Trades == null
+                || !tradeFrame.Trades.Any())
             {
                 return;
             }
 
             lock (_traderIdLock)
             {
-                if (!_traderIds.ContainsKey(tradeFrame.TraderId?.ToLower()))
+                foreach (var trade in tradeFrame.Trades.Where(tf => tf != null).ToList())
+
+                if (!_traderIds.ContainsKey(trade.TraderId.ToLower()))
                 {
-                    _traderIds.Add(new KeyValuePair<string, string>(tradeFrame.TraderId.ToLower(), tradeFrame.TraderId));
+                    _traderIds.Add(new KeyValuePair<string, string>(trade.TraderId.ToLower(), trade.TraderId.ToLower()));
                 }
             }
         }

@@ -2,7 +2,6 @@
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
-using Domain.Trades.Orders.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +30,6 @@ namespace RedDeer.DataImport.DataImport.App
             var builtConfig = BuildConfiguration();
             container.Inject(typeof(INetworkConfiguration), builtConfig);
             container.Inject(typeof(IUploadConfiguration), builtConfig);
-            container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 

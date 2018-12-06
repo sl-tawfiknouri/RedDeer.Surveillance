@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -10,11 +9,9 @@ namespace Surveillance.Rules.HighProfits
     public class HighProfitMessageSender : BaseMessageSender, IHighProfitMessageSender
     {
         public HighProfitMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<HighProfitMessageSender> logger,
             ICaseMessageSender caseMessageSender)
             : base(
-                dtoMapper,
                 "Automated High Profit Rule Breach Detected",
                 "High Profit Message Sender",
                 logger,

@@ -1,6 +1,6 @@
 ﻿using System;
 using DataImport.Network_IO.Interfaces;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Streams;
 using DomainV2.Trading;
 using Newtonsoft.Json;
 using Utilities.Network_IO.Websocket_Hosts;
@@ -13,9 +13,9 @@ namespace DataImport.Network_IO
     /// </summary>
     public class RelayTradeNetworkDuplexer : IRelayTradeNetworkDuplexer
     {
-        private readonly ITradeOrderStream<Order> _reddeerTradeFormatStream;
+        private readonly OrderStream<Order> _reddeerTradeFormatStream;
 
-        public RelayTradeNetworkDuplexer(ITradeOrderStream<Order> reddeerStream)
+        public RelayTradeNetworkDuplexer(OrderStream<Order> reddeerStream)
         {
             _reddeerTradeFormatStream = reddeerStream ?? throw new ArgumentNullException(nameof(reddeerStream));
         }

@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
 using DomainV2.Scheduling;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
@@ -44,7 +44,7 @@ namespace Surveillance.Recorders
             _logger.LogError($"An exception occured in the reddeer trade recorder {error}");
         }
 
-        public async void OnNext(TradeOrderFrame value)
+        public async void OnNext(Order value)
         {
             if (value == null)
             {
@@ -59,7 +59,7 @@ namespace Surveillance.Recorders
             }
         }
 
-        private void UpdateBatch(TradeOrderFrame value)
+        private void UpdateBatch(Order value)
         {
             if (value == null)
             {
@@ -80,8 +80,8 @@ namespace Surveillance.Recorders
                     var schedule = new ScheduledExecution
                     {
                         Rules = GetAllRules(),
-                        TimeSeriesInitiation = value.StatusChangedOn,
-                        TimeSeriesTermination = value.StatusChangedOn
+                        TimeSeriesInitiation = value.MostRecentDateEvent(),
+                        TimeSeriesTermination = value.MostRecentDateEvent()
                     };
 
                     schedulePair = new SchedulePair
@@ -95,14 +95,14 @@ namespace Surveillance.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.StatusChangedOn < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.MostRecentDateEvent() < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    schedulePair.Schedule.TimeSeriesInitiation = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesInitiation = value.MostRecentDateEvent();
                 }
 
-                if (value.StatusChangedOn > schedulePair.Schedule.TimeSeriesTermination)
+                if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)
                 {
-                    schedulePair.Schedule.TimeSeriesTermination = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesTermination = value.MostRecentDateEvent();
                 }
 
                 if (schedulePair.Count == value.BatchSize)

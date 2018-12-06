@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
@@ -13,11 +13,9 @@ namespace Surveillance.Rules.CancelledOrders
     public class CancelledOrderMessageSender : BaseMessageSender, ICancelledOrderMessageSender
     {
         public CancelledOrderMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<CancelledOrderMessageSender> logger,
             ICaseMessageSender caseMessageSender)
             : base(
-                dtoMapper,
                 "Automated Cancellation Ratio Rule Breach Detected",
                 "Cancelled Order Message Sender",
                 logger,
@@ -39,7 +37,7 @@ namespace Surveillance.Rules.CancelledOrders
         private string BuildDescription(
             ICancelledOrderRuleParameters parameters,
             ICancelledOrderRuleBreach ruleBreach,
-            Domain.Trades.Orders.TradeOrderFrame anyOrder)
+            Order anyOrder)
         {
             var percentagePositionCancelled =
                 Math.Round(
@@ -56,7 +54,7 @@ namespace Surveillance.Rules.CancelledOrders
             var positionSizeSegment = PositionSizeText(parameters, ruleBreach, percentagePositionCancelled);
             var orderRatioSegment = OrderRatioText(parameters, ruleBreach, tradeCountCancelled);
 
-            var description = $"Cancelled Order Rule Breach. Traded ({anyOrder?.Position.GetDescription()}) security {anyOrder?.Security?.Name} ({anyOrder?.Security?.Identifiers}) with excessive cancellations in {parameters.WindowSize.TotalMinutes} minute time period.{positionSizeSegment}{orderRatioSegment}";
+            var description = $"Cancelled Order Rule Breach. Traded ({anyOrder?.OrderPosition.GetDescription()}) security {anyOrder?.Instrument?.Name} ({anyOrder?.Instrument?.Identifiers}) with excessive cancellations in {parameters.WindowSize.TotalMinutes} minute time period.{positionSizeSegment}{orderRatioSegment}";
 
             return description;
         }

@@ -1,9 +1,9 @@
 ﻿using System;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 
 namespace DataImport.Network_IO.RelaySubscribers.Interfaces
 {
-    public interface ITradeRelaySubscriber : IObserver<TradeOrderFrame>
+    public interface ITradeRelaySubscriber : IObserver<Order>
     {
         /// <summary>
         /// Indicates success of operation

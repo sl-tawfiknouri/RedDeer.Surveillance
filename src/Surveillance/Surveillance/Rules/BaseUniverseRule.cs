@@ -166,47 +166,47 @@ namespace Surveillance.Rules
 
             if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.TradeSubmittedOn);
-                history.Add(value, value.OrderPlacedDate);
-                TradingInitialHistory.TryAdd(value.Security.Identifiers, history);
+                var history = new TradingHistoryStack(WindowSize, i => i.OrderPlacedDate.GetValueOrDefault());
+                history.Add(value, value.OrderPlacedDate.GetValueOrDefault());
+                TradingInitialHistory.TryAdd(value.Instrument.Identifiers, history);
             }
             else
             {
-                TradingInitialHistory.TryGetValue(value.Security.Identifiers, out var history);
+                TradingInitialHistory.TryGetValue(value.Instrument.Identifiers, out var history);
 
-                history?.Add(value, value.TradeSubmittedOn);
-                history?.ArchiveExpiredActiveItems(value.TradeSubmittedOn);
+                history?.Add(value, value.OrderPlacedDate.GetValueOrDefault());
+                history?.ArchiveExpiredActiveItems(value.OrderPlacedDate.GetValueOrDefault());
             }
 
-            TradingInitialHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);
+            TradingInitialHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);
 
             RunInitialSubmissionRule(updatedHistory);
         }
 
         private void Trade(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is TradeOrderFrame value))
+            if (!(universeEvent.UnderlyingEvent is Order value))
             {
                 return;
             }
 
             UniverseDateTime = universeEvent.EventTime;
 
-            if (!TradingHistory.ContainsKey(value.Security.Identifiers))
+            if (!TradingHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.StatusChangedOn);
-                history.Add(value, value.StatusChangedOn);
-                TradingHistory.TryAdd(value.Security.Identifiers, history);
+                var history = new TradingHistoryStack(WindowSize, i => i.MostRecentDateEvent());
+                history.Add(value, value.MostRecentDateEvent());
+                TradingHistory.TryAdd(value.Instrument.Identifiers, history);
             }
             else
             {
-                TradingHistory.TryGetValue(value.Security.Identifiers, out var history);
+                TradingHistory.TryGetValue(value.Instrument.Identifiers, out var history);
 
-                history?.Add(value, value.StatusChangedOn);
-                history?.ArchiveExpiredActiveItems(value.StatusChangedOn);
+                history?.Add(value, value.MostRecentDateEvent());
+                history?.ArchiveExpiredActiveItems(value.MostRecentDateEvent());
             }
 
-            TradingHistory.TryGetValue(value.Security.Identifiers, out var updatedHistory);
+            TradingHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);
 
             RunRule(updatedHistory);
         }
@@ -268,7 +268,7 @@ namespace Surveillance.Rules
                     TradingHistory
                         .Where(th =>
                             string.Equals(
-                                th.Value?.Exchange()?.Id.Id,
+                                th.Value?.Exchange()?.MarketIdentifierCode,
                                 closeOpen.MarketId,
                                 StringComparison.InvariantCultureIgnoreCase))
                         .ToList();

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Trades.Orders;
 using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using DomainV2.Scheduling;
+using DomainV2.Trading;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -52,7 +53,7 @@ namespace Surveillance.Universe
             return new Universe(projectedTrades, exchangeFrames, universe);
         }
 
-        private async Task<IReadOnlyCollection<TradeOrderFrame>> TradeDataFetchAurora(
+        private async Task<IReadOnlyCollection<Order>> TradeDataFetchAurora(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx)
         {
@@ -62,7 +63,7 @@ namespace Surveillance.Universe
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
-            return trades ?? new List<TradeOrderFrame>();
+            return trades ?? new List<Order>();
         }
 
         private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetchAurora(
@@ -80,7 +81,7 @@ namespace Surveillance.Universe
 
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
-            IReadOnlyCollection<TradeOrderFrame> trades,
+            IReadOnlyCollection<Order> trades,
             IReadOnlyCollection<ExchangeFrame> exchangeFrames)
         {
             var tradeSubmittedEvents =

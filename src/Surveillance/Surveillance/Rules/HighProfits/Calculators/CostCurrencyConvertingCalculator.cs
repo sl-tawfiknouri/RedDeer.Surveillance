@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Trades.Orders;
 using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -24,7 +24,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
         }
 
         public async Task<CurrencyAmount?> CalculateCostOfPosition(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
@@ -36,8 +36,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var purchaseOrders =
                 activeFulfilledTradeOrders
-                    .Where(afto => afto.Position == OrderPosition.Buy)
-                    .Select(afto => new CurrencyAmount(afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0, afto.OrderCurrency))
+                    .Where(afto => afto.OrderPosition == OrderPositions.BUY)
+                    .Select(afto => 
+                        new CurrencyAmount(
+                            afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault(0),
+                            afto.OrderCurrency))
                     .ToList();
 
             var adjustedToCurrencyPurchaseOrders = await _currencyConverter.Convert(purchaseOrders, _targetCurrency, universeDateTime, ctx);

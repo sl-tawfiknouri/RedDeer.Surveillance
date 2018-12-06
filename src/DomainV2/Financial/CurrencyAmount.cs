@@ -14,6 +14,12 @@
             Currency = currency;
         }
 
+        public CurrencyAmount(decimal? value, string currency)
+        {
+            Value = value.GetValueOrDefault(0);
+            Currency = new Currency(currency ?? string.Empty);
+        }
+
         public decimal Value { get; }
         public Currency Currency { get; }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using DomainV2.Equity;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -232,6 +231,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     dto.UnderlyingSecurityIssuerIdentifier);
 
             Enum.TryParse(dto.MarketType?.ToString() ?? string.Empty, out MarketTypes result);
+            var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
+            var orderPositionResult = (OrderPositions)dto.OrderPosition.GetValueOrDefault(0);
+            var orderCurrency = new Currency(dto.OrderCurrency);
+            var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
+            var averagePrice = new CurrencyAmount(dto.OrderAveragePrice, dto.OrderCurrency);
 
             var market = new DomainV2.Financial.Market(dto.MarketId, dto.MarketName, result);
 
@@ -246,14 +250,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.OrderRejectedDate,
                 dto.OrderCancelledDate,
                 dto.OrderFilledDate,
-                dto.OrderType,
-                dto.OrderPosition,
-                dto.OrderCurrency,
-                dto.OrderLimitPrice,
-                dto.OrderAveragePrice,
+                orderTypeResult,
+                orderPositionResult,
+                orderCurrency,
+                limitPrice,
+                averagePrice,
                 dto.OrderOrderedVolume,
                 dto.OrderFilledVolume,
                 dto.OrderPortfolioManager,
+                dto.OrderTraderId,
                 dto.OrderExecutingBroker,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
@@ -321,15 +326,16 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderCancelledDate = order.OrderCancelledDate;
                 OrderFilledDate = order.OrderFilledDate;
 
-                OrderType = order.OrderType;
-                OrderPosition = order.OrderPosition;
-                OrderCurrency = order.OrderCurrency;
-                OrderLimitPrice = order.OrderLimitPrice;
-                OrderAveragePrice = order.OrderAveragePrice;
+                OrderType = (int?)order.OrderType;
+                OrderPosition = (int?)order.OrderPosition;
+                OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
+                OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
+                OrderAveragePrice = order.OrderAveragePrice.GetValueOrDefault().Value;
                 OrderOrderedVolume = order.OrderOrderedVolume;
                 OrderFilledVolume = order.OrderFilledVolume;
 
                 OrderPortfolioManager = order.OrderPortfolioManager;
+                OrderTraderId = order.OrderTraderId;
                 OrderExecutingBroker = order.OrderExecutingBroker;
                 OrderClearingAgent = order.OrderClearingAgent;
                 OrderDealingInstructions = order.OrderDealingInstructions;
@@ -393,14 +399,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime? OrderRejectedDate { get; set; }
             public DateTime? OrderCancelledDate { get; set; }
             public DateTime? OrderFilledDate { get; set; }
-            public string OrderType { get; set; }
-            public string OrderPosition { get; set; }
+            public int? OrderType { get; set; }
+            public int? OrderPosition { get; set; }
             public string OrderCurrency { get; set; }
             public decimal? OrderLimitPrice { get; set; }
             public decimal? OrderAveragePrice { get; set; }
             public long? OrderOrderedVolume { get; set; }
             public long? OrderFilledVolume { get; set; }
             public string OrderPortfolioManager { get; set; }
+            public string OrderTraderId { get; set; }
             public string OrderExecutingBroker { get; set; }
             public string OrderClearingAgent { get; set; }
             public string OrderDealingInstructions { get; set; }

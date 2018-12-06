@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Files.Interfaces;
 using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
 
 namespace DomainV2.Files
@@ -47,8 +46,11 @@ namespace DomainV2.Files
             var cancelledDate = MapDate(csv.OrderCancelledDate);
             var filledDate = MapDate(csv.OrderFilledDate);
 
-            var limitPrice = MapDecimal(csv.OrderLimitPrice);
-            var averagePrice = MapDecimal(csv.OrderAveragePrice);
+            var orderType = MapToEnum<OrderTypes>(csv.OrderType);
+            var orderPosition = MapToEnum<OrderPositions>(csv.OrderPosition);
+            var orderCurrency = new Currency(csv.OrderCurrency);
+            var limitPrice = new CurrencyAmount(MapDecimal(csv.OrderLimitPrice), csv.OrderCurrency);
+            var averagePrice = new CurrencyAmount(MapDecimal(csv.OrderAveragePrice), csv.OrderCurrency);
 
             var orderedVolume = MapLong(csv.OrderOrderedVolume);
             var filledVolume = MapLong(csv.OrderFilledVolume);
@@ -64,14 +66,15 @@ namespace DomainV2.Files
                 rejectedDate,
                 cancelledDate,
                 filledDate,
-                csv.OrderType,
-                csv.OrderPosition,
-                csv.OrderCurrency,
+                orderType,
+                orderPosition,
+                orderCurrency,
                 limitPrice,
                 averagePrice,
                 orderedVolume,
                 filledVolume,
                 csv.OrderPortfolioManager,
+                csv.OrderTraderId,
                 csv.OrderExecutingBroker,
                 csv.OrderClearingAgent,
                 csv.OrderDealingInstructions,
@@ -98,8 +101,11 @@ namespace DomainV2.Files
             var cancelledDate = MapDate(csv.TradeCancelledDate);
             var filledDate = MapDate(csv.TradeFilledDate);
 
-            var limitPrice = MapDecimal(csv.TradeLimitPrice);
-            var averagePrice = MapDecimal(csv.TradeAveragePrice);
+            var tradeType = MapToEnum<OrderTypes>(csv.TradeType);
+            var tradePosition = MapToEnum<OrderPositions>(csv.TradePosition);
+            var tradeCurrency = new Currency(csv.TradeCurrency);
+            var limitPrice = new CurrencyAmount(MapDecimal(csv.TradeLimitPrice), csv.TradeCurrency);
+            var averagePrice = new CurrencyAmount(MapDecimal(csv.TradeAveragePrice), csv.TradeCurrency);
 
             var orderedVolume = MapLong(csv.TradeOrderedVolume);
             var filledVolume = MapLong(csv.TradeFilledVolume);
@@ -119,9 +125,9 @@ namespace DomainV2.Files
                 filledDate,
                 csv.TraderId,
                 csv.TradeCounterParty,
-                csv.TradeType,
-                csv.TradePosition,
-                csv.TradeCurrency,
+                tradeType,
+                tradePosition,
+                tradeCurrency,
                 limitPrice,
                 averagePrice,
                 orderedVolume,
@@ -143,8 +149,11 @@ namespace DomainV2.Files
             var cancelledDate = MapDate(csv.TransactionCancelledDate);
             var filledDate = MapDate(csv.TransactionFilledDate);
 
-            var limitPrice = MapDecimal(csv.TransactionLimitPrice);
-            var averagePrice = MapDecimal(csv.TransactionAveragePrice);
+            var tradeType = MapToEnum<OrderTypes>(csv.TransactionPosition);
+            var tradePosition = MapToEnum<OrderPositions>(csv.TransactionPosition);
+            var tradeCurrency = new Currency(csv.TransactionCurrency);
+            var limitPrice = new CurrencyAmount(MapDecimal(csv.TransactionLimitPrice), csv.TransactionCurrency);
+            var averagePrice = new CurrencyAmount(MapDecimal(csv.TransactionAveragePrice), csv.TransactionCurrency);
 
             var orderedVolume = MapLong(csv.TransactionOrderedVolume);
             var filledVolume = MapLong(csv.TransactionFilledVolume);
@@ -161,13 +170,20 @@ namespace DomainV2.Files
                 filledDate,
                 csv.TransactionTraderId,
                 csv.TransactionCounterParty,
-                csv.TransactionType,
-                csv.TransactionPosition,
-                csv.TransactionCurrency,
+                tradeType,
+                tradePosition,
+                tradeCurrency,
                 limitPrice,
                 averagePrice,
                 orderedVolume,
                 filledVolume);
+        }
+
+        private T MapToEnum<T>(string propertyValue) where T : struct, IConvertible
+        {
+            Enum.TryParse(propertyValue, out T result);
+
+            return result;
         }
 
         private DateTime? MapDate(string date)

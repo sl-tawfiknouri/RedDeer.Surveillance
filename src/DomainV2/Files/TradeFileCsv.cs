@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DomainV2.Files
+﻿namespace DomainV2.Files
 {
     /// <summary>
     /// Version 0.2 of the Trade File
@@ -53,6 +51,7 @@ namespace DomainV2.Files
         public string OrderOrderedVolume { get; set; }
         public string OrderFilledVolume { get; set; }
         public string OrderPortfolioManager { get; set; }
+        public string OrderTraderId { get; set; }
         public string OrderExecutingBroker { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }

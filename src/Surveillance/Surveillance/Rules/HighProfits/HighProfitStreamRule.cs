@@ -76,7 +76,7 @@ namespace Surveillance.Rules.HighProfits
             var activeTrades = history.ActiveTradeHistory();
 
             var liveTrades = activeTrades
-                .Where(at => at.OrderStatus == OrderStatus.Filled)
+                .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
             var costCalculator = GetCostCalculator();

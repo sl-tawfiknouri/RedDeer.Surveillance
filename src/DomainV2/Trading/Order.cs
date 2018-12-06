@@ -18,14 +18,15 @@ namespace DomainV2.Trading
             DateTime? orderRejectedDate,
             DateTime? orderCancelledDate,
             DateTime? orderFilledDate,
-            string orderType,
-            string orderPosition,
-            string orderCurrency,
-            decimal? orderLimitPrice,
-            decimal? orderAveragePrice,
+            OrderTypes orderType,
+            OrderPositions orderPosition,
+            Currency orderCurrency,
+            CurrencyAmount? orderLimitPrice,
+            CurrencyAmount? orderAveragePrice,
             long? orderOrderedVolume,
             long? orderFilledVolume,
             string orderPortfolioManager,
+            string orderTraderId,
             string orderExecutingBroker,
             string orderClearingAgent,
             string orderDealingInstructions,
@@ -45,9 +46,9 @@ namespace DomainV2.Trading
             OrderRejectedDate = orderRejectedDate;
             OrderCancelledDate = orderCancelledDate;
             OrderFilledDate = orderFilledDate;
-            OrderType = orderType ?? string.Empty;
-            OrderPosition = orderPosition ?? string.Empty;
-            OrderCurrency = orderCurrency ?? string.Empty;
+            OrderType = orderType;
+            OrderPosition = orderPosition;
+            OrderCurrency = orderCurrency;
             OrderLimitPrice = orderLimitPrice;
             OrderAveragePrice = orderAveragePrice;
             OrderOrderedVolume = orderOrderedVolume;
@@ -74,14 +75,15 @@ namespace DomainV2.Trading
         public DateTime? OrderRejectedDate { get; }
         public DateTime? OrderCancelledDate { get; }
         public DateTime? OrderFilledDate { get; }
-        public string OrderType { get; }
-        public string OrderPosition { get; }
-        public string OrderCurrency { get; }
-        public decimal? OrderLimitPrice { get; }
-        public decimal? OrderAveragePrice { get; }
+        public OrderTypes OrderType { get; }
+        public OrderPositions OrderPosition { get; }
+        public Currency OrderCurrency { get; }
+        public CurrencyAmount? OrderLimitPrice { get; }
+        public CurrencyAmount? OrderAveragePrice { get; }
         public long? OrderOrderedVolume { get; }
         public long? OrderFilledVolume { get; }
         public string OrderPortfolioManager { get; }
+        public string OrderTraderId { get; }
         public string OrderExecutingBroker { get; }
         public string OrderClearingAgent { get; }
         public string OrderDealingInstructions { get; }
@@ -116,6 +118,41 @@ namespace DomainV2.Trading
 
             // placed should never be null i.e. this shouldn't call datetime.now
             return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.Now; 
+        }
+
+        public OrderStatus OrderStatus()
+        {
+            if (OrderFilledDate != null)
+            {
+                return Financial.OrderStatus.Filled;
+            }
+
+            if (OrderCancelledDate != null)
+            {
+                return Financial.OrderStatus.Cancelled;
+            }
+
+            if (OrderRejectedDate != null)
+            {
+                return Financial.OrderStatus.Rejected;
+            }
+
+            if (OrderAmendedDate != null)
+            {
+                return Financial.OrderStatus.Amended;
+            }
+
+            if (OrderBookedDate != null)
+            {
+                return Financial.OrderStatus.Booked;
+            }
+
+            if (OrderPlacedDate != null)
+            {
+                return Financial.OrderStatus.Placed;
+            }
+
+            return Financial.OrderStatus.Unknown;
         }
     }
 }

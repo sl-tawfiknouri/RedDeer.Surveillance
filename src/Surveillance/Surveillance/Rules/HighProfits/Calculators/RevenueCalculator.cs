@@ -108,10 +108,10 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var filledOrders =
                 activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Sell)
+                .Where(afto => afto.OrderPosition == OrderPositions.SELL)
                 .Select(afto =>
                     new CurrencyAmount(
-                        afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0,
+                        afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
                         afto.OrderCurrency))
                 .ToList();
 
@@ -125,7 +125,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return summedCurrency;
         }
 
-        private int CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
+        private long CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -133,12 +133,12 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Buy)
-                .Select(afto => afto.FulfilledVolume)
+                .Where(afto => afto.OrderPosition == OrderPositions.BUY)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
 
-        private int CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
+        private long CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -146,23 +146,23 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Sell)
-                .Select(afto => afto.FulfilledVolume)
+                .Where(afto => afto.OrderPosition == OrderPositions.SELL)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
 
         private CurrencyAmount? CalculateInferredVirtualProfit(
             IList<Order> activeFulfilledTradeOrders,
             CurrencyAmount? realisedRevenue,
-            int sizeOfVirtualPosition)
+            long sizeOfVirtualPosition)
         {
             _logger.LogInformation(
                 "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
 
             var mostRecentTrade =
                 activeFulfilledTradeOrders
-                    .Where(afto => afto.ExecutedPrice != null)
-                    .OrderByDescending(afto => afto.StatusChangedOn)
+                    .Where(afto => afto.OrderAveragePrice != null)
+                    .OrderByDescending(afto => afto.MostRecentDateEvent())
                     .FirstOrDefault();
 
             if (mostRecentTrade == null)
@@ -170,7 +170,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var inferredVirtualProfits = mostRecentTrade.ExecutedPrice?.Value * sizeOfVirtualPosition ?? 0;
+            var inferredVirtualProfits = mostRecentTrade.OrderAveragePrice.GetValueOrDefault().Value * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
 
             if (realisedRevenue == null)

@@ -59,7 +59,7 @@ namespace Surveillance.Rules.Spoofing
 
             var mostRecentTrade = tradeWindow.Pop();
 
-            if (mostRecentTrade.OrderStatus != OrderStatus.Filled)
+            if (mostRecentTrade.OrderStatus() != OrderStatus.Filled)
             {
                 // we need to start from a filled order
                 return;
@@ -142,12 +142,12 @@ namespace Surveillance.Rules.Spoofing
 
         private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, Order nextTrade)
         {
-            switch (nextTrade.Position)
+            switch (nextTrade.OrderPosition)
             {
-                case OrderPosition.Buy:
+                case OrderPositions.BUY:
                     buyPosition.Add(nextTrade);
                     break;
-                case OrderPosition.Sell:
+                case OrderPositions.SELL:
                     sellPosition.Add(nextTrade);
                     break;
                 default:

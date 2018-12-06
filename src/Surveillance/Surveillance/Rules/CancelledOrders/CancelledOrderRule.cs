@@ -123,7 +123,7 @@ namespace Surveillance.Rules.CancelledOrders
                 }
             }
 
-            var cancelledPositionOrders = tradingPosition.Get().Count(tp => tp.OrderStatus == OrderStatus.Cancelled);
+            var cancelledPositionOrders = tradingPosition.Get().Count(tp => tp.OrderStatus() == OrderStatus.Cancelled);
 
             var totalPositionOrders = tradingPosition.Get().Count;
 

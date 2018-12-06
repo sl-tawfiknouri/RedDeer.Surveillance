@@ -57,12 +57,12 @@ namespace Surveillance.Rules.HighVolume
             var tradedSecurities =
                 tradeWindow
                     .Where(tr =>
-                        tr.OrderStatus == OrderStatus.Filled)
+                        tr.OrderStatus() == OrderStatus.Filled)
                     .ToList();
 
             var tradedVolume =
                 tradedSecurities
-                    .Sum(tr => tr.OrderFilledVolume);
+                    .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradeWindow.ToList());
             var mostRecentTrade = tradeWindow.Pop();
@@ -107,7 +107,7 @@ namespace Surveillance.Rules.HighVolume
             _alertStream.Add(message);
         }
 
-        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, int tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
             if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
             {
@@ -155,7 +155,7 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, int tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
             if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
             {
@@ -242,7 +242,7 @@ namespace Surveillance.Rules.HighVolume
 
             var tradedValue =
                 (double)trades
-                    .Select(tr => tr.OrderFilledVolume.GetValueOrDefault(0) * (tr.OrderAveragePrice.GetValueOrDefault(0)))
+                    .Select(tr => tr.OrderFilledVolume.GetValueOrDefault(0) * (tr.OrderAveragePrice.GetValueOrDefault().Value))
                     .Sum();
 
             var breachPercentage =

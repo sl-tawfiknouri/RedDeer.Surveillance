@@ -31,7 +31,7 @@ namespace Surveillance.Trades
 
             lock (_lock)
             {
-                if (currentTime.Subtract(frame.StatusChangedOn) <= _activeTradeDuration)
+                if (currentTime.Subtract(frame.MostRecentDateEvent()) <= _activeTradeDuration)
                 {
                     _active.Add(frame);
                 }
@@ -48,7 +48,7 @@ namespace Surveillance.Trades
             {
                 var itemsToArchive =
                     _active
-                        .Where(item => currentTime.Subtract(item.StatusChangedOn) > _activeTradeDuration)
+                        .Where(item => currentTime.Subtract(item.MostRecentDateEvent()) > _activeTradeDuration)
                         .ToList();
 
                 var newActive = _active.Except(itemsToArchive).ToList();

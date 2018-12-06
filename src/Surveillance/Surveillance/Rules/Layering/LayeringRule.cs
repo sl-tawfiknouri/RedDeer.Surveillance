@@ -61,7 +61,7 @@ namespace Surveillance.Rules.Layering
 
             var mostRecentTrade = tradeWindow.Pop();
 
-            if (mostRecentTrade.OrderStatus != OrderStatus.Filled)
+            if (mostRecentTrade.OrderStatus() != OrderStatus.Filled)
             {
                 return;
             }

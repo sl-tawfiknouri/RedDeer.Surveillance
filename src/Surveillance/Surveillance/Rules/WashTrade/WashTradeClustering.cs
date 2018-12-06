@@ -32,7 +32,7 @@ namespace Surveillance.Rules.WashTrade
 
             var prices =
                 filteredFrames
-                    .Select(ff => new double[] { (double)ff.OrderAveragePrice.GetValueOrDefault(0), ff.MostRecentDateEvent().Ticks})
+                    .Select(ff => new double[] { (double)ff.OrderAveragePrice.GetValueOrDefault().Value, ff.MostRecentDateEvent().Ticks})
                     .ToArray();
 
             var clusters = kMeans.Learn(prices);           

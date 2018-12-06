@@ -149,20 +149,22 @@ namespace Surveillance.Universe.OrganisationalFactors
 
             lock (_traderLock)
             {
-                if (string.IsNullOrWhiteSpace(data.TraderId))
+                var orderTraderId = data.OrderTraderId;
+
+                if (string.IsNullOrWhiteSpace(orderTraderId))
                 {
-                    data.TraderId = string.Empty;
+                    orderTraderId = string.Empty;
                 }
 
-                if (!_traderFactors.ContainsKey(data.TraderId))
+                if (!_traderFactors.ContainsKey(orderTraderId))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(data.TraderId, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(orderTraderId, (IUniverseRule)_cloneSource.Clone());
                     _traderFactors.Add(kvp);
                 }
 
-                if (_traderFactors.ContainsKey(data.TraderId))
+                if (_traderFactors.ContainsKey(orderTraderId))
                 {
-                    _traderFactors.TryGetValue(data.TraderId, out var rule);
+                    _traderFactors.TryGetValue(orderTraderId, out var rule);
                     rule?.OnNext(value);
                 }
             }
@@ -214,7 +216,7 @@ namespace Surveillance.Universe.OrganisationalFactors
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(data.AccountId)
+            if (string.IsNullOrWhiteSpace(data.OrderFund)
                 && !_aggregateNonFactorableIntoOwnCategory)
             {
                 return;
@@ -222,20 +224,22 @@ namespace Surveillance.Universe.OrganisationalFactors
 
             lock (_accountLock)
             {
-                if (string.IsNullOrWhiteSpace(data.AccountId))
+                var orderFund = data.OrderFund;
+
+                if (string.IsNullOrWhiteSpace(orderFund))
                 {
-                    data.AccountId = string.Empty;
+                    orderFund = string.Empty;
                 }
 
-                if (!_fundFactors.ContainsKey(data.AccountId))
+                if (!_fundFactors.ContainsKey(orderFund))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(data.AccountId, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(orderFund, (IUniverseRule)_cloneSource.Clone());
                     _fundFactors.Add(kvp);
                 }
 
-                if (_fundFactors.ContainsKey(data.AccountId))
+                if (_fundFactors.ContainsKey(orderFund))
                 {
-                    _fundFactors.TryGetValue(data.AccountId, out var rule);
+                    _fundFactors.TryGetValue(orderFund, out var rule);
                     rule?.OnNext(value);
                 }
             }

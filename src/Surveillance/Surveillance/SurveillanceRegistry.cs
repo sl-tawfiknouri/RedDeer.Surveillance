@@ -132,8 +132,6 @@ namespace Surveillance
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
-            For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
-
             For<IExchangeRateProfitCalculator>().Use<ExchangeRateProfitCalculator>();
 
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();

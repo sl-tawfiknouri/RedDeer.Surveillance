@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Trading
@@ -18,11 +19,11 @@ namespace DomainV2.Trading
             DateTime? tradeFilledDate,
             string traderId,
             string tradeCounterParty,
-            string tradeType,
-            string tradePosition,
-            string tradeCurrency, 
-            decimal? tradeLimitPrice,
-            decimal? tradeAveragePrice,
+            OrderTypes tradeType,
+            OrderPositions tradePosition,
+            Currency tradeCurrency, 
+            CurrencyAmount? tradeLimitPrice,
+            CurrencyAmount? tradeAveragePrice,
             long? tradeOrderedVolume,
             long? tradeFilledVolume,
             decimal? tradeOptionStrikePrice,
@@ -41,9 +42,9 @@ namespace DomainV2.Trading
             TradeFilledDate = tradeFilledDate;
             TraderId = traderId ?? string.Empty;
             TradeCounterParty = tradeCounterParty ?? string.Empty;
-            TradeType = tradeType ?? string.Empty;
-            TradePosition = tradePosition ?? string.Empty;
-            TradeCurrency = tradeCurrency ?? string.Empty;
+            TradeType = tradeType;
+            TradePosition = tradePosition;
+            TradeCurrency = tradeCurrency;
             TradeLimitPrice = tradeLimitPrice;
             TradeAveragePrice = tradeAveragePrice;
             TradeOrderedVolume = tradeOrderedVolume;
@@ -65,11 +66,11 @@ namespace DomainV2.Trading
         public DateTime? TradeFilledDate { get; }
         public string TraderId { get; }
         public string TradeCounterParty { get; }
-        public string TradeType { get; }
-        public string TradePosition { get; }
-        public string TradeCurrency { get; }
-        public decimal? TradeLimitPrice { get; }
-        public decimal? TradeAveragePrice { get; }
+        public OrderTypes TradeType { get; }
+        public OrderPositions TradePosition { get; }
+        public Currency TradeCurrency { get; }
+        public CurrencyAmount? TradeLimitPrice { get; }
+        public CurrencyAmount? TradeAveragePrice { get; }
         public long? TradeOrderedVolume { get; }
         public long? TradeFilledVolume { get; }
         public decimal? TradeOptionStrikePrice { get; }

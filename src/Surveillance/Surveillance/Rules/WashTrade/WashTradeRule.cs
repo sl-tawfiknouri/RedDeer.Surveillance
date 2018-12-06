@@ -124,9 +124,7 @@ namespace Surveillance.Rules.WashTrade
 
             var liveTrades =
                 frames
-                    .Where(at =>
-                        at.OrderStatus == OrderStatus.Fulfilled
-                        || at.OrderStatus == OrderStatus.PartialFulfilled)
+                    .Where(at => at.OrderStatus() == OrderStatus.Filled)
                     .Where(at => at.OrderAveragePrice != null)
                     .ToList();
 
@@ -165,11 +163,11 @@ namespace Surveillance.Rules.WashTrade
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.Position == OrderPositions.BUY).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.Position == OrderPositions.SELL).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume * (bp.OrderAveragePrice.GetValueOrDefault(0)));
-            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume * (sp.OrderAveragePrice.GetValueOrDefault(0)));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault(0) * (bp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault(0) * (sp.OrderAveragePrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -201,8 +199,8 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
-            var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
+            var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
+            var absCurrencyAmount = new CurrencyAmount(absDifference, currency?.Value ?? string.Empty);
 
             var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
@@ -292,8 +290,8 @@ namespace Surveillance.Rules.WashTrade
             var results = new List<PositionCluster>();
             foreach (var pair in pairs)
             {
-                var buyVolume = pair.Buys.Get().Sum(b => b.OrderFilledVolume);
-                var sellVolume = pair.Sells.Get().Sum(s => s.OrderFilledVolume);
+                var buyVolume = pair.Buys.Get().Sum(b => b.OrderFilledVolume.GetValueOrDefault());
+                var sellVolume = pair.Sells.Get().Sum(s => s.OrderFilledVolume.GetValueOrDefault());
 
                 if (buyVolume == sellVolume)
                 {
@@ -327,8 +325,8 @@ namespace Surveillance.Rules.WashTrade
             var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
             var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume * (bp.OrderAveragePrice.GetValueOrDefault(0)));
-            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume * (sp.OrderAveragePrice.GetValueOrDefault(0)));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAveragePrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -341,7 +339,7 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
             var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
@@ -393,8 +391,8 @@ namespace Surveillance.Rules.WashTrade
                     continue;
                 }
 
-                var buyValue = cluster.Buys.Get().Sum(b => b.OrderAveragePrice.GetValueOrDefault(0) * b.OrderFilledVolume.GetValueOrDefault(0));
-                var sellValue = cluster.Sells.Get().Sum(s => s.OrderAveragePrice.GetValueOrDefault(0) * s.OrderFilledVolume.GetValueOrDefault(0));
+                var buyValue = cluster.Buys.Get().Sum(b => b.OrderAveragePrice.GetValueOrDefault().Value * b.OrderFilledVolume.GetValueOrDefault(0));
+                var sellValue = cluster.Sells.Get().Sum(s => s.OrderAveragePrice.GetValueOrDefault().Value * s.OrderFilledVolume.GetValueOrDefault(0));
                 
                 var largerValue = Math.Max(buyValue, sellValue);
                 var smallerValue = Math.Min(buyValue, sellValue);

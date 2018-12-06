@@ -17,7 +17,7 @@ namespace Surveillance.Rules.HighVolume
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
-            int totalOrdersTradedInWindow)
+            long totalOrdersTradedInWindow)
         {
             Window = window;
             Trades = trades;
@@ -41,7 +41,7 @@ namespace Surveillance.Rules.HighVolume
         public BreachDetails WindowBreach { get; }
         public BreachDetails MarketCapBreach { get; }
 
-        public int TotalOrdersTradedInWindow { get; }
+        public long TotalOrdersTradedInWindow { get; }
 
         public class BreachDetails
         {

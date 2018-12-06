@@ -33,16 +33,15 @@ namespace Surveillance.Currency
             
             foreach (var trad in position.Get())
             {
-                if (trad.FulfilledVolume == 0)
+                if (trad.OrderFilledVolume.GetValueOrDefault() == 0)
                     continue;
 
-                var weight = (decimal)trad.FulfilledVolume / (decimal)totalVolume;
+                var weight = (decimal)trad.OrderFilledVolume.GetValueOrDefault(0) / (decimal)totalVolume;
 
-                var orderCurrency = new DomainV2.Financial.Currency(trad.OrderCurrency);
                 var rate = await _exchangeRates.GetRate(
-                    orderCurrency,
+                    trad.OrderCurrency,
                     targetCurrency,
-                    trad.StatusChangedOn,
+                    trad.MostRecentDateEvent(),
                     ruleCtx);
                 
                 weightedRates.Add(new WeightedXRate(weight, ((decimal?)rate?.Rate ?? 0m)));

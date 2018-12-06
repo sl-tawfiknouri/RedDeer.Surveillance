@@ -41,12 +41,12 @@ namespace Surveillance.Rules.WashTrade
 
                 if (benchmarkPrice == 0)
                 {
-                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault(0);                   
+                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;                   
                 }
 
-                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAveragePrice.GetValueOrDefault(0), parameters))
+                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAveragePrice.GetValueOrDefault().Value, parameters))
                 {
-                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault(0);
+                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;
 
                     if (currentBuyPosition.Get().Any()
                         && currentSellPosition.Get().Any())

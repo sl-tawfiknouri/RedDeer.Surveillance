@@ -141,7 +141,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 .Where(afto => afto.OrderPosition == OrderPositions.SELL)
                 .Select(afto =>
                     new CurrencyAmount(
-                        afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault(0),
+                        afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
                         afto.OrderCurrency))
                 .ToList();
 
@@ -150,7 +150,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return conversion;
         }
 
-        private int CalculateTotalPurchaseVolume(
+        private long CalculateTotalPurchaseVolume(
             IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
@@ -160,11 +160,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return activeFulfilledTradeOrders
                 .Where(afto => afto.OrderPosition == OrderPositions.BUY)
-                .Select(afto => afto.OrderFilledVolume)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
 
-        private int CalculateTotalSalesVolume(
+        private long CalculateTotalSalesVolume(
             IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
@@ -181,7 +181,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
         private async Task<CurrencyAmount?> CalculateInferredVirtualProfit(
             IList<Order> activeFulfilledTradeOrders,
             CurrencyAmount? realisedRevenue,
-            int sizeOfVirtualPosition,
+            long sizeOfVirtualPosition,
             DomainV2.Financial.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
@@ -200,7 +200,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var inferredVirtualProfits = mostRecentTrade.OrderAveragePrice.GetValueOrDefault(0) * sizeOfVirtualPosition;
+            var inferredVirtualProfits = mostRecentTrade.OrderAveragePrice.GetValueOrDefault().Value * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
             var convertedCurrencyAmount = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, universeDateTime, ctx);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Trading
@@ -17,11 +18,11 @@ namespace DomainV2.Trading
             DateTime? transactionFilledDate,
             string transactionTraderId,
             string transactionCounterParty,
-            string transactionType,
-            string transactionPosition,
-            string transactionCurrency,
-            decimal? transactionLimitPrice,
-            decimal? transactionAveragePrice,
+            OrderTypes transactionType,
+            OrderPositions transactionPosition,
+            Currency transactionCurrency,
+            CurrencyAmount? transactionLimitPrice,
+            CurrencyAmount? transactionAveragePrice,
             long? transactionOrderedVolume,
             long? transactionFilledVolume)
         {
@@ -36,9 +37,9 @@ namespace DomainV2.Trading
             TransactionFilledDate = transactionFilledDate;
             TransactionTraderId = transactionTraderId ?? string.Empty; ;
             TransactionCounterParty = transactionCounterParty ?? string.Empty; ;
-            TransactionType = transactionType ?? string.Empty; ;
-            TransactionPosition = transactionPosition ?? string.Empty; ;
-            TransactionCurrency = transactionCurrency ?? string.Empty; ;
+            TransactionType = transactionType;
+            TransactionPosition = transactionPosition;
+            TransactionCurrency = transactionCurrency;
             TransactionLimitPrice = transactionLimitPrice;
             TransactionAveragePrice = transactionAveragePrice;
             TransactionOrderedVolume = transactionOrderedVolume;
@@ -56,11 +57,11 @@ namespace DomainV2.Trading
         public DateTime? TransactionFilledDate { get; }
         public string TransactionTraderId { get; }
         public string TransactionCounterParty { get; }
-        public string TransactionType { get; }
-        public string TransactionPosition { get; }
-        public string TransactionCurrency { get; }
-        public decimal? TransactionLimitPrice { get; }
-        public decimal? TransactionAveragePrice { get; }
+        public OrderTypes TransactionType { get; }
+        public OrderPositions TransactionPosition { get; }
+        public Currency TransactionCurrency { get; }
+        public CurrencyAmount? TransactionLimitPrice { get; }
+        public CurrencyAmount? TransactionAveragePrice { get; }
         public long? TransactionOrderedVolume { get; }
         public long? TransactionFilledVolume { get; }
         public Trade ParentTrade { get; set; } // parent trade the transaction is a part of can be null

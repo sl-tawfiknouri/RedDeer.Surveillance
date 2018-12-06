@@ -87,14 +87,14 @@ namespace Surveillance.Universe
             var tradeSubmittedEvents =
                 trades
                     .Where(tr => tr != null)
-                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tr.TradeSubmittedOn, tr))
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tr.OrderPlacedDate.GetValueOrDefault(), tr))
                     .ToArray();
 
             var tradeStatusChangedOnEvents =
                 trades
                     .Where(tr => tr != null)
-                    .Where(tr => ! (tr.OrderStatus == OrderStatus.Booked && tr.TradeSubmittedOn == tr.StatusChangedOn))
-                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.StatusChangedOn, tr))
+                    .Where(tr => ! (tr.OrderStatus() == OrderStatus.Booked && tr.OrderPlacedDate == tr.MostRecentDateEvent()))
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.TradeReddeer, tr.MostRecentDateEvent(), tr))
                     .ToArray();
 
             var exchangeEvents =

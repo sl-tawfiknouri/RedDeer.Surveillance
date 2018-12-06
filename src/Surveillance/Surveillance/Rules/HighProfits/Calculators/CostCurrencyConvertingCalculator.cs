@@ -39,7 +39,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                     .Where(afto => afto.OrderPosition == OrderPositions.BUY)
                     .Select(afto => 
                         new CurrencyAmount(
-                            afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault(0),
+                            afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
                             afto.OrderCurrency))
                     .ToList();
 

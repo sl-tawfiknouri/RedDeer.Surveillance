@@ -206,12 +206,12 @@ namespace Surveillance.Rules.MarkingTheClose
             var volumeTradedBuy =
                 securities
                     .Where(sec => sec.OrderPosition == OrderPositions.BUY)
-                    .Sum(sec => sec.OrderFilledVolume);
+                    .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var volumeTradedSell =
                 securities
                     .Where(sec => sec.OrderPosition == OrderPositions.SELL)
-                    .Sum(sec => sec.OrderFilledVolume);
+                    .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;
             var buyDailyPercentageBreach = CalculateBuyBreach(volumeTradedBuy, marketVolumeTraded, hasBuyDailyVolumeBreach);

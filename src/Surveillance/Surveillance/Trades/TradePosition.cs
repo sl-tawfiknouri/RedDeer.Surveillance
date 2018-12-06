@@ -48,16 +48,16 @@ namespace Surveillance.Trades
         {
             return
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus == status)
-                .Sum(trad => trad.OrderFilledVolume);
+                .Where(trad => trad != null && trad.OrderStatus() == status)
+                .Sum(trad => trad.OrderFilledVolume.GetValueOrDefault(0));
         }
 
         public long VolumeNotInStatus(OrderStatus status)
         {
             return
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus != status)
-                .Sum(trad => trad.OrderFilledVolume);
+                .Where(trad => trad != null && trad.OrderStatus() != status)
+                .Sum(trad => trad.OrderFilledVolume.GetValueOrDefault(0));
         }
 
         /// <summary>

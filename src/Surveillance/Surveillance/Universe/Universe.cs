@@ -26,7 +26,7 @@ namespace Surveillance.Universe
         /// </summary>
         private void Setup()
         {
-            Trades = Trades.OrderBy(tra => tra.StatusChangedOn).ToList();
+            Trades = Trades.OrderBy(tra => tra.MostRecentDateEvent()).ToList();
             MarketEquityData = MarketEquityData.OrderBy(med => med.Securities.FirstOrDefault()?.TimeStamp).ToList();
             UniverseEvents = UniverseEvents.OrderBy(ue => ue.EventTime).ToList();
         }

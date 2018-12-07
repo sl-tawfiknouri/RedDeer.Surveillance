@@ -55,16 +55,6 @@ namespace DataImport.Managers
 
         public IUploadTradeFileMonitor Initialise()
         {
-            var unsubscriberFactory = new UnsubscriberFactory<TradeOrderFrame>();
-            var tradeProcessorOrderStream = new TradeOrderStream<TradeOrderFrame>(unsubscriberFactory);
-            var tradeProcessor = new TradeProcessor<TradeOrderFrame>(_tpLogger, tradeProcessorOrderStream);
-
-            // hook the relay subscriber to begin communications with the outgoing network stream
-            // //tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
-
-            // hook the trade processor to receive the incoming network stream
-            _tradeOrderStream.Subscribe(tradeProcessor);
-
             // hook up the data recorder
             _tradeOrderStream.Subscribe(_tradeRecorder);
 
@@ -73,7 +63,7 @@ namespace DataImport.Managers
 
             HostOverWebsockets();
 
-            var fileMonitor = _fileMonitorFactory.Create(tradeProcessorOrderStream);
+            var fileMonitor = _fileMonitorFactory.Create(_tradeOrderStream);
             fileMonitor.Initiate();
 
             return fileMonitor;

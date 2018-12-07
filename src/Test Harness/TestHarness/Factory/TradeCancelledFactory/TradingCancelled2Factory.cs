@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NLog;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Strategies;
+using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 
 namespace TestHarness.Factory.TradeCancelledFactory
 {

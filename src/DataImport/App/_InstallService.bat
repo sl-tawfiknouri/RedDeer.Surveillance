@@ -1,0 +1,1 @@
+dotnet RedDeer.DataImport.DataImport.App.dll --register-service

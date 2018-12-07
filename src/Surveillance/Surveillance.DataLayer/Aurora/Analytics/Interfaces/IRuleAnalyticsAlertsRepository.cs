@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Surveillance.DataLayer.Aurora.Analytics
+namespace Surveillance.DataLayer.Aurora.Analytics.Interfaces
 {
     public interface IRuleAnalyticsAlertsRepository
     {

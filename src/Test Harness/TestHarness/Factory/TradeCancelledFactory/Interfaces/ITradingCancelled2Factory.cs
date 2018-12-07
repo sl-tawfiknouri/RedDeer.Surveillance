@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TestHarness.Engine.OrderGenerator;
 
-namespace TestHarness.Factory.TradeCancelledFactory
+namespace TestHarness.Factory.TradeCancelledFactory.Interfaces
 {
     public interface ITradingCancelled2Factory
     {

@@ -1,1 +1,0 @@
-dotnet RedDeer.Relay.Relay.App.dll --unregister-service

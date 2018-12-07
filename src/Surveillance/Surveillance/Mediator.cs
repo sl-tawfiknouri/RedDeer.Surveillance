@@ -11,22 +11,17 @@ namespace Surveillance
     /// </summary>
     public class Mediator : IMediator
     {
-        private readonly IReddeerTradeService _reddeerTradeService;
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly IApplicationHeartbeatService _heartbeatService;
         private readonly IEnrichmentService _enrichmentService;
 
         public Mediator(
-            IReddeerTradeService reddeerTradeService,
             IReddeerRuleScheduler ruleScheduler,
             IReddeerDistributedRuleScheduler distributedRuleScheduler,
             IApplicationHeartbeatService heartbeatService,
             IEnrichmentService enrichmentService)
         {
-            _reddeerTradeService =
-                reddeerTradeService 
-                ?? throw new ArgumentNullException(nameof(reddeerTradeService));
             _ruleScheduler =
                 ruleScheduler
                 ?? throw new ArgumentNullException(nameof(ruleScheduler));
@@ -45,14 +40,12 @@ namespace Surveillance
         {
             _distributedRuleScheduler.Initiate();
             _ruleScheduler.Initiate();
-            _reddeerTradeService.Initialise();
             _heartbeatService.Initialise();
             _enrichmentService.Initialise();
         }
 
         public void Terminate()
         {
-            _reddeerTradeService.Dispose();
             _ruleScheduler.Terminate();
             _distributedRuleScheduler.Terminate();
             _enrichmentService.Terminate();

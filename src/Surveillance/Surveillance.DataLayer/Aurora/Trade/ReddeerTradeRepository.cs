@@ -169,7 +169,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Instrument};
                     var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
                     dto.SecurityId = marketSecurityId.SecurityId;
-                    dto.MarketIdentifierCode = marketSecurityId.MarketId;
+                    dto.MarketId = marketSecurityId.MarketId;
                 }
 
                 using (var conn = dbConnection.ExecuteAsync(CreateSql2, dto))

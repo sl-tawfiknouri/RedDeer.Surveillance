@@ -115,6 +115,7 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderOrderedVolume = rawRecord["OrderOrderedVolume"],
                 OrderFilledVolume = rawRecord["OrderFilledVolume"],
                 OrderPortfolioManager = rawRecord["OrderPortfolioManager"],
+                OrderTraderId = rawRecord["OrderTraderId"],
                 OrderExecutingBroker = rawRecord["OrderExecutingBroker"],
                 OrderClearingAgent = rawRecord["OrderClearingAgent"],
                 OrderDealingInstructions = rawRecord["OrderDealingInstructions"],

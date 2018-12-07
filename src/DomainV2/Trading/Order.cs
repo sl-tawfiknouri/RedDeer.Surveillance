@@ -54,6 +54,7 @@ namespace DomainV2.Trading
             OrderOrderedVolume = orderOrderedVolume;
             OrderFilledVolume = orderFilledVolume;
             OrderPortfolioManager = orderPortfolioManager ?? string.Empty;
+            OrderTraderId = orderTraderId ?? string.Empty;
             OrderExecutingBroker = orderExecutingBroker ?? string.Empty;
             OrderClearingAgent = orderClearingAgent ?? string.Empty;
             OrderDealingInstructions = orderDealingInstructions ?? string.Empty;

@@ -3,10 +3,12 @@
     public class Market
     {
         public Market(
+            string id,
             string marketIdentifierCode,
             string name,
             MarketTypes type)
         {
+            Id = id ?? string.Empty;
             MarketIdentifierCode = marketIdentifierCode;
             Name = name;
             Type = type;
@@ -26,5 +28,10 @@
         /// The market category
         /// </summary>
         public MarketTypes Type { get; }
+
+        /// <summary>
+        /// Primary Key
+        /// </summary>
+        public string Id { get; }
     }
 }

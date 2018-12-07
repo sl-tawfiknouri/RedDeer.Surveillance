@@ -343,24 +343,25 @@ namespace Surveillance.DataLayer.Aurora.Market
         /// Otherwise create a new entry and provide the market ids and security ids
         /// Future caching possibility if you're investigating slow inserts
         /// </summary>
-        public async Task<string> CreateAndOrGetSecurityId(MarketDataPair pair)
+        public async Task<MarketSecurityIds> CreateAndOrGetSecurityId(MarketDataPair pair)
         {
             if (pair == null)
             {
                 _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId was passed a null market data pair.");
-                return string.Empty;
+                return new MarketSecurityIds();
             }
 
-            if (!string.IsNullOrWhiteSpace(pair.Security?.Identifiers.Id))
+            if (!string.IsNullOrWhiteSpace(pair.Security?.Identifiers.Id)
+                && !string.IsNullOrWhiteSpace(pair.Exchange?.Id))
             {
-                return pair.Security?.Identifiers.Id;
+                return new MarketSecurityIds { MarketId = pair.Exchange.Id, SecurityId = pair.Security?.Identifiers.Id};
             }
 
             if (pair.Exchange == null
                 || string.IsNullOrWhiteSpace(pair.Exchange?.MarketIdentifierCode))
             {
                 _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId either received a null exchange object or an empty market id for a trade. Not able to continue.");
-                return string.Empty;
+                return new MarketSecurityIds();
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
@@ -384,7 +385,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     securityId = await conn;
                 }
 
-                return securityId;
+                return new MarketSecurityIds {MarketId = marketId, SecurityId = securityId};
             }
             catch (Exception e)
             {
@@ -396,7 +397,13 @@ namespace Surveillance.DataLayer.Aurora.Market
                 dbConnection.Dispose();
             }
 
-            return string.Empty;
+            return new MarketSecurityIds();
+        }
+
+        public class MarketSecurityIds
+        {
+            public string MarketId { get; set; } = string.Empty;
+            public string SecurityId { get; set; } = string.Empty;
         }
 
         private class MarketUpdateDto

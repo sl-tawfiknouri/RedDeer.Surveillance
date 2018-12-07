@@ -21,13 +21,62 @@ namespace Surveillance.DataLayer.Aurora.Trade
         private readonly ILogger _logger;
 
         private const string CreateSql2 = @"
-            
-            ";
+            INSERT INTO Order(
+                MarketId,
+                SecurityId,
+                ClientOrderId,
+                PlacedDate,
+                BookedDate,
+                AmendedDate,
+                RejectedDate,
+                CancelledDate,
+                FilledDate,
+                OrderType,
+                Position,
+                Currency,
+                LimitPrice,
+                AveragePrice,
+                OrderedVolume,
+                FilledVolume,
+                PortfolioManager,
+                TraderId,
+                ExecutingBroker,
+                ClearingAgent,
+                DealingInstructions,
+                Strategy,
+                Rationale,
+                Fund,
+                ClientAccountAttributionId)
+            VALUES(
+                @MarketId,
+                @SecurityId,
+                @ClientOrderId,
+                @OrderPlacedDate,
+                @OrderBookedDate,
+                @OrderAmendedDate,
+                @OrderRejectedDate,
+                @OrderCancelledDate,
+                @OrderFilledDate,
+                @OrderType,
+                @OrderPosition,
+                @OrderCurrency,
+                @OrderLimitPrice,
+                @OrderAveragePrice,
+                @OrderOrderedVolume,
+                @OrderFilledVolume,
+                @OrderPortfolioManager,
+                @TraderId,
+                @ExecutingBroker,
+                @ClearingAgent,
+                @DealingInstructions,
+                @Strategy,
+                @Rationale,
+                @Fund,
+                @ClientAccountAttributionId);";
 
         private const string GetSql2 = @"
             
             ";
-
 
         private const string CreateSql = @"
     INSERT INTO TradeReddeer(
@@ -151,8 +200,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 if (string.IsNullOrWhiteSpace(dto.SecurityId))
                 {
                     var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Instrument};
-                    var securityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
-                    dto.SecurityId = securityId;
+                    var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
+                    dto.SecurityId = marketSecurityId.SecurityId;
+                    dto.MarketId = marketSecurityId.MarketId;
                 }
 
                 using (var conn = dbConnection.ExecuteAsync(CreateSql, dto))
@@ -425,187 +475,5 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public string OrderFund { get; set; }
             public string OrderClientAccountAttributionId { get; set; }
         }
-
-
-
-        //private class OrderDto
-        //{
-        //    public OrderDto()
-        //    {
-        //    }
-
-        //    public OrderDto(Order frame)
-        //    {
-        //        if (frame == null)
-        //        {
-        //            return;
-        //        }
-
-        //        Id = frame.ReddeerOrderId;
-        //        OrderTypeId = (int?)frame.OrderType;
-        //        MarketId = frame.Market?.MarketIdentifierCode;
-        //        MarketName = frame.Market?.Name;
-        //        SecurityId = frame.Security?.Identifiers.Id ?? string.Empty;
-        //        SecurityReddeerId = frame.Security?.Identifiers.ReddeerId;
-        //        SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier;
-        //        SecuritySedol = frame.Security?.Identifiers.Sedol;
-        //        SecurityIsin = frame.Security?.Identifiers.Isin;
-        //        SecurityFigi = frame.Security?.Identifiers.Figi;
-        //        SecurityCusip = frame.Security?.Identifiers.Cusip;
-        //        SecurityExchangeSymbol = frame.Security?.Identifiers.ExchangeSymbol;
-        //        SecurityLei = frame.Security?.Identifiers.Lei;
-        //        SecurityBloombergTicker = frame.Security?.Identifiers.BloombergTicker;
-        //        SecurityName = frame.Security?.Name;
-        //        SecurityCfi = frame.Security?.Cfi;
-        //        SecurityIssuerIdentifier = frame.Security?.IssuerIdentifier;
-        //        LimitPrice = frame.Limit?.Value;
-        //        LimitCurrency = frame.Limit?.Currency.Value;
-        //        TradeSubmittedOn = frame.TradeSubmittedOn;
-        //        StatusChangedOn = frame.StatusChangedOn;
-        //        OrderedVolume = frame.OrderedVolume;
-        //        FilledVolume = frame.FulfilledVolume;
-        //        ExecutedPrice = frame.ExecutedPrice?.Value;
-        //        OrderCurrency = frame.OrderCurrency;
-        //        OrderPositionId = (int)frame.Position;
-        //        OrderStatusId = (int)frame.OrderStatus;
-        //        TraderId = frame.TraderId;
-        //        TradeClientAttributionId = frame.TradeClientAttributionId;
-        //        AccountId = frame.AccountId;
-        //        PartyBrokerId = frame.PartyBrokerId;
-        //        CounterPartyBrokerId = frame.CounterPartyBrokerId;
-        //        DealerInstructions = frame.DealerInstructions;
-        //        TradeRationale = frame.TradeRationale;
-        //        TradeStrategy = frame.TradeStrategy;
-        //    }
-
-        //    /// <summary>
-        //    /// Dapper field for primary key
-        //    /// </summary>
-        //    public int? Id { get; set; }
-
-        //    /// <summary>
-        //    /// The type of order i.e. market / limit
-        //    /// </summary>
-        //    public int? OrderTypeId { get; set; }
-
-        //    /// <summary>
-        //    /// The market the security is being traded on
-        //    /// </summary>
-        //    public string MarketId { get; set; }
-
-        //    /// <summary>
-        //    /// The market the security is being traded on
-        //    /// </summary>
-        //    public string MarketName { get; set; }
-
-        //    /// <summary>
-        //    /// The enumeration for the type of market i.e. stock exchange or otc
-        //    /// </summary>
-        //    public int? MarketType { get; set; }
-
-        //    public string SecurityId { get; set; }
-        //    public string SecurityReddeerId { get; set; }
-        //    public string SecurityClientIdentifier { get; set; }
-        //    public string SecuritySedol { get; set; }
-        //    public string SecurityIsin { get; set; }
-        //    public string SecurityFigi { get; set; }
-        //    public string SecurityCusip { get; set; }
-        //    public string SecurityExchangeSymbol { get; set; }
-        //    public string SecurityLei { get; set; }
-        //    public string SecurityBloombergTicker { get; set; }
-        //    public string SecurityName { get; set; }
-        //    public string SecurityCfi { get; set; }
-        //    public string SecurityIssuerIdentifier { get; set; }
-
-        //    /// <summary>
-        //    /// If its a limit order, the limit price
-        //    /// </summary>
-        //    public decimal? LimitPrice { get; set; }
-
-        //    /// <summary>
-        //    /// If its a limit order, the limit price (currency)
-        //    /// </summary>
-        //    public string LimitCurrency { get; set; }
-
-        //    /// <summary>
-        //    /// Trade initially submitted on
-        //    /// </summary>
-        //    public DateTime TradeSubmittedOn { get; set; }
-
-        //    /// <summary>
-        //    /// Last update to the order (i.e. placed -> cancelled; placed -> fulfilled)
-        //    /// </summary>
-        //    public DateTime StatusChangedOn { get; set; }
-
-        //    /// <summary>
-        //    /// The amount that was requested to trade
-        //    /// </summary>
-        //    public int OrderedVolume { get; set; }
-
-        //    /// <summary>
-        //    /// The amount that was traded
-        //    /// </summary>
-        //    public int FilledVolume { get; set; }
-
-        //    /// <summary>
-        //    /// This is the price the trade was executed at; if several prices use the weighted average
-        //    /// </summary>
-        //    public decimal? ExecutedPrice { get; set; }
-
-        //    /// <summary>
-        //    /// The currency for the executed price
-        //    /// </summary>
-        //    public string OrderCurrency { get; set; }
-
-        //    /// <summary>
-        //    /// Buy or Sell
-        //    /// </summary>
-        //    public int? OrderPositionId { get; set; }
-
-        //    /// <summary>
-        //    /// Status of the order (placed/cancelled/fulfilled)
-        //    /// </summary>
-        //    public int? OrderStatusId { get; set; }
-
-        //    /// <summary>
-        //    /// A client identifier of the trader placing the order
-        //    /// </summary>
-        //    public string TraderId { get; set; }
-
-        //    /// <summary>
-        //    /// The client the trader is trading on behalf of
-        //    /// </summary>
-        //    public string TradeClientAttributionId { get; set; }
-
-        //    /// <summary>
-        //    /// The client account traded for
-        //    /// </summary>
-        //    public string AccountId { get; set; }
-
-        //    /// <summary>
-        //    /// The broker submitting the trade to the market
-        //    /// </summary>
-        //    public string PartyBrokerId { get; set; }
-
-        //    /// <summary>
-        //    /// The counter party broker matching the order
-        //    /// </summary>
-        //    public string CounterPartyBrokerId { get; set; }
-
-        //    /// <summary>
-        //    /// The instruction notes passed to the dealer
-        //    /// </summary>
-        //    public string DealerInstructions { get; set; }
-
-        //    /// <summary>
-        //    /// The traders rationalisation for the trade
-        //    /// </summary>
-        //    public string TradeRationale { get; set; }
-
-        //    /// <summary>
-        //    /// The strategy behind the trade
-        //    /// </summary>
-        //    public string TradeStrategy { get; set; }
-        //}
     }
 }

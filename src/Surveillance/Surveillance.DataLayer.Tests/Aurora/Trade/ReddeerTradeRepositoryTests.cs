@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DomainV2.Equity;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
@@ -9,7 +8,6 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.System.Auditing.Context.Interfaces;
 

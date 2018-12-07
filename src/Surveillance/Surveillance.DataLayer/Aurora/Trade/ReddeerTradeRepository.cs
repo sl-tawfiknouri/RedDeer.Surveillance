@@ -31,6 +31,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 RejectedDate,
                 CancelledDate,
                 FilledDate,
+                StatusChangedDate,
                 OrderType,
                 Position,
                 Currency,
@@ -57,6 +58,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderRejectedDate,
                 @OrderCancelledDate,
                 @OrderFilledDate,
+                @OrderStatusChangedDate,
                 @OrderType,
                 @OrderPosition,
                 @OrderCurrency,
@@ -74,56 +76,65 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderFund,
                 @OrderClientAccountAttributionId);";
 
-        private const string GetSql2 = @"
-            
-            ";
-
         private const string GetSql = @"
-        SELECT 
-            tr.Id,
-	        tr.OrderTypeId,
-	        tr.LimitPrice,
-	        tr.LimitCurrency,
-	        tr.TradeSubmittedOn,
-	        tr.StatusChangedOn,
-	        tr.FilledVolume,
-	        tr.OrderedVolume,
-	        tr.OrderPositionId,
-	        tr.OrderStatusId,
-	        tr.OrderCurrency,
-	        tr.TraderId,
-	        tr.TradeClientAttributionId,
-	        tr.AccountId,
-	        tr.PartyBrokerId,
-	        tr.CounterPartyBrokerId,
-	        tr.ExecutedPrice,
-	        tr.DealerInstructions,
-	        tr.TradeRationale,
-	        tr.TradeStrategy,
-            tr.SecurityId,
-            mses.ReddeerId AS SecurityReddeerId,
-            mses.ClientIdentifier AS SecurityClientIdentifier,
-            mses.Sedol AS SecuritySedol,
-            mses.Isin AS SecurityIsin,
-            mses.Figi AS SecurityFigi,
-            mses.Cusip AS SecurityCusip,
-            mses.ExchangeSymbol AS SecurityExchangeSymbol,
-            mses.Lei AS SecurityLei,
-            mses.BloombergTicker AS SecurityBloombergTicker,
-            mses.SecurityName AS SecurityName,
-            mses.Cfi AS SecurityCfi,
-            mses.IssuerIdentifier AS SecurityIssuerIdentifier,
-            mse.MarketId,
-            mse.MarketName
-        FROM 
-            TradeReddeer AS tr
-        LEFT OUTER JOIN MarketStockExchangeSecurities AS mses 
-            ON tr.SecurityId = mses.Id
-        LEFT OUTER JOIN MarketStockExchange as mse
-            ON mses.MarketStockExchangeId = mse.Id
-        WHERE 
-            tr.StatusChangedOn >= @Start
-            AND tr.StatusChangedOn <= @End;";
+            SELECT
+	            ord.Id as Id,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.OrderType as OrderType,
+                ord.Position as OrderPosition,
+                ord.Currency as OrderCurrency,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AveragePrice as OrderAveragePrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.PortfolioManager as OrderPortfolioManager,
+                ord.TraderId as OrderTraderId,
+                ord.ExecutingBroker as OrderExecutingBroker,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.Strategy as OrderStrategy,
+                ord.Rationale as OrderRationale,
+                ord.Fund as OrderFund,
+                ord.ClientAccountAttributionId as OrderClientAccountAttributionId,
+	            fi.ReddeerId AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName
+            FROM orders as ord
+            LEFT OUTER JOIN financialinstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN market as mark
+            on mark.Id = ord.MarketId
+            WHERE 
+            ord.PlacedDate >= @Start
+            AND Ord.StatusChangedDate <= @End;";
 
         public ReddeerTradeRepository(
             IConnectionStringFactory connectionStringFactory,
@@ -292,6 +303,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         private class OrderDto
         {
+            public OrderDto()
+            {
+                // used by reads
+            }
+
             public OrderDto(Order order)
             {
                 if (order == null)
@@ -341,6 +357,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderRejectedDate = order.OrderRejectedDate;
                 OrderCancelledDate = order.OrderCancelledDate;
                 OrderFilledDate = order.OrderFilledDate;
+                OrderStatusChangedDate = order.MostRecentDateEvent();
 
                 OrderType = (int?)order.OrderType;
                 OrderPosition = (int?)order.OrderPosition;
@@ -420,6 +437,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime? OrderRejectedDate { get; set; }
             public DateTime? OrderCancelledDate { get; set; }
             public DateTime? OrderFilledDate { get; set; }
+            public DateTime? OrderStatusChangedDate { get; set; }
             public int? OrderType { get; set; }
             public int? OrderPosition { get; set; }
             public string OrderCurrency { get; set; }

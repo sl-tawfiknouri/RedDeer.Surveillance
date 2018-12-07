@@ -20,6 +20,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger _logger;
 
+        private const string CreateSql2 = @"
+            
+            ";
+
+        private const string GetSql2 = @"
+            
+            ";
+
+
         private const string CreateSql = @"
     INSERT INTO TradeReddeer(
 	    OrderTypeId,

@@ -46,7 +46,8 @@ namespace Surveillance.DataLayer.Aurora.Market
         private const string GetMarketSql =
             @"
             SELECT
-             MSE.MarketId as MarketId,
+             MSE.Id as MarketId,
+             MSE.MarketId as MarketIdentifierCode,
              MSE.MarketName as MarketName,
              MSES.ReddeerId as ReddeerId,
              MSES.ClientIdentifier as ClientIdentifier,
@@ -300,17 +301,18 @@ namespace Surveillance.DataLayer.Aurora.Market
                     var groupedByExchange =
                         response
                             .GroupBy(rep =>
-                                new { rep.MarketId, rep.MarketName, rep.Epoch},
+                                new { rep.MarketId, Mic = rep.MarketIdentifierCode, rep.MarketName, rep.Epoch},
                                 (key, group) => new
                                 {
                                     Key1 = key.MarketId,
                                     Key2 = key.MarketName,
                                     Key3 = key.Epoch,
+                                    Key4 = key.Mic,
                                     Result = group.ToList()
                                 })
                             .Select(i =>
                             {
-                                var market = new DomainV2.Financial.Market(i.Key1, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new ExchangeFrame(
                                         market,
@@ -610,9 +612,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
 
 
-
             // dont set these two for writes they're just for reads
             public string MarketId { get; set; }
+            public string MarketIdentifierCode { get; set; }
             public string MarketName { get; set; }
         }
 

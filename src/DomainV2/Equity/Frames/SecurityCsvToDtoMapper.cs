@@ -129,7 +129,7 @@ namespace DomainV2.Equity.Frames
             var security = BuildSecurity(csv);
             var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice);
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
-            var market = new Market(csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
+            var market = new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
 
             return new SecurityTick(
                 security,

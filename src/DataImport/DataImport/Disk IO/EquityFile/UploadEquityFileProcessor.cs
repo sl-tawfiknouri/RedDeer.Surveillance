@@ -100,7 +100,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
             else
             {
-                var exchange = new Market(record.MarketIdentifierCode, record.MarketName, MarketTypes.STOCKEXCHANGE);
+                var exchange = new Market(string.Empty, record.MarketIdentifierCode, record.MarketName, MarketTypes.STOCKEXCHANGE);
                 var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
                 marketUpdates.Add(exchangeFrame);
             }

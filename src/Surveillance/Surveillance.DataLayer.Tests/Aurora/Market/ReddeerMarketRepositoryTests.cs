@@ -66,11 +66,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private ExchangeFrame Frame()
         {
-            var stockExchange = new Market(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
+            var stockExchange = new DomainV2.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var securityIdentifiers = new SecurityIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new InstrumentIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
-            var security = new Security(
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",

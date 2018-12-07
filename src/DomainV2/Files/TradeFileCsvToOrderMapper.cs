@@ -268,7 +268,7 @@ namespace DomainV2.Files
         {
             Enum.TryParse(csv.MarketType, out MarketTypes marketType);
 
-            return new Market(csv.MarketIdentifierCode, csv.MarketName, marketType);
+            return new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, marketType);
         }
 
         private InstrumentTypes MapCfi(string cfi)

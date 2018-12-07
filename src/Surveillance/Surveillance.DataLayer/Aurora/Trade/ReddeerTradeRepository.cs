@@ -21,7 +21,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
         private readonly ILogger _logger;
 
         private const string CreateSql2 = @"
-            INSERT INTO Order(
+            INSERT INTO Orders(
                 MarketId,
                 SecurityId,
                 ClientOrderId,
@@ -50,7 +50,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             VALUES(
                 @MarketId,
                 @SecurityId,
-                @ClientOrderId,
+                @OrderId,
                 @OrderPlacedDate,
                 @OrderBookedDate,
                 @OrderAmendedDate,
@@ -65,62 +65,18 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderOrderedVolume,
                 @OrderFilledVolume,
                 @OrderPortfolioManager,
-                @TraderId,
-                @ExecutingBroker,
-                @ClearingAgent,
-                @DealingInstructions,
-                @Strategy,
-                @Rationale,
-                @Fund,
-                @ClientAccountAttributionId);";
+                @OrderTraderId,
+                @OrderExecutingBroker,
+                @OrderClearingAgent,
+                @OrderDealingInstructions,
+                @OrderStrategy,
+                @OrderRationale,
+                @OrderFund,
+                @OrderClientAccountAttributionId);";
 
         private const string GetSql2 = @"
             
             ";
-
-        private const string CreateSql = @"
-    INSERT INTO TradeReddeer(
-	    OrderTypeId,
-	    LimitPrice,
-	    LimitCurrency,
-	    TradeSubmittedOn,
-	    StatusChangedOn,
-	    FilledVolume,
-	    OrderedVolume,
-	    OrderPositionId,
-	    OrderStatusId,
-	    OrderCurrency,
-	    TraderId,
-	    TradeClientAttributionId,
-	    AccountId,
-	    PartyBrokerId,
-	    CounterPartyBrokerId,
-	    ExecutedPrice,
-	    DealerInstructions,
-	    TradeRationale,
-	    TradeStrategy,
-        SecurityId)
-    VALUES(
-	    @OrderTypeId,
-	    @LimitPrice,
-	    @LimitCurrency,
-	    @TradeSubmittedOn,
-	    @StatusChangedOn,
-	    @FilledVolume,
-	    @OrderedVolume,
-	    @OrderPositionId,
-	    @OrderStatusId,
-	    @OrderCurrency,
-	    @TraderId,
-	    @TradeClientAttributionId,
-	    @AccountId,
-	    @PartyBrokerId,
-	    @CounterPartyBrokerId,
-	    @ExecutedPrice,
-	    @DealerInstructions,
-	    @TradeRationale,
-	    @TradeStrategy,
-        @SecurityId);";
 
         private const string GetSql = @"
         SELECT 
@@ -202,10 +158,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Instrument};
                     var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
                     dto.SecurityId = marketSecurityId.SecurityId;
-                    dto.MarketId = marketSecurityId.MarketId;
+                    dto.MarketIdentifierCode = marketSecurityId.MarketId;
                 }
 
-                using (var conn = dbConnection.ExecuteAsync(CreateSql, dto))
+                using (var conn = dbConnection.ExecuteAsync(CreateSql2, dto))
                 {
                     await conn;
                 }
@@ -296,7 +252,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
             var averagePrice = new CurrencyAmount(dto.OrderAveragePrice, dto.OrderCurrency);
 
-            var market = new DomainV2.Financial.Market(dto.MarketId, dto.MarketName, result);
+            var market = new DomainV2.Financial.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
 
             return new Order(
                 financialInstrument,
@@ -343,7 +299,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     return;
                 }
 
-                MarketId = order.Market?.MarketIdentifierCode;
+                MarketId = order.Market?.Id ?? string.Empty;
+                MarketIdentifierCode = order.Market?.MarketIdentifierCode;
                 MarketName = order.Market?.Name;
                 MarketType = (int?)order.Market?.Type;
 
@@ -405,9 +362,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
             }
 
             /// <summary>
-            /// The market the security is being traded on
+            /// The id for the market (primary key)
             /// </summary>
             public string MarketId { get; set; }
+
+            /// <summary>
+            /// The market the security is being traded on
+            /// </summary>
+            public string MarketIdentifierCode { get; set; }
 
             /// <summary>
             /// The market the security is being traded on

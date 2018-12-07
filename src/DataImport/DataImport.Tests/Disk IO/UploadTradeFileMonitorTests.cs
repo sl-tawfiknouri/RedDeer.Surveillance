@@ -2,8 +2,8 @@
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -15,7 +15,7 @@ namespace DataImport.Tests.Disk_IO
     [TestFixture]
     public class UploadTradeFileMonitorTests
     {
-        private ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
+        private IOrderStream<Order> _tradeOrderStream;
         private IUploadConfiguration _uploadConfiguration;
         private IReddeerDirectory _directory;
         private IUploadTradeFileProcessor _fileProcessor;
@@ -25,7 +25,7 @@ namespace DataImport.Tests.Disk_IO
         [SetUp]
         public void Setup()
         {
-            _tradeOrderStream = A.Fake<ITradeOrderStream<TradeOrderFrame>>();
+            _tradeOrderStream = A.Fake<IOrderStream<Order>>();
             _uploadConfiguration = A.Fake<IUploadConfiguration>();
             _directory = A.Fake<IReddeerDirectory>();
             _fileProcessor = A.Fake<IUploadTradeFileProcessor>();

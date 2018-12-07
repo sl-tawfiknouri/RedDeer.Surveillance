@@ -6,6 +6,7 @@ using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using DomainV2.Files;
 using DomainV2.Streams;
+using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -16,7 +17,7 @@ namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitor : BaseUploadFileMonitor, IUploadTradeFileMonitor
     {
-        private readonly OrderStream<Order> _stream;
+        private readonly IOrderStream<Order> _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadTradeFileProcessor _fileProcessor;
         private readonly ISystemProcessContext _systemProcessContext;
@@ -24,7 +25,7 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
-            OrderStream<Order> stream,
+            IOrderStream<Order> stream,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IUploadTradeFileProcessor fileProcessor,

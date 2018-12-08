@@ -108,33 +108,39 @@ namespace TestHarness.Engine.OrderGenerator
             var frames = new List<Order>();
             for (var i = 0; i < clusterSize; i++)
             {
-                var frame = new Order(
-                    null,
-                    OrderType.Limit,
-                    value.Exchange,
+                var frame2 = new Order(
                     security.Security,
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    (int)(security.DailyVolume.Traded * 0.001m),
-                    (int)(security.DailyVolume.Traded * 0.001m),
-                    i < splitSize ? OrderPosition.Sell : OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
-                    value.TimeStamp.AddSeconds(i),
+                    security.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    value.TimeStamp,
                     value.TimeStamp,
                     null,
                     null,
                     null,
+                    value.TimeStamp.AddSeconds(i),
+                    OrderTypes.LIMIT,
+                    i < splitSize ? OrderPositions.SELL : OrderPositions.BUY,
+                    new Currency("GBP"),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    (int) (security.DailyVolume.Traded * 0.001m),
+                    (int) (security.DailyVolume.Traded * 0.001m),
                     null,
                     null,
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency.Value);
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                frames.Add(frame);
+                frames.Add(frame2);
             }
 
-            foreach (var trade in frames.OrderBy(i => i.StatusChangedOn))
+            foreach (var trade in frames.OrderBy(i => i.MostRecentDateEvent()))
             {
                 TradeStream.Add(trade);
             }

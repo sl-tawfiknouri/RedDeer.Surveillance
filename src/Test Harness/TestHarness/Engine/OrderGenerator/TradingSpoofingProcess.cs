@@ -148,30 +148,36 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 var tradeTime = latestFrame.TimeStamp;
 
-                var volumeFrame = new Order(
-                    null,
-                    i == 0 ? OrderType.Market : OrderType.Limit,
-                    headSecurity.Market,
+                var volumeOrder = new Order(
                     headSecurity.Security,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    i == 0 ? (int)tradedVolume : 0,
-                    (int)tradedVolume,
-                    i == 0 ? OrderPosition.Buy : OrderPosition.Sell,
-                    i == 0 ? OrderStatus.Fulfilled : OrderStatus.Cancelled,
-                    tradeTime.AddSeconds(i),
+                    headSecurity.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradeTime.AddSeconds(-i),
                     tradeTime.AddSeconds(-i),
                     null,
                     null,
+                    i == 0 ? null : (DateTime?) tradeTime.AddSeconds(i),
+                    i == 0 ? (DateTime?) tradeTime.AddSeconds(i) : null,
+                    i == 0 ? OrderTypes.MARKET : OrderTypes.LIMIT,
+                    i == 0 ? OrderPositions.BUY : OrderPositions.SELL,
+                    headSecurity.Spread.Price.Currency,
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    (int) tradedVolume,
+                    i == 0 ? (int) tradedVolume : 0,
                     null,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency.Value);
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volumeOrder);
             }
         }
 

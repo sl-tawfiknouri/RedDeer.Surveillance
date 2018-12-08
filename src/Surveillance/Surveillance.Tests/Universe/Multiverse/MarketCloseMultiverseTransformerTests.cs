@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Streams;
 using FakeItEasy;
@@ -203,7 +204,7 @@ namespace Surveillance.Tests.Universe.Multiverse
         private IUniverseEvent Tick(DateTime genesis, int day, int hour, string id)
         {
             var tick = new ExchangeFrame(
-                new Market(new Market.MarketId("NASDAQ"), $"NASDAQ {id}"),
+                new Market("1", "NASDAQ", $"NASDAQ {id}", MarketTypes.STOCKEXCHANGE),
                 genesis.AddDays(day).AddHours(hour),
                 new List<SecurityTick>());
 

@@ -145,29 +145,37 @@ namespace Surveillance.Tests.Trades
                     "CFI",
                     "Issuer Identifier");
 
-            return new Order(
-                null,
-                OrderTypes.MARKET,
-                new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE),
-                security,
-                null,
-                new CurrencyAmount(1000, "GBP"), 
-                1000,
-                1000,
-                OrderPositions.BUY,
-                status,
-                DateTime.Now,
-                DateTime.Now,
-                "trader-1",
-                "client-attribution-id",
-                "account-1",
-                "Buy!",
-                "party-broker",
-                "counter party",
-                "Good day to buy",
-                "None",
-                "GBX");
+            var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.Now : null;
+            var filledDate = status == OrderStatus.Filled ? (DateTime?) DateTime.Now : null;
 
+            return new Order(
+                security,
+                new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE),
+                null,
+                "id1",
+                DateTime.Now,
+                null,
+                null,
+                null,
+                cancelledDate,
+                filledDate,
+                OrderTypes.MARKET,
+                OrderPositions.BUY,
+                new DomainV2.Financial.Currency("GBP"),
+                new CurrencyAmount(1000, "GBP"),
+                new CurrencyAmount(1000, "GBP"),
+                1000,
+                1000,
+                "Portfolio Manager",
+                "Trader - 1",
+                "The Broker",
+                "The Clearing Bank",
+                "Process ASAP",
+                "Long/Short",
+                "UnderPriced",
+                "Rybank Long",
+                "12345",
+                new Trade[0]);
         }
     }
 }

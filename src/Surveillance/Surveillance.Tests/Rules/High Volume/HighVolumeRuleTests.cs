@@ -13,6 +13,7 @@ using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 
@@ -93,18 +94,18 @@ namespace Surveillance.Tests.Rules.High_Volume
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
             underlyingTrade.OrderFilledDate = DateTime.UtcNow;
-            underlyingTrade.FulfilledVolume = 10;
-            underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
-            var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
+            underlyingTrade.OrderFilledVolume = 10;
+            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<SecurityTick>
                 {
-                    new SecurityTick(underlyingTrade.Security,
-                        new Spread(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.TradeSubmittedOn.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value), 5000, market)
+                    new SecurityTick(underlyingTrade.Instrument,
+                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
+                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
                 });
 
             var marketEvent =
@@ -128,20 +129,19 @@ namespace Surveillance.Tests.Rules.High_Volume
             var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _logger);
 
             var trade = Trade();
-            var underlyingTrade = (TradeOrderFrame)trade.UnderlyingEvent;
-            underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
-            underlyingTrade.FulfilledVolume = 300;
-            underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
-            var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
+            var underlyingTrade = (Order)trade.UnderlyingEvent;
+            underlyingTrade.OrderFilledVolume = 300;
+            underlyingTrade.OrderPlacedDate = DateTime.UtcNow;
+            var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<SecurityTick>
                 {
-                    new SecurityTick(underlyingTrade.Security,
-                        new Spread(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.TradeSubmittedOn.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value), 5000, market)
+                    new SecurityTick(underlyingTrade.Instrument,
+                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
+                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
                 });
 
             var marketEvent =
@@ -165,20 +165,19 @@ namespace Surveillance.Tests.Rules.High_Volume
             var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _logger);
 
             var trade = Trade();
-            var underlyingTrade = (TradeOrderFrame)trade.UnderlyingEvent;
-            underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
-            underlyingTrade.FulfilledVolume = 300;
-            underlyingTrade.StatusChangedOn = DateTime.UtcNow;
-            var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
-            var marketData = new ExchangeFrame(market, underlyingTrade.TradeSubmittedOn.AddSeconds(-55),
+            var underlyingTrade = (Order)trade.UnderlyingEvent;
+            underlyingTrade.OrderFilledDate = DateTime.Now;
+            underlyingTrade.OrderFilledVolume = 300;
+            var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<SecurityTick>
                 {
-                    new SecurityTick(underlyingTrade.Security,
-                        new Spread(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.TradeSubmittedOn.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value,
-                            underlyingTrade.ExecutedPrice.Value, underlyingTrade.ExecutedPrice.Value), 5000, market)
+                    new SecurityTick(underlyingTrade.Instrument,
+                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
+                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
                 });
 
             var marketEvent =
@@ -196,7 +195,7 @@ namespace Surveillance.Tests.Rules.High_Volume
 
         private IUniverseEvent Trade()
         {
-            var trade = ((TradeOrderFrame)null).Random();
+            var trade = ((Order)null).Random();
             return new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, trade);
         }
 

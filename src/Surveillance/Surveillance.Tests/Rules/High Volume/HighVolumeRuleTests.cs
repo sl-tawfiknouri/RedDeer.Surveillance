@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
 using DomainV2.Equity;
 using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using DomainV2.Scheduling;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -12,7 +13,6 @@ using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 
@@ -91,8 +91,8 @@ namespace Surveillance.Tests.Rules.High_Volume
             var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _logger);
 
             var trade = Trade();
-            var underlyingTrade = (TradeOrderFrame)trade.UnderlyingEvent;
-            underlyingTrade.OrderStatus = OrderStatus.Fulfilled;
+            var underlyingTrade = (Order)trade.UnderlyingEvent;
+            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
             underlyingTrade.FulfilledVolume = 10;
             underlyingTrade.StatusChangedOn = DateTime.UtcNow;
             var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");

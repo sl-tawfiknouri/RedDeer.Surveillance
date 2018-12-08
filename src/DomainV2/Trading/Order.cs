@@ -7,6 +7,11 @@ namespace DomainV2.Trading
 {
     public class Order
     {
+        public Order()
+        {
+            // used for extension method only
+        }
+
         public Order(
             FinancialInstrument instrument,
             Market market,
@@ -65,34 +70,34 @@ namespace DomainV2.Trading
             Trades = trades ?? new Trade[0];
         }
 
-        public FinancialInstrument Instrument { get; }
-        public Market Market { get; }
+        public FinancialInstrument Instrument { get; set; }
+        public Market Market { get; set; }
 
-        public int? ReddeerOrderId { get; } // primary key
-        public string OrderId { get; } // the client id for the order
-        public DateTime? OrderPlacedDate { get; }
-        public DateTime? OrderBookedDate { get; }
-        public DateTime? OrderAmendedDate { get; }
-        public DateTime? OrderRejectedDate { get; }
-        public DateTime? OrderCancelledDate { get; }
-        public DateTime? OrderFilledDate { get; }
-        public OrderTypes OrderType { get; }
-        public OrderPositions OrderPosition { get; }
-        public Currency OrderCurrency { get; }
-        public CurrencyAmount? OrderLimitPrice { get; }
-        public CurrencyAmount? OrderAveragePrice { get; }
-        public long? OrderOrderedVolume { get; }
-        public long? OrderFilledVolume { get; }
-        public string OrderPortfolioManager { get; }
-        public string OrderTraderId { get; }
-        public string OrderExecutingBroker { get; }
-        public string OrderClearingAgent { get; }
-        public string OrderDealingInstructions { get; }
-        public string OrderStrategy { get; }
-        public string OrderRationale { get; }
-        public string OrderFund { get; }
-        public string OrderClientAccountAttributionId { get; }
-        public IReadOnlyCollection<Trade> Trades { get; }
+        public int? ReddeerOrderId { get; set; } // primary key
+        public string OrderId { get; set; } // the client id for the order
+        public DateTime? OrderPlacedDate { get; set; }
+        public DateTime? OrderBookedDate { get; set; }
+        public DateTime? OrderAmendedDate { get; set; }
+        public DateTime? OrderRejectedDate { get; set; }
+        public DateTime? OrderCancelledDate { get; set; }
+        public DateTime? OrderFilledDate { get; set; }
+        public OrderTypes OrderType { get; set; }
+        public OrderPositions OrderPosition { get; set; }
+        public Currency OrderCurrency { get; set; }
+        public CurrencyAmount? OrderLimitPrice { get; set; }
+        public CurrencyAmount? OrderAveragePrice { get; set; }
+        public long? OrderOrderedVolume { get; set; }
+        public long? OrderFilledVolume { get; set; }
+        public string OrderPortfolioManager { get; set; }
+        public string OrderTraderId { get; set; }
+        public string OrderExecutingBroker { get; set; }
+        public string OrderClearingAgent { get; set; }
+        public string OrderDealingInstructions { get; set; }
+        public string OrderStrategy { get; set; }
+        public string OrderRationale { get; set; }
+        public string OrderFund { get; set; }
+        public string OrderClientAccountAttributionId { get; set; }
+        public IReadOnlyCollection<Trade> Trades { get; set; }
 
         // Batch properties
         public bool IsInputBatch { get; set; }

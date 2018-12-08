@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using Domain.Trades.Orders;
-using DomainV2.Equity;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using Surveillance.Mappers;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
@@ -22,7 +20,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         private ICaseMessageSender _messageSender;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IHighProfitsRuleParameters _parameters;
-        private Security _security;
+        private FinancialInstrument _security;
 
         [SetUp]
         public void Setup()
@@ -33,7 +31,13 @@ namespace Surveillance.Tests.Rules.HighProfits
             A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
 
             _logger = A.Fake<ILogger<HighProfitMessageSender>>();
-            _security = new Security(new SecurityIdentifiers("id", "id", "id", "id", "id", "id", "id", "id", "id", "id"), "security", "cfi", "issuer-identifier");
+            _security =
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers("id", "id", "id", "id", "id", "id", "id", "id", "id", "id"),
+                    "security",
+                    "cfi", 
+                    "issuer-identifier");
         }
 
         [Test]
@@ -41,18 +45,17 @@ namespace Surveillance.Tests.Rules.HighProfits
         public void DoesSendExchangeRateMessage_AsExpected()
         {
             var messageSender = new HighProfitMessageSender(
-                new TradeOrderDataItemDtoMapper(),
                 _logger,
                 _messageSender);
 
             var exchangeRateProfitBreakdown =
                 new ExchangeRateProfitBreakdown(
-                    new TradePosition(new List<TradeOrderFrame>()),
-                    new TradePosition(new List<TradeOrderFrame>()),
+                    new TradePosition(new List<Order>()),
+                    new TradePosition(new List<Order>()),
                     10m,
                     1m,
-                    "USD",
-                    "GBP");
+                    new DomainV2.Financial.Currency("USD"),
+                    new DomainV2.Financial.Currency("GBP"));
 
             var breach =
                 new HighProfitRuleBreach(
@@ -63,7 +66,7 @@ namespace Surveillance.Tests.Rules.HighProfits
                     _security,
                     false,
                     false,
-                    new TradePosition(new List<TradeOrderFrame>()),
+                    new TradePosition(new List<Order>()),
                     false,
                     exchangeRateProfitBreakdown);
 

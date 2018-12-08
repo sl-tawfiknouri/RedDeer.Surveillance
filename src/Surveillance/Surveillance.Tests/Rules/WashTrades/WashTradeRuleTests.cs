@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -93,7 +94,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var trades = new List<TradeOrderFrame> {new TradeOrderFrame().Random()};
+            var trades = new List<Order> {new Order().Random()};
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, false);
@@ -113,17 +114,17 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(19);
-            var tr2 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(19);
+            var tr2 = new Order().Random(21);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
 
-            tr1.ExecutedPrice = tr2.ExecutedPrice;
-            tr1.FulfilledVolume = 2000;
-            tr2.FulfilledVolume = 1000;
+            tr1.OrderAveragePrice = tr2.OrderAveragePrice;
+            tr1.OrderFilledVolume = 2000;
+            tr2.OrderFilledVolume = 1000;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2 };
+            var trades = new List<Order> { tr1, tr2 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, false);
@@ -143,17 +144,17 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(19);
-            var tr2 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(19);
+            var tr2 = new Order().Random(21);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
 
-            tr1.ExecutedPrice = tr2.ExecutedPrice;
-            tr1.FulfilledVolume = 950;
-            tr2.FulfilledVolume = 1000;
+            tr1.OrderAveragePrice = tr2.OrderAveragePrice;
+            tr1.OrderFilledVolume = 950;
+            tr2.OrderFilledVolume = 1000;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2 };
+            var trades = new List<Order> { tr1, tr2 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
@@ -174,23 +175,23 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(21);
-            var tr2 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(21);
+            var tr2 = new Order().Random(21);
 
-            var tr3 = new TradeOrderFrame().Random(10);
-            var tr4 = new TradeOrderFrame().Random(9);
+            var tr3 = new Order().Random(10);
+            var tr4 = new Order().Random(9);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
-            tr1.FulfilledVolume = 950;
-            tr2.FulfilledVolume = 1000;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderFilledVolume = 950;
+            tr2.OrderFilledVolume = 1000;
 
-            tr3.Position = OrderPosition.Buy;
-            tr4.Position = OrderPosition.Sell;
-            tr4.FulfilledVolume = 950;
-            tr3.FulfilledVolume = 1500;
+            tr3.OrderPosition = OrderPositions.BUY;
+            tr4.OrderPosition = OrderPositions.SELL;
+            tr4.OrderFilledVolume = 950;
+            tr3.OrderFilledVolume = 1500;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2, tr3, tr4 };
+            var trades = new List<Order> { tr1, tr2, tr3, tr4 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
@@ -211,23 +212,23 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(21);
-            var tr2 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(21);
+            var tr2 = new Order().Random(21);
 
-            var tr3 = new TradeOrderFrame().Random(100);
-            var tr4 = new TradeOrderFrame().Random(101);
+            var tr3 = new Order().Random(100);
+            var tr4 = new Order().Random(101);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
-            tr1.FulfilledVolume = 950;
-            tr2.FulfilledVolume = 1000;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderFilledVolume = 950;
+            tr2.OrderFilledVolume = 1000;
 
-            tr3.Position = OrderPosition.Buy;
-            tr4.Position = OrderPosition.Sell;
-            tr4.FulfilledVolume = 1500;
-            tr3.FulfilledVolume = 1500;
+            tr3.OrderPosition = OrderPositions.BUY;
+            tr4.OrderPosition = OrderPositions.SELL;
+            tr4.OrderFilledVolume = 1500;
+            tr3.OrderFilledVolume = 1500;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2, tr3, tr4 };
+            var trades = new List<Order> { tr1, tr2, tr3, tr4 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
@@ -248,26 +249,26 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(21);
-            var tr2 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(21);
+            var tr2 = new Order().Random(21);
 
-            var tr3 = new TradeOrderFrame().Random(100);
-            var tr4 = new TradeOrderFrame().Random(101);
+            var tr3 = new Order().Random(100);
+            var tr4 = new Order().Random(101);
 
-            var tr5 = new TradeOrderFrame().Random(50);
-            var tr6 = new TradeOrderFrame().Random(70);
+            var tr5 = new Order().Random(50);
+            var tr6 = new Order().Random(70);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
-            tr1.FulfilledVolume = 950;
-            tr2.FulfilledVolume = 1000;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderFilledVolume = 950;
+            tr2.OrderFilledVolume = 1000;
 
-            tr3.Position = OrderPosition.Buy;
-            tr4.Position = OrderPosition.Sell;
-            tr4.FulfilledVolume = 1500;
-            tr3.FulfilledVolume = 1500;
+            tr3.OrderPosition = OrderPositions.BUY;
+            tr4.OrderPosition = OrderPositions.SELL;
+            tr4.OrderFilledVolume = 1500;
+            tr3.OrderFilledVolume = 1500;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2, tr3, tr4, tr5, tr6 };
+            var trades = new List<Order> { tr1, tr2, tr3, tr4, tr5, tr6 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
@@ -289,33 +290,33 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _logger);
 
-            var tr1 = new TradeOrderFrame().Random(21);
-            var tr2 = new TradeOrderFrame().Random(21);
-            var tr11 = new TradeOrderFrame().Random(21);
-            var tr22 = new TradeOrderFrame().Random(21);
+            var tr1 = new Order().Random(21);
+            var tr2 = new Order().Random(21);
+            var tr11 = new Order().Random(21);
+            var tr22 = new Order().Random(21);
 
 
-            var tr3 = new TradeOrderFrame().Random(100);
-            var tr4 = new TradeOrderFrame().Random(101);
+            var tr3 = new Order().Random(100);
+            var tr4 = new Order().Random(101);
 
-            var tr5 = new TradeOrderFrame().Random(50);
-            var tr6 = new TradeOrderFrame().Random(70);
+            var tr5 = new Order().Random(50);
+            var tr6 = new Order().Random(70);
 
-            tr1.Position = OrderPosition.Buy;
-            tr2.Position = OrderPosition.Sell;
-            tr1.FulfilledVolume = 950;
-            tr2.FulfilledVolume = 1000;
-            tr11.Position = OrderPosition.Buy;
-            tr22.Position = OrderPosition.Sell;
-            tr11.FulfilledVolume = 950;
-            tr22.FulfilledVolume = 1000;
+            tr1.OrderPosition = OrderPositions.BUY;
+            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderFilledVolume = 950;
+            tr2.OrderFilledVolume = 1000;
+            tr11.OrderPosition = OrderPositions.BUY;
+            tr22.OrderPosition = OrderPositions.SELL;
+            tr11.OrderFilledVolume = 950;
+            tr22.OrderFilledVolume = 1000;
 
-            tr3.Position = OrderPosition.Buy;
-            tr4.Position = OrderPosition.Sell;
-            tr4.FulfilledVolume = 1500;
-            tr3.FulfilledVolume = 1500;
+            tr3.OrderPosition = OrderPositions.BUY;
+            tr4.OrderPosition = OrderPositions.SELL;
+            tr4.OrderFilledVolume = 1500;
+            tr3.OrderFilledVolume = 1500;
 
-            var trades = new List<TradeOrderFrame> { tr1, tr2, tr3, tr4, tr5, tr6, tr11, tr22 };
+            var trades = new List<Order> { tr1, tr2, tr3, tr4, tr5, tr6, tr11, tr22 };
             var result = rule.ClusteringTrades(trades);
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);

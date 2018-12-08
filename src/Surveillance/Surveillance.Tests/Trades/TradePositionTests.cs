@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
-using DomainV2.Equity;
 using DomainV2.Financial;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -24,13 +23,13 @@ namespace Surveillance.Tests.Trades
         [Test]
         public void CancellationRatioByTradeCount_ReturnsExpected()
         {
-            var tof = new List<TradeOrderFrame>
+            var tof = new List<Order>
             {
                 TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled)
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled)
             };
 
             var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
@@ -43,13 +42,13 @@ namespace Surveillance.Tests.Trades
         [Test]
         public void CancellationRatioByTradeCountNotHigh_ReturnsExpected()
         {
-            var tof = new List<TradeOrderFrame>
+            var tof = new List<Order>
             {
                 TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled)
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled)
             };
 
             var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
@@ -62,13 +61,13 @@ namespace Surveillance.Tests.Trades
         [Test]
         public void CancellationRatioByTradeCountIsHigh_ReturnsExpected()
         {
-            var tof = new List<TradeOrderFrame>
+            var tof = new List<Order>
             {
                 TradeFrame(OrderStatus.Cancelled),
                 TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled)
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled)
             };
 
             var tradePosition = new TradePositionCancellations(tof, null, 0.3m, _logger);
@@ -82,16 +81,16 @@ namespace Surveillance.Tests.Trades
         public void CancellationRatioByPositionSizeIsHigh_ReturnsExpected()
         {
             var bigPosition = TradeFrame(OrderStatus.Cancelled);
-            bigPosition.FulfilledVolume = bigPosition.FulfilledVolume * 100;
-            bigPosition.OrderedVolume = bigPosition.FulfilledVolume * 100;
+            bigPosition.OrderFilledVolume = bigPosition.OrderFilledVolume * 100;
+            bigPosition.OrderOrderedVolume = bigPosition.OrderFilledVolume * 100;
 
-            var tof = new List<TradeOrderFrame>
+            var tof = new List<Order>
             {
                 bigPosition,
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled)
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled)
             };
 
             var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
@@ -104,16 +103,16 @@ namespace Surveillance.Tests.Trades
         [Test]
         public void CancellationRatioByPositionSizeNotHigh_ReturnsExpected()
         {
-            var bigPosition = TradeFrame(OrderStatus.Fulfilled);
-            bigPosition.FulfilledVolume = bigPosition.FulfilledVolume * 100;
+            var bigPosition = TradeFrame(OrderStatus.Filled);
+            bigPosition.OrderFilledVolume = bigPosition.OrderFilledVolume * 100;
 
-            var tof = new List<TradeOrderFrame>
+            var tof = new List<Order>
             {
                 bigPosition,
                 TradeFrame(OrderStatus.Cancelled),
                 TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled)
+                TradeFrame(OrderStatus.Filled),
+                TradeFrame(OrderStatus.Filled)
             };
 
             var tradePosition = new TradePositionCancellations(tof, 0.8m, null, _logger);
@@ -123,28 +122,39 @@ namespace Surveillance.Tests.Trades
             Assert.AreEqual(result, false);
         }
 
-        private TradeOrderFrame TradeFrame(OrderStatus status)
+        private Order TradeFrame(OrderStatus status)
         {
             var securityIdentifiers =
-                new SecurityIdentifiers(string.Empty, "reddeer id", "client id", "1234567", "12345678912", "figi", "cusip", "test", "test lei", "ticker");
+                new InstrumentIdentifiers(
+                    string.Empty,
+                    "reddeer id",
+                    "client id",
+                    "1234567",
+                    "12345678912",
+                    "figi",
+                    "cusip",
+                    "test",
+                    "test lei",
+                    "ticker");
 
             var security =
-                new Security(
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
                     securityIdentifiers,
                     "Test Security",
                     "CFI",
                     "Issuer Identifier");
 
-            return new TradeOrderFrame(
+            return new Order(
                 null,
-                OrderType.Market,
-                new Market(new Market.MarketId("XLON"), "XLON"),
+                OrderTypes.MARKET,
+                new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE),
                 security,
                 null,
                 new CurrencyAmount(1000, "GBP"), 
                 1000,
                 1000,
-                OrderPosition.Buy,
+                OrderPositions.BUY,
                 status,
                 DateTime.Now,
                 DateTime.Now,

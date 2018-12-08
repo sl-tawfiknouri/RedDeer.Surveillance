@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
 using DomainV2.Financial;
+using DomainV2.Trading;
 using NUnit.Framework;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;
@@ -55,15 +55,15 @@ namespace Surveillance.Tests.Rules.WashTrades
         {
             var pairer = new WashTradePositionPairer();
 
-            var buy = (new TradeOrderFrame()).Random();
-            var sell = (new TradeOrderFrame()).Random();
+            var buy = (new Order()).Random();
+            var sell = (new Order()).Random();
 
-            buy.Position = OrderPosition.Buy;
-            sell.Position = OrderPosition.Sell;
+            buy.OrderPosition = OrderPositions.BUY;
+            sell.OrderPosition = OrderPositions.SELL;
 
-            buy.ExecutedPrice = sell.ExecutedPrice;
+            buy.OrderAveragePrice = sell.OrderAveragePrice;
 
-            var tradeList = new List<TradeOrderFrame>{ buy, sell };
+            var tradeList = new List<Order>{ buy, sell };
 
             var results = pairer.PairUp(tradeList, _parameters);
 
@@ -82,22 +82,22 @@ namespace Surveillance.Tests.Rules.WashTrades
         {
             var pairer = new WashTradePositionPairer();
 
-            var buy1 = (new TradeOrderFrame()).Random();
-            var sell1 = (new TradeOrderFrame()).Random();
+            var buy1 = (new Order()).Random();
+            var sell1 = (new Order()).Random();
 
-            buy1.Position = OrderPosition.Buy;
-            sell1.Position = OrderPosition.Sell;
-            buy1.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.01m, sell1.ExecutedPrice.Value.Currency);
+            buy1.OrderPosition = OrderPositions.BUY;
+            sell1.OrderPosition = OrderPositions.SELL;
+            buy1.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.01m, sell1.OrderAveragePrice.Value.Currency);
 
-            var buy2 = (new TradeOrderFrame()).Random();
-            var sell2 = (new TradeOrderFrame()).Random();
+            var buy2 = (new Order()).Random();
+            var sell2 = (new Order()).Random();
 
-            buy2.Position = OrderPosition.Buy;
-            sell2.Position = OrderPosition.Sell;
-            sell2.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.20m, sell1.ExecutedPrice.Value.Currency);
-            buy2.ExecutedPrice = new CurrencyAmount(sell2.ExecutedPrice.Value.Value * 1.01m, sell2.ExecutedPrice.Value.Currency);
+            buy2.OrderPosition = OrderPositions.BUY;
+            sell2.OrderPosition = OrderPositions.SELL;
+            sell2.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.20m, sell1.OrderAveragePrice.Value.Currency);
+            buy2.OrderAveragePrice = new CurrencyAmount(sell2.OrderAveragePrice.Value.Value * 1.01m, sell2.OrderAveragePrice.Value.Currency);
 
-            var tradeList = new List<TradeOrderFrame> { buy1, sell1, buy2, sell2 };
+            var tradeList = new List<Order> { buy1, sell1, buy2, sell2 };
 
             var results = pairer.PairUp(tradeList, _parameters);
 
@@ -120,51 +120,51 @@ namespace Surveillance.Tests.Rules.WashTrades
         {
             var pairer = new WashTradePositionPairer();
 
-            var buy1 = (new TradeOrderFrame()).Random();
-            var sell1 = (new TradeOrderFrame()).Random();
+            var buy1 = (new Order()).Random();
+            var sell1 = (new Order()).Random();
 
-            buy1.Position = OrderPosition.Buy;
-            sell1.Position = OrderPosition.Sell;
-            buy1.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.01m, sell1.ExecutedPrice.Value.Currency);
+            buy1.OrderPosition = OrderPositions.BUY;
+            sell1.OrderPosition = OrderPositions.SELL;
+            buy1.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.01m, sell1.OrderAveragePrice.Value.Currency);
 
-            var buy2 = (new TradeOrderFrame()).Random();
-            var sell2 = (new TradeOrderFrame()).Random();
+            var buy2 = (new Order()).Random();
+            var sell2 = (new Order()).Random();
 
-            buy2.Position = OrderPosition.Buy;
-            sell2.Position = OrderPosition.Sell;
-            sell2.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.20m, sell1.ExecutedPrice.Value.Currency);
-            buy2.ExecutedPrice = new CurrencyAmount(sell2.ExecutedPrice.Value.Value * 1.01m, sell2.ExecutedPrice.Value.Currency);
+            buy2.OrderPosition = OrderPositions.BUY;
+            sell2.OrderPosition = OrderPositions.SELL;
+            sell2.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.20m, sell1.OrderAveragePrice.Value.Currency);
+            buy2.OrderAveragePrice = new CurrencyAmount(sell2.OrderAveragePrice.Value.Value * 1.01m, sell2.OrderAveragePrice.Value.Currency);
 
-            var buy3 = (new TradeOrderFrame()).Random();
-            buy3.Position = OrderPosition.Buy;
-            buy3.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.30m, sell2.ExecutedPrice.Value.Currency);
+            var buy3 = (new Order()).Random();
+            buy3.OrderPosition = OrderPositions.BUY;
+            buy3.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.30m, sell2.OrderAveragePrice.Value.Currency);
 
-            var buy4 = (new TradeOrderFrame()).Random();
-            buy4.Position = OrderPosition.Buy;
-            buy4.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.35m, sell2.ExecutedPrice.Value.Currency);
+            var buy4 = (new Order()).Random();
+            buy4.OrderPosition = OrderPositions.BUY;
+            buy4.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.35m, sell2.OrderAveragePrice.Value.Currency);
 
-            var buy5 = (new TradeOrderFrame()).Random();
-            var sell5 = (new TradeOrderFrame()).Random();
-            var sell6 = (new TradeOrderFrame()).Random();
-            var sell7 = (new TradeOrderFrame()).Random();
-            var sell8 = (new TradeOrderFrame()).Random();
-            var sell9 = (new TradeOrderFrame()).Random();
+            var buy5 = (new Order()).Random();
+            var sell5 = (new Order()).Random();
+            var sell6 = (new Order()).Random();
+            var sell7 = (new Order()).Random();
+            var sell8 = (new Order()).Random();
+            var sell9 = (new Order()).Random();
 
-            buy5.Position = OrderPosition.Buy;
-            sell5.Position = OrderPosition.Sell;
-            sell6.Position = OrderPosition.Sell;
-            sell7.Position = OrderPosition.Sell;
-            sell8.Position = OrderPosition.Sell;
-            sell9.Position = OrderPosition.Sell;
+            buy5.OrderPosition = OrderPositions.BUY;
+            sell5.OrderPosition = OrderPositions.SELL;
+            sell6.OrderPosition = OrderPositions.SELL;
+            sell7.OrderPosition = OrderPositions.SELL;
+            sell8.OrderPosition = OrderPositions.SELL;
+            sell9.OrderPosition = OrderPositions.SELL;
 
-            sell5.ExecutedPrice = new CurrencyAmount(sell1.ExecutedPrice.Value.Value * 1.40m, sell1.ExecutedPrice.Value.Currency);
-            sell6.ExecutedPrice = new CurrencyAmount(sell5.ExecutedPrice.Value.Value * 1.01m, sell1.ExecutedPrice.Value.Currency);
-            sell7.ExecutedPrice = new CurrencyAmount(sell5.ExecutedPrice.Value.Value * 1.01m, sell1.ExecutedPrice.Value.Currency);
-            sell8.ExecutedPrice = new CurrencyAmount(sell5.ExecutedPrice.Value.Value * 0.99m, sell1.ExecutedPrice.Value.Currency);
-            sell9.ExecutedPrice = new CurrencyAmount(sell5.ExecutedPrice.Value.Value, sell1.ExecutedPrice.Value.Currency);
-            buy5.ExecutedPrice = new CurrencyAmount(sell5.ExecutedPrice.Value.Value * 1.01m, sell2.ExecutedPrice.Value.Currency);
+            sell5.OrderAveragePrice = new CurrencyAmount(sell1.OrderAveragePrice.Value.Value * 1.40m, sell1.OrderAveragePrice.Value.Currency);
+            sell6.OrderAveragePrice = new CurrencyAmount(sell5.OrderAveragePrice.Value.Value * 1.01m, sell1.OrderAveragePrice.Value.Currency);
+            sell7.OrderAveragePrice = new CurrencyAmount(sell5.OrderAveragePrice.Value.Value * 1.01m, sell1.OrderAveragePrice.Value.Currency);
+            sell8.OrderAveragePrice = new CurrencyAmount(sell5.OrderAveragePrice.Value.Value * 0.99m, sell1.OrderAveragePrice.Value.Currency);
+            sell9.OrderAveragePrice = new CurrencyAmount(sell5.OrderAveragePrice.Value.Value, sell1.OrderAveragePrice.Value.Currency);
+            buy5.OrderAveragePrice = new CurrencyAmount(sell5.OrderAveragePrice.Value.Value * 1.01m, sell2.OrderAveragePrice.Value.Currency);
 
-            var tradeList = new List<TradeOrderFrame> { buy1, sell1, buy2, sell2, buy3, buy4, buy5, sell5, sell6, sell7, sell8, sell9 };
+            var tradeList = new List<Order> { buy1, sell1, buy2, sell2, buy3, buy4, buy5, sell5, sell6, sell7, sell8, sell9 };
 
             var results = pairer.PairUp(tradeList, _parameters);
 

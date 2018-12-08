@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
 using DomainV2.Equity;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -75,17 +75,17 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
-            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
-            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(-1), new object());
 
             rule.OnNext(genesis);
             rule.OnNext(buyEvent);
@@ -100,17 +100,17 @@ namespace Surveillance.Tests.Rules.Layering
         {
             
             var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
-            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
-            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
             rule.OnNext(genesis);
             rule.OnNext(buyEvent);
@@ -125,17 +125,17 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
             var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.TradeSubmittedOn.AddMinutes(-1), new object());
-            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.TradeSubmittedOn, tradeBuy);
-            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.TradeSubmittedOn, tradeSell);
-            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.TradeSubmittedOn.AddMinutes(1), new object());
+            var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
+            var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
+            var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
+            var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
             rule.OnNext(genesis);
             rule.OnNext(buyEvent);
@@ -150,12 +150,12 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
             var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.FulfilledVolume = 987;
             tradeSell.FulfilledVolume = 1019;
@@ -193,15 +193,15 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
             var rule = new LayeringRule(_parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 100;
-            tradeSell.FulfilledVolume = 100;
+            tradeBuy.OrderFilledVolume = 100;
+            tradeSell.OrderFilledVolume = 100;
             var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
@@ -237,21 +237,21 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 300;
-            tradeSell.FulfilledVolume = 5;
+            tradeBuy.OrderFilledVolume = 300;
+            tradeSell.OrderFilledVolume = 5;
             var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
-            var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
+            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<SecurityTick>
                 {
-                    new SecurityTick(tradeBuy.Security,
+                    new SecurityTick(tradeBuy.Instrument,
                         new Spread(tradeBuy.ExecutedPrice.Value, tradeSell.ExecutedPrice.Value,
                             tradeSell.ExecutedPrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.TradeSubmittedOn.AddSeconds(-55), 100000,
@@ -281,15 +281,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 100;
-            tradeSell.FulfilledVolume = 100;
+            tradeBuy.OrderFilledVolume = 100;
+            tradeSell.OrderFilledVolume = 100;
             var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
@@ -325,15 +325,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 100;
-            tradeSell.FulfilledVolume = 100;
+            tradeBuy.OrderFilledVolume = 100;
+            tradeSell.OrderFilledVolume = 100;
             var market = new Market(new Market.MarketId("XLON"), "London Stock Exchange");
 
             var marketData = new ExchangeFrame(market, tradeBuy.TradeSubmittedOn.AddSeconds(-55),
@@ -369,15 +369,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 300;
-            tradeSell.FulfilledVolume = 5;
+            tradeBuy.OrderFilledVolume = 300;
+            tradeSell.OrderFilledVolume = 5;
 
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
@@ -432,15 +432,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 300;
-            tradeSell.FulfilledVolume = 5;
+            tradeBuy.OrderFilledVolume = 300;
+            tradeSell.OrderFilledVolume = 5;
 
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
@@ -495,15 +495,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Sell;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Buy;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 300;
-            tradeSell.FulfilledVolume = 5;
+            tradeBuy.OrderFilledVolume = 300;
+            tradeSell.OrderFilledVolume = 5;
 
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
@@ -558,15 +558,15 @@ namespace Surveillance.Tests.Rules.Layering
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
             var rule = new LayeringRule(parameters, _alertStream, _logger, _ruleCtx);
-            var tradeBuy = ((TradeOrderFrame)null).Random();
-            var tradeSell = ((TradeOrderFrame)null).Random();
-            tradeBuy.Position = OrderPosition.Buy;
-            tradeBuy.OrderStatus = OrderStatus.Fulfilled;
-            tradeSell.Position = OrderPosition.Sell;
-            tradeSell.OrderStatus = OrderStatus.Fulfilled;
+            var tradeBuy = ((Order)null).Random();
+            var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
-            tradeBuy.FulfilledVolume = 300;
-            tradeSell.FulfilledVolume = 5;
+            tradeBuy.OrderFilledVolume = 300;
+            tradeSell.OrderFilledVolume = 5;
 
             tradeBuy.TradeSubmittedOn = new DateTime(2018, 10, 14, 10, 30, 0);
             tradeSell.TradeSubmittedOn = tradeBuy.TradeSubmittedOn.AddSeconds(30);
@@ -600,15 +600,15 @@ namespace Surveillance.Tests.Rules.Layering
 
         private ExchangeFrame SetExchangeFrameToPrice(
             Market market,
-            TradeOrderFrame baseBuyFrame,
-            TradeOrderFrame baseSellFrame,
+            Order baseBuyFrame,
+            Order baseSellFrame,
             decimal price,
             DateTime timestamp)
         {
             return new ExchangeFrame(market, timestamp,
                 new List<SecurityTick>
                 {
-                    new SecurityTick(baseBuyFrame.Security,
+                    new SecurityTick(baseBuyFrame.Instrument,
                         new Spread(baseBuyFrame.ExecutedPrice.Value, baseSellFrame.ExecutedPrice.Value,
                             new CurrencyAmount(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
                         timestamp, 100000,

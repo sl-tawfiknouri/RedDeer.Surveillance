@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using NUnit.Framework;
 using Surveillance.Rules.HighProfits.Calculators;
 using Surveillance.Tests.Helpers;
@@ -13,15 +13,21 @@ namespace Surveillance.Tests.Rules.HighProfits.Calculators
         [Test]
         public void ProfitBreakCalculatesCorrectPercentageDueToWer()
         {
-            var costOne = (new TradeOrderFrame()).Random();
-            var costTwo = (new TradeOrderFrame()).Random();
-            var costPosition = new TradePosition(new List<TradeOrderFrame> { costOne, costTwo });
+            var costOne = (new Order()).Random();
+            var costTwo = (new Order()).Random();
+            var costPosition = new TradePosition(new List<Order> { costOne, costTwo });
 
-            var revenueOne = (new TradeOrderFrame()).Random();
-            var revenueTwo = (new TradeOrderFrame()).Random();
-            var revenuePosition = new TradePosition(new List<TradeOrderFrame> { revenueOne, revenueTwo });
+            var revenueOne = (new Order()).Random();
+            var revenueTwo = (new Order()).Random();
+            var revenuePosition = new TradePosition(new List<Order> { revenueOne, revenueTwo });
 
-            var breakdown = new ExchangeRateProfitBreakdown(costPosition, revenuePosition, 2, 1.5m, "USD", "GBP");
+            var breakdown = new ExchangeRateProfitBreakdown(
+                costPosition,
+                revenuePosition,
+                2, 
+                1.5m,
+                new DomainV2.Financial.Currency("USD"),
+                new DomainV2.Financial.Currency("GBP"));
 
             var x = breakdown.AbsoluteAmountDueToWer();
             var y = breakdown.RelativePercentageDueToWer();

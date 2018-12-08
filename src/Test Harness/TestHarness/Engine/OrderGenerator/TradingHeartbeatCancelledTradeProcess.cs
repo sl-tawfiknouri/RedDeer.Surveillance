@@ -217,30 +217,39 @@ namespace TestHarness.Engine.OrderGenerator
             var volume = (int)((value / security.Spread.Ask.Value) + 1);
             var orderPosition = (OrderPositions)DiscreteUniform.Sample(0, 3);
 
+            var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?) DateTime.UtcNow : null;
+            var filledDate = status == OrderStatus.Filled ? (DateTime?)DateTime.UtcNow : null;
+
             var order =
                 new Order(
-                    null,
-                    OrderTypes.MARKET,
-                    exchange,
                     security.Security,
+                    exchange,
                     null,
+                    Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
+                    DateTime.UtcNow,
+                    null,
+                    null,
+                    cancelledDate,
+                    filledDate,
+                    OrderTypes.MARKET,
+                    orderPosition,
+                    security.Spread.Price.Currency,
+                    security.Spread.Price,
                     security.Spread.Price,
                     volume,
                     volume,
-                    orderPosition,
-                    status,
-                    DateTime.UtcNow,
-                    DateTime.UtcNow,
-                    "Trader-1",
-                    string.Empty,
-                    string.Empty,
-                    "Deal quickly",
-                    "Broker-1",
-                    "Broker-2",
-                    "Trading to use price advantage from spoof",
-                    "Spoofing",
-                    "GBP");
-
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
+            
             return order;
         }
     }

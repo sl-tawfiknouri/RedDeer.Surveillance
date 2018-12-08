@@ -133,19 +133,24 @@ namespace TestHarness.Engine.OrderGenerator
             tradedVolume = (int)((decimal)tradedVolume * 0.04m);
             var tradeTime = latestFrame.TimeStamp;
 
-            var volumeFrame = new Order(
-                null,
-                realisedTrade ? OrderTypes.MARKET : OrderTypes.LIMIT,
-                headSecurity.Market,
+            var volume = new Order(
                 headSecurity.Security,
-                headSecurity.Spread.Price,
-                headSecurity.Spread.Price,
-                realisedTrade ? (int)tradedVolume : 0,
-                (int)tradedVolume,
+                headSecurity.Market,
+                null,
+                Guid.NewGuid().ToString(),
+                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                null,
+                null,
+                realisedTrade ? (DateTime?) null : tradeTime,
+                realisedTrade ? tradeTime.AddMinutes(1) : (DateTime?) null,
+                realisedTrade ? OrderTypes.MARKET : OrderTypes.LIMIT,
                 realisedTrade ? OrderPositions.SELL : OrderPositions.BUY,
-                realisedTrade ? OrderStatus.Filled : OrderStatus.Cancelled,
-                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
-                realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                headSecurity.Spread.Price.Currency,
+                headSecurity.Spread.Price,
+                headSecurity.Spread.Price,
+                realisedTrade ? (int) tradedVolume : 0,
+                realisedTrade ? (int) tradedVolume : 0,
                 null,
                 null,
                 null,
@@ -154,9 +159,10 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
-                headSecurity.Spread.Price.Currency.Value);
+                null,
+                new Trade[0]);
 
-            TradeStream.Add(volumeFrame);
+            TradeStream.Add(volume);
         }
 
         protected override void _TerminateTradingStrategy()

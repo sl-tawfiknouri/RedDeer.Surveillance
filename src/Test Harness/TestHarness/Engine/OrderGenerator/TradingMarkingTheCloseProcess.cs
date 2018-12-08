@@ -212,6 +212,8 @@ namespace TestHarness.Engine.OrderGenerator
                 var timeOffset = _marketDto.MarketCloseTime.Add(-TimeSpan.FromMinutes((2 * i) + 1));
                 var tradeTime = securities.TimeStamp.Date.Add(timeOffset);
 
+
+
                 var volumeFrame = new TradeOrderFrame(
                     null,
                     OrderType.Market,

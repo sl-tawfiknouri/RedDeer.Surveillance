@@ -118,36 +118,43 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
-            var accountId = GenerateProbabilisticIdString();
-            var dealerInstructions = string.Empty;
-            var partyBrokerId = GenerateIdString();
+            var dealerInstructions = "Process Asap";
             var counterPartyBrokerId = GenerateIdString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
             var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
 
+            var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
+            var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;
+            
             return new Order(
-                null,
-                orderType,
-                exchFrame.Exchange,
                 tick.Security,
+                tick.Market,
+                null,
+                Guid.NewGuid().ToString(),
+                orderSubmittedOn,
+                orderSubmittedOn,
+                null,
+                cancelledDate,
+                filledDate,
+                orderStatusLastChanged,
+                OrderTypes.MARKET,
+                position,
+                new Currency(orderCurrency),
                 limit,
                 executedPrice,
                 volume,
                 volume,
-                position,
-                orderStatus,
-                orderStatusLastChanged,
-                orderSubmittedOn,
+                "Mr. Portfolio Manager",
                 traderId,
-                traderClientId,
-                accountId,
-                dealerInstructions,
-                partyBrokerId,
                 counterPartyBrokerId,
+                "Clearing-Bank",
+                dealerInstructions,
+                "long/short",
                 tradeRationale,
                 tradeStrategy,
-                orderCurrency);
+                traderClientId,
+                new Trade[0]);
         }
 
         private string GenerateIdString()

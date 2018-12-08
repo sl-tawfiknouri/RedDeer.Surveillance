@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Trades.Orders;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;

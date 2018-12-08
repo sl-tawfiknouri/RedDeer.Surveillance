@@ -1,12 +1,11 @@
 ﻿using System;
-using NLog;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -26,7 +25,7 @@ namespace TestHarness.Engine.OrderGenerator
         public TradingHeartbeatSpoofingProcess(
             IPulsatingHeartbeat heartbeat,
             ILogger logger,
-            ITradeStrategy<TradeOrderFrame> orderStrategy)
+            ITradeStrategy<Order> orderStrategy)
             : base(logger, orderStrategy)
         {
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
@@ -77,7 +76,7 @@ namespace TestHarness.Engine.OrderGenerator
                 // limited to six as recursion > 8 deep tends to get tough on the stack and raise the risk of a SO error
                 // if you want to increase this beyond 20 update spoofed order code for volume as well.
                 var spoofSize = DiscreteUniform.Sample(1, 6);
-                var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.StatusChangedOn);
+                var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.MostRecentDateEvent());
                 var counterTrade = CounterTrade(spoofSecurity);
 
                 foreach (var item in spoofedOrders)
@@ -89,12 +88,12 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private TradeOrderFrame[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
+        private Order[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
         {
             if (security == null
                 || remainingSpoofedOrders <= 0)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
@@ -108,16 +107,16 @@ namespace TestHarness.Engine.OrderGenerator
             var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
             var tradePlacedOn = statusChangedOn;
 
-            var spoofedTrade = new TradeOrderFrame(
+            var spoofedTrade = new Order(
                 null,
-                OrderType.Limit,
+                OrderTypes.LIMIT,
                 _lastFrame.Exchange,
                 security.Security,
                 limitPrice,
                 limitPrice,
                 volume,
                 volume,
-                OrderPosition.Buy,
+                OrderPositions.BUY,
                 OrderStatus.Cancelled,
                 statusChangedOn,
                 tradePlacedOn,
@@ -137,23 +136,23 @@ namespace TestHarness.Engine.OrderGenerator
                 .ToArray();
         }
 
-        private TradeOrderFrame CounterTrade(SecurityTick security)
+        private Order CounterTrade(SecurityTick security)
         {
             var volumeToTrade = (int)Math.Round(security.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
             var statusChangedOn = DateTime.UtcNow;
             var tradePlacedOn = statusChangedOn;
 
-            return new TradeOrderFrame(
+            return new Order(
                 null,
-                OrderType.Market,
+                OrderTypes.MARKET,
                 _lastFrame.Exchange,
                 security.Security,
                 null,
                 security.Spread.Price,
                 volumeToTrade,
                 volumeToTrade,
-                OrderPosition.Sell,
-                OrderStatus.Fulfilled,
+                OrderPositions.SELL,
+                OrderStatus.Filled,
                 statusChangedOn,
                 tradePlacedOn,
                 "Spoofing-Trader",

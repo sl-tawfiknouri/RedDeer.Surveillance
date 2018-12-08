@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using MathNet.Numerics.Distributions;
-using NLog;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -30,7 +30,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingHeartbeatCancelledTradeProcess(
             ILogger logger,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             IPulsatingHeartbeat heartbeat) 
             : base(logger, orderStrategy)
         {
@@ -80,7 +80,7 @@ namespace TestHarness.Engine.OrderGenerator
                 var cancellationSecurity = _lastFrame.Securities.Skip(selectSecurityToCancelTradesFor).FirstOrDefault();
                 var cancellationOrderTotal = DiscreteUniform.Sample(3, 20);
                 var cancellationOrderTactic = DiscreteUniform.Sample(1, 3);
-                var orders = new TradeOrderFrame[0];
+                var orders = new Order[0];
                 orders = SetCancellationOrder(cancellationSecurity, cancellationOrderTotal, cancellationOrderTactic, orders);
 
                 foreach (var item in orders)
@@ -90,7 +90,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private TradeOrderFrame[] SetCancellationOrder(SecurityTick cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, TradeOrderFrame[] orders)
+        private Order[] SetCancellationOrder(SecurityTick cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, Order[] orders)
         {
             switch (cancellationOrderTactic)
             {
@@ -112,12 +112,12 @@ namespace TestHarness.Engine.OrderGenerator
             return orders;
         }
 
-        private TradeOrderFrame[] CancellationOrdersByValue(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByValue(SecurityTick security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var ordersToCancel = DiscreteUniform.Sample(1, totalOrders);
@@ -126,7 +126,7 @@ namespace TestHarness.Engine.OrderGenerator
             var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeThreshold * ((decimal)(1m / ordersToCancel)) + 1);
             // ReSharper restore RedundantCast
 
-            var orders = new List<TradeOrderFrame>();
+            var orders = new List<Order>();
 
             for (var x = 0; x < ordersToCancel; x++)
             {
@@ -142,12 +142,12 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private TradeOrderFrame[] CancellationOrdersByRatio(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByRatio(SecurityTick security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var ordersToCancel = Math.Min((int)(totalOrders * _cancellationOfOrdersSubmittedThresholdPercentage) + 1, totalOrders);
@@ -156,7 +156,7 @@ namespace TestHarness.Engine.OrderGenerator
             var minimumPerOrderValue = (int)((decimal)_valueOfCancelledTradeRatioThreshold * ((decimal)(1m / ordersToCancel)) + 1);
             // ReSharper restore RedundantCast
 
-            var orders = new List<TradeOrderFrame>();
+            var orders = new List<Order>();
 
             for (var x = 0; x < ordersToCancel; x++)
             {
@@ -172,12 +172,12 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private TradeOrderFrame[] CancellationOrdersByPercentOfVolume(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByPercentOfVolume(SecurityTick security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var cancelledOrderPositionSize = 10000000;
@@ -189,7 +189,7 @@ namespace TestHarness.Engine.OrderGenerator
             var remainingOrderValuePerOrder = (int)((decimal)remainingOrderValue * ((decimal)(1m / ordersToFulfill)) + 1);
             // ReSharper restore RedundantCast
 
-            var orders = new List<TradeOrderFrame>();
+            var orders = new List<Order>();
 
             for (var x = 0; x < ordersToCancel; x++)
             {
@@ -204,7 +204,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private TradeOrderFrame[] SingularCancelledOrder(SecurityTick security, Market exchange)
+        private Order[] SingularCancelledOrder(SecurityTick security, Market exchange)
         {
             var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
@@ -212,15 +212,15 @@ namespace TestHarness.Engine.OrderGenerator
             return new[] { order };
         }
 
-        private TradeOrderFrame OrderForValue(OrderStatus status, decimal value, SecurityTick security, Market exchange)
+        private Order OrderForValue(OrderStatus status, decimal value, SecurityTick security, Market exchange)
         {
             var volume = (int)((value / security.Spread.Ask.Value) + 1);
-            var orderPosition = (OrderPosition)DiscreteUniform.Sample(0, 3);
+            var orderPosition = (OrderPositions)DiscreteUniform.Sample(0, 3);
 
             var order =
-                new TradeOrderFrame(
+                new Order(
                     null,
-                    OrderType.Market,
+                    OrderTypes.MARKET,
                     exchange,
                     security.Security,
                     null,

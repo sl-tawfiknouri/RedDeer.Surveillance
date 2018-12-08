@@ -15,12 +15,12 @@ namespace TestHarness.Engine.EquitiesGenerator
     public class EquitiesFileRelayProcess : IEquityDataGenerator
     {
         private readonly string _filePath;
-        private readonly ILogger<EquitiesFileRelayProcess> _logger;
+        private readonly ILogger _logger;
         private readonly ISecurityCsvToDtoMapper _securityMapper;
 
         public EquitiesFileRelayProcess(
             string filePath,
-            ILogger<EquitiesFileRelayProcess> logger,
+            ILogger logger,
             ISecurityCsvToDtoMapper securityMapper)
         {
             _filePath = filePath ?? string.Empty;

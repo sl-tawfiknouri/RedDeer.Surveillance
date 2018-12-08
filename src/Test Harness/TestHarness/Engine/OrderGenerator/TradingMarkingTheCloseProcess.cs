@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -24,14 +22,14 @@ namespace TestHarness.Engine.OrderGenerator
         private DateTime? _executeOn;
 
         public TradingMarkingTheCloseProcess(
-            IReadOnlyCollection<string> _markingtheCloseTargetSedols,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            IReadOnlyCollection<string> markingTheCloseTargetSedols,
+            ITradeStrategy<Order> orderStrategy,
             ExchangeDto marketDto,
             ILogger logger)
             : base(logger, orderStrategy)
         {
             _markingTheCloseTargetSedols =
-                _markingtheCloseTargetSedols
+                markingTheCloseTargetSedols
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();

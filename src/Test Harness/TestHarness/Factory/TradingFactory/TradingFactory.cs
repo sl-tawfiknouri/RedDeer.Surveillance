@@ -1,7 +1,7 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator;

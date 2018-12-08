@@ -1,11 +1,10 @@
-﻿using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Finance;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -21,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
         private bool _hasProcessedCount;
 
         public TradingCancelledOrderTradeProcess(
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             IReadOnlyCollection<string> cancelTargetSedols,
             DateTime triggerCount,
             ILogger logger)
@@ -115,13 +114,13 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var security = correctSecurity.FirstOrDefault();
-            var frames = new List<TradeOrderFrame>();
+            var frames = new List<Order>();
 
             var totalPurchase = security.DailyVolume.Traded * 0.1m;
             var initialBuyShare = totalPurchase * positionPercentageToCancel;
             var splitShare = ((totalPurchase - initialBuyShare) * (1m / 9m)) - 1;
 
-            var cancelledFrame = new TradeOrderFrame(
+            var cancelledFrame = new Order(
                 null,
                 OrderType.Limit,
                 value.Exchange,
@@ -148,7 +147,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             for (var i = 1; i < 10; i++)
             {
-                var frame = new TradeOrderFrame(
+                var frame = new Order(
                     null,
                     OrderType.Limit,
                     value.Exchange,
@@ -204,10 +203,10 @@ namespace TestHarness.Engine.OrderGenerator
 
             var security = correctSecurity.FirstOrDefault();
 
-            var frames = new List<TradeOrderFrame>();
+            var frames = new List<Order>();
             for (var i = 0; i < 10; i++)
             {
-                var frame = new TradeOrderFrame(
+                var frame = new Order(
                     null,
                     OrderType.Limit,
                     value.Exchange,

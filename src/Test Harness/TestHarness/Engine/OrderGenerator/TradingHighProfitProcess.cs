@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
 
@@ -19,7 +19,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingHighProfitProcess(
             IReadOnlyCollection<DataGenerationPlan> plan,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
@@ -134,7 +134,7 @@ namespace TestHarness.Engine.OrderGenerator
             tradedVolume = (int)((decimal)tradedVolume * 0.05m);
             var tradeTime = latestFrame.TimeStamp;
 
-            var volumeFrame = new TradeOrderFrame(
+            var volumeFrame = new Order(
                 null,
                 OrderType.Market,
                 headSecurity.Market,

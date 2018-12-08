@@ -1,5 +1,5 @@
 ﻿using System;
-using NLog;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;

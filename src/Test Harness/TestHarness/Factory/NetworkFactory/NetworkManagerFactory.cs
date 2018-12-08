@@ -1,5 +1,5 @@
-﻿using NLog;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;

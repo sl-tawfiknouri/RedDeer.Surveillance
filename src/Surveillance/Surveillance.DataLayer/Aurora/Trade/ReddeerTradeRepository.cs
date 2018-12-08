@@ -248,7 +248,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         dto.UnderlyingSecurityCusip,
                         dto.UnderlyingSecurityLei,
                         dto.UnderlyingSecurityExchangeSymbol,
-                        dto.UnderlyingSecurityBloombergTicker),
+                        dto.UnderlyingSecurityBloombergTicker,
+                        dto.UnderlyingClientIdentifier),
                     dto.SecurityName,
                     dto.SecurityCfi,
                     dto.SecurityIssuerIdentifier,
@@ -348,6 +349,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 UnderlyingSecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
                 UnderlyingSecurityLei = order?.Instrument.Identifiers.Lei;
                 UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+                UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
 
                 ReddeerOrderId = order.ReddeerOrderId;
                 OrderId = order.OrderId;
@@ -427,6 +429,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public string UnderlyingSecurityExchangeSymbol { get; set; }
             public string UnderlyingSecurityLei { get; set; }
             public string UnderlyingSecurityBloombergTicker { get; set; }
+            public string UnderlyingClientIdentifier { get; set; }
 
 
             public int? ReddeerOrderId { get; set; } // primary key

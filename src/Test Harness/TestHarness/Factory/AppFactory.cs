@@ -1,7 +1,6 @@
-﻿using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+﻿using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
+using Microsoft.Extensions.Logging;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Display;
@@ -20,7 +19,6 @@ using TestHarness.Factory.TradingSpoofingFactory;
 using TestHarness.Factory.TradingSpoofingFactory.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
-using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradeHighProfitFactory.Interfaces;

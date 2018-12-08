@@ -25,7 +25,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
-        private readonly ILogger<EquitiesDataGenerationMarkovProcess> _logger;
+        private readonly ILogger _logger;
 
         private readonly object _stateTransitionLock = new object();
         private readonly object _walkingLock = new object();
@@ -36,7 +36,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             IEquityDataGeneratorStrategy dataStrategy,
             IReadOnlyCollection<DataGenerationPlan> plan,
             TimeSpan tickSeparation,
-            ILogger<EquitiesDataGenerationMarkovProcess> logger)
+            ILogger logger)
         {
             _dataStrategy =
                 dataStrategy
@@ -182,7 +182,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             lock (_stateTransitionLock)
             {
                 _walkInitiated = false;
-                _logger.Log(LogLevel.Info, "Random walk generator terminating walk");
+                _logger.LogInformation("Random walk generator terminating walk");
             }
         }
 

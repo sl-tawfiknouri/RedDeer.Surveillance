@@ -1,9 +1,9 @@
 ﻿using System;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 
 namespace TestHarness.Engine.OrderStorage.Interfaces
 {
-    public interface IOrderFileStorageProcess : IObserver<TradeOrderFrame>
+    public interface IOrderFileStorageProcess : IObserver<Order>
     {
     }
 }

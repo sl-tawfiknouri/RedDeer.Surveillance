@@ -1,5 +1,5 @@
-﻿using NLog;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;

@@ -31,6 +31,7 @@ ALTER TABLE financialinstruments ADD UnderlyingCusip NVARCHAR(9) NULL;
 ALTER TABLE financialinstruments ADD UnderlyingLei NVARCHAR(20) NULL;
 ALTER TABLE financialinstruments ADD UnderlyingExchangeSymbol NVARCHAR(20) NULL;
 ALTER TABLE financialinstruments ADD UnderlyingBloombergTicker NVARCHAR(254) NULL;
+ALTER TABLE financialinstruments ADD UnderlyingClientIdentifier NVARCHAR(254) NULL;
 
 CREATE TABLE instrumenttypes(Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, Descriptions NVARCHAR(254));
 INSERT INTO instrumenttypes(Descriptions) VALUES ("None"), ("Market"), ("Limit");

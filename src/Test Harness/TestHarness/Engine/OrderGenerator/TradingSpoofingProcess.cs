@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -24,7 +22,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingSpoofingProcess(
             IReadOnlyCollection<string> spoofingTargetSedols,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
@@ -150,7 +148,7 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 var tradeTime = latestFrame.TimeStamp;
 
-                var volumeFrame = new TradeOrderFrame(
+                var volumeFrame = new Order(
                     null,
                     i == 0 ? OrderType.Market : OrderType.Limit,
                     headSecurity.Market,

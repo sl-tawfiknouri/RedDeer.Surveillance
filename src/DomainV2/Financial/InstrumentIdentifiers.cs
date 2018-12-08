@@ -31,6 +31,7 @@ namespace DomainV2.Financial
                 string.Empty,
                 string.Empty,
                 string.Empty,
+                string.Empty,
                 string.Empty)
         { }
 
@@ -51,7 +52,8 @@ namespace DomainV2.Financial
             string underlyingCusip,
             string underlyingLei,
             string underlyingExchangeSymbol,
-            string underlyingBloombergTicker)
+            string underlyingBloombergTicker,
+            string underlyingClientIdentifier)
         {
             Id = id ?? string.Empty;
             ReddeerId = reddeerId ?? string.Empty;
@@ -71,6 +73,7 @@ namespace DomainV2.Financial
             UnderlyingLei = underlyingLei ?? string.Empty;
             UnderlyingExchangeSymbol = underlyingExchangeSymbol ?? string.Empty;
             UnderlyingBloombergTicker = underlyingBloombergTicker ?? string.Empty;
+            UnderlyingClientIdentifier = underlyingClientIdentifier ?? string.Empty;
         }
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace DomainV2.Financial
         public string UnderlyingLei { get; }
         public string UnderlyingExchangeSymbol { get; }
         public string UnderlyingBloombergTicker { get; }
-
+        public string UnderlyingClientIdentifier { get; }
 
         public override int GetHashCode()
         {

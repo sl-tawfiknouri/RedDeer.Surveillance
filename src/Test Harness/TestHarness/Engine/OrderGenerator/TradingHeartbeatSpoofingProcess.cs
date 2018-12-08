@@ -107,28 +107,35 @@ namespace TestHarness.Engine.OrderGenerator
             var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
             var tradePlacedOn = statusChangedOn;
 
-            var spoofedTrade = new Order(
-                null,
-                OrderTypes.LIMIT,
-                _lastFrame.Exchange,
-                security.Security,
-                limitPrice,
-                limitPrice,
-                volume,
-                volume,
-                OrderPositions.BUY,
-                OrderStatus.Cancelled,
-                statusChangedOn,
-                tradePlacedOn,
-                "Spoofing-Trader",
-                string.Empty,
-                "Account-1",
-                "Buy",
-                "Broker-1",
-                "Broker-2",
-                "Spoofing limit buys",
-                "Spoofing",
-                "GBP");
+            var spoofedTrade =
+                new Order(
+                    security.Security,
+                    security.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradePlacedOn,
+                    tradePlacedOn,
+                    null,
+                    null,
+                    statusChangedOn,
+                    null,
+                    OrderTypes.LIMIT,
+                    OrderPositions.BUY,
+                    security.Spread.Price.Currency,
+                    limitPrice,
+                    limitPrice,
+                    volume,
+                    volume,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
             return 
                 new[] { spoofedTrade }
@@ -142,28 +149,37 @@ namespace TestHarness.Engine.OrderGenerator
             var statusChangedOn = DateTime.UtcNow;
             var tradePlacedOn = statusChangedOn;
 
-            return new Order(
-                null,
-                OrderTypes.MARKET,
-                _lastFrame.Exchange,
-                security.Security,
-                null,
-                security.Spread.Price,
-                volumeToTrade,
-                volumeToTrade,
-                OrderPositions.SELL,
-                OrderStatus.Filled,
-                statusChangedOn,
-                tradePlacedOn,
-                "Spoofing-Trader",
-                string.Empty,
-                "Account-1",
-                "Sell",
-                "Broker-1",
-                "Broker-2",
-                "Spoofing counter trade",
-                "Spoofing",
-                "GBP");
+            var spoofedTrade =
+                new Order(
+                    security.Security,
+                    _lastFrame.Exchange,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradePlacedOn,
+                    tradePlacedOn,
+                    null,
+                    null,
+                    null,
+                    statusChangedOn,
+                    OrderTypes.MARKET,
+                    OrderPositions.SELL,
+                    security.Spread.Price.Currency,
+                    security.Spread.Price,
+                    security.Spread.Price,
+                    volumeToTrade,
+                    volumeToTrade,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
+
+            return spoofedTrade;
         }
     }
 }

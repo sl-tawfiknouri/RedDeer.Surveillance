@@ -136,30 +136,36 @@ namespace TestHarness.Engine.OrderGenerator
 
             for (var i = 0; i < 5; i++)
             {
-                var volumeFrame = new Order(
-                    null,
-                    OrderType.Market,
-                    headSecurity.Market,
+                var volume = new Order(
                     headSecurity.Security,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
+                    headSecurity.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
                     headSecurity.TimeStamp.AddSeconds(30 * i),
                     headSecurity.TimeStamp.AddSeconds(30 * i),
                     null,
                     null,
                     null,
+                    headSecurity.TimeStamp.AddSeconds(30 * i),
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    headSecurity.Spread.Price.Currency,
+                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
+                    (int)volumeForBreachesToTrade,
+                    (int)volumeForBreachesToTrade,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency.Value);
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volume);
             }
         }
 
@@ -191,30 +197,36 @@ namespace TestHarness.Engine.OrderGenerator
 
             for (var i = 0; i < 5; i++)
             {
-                var volumeFrame = new Order(
-                    null,
-                    OrderType.Market,
-                    securities.Market,
+                var volume = new Order(
                     securities.Security,
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
+                    securities.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
                     securities.TimeStamp.AddSeconds(30 * i),
                     securities.TimeStamp.AddSeconds(30 * i),
                     null,
                     null,
                     null,
+                    securities.TimeStamp.AddSeconds(30 * i),
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    securities.Spread.Price.Currency,
+                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    (int) volumeForBreachesToTrade,
+                    (int) volumeForBreachesToTrade,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    securities.Spread.Price.Currency.Value);
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volume);
             }
         }
 

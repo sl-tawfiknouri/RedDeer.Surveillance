@@ -134,30 +134,36 @@ namespace TestHarness.Engine.OrderGenerator
             tradedVolume = (int)((decimal)tradedVolume * 0.05m);
             var tradeTime = latestFrame.TimeStamp;
 
-            var volumeFrame = new Order(
-                null,
-                OrderType.Market,
-                headSecurity.Market,
+            var volume = new Order(
                 headSecurity.Security,
-                headSecurity.Spread.Price,
-                headSecurity.Spread.Price,
-                (int)tradedVolume,
-                (int)tradedVolume,
-                sellTrade ? OrderPosition.Sell : OrderPosition.Buy,
-                OrderStatus.Fulfilled,
+                headSecurity.Market,
+                null,
+                Guid.NewGuid().ToString(),
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 null,
                 null,
                 null,
+                sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
+                OrderTypes.MARKET,
+                sellTrade ? OrderPositions.SELL : OrderPositions.BUY,
+                headSecurity.Spread.Price.Currency,
+                headSecurity.Spread.Price,
+                headSecurity.Spread.Price,
+                (int) tradedVolume,
+                (int) tradedVolume,
                 null,
                 null,
                 null,
                 null,
                 null,
-                headSecurity.Spread.Price.Currency.Value);
+                null,
+                null,
+                null,
+                null,
+                new Trade[0]);
 
-            TradeStream.Add(volumeFrame);
+            TradeStream.Add(volume);
         }
 
         protected override void _TerminateTradingStrategy()

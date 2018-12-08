@@ -1,7 +1,7 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Commands.Market_Abuse_Commands;
 using TestHarness.Display.Interfaces;
@@ -15,12 +15,12 @@ namespace TestHarness.Commands
         private readonly IReadOnlyCollection<ICommand> _commands;
         private readonly ICommand _unRecognisedCommand;
         private readonly IConsole _console;
-        private readonly ILogger _logger;
+        private readonly ILogger<CommandManager> _logger;
 
         public CommandManager(
             IAppFactory appFactory,
             IProgramState programState,
-            ILogger logger,
+            ILogger<CommandManager> logger,
             IConsole console)
         {
             _unRecognisedCommand = new UnRecognisedCommand();
@@ -62,7 +62,7 @@ namespace TestHarness.Commands
 
         public void InterpretIoCommand(string command)
         {
-            _logger.Info($"Command Manager receieved command: {command}");
+            _logger.LogInformation($"Command Manager received command: {command}");
 
             _console.ClearCommandInputLine();
 

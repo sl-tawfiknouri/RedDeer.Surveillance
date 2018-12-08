@@ -1,4 +1,4 @@
-﻿using Domain.Equity.Streams.Interfaces;
+﻿using DomainV2.Equity.Streams.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
 

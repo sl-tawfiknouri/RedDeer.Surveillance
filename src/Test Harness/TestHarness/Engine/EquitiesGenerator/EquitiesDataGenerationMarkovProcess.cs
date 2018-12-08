@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -25,7 +25,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
         private ExchangeFrame _activeFrame;
-        private readonly ILogger _logger;
+        private readonly ILogger<EquitiesDataGenerationMarkovProcess> _logger;
 
         private readonly object _stateTransitionLock = new object();
         private readonly object _walkingLock = new object();
@@ -36,7 +36,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             IEquityDataGeneratorStrategy dataStrategy,
             IReadOnlyCollection<DataGenerationPlan> plan,
             TimeSpan tickSeparation,
-            ILogger logger)
+            ILogger<EquitiesDataGenerationMarkovProcess> logger)
         {
             _dataStrategy =
                 dataStrategy
@@ -52,7 +52,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         public void InitiateWalk(IStockExchangeStream stream, ExchangeDto market, SecurityPriceResponseDto prices)
         {
-            _logger.Log(LogLevel.Info, "Walk initiated in equity generator");
+            _logger.LogInformation("Walk initiated in equity generator");
 
             if (stream == null)
             {

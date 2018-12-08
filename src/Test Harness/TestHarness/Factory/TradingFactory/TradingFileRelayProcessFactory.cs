@@ -1,4 +1,5 @@
 ﻿using System;
+using DomainV2.Files;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -18,7 +19,7 @@ namespace TestHarness.Factory.TradingFactory
         {
             return new TradingFileRelayProcess(
                 _appFactory.Logger,
-                new TradeOrderCsvToDtoMapper(),
+                new TradeFileCsvToOrderMapper(), 
                 filePath);
         }
     }

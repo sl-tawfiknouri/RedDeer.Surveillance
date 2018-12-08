@@ -136,7 +136,7 @@ namespace TestHarness.Engine.OrderGenerator
             for (var x = 0; x < ordersToFulfill; x++)
             {
                 var fulfilledOrderValue = DiscreteUniform.Sample(0, minimumPerOrderValue * 3);
-                orders.Add(OrderForValue(OrderStatus.Fulfilled, fulfilledOrderValue, security, _lastFrame.Exchange));
+                orders.Add(OrderForValue(OrderStatus.Filled, fulfilledOrderValue, security, _lastFrame.Exchange));
             }
 
             return orders.ToArray();

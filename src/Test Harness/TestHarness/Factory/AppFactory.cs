@@ -1,4 +1,5 @@
-﻿using DomainV2.Scheduling;
+﻿using DomainV2.Files;
+using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Commands;
@@ -45,7 +46,7 @@ namespace TestHarness.Factory
     {
         public AppFactory(INetworkConfiguration networkConfiguration)
         {
-            Logger = new LogFactory().GetLogger("TestHarnessLogger");
+            Logger = new LoggerFactory().CreateLogger("TestHarnessLogger");
 
             State = new ProgramState();
             Console = new Console();
@@ -65,7 +66,7 @@ namespace TestHarness.Factory
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
             EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
-            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeOrderCsvToDtoMapper(),  Logger);
+            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeFileCsvToOrderMapper(), Logger);
             LayeringProcessFactory = new TradingLayeringFactory.TradingLayeringFactory(Logger);
             TradingCancelled2Factory = new TradingCancelled2Factory(Logger);
             TradingHighVolumeFactory = new TradingHighVolumeFactory(Logger);

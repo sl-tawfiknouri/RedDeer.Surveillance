@@ -115,7 +115,7 @@ namespace TestHarness.Engine.OrderStorage
                 }
                 catch (Exception a)
                 {
-                    _logger.Log(LogLevel.Error, a);
+                    _logger.LogError(a.Message);
                     _timer.Start();
                 }
             }

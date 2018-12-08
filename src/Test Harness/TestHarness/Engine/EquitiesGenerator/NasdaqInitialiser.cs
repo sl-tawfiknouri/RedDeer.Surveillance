@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using DomainV2.Equity;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {

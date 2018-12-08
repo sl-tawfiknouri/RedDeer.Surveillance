@@ -15,12 +15,12 @@ namespace TestHarness.Commands
         private readonly IReadOnlyCollection<ICommand> _commands;
         private readonly ICommand _unRecognisedCommand;
         private readonly IConsole _console;
-        private readonly ILogger<CommandManager> _logger;
+        private readonly ILogger _logger;
 
         public CommandManager(
             IAppFactory appFactory,
             IProgramState programState,
-            ILogger<CommandManager> logger,
+            ILogger logger,
             IConsole console)
         {
             _unRecognisedCommand = new UnRecognisedCommand();

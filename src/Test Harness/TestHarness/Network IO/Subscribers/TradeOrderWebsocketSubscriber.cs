@@ -1,13 +1,13 @@
-﻿using Domain.Trades.Orders;
+﻿using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Hosts;
-using NLog;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using TestHarness.Network_IO.Subscribers.Interfaces;
 
 namespace TestHarness.Network_IO.Subscribers
 {
-    public class TradeOrderWebsocketSubscriber : BaseWebsocketSubscriber<TradeOrderFrame>, ITradeOrderWebsocketSubscriber
+    public class TradeOrderWebsocketSubscriber : BaseWebsocketSubscriber<Order>, ITradeOrderWebsocketSubscriber
     {
         public TradeOrderWebsocketSubscriber(
             INetworkSwitch networkSwitch,
@@ -16,7 +16,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
         }
 
-        public override void OnNext(TradeOrderFrame value)
+        public override void OnNext(Order value)
         {
             lock (StateLock)
             {

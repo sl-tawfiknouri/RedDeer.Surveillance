@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
 

@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 
 namespace TestHarness.Engine.EquitiesStorage.Interfaces
 {

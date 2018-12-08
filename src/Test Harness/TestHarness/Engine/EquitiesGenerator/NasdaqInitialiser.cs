@@ -1,12 +1,10 @@
-﻿using Domain.Market;
+﻿using DomainV2.Equity.Frames;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
+using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using Domain.Finance;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -16,7 +14,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         public ExchangeFrame InitialFrame()
         {
-            var exchange = new Market(new Market.MarketId("NASDAQ"), "NASDAQ");
+            var exchange = new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
@@ -32,8 +30,9 @@ namespace TestHarness.Engine.EquitiesGenerator
 
             return nasdaqRaw.Select(raw =>
                 new SecurityTick(
-                    new Security(
-                        new SecurityIdentifiers(
+                    new FinancialInstrument(
+                        InstrumentTypes.Equity,
+                        new InstrumentIdentifiers(
                             string.Empty,
                             raw.Symbol,
                             raw.Symbol,
@@ -46,7 +45,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                             raw.Symbol),
                         raw.Symbol,
                         "CFI",
-                        raw.Symbol),
+                        raw.Symbol), 
                      new Spread(
                         new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
@@ -61,7 +60,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                         new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
                         new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
                     volume * 3,
-                    new Market(new Market.MarketId("NASDAQ"), "NASDAQ")))
+                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE)))
                 .ToList();
         }
 

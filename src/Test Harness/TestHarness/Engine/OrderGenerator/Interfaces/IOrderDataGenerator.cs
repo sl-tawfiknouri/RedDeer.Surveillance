@@ -1,14 +1,14 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
 
 namespace TestHarness.Engine.OrderGenerator.Interfaces
 {
     public interface IOrderDataGenerator : IObserver<ExchangeFrame>
     {
-        void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream<TradeOrderFrame> tradeStream);
+        void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream);
         void TerminateTrading();
     }
 }

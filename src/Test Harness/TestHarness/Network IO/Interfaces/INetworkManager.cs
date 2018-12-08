@@ -1,6 +1,7 @@
-﻿using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+﻿using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
+
 // ReSharper disable IdentifierTypo
 // ReSharper disable UnusedMember.Global
 
@@ -10,7 +11,7 @@ namespace TestHarness.Network_IO.Interfaces
     {
         bool InitiateAllNetworkConnections();
         void TerminateAllNetworkConnections();
-        bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream);
+        bool AttachTradeOrderSubscriberToStream(IOrderStream<Order> orderStream);
         void DetachTradeOrderSubscriber();
         bool AttachStockExchangeSubscriberToStream(IStockExchangeStream exchangeStream);
         void DetachStockExchangeSubscriber();

@@ -1,6 +1,6 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
@@ -32,9 +32,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (StateLock)
             {
-                _logger.Log(
-                    LogLevel.Info,
-                    $"Initiating trade order websocket subscriber with {TimeoutSeconds} second timeout");
+                _logger.LogInformation($"Initiating trade order websocket subscriber with {TimeoutSeconds} second timeout");
 
                 // allow a 10 second one off attempt to connect
                 var cts = new CancellationTokenSource(TimeSpan.FromSeconds(TimeoutSeconds));
@@ -54,7 +52,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             lock (StateLock)
             {
-                _logger.Log(LogLevel.Info, "Trade Order Websocket Subscriber underlying stream completed.");
+                _logger.LogInformation("Trade Order Websocket Subscriber underlying stream completed.");
 
                 NetworkSwitch.Terminate();
             }
@@ -64,7 +62,7 @@ namespace TestHarness.Network_IO.Subscribers
         {
             if (error != null)
             {
-                _logger.Log(LogLevel.Error, error);
+                _logger.LogInformation(error.Message);
             }
         }
 

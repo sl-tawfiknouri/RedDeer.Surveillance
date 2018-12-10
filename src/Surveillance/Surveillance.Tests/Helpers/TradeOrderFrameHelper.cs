@@ -21,7 +21,7 @@ namespace Surveillance.Tests.Helpers
                 null,
                 "order-1",
                 DateTime.Now,
-                null,
+                DateTime.Now,
                 null,
                 null,
                 null,

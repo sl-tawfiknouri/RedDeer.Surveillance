@@ -37,5 +37,10 @@
         {
             return new CurrencyAmount(a.Value - b.Value, a.Currency);
         }
+
+        public override string ToString()
+        {
+            return $"{Currency.Value} {Value}";
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DomainV2.Enums;
 using DomainV2.Financial;
 
 namespace DomainV2.Trading
@@ -159,6 +160,11 @@ namespace DomainV2.Trading
             }
 
             return Financial.OrderStatus.Unknown;
+        }
+
+        public override string ToString()
+        {
+            return $"{Instrument.Name} | MARKET-{Market.Name} | STATUS-{OrderStatus().GetDescription()} | ORDERED-{OrderOrderedVolume} | FILL-{OrderFilledVolume} | PRICE-{OrderAveragePrice?.ToString()}";
         }
     }
 }

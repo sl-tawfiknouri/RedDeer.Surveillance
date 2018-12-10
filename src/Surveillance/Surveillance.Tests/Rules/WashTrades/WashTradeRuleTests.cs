@@ -4,6 +4,7 @@ using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
@@ -186,11 +187,15 @@ namespace Surveillance.Tests.Rules.WashTrades
             tr2.OrderPosition = OrderPositions.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
+            tr1.OrderFilledDate = DateTime.UtcNow;
+            tr2.OrderFilledDate = DateTime.UtcNow;
 
             tr3.OrderPosition = OrderPositions.BUY;
             tr4.OrderPosition = OrderPositions.SELL;
             tr4.OrderFilledVolume = 950;
             tr3.OrderFilledVolume = 1500;
+            tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
 
             var trades = new List<Order> { tr1, tr2, tr3, tr4 };
             var result = rule.ClusteringTrades(trades);

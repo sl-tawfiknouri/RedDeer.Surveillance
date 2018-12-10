@@ -79,26 +79,26 @@ namespace DomainV2.Financial
         /// <summary>
         /// Primary key id
         /// </summary>
-        public string Id { get; }
-        public string ReddeerId { get; }
-        public string ClientIdentifier { get; }
-        public string Sedol { get; }
-        public string Isin { get; }
-        public string Figi { get; }
-        public string Cusip { get; }
-        public string ExchangeSymbol { get; }
-        public string Lei { get; }
-        public string BloombergTicker { get; }
+        public string Id { get; set; }
+        public string ReddeerId { get; set; }
+        public string ClientIdentifier { get; set; }
+        public string Sedol { get; set; }
+        public string Isin { get; set; }
+        public string Figi { get; set; }
+        public string Cusip { get; set; }
+        public string ExchangeSymbol { get; set; }
+        public string Lei { get; set; }
+        public string BloombergTicker { get; set; }
 
 
-        public string UnderlyingSedol { get; }
-        public string UnderlyingIsin { get; }
-        public string UnderlyingFigi { get; }
-        public string UnderlyingCusip { get; }
-        public string UnderlyingLei { get; }
-        public string UnderlyingExchangeSymbol { get; }
-        public string UnderlyingBloombergTicker { get; }
-        public string UnderlyingClientIdentifier { get; }
+        public string UnderlyingSedol { get; set; }
+        public string UnderlyingIsin { get; set; }
+        public string UnderlyingFigi { get; set; }
+        public string UnderlyingCusip { get; set; }
+        public string UnderlyingLei { get; set; }
+        public string UnderlyingExchangeSymbol { get; set; }
+        public string UnderlyingBloombergTicker { get; set; }
+        public string UnderlyingClientIdentifier { get; set; }
 
         public override int GetHashCode()
         {

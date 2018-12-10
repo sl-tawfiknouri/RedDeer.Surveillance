@@ -4,6 +4,11 @@ namespace DomainV2.Financial
 {
     public class FinancialInstrument : IFinancialInstrument
     {
+        public FinancialInstrument()
+        {
+            // used for deserialisation
+        }
+
         public FinancialInstrument(
             InstrumentTypes types,
             InstrumentIdentifiers identifiers,

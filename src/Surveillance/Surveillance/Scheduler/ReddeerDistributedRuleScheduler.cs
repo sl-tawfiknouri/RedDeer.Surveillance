@@ -139,6 +139,8 @@ namespace Surveillance.Scheduler
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleCtx);
                         break;
+                    case DomainV2.Scheduling.Rules.UniverseFilter:
+                        break;
                     default:
                         _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         ruleCtx.EventError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

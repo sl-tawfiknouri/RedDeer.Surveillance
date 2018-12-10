@@ -164,7 +164,7 @@ namespace DomainV2.Trading
 
         public override string ToString()
         {
-            return $"{Instrument.Name} |{Market.Name} | {OrderStatus().GetDescription()} | {OrderOrderedVolume} | {OrderFilledVolume} | {OrderAveragePrice?.ToString()}";
+            return $"{Instrument.Name} |{Market.Name} | {OrderStatus().GetDescription()} | ordered-{OrderOrderedVolume} | filled-{OrderFilledVolume} | {OrderAveragePrice?.ToString()}";
         }
     }
 }

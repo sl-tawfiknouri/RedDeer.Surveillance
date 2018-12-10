@@ -268,16 +268,22 @@ namespace Surveillance.Tests.Rules.WashTrades
             tr2.OrderPosition = OrderPositions.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
+            tr1.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr2.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
 
             tr3.OrderPosition = OrderPositions.BUY;
             tr4.OrderPosition = OrderPositions.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
+            tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
+            tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
 
             tr5.OrderPosition = OrderPositions.BUY;
             tr6.OrderPosition = OrderPositions.SELL;
             tr6.OrderFilledVolume = 1500;
             tr5.OrderFilledVolume = 1500;
+            tr5.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
+            tr6.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
 
             var trades = new List<Order> { tr1, tr2, tr3, tr4, tr5, tr6 };
             var result = rule.ClusteringTrades(trades);

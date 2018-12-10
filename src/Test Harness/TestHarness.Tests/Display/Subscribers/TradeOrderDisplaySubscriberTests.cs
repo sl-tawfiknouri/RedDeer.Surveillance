@@ -1,11 +1,9 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
-using Domain.Equity;
-using Domain.Finance;
-using Domain.Trades.Orders;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
+using TestHarness.Tests.Helpers;
 
 namespace TestHarness.Tests.Display.Subscribers
 {
@@ -44,34 +42,13 @@ namespace TestHarness.Tests.Display.Subscribers
         public void OnNext_PassesOrderFrame_OnToConsole()
         {
             var tradeOrderSubscriber = new TradeOrderFrameDisplaySubscriber(_console);
-            var tradeOrderFrame = 
-                new TradeOrderFrame(
-                    null,
-                    OrderType.Market,
-                    null,
-                    null,
-                    null,
-                    new CurrencyAmount(10, "GBX"), 
-                    10,
-                    10,
-                    OrderPosition.Buy,
-                    OrderStatus.Cancelled,
-                    DateTime.Now,
-                    DateTime.Now,
-                    "trader-id",
-                    "trader-client-id",
-                    "account-id",
-                    "dealer-instruction",
-                    "party-broker",
-                    "counterParty-broker",
-                    "trader rationale",
-                    "trade strategy",
-                    "GBX");
 
-            tradeOrderSubscriber.OnNext(tradeOrderFrame);
+            var order = OrderHelper.GetOrder();
+
+            tradeOrderSubscriber.OnNext(order);
 
             A
-                .CallTo(() => _console.OutputTradeFrame(tradeOrderFrame))
+                .CallTo(() => _console.OutputTradeFrame(order))
                 .MustHaveHappenedOnceExactly();
         }
     }

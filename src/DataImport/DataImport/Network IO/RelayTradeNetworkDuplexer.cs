@@ -48,7 +48,7 @@ namespace DataImport.Network_IO
         {
             var serialiserSettings = new JsonSerializerSettings()
             {
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat
             };
 
             var formattedMessage = JsonConvert.DeserializeObject<Order>(message.Message, serialiserSettings);

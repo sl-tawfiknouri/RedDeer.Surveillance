@@ -20,8 +20,8 @@
             Currency = new Currency(currency ?? string.Empty);
         }
 
-        public decimal Value { get; }
-        public Currency Currency { get; }
+        public decimal Value { get; set; }
+        public Currency Currency { get; set; }
 
         public bool DenominatedInCommonCurrency(CurrencyAmount amount)
         {

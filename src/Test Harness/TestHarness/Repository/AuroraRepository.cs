@@ -13,6 +13,7 @@ namespace TestHarness.Repository
         private readonly IConsole _console;
 
         private const string DeleteSql = @"
+			DELETE FROM TradeReddeer WHERE ID > -1;
             DELETE FROM Transactions WHERE ID > -1;
             DELETE FROM Trades WHERE ID > -1;
             DELETE FROM Orders WHERE ID > -1;

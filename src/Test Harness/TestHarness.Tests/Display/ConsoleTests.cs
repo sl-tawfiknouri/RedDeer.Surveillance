@@ -1,10 +1,8 @@
-﻿using Domain.Equity;
-using Domain.Market;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Linq;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 
 namespace TestHarness.Tests.Display
 {
@@ -28,11 +26,11 @@ namespace TestHarness.Tests.Display
             Assert.IsTrue(true);
         }
 
-        private TradeOrderFrame GenerateFrame(int vol)
+        private Order GenerateFrame(int vol)
         {
-            var stock = new Market(new Market.MarketId("LSE"), "London Stock Exchange");
+            var stock = new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
             var securityIdentifiers =
-                new SecurityIdentifiers(
+                new InstrumentIdentifiers(
                     string.Empty,
                     "STAN",
                     "STAN",
@@ -44,34 +42,43 @@ namespace TestHarness.Tests.Display
                     "stan lei",
                     "stan");
 
-            var sec = new Security(
+            var sec = new FinancialInstrument(
+                InstrumentTypes.Equity,
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",
                 "Standard Chartered Bank");
 
-            return new TradeOrderFrame(
-                    null,
-                    OrderType.Limit,
-                    stock,
-                    sec,
-                    new CurrencyAmount(20.2m, "GBP"),
-                    new CurrencyAmount(20.2m, "GBP"),
-                    100 * vol,
-                    100 * vol,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
-                    DateTime.Now,
-                    DateTime.Now,
-                    "trader-1",
-                    "",
-                    "account-1",
-                    "test",
-                    "party-broker",
-                    "counterParty-broker",
-                    "none",
-                    "unknown",
-                    "GBX");
+            var order = new Order(
+                sec,
+                stock,
+                null,
+                Guid.NewGuid().ToString(),
+                DateTime.UtcNow,
+                DateTime.UtcNow,
+                null,
+                null,
+                null,
+                DateTime.UtcNow,
+                OrderTypes.MARKET,
+                OrderPositions.BUY,
+                new Currency("GBP"),
+                new CurrencyAmount(20.2m, "GBP"),
+                new CurrencyAmount(20.2m, "GBP"),
+                100 * vol,
+                100 * vol,
+                "portfolio-manager",
+                "trader-1",
+                "executing-broker",
+                "clearing-bank",
+                "deal asap",
+                "long/short equities",
+                "low liquidity",
+                "fast-fund",
+                "acc-1",
+                new Trade[0]);
+
+            return order;
         }
     }
 }

@@ -51,9 +51,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
             randomWalk.InitiateWalk(stream);
 
             Assert.AreEqual(observer.Buffer.Count, 1);
-            A
-                .CallTo(() => _logger.LogInformation("Walk initiated in equity generator"))
-                .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
         }
@@ -78,9 +75,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
             }
 
             Assert.AreEqual(observer.Buffer.Count, 2);
-            A
-                .CallTo(() => _logger.LogInformation("Walk initiated in equity generator"))
-                .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
         }

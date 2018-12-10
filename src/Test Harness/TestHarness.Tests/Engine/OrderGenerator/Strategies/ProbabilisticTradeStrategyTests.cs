@@ -84,10 +84,6 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                 .CallTo(() => _tradeOrderStream.Add(A<Order>.Ignored))
                 .Invokes(x => Console.WriteLine(x.Arguments[0]));
 
-            A
-                .CallTo(() => _logger.Log(A<LogLevel>.Ignored, A<string>.Ignored))
-                .Invokes(x => Console.WriteLine(x.Arguments[1]));
-
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
 
             Assert.IsTrue(frames >= 0);

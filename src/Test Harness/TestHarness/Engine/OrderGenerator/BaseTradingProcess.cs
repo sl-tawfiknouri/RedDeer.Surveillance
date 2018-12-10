@@ -73,7 +73,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public void OnError(Exception error)
         {
-            Logger.LogError(error.Message);
+            Logger.LogError(error?.Message);
         }
 
         public abstract void OnNext(ExchangeFrame value);

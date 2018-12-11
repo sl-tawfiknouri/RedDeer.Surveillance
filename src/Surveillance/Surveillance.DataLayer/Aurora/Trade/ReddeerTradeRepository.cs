@@ -127,10 +127,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
-            FROM orders as ord
-            LEFT OUTER JOIN financialinstruments as fi
+            FROM Orders as ord
+            LEFT OUTER JOIN FinancialInstruments as fi
             ON fi.Id = ord.SecurityId
-            LEFT OUTER JOIN market as mark
+            LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
             WHERE 
             ord.PlacedDate >= @Start

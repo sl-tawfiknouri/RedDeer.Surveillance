@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 
 namespace Surveillance.Universe.Interfaces
 {
     public interface IUniverse
     {
-        IReadOnlyCollection<TradeOrderFrame> Trades { get; }
+        IReadOnlyCollection<Order> Trades { get; }
         IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; }
     }
 }

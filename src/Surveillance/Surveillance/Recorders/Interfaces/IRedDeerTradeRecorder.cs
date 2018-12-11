@@ -1,9 +1,9 @@
 ﻿using System;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 
 namespace Surveillance.Recorders.Interfaces
 {
-    public interface IRedDeerTradeRecorder : IObserver<TradeOrderFrame>
+    public interface IRedDeerTradeRecorder : IObserver<Order>
     {
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;
@@ -73,7 +73,7 @@ namespace DataImport.Network_IO.RelaySubscribers
             _networkSwitch.Terminate();
         }
 
-        public void OnNext(TradeOrderFrame value)
+        public void OnNext(Order value)
         {
             lock (_stateLock)
             {

@@ -1,7 +1,8 @@
 ﻿using Surveillance.Trades.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 
 namespace Surveillance.Trades
 {
@@ -11,49 +12,52 @@ namespace Surveillance.Trades
     /// </summary>
     public class TradePosition : ITradePosition
     {
-        private readonly IList<TradeOrderFrame> _trades;
+        private readonly IList<Order> _trades;
 
-        public TradePosition(IList<TradeOrderFrame> trades)
+        public TradePosition(IList<Order> trades)
         {
-            _trades = trades?.Where(trad => trad != null).ToList() ?? new List<TradeOrderFrame>();
+            _trades = trades?.Where(trad => trad != null).ToList() ?? new List<Order>();
         }
 
-        public IList<TradeOrderFrame> Get()
+        public IList<Order> Get()
         {
-            return new List<TradeOrderFrame>(_trades);
+            return new List<Order>(_trades);
         }
 
-        public void Add(TradeOrderFrame item)
+        public void Add(Order item)
         {
             _trades.Add(item);
         }
 
-        public int TotalVolume()
+        public long TotalVolume()
         {
-            return _trades.Sum(trad => trad?.FulfilledVolume ?? 0);
+            return _trades.Sum(trad => trad?.OrderFilledVolume ?? 0);
         }
 
-        public int TotalVolumeOrderedOrFilled()
+        public long TotalVolumeOrderedOrFilled()
         {
             return _trades
                 .Where(trad => trad != null)
-                .Sum(trad => trad.FulfilledVolume == 0 ? trad.OrderedVolume : (trad.FulfilledVolume));
+                .Sum(trad => 
+                    trad.OrderFilledVolume == 0 
+                        ? trad.OrderOrderedVolume.GetValueOrDefault(0)
+                        : (trad.OrderFilledVolume.GetValueOrDefault(0)));
         }
 
-        public int VolumeInStatus(OrderStatus status)
+        public long VolumeInStatus(OrderStatus status)
         {
             return
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus == status)
-                .Sum(trad => trad.FulfilledVolume);
+                .Where(trad => trad != null && trad.OrderStatus() == status)
+                .Sum(trad => trad.OrderFilledVolume.GetValueOrDefault(0));
         }
 
-        public int VolumeNotInStatus(OrderStatus status)
+        public long VolumeNotInStatus(OrderStatus status)
         {
             return
                 _trades
-                .Where(trad => trad != null && trad.OrderStatus != status)
-                .Sum(trad => trad.FulfilledVolume);
+                .Where(trad => trad != null && trad.OrderStatus() != status)
+                .Sum(trad => trad.OrderFilledVolume.GetValueOrDefault(0));
         }
 
         /// <summary>

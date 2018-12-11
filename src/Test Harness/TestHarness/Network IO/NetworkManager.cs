@@ -1,8 +1,8 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
-using NLog;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Network_IO.Interfaces;
 using TestHarness.Network_IO.Subscribers.Interfaces;
@@ -55,7 +55,7 @@ namespace TestHarness.Network_IO
         private bool _InitiateTradingNetworkConnections()
         {
 
-            _logger.Log(LogLevel.Info, "Network Manager initiating trading network connections");
+            _logger.LogInformation("Network Manager initiating trading network connections");
 
             if (_tradeOrderWebsocketSubscriber == null)
             {
@@ -69,7 +69,7 @@ namespace TestHarness.Network_IO
 
         private bool _InitiateStockMarketNetworkConnections()
         {
-            _logger.Log(LogLevel.Info, "Network Manager initiating stock market network connections");
+            _logger.LogInformation("Network Manager initiating stock market network connections");
 
             if (_stockMarketWebsocketSubscriber == null)
             {
@@ -85,7 +85,7 @@ namespace TestHarness.Network_IO
         {
             lock (_stateTransition)
             {
-                _logger.Log(LogLevel.Info, "Network Manager terminating network connections");
+                _logger.LogInformation("Network Manager terminating network connections");
 
                 _tradeOrderWebsocketSubscriber?.Terminate();
 
@@ -96,7 +96,7 @@ namespace TestHarness.Network_IO
         /// <summary>
         /// Join the trade order stream to the websocket connections
         /// </summary>
-        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream)
+        public bool AttachTradeOrderSubscriberToStream(IOrderStream<Order> orderStream)
         {
             lock (_stateTransition)
             {
@@ -112,7 +112,7 @@ namespace TestHarness.Network_IO
                 if (orderStream != null
                     && _tradeOrderWebsocketSubscriber != null)
                 {
-                    _logger.Log(LogLevel.Info, "Network Manager attaching trade order subscriber to stream");
+                    _logger.LogInformation("Network Manager attaching trade order subscriber to stream");
                     _tradeOrderUnsubscriber = orderStream.Subscribe(_tradeOrderWebsocketSubscriber);
 
                     return true;
@@ -129,7 +129,7 @@ namespace TestHarness.Network_IO
         {
             lock (_stateTransition)
             {
-                _logger.Log(LogLevel.Info, "Network Manager detatching trade order subscriber from stream");
+                _logger.LogInformation("Network Manager detatching trade order subscriber from stream");
 
                 _tradeOrderUnsubscriber?.Dispose();
             }
@@ -154,7 +154,7 @@ namespace TestHarness.Network_IO
                 if (exchangeStream != null
                     && _stockMarketWebsocketSubscriber != null)
                 {
-                    _logger.Log(LogLevel.Info, "Network Manager attaching stock exchange subscriber to stream");
+                    _logger.LogInformation("Network Manager attaching stock exchange subscriber to stream");
                     _stockMarketUnsubscriber = exchangeStream.Subscribe(_stockMarketWebsocketSubscriber);
 
                     return true;
@@ -171,7 +171,7 @@ namespace TestHarness.Network_IO
         {
             lock (_stateTransition)
             {
-                _logger.Log(LogLevel.Info, "Network Manager detatching stock exchange subscriber from stream");
+                _logger.LogInformation("Network Manager detatching stock exchange subscriber from stream");
 
                 _stockMarketUnsubscriber?.Dispose();
             }

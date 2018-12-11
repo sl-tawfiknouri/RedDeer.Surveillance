@@ -9,14 +9,14 @@
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="MathNet.Numerics" Version="4.5.1" />
     <PackageReference Include="MySql.Data" Version="8.0.12" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.17.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Domain\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\DomainV2\DomainV2.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
 

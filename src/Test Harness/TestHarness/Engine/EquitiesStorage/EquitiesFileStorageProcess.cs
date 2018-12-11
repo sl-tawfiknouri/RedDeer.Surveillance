@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using Domain.Equity.Frames;
-using Domain.Equity.Frames.Interfaces;
-using Domain.Equity.Streams.Interfaces;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Frames.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 
 namespace TestHarness.Engine.EquitiesStorage
@@ -47,7 +47,7 @@ namespace TestHarness.Engine.EquitiesStorage
 
             if (string.IsNullOrWhiteSpace(_path))
             {
-                _logger.Error("Equities File Relay Process did not find file because the path was empty or null");
+                _logger.LogError("Equities File Relay Process did not find file because the path was empty or null");
                 return;
             }
 
@@ -59,13 +59,13 @@ namespace TestHarness.Engine.EquitiesStorage
 
         public void OnCompleted()
         {
-            _logger.Log(LogLevel.Info, "Order data generator received completed message from stock stream. Terminating equities file storage");
+            _logger.LogInformation("Order data generator received completed message from stock stream. Terminating equities file storage");
             Terminate();            
         }
 
         public void OnError(Exception error)
         {
-            _logger.Log(LogLevel.Error, error);
+            _logger.LogError(error.Message);
         }
 
         public void OnNext(ExchangeFrame value)
@@ -81,7 +81,7 @@ namespace TestHarness.Engine.EquitiesStorage
                 return;
             }
 
-            var fileName = $"{value.Exchange.Id.Id}-{value.TimeStamp.ToString("yyyyMMddHHmmssffff")}.csv";
+            var fileName = $"{value.Exchange.Id}-{value.TimeStamp.ToString("yyyyMMddHHmmssffff")}.csv";
             var filePath = Path.Combine(_path, fileName);
 
             using (var writer = File.CreateText(filePath))

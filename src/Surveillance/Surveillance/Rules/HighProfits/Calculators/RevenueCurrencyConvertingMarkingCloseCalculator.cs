@@ -1,5 +1,5 @@
-﻿using Domain.Equity;
-using Domain.Equity.Frames;
+﻿using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 
@@ -8,13 +8,13 @@ namespace Surveillance.Rules.HighProfits.Calculators
     public class RevenueCurrencyConvertingMarkingCloseCalculator : RevenueCurrencyConvertingCalculator
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
             : base(targetCurrency, currencyConverter, logger)
         { }
 
-        protected override Price? SecurityTickToPrice(SecurityTick tick)
+        protected override CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
         {
             if (tick == null)
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -13,7 +13,7 @@ namespace Surveillance.Rules.MarkingTheClose
     {
         public MarkingTheCloseBreach(
             TimeSpan window,
-            Security security,
+            FinancialInstrument security,
             MarketOpenClose marketClose,
             ITradePosition tradingPosition,
             IMarkingTheCloseParameters parameters,
@@ -24,7 +24,7 @@ namespace Surveillance.Rules.MarkingTheClose
             Security = security ?? throw new ArgumentNullException(nameof(security));
 
             MarketClose = marketClose ?? throw new ArgumentNullException(nameof(marketClose));
-            Trades = tradingPosition ?? new TradePosition(new List<TradeOrderFrame>());
+            Trades = tradingPosition ?? new TradePosition(new List<Order>());
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
             DailyBreach = dailyBreach;
@@ -37,7 +37,7 @@ namespace Surveillance.Rules.MarkingTheClose
         public IMarkingTheCloseParameters Parameters { get; }
 
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         public VolumeBreach DailyBreach { get; }
         public VolumeBreach WindowBreach { get; }

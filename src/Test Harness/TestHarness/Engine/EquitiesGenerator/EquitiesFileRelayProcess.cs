@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using Domain.Equity.Frames;
-using Domain.Equity.Frames.Interfaces;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Market;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Frames.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Financial;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator
@@ -32,13 +32,13 @@ namespace TestHarness.Engine.EquitiesGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                _logger.Error("Equities File Relay Process did not find file because the path was empty or null");
+                _logger.LogError("Equities File Relay Process did not find file because the path was empty or null");
                 return;
             }
 
             if (!File.Exists(_filePath))
             {
-                _logger.Error($"Equities File Relay Process did not find file {_filePath}");
+                _logger.LogError($"Equities File Relay Process did not find file {_filePath}");
                 return;
             }
 
@@ -64,7 +64,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
             if (_securityMapper.FailedParseTotal > 0)
             {
-                _logger.Error($"EquitiesFileRelayProcess had {_securityMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
+                _logger.LogError($"EquitiesFileRelayProcess had {_securityMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
             }
 
             if (!securities.Any())
@@ -89,14 +89,16 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
 
             return securities
-                .GroupBy(sec => sec.Market.Id.Id)
+                .GroupBy(sec => sec.Market.Id)
                 .Select(groupedExchange => groupedExchange.GroupBy(gb => gb.TimeStamp))
                 .SelectMany(io =>
                     io.Select(iio =>
                         new ExchangeFrame(
-                            new StockExchange(
+                            new Market(
+                                null,
                                 iio.FirstOrDefault()?.Market.Id,
-                                iio.FirstOrDefault()?.Market.Name),
+                                iio.FirstOrDefault()?.Market.Name,
+                                MarketTypes.STOCKEXCHANGE),
                         iio.Key,
                         iio.ToList())))
                 .OrderBy(io => io.TimeStamp)

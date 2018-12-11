@@ -1,4 +1,4 @@
-﻿using Domain.Streams;
+﻿using DomainV2.Streams;
 
 namespace Surveillance.Analytics.Streams.Interfaces
 {

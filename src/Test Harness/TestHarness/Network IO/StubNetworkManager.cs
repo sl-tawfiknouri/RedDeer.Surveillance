@@ -1,8 +1,8 @@
-﻿using NLog;
-using System;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+﻿using System;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Network_IO
@@ -18,35 +18,35 @@ namespace TestHarness.Network_IO
 
         public bool AttachStockExchangeSubscriberToStream(IStockExchangeStream exchangeStream)
         {
-            _logger.Info("Stub Network Manager. Attach stock exchange subscriber to stream called.");
+            _logger.LogInformation("Stub Network Manager. Attach stock exchange subscriber to stream called.");
             return true;
         }
 
-        public bool AttachTradeOrderSubscriberToStream(ITradeOrderStream<TradeOrderFrame> orderStream)
+        public bool AttachTradeOrderSubscriberToStream(IOrderStream<Order> orderStream)
         {
-            _logger.Info("Stub Network Manager. Attach trade order subscriber to stream called.");
+            _logger.LogInformation("Stub Network Manager. Attach trade order subscriber to stream called.");
             return true;
         }
 
         public void DetachStockExchangeSubscriber()
         {
-            _logger.Info("Stub Network Manager. Detach stock exchange subscriber called.");
+            _logger.LogInformation("Stub Network Manager. Detach stock exchange subscriber called.");
         }
 
         public void DetachTradeOrderSubscriber()
         {
-            _logger.Info("Stub Network Manager. Detach trade order subscriber called.");
+            _logger.LogInformation("Stub Network Manager. Detach trade order subscriber called.");
         }
 
         public bool InitiateAllNetworkConnections()
         {
-            _logger.Info("Stub Network Manager. Initiate network connections called.");
+            _logger.LogInformation("Stub Network Manager. Initiate network connections called.");
             return true;
         }
 
         public void TerminateAllNetworkConnections()
         {
-            _logger.Info("Stub Network Manager. Terminate network connections called.");
+            _logger.LogInformation("Stub Network Manager. Terminate network connections called.");
         }
     }
 }

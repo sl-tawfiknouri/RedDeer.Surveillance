@@ -1,5 +1,5 @@
-﻿using Domain.Equity.Frames;
-using NLog;
+﻿using DomainV2.Equity.Frames;
+using Microsoft.Extensions.Logging;
 using TestHarness.Network_IO.Subscribers.Interfaces;
 using Utilities.Network_IO.Websocket_Connections.Interfaces;
 using Utilities.Network_IO.Websocket_Hosts;

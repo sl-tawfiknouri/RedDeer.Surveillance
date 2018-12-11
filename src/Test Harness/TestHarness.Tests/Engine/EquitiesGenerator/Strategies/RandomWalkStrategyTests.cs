@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
@@ -36,9 +36,9 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new SecurityIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
-            var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
-            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
+            var identifiers = new InstrumentIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "Microsoft Company");
+            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 
             var tick =
                 new SecurityTick(
@@ -50,7 +50,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     3000,
                     null,
                     100,
-                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
+                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var result = strategy.AdvanceFrame(tick, DateTime.UtcNow, true);
 
@@ -68,9 +68,9 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new SecurityIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
-            var security = new Security(identifiers, "Microsoft", "CFI", "Microsoft Company");
-            var spread = new Spread(new Price(66, "GBP"), new Price(65, "GBP"), new Price(65, "GBP"));
+            var identifiers = new InstrumentIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "Microsoft Company");
+            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 
             var tick =
                 new SecurityTick(
@@ -82,7 +82,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                     3000,
                     null,
                     100,
-                    new StockExchange(new Market.MarketId("NASDAQ"), "NASDAQ"));
+                    new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
             Console.WriteLine(printableInitialSecurity);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -46,7 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
+            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(DomainV2.Scheduling.Rules.CancelledOrders) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -99,7 +99,7 @@ namespace Surveillance.Universe.Subscribers
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
+                    DomainV2.Scheduling.Rules.CancelledOrders.GetDescription(),
                     CancelledOrderRuleFactory.Version,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

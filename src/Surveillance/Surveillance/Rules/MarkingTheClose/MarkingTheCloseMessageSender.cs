@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -10,11 +9,9 @@ namespace Surveillance.Rules.MarkingTheClose
     public class MarkingTheCloseMessageSender : BaseMessageSender, IMarkingTheCloseMessageSender
     {
         public MarkingTheCloseMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<MarkingTheCloseMessageSender> logger, 
             ICaseMessageSender caseMessageSender)
             : base(
-                dtoMapper,
                 "Automated Marking The Close Rule Breach Detected",
                 "Marking The Close Message Sender",
                 logger,

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Scheduling;
+using DomainV2.Scheduling;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 

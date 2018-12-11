@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -46,7 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.Layering) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(DomainV2.Scheduling.Rules.Layering) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -105,7 +105,7 @@ namespace Surveillance.Universe.Subscribers
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.Layering.GetDescription(),
+                    DomainV2.Scheduling.Rules.Layering.GetDescription(),
                     LayeringRuleFactory.Version,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

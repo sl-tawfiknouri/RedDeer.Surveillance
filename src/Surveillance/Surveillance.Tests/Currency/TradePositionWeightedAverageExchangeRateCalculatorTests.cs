@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -44,22 +44,22 @@ namespace Surveillance.Tests.Currency
             var exchangeRates = new ExchangeRates(repoDecorator, _loggerExchRate);
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(exchangeRates);
 
-            TradeOrderFrame tradeOne = (new TradeOrderFrame()).Random();
-            TradeOrderFrame tradeTwo = (new TradeOrderFrame()).Random();
-            TradeOrderFrame tradeThree = (new TradeOrderFrame()).Random();
+            Order tradeOne = (new Order()).Random();
+            Order tradeTwo = (new Order()).Random();
+            Order tradeThree = (new Order()).Random();
 
-            tradeOne.StatusChangedOn = new DateTime(2017, 01, 01);
-            tradeTwo.StatusChangedOn = new DateTime(2017, 10, 25);
-            tradeThree.StatusChangedOn = new DateTime(2017, 10, 25);
+            tradeOne.OrderFilledDate = new DateTime(2017, 01, 01);
+            tradeTwo.OrderFilledDate = new DateTime(2017, 10, 25);
+            tradeThree.OrderFilledDate = new DateTime(2017, 10, 25);
 
-            var position = new TradePosition(new List<TradeOrderFrame>
+            var position = new TradePosition(new List<Order>
             {
                 tradeOne,
                 tradeTwo,
                 tradeThree
             });
 
-            var usd = new Domain.Finance.Currency("usd");
+            var usd = new DomainV2.Financial.Currency("usd");
 
             var wer = await calculator.WeightedExchangeRate(
                 position,

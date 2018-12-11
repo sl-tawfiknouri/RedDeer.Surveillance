@@ -1,10 +1,10 @@
-﻿using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -20,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
         private bool _hasProcessedCount;
 
         public TradingCancelledOrderTradeProcess(
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             IReadOnlyCollection<string> cancelTargetSedols,
             DateTime triggerCount,
             ILogger logger)
@@ -114,52 +114,63 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var security = correctSecurity.FirstOrDefault();
-            var frames = new List<TradeOrderFrame>();
+            var frames = new List<Order>();
 
             var totalPurchase = security.DailyVolume.Traded * 0.1m;
             var initialBuyShare = totalPurchase * positionPercentageToCancel;
             var splitShare = ((totalPurchase - initialBuyShare) * (1m / 9m)) - 1;
 
-            var cancelledFrame = new TradeOrderFrame(
-                null,
-                OrderType.Limit,
-                value.Exchange,
+            var cancelledFrame = new Order(
                 security.Security,
-                new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                security.Market,
                 null,
-                (int)initialBuyShare,
-                (int)initialBuyShare,
-                OrderPosition.Buy,
-                OrderStatus.Cancelled,
+                Guid.NewGuid().ToString(),
                 value.TimeStamp,
                 value.TimeStamp,
                 null,
                 null,
+                value.TimeStamp,
+                null,
+                OrderTypes.MARKET,
+                OrderPositions.BUY,
+                new Currency("GBP"),
+                new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                (int)initialBuyShare,
+                (int)initialBuyShare,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
-                security.Spread.Price.Currency);
+                null,
+                null,
+                null,
+                new Trade[0]);
 
             frames.Add(cancelledFrame);
 
             for (var i = 1; i < 10; i++)
             {
-                var frame = new TradeOrderFrame(
-                    null,
-                    OrderType.Limit,
-                    value.Exchange,
+                var frame = new Order(
                     security.Security,
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    security.Market,
                     null,
+                    Guid.NewGuid().ToString(),
+                    value.TimeStamp.AddMinutes(1),
+                    value.TimeStamp.AddMinutes(1),
+                    null,
+                    null,
+                    value.TimeStamp.AddMinutes(1),
+                    null,
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    new Currency("GBP"),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                     (int)splitShare,
                     (int)splitShare,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
-                    value.TimeStamp.AddMinutes(i),
-                    value.TimeStamp,
                     null,
                     null,
                     null,
@@ -168,12 +179,13 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency);
-
+                    null,
+                    new Trade[0]);
+                
                 frames.Add(frame);
             }
 
-            foreach (var trade in frames.OrderBy(i => i.StatusChangedOn))
+            foreach (var trade in frames.OrderBy(i => i.MostRecentDateEvent()))
             {
                 TradeStream.Add(trade);
             }
@@ -203,22 +215,27 @@ namespace TestHarness.Engine.OrderGenerator
 
             var security = correctSecurity.FirstOrDefault();
 
-            var frames = new List<TradeOrderFrame>();
+            var frames = new List<Order>();
             for (var i = 0; i < 10; i++)
             {
-                var frame = new TradeOrderFrame(
-                    null,
-                    OrderType.Limit,
-                    value.Exchange,
+                var frame = new Order(
                     security.Security,
-                    new Price(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    security.Market,
                     null,
+                    Guid.NewGuid().ToString(),
+                    value.TimeStamp.AddMinutes(1),
+                    value.TimeStamp.AddMinutes(1),
+                    null,
+                    null,
+                    i < amountToCancel ? (DateTime?)value.TimeStamp.AddMinutes(1) : null,
+                    null,
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    new Currency("GBP"),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
                     i < amountToCancel ? 0 : (int)(security.DailyVolume.Traded * 0.01m),
-                    (int)(security.DailyVolume.Traded * 0.01m),
-                    OrderPosition.Buy,
-                    i < amountToCancel ? OrderStatus.Cancelled : OrderStatus.Fulfilled,
-                    value.TimeStamp.AddMinutes(i),
-                    value.TimeStamp,
+                    0,
                     null,
                     null,
                     null,
@@ -227,12 +244,13 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    security.Spread.Price.Currency);
+                    null,
+                    new Trade[0]);
 
                 frames.Add(frame);
             }
 
-            foreach (var trade in frames.OrderBy(i => i.StatusChangedOn))
+            foreach (var trade in frames.OrderBy(i => i.MostRecentDateEvent()))
             {
                 TradeStream.Add(trade);
             }

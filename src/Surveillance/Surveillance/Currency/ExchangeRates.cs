@@ -38,8 +38,8 @@ namespace Surveillance.Currency
         // so EUR/USD 1.3225 means 1 euro buys 1.3225 dollars
         // with eur = fixed and usd = variable currencies
         public async Task<ExchangeRateDto> GetRate(
-            Domain.Finance.Currency fixedCurrency,
-            Domain.Finance.Currency variableCurrency,
+            DomainV2.Financial.Currency fixedCurrency,
+            DomainV2.Financial.Currency variableCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -80,8 +80,8 @@ namespace Surveillance.Currency
 
         private ExchangeRateDto Convert(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Finance.Currency fixedCurrency,
-            Domain.Finance.Currency variableCurrency,
+            DomainV2.Financial.Currency fixedCurrency,
+            DomainV2.Financial.Currency variableCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -115,8 +115,8 @@ namespace Surveillance.Currency
 
         private ExchangeRateDto TryDirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Finance.Currency fixedCurrency,
-            Domain.Finance.Currency variableCurrency)
+            DomainV2.Financial.Currency fixedCurrency,
+            DomainV2.Financial.Currency variableCurrency)
         {
             var directConversion = exchangeRates
                 .FirstOrDefault(er =>
@@ -128,8 +128,8 @@ namespace Surveillance.Currency
 
         private ExchangeRateDto TryReciprocalConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Finance.Currency fixedCurrency,
-            Domain.Finance.Currency variableCurrency)
+            DomainV2.Financial.Currency fixedCurrency,
+            DomainV2.Financial.Currency variableCurrency)
         {
             var reciprocalConversion = exchangeRates
                 .FirstOrDefault(er =>
@@ -158,8 +158,8 @@ namespace Surveillance.Currency
 
         private ExchangeRateDto TryIndirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Finance.Currency fixedCurrency,
-            Domain.Finance.Currency variableCurrency,
+            DomainV2.Financial.Currency fixedCurrency,
+            DomainV2.Financial.Currency variableCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -216,7 +216,7 @@ namespace Surveillance.Currency
 
         private List<ExchangeRateDto> GetExchangeRates(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Finance.Currency targetCurrency)
+            DomainV2.Financial.Currency targetCurrency)
         {
             return exchangeRates
                 .Where(er =>

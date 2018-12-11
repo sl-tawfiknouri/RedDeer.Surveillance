@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Trading;
 using Utilities.Network_IO.Interfaces;
 // ReSharper disable UnusedMember.Global
 
@@ -10,7 +10,7 @@ namespace TestHarness.Display.Interfaces
     {
         void OutputMarketFrame(ExchangeFrame frame);
 
-        void OutputTradeFrame(TradeOrderFrame frame);
+        void OutputTradeFrame(Order frame);
 
         void OutputException(Exception e);
 

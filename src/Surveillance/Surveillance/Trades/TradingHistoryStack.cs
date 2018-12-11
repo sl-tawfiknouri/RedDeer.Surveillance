@@ -2,32 +2,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 
 namespace Surveillance.Trades
 {
     public class TradingHistoryStack : ITradingHistoryStack
     {
-        private readonly Stack<TradeOrderFrame> _activeStack;
-        private readonly Queue<TradeOrderFrame> _history;
-        private StockExchange _market;
+        private readonly Stack<Order> _activeStack;
+        private readonly Queue<Order> _history;
+        private Market _market;
 
         private readonly object _lock = new object();
         private readonly TimeSpan _activeTradeDuration;
-        private readonly Func<TradeOrderFrame, DateTime> _getFrameTime;
+        private readonly Func<Order, DateTime> _getFrameTime;
         
         public TradingHistoryStack(
             TimeSpan activeTradeDuration,
-            Func<TradeOrderFrame, DateTime> getFrameTime)
+            Func<Order, DateTime> getFrameTime)
         {
-            _activeStack = new Stack<TradeOrderFrame>();
-            _history = new Queue<TradeOrderFrame>();
+            _activeStack = new Stack<Order>();
+            _history = new Queue<Order>();
             _activeTradeDuration = activeTradeDuration;
             _getFrameTime = getFrameTime;
         }
 
-        public void Add(TradeOrderFrame frame, DateTime currentTime)
+        public void Add(Order frame, DateTime currentTime)
         {
             if (frame == null)
             {
@@ -52,7 +52,7 @@ namespace Surveillance.Trades
             lock (_lock)
             {
                 var initialActiveStackCount = _activeStack.Count;
-                var counterPartyStack = new Stack<TradeOrderFrame>();
+                var counterPartyStack = new Stack<Order>();
 
                 while (initialActiveStackCount > 0)
                 {
@@ -85,19 +85,19 @@ namespace Surveillance.Trades
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<TradeOrderFrame> ActiveTradeHistory()
+        public Stack<Order> ActiveTradeHistory()
         {
             lock (_lock)
             {
-                var tradeStackCopy = new Stack<TradeOrderFrame>(_activeStack);
-                var reverseCopyOfTradeStack = new Stack<TradeOrderFrame>(tradeStackCopy);
+                var tradeStackCopy = new Stack<Order>(_activeStack);
+                var reverseCopyOfTradeStack = new Stack<Order>(tradeStackCopy);
 
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;
             }
         }
 
-        public StockExchange Exchange()
+        public Market Exchange()
         {
             if (_market != null)
             {

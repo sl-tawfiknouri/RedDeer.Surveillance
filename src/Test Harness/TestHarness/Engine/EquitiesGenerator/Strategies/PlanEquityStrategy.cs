@@ -1,6 +1,7 @@
 ﻿using System;
-using Domain.Equity;
-using Domain.Equity.Frames;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
 
@@ -76,11 +77,11 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         private Spread AdjustSpreadCalculation(decimal adjustmentFactor, SecurityTick precedingTick)
         {
             var adjustedBid =
-                new Price(precedingTick.Spread.Bid.Value * adjustmentFactor, precedingTick.Spread.Bid.Currency);
+                new CurrencyAmount(precedingTick.Spread.Bid.Value * adjustmentFactor, precedingTick.Spread.Bid.Currency);
             var adjustedAsk =
-                new Price(precedingTick.Spread.Ask.Value * adjustmentFactor, precedingTick.Spread.Ask.Currency);
+                new CurrencyAmount(precedingTick.Spread.Ask.Value * adjustmentFactor, precedingTick.Spread.Ask.Currency);
             var adjustedPrice =
-                new Price(precedingTick.Spread.Price.Value * adjustmentFactor, precedingTick.Spread.Price.Currency);
+                new CurrencyAmount(precedingTick.Spread.Price.Value * adjustmentFactor, precedingTick.Spread.Price.Currency);
 
             return new Spread(adjustedBid, adjustedAsk, adjustedPrice);
         }

@@ -1,5 +1,5 @@
-﻿using Domain.Equity;
-using Domain.Equity.Frames;
+﻿using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 
 namespace Surveillance.Rules.HighProfits.Calculators
@@ -10,7 +10,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             : base(logger)
         { }
 
-        protected override Price? SecurityTickToPrice(SecurityTick tick)
+        protected override CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
         {
             if (tick == null)
             {

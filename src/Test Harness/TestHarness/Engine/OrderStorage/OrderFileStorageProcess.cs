@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Timers;
 using CsvHelper;
-using Domain.Trades.Orders;
-using Domain.Trades.Orders.Interfaces;
-using NLog;
+using DomainV2.Files.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.OrderStorage.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField
@@ -21,24 +21,24 @@ namespace TestHarness.Engine.OrderStorage
 
         private volatile bool _timerInitiated;
 
-        private readonly List<TradeOrderFrame> _frames;
+        private readonly List<Order> _frames;
         private readonly Timer _timer;
         private readonly string _fileStamp;
 
         private readonly IConsole _console;
-        private readonly ITradeOrderCsvToDtoMapper _csvMapper;
+        private readonly ITradeFileCsvToOrderMapper _csvMapper;
 
         public OrderFileStorageProcess(
             string storagePath,
             IConsole console,
-            ITradeOrderCsvToDtoMapper csvMapper,
+            ITradeFileCsvToOrderMapper csvMapper,
             ILogger logger)
         {
             _storagePath = storagePath ?? "GeneratedOrderFiles";
             _console = console ?? throw new ArgumentNullException(nameof(console));
             _csvMapper = csvMapper ?? throw new ArgumentNullException(nameof(csvMapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _frames = new List<TradeOrderFrame>();
+            _frames = new List<Order>();
             _timerInitiated = false;
             _fileStamp = $"TradeFile-{DateTime.UtcNow.Ticks}-{Guid.NewGuid()}.csv";
 
@@ -59,7 +59,7 @@ namespace TestHarness.Engine.OrderStorage
             }
             catch (Exception e)
             {
-                _logger.Log(LogLevel.Error, e);
+                _logger.LogError(e.Message);
             }
         }
 
@@ -68,10 +68,10 @@ namespace TestHarness.Engine.OrderStorage
 
         public void OnError(Exception error)
         {
-            _logger.Log(LogLevel.Error, error);
+            _logger.LogError(error.Message);
         }
 
-        public void OnNext(TradeOrderFrame value)
+        public void OnNext(Order value)
         {
             lock (_lock)
             {
@@ -101,8 +101,7 @@ namespace TestHarness.Engine.OrderStorage
                 {
                     var filePath = Path.Combine(_storagePath, _fileStamp);
 
-
-                    var csvFrames = _frames.Select(_csvMapper.Map).ToList();
+                    var csvFrames = _frames.Select(_csvMapper.Map).ToList().SelectMany(x => x).ToList();
 
                     using (var writer = File.CreateText(filePath))
                     {
@@ -116,7 +115,7 @@ namespace TestHarness.Engine.OrderStorage
                 }
                 catch (Exception a)
                 {
-                    _logger.Log(LogLevel.Error, a);
+                    _logger.LogError(a.Message);
                     _timer.Start();
                 }
             }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 
 namespace Surveillance.Rules.WashTrade.Interfaces
 {
     public interface IWashTradeClustering
     {
-        IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<TradeOrderFrame> frames);
+        IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<Order> frames);
     }
 }

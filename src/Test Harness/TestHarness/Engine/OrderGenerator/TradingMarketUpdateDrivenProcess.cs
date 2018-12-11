@@ -1,6 +1,6 @@
-﻿using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using NLog;
+﻿using DomainV2.Equity.Frames;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -12,7 +12,7 @@ namespace TestHarness.Engine.OrderGenerator
     {
         public TradingMarketUpdateDrivenProcess(
             ILogger logger,
-            ITradeStrategy<TradeOrderFrame> orderStrategy) 
+            ITradeStrategy<Order> orderStrategy) 
             : base(logger, orderStrategy)
         {
         }

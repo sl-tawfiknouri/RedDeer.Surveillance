@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Trades;
@@ -14,7 +15,7 @@ namespace Surveillance.Rules.WashTrade
     public class WashTradePositionPairer : IWashTradePositionPairer
     {
         public IReadOnlyCollection<PositionCluster> PairUp(
-            List<TradeOrderFrame> trades,
+            List<Order> trades,
             IWashTradeRuleParameters parameters)
         {
             if (trades == null
@@ -27,25 +28,25 @@ namespace Surveillance.Rules.WashTrade
             trades = trades.Where(tr => tr != null).ToList();
 
             var positionPairs = new List<PositionCluster>();
-            var currentBuyPosition = new TradePosition(new List<TradeOrderFrame>());
-            var currentSellPosition = new TradePosition(new List<TradeOrderFrame>());
+            var currentBuyPosition = new TradePosition(new List<Order>());
+            var currentSellPosition = new TradePosition(new List<Order>());
             var benchmarkPrice = 0m;
 
             foreach (var trade in trades)
             {
-                if (trade?.ExecutedPrice == null)
+                if (trade?.OrderAveragePrice == null)
                 {
                     continue;
                 }
 
                 if (benchmarkPrice == 0)
                 {
-                    benchmarkPrice = trade.ExecutedPrice.Value.Value;                   
+                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;                   
                 }
 
-                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.ExecutedPrice.Value.Value, parameters))
+                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAveragePrice.GetValueOrDefault().Value, parameters))
                 {
-                    benchmarkPrice = trade.ExecutedPrice.Value.Value;
+                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;
 
                     if (currentBuyPosition.Get().Any()
                         && currentSellPosition.Get().Any())
@@ -53,16 +54,16 @@ namespace Surveillance.Rules.WashTrade
                         positionPairs.Add(new PositionCluster(currentBuyPosition, currentSellPosition));
                     }
 
-                    currentBuyPosition = new TradePosition(new List<TradeOrderFrame>());
-                    currentSellPosition = new TradePosition(new List<TradeOrderFrame>());
+                    currentBuyPosition = new TradePosition(new List<Order>());
+                    currentSellPosition = new TradePosition(new List<Order>());
                 }
 
-                if (trade.Position == OrderPosition.Buy)
+                if (trade.OrderPosition == OrderPositions.BUY)
                 {
                     currentBuyPosition.Add(trade);
                 }
 
-                if (trade.Position == OrderPosition.Sell)
+                if (trade.OrderPosition == OrderPositions.SELL)
                 {
                     currentSellPosition.Add(trade);
                 }

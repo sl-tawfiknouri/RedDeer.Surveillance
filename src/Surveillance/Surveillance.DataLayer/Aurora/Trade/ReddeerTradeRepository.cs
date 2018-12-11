@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Equity;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
@@ -21,96 +20,121 @@ namespace Surveillance.DataLayer.Aurora.Trade
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger _logger;
 
-        private const string CreateSql = @"
-    INSERT INTO TradeReddeer(
-	    OrderTypeId,
-	    LimitPrice,
-	    LimitCurrency,
-	    TradeSubmittedOn,
-	    StatusChangedOn,
-	    FilledVolume,
-	    OrderedVolume,
-	    OrderPositionId,
-	    OrderStatusId,
-	    OrderCurrency,
-	    TraderId,
-	    TradeClientAttributionId,
-	    AccountId,
-	    PartyBrokerId,
-	    CounterPartyBrokerId,
-	    ExecutedPrice,
-	    DealerInstructions,
-	    TradeRationale,
-	    TradeStrategy,
-        SecurityId)
-    VALUES(
-	    @OrderTypeId,
-	    @LimitPrice,
-	    @LimitCurrency,
-	    @TradeSubmittedOn,
-	    @StatusChangedOn,
-	    @FilledVolume,
-	    @OrderedVolume,
-	    @OrderPositionId,
-	    @OrderStatusId,
-	    @OrderCurrency,
-	    @TraderId,
-	    @TradeClientAttributionId,
-	    @AccountId,
-	    @PartyBrokerId,
-	    @CounterPartyBrokerId,
-	    @ExecutedPrice,
-	    @DealerInstructions,
-	    @TradeRationale,
-	    @TradeStrategy,
-        @SecurityId);";
+        private const string CreateSql2 = @"
+            INSERT INTO Orders(
+                MarketId,
+                SecurityId,
+                ClientOrderId,
+                PlacedDate,
+                BookedDate,
+                AmendedDate,
+                RejectedDate,
+                CancelledDate,
+                FilledDate,
+                StatusChangedDate,
+                OrderType,
+                Position,
+                Currency,
+                LimitPrice,
+                AveragePrice,
+                OrderedVolume,
+                FilledVolume,
+                PortfolioManager,
+                TraderId,
+                ExecutingBroker,
+                ClearingAgent,
+                DealingInstructions,
+                Strategy,
+                Rationale,
+                Fund,
+                ClientAccountAttributionId)
+            VALUES(
+                @MarketId,
+                @SecurityId,
+                @OrderId,
+                @OrderPlacedDate,
+                @OrderBookedDate,
+                @OrderAmendedDate,
+                @OrderRejectedDate,
+                @OrderCancelledDate,
+                @OrderFilledDate,
+                @OrderStatusChangedDate,
+                @OrderType,
+                @OrderPosition,
+                @OrderCurrency,
+                @OrderLimitPrice,
+                @OrderAveragePrice,
+                @OrderOrderedVolume,
+                @OrderFilledVolume,
+                @OrderPortfolioManager,
+                @OrderTraderId,
+                @OrderExecutingBroker,
+                @OrderClearingAgent,
+                @OrderDealingInstructions,
+                @OrderStrategy,
+                @OrderRationale,
+                @OrderFund,
+                @OrderClientAccountAttributionId);";
 
         private const string GetSql = @"
-        SELECT 
-            tr.Id,
-	        tr.OrderTypeId,
-	        tr.LimitPrice,
-	        tr.LimitCurrency,
-	        tr.TradeSubmittedOn,
-	        tr.StatusChangedOn,
-	        tr.FilledVolume,
-	        tr.OrderedVolume,
-	        tr.OrderPositionId,
-	        tr.OrderStatusId,
-	        tr.OrderCurrency,
-	        tr.TraderId,
-	        tr.TradeClientAttributionId,
-	        tr.AccountId,
-	        tr.PartyBrokerId,
-	        tr.CounterPartyBrokerId,
-	        tr.ExecutedPrice,
-	        tr.DealerInstructions,
-	        tr.TradeRationale,
-	        tr.TradeStrategy,
-            tr.SecurityId,
-            mses.ReddeerId AS SecurityReddeerId,
-            mses.ClientIdentifier AS SecurityClientIdentifier,
-            mses.Sedol AS SecuritySedol,
-            mses.Isin AS SecurityIsin,
-            mses.Figi AS SecurityFigi,
-            mses.Cusip AS SecurityCusip,
-            mses.ExchangeSymbol AS SecurityExchangeSymbol,
-            mses.Lei AS SecurityLei,
-            mses.BloombergTicker AS SecurityBloombergTicker,
-            mses.SecurityName AS SecurityName,
-            mses.Cfi AS SecurityCfi,
-            mses.IssuerIdentifier AS SecurityIssuerIdentifier,
-            mse.MarketId,
-            mse.MarketName
-        FROM 
-            TradeReddeer AS tr
-        LEFT OUTER JOIN MarketStockExchangeSecurities AS mses 
-            ON tr.SecurityId = mses.Id
-        LEFT OUTER JOIN MarketStockExchange as mse
-            ON mses.MarketStockExchangeId = mse.Id
-        WHERE 
-            tr.StatusChangedOn >= @Start
-            AND tr.StatusChangedOn <= @End;";
+            SELECT
+	            ord.Id as Id,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.OrderType as OrderType,
+                ord.Position as OrderPosition,
+                ord.Currency as OrderCurrency,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AveragePrice as OrderAveragePrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.PortfolioManager as OrderPortfolioManager,
+                ord.TraderId as OrderTraderId,
+                ord.ExecutingBroker as OrderExecutingBroker,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.Strategy as OrderStrategy,
+                ord.Rationale as OrderRationale,
+                ord.Fund as OrderFund,
+                ord.ClientAccountAttributionId as OrderClientAccountAttributionId,
+	            fi.ReddeerId AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName
+            FROM orders as ord
+            LEFT OUTER JOIN financialinstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN market as mark
+            on mark.Id = ord.MarketId
+            WHERE 
+            ord.PlacedDate >= @Start
+            AND Ord.StatusChangedDate <= @End;";
 
         public ReddeerTradeRepository(
             IConnectionStringFactory connectionStringFactory,
@@ -125,7 +149,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(TradeOrderFrame entity)
+        public async Task Create(Order entity)
         {
             if (entity == null)
             {
@@ -138,23 +162,24 @@ namespace Surveillance.DataLayer.Aurora.Trade
             {
                 dbConnection.Open();
 
-                var dto = new TradeOrderFrameDto(entity);
+                var dto = new OrderDto(entity);
 
                 if (string.IsNullOrWhiteSpace(dto.SecurityId))
                 {
-                    var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Security};
-                    var securityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
-                    dto.SecurityId = securityId;
+                    var marketDataPair = new MarketDataPair {Exchange = entity.Market, Security = entity.Instrument};
+                    var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
+                    dto.SecurityId = marketSecurityId.SecurityId;
+                    dto.MarketId = marketSecurityId.MarketId;
                 }
 
-                using (var conn = dbConnection.ExecuteAsync(CreateSql, dto))
+                using (var conn = dbConnection.ExecuteAsync(CreateSql2, dto))
                 {
                     await conn;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Security?.Name} {e.Message}");
+                _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message}");
             }
             finally
             {
@@ -163,14 +188,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
             }
         }
 
-        public async Task<IReadOnlyCollection<TradeOrderFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date.AddDays(1).AddMilliseconds(-1);
 
             if (end < start)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
@@ -180,7 +205,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Open();
 
                 var query = new GetQuery {Start = start, End = end};
-                using (var conn = dbConnection.QueryAsync<TradeOrderFrameDto>(GetSql, query))
+                using (var conn = dbConnection.QueryAsync<OrderDto>(GetSql, query))
                 {
                     var rawResult = await conn;
 
@@ -198,29 +223,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Dispose();
             }
 
-            return new TradeOrderFrame[0];
+            return new Order[0];
         }
 
-        private TradeOrderFrame Project(TradeOrderFrameDto dto)
+        private Order Project(OrderDto dto)
         {
-            var limit =
-                dto.LimitPrice.HasValue
-                    ? new Price(dto.LimitPrice.Value, dto.LimitCurrency)
-                    : (Price?)null;
-
-            var executedPrice =
-                dto.ExecutedPrice.HasValue
-                    ? new Price(dto.ExecutedPrice.Value, dto.OrderCurrency)
-                    : (Price?) null; 
-
-            return new TradeOrderFrame(
-                dto.Id,
-                (OrderType)dto.OrderTypeId.GetValueOrDefault(0),
-                new StockExchange(
-                    new Domain.Market.Market.MarketId(dto.MarketId),
-                    dto.MarketName),
-                new Security(
-                    new SecurityIdentifiers(
+            var financialInstrument =
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers(
                         dto.SecurityId,
                         dto.SecurityReddeerId,
                         dto.SecurityClientIdentifier,
@@ -230,27 +241,59 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         dto.SecurityCusip,
                         dto.SecurityExchangeSymbol,
                         dto.SecurityLei,
-                        dto.SecurityBloombergTicker),
+                        dto.SecurityBloombergTicker,
+                        dto.UnderlyingSecuritySedol,
+                        dto.UnderlyingSecurityIsin,
+                        dto.UnderlyingSecurityFigi,
+                        dto.UnderlyingSecurityCusip,
+                        dto.UnderlyingSecurityLei,
+                        dto.UnderlyingSecurityExchangeSymbol,
+                        dto.UnderlyingSecurityBloombergTicker,
+                        dto.UnderlyingClientIdentifier),
                     dto.SecurityName,
                     dto.SecurityCfi,
-                    dto.SecurityIssuerIdentifier),
-                limit,
-                executedPrice,
-                dto.FilledVolume,
-                dto.OrderedVolume,
-                (OrderPosition)dto.OrderPositionId.GetValueOrDefault(0),
-                (OrderStatus)dto.OrderStatusId.GetValueOrDefault(0),
-                dto.StatusChangedOn,
-                dto.TradeSubmittedOn,
-                dto.TraderId,
-                dto.TradeClientAttributionId,
-                dto.AccountId,
-                dto.DealerInstructions,
-                dto.PartyBrokerId,
-                dto.CounterPartyBrokerId,
-                dto.TradeRationale,
-                dto.TradeStrategy,
-                dto.OrderCurrency);
+                    dto.SecurityIssuerIdentifier,
+                    dto.UnderlyingSecurityName,
+                    dto.UnderlyingSecurityCfi,
+                    dto.UnderlyingSecurityIssuerIdentifier);
+
+            Enum.TryParse(dto.MarketType?.ToString() ?? string.Empty, out MarketTypes result);
+            var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
+            var orderPositionResult = (OrderPositions)dto.OrderPosition.GetValueOrDefault(0);
+            var orderCurrency = new Currency(dto.OrderCurrency);
+            var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
+            var averagePrice = new CurrencyAmount(dto.OrderAveragePrice, dto.OrderCurrency);
+
+            var market = new DomainV2.Financial.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+
+            return new Order(
+                financialInstrument,
+                market,
+                dto.ReddeerOrderId,
+                dto.OrderId,
+                dto.OrderPlacedDate,
+                dto.OrderBookedDate,
+                dto.OrderAmendedDate,
+                dto.OrderRejectedDate,
+                dto.OrderCancelledDate,
+                dto.OrderFilledDate,
+                orderTypeResult,
+                orderPositionResult,
+                orderCurrency,
+                limitPrice,
+                averagePrice,
+                dto.OrderOrderedVolume,
+                dto.OrderFilledVolume,
+                dto.OrderPortfolioManager,
+                dto.OrderTraderId,
+                dto.OrderExecutingBroker,
+                dto.OrderClearingAgent,
+                dto.OrderDealingInstructions,
+                dto.OrderStrategy,
+                dto.OrderRationale,
+                dto.OrderFund,
+                dto.OrderClientAccountAttributionId,
+                new DomainV2.Trading.Trade[0]);
         }
 
         private class GetQuery
@@ -259,79 +302,114 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime End { get; set; }
         }
 
-        private class TradeOrderFrameDto
+        private class OrderDto
         {
-            public TradeOrderFrameDto()
+            public OrderDto()
             {
+                // used by reads
             }
 
-            public TradeOrderFrameDto(TradeOrderFrame frame)
+            public OrderDto(Order order)
             {
-                if (frame == null)
+                if (order == null)
                 {
                     return;
                 }
 
-                Id = frame.Id;
-                OrderTypeId = (int)frame.OrderType;
-                MarketId = frame.Market?.Id?.Id;
-                MarketName = frame.Market?.Name;
-                SecurityId = frame.Security?.Identifiers.Id ?? string.Empty;
-                SecurityReddeerId = frame.Security?.Identifiers.ReddeerId;
-                SecurityClientIdentifier = frame.Security?.Identifiers.ClientIdentifier;
-                SecuritySedol = frame.Security?.Identifiers.Sedol;
-                SecurityIsin = frame.Security?.Identifiers.Isin;
-                SecurityFigi = frame.Security?.Identifiers.Figi;
-                SecurityCusip = frame.Security?.Identifiers.Cusip;
-                SecurityExchangeSymbol = frame.Security?.Identifiers.ExchangeSymbol;
-                SecurityLei = frame.Security?.Identifiers.Lei;
-                SecurityBloombergTicker = frame.Security?.Identifiers.BloombergTicker;
-                SecurityName = frame.Security?.Name;
-                SecurityCfi = frame.Security?.Cfi;
-                SecurityIssuerIdentifier = frame.Security?.IssuerIdentifier;
-                LimitPrice = frame.Limit?.Value;
-                LimitCurrency = frame.Limit?.Currency;
-                TradeSubmittedOn = frame.TradeSubmittedOn;
-                StatusChangedOn = frame.StatusChangedOn;
-                OrderedVolume = frame.OrderedVolume;
-                FilledVolume = frame.FulfilledVolume;
-                ExecutedPrice = frame.ExecutedPrice?.Value;
-                OrderCurrency = frame.OrderCurrency;
-                OrderPositionId = (int)frame.Position;
-                OrderStatusId = (int)frame.OrderStatus;
-                TraderId = frame.TraderId;
-                TradeClientAttributionId = frame.TradeClientAttributionId;
-                AccountId = frame.AccountId;
-                PartyBrokerId = frame.PartyBrokerId;
-                CounterPartyBrokerId = frame.CounterPartyBrokerId;
-                DealerInstructions = frame.DealerInstructions;
-                TradeRationale = frame.TradeRationale;
-                TradeStrategy = frame.TradeStrategy;
+                MarketId = order.Market?.Id ?? string.Empty;
+                MarketIdentifierCode = order.Market?.MarketIdentifierCode;
+                MarketName = order.Market?.Name;
+                MarketType = (int?)order.Market?.Type;
+
+                SecurityId = order?.Instrument.Identifiers.Id;
+                SecurityReddeerId = order?.Instrument.Identifiers.ReddeerId;
+                SecurityClientIdentifier = order?.Instrument.Identifiers.ClientIdentifier;
+
+                SecurityName = order?.Instrument.Name;
+                SecurityCfi = order?.Instrument.Cfi;
+                SecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
+                SecurityType = (int?)order?.Instrument.Type;
+
+                SecuritySedol = order?.Instrument.Identifiers.Sedol;
+                SecurityIsin = order?.Instrument.Identifiers.Isin;
+                SecurityFigi = order?.Instrument.Identifiers.Figi;
+                SecurityCusip = order?.Instrument.Identifiers.Cusip;
+                SecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
+                SecurityLei = order?.Instrument.Identifiers.Lei;
+                SecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+
+                UnderlyingSecurityName = order?.Instrument.Name;
+                UnderlyingSecurityCfi = order?.Instrument.Cfi;
+                UnderlyingSecurityIssuerIdentifier = order?.Instrument.IssuerIdentifier;
+
+                UnderlyingSecuritySedol = order?.Instrument.Identifiers.Sedol;
+                UnderlyingSecurityIsin = order?.Instrument.Identifiers.Isin;
+                UnderlyingSecurityFigi = order?.Instrument.Identifiers.Figi;
+                UnderlyingSecurityCusip = order?.Instrument.Identifiers.Cusip;
+                UnderlyingSecurityExchangeSymbol = order?.Instrument.Identifiers.ExchangeSymbol;
+                UnderlyingSecurityLei = order?.Instrument.Identifiers.Lei;
+                UnderlyingSecurityBloombergTicker = order?.Instrument.Identifiers.BloombergTicker;
+                UnderlyingClientIdentifier = order?.Instrument.Identifiers.UnderlyingClientIdentifier;
+
+                ReddeerOrderId = order.ReddeerOrderId;
+                OrderId = order.OrderId;
+                OrderPlacedDate = order.OrderPlacedDate;
+                OrderBookedDate = order.OrderBookedDate;
+                OrderAmendedDate = order.OrderAmendedDate;
+                OrderRejectedDate = order.OrderRejectedDate;
+                OrderCancelledDate = order.OrderCancelledDate;
+                OrderFilledDate = order.OrderFilledDate;
+                OrderStatusChangedDate = order.MostRecentDateEvent();
+
+                OrderType = (int?)order.OrderType;
+                OrderPosition = (int?)order.OrderPosition;
+                OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
+                OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
+                OrderAveragePrice = order.OrderAveragePrice.GetValueOrDefault().Value;
+                OrderOrderedVolume = order.OrderOrderedVolume;
+                OrderFilledVolume = order.OrderFilledVolume;
+
+                OrderPortfolioManager = order.OrderPortfolioManager;
+                OrderTraderId = order.OrderTraderId;
+                OrderExecutingBroker = order.OrderExecutingBroker;
+                OrderClearingAgent = order.OrderClearingAgent;
+                OrderDealingInstructions = order.OrderDealingInstructions;
+                OrderStrategy = order.OrderStrategy;
+                OrderRationale = order.OrderRationale;
+                OrderFund = order.OrderFund;
+                OrderClientAccountAttributionId = order.OrderClientAccountAttributionId;
             }
 
             /// <summary>
-            /// Dapper field for primary key
-            /// </summary>
-            public int? Id { get; set; }
-
-            /// <summary>
-            /// The type of order i.e. market / limit
-            /// </summary>
-            public int? OrderTypeId { get; set; }
-
-            /// <summary>
-            /// The market the security is being traded on
+            /// The id for the market (primary key)
             /// </summary>
             public string MarketId { get; set; }
 
             /// <summary>
             /// The market the security is being traded on
             /// </summary>
+            public string MarketIdentifierCode { get; set; }
+
+            /// <summary>
+            /// The market the security is being traded on
+            /// </summary>
             public string MarketName { get; set; }
+
+            /// <summary>
+            /// The enumeration for the type of market i.e. stock exchange or otc
+            /// </summary>
+            public int? MarketType { get; set; }
+
 
             public string SecurityId { get; set; }
             public string SecurityReddeerId { get; set; }
             public string SecurityClientIdentifier { get; set; }
+
+            public string SecurityName { get; set; }
+            public string SecurityCfi { get; set; }
+            public string SecurityIssuerIdentifier { get; set; }
+            public int? SecurityType { get; set; }
+
             public string SecuritySedol { get; set; }
             public string SecurityIsin { get; set; }
             public string SecurityFigi { get; set; }
@@ -339,99 +417,46 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public string SecurityExchangeSymbol { get; set; }
             public string SecurityLei { get; set; }
             public string SecurityBloombergTicker { get; set; }
-            public string SecurityName { get; set; }
-            public string SecurityCfi { get; set; }
-            public string SecurityIssuerIdentifier { get; set; }
 
-            /// <summary>
-            /// If its a limit order, the limit price
-            /// </summary>
-            public decimal? LimitPrice { get; set; }
+            public string UnderlyingSecurityName { get; set; }
+            public string UnderlyingSecurityCfi { get; set; }
+            public string UnderlyingSecurityIssuerIdentifier { get; set; }
 
-            /// <summary>
-            /// If its a limit order, the limit price (currency)
-            /// </summary>
-            public string LimitCurrency { get; set; }
+            public string UnderlyingSecuritySedol { get; set; }
+            public string UnderlyingSecurityIsin { get; set; }
+            public string UnderlyingSecurityFigi { get; set; }
+            public string UnderlyingSecurityCusip { get; set; }
+            public string UnderlyingSecurityExchangeSymbol { get; set; }
+            public string UnderlyingSecurityLei { get; set; }
+            public string UnderlyingSecurityBloombergTicker { get; set; }
+            public string UnderlyingClientIdentifier { get; set; }
 
-            /// <summary>
-            /// Trade initially submitted on
-            /// </summary>
-            public DateTime TradeSubmittedOn { get; set; }
 
-            /// <summary>
-            /// Last update to the order (i.e. placed -> cancelled; placed -> fulfilled)
-            /// </summary>
-            public DateTime StatusChangedOn { get; set; }
-
-            /// <summary>
-            /// The amount that was requested to trade
-            /// </summary>
-            public int OrderedVolume { get; set; }
-
-            /// <summary>
-            /// The amount that was traded
-            /// </summary>
-            public int FilledVolume { get; set; }
-
-            /// <summary>
-            /// This is the price the trade was executed at; if several prices use the weighted average
-            /// </summary>
-            public decimal? ExecutedPrice { get; set; }
-
-            /// <summary>
-            /// The currency for the executed price
-            /// </summary>
+            public int? ReddeerOrderId { get; set; } // primary key
+            public string OrderId { get; set; } // the client id for the order
+            public DateTime? OrderPlacedDate { get; set; }
+            public DateTime? OrderBookedDate { get; set; }
+            public DateTime? OrderAmendedDate { get; set; }
+            public DateTime? OrderRejectedDate { get; set; }
+            public DateTime? OrderCancelledDate { get; set; }
+            public DateTime? OrderFilledDate { get; set; }
+            public DateTime? OrderStatusChangedDate { get; set; }
+            public int? OrderType { get; set; }
+            public int? OrderPosition { get; set; }
             public string OrderCurrency { get; set; }
-
-            /// <summary>
-            /// Buy or Sell
-            /// </summary>
-            public int? OrderPositionId { get; set; }
-
-            /// <summary>
-            /// Status of the order (placed/cancelled/fulfilled)
-            /// </summary>
-            public int? OrderStatusId { get; set; }
-
-            /// <summary>
-            /// A client identifier of the trader placing the order
-            /// </summary>
-            public string TraderId { get; set; }
-
-            /// <summary>
-            /// The client the trader is trading on behalf of
-            /// </summary>
-            public string TradeClientAttributionId { get; set; }
-
-            /// <summary>
-            /// The client account traded for
-            /// </summary>
-            public string AccountId { get; set; }
-
-            /// <summary>
-            /// The broker submitting the trade to the market
-            /// </summary>
-            public string PartyBrokerId { get; set; }
-
-            /// <summary>
-            /// The counter party broker matching the order
-            /// </summary>
-            public string CounterPartyBrokerId { get; set; }
-
-            /// <summary>
-            /// The instruction notes passed to the dealer
-            /// </summary>
-            public string DealerInstructions { get; set; }
-
-            /// <summary>
-            /// The traders rationalisation for the trade
-            /// </summary>
-            public string TradeRationale { get; set; }
-
-            /// <summary>
-            /// The strategy behind the trade
-            /// </summary>
-            public string TradeStrategy { get; set; }
+            public decimal? OrderLimitPrice { get; set; }
+            public decimal? OrderAveragePrice { get; set; }
+            public long? OrderOrderedVolume { get; set; }
+            public long? OrderFilledVolume { get; set; }
+            public string OrderPortfolioManager { get; set; }
+            public string OrderTraderId { get; set; }
+            public string OrderExecutingBroker { get; set; }
+            public string OrderClearingAgent { get; set; }
+            public string OrderDealingInstructions { get; set; }
+            public string OrderStrategy { get; set; }
+            public string OrderRationale { get; set; }
+            public string OrderFund { get; set; }
+            public string OrderClientAccountAttributionId { get; set; }
         }
     }
 }

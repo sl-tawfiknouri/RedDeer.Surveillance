@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -53,7 +53,7 @@ namespace TestHarness.Engine.OrderGenerator
             _baseGenerator.OnNext(filteredFrame);
         }
 
-        public void InitiateTrading(IStockExchangeStream stockStream, ITradeOrderStream<TradeOrderFrame> tradeStream)
+        public void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream)
         {
             _baseGenerator.InitiateTrading(stockStream, tradeStream);
         }

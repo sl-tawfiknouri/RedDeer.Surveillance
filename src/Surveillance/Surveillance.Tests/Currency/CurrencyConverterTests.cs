@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Finance;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -18,7 +18,7 @@ namespace Surveillance.Tests.Currency
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IExchangeRateApiCachingDecoratorRepository _apiRepository;
         private ILogger<CurrencyConverter> _logger;
-        private Domain.Finance.Currency _currency;
+        private DomainV2.Financial.Currency _currency;
         private DateTime _conversionTime;
 
         [SetUp]
@@ -27,7 +27,7 @@ namespace Surveillance.Tests.Currency
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _apiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
             _logger = A.Fake<ILogger<CurrencyConverter>>();
-            _currency = new Domain.Finance.Currency("USD");
+            _currency = new DomainV2.Financial.Currency("USD");
             _conversionTime = new DateTime(2017, 8, 31);
         }
 
@@ -74,7 +74,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(10, "CNY")
             };
-            var targetCurrency = new Domain.Finance.Currency("CNY");
+            var targetCurrency = new DomainV2.Financial.Currency("CNY");
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.Now, _ruleCtx);
 
@@ -92,7 +92,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(100, "CNY")
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -109,7 +109,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(100, "CNY")
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
             A
@@ -130,7 +130,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(100, "CNY")
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
             var rate = new ExchangeRateDto
             {
@@ -166,7 +166,7 @@ namespace Surveillance.Tests.Currency
                 new CurrencyAmount(100, "CNY"),
                 new CurrencyAmount(20, "USD")
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
             var cnyRate = new ExchangeRateDto
             {
@@ -211,7 +211,7 @@ namespace Surveillance.Tests.Currency
                 new CurrencyAmount(100, "CNY"),
                 new CurrencyAmount(20, "USD")
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
             var cnyRate = new ExchangeRateDto
             {
@@ -247,7 +247,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(100, "CNY"),
             };
-            var targetCurrency = new Domain.Finance.Currency("GBP");
+            var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
             var cnyRate = new ExchangeRateDto
             {
@@ -286,7 +286,7 @@ namespace Surveillance.Tests.Currency
             {
                 new CurrencyAmount(100, "CNY")
             };
-            var targetCurrency = new Domain.Finance.Currency("EUR");
+            var targetCurrency = new DomainV2.Financial.Currency("EUR");
             var targetDate = new DateTime(2018, 01, 01);
             var cnyRate = new ExchangeRateDto
             {

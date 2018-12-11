@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -66,11 +66,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private ExchangeFrame Frame()
         {
-            var stockExchange = new StockExchange(new Domain.Market.Market.MarketId("XLON"), "London Stock Exchange");
+            var stockExchange = new DomainV2.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var securityIdentifiers = new SecurityIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
+            var securityIdentifiers = new InstrumentIdentifiers(string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
-            var security = new Security(
+            var security = new FinancialInstrument(
+                InstrumentTypes.Equity,
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",
@@ -80,12 +81,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             {
                 new SecurityTick(
                     security,
-                    new Spread(new Price(100, "GBP"), new Price(101, "GBP"), new Price(100.5m, "GBP")),
+                    new Spread(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP")),
                     new Volume(1000),
                     new Volume(10000),
                     DateTime.UtcNow,
                     1000000,
-                    new IntradayPrices(new Price(90, "GBP"), new Price(85, "GBP"), new Price(105, "GBP"), new Price(84, "GBP")),
+                    new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
                     1000,
                     stockExchange)
             };

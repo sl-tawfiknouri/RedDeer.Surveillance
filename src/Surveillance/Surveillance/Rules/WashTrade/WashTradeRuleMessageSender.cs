@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -12,11 +11,9 @@ namespace Surveillance.Rules.WashTrade
     public class WashTradeRuleMessageSender : BaseMessageSender, IWashTradeRuleMessageSender
     {
         public WashTradeRuleMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             ILogger<WashTradeRuleMessageSender> logger,
             ICaseMessageSender caseMessageSender) 
             : base(
-                dtoMapper,
                 "Automated Wash Trade Rule Breach Detected",
                 "Wash Trade Rule Message Sender",
                 logger,

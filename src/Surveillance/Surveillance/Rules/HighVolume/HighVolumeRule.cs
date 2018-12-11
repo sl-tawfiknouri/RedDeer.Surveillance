@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
@@ -32,7 +32,7 @@ namespace Surveillance.Rules.HighVolume
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.HighVolume,
+                DomainV2.Scheduling.Rules.HighVolume,
                 HighVolumeRuleFactory.Version,
                 "High Volume Rule",
                 opCtx,
@@ -57,13 +57,12 @@ namespace Surveillance.Rules.HighVolume
             var tradedSecurities =
                 tradeWindow
                     .Where(tr =>
-                        tr.OrderStatus == OrderStatus.Fulfilled
-                        || tr.OrderStatus == OrderStatus.PartialFulfilled)
+                        tr.OrderStatus() == OrderStatus.Filled)
                     .ToList();
 
             var tradedVolume =
                 tradedSecurities
-                    .Sum(tr => tr.FulfilledVolume);
+                    .Sum(tr => tr.OrderFilledVolume.GetValueOrDefault(0));
 
             var tradePosition = new TradePosition(tradeWindow.ToList());
             var mostRecentTrade = tradeWindow.Pop();
@@ -97,26 +96,26 @@ namespace Surveillance.Rules.HighVolume
                 new HighVolumeRuleBreach(
                     _parameters.WindowSize, 
                     tradePosition,
-                    mostRecentTrade?.Security,
+                    mostRecentTrade?.Instrument,
                     _parameters,
                     dailyBreach,
                     windowBreach,
                     marketCapBreach,
                     tradedVolume);
 
-            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
+            var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }
 
-        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
+            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
             {
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.Id, out var exchangeFrame);
+            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var exchangeFrame);
 
             if (exchangeFrame == null)
             {
@@ -126,7 +125,7 @@ namespace Surveillance.Rules.HighVolume
 
             var security = exchangeFrame
                 .Securities
-                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers));
+                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers));
 
             if (security == null)
             {
@@ -156,11 +155,11 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(TradeOrderFrame mostRecentTrade, int tradedVolume)
+        private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.Id, out var marketStack))
+            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
             {
-                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.Id} at {UniverseDateTime}.");
+                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
@@ -171,7 +170,7 @@ namespace Surveillance.Rules.HighVolume
                 .Where(amh => amh != null)
                 .Select(amh =>
                     amh.Securities?.FirstOrDefault(sec =>
-                        Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers)))
+                        Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers)))
                 .Where(sec => sec != null)
                 .ToList();
 
@@ -198,7 +197,7 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        private HighVolumeRuleBreach.BreachDetails MarketCapCheck(TradeOrderFrame mostRecentTrade, List<TradeOrderFrame> trades)
+        private HighVolumeRuleBreach.BreachDetails MarketCapCheck(Order mostRecentTrade, List<Order> trades)
         {
             if (trades == null
                 || !trades.Any())
@@ -206,13 +205,13 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.Id))
+            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
             {
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.Id, out var exchangeFrame);
+            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var exchangeFrame);
 
             if (exchangeFrame == null)
             {
@@ -222,7 +221,7 @@ namespace Surveillance.Rules.HighVolume
 
             var security = exchangeFrame
                 .Securities
-                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Security.Identifiers));
+                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers));
 
             if (security == null)
             {
@@ -243,7 +242,7 @@ namespace Surveillance.Rules.HighVolume
 
             var tradedValue =
                 (double)trades
-                    .Select(tr => tr.FulfilledVolume * (tr.ExecutedPrice.GetValueOrDefault().Value))
+                    .Select(tr => tr.OrderFilledVolume.GetValueOrDefault(0) * (tr.OrderAveragePrice.GetValueOrDefault().Value))
                     .Sum();
 
             var breachPercentage =
@@ -284,7 +283,7 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
 
-            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
+            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
             _alertStream.Add(alert);
 
             if (_hadMissingData)

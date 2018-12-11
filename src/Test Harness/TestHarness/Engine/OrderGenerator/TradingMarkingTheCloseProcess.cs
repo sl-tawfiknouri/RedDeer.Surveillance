@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -23,14 +22,14 @@ namespace TestHarness.Engine.OrderGenerator
         private DateTime? _executeOn;
 
         public TradingMarkingTheCloseProcess(
-            IReadOnlyCollection<string> _markingtheCloseTargetSedols,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            IReadOnlyCollection<string> markingTheCloseTargetSedols,
+            ITradeStrategy<Order> orderStrategy,
             ExchangeDto marketDto,
             ILogger logger)
             : base(logger, orderStrategy)
         {
             _markingTheCloseTargetSedols =
-                _markingtheCloseTargetSedols
+                markingTheCloseTargetSedols
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();
@@ -139,30 +138,36 @@ namespace TestHarness.Engine.OrderGenerator
                 var timeOffset = _marketDto.MarketCloseTime.Add(-TimeSpan.FromMinutes((2 * i) + 1));
                 var tradeTime = headSecurity.TimeStamp.Date.Add(timeOffset);
 
-                var volumeFrame = new TradeOrderFrame(
-                    null,
-                    OrderType.Market,
-                    headSecurity.Market,
+                var volume = new Order(
                     headSecurity.Security,
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    (int)volumeForBreachesToTrade,
-                    (int)volumeForBreachesToTrade,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
+                    headSecurity.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
                     tradeTime,
                     tradeTime,
                     null,
                     null,
                     null,
+                    tradeTime,
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    headSecurity.Spread.Price.Currency,
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    (int) volumeForBreachesToTrade,
+                    (int) volumeForBreachesToTrade,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency);
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volume);
             }
         }
 
@@ -213,30 +218,36 @@ namespace TestHarness.Engine.OrderGenerator
                 var timeOffset = _marketDto.MarketCloseTime.Add(-TimeSpan.FromMinutes((2 * i) + 1));
                 var tradeTime = securities.TimeStamp.Date.Add(timeOffset);
 
-                var volumeFrame = new TradeOrderFrame(
-                    null,
-                    OrderType.Market,
-                    securities.Market,
+                var volume = new Order(
                     securities.Security,
-                    new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    new Price(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    (int)finalVolumeForBreachestoTrade,
-                    (int)finalVolumeForBreachestoTrade,
-                    OrderPosition.Buy,
-                    OrderStatus.Fulfilled,
+                    securities.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
                     tradeTime,
                     tradeTime,
                     null,
                     null,
                     null,
+                    tradeTime,
+                    OrderTypes.MARKET,
+                    OrderPositions.BUY,
+                    securities.Spread.Price.Currency,
+                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    (int)finalVolumeForBreachestoTrade,
+                    (int)finalVolumeForBreachestoTrade,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    securities.Spread.Price.Currency);
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volume);
             }
         }
 

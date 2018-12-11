@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.MessageBusIO.Interfaces;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Utilities.Aws_IO.Interfaces;
 

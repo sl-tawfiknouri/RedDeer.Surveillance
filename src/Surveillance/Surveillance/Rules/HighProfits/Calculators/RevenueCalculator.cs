@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -29,10 +27,10 @@ namespace Surveillance.Rules.HighProfits.Calculators
         /// Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
         public async Task<CurrencyAmount?> CalculateRevenueOfPosition(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IDictionary<Market.MarketId, ExchangeFrame> latestExchangeFrameBook)
+            IDictionary<string, ExchangeFrame> latestExchangeFrameBook)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -52,13 +50,13 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             // has a virtual position; calculate its value
-            var security = activeFulfilledTradeOrders.FirstOrDefault()?.Security;
+            var security = activeFulfilledTradeOrders.FirstOrDefault()?.Instrument;
             if (security == null)
             {
                 return realisedRevenue;
             }
 
-            var marketId = activeFulfilledTradeOrders.FirstOrDefault()?.Market?.Id;
+            var marketId = activeFulfilledTradeOrders.FirstOrDefault()?.Market?.MarketIdentifierCode;
             if (marketId == null)
             {
                 return CalculateInferredVirtualProfit(
@@ -101,7 +99,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return realisedRevenue + currencyAmount;
         }
 
-        private CurrencyAmount? CalculateRealisedRevenue(IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private CurrencyAmount? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -110,10 +108,10 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var filledOrders =
                 activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Sell)
+                .Where(afto => afto.OrderPosition == OrderPositions.SELL)
                 .Select(afto =>
                     new CurrencyAmount(
-                        afto.FulfilledVolume * afto.ExecutedPrice?.Value ?? 0,
+                        afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
                         afto.OrderCurrency))
                 .ToList();
 
@@ -127,7 +125,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return summedCurrency;
         }
 
-        private int CalculateTotalPurchaseVolume(IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private long CalculateTotalPurchaseVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -135,12 +133,12 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Buy)
-                .Select(afto => afto.FulfilledVolume)
+                .Where(afto => afto.OrderPosition == OrderPositions.BUY)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
 
-        private int CalculateTotalSalesVolume(IList<TradeOrderFrame> activeFulfilledTradeOrders)
+        private long CalculateTotalSalesVolume(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -148,23 +146,23 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return activeFulfilledTradeOrders
-                .Where(afto => afto.Position == OrderPosition.Sell)
-                .Select(afto => afto.FulfilledVolume)
+                .Where(afto => afto.OrderPosition == OrderPositions.SELL)
+                .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
 
         private CurrencyAmount? CalculateInferredVirtualProfit(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            IList<Order> activeFulfilledTradeOrders,
             CurrencyAmount? realisedRevenue,
-            int sizeOfVirtualPosition)
+            long sizeOfVirtualPosition)
         {
             _logger.LogInformation(
                 "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
 
             var mostRecentTrade =
                 activeFulfilledTradeOrders
-                    .Where(afto => afto.ExecutedPrice != null)
-                    .OrderByDescending(afto => afto.StatusChangedOn)
+                    .Where(afto => afto.OrderAveragePrice != null)
+                    .OrderByDescending(afto => afto.MostRecentDateEvent())
                     .FirstOrDefault();
 
             if (mostRecentTrade == null)
@@ -172,7 +170,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var inferredVirtualProfits = mostRecentTrade.ExecutedPrice?.Value * sizeOfVirtualPosition ?? 0;
+            var inferredVirtualProfits = mostRecentTrade.OrderAveragePrice.GetValueOrDefault().Value * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
 
             if (realisedRevenue == null)
@@ -183,7 +181,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return realisedRevenue + currencyAmount;
         }
 
-        protected virtual Price? SecurityTickToPrice(SecurityTick tick)
+        protected virtual CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
         {
             if (tick == null)
             {

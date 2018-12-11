@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Domain.Equity;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -14,8 +14,8 @@ namespace Surveillance.Rules.Spoofing
             TimeSpan window,
             ITradePosition fulfilledTradePosition,
             ITradePosition cancelledTradePosition,
-            Security security,
-            TradeOrderFrame mostRecentTrade)
+            FinancialInstrument security,
+            Order mostRecentTrade)
         {
             Window = window;
             Security = security;
@@ -32,11 +32,11 @@ namespace Surveillance.Rules.Spoofing
         public ITradePosition Trades { get; }
         public ITradePosition TradesInFulfilledPosition { get; }
         public ITradePosition CancelledTrades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         /// <summary>
         /// The trade whose fulfillment triggered the rule breach. This is a constituent of trades but not cancelled trades.
         /// </summary>
-        public TradeOrderFrame MostRecentTrade { get; }
+        public Order MostRecentTrade { get; }
     }
 }

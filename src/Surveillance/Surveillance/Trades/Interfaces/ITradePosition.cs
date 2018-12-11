@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
+
 // ReSharper disable UnusedMember.Global
 
 namespace Surveillance.Trades.Interfaces
 {
     public interface ITradePosition
     {
-        IList<TradeOrderFrame> Get();
-        void Add(TradeOrderFrame item);
+        IList<Order> Get();
+        void Add(Order item);
 
-        int TotalVolume();
-        int TotalVolumeOrderedOrFilled();
-        int VolumeInStatus(OrderStatus status);
-        int VolumeNotInStatus(OrderStatus status);
+        long TotalVolume();
+        long TotalVolumeOrderedOrFilled();
+        long VolumeInStatus(OrderStatus status);
+        long VolumeNotInStatus(OrderStatus status);
 
         bool PositionIsSubsetOf(ITradePosition position);
     }

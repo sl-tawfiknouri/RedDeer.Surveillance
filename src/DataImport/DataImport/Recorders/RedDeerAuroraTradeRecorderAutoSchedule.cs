@@ -4,8 +4,8 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Recorders.Interfaces;
-using Domain.Scheduling;
-using Domain.Trades.Orders;
+using DomainV2.Scheduling;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 
@@ -42,7 +42,7 @@ namespace DataImport.Recorders
             _logger.LogError($"An exception occured in the reddeer trade recorder {error}");
         }
 
-        public async void OnNext(TradeOrderFrame value)
+        public async void OnNext(Order value)
         {
             if (value == null)
             {
@@ -57,7 +57,7 @@ namespace DataImport.Recorders
             }
         }
 
-        private void UpdateBatch(TradeOrderFrame value)
+        private void UpdateBatch(Order value)
         {
             if (value == null)
             {
@@ -78,8 +78,8 @@ namespace DataImport.Recorders
                     var schedule = new ScheduledExecution
                     {
                         Rules = GetAllRules(),
-                        TimeSeriesInitiation = value.StatusChangedOn,
-                        TimeSeriesTermination = value.StatusChangedOn
+                        TimeSeriesInitiation = value.OrderPlacedDate.GetValueOrDefault(),
+                        TimeSeriesTermination = value.MostRecentDateEvent()
                     };
 
                     schedulePair = new SchedulePair
@@ -93,14 +93,14 @@ namespace DataImport.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.StatusChangedOn < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.MostRecentDateEvent() < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    schedulePair.Schedule.TimeSeriesInitiation = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesInitiation = value.MostRecentDateEvent();
                 }
 
-                if (value.StatusChangedOn > schedulePair.Schedule.TimeSeriesTermination)
+                if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)
                 {
-                    schedulePair.Schedule.TimeSeriesTermination = value.StatusChangedOn;
+                    schedulePair.Schedule.TimeSeriesTermination = value.MostRecentDateEvent();
                 }
 
                 if (schedulePair.Count == value.BatchSize)
@@ -113,12 +113,12 @@ namespace DataImport.Recorders
 
         private List<RuleIdentifier> GetAllRules()
         {
-            var allRules = Enum.GetValues(typeof(Domain.Scheduling.Rules));
-            var allRulesList = new List<Domain.Scheduling.Rules>();
+            var allRules = Enum.GetValues(typeof(Rules));
+            var allRulesList = new List<Rules>();
 
             foreach (var item in allRules)
             {
-                allRulesList.Add((Domain.Scheduling.Rules)item);
+                allRulesList.Add((Rules)item);
             }
 
             return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();

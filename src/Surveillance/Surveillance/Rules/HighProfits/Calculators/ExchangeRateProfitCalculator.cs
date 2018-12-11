@@ -22,17 +22,17 @@ namespace Surveillance.Rules.HighProfits.Calculators
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            Domain.Finance.Currency variableCurrency, 
+            DomainV2.Financial.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency))?.OrderCurrency;
+            var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Value))?.OrderCurrency;
 
-            if (string.IsNullOrWhiteSpace(orderCurrency))
+            if (string.IsNullOrWhiteSpace(orderCurrency.GetValueOrDefault().Value))
             {
                 orderCurrency =
                     positionRevenue
                         .Get()
-                        .FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency))
+                        .FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Value))
                         ?.OrderCurrency;
             }
 
@@ -44,8 +44,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 positionRevenue,
                 costRates,
                 revenueRates,
-                orderCurrency,
-                variableCurrency.Value);
+                orderCurrency.GetValueOrDefault(),
+                variableCurrency);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using NLog;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using TestHarness.Display.Interfaces;
 using TestHarness.Network_IO.Subscribers.Interfaces;
 using Utilities.Network_IO.Websocket_Connections;

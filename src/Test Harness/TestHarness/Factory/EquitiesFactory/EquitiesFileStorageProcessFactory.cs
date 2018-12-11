@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.Frames;
-using NLog;
+using DomainV2.Equity.Frames;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesStorage;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

@@ -6,10 +6,8 @@ using DataImport.Network_IO;
 using DataImport.Network_IO.RelaySubscribers.Interfaces;
 using DataImport.Processors;
 using DataImport.Recorders.Interfaces;
-using Domain.Streams;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Streams;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Utilities.Network_IO.Websocket_Hosts;
 using Utilities.Network_IO.Websocket_Hosts.Interfaces;
@@ -18,24 +16,24 @@ namespace DataImport.Managers
 {
     public class TradeOrderStreamManager : ITradeOrderStreamManager
     {
-        private readonly ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
+        private readonly OrderStream<Order> _tradeOrderStream;
         private readonly ITradeRelaySubscriber _tradeRelaySubscriber;
         private readonly IWebsocketHostFactory _websocketHostFactory;
         private readonly INetworkConfiguration _networkConfiguration;
         private readonly IUploadTradeFileMonitorFactory _fileMonitorFactory;
         private readonly IRedDeerAuroraTradeRecorderAutoSchedule _tradeRecorder;
 
-        private readonly ILogger<TradeProcessor<TradeOrderFrame>> _tpLogger;
+        private readonly ILogger<TradeProcessor<Order>> _tpLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
 
         public TradeOrderStreamManager(
-            ITradeOrderStream<TradeOrderFrame> tradeOrderStream,
+            OrderStream<Order> tradeOrderStream,
             ITradeRelaySubscriber tradeRelaySubscriber,
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
             IUploadTradeFileMonitorFactory fileMonitorFactory,
             IRedDeerAuroraTradeRecorderAutoSchedule tradeRecorder,
-            ILogger<TradeProcessor<TradeOrderFrame>> tpLogger,
+            ILogger<TradeProcessor<Order>> tpLogger,
             ILogger<NetworkExchange> exchangeLogger)
         {
             _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
@@ -55,6 +53,16 @@ namespace DataImport.Managers
 
         public IUploadTradeFileMonitor Initialise()
         {
+            var unsubscriberFactory = new UnsubscriberFactory<Order>();
+            //var tradeProcessorOrderStream = new OrderStream<Order>(unsubscriberFactory);
+            var tradeProcessor = new TradeProcessor<Order>(_tpLogger, _tradeOrderStream);
+
+            // hook the relay subscriber to begin communications with the outgoing network stream
+            // //tradeProcessorOrderStream.Subscribe(_tradeRelaySubscriber);
+
+            // hook the trade processor to receive the incoming network stream
+           // _tradeOrderStream.Subscribe(tradeProcessor);
+
             // hook up the data recorder
             _tradeOrderStream.Subscribe(_tradeRecorder);
 

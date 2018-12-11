@@ -1,7 +1,8 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
-using Domain.Equity;
-using Domain.Equity.Frames;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies
@@ -50,16 +51,16 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newSpread =
                 new Spread(
-                    new Price(newBuy, tick.Spread.Bid.Currency),
-                    new Price(newSell, tick.Spread.Ask.Currency),
-                    new Price(newBuy, tick.Spread.Bid.Currency));
+                    new CurrencyAmount(newBuy, tick.Spread.Bid.Currency),
+                    new CurrencyAmount(newSell, tick.Spread.Ask.Currency),
+                    new CurrencyAmount(newBuy, tick.Spread.Bid.Currency));
             var newVolume = CalculateNewVolume(tick);
             var newMarketCap = (tick.ListedSecurities ?? tick.DailyVolume.Traded) * newBuy;
 
             var newIntraday =
                 walkIntraday
-                    ? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency)
-                    : (tick.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency));
+                    ? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency.Value)
+                    : (tick.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency.Value));
 
             return
                 new SecurityTick(
@@ -83,20 +84,20 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             {
                 return
                     new IntradayPrices(
-                        new Price(newBuy, currency),
-                        new Price(newBuy, currency),
-                        new Price(newBuy, currency),
-                        new Price(newBuy, currency));
+                        new CurrencyAmount(newBuy, currency),
+                        new CurrencyAmount(newBuy, currency),
+                        new CurrencyAmount(newBuy, currency),
+                        new CurrencyAmount(newBuy, currency));
             }
 
             var adjustedHigh =
                 tick.IntradayPrices.High.Value.Value < newBuy
-                ? new Price(newBuy, tick.IntradayPrices.High.Value.Currency)
+                ? new CurrencyAmount(newBuy, tick.IntradayPrices.High.Value.Currency)
                 : tick.IntradayPrices.High.Value;
 
             var adjustedLow =
                 tick.IntradayPrices.Low.Value.Value < newBuy
-                ? new Price(newBuy, tick.IntradayPrices.High.Value.Currency)
+                ? new CurrencyAmount(newBuy, tick.IntradayPrices.High.Value.Currency)
                 : tick.IntradayPrices.Low.Value;
 
             var newIntraday =

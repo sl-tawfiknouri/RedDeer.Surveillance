@@ -9,7 +9,7 @@ namespace Surveillance.Currency.Interfaces
     {
         Task<decimal> WeightedExchangeRate(
             ITradePosition position,
-            Domain.Finance.Currency targetCurrency,
+            DomainV2.Financial.Currency targetCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx);
     }
 }

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
 using MathNet.Numerics.Distributions;
-using NLog;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
 {
-    public class MarkovTradeStrategy : ITradeStrategy<TradeOrderFrame>
+    public class MarkovTradeStrategy : ITradeStrategy<Order>
     {
         private readonly ILogger _logger;
         private readonly ITradeVolumeStrategy _tradeVolumeStrategy;
@@ -39,7 +39,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 _limitStandardDeviation = limitStandardDeviation.Value;
         }
 
-        public void ExecuteTradeStrategy(ExchangeFrame frame, ITradeOrderStream<TradeOrderFrame> tradeOrders)
+        public void ExecuteTradeStrategy(ExchangeFrame frame, IOrderStream<Order> tradeOrders)
         {
             if (tradeOrders == null)
             {
@@ -49,14 +49,14 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (frame == null)
             {
-                _logger.Log(LogLevel.Info, "A null frame was passed to the markov trade strategy");
+                _logger.LogInformation("A null frame was passed to the markov trade strategy");
                 return;
             }
 
             if (frame.Securities == null
                 || frame.Securities.All(sec => sec == null))
             {
-                _logger.Log(LogLevel.Info, "No securities were present on the exchange frame in the markov trade strategy");
+                _logger.LogInformation("No securities were present on the exchange frame in the markov trade strategy");
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (numberOfTradeOrders <= 0)
             {
-                _logger.Log(LogLevel.Info, "Markov trading strategy decided not to trade on this frame");
+                _logger.LogInformation("Markov trading strategy decided not to trade on this frame");
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
         private void GenerateAndSubmitTrades(
             ExchangeFrame frame,
-            ITradeOrderStream<TradeOrderFrame> tradeOrders,
+            IOrderStream<Order> tradeOrders,
             int numberOfTradeOrders)
         {
             var securitiesToTradeIds = SecuritiesToTrade(frame, numberOfTradeOrders);
@@ -86,7 +86,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tradeOrders.Add(trade);
             }
 
-            _logger.Log(LogLevel.Info, $"Submitted {trades.Count} trade orders in frame");
+            _logger.LogInformation($"Submitted {trades.Count} trade orders in frame");
         }
 
         private IReadOnlyCollection<int> SecuritiesToTrade(ExchangeFrame frame, int securitiesToTrade)
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return securitiesToTradeIds;
         }
 
-        private TradeOrderFrame GenerateTrade(SecurityTick tick, ExchangeFrame exchFrame)
+        private Order GenerateTrade(SecurityTick tick, ExchangeFrame exchFrame)
         {
             if (tick == null)
             {
@@ -118,36 +118,43 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateIdString();
             var traderClientId = GenerateProbabilisticIdString();
-            var accountId = GenerateProbabilisticIdString();
-            var dealerInstructions = string.Empty;
-            var partyBrokerId = GenerateIdString();
+            var dealerInstructions = "Process Asap";
             var counterPartyBrokerId = GenerateIdString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
-            var orderCurrency = tick?.Spread.Price.Currency ?? string.Empty;
+            var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
 
-            return new TradeOrderFrame(
-                null,
-                orderType,
-                exchFrame.Exchange,
+            var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
+            var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;
+            
+            return new Order(
                 tick.Security,
+                tick.Market,
+                null,
+                Guid.NewGuid().ToString(),
+                orderSubmittedOn,
+                orderSubmittedOn,
+                null,
+                cancelledDate,
+                filledDate,
+                orderStatusLastChanged,
+                OrderTypes.MARKET,
+                position,
+                new Currency(orderCurrency),
                 limit,
                 executedPrice,
                 volume,
                 volume,
-                position,
-                orderStatus,
-                orderStatusLastChanged,
-                orderSubmittedOn,
+                "Mr. Portfolio Manager",
                 traderId,
-                traderClientId,
-                accountId,
-                dealerInstructions,
-                partyBrokerId,
                 counterPartyBrokerId,
+                "Clearing-Bank",
+                dealerInstructions,
+                "long/short",
                 tradeRationale,
                 tradeStrategy,
-                orderCurrency);
+                traderClientId,
+                new Trade[0]);
         }
 
         private string GenerateIdString()
@@ -169,49 +176,49 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
         private OrderStatus CalculateOrderStatus()
         {
-            var orderStatusSample = DiscreteUniform.Sample(0, 2);
+            var orderStatusSample = DiscreteUniform.Sample(1, 5);
             var orderStatus = (OrderStatus)orderStatusSample;
 
             return orderStatus;
         }
 
-        private OrderPosition CalculateTradeDirection()
+        private OrderPositions CalculateTradeDirection()
         {
-            var buyOrSellSample = DiscreteUniform.Sample(0, 1);
-            var buyOrSell = (OrderPosition)buyOrSellSample;
+            var buyOrSellSample = DiscreteUniform.Sample(1, 2);
+            var buyOrSell = (OrderPositions)buyOrSellSample;
 
             return buyOrSell;
         }
 
-        private OrderType CalculateTradeOrderType()
+        private OrderTypes CalculateTradeOrderType()
         {
             var tradeOrderTypeSample = DiscreteUniform.Sample(0, 1);
 
-            var tradeOrderType = (OrderType)tradeOrderTypeSample;
+            var tradeOrderType = (OrderTypes)tradeOrderTypeSample;
 
             return tradeOrderType;
         }
 
-        private Price? CalculateLimit(SecurityTick tick, OrderPosition buyOrSell, OrderType tradeOrderType)
+        private CurrencyAmount? CalculateLimit(SecurityTick tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
         {
-            if (tradeOrderType != OrderType.Limit)
+            if (tradeOrderType != OrderTypes.LIMIT)
             {
                 return null;
             }
 
-            if (buyOrSell == OrderPosition.Buy)
+            if (buyOrSell == OrderPositions.BUY)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new Price(adjustedPrice, tick.Spread.Bid.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.Spread.Bid.Currency);
             }
-            else if (buyOrSell == OrderPosition.Sell)
+            else if (buyOrSell == OrderPositions.SELL)
             {
                 var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new Price(adjustedPrice, tick.Spread.Ask.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.Spread.Ask.Currency);
             }
 
             return null;

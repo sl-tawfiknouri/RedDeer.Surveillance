@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -43,7 +43,7 @@ namespace Surveillance.Rules.WashTrade
             ILogger logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.WashTrade,
+                DomainV2.Scheduling.Rules.WashTrade,
                 WashTradeRuleFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
@@ -98,7 +98,7 @@ namespace Surveillance.Rules.WashTrade
                 return;
             }
 
-            var security = liveTrades?.FirstOrDefault()?.Security;
+            var security = liveTrades?.FirstOrDefault()?.Instrument;
 
             _logger.LogInformation($"Wash Trade Rule incrementing alerts because of security {security?.Name} at {UniverseDateTime}");
 
@@ -111,32 +111,30 @@ namespace Surveillance.Rules.WashTrade
                     pairingPositionsCheck,
                     clusteringPositionCheck);
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
+            var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, breach, RuleCtx);
             _alertStream.Add(universeAlert);
         }
 
-        private List<TradeOrderFrame> FilterByClientAccount(TradeOrderFrame mostRecentFrame, Stack<TradeOrderFrame> frames)
+        private List<Order> FilterByClientAccount(Order mostRecentFrame, Stack<Order> frames)
         {
             if (frames == null)
             {
-                return new List<TradeOrderFrame>();
+                return new List<Order>();
             }
 
             var liveTrades =
                 frames
-                    .Where(at =>
-                        at.OrderStatus == OrderStatus.Fulfilled
-                        || at.OrderStatus == OrderStatus.PartialFulfilled)
-                    .Where(at => at.ExecutedPrice != null)
+                    .Where(at => at.OrderStatus() == OrderStatus.Filled)
+                    .Where(at => at.OrderAveragePrice != null)
                     .ToList();
 
-            if (!string.IsNullOrWhiteSpace(mostRecentFrame?.TradeClientAttributionId))
+            if (!string.IsNullOrWhiteSpace(mostRecentFrame?.OrderClientAccountAttributionId))
             {
                 liveTrades = liveTrades
                     .Where(lt => 
                         string.Equals(
-                            lt.TradeClientAttributionId,
-                            mostRecentFrame.TradeClientAttributionId,
+                            lt.OrderClientAccountAttributionId,
+                            mostRecentFrame.OrderClientAccountAttributionId,
                             StringComparison.InvariantCultureIgnoreCase))
                     .ToList();
             }
@@ -147,7 +145,7 @@ namespace Surveillance.Rules.WashTrade
         /// <summary>
         /// See if trades net out to near zero i.e. large amount of churn
         /// </summary>
-        public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<Order> activeTrades)
         {
             if (!_parameters.PerformAveragePositionAnalysis)
             {
@@ -165,11 +163,11 @@ namespace Surveillance.Rules.WashTrade
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 
-            var buyPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Buy).ToList());
-            var sellPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Sell).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.FulfilledVolume * (bp.ExecutedPrice?.Value ?? 0));
-            var valueOfSell = sellPosition.Sum(sp => sp.FulfilledVolume * (sp.ExecutedPrice?.Value ?? 0));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault(0) * (bp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault(0) * (sp.OrderAveragePrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -201,10 +199,10 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
-            var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
+            var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
+            var absCurrencyAmount = new CurrencyAmount(absDifference, currency?.Value ?? string.Empty);
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -232,7 +230,7 @@ namespace Surveillance.Rules.WashTrade
                 convertedCurrency);
         }
 
-        public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<TradeOrderFrame> activeTrades)
+        public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<Order> activeTrades)
         {
             if (!_parameters.PerformPairingPositionAnalysis)
             {
@@ -292,8 +290,8 @@ namespace Surveillance.Rules.WashTrade
             var results = new List<PositionCluster>();
             foreach (var pair in pairs)
             {
-                var buyVolume = pair.Buys.Get().Sum(b => b.FulfilledVolume);
-                var sellVolume = pair.Sells.Get().Sum(s => s.FulfilledVolume);
+                var buyVolume = pair.Buys.Get().Sum(b => b.OrderFilledVolume.GetValueOrDefault());
+                var sellVolume = pair.Sells.Get().Sum(s => s.OrderFilledVolume.GetValueOrDefault());
 
                 if (buyVolume == sellVolume)
                 {
@@ -316,7 +314,7 @@ namespace Surveillance.Rules.WashTrade
             return results;
         }
 
-        private async Task<bool> CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(List<TradeOrderFrame> activeTrades)
+        private async Task<bool> CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(List<Order> activeTrades)
         {
             if (_parameters.PairingPositionMaximumAbsoluteCurrencyAmount == null
                 || string.IsNullOrWhiteSpace(_parameters.PairingPositionMaximumAbsoluteCurrency))
@@ -324,11 +322,11 @@ namespace Surveillance.Rules.WashTrade
                 return true;
             }
 
-            var buyPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Buy).ToList());
-            var sellPosition = new List<TradeOrderFrame>(activeTrades.Where(at => at.Position == OrderPosition.Sell).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.FulfilledVolume * (bp.ExecutedPrice?.Value ?? 0));
-            var valueOfSell = sellPosition.Sum(sp => sp.FulfilledVolume * (sp.ExecutedPrice?.Value ?? 0));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAveragePrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -341,10 +339,10 @@ namespace Surveillance.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Finance.Currency(activeTrades.FirstOrDefault()?.OrderCurrency);
+            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -362,7 +360,7 @@ namespace Surveillance.Rules.WashTrade
             return true;
         }
 
-        public WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringTrades(List<TradeOrderFrame> activeTrades)
+        public WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringTrades(List<Order> activeTrades)
         {
             if (!_parameters.PerformClusteringPositionAnalysis)
             {
@@ -393,8 +391,8 @@ namespace Surveillance.Rules.WashTrade
                     continue;
                 }
 
-                var buyValue = cluster.Buys.Get().Sum(b => b.ExecutedPrice.Value.Value * b.FulfilledVolume);
-                var sellValue = cluster.Sells.Get().Sum(s => s.ExecutedPrice.Value.Value * s.FulfilledVolume);
+                var buyValue = cluster.Buys.Get().Sum(b => b.OrderAveragePrice.GetValueOrDefault().Value * b.OrderFilledVolume.GetValueOrDefault(0));
+                var sellValue = cluster.Sells.Get().Sum(s => s.OrderAveragePrice.GetValueOrDefault().Value * s.OrderFilledVolume.GetValueOrDefault(0));
                 
                 var largerValue = Math.Max(buyValue, sellValue);
                 var smallerValue = Math.Min(buyValue, sellValue);
@@ -441,7 +439,7 @@ namespace Surveillance.Rules.WashTrade
         {
             _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
 
-            var alertStream = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, null, RuleCtx, true);
+            var alertStream = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, null, RuleCtx, true);
             _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
         }

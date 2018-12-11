@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Utilities.Aws_IO.Interfaces;

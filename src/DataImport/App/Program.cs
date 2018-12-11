@@ -8,8 +8,6 @@ using DasMulli.Win32.ServiceUtils;
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
-using Domain.Equity.Frames.Interfaces;
-using Domain.Trades.Orders.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
@@ -50,8 +48,6 @@ namespace RedDeer.DataImport.DataImport.App
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);
-                Container.Inject(typeof(ITradeOrderCsvConfig), builtConfig);
-                Container.Inject(typeof(ISecurityTickCsvConfig), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 

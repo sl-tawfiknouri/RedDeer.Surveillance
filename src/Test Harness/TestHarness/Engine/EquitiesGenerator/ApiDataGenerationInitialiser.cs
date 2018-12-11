@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
@@ -49,8 +49,9 @@ namespace TestHarness.Engine.EquitiesGenerator
                     .SelectMany(sm =>
                         sm.Prices.Select(smp =>
                             new SecurityTick(
-                                new Security(
-                                    new SecurityIdentifiers(
+                                new FinancialInstrument(
+                                    InstrumentTypes.Equity,
+                                    new InstrumentIdentifiers(
                                         string.Empty,
                                         string.Empty,
                                         string.Empty,
@@ -63,15 +64,15 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         sm.BloombergTicker),
                                     sm.SecurityName,
                                     sm.Cfi,
-                                    sm.IssuerIdentifier),
+                                    sm.IssuerIdentifier), 
                                 new Spread(
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency)),
                                 new Volume(volume((double)CalculateADailyVolume(smp.Value))),
@@ -79,22 +80,24 @@ namespace TestHarness.Engine.EquitiesGenerator
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
                                 smp.Value.MarketCapUsd,
                                 new IntradayPrices(
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.ClosePrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.HighIntradayPrice,
                                         sm.SecurityCurrency),
-                                    new Price(
+                                    new CurrencyAmount(
                                         smp.Value.LowIntradayPrice,
                                         sm.SecurityCurrency)),
                                 null,
-                                new StockExchange(
-                                    new Market.MarketId(_market.Code),
-                                    _market.Name))))
+                                new Market(
+                                    null,
+                                    _market.Code,
+                                    _market.Name,
+                                    MarketTypes.STOCKEXCHANGE))))
                     .GroupBy(x => x.TimeStamp)
                     .OrderBy(i => i.Key)
                     .ToList();
@@ -103,9 +106,11 @@ namespace TestHarness.Engine.EquitiesGenerator
                 initialTicks
                     .Select(it =>
                         new ExchangeFrame(
-                            new StockExchange(
-                                new Market.MarketId(_market.Code),
-                                _market.Name),
+                            new Market(
+                                null,
+                                _market.Code,
+                                _market.Name,
+                                MarketTypes.STOCKEXCHANGE),
                             it.Key,
                             it.ToList()))
                         .ToList();

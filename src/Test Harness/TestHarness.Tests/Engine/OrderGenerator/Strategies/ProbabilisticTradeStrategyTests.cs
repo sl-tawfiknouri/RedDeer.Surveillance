@@ -1,14 +1,14 @@
-﻿using Domain.Market;
-using FakeItEasy;
+﻿using FakeItEasy;
 using MathNet.Numerics.Distributions;
-using NLog;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -18,13 +18,13 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
     public class ProbabilisticTradeStrategyTests
     {
         private ILogger _logger;
-        private ITradeOrderStream<TradeOrderFrame> _tradeOrderStream;
+        private IOrderStream<Order> _tradeOrderStream;
         private ITradeVolumeStrategy _tradeVolumeStrategy;
 
         [SetUp]
         public void Setup()
         {
-            _tradeOrderStream = A.Fake<ITradeOrderStream<TradeOrderFrame>>();
+            _tradeOrderStream = A.Fake<IOrderStream<Order>>();
             _logger = A.Fake<ILogger>();
 
             _tradeVolumeStrategy = new TradeVolumeNormalDistributionStrategy(6);
@@ -50,8 +50,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
-                new StockExchange(
-                    new Market.MarketId("LSE"), "London Stock Exchange"), 
+                new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE), 
                 DateTime.UtcNow,
                 null);
 
@@ -63,16 +62,13 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
             var frame = new ExchangeFrame(
-                new StockExchange(
-                    new Market.MarketId("LSE"), "London Stock Exchange"),
+                new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
                 new List<SecurityTick>());
 
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
 
-            _logger.Log(
-                LogLevel.Info,
-                "No securities were present on the exchange frame in the probabilistic trade strategy");
+            _logger.LogInformation("No securities were present on the exchange frame in the probabilistic trade strategy");
         }
 
         [TestCase(0)]
@@ -85,12 +81,8 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             var frame = GenerateFrame(frames);
 
             A
-                .CallTo(() => _tradeOrderStream.Add(A<TradeOrderFrame>.Ignored))
+                .CallTo(() => _tradeOrderStream.Add(A<Order>.Ignored))
                 .Invokes(x => Console.WriteLine(x.Arguments[0]));
-
-            A
-                .CallTo(() => _logger.Log(A<LogLevel>.Ignored, A<string>.Ignored))
-                .Invokes(x => Console.WriteLine(x.Arguments[1]));
 
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
 
@@ -101,7 +93,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         {
             var frames = GenerateSecurityFrames(securityFrames);
             var exchFrame = new ExchangeFrame(
-                new StockExchange(new Market.MarketId("LSE"), "London Stock Exchange"),
+                new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
                 frames);
 
@@ -118,17 +110,18 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                 var volume = DiscreteUniform.Sample(0, 100000000);
                 
                 var frame = new SecurityTick(
-                    new Security(
-                        new SecurityIdentifiers(string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"),
-                        "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"),
-                    new Spread(new Price((decimal)buyPrice, "GBP"), new Price((decimal)sellPrice, "GBP"), new Price((decimal)buyPrice, "GBP")),
+                    new FinancialInstrument(
+                        InstrumentTypes.Equity,
+                        new InstrumentIdentifiers(string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
+                        "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"), 
+                    new Spread(new CurrencyAmount((decimal)buyPrice, "GBP"), new CurrencyAmount((decimal)sellPrice, "GBP"), new CurrencyAmount((decimal)buyPrice, "GBP")),
                     new Volume(volume),
                     new Volume(volume),
                     DateTime.UtcNow,
                     3000,
                     null,
                     1000,
-                    new StockExchange(new Market.MarketId("XLON"), "London Stock Exchange"));
+                    new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
                 results.Add(frame);
             }

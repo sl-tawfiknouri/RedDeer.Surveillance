@@ -4,9 +4,8 @@ using System.Linq;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.ComplianceCase;
 using Contracts.SurveillanceService.ComplianceCaseLog;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Mappers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -15,20 +14,17 @@ namespace Surveillance.Rules
 {
     public abstract class BaseMessageSender
     {
-        private readonly ITradeOrderDataItemDtoMapper _dtoMapper;
         private readonly ICaseMessageSender _caseMessageSender;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
         private readonly ILogger _logger;
 
         protected BaseMessageSender(
-            ITradeOrderDataItemDtoMapper dtoMapper,
             string caseTitle,
             string messageSenderName,
             ILogger logger,
             ICaseMessageSender caseMessageSender)
         {
-            _dtoMapper = dtoMapper ?? throw new ArgumentNullException(nameof(dtoMapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
 
@@ -64,8 +60,8 @@ namespace Surveillance.Rules
 
         private ComplianceCaseDataItemDto CaseDataItem(IRuleBreach ruleBreach, string description)
         {
-            var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.StatusChangedOn);
-            var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.StatusChangedOn);
+            var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.MostRecentDateEvent());
+            var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.MostRecentDateEvent());
             var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
 
             var entityReferences =
@@ -97,7 +93,7 @@ namespace Surveillance.Rules
             };
         }
 
-        protected virtual ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<TradeOrderFrame> orders)
+        protected virtual ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<Order> orders)
         {
             if (orders == null
                 || !orders.Any())
@@ -109,7 +105,7 @@ namespace Surveillance.Rules
                 .Select(tp =>
                     new ComplianceCaseLogDataItemDto
                     {
-                        DataItemId = tp.Id.ToString(),
+                        DataItemId = tp.ReddeerOrderId.ToString(),
                         DataItemType = DataItemType.TradeOrder,
                         Type = ComplianceCaseLogType.Unset,
                         Notes = string.Empty,

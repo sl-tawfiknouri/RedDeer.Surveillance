@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Factory;
 using TestHarness.Factory.Interfaces;
@@ -32,7 +32,7 @@ namespace TestHarness
         {
             lock (_lock)
             {
-                _appFactory.Logger.Log(LogLevel.Info, "Mediator Initiating");
+                _appFactory.Logger.LogInformation("Mediator Initiating");
 
                 _commandManager.InterpretIoCommand(_commandManifest.Initiate);
             }
@@ -56,7 +56,7 @@ namespace TestHarness
         {
             lock (_lock)
             {
-                _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating");
+                _appFactory.Logger.LogInformation("Mediator Terminating");
 
                 _commandManager.InterpretIoCommand(_commandManifest.Quit);
             }

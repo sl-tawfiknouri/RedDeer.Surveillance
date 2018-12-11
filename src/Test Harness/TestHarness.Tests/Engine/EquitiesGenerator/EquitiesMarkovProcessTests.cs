@@ -1,10 +1,10 @@
 ﻿using FakeItEasy;
-using NLog;
 using NUnit.Framework;
 using System;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams;
-using Domain.Streams;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams;
+using DomainV2.Streams;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
@@ -51,9 +51,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
             randomWalk.InitiateWalk(stream);
 
             Assert.AreEqual(observer.Buffer.Count, 1);
-            A
-                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in equity generator"))
-                .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
         }
@@ -78,9 +75,6 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
             }
 
             Assert.AreEqual(observer.Buffer.Count, 2);
-            A
-                .CallTo(() => _logger.Log(LogLevel.Info, "Walk initiated in equity generator"))
-                .MustHaveHappenedOnceExactly();
 
             randomWalk.TerminateWalk();
         }
@@ -117,7 +111,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             Assert.AreEqual(observer.Buffer.Count, 2);
 
-            A.CallTo(() => _logger.Log(LogLevel.Info, "Random walk generator terminating walk"))
+            A.CallTo(() => _logger.LogInformation("Random walk generator terminating walk"))
                 .MustHaveHappenedOnceExactly();
         }
     }

@@ -4,8 +4,10 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Streams.Interfaces;
+using DomainV2.Files;
+using DomainV2.Streams;
+using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -15,7 +17,7 @@ namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitor : BaseUploadFileMonitor, IUploadTradeFileMonitor
     {
-        private readonly ITradeOrderStream<TradeOrderFrame> _stream;
+        private readonly IOrderStream<Order> _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadTradeFileProcessor _fileProcessor;
         private readonly ISystemProcessContext _systemProcessContext;
@@ -23,7 +25,7 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
-            ITradeOrderStream<TradeOrderFrame> stream,
+            IOrderStream<Order> stream,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IUploadTradeFileProcessor fileProcessor,
@@ -90,7 +92,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void FailedRead(
             string path,
-            UploadFileProcessorResult<TradeOrderFrameCsv, TradeOrderFrame> csvReadResults,
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
@@ -111,7 +113,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void SuccessfulRead(
             string path,
-            UploadFileProcessorResult<TradeOrderFrameCsv, TradeOrderFrame> csvReadResults,
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
@@ -130,7 +132,6 @@ namespace DataImport.Disk_IO.TradeFile
             _logger.LogInformation($"Upload Trade File for {path} has deleted the file. Now about to check for unsuccessful reads.");
 
             _logger.LogInformation($"Upload Trade File successfully processed file for {path}. Did not find any unsuccessful reads.");
-            fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
             fileUpload.EndEvent().EndEvent();
         }
     }

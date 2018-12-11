@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
@@ -43,7 +43,7 @@ namespace Surveillance.Rules.HighProfits
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
-                Domain.Scheduling.Rules.HighProfits,
+                DomainV2.Scheduling.Rules.HighProfits,
                 HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
@@ -76,9 +76,7 @@ namespace Surveillance.Rules.HighProfits
             var activeTrades = history.ActiveTradeHistory();
 
             var liveTrades = activeTrades
-                .Where(at =>
-                    at.OrderStatus == OrderStatus.PartialFulfilled
-                    || at.OrderStatus == OrderStatus.Fulfilled)
+                .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
             var costCalculator = GetCostCalculator();
@@ -137,11 +135,11 @@ namespace Surveillance.Rules.HighProfits
             }
         }
 
-        private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<TradeOrderFrame> liveTrades)
+        private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-            var buys = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Buy).ToList());
-            var sells = new TradePosition(liveTrades.Where(lt => lt.Position == OrderPosition.Sell).ToList());
+            var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var buys = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.BUY).ToList());
+            var sells = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.SELL).ToList());
 
             var exchangeRateProfitsTask =
                 _exchangeRateProfitCalculator.ExchangeRateMovement(
@@ -158,7 +156,7 @@ namespace Surveillance.Rules.HighProfits
 
         private ICostCalculator GetCostCalculator()
         {
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
             var costCalculator = _parameters.UseCurrencyConversions
                 ? _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency)
@@ -179,7 +177,7 @@ namespace Surveillance.Rules.HighProfits
                 return calculator;
             }
 
-            var targetCurrency = new Domain.Finance.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             
             var currencyConvertingCalculator =
                 MarketClosureRule
@@ -195,14 +193,14 @@ namespace Surveillance.Rules.HighProfits
         }
 
         private void WriteAlertToMessageSender(
-            Stack<TradeOrderFrame> activeTrades,
+            Stack<Order> activeTrades,
             decimal absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
             IExchangeRateProfitBreakdown breakdown)
         {
-            var security = activeTrades.FirstOrDefault(at => at.Security != null)?.Security;
+            var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
 
             _logger.LogInformation($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to message sender.");
 
@@ -220,7 +218,7 @@ namespace Surveillance.Rules.HighProfits
                     MarketClosureRule,
                     breakdown);
 
-            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -275,7 +273,7 @@ namespace Surveillance.Rules.HighProfits
 
             if (_submitRuleBreaches)
             {
-                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
                 _alertStream.Add(alert);
             }
 

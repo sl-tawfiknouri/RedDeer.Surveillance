@@ -1,7 +1,7 @@
-﻿using NLog;
-using System;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
+﻿using System;
+using DomainV2.Equity.Frames;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
@@ -20,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingHeartBeatDrivenProcess(
             ILogger logger,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             IHeartbeat heartbeat) 
             : base(logger, orderStrategy)
         {

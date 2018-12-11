@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Market;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Financial;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -20,7 +20,7 @@ namespace Surveillance.Universe.Multiverse
     {
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
-        private readonly IDictionary<Market.MarketId, List<FrameToDate>> _exchangeFrame;
+        private readonly IDictionary<string, List<FrameToDate>> _exchangeFrame;
         private readonly Queue<IUniverseEvent> _universeEvents;
         private readonly object _lock = new object();
 
@@ -31,7 +31,7 @@ namespace Surveillance.Universe.Multiverse
         {
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
-            _exchangeFrame = new Dictionary<Market.MarketId, List<FrameToDate>>();
+            _exchangeFrame = new Dictionary<string, List<FrameToDate>>();
             _universeEvents = new Queue<IUniverseEvent>();
             _subscribedRules = new List<IUniverseCloneableRule>();
         }
@@ -81,9 +81,9 @@ namespace Surveillance.Universe.Multiverse
 
              var frame = (ExchangeFrame)universeEvent.UnderlyingEvent;
 
-            if (_exchangeFrame.ContainsKey(frame.Exchange.Id))
+            if (_exchangeFrame.ContainsKey(frame.Exchange.MarketIdentifierCode))
             {
-                _exchangeFrame.TryGetValue(frame.Exchange.Id, out var timeFrame);
+                _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var timeFrame);
 
                 var tfEntry =
                     timeFrame
@@ -109,10 +109,10 @@ namespace Surveillance.Universe.Multiverse
                 return;
             }
 
-            if (!_exchangeFrame.ContainsKey(new Market.MarketId(marketOpenClose.MarketId)))
+            if (!_exchangeFrame.ContainsKey(marketOpenClose.MarketId))
             {
                 _exchangeFrame.Add(
-                    new Market.MarketId(marketOpenClose.MarketId),
+                    marketOpenClose.MarketId,
                     new List<FrameToDate>
                     {
                         new FrameToDate { OpenDate = marketOpenClose.MarketOpen.AddHours(-4), Frame =  null},
@@ -122,7 +122,7 @@ namespace Surveillance.Universe.Multiverse
                 return;
             }
 
-            _exchangeFrame.TryGetValue(new Market.MarketId(marketOpenClose.MarketId), out var frames);
+            _exchangeFrame.TryGetValue(marketOpenClose.MarketId, out var frames);
             frames?.Add(new FrameToDate { OpenDate = marketOpenClose.MarketOpen.AddDays(1).AddHours(-4), Frame = null});           
         }
 
@@ -164,7 +164,7 @@ namespace Surveillance.Universe.Multiverse
             }
 
             var frame = (ExchangeFrame) universeEvent.UnderlyingEvent;
-            _exchangeFrame.TryGetValue(frame.Exchange.Id, out var frames);
+            _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var frames);
 
             if (frames == null)
             {

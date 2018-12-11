@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -11,8 +10,8 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders;
-using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 
 namespace Surveillance.Tests.Rules.Cancelled_Orders
@@ -51,28 +50,28 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         [Test]
         public void OnNext_SendsExpectedMessage_ForTradeCountRuleBreach()
         {
-            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            var cancelledOrdersByTradeSize = new List<Order>
             {
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
@@ -98,28 +97,28 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         [Test]
         public void OnNext_SendsExpectedMessage_ForTradeCountRuleBreach_WithNoMax()
         {
-            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            var cancelledOrdersByTradeSize = new List<Order>
             {
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
@@ -143,21 +142,21 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         [Test]
         public void OnNext_DoesNotSendsMessage_ForNoTradeCountRuleBreach()
         {
-            var trade = TradeFrame(OrderStatus.Cancelled);
-            trade.FulfilledVolume = trade.FulfilledVolume * 100;
+            var trade = OrderFactory(OrderStatus.Cancelled);
+            trade.OrderFilledVolume = trade.OrderFilledVolume * 100;
 
-            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            var cancelledOrdersByTradeSize = new List<Order>
             {
                 trade,
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
@@ -181,22 +180,22 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         [Test]
         public void OnNext_SendsExpectedMessage_ForPositionSizeRuleBreach()
         {
-            var trade = TradeFrame(OrderStatus.Cancelled);
-            trade.FulfilledVolume = trade.FulfilledVolume * 100;
-            trade.OrderedVolume = trade.OrderedVolume * 100;
+            var trade = OrderFactory(OrderStatus.Cancelled);
+            trade.OrderFilledVolume = trade.OrderFilledVolume * 100;
+            trade.OrderOrderedVolume = trade.OrderOrderedVolume * 100;
 
-            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            var cancelledOrdersByTradeSize = new List<Order>
             {
                 trade,
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
@@ -220,18 +219,18 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         [Test]
         public void OnNext_DoesNotSendMessage_ForNoPositionSizeRuleBreach()
         {
-            var cancelledOrdersByTradeSize = new List<TradeOrderFrame>
+            var cancelledOrdersByTradeSize = new List<Order>
             {
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Cancelled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
-                TradeFrame(OrderStatus.Fulfilled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Cancelled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
+                OrderFactory(OrderStatus.Filled),
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
@@ -252,49 +251,21 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 .MustNotHaveHappened();
         }
 
-        private TradeOrderFrame TradeFrame(OrderStatus status)
+        private Order OrderFactory(OrderStatus status)
         {
-            var securityIdentifiers =
-                new SecurityIdentifiers(
-                    string.Empty,
-                    "reddeer id",
-                    "client id",
-                    "1234567",
-                    "12345678912",
-                    "figi", 
-                    "cusip",
-                    "test",
-                    "testLei",
-                    "tick");
+            var order = ((Order) (null)).Random();
 
-            var security = new Security(
-                securityIdentifiers,
-                "Test Security",
-                "CFI",
-                "Issuer-Identifier");
+            switch (status)
+            {
+                case DomainV2.Financial.OrderStatus.Cancelled:
+                    order.OrderCancelledDate = DateTime.Now;
+                    return order;
+                case DomainV2.Financial.OrderStatus.Filled:
+                    order.OrderFilledDate = DateTime.Now;
+                    return order;
+            }
 
-            return new TradeOrderFrame(
-                null,
-                OrderType.Market,
-                new StockExchange(new Market.MarketId("XLON"), "XLON"),
-                security,
-                null,
-                new Price(1000, "GBP"),
-                1000,
-                1000,
-                OrderPosition.Buy,
-                status,
-                DateTime.Now,
-                DateTime.Now,
-                "trader-1",
-                "client-attribution-id",
-                "account-1",
-                "dealer-instructions",
-                "party-broker",
-                "counter party",
-                "trade rationale",
-                "good strategy",
-                "GBX");
+            return order;
         }
     }
 }

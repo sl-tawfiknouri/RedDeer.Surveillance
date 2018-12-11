@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity;
+using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -11,7 +11,7 @@ namespace Surveillance.Rules.CancelledOrders
         public CancelledOrderRuleBreach(
             ICancelledOrderRuleParameters parameters,
             ITradePosition trades,
-            Security security,
+            FinancialInstrument security,
             bool exceededPercentagePositionCancellations,
             decimal? percentagePositionCancelled,
             int? amountOfPositionCancelled,
@@ -40,7 +40,7 @@ namespace Surveillance.Rules.CancelledOrders
         public ICancelledOrderRuleParameters Parameters { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
 
         public bool ExceededPercentagePositionCancellations { get; }

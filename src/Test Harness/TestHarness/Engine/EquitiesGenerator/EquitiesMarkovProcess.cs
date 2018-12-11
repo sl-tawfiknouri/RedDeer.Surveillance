@@ -1,8 +1,8 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
@@ -54,7 +54,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
         public void InitiateWalk(IStockExchangeStream stream)
         {
-            _logger.Log(LogLevel.Info, "Walk initiated in equity generator");
+            _logger.LogInformation("Walk initiated in equity generator");
 
             if (stream == null)
             {
@@ -79,7 +79,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             if (_tickLocked)
             {
                 // don't tick if we're getting overwhelmed
-                _logger.Log(LogLevel.Info, "Ticks tocking too fast for equity generator");
+                _logger.LogInformation("Ticks tocking too fast for equity generator");
                 return;
             }
 
@@ -122,7 +122,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _heartBeat.Stop();
                 _heartBeat.Dispose();
 
-                _logger.Log(LogLevel.Info, "Random walk generator terminating walk");
+                _logger.LogInformation("Random walk generator terminating walk");
             }
         }
     }

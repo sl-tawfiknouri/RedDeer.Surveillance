@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Streams.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 
 namespace Surveillance.Analytics.Streams

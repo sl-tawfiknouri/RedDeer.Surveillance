@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
 
@@ -19,11 +19,10 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingLayeringProcess(
             IReadOnlyCollection<DataGenerationPlan> plan,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
-
             _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(1));
             _plan = plan ?? new DataGenerationPlan[0];
         }
@@ -134,30 +133,36 @@ namespace TestHarness.Engine.OrderGenerator
             tradedVolume = (int)((decimal)tradedVolume * 0.04m);
             var tradeTime = latestFrame.TimeStamp;
 
-            var volumeFrame = new TradeOrderFrame(
-                null,
-                realisedTrade ? OrderType.Market : OrderType.Limit,
-                headSecurity.Market,
+            var volume = new Order(
                 headSecurity.Security,
-                headSecurity.Spread.Price,
-                headSecurity.Spread.Price,
-                realisedTrade ? (int)tradedVolume : 0,
-                (int)tradedVolume,
-                realisedTrade ? OrderPosition.Sell : OrderPosition.Buy,
-                realisedTrade ? OrderStatus.Fulfilled : OrderStatus.Cancelled,
+                headSecurity.Market,
+                null,
+                Guid.NewGuid().ToString(),
                 realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 realisedTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 null,
                 null,
+                realisedTrade ? (DateTime?) null : tradeTime,
+                realisedTrade ? tradeTime.AddMinutes(1) : (DateTime?) null,
+                realisedTrade ? OrderTypes.MARKET : OrderTypes.LIMIT,
+                realisedTrade ? OrderPositions.SELL : OrderPositions.BUY,
+                headSecurity.Spread.Price.Currency,
+                headSecurity.Spread.Price,
+                headSecurity.Spread.Price,
+                realisedTrade ? (int) tradedVolume : 0,
+                realisedTrade ? (int) tradedVolume : 0,
                 null,
                 null,
                 null,
                 null,
                 null,
                 null,
-                headSecurity.Spread.Price.Currency);
+                null,
+                null,
+                null,
+                new Trade[0]);
 
-            TradeStream.Add(volumeFrame);
+            TradeStream.Add(volume);
         }
 
         protected override void _TerminateTradingStrategy()

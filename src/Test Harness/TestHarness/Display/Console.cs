@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Trading;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display
 {
     public class Console : IConsole
     {
-        private Stack<TradeOrderFrame> _tradeOrders;
+        private Stack<Order> _tradeOrders;
         private readonly object _lock = new object();
 
         private readonly int _marketFrameOffset = 6;
@@ -19,7 +19,7 @@ namespace TestHarness.Display
 
         public Console()
         {
-            _tradeOrders = new Stack<TradeOrderFrame>();
+            _tradeOrders = new Stack<Order>();
 
             InitialConfiguration();
         }
@@ -68,7 +68,7 @@ namespace TestHarness.Display
         /// <summary>
         /// Paint the last (_tradeLimitToPrint) trades most recent first
         /// </summary>
-        public void OutputTradeFrame(TradeOrderFrame frame)
+        public void OutputTradeFrame(Order frame)
         {
             lock (_lock)
             {
@@ -79,7 +79,7 @@ namespace TestHarness.Display
                 }
 
                 WriteToLine(_tradeFrameOffset, $"Showing last {_tradeLimitToPrint} trades of {_id + 1}.");
-                var newStack = new Stack<TradeOrderFrame>();
+                var newStack = new Stack<Order>();
                 _tradeOrders.Push(frame);
 
                 var loopSize = _tradeOrders.Count;
@@ -94,7 +94,7 @@ namespace TestHarness.Display
                     }
                 }
 
-                var reversedStack = new Stack<TradeOrderFrame>();
+                var reversedStack = new Stack<Order>();
                 var reverseLoopSize = newStack.Count;
                 for (var x = 1; x <= reverseLoopSize; x++)
                 {

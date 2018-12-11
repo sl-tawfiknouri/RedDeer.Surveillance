@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Accord.MachineLearning;
 using Accord.Math.Distances;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Trades;
 
@@ -11,7 +12,7 @@ namespace Surveillance.Rules.WashTrade
 {
     public class WashTradeClustering : IWashTradeClustering
     {
-        public IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<TradeOrderFrame> frames)
+        public IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<Order> frames)
         {
             if (frames == null
                 || !frames.Any())
@@ -19,7 +20,7 @@ namespace Surveillance.Rules.WashTrade
                 return new PositionClusterCentroid[0];
             }
 
-            var filteredFrames = frames.Where(fra => fra.ExecutedPrice != null && fra.FulfilledVolume > 0).ToList();
+            var filteredFrames = frames.Where(fra => fra.OrderAveragePrice != null && fra.OrderFilledVolume > 0).ToList();
 
             if (!filteredFrames.Any())
             {
@@ -31,14 +32,14 @@ namespace Surveillance.Rules.WashTrade
 
             var prices =
                 filteredFrames
-                    .Select(ff => new double[] { (double)ff.ExecutedPrice.Value.Value, ff.StatusChangedOn.Ticks})
+                    .Select(ff => new double[] { (double)ff.OrderAveragePrice.GetValueOrDefault().Value, ff.MostRecentDateEvent().Ticks})
                     .ToArray();
 
             var clusters = kMeans.Learn(prices);           
             int[] labels = clusters.Decide(prices);
 
             var groupedFrames = filteredFrames
-                .Select((x, i) => new KeyValuePair<int, TradeOrderFrame>(i, x))
+                .Select((x, i) => new KeyValuePair<int, Order>(i, x))
                 .GroupBy(i => labels[i.Key]);
 
             var results = new List<PositionClusterCentroid>();
@@ -47,8 +48,8 @@ namespace Surveillance.Rules.WashTrade
             {
                 var centroid = clusters.Centroids[labels[grp.First().Key]];
                 var grpFrames = grp.Select(i => i.Value).ToList();
-                var buys = new TradePosition(grpFrames.Where(i => i.Position == OrderPosition.Buy).ToList());
-                var sells = new TradePosition(grpFrames.Where(i => i.Position == OrderPosition.Sell).ToList());
+                var buys = new TradePosition(grpFrames.Where(i => i.OrderPosition == OrderPositions.BUY).ToList());
+                var sells = new TradePosition(grpFrames.Where(i => i.OrderPosition == OrderPositions.SELL).ToList());
 
                 if (buys.Get().Any() && sells.Get().Any())
                 {
@@ -60,7 +61,7 @@ namespace Surveillance.Rules.WashTrade
             return results;
         }
 
-        private int OptimalClusterCount(IReadOnlyCollection<TradeOrderFrame> frames)
+        private int OptimalClusterCount(IReadOnlyCollection<Order> frames)
         {
             if (frames.Count < 3)
             {

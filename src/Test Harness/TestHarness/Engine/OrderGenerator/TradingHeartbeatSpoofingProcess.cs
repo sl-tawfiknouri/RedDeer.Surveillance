@@ -1,11 +1,11 @@
 ﻿using System;
-using NLog;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -25,7 +25,7 @@ namespace TestHarness.Engine.OrderGenerator
         public TradingHeartbeatSpoofingProcess(
             IPulsatingHeartbeat heartbeat,
             ILogger logger,
-            ITradeStrategy<TradeOrderFrame> orderStrategy)
+            ITradeStrategy<Order> orderStrategy)
             : base(logger, orderStrategy)
         {
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
@@ -76,7 +76,7 @@ namespace TestHarness.Engine.OrderGenerator
                 // limited to six as recursion > 8 deep tends to get tough on the stack and raise the risk of a SO error
                 // if you want to increase this beyond 20 update spoofed order code for volume as well.
                 var spoofSize = DiscreteUniform.Sample(1, 6);
-                var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.StatusChangedOn);
+                var spoofedOrders = SpoofedOrder(spoofSecurity, spoofSize, spoofSize).OrderBy(x => x.MostRecentDateEvent());
                 var counterTrade = CounterTrade(spoofSecurity);
 
                 foreach (var item in spoofedOrders)
@@ -88,17 +88,17 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private TradeOrderFrame[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
+        private Order[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
         {
             if (security == null
                 || remainingSpoofedOrders <= 0)
             {
-                return new TradeOrderFrame[0];
+                return new Order[0];
             }
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
             var limitPriceValue = security.Spread.Bid.Value * priceOffset;
-            var limitPrice = new Price(limitPriceValue, security.Spread.Bid.Currency);
+            var limitPrice = new CurrencyAmount(limitPriceValue, security.Spread.Bid.Currency);
 
             var individualTradeVolumeLimit = (100 / totalSpoofedOrders);
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;
@@ -107,28 +107,35 @@ namespace TestHarness.Engine.OrderGenerator
             var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
             var tradePlacedOn = statusChangedOn;
 
-            var spoofedTrade = new TradeOrderFrame(
-                null,
-                OrderType.Limit,
-                _lastFrame.Exchange,
-                security.Security,
-                limitPrice,
-                limitPrice,
-                volume,
-                volume,
-                OrderPosition.Buy,
-                OrderStatus.Cancelled,
-                statusChangedOn,
-                tradePlacedOn,
-                "Spoofing-Trader",
-                string.Empty,
-                "Account-1",
-                "Buy",
-                "Broker-1",
-                "Broker-2",
-                "Spoofing limit buys",
-                "Spoofing",
-                "GBP");
+            var spoofedTrade =
+                new Order(
+                    security.Security,
+                    security.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradePlacedOn,
+                    tradePlacedOn,
+                    null,
+                    null,
+                    statusChangedOn,
+                    null,
+                    OrderTypes.LIMIT,
+                    OrderPositions.BUY,
+                    security.Spread.Price.Currency,
+                    limitPrice,
+                    limitPrice,
+                    volume,
+                    volume,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
             return 
                 new[] { spoofedTrade }
@@ -136,34 +143,43 @@ namespace TestHarness.Engine.OrderGenerator
                 .ToArray();
         }
 
-        private TradeOrderFrame CounterTrade(SecurityTick security)
+        private Order CounterTrade(SecurityTick security)
         {
             var volumeToTrade = (int)Math.Round(security.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
             var statusChangedOn = DateTime.UtcNow;
             var tradePlacedOn = statusChangedOn;
 
-            return new TradeOrderFrame(
-                null,
-                OrderType.Market,
-                _lastFrame.Exchange,
-                security.Security,
-                null,
-                security.Spread.Price,
-                volumeToTrade,
-                volumeToTrade,
-                OrderPosition.Sell,
-                OrderStatus.Fulfilled,
-                statusChangedOn,
-                tradePlacedOn,
-                "Spoofing-Trader",
-                string.Empty,
-                "Account-1",
-                "Sell",
-                "Broker-1",
-                "Broker-2",
-                "Spoofing counter trade",
-                "Spoofing",
-                "GBP");
+            var spoofedTrade =
+                new Order(
+                    security.Security,
+                    _lastFrame.Exchange,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradePlacedOn,
+                    tradePlacedOn,
+                    null,
+                    null,
+                    null,
+                    statusChangedOn,
+                    OrderTypes.MARKET,
+                    OrderPositions.SELL,
+                    security.Spread.Price.Currency,
+                    security.Spread.Price,
+                    security.Spread.Price,
+                    volumeToTrade,
+                    volumeToTrade,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
+
+            return spoofedTrade;
         }
     }
 }

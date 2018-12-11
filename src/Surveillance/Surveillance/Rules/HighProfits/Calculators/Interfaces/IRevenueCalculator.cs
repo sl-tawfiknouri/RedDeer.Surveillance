@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Equity.Frames;
-using Domain.Finance;
-using Domain.Market;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
@@ -12,9 +11,9 @@ namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
     public interface IRevenueCalculator
     {
         Task<CurrencyAmount?> CalculateRevenueOfPosition(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IDictionary<Market.MarketId, ExchangeFrame> latestExchangeFrameBook);
+            IDictionary<string, ExchangeFrame> latestExchangeFrameBook);
     }
 }

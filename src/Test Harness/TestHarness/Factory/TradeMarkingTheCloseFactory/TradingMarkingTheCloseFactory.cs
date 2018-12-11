@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NLog;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;

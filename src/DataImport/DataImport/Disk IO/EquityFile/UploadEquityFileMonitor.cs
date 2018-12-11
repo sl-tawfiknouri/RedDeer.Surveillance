@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -115,6 +115,7 @@ namespace DataImport.Disk_IO.EquityFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
+
             _logger.LogError($"UploadEquityFileMonitor Process File failure for {path}. Detected {csvReadResults.UnsuccessfulReads.Count} failed reads.");
 
             foreach (var failedRead in csvReadResults.UnsuccessfulReads)
@@ -126,8 +127,6 @@ namespace DataImport.Disk_IO.EquityFile
             ReddeerDirectory.DeleteFile(path);
             _logger.LogInformation($"Upload equity file monitor deleted processed files.");
 
-            _logger.LogInformation($"Process File completed with failed reads written to {GetFailedReadsPath()} for {path}");
-            fileUpload.EventException($"Had failed reads written to disk {GetFailedReadsPath()}");
             fileUpload.EndEvent().EndEvent();
         }
     }

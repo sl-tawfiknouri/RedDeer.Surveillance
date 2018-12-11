@@ -1,10 +1,10 @@
 ﻿using System;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers
 {
-    public class TradeOrderFrameDisplaySubscriber : IObserver<TradeOrderFrame>
+    public class TradeOrderFrameDisplaySubscriber : IObserver<Order>
     {
         private readonly IConsole _display;
 
@@ -22,7 +22,7 @@ namespace TestHarness.Display.Subscribers
             _display.OutputException(error);
         }
 
-        public void OnNext(TradeOrderFrame value)
+        public void OnNext(Order value)
         {
             _display.OutputTradeFrame(value);
         }

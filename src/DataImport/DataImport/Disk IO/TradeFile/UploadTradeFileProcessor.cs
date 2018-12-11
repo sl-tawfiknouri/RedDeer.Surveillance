@@ -1,43 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trades.Orders;
-using Domain.Trades.Orders.Interfaces;
+using DomainV2.Files;
+using DomainV2.Files.Interfaces;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.TradeFile
 {
-    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeOrderFrameCsv, TradeOrderFrame>, IUploadTradeFileProcessor
+    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeFileCsv, Order>, IUploadTradeFileProcessor
     {
-        private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
-        private readonly ITradeOrderCsvConfig _mappingConfig;
+        private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
+        private readonly ITradeFileCsvValidator _tradeFileCsvValidator;
+
 
         public UploadTradeFileProcessor(
-            ITradeOrderCsvToDtoMapper csvToDtoMapper,
-            ITradeOrderCsvConfig mappingConfig,
+            ITradeFileCsvToOrderMapper csvToDtoMapper,
+            ITradeFileCsvValidator tradeFileCsvValidator,
             ILogger<UploadTradeFileProcessor> logger)
             : base(logger, "Upload Trade File Processor")
         {
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
-            _mappingConfig = mappingConfig ?? throw new ArgumentNullException(nameof(mappingConfig));
+            _tradeFileCsvValidator = tradeFileCsvValidator ?? throw new ArgumentNullException(nameof(tradeFileCsvValidator));
         }
 
         protected override void MapRecord(
-            TradeOrderFrameCsv record,
-            List<TradeOrderFrame> marketUpdates,
-            List<TradeOrderFrameCsv> failedMarketUpdateReads)
+            TradeFileCsv record,
+            List<Order> marketUpdates,
+            List<TradeFileCsv> failedMarketUpdateReads)
         {
+            var validationResult = _tradeFileCsvValidator.Validate(record);
+
+            if (!validationResult.IsValid)
+            {
+                _csvToDtoMapper.FailedParseTotal += 1;
+                failedMarketUpdateReads.Add(record);
+
+                if (validationResult.Errors.Any())
+                {
+                    var consolidatedErrorMessage = validationResult.Errors.Aggregate(string.Empty, (a, b) => a + " " + b.ErrorMessage);
+                    Logger.LogWarning(consolidatedErrorMessage);
+                }
+
+                return;
+            }
+
             var mappedRecord = _csvToDtoMapper.Map(record);
             if (mappedRecord != null)
             {
                 marketUpdates.Add(mappedRecord);
-            }
-            else
-            {
-                failedMarketUpdateReads.Add(record);
             }
         }
 
@@ -51,113 +64,105 @@ namespace DataImport.Disk_IO.TradeFile
             _csvToDtoMapper.FailedParseTotal = 0;
         }
 
-        protected override TradeOrderFrameCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override TradeFileCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
                 return null;
             }
 
-            return new TradeOrderFrameCsv
+            return new TradeFileCsv
             {
-                StatusChangedOn = rawRecord[_mappingConfig.StatusChangedOnFieldName],
-                MarketIdentifierCode = rawRecord[_mappingConfig.MarketIdentifierCodeFieldName],
-                MarketName = rawRecord[_mappingConfig.MarketNameFieldName],
+                MarketType = rawRecord["MarketType"],
+                MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
+                MarketName = rawRecord["MarketName"],
 
-                SecurityClientIdentifier = rawRecord[_mappingConfig.SecurityClientIdentifierFieldName],
-                SecurityFigi = rawRecord[_mappingConfig.SecurityFigiFieldName],
-                SecurityIsin = rawRecord[_mappingConfig.SecurityIsinFieldName],
-                SecuritySedol = rawRecord[_mappingConfig.SecuritySedolFieldName],
-                SecurityCusip = rawRecord[_mappingConfig.SecurityCusipFieldName],
-                SecurityExchangeSymbol = rawRecord[_mappingConfig.SecurityExchangeSymbolFieldName],
+                InstrumentName = rawRecord["InstrumentName"],
+                InstrumentCfi = rawRecord["InstrumentCfi"],
+                InstrumentIssuerIdentifier = rawRecord["InstrumentIssuerIdentifier"],
+                InstrumentClientIdentifier = rawRecord["InstrumentClientIdentifier"],
+                InstrumentSedol = rawRecord["InstrumentSedol"],
+                InstrumentIsin = rawRecord["InstrumentIsin"],
+                InstrumentFigi = rawRecord["InstrumentFigi"],
+                InstrumentCusip = rawRecord["InstrumentCusip"],
+                InstrumentLei = rawRecord["InstrumentLei"],
+                InstrumentExchangeSymbol = rawRecord["InstrumentExchangeSymbol"],
+                InstrumentBloombergTicker = rawRecord["InstrumentBloombergTicker"],
+                InstrumentUnderlyingName = rawRecord["InstrumentUnderlyingName"],
+                InstrumentUnderlyingCfi = rawRecord["InstrumentUnderlyingCfi"],
+                InstrumentUnderlyingIssuerIdentifier = rawRecord["InstrumentUnderlyingIssuerIdentifier"],
+                InstrumentUnderlyingClientIdentifier = rawRecord["InstrumentUnderlyingClientIdentifier"],
+                InstrumentUnderlyingSedol = rawRecord["InstrumentUnderlyingSedol"],
+                InstrumentUnderlyingIsin = rawRecord["InstrumentUnderlyingIsin"],
+                InstrumentUnderlyingFigi = rawRecord["InstrumentUnderlyingFigi"],
+                InstrumentUnderlyingCusip = rawRecord["InstrumentUnderlyingCusip"],
+                InstrumentUnderlyingLei = rawRecord["InstrumentUnderlyingLei"],
+                InstrumentUnderlyingExchangeSymbol = rawRecord["InstrumentUnderlyingExchangeSymbol"],
+                InstrumentUnderlyingBloombergTicker = rawRecord["InstrumentUnderlyingBloombergTicker"],
+                
+                OrderId = rawRecord["OrderId"],
+                OrderPlacedDate = rawRecord["OrderPlacedDate"],
+                OrderBookedDate = rawRecord["OrderBookedDate"],
+                OrderAmendedDate = rawRecord["OrderAmendedDate"],
+                OrderRejectedDate = rawRecord["OrderRejectedDate"],
+                OrderCancelledDate = rawRecord["OrderCancelledDate"],
+                OrderFilledDate = rawRecord["OrderFilledDate"],
+                OrderType = rawRecord["OrderType"],
+                OrderPosition = rawRecord["OrderPosition"],
+                OrderCurrency = rawRecord["OrderCurrency"],
+                OrderLimitPrice = rawRecord["OrderLimitPrice"],
+                OrderAveragePrice = rawRecord["OrderAveragePrice"],
+                OrderOrderedVolume = rawRecord["OrderOrderedVolume"],
+                OrderFilledVolume = rawRecord["OrderFilledVolume"],
+                OrderPortfolioManager = rawRecord["OrderPortfolioManager"],
+                OrderTraderId = rawRecord["OrderTraderId"],
+                OrderExecutingBroker = rawRecord["OrderExecutingBroker"],
+                OrderClearingAgent = rawRecord["OrderClearingAgent"],
+                OrderDealingInstructions = rawRecord["OrderDealingInstructions"],
+                OrderStrategy = rawRecord["OrderStrategy"],
+                OrderRationale = rawRecord["OrderRationale"],
+                OrderFund = rawRecord["OrderFund"],
+                OrderClientAccountAttributionId = rawRecord["OrderClientAccountAttributionId"],
+                
+                TradeId = rawRecord["TradeId"],
+                TradePlacedDate = rawRecord["TradePlacedDate"],
+                TradeBookedDate = rawRecord["TradeBookedDate"],
+                TradeAmendedDate = rawRecord["TradeAmendedDate"],
+                TradeRejectedDate = rawRecord["TradeRejectedDate"],
+                TradeCancelledDate = rawRecord["TradeCancelledDate"],
+                TradeFilledDate = rawRecord["TradeFilledDate"],
+                TraderId = rawRecord["TraderId"],
+                TradeCounterParty = rawRecord["TradeCounterParty"],
+                TradeType = rawRecord["TradeType"],
+                TradePosition = rawRecord["TradePosition"],
+                TradeCurrency = rawRecord["TradeCurrency"],
+                TradeLimitPrice = rawRecord["TradeLimitPrice"],
+                TradeAveragePrice = rawRecord["TradeAveragePrice"],
+                TradeOrderedVolume = rawRecord["TradeOrderedVolume"],
+                TradeFilledVolume = rawRecord["TradeFilledVolume"],
+                TradeOptionStrikePrice = rawRecord["TradeOptionStrikePrice"],
+                TradeOptionExpirationDate = rawRecord["TradeOptionExpirationDate"],
+                TradeOptionEuropeanAmerican = rawRecord["TradeOptionEuropeanAmerican"],
 
-                SecurityName = rawRecord[_mappingConfig.SecurityNameFieldName],
-                SecurityCfi = rawRecord[_mappingConfig.SecurityCfiFieldName],
-
-                OrderType = rawRecord[_mappingConfig.OrderTypeFieldName],
-                OrderPosition = rawRecord[_mappingConfig.OrderPositionFieldName],
-                OrderStatus = rawRecord[_mappingConfig.OrderStatusFieldName],
-                FulfilledVolume = rawRecord[_mappingConfig.FulfilledVolumeFieldName],
-                LimitPrice = rawRecord[_mappingConfig.LimitPriceFieldName],
-
-                TradeSubmittedOn = rawRecord[_mappingConfig.TradeSubmittedOnFieldName],
-                TraderId = rawRecord[_mappingConfig.TraderIdFieldName],
-                ClientAttributionId = rawRecord[_mappingConfig.TraderClientAttributionIdFieldName],
-                PartyBrokerId = rawRecord[_mappingConfig.PartyBrokerIdFieldName],
-                CounterPartyBrokerId = rawRecord[_mappingConfig.CounterPartyBrokerIdFieldName],
-
-                OrderCurrency = rawRecord[_mappingConfig.CurrencyFieldName],
-                SecurityLei = rawRecord[_mappingConfig.SecurityLei],
-                SecurityBloombergTicker = rawRecord[_mappingConfig.SecurityBloombergTickerFieldName],
-                ExecutedPrice = rawRecord[_mappingConfig.ExecutedPriceFieldName],
-                OrderedVolume = rawRecord[_mappingConfig.OrderedVolumeFieldName],
-                AccountId = rawRecord[_mappingConfig.AccountIdFieldName],
-                DealerInstructions = rawRecord[_mappingConfig.DealerInstructionsFieldName],
-                TradeRationale = rawRecord[_mappingConfig.TradeRationaleFieldName],
-                TradeStrategy = rawRecord[_mappingConfig.TradeStrategyFieldName],
-                SecurityIssuerIdentifier = rawRecord[_mappingConfig.SecurityIssuerIdentifier],
+                TransactionId = rawRecord["TransactionId"],
+                TransactionPlacedDate = rawRecord["TransactionPlacedDate"],
+                TransactionBookedDate = rawRecord["TransactionBookedDate"],
+                TransactionAmendedDate = rawRecord["TransactionAmendedDate"],
+                TransactionRejectedDate = rawRecord["TransactionRejectedDate"],
+                TransactionCancelledDate = rawRecord["TransactionCancelledDate"],
+                TransactionFilledDate = rawRecord["TransactionFilledDate"],
+                TransactionTraderId = rawRecord["TransactionTraderId"],
+                TransactionCounterParty = rawRecord["TransactionCounterParty"],
+                TransactionType = rawRecord["TransactionType"],
+                TransactionPosition = rawRecord["TransactionPosition"],
+                TransactionCurrency = rawRecord["TransactionCurrency"],
+                TransactionLimitPrice = rawRecord["TransactionLimitPrice"],
+                TransactionAveragePrice = rawRecord["TransactionAveragePrice"],
+                TransactionOrderedVolume = rawRecord["TransactionOrderedVolume"],
+                TransactionFilledVolume = rawRecord["TransactionFilledVolume"],
 
                 RowId = rowId
             };
-        }
-
-        public void WriteFailedReadsToDisk(string failedReadsPath, string failedReadFileName, IReadOnlyCollection<TradeOrderFrameCsv> failedReads)
-        {
-            if (failedReads == null
-                || !failedReads.Any())
-            {
-                return;
-            }
-
-            var failedFileName = $"{failedReadFileName}-failed-read-{Guid.NewGuid()}.csv";
-            var target = Path.Combine(failedReadsPath, failedFileName);
-
-            using (TextWriter twriter = new StreamWriter(target))
-            {
-                var csv = new CsvWriter(twriter);
-
-                // write out headers
-                csv.WriteField(_mappingConfig.StatusChangedOnFieldName);
-                csv.WriteField(_mappingConfig.MarketIdentifierCodeFieldName);
-                csv.WriteField(_mappingConfig.MarketNameFieldName);
-
-                csv.WriteField(_mappingConfig.SecurityClientIdentifierFieldName);
-                csv.WriteField(_mappingConfig.SecurityFigiFieldName);
-                csv.WriteField(_mappingConfig.SecurityIsinFieldName);
-                csv.WriteField(_mappingConfig.SecuritySedolFieldName);
-                csv.WriteField(_mappingConfig.SecurityCusipFieldName);
-                csv.WriteField(_mappingConfig.SecurityExchangeSymbolFieldName);
-
-
-                csv.WriteField(_mappingConfig.SecurityNameFieldName);
-                csv.WriteField(_mappingConfig.SecurityCfiFieldName);
-
-                csv.WriteField(_mappingConfig.OrderTypeFieldName);
-                csv.WriteField(_mappingConfig.OrderPositionFieldName);
-                csv.WriteField(_mappingConfig.OrderStatusFieldName);
-                csv.WriteField(_mappingConfig.FulfilledVolumeFieldName);
-                csv.WriteField(_mappingConfig.LimitPriceFieldName);
-
-                csv.WriteField(_mappingConfig.TraderIdFieldName);
-                csv.WriteField(_mappingConfig.CurrencyFieldName);
-                csv.WriteField(_mappingConfig.PartyBrokerIdFieldName);
-                csv.WriteField(_mappingConfig.CounterPartyBrokerIdFieldName);
-                csv.WriteField(_mappingConfig.TradeSubmittedOnFieldName);
-                csv.WriteField(_mappingConfig.TraderClientAttributionIdFieldName);
-
-                csv.NextRecord();
-
-                foreach (var rec in failedReads)
-                {
-                    if (rec == null)
-                    {
-                        continue;
-                    }
-
-                    csv.WriteRecord(rec);
-                    csv.NextRecord();
-                }
-            }
         }
     }
 }

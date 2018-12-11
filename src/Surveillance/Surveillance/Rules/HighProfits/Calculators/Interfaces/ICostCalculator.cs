@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Finance;
-using Domain.Trades.Orders;
+using DomainV2.Financial;
+using DomainV2.Trading;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
@@ -10,7 +10,7 @@ namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
     public interface ICostCalculator
     {
         Task<CurrencyAmount?> CalculateCostOfPosition(
-            IList<TradeOrderFrame> activeFulfilledTradeOrders,
+            IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx);
     }

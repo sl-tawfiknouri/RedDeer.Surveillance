@@ -1,9 +1,9 @@
 ﻿using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
-using Domain.Streams;
+using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
+using DomainV2.Streams;
 using StructureMap;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
@@ -132,8 +132,6 @@ namespace Surveillance
 
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
-            For<ITradeOrderDataItemDtoMapper>().Use<TradeOrderDataItemDtoMapper>();
-
             For<IExchangeRateProfitCalculator>().Use<ExchangeRateProfitCalculator>();
 
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();

@@ -1,12 +1,11 @@
-﻿using Domain.Scheduling.Interfaces;
-using NLog;
+﻿using DomainV2.Scheduling.Interfaces;
+using Microsoft.Extensions.Logging;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.NetworkFactory.Interfaces;
-using TestHarness.Factory.TradeCancelledFactory;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;

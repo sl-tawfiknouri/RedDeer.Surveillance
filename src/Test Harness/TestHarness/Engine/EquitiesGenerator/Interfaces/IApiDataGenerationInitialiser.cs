@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 
 namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {

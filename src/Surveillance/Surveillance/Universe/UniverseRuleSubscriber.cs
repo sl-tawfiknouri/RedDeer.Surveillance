@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Scheduling;
+using DomainV2.Scheduling;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;

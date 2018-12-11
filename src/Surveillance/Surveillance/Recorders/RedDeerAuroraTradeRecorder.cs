@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.Recorders.Interfaces;
@@ -28,7 +28,7 @@ namespace Surveillance.Recorders
             _logger.LogError($"An exception occured in the reddeer trade recorder {error}");
         }
 
-        public async void OnNext(TradeOrderFrame value)
+        public async void OnNext(Order value)
         {
             if (value == null)
             {

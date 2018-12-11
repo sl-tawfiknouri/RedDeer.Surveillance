@@ -1,6 +1,6 @@
 ﻿using Surveillance.Recorders.Interfaces;
 using System;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 
 namespace Surveillance.Recorders
 {

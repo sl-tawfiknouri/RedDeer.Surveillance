@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity;
-using Domain.Finance;
+using DomainV2.Equity;
+using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -12,12 +12,12 @@ namespace Surveillance.Rules.HighVolume
         public HighVolumeRuleBreach(
             TimeSpan window,
             ITradePosition trades,
-            Security security,
+            FinancialInstrument security,
             IHighVolumeRuleParameters parameters,
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
-            int totalOrdersTradedInWindow)
+            long totalOrdersTradedInWindow)
         {
             Window = window;
             Trades = trades;
@@ -33,7 +33,7 @@ namespace Surveillance.Rules.HighVolume
 
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         public IHighVolumeRuleParameters Parameters { get; }
 
@@ -41,7 +41,7 @@ namespace Surveillance.Rules.HighVolume
         public BreachDetails WindowBreach { get; }
         public BreachDetails MarketCapBreach { get; }
 
-        public int TotalOrdersTradedInWindow { get; }
+        public long TotalOrdersTradedInWindow { get; }
 
         public class BreachDetails
         {

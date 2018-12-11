@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using Domain.Equity.Frames;
-using Domain.Trades.Orders;
-using Domain.Trades.Orders.Interfaces;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Files;
+using DomainV2.Files.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
     public class TradingFileRelayProcess : BaseTradingProcess
     {
-        private readonly ITradeOrderCsvToDtoMapper _csvToDtoMapper;
+        private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
         private readonly string _filePath;
 
         public TradingFileRelayProcess(
             ILogger logger,
-            ITradeOrderCsvToDtoMapper csvToDtoMapper,
+            ITradeFileCsvToOrderMapper csvToDtoMapper,
             string filePath)
             : base(logger, new StubTradeStrategy())
         {
@@ -30,23 +31,23 @@ namespace TestHarness.Engine.OrderGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                Logger.Error("Trading File Relay Process did not find file because the path was empty or null");
+                Logger.LogError("Trading File Relay Process did not find file because the path was empty or null");
                 return;
             }
 
             if (!File.Exists(_filePath))
             {
-                Logger.Error($"Trading File Relay Process did not find file {_filePath}");
+                Logger.LogError($"Trading File Relay Process did not find file {_filePath}");
                 return;
             }
 
-            var tradeOrders = new List<TradeOrderFrame>();
+            var tradeOrders = new List<Order>();
 
             using (var reader = File.OpenText(_filePath))
             {
                 var csv = new CsvReader(reader);
                 csv.Configuration.HasHeaderRecord = true;
-                var csvRecords = csv.GetRecords<TradeOrderFrameCsv>().ToList();
+                var csvRecords = csv.GetRecords<TradeFileCsv>().ToList();
 
                 foreach (var record in csvRecords)
                 {
@@ -60,7 +61,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             if (_csvToDtoMapper.FailedParseTotal > 0)
             {
-                Logger.Error($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
+                Logger.LogError($"TradingFileRelayProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
             }
 
             if (!tradeOrders.Any())
@@ -68,7 +69,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var sortedTradeOrders = tradeOrders.OrderBy(to => to.StatusChangedOn).ToList();
+            var sortedTradeOrders = tradeOrders.OrderBy(to => to.OrderPlacedDate).ToList();
 
             foreach (var item in sortedTradeOrders)
             {

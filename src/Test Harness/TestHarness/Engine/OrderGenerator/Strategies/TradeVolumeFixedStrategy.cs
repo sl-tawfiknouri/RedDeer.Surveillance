@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies

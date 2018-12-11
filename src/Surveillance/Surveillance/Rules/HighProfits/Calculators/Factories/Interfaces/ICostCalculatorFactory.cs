@@ -5,6 +5,6 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces
     public interface ICostCalculatorFactory
     {
         ICostCalculator CostCalculator();
-        ICostCalculator CurrencyConvertingCalculator(Domain.Finance.Currency currency);
+        ICostCalculator CurrencyConvertingCalculator(DomainV2.Financial.Currency currency);
     }
 }

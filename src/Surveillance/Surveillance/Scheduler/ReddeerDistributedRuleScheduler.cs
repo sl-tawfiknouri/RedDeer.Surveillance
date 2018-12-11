@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
@@ -111,33 +111,35 @@ namespace Surveillance.Scheduler
             {
                 switch (rule.Rule)
                 {
-                    case Domain.Scheduling.Rules.CancelledOrders:
+                    case DomainV2.Scheduling.Rules.CancelledOrders:
                         var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.HighProfits:
+                    case DomainV2.Scheduling.Rules.HighProfits:
                         var highProfitRuleRuns = parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, highProfitRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.HighVolume:
+                    case DomainV2.Scheduling.Rules.HighVolume:
                         var highVolumeRuleRuns = parameters.HighVolumes?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.Layering:
+                    case DomainV2.Scheduling.Rules.Layering:
                         var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.MarkingTheClose:
+                    case DomainV2.Scheduling.Rules.MarkingTheClose:
                         var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.Spoofing:
+                    case DomainV2.Scheduling.Rules.Spoofing:
                         var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
-                    case Domain.Scheduling.Rules.WashTrade:
+                    case DomainV2.Scheduling.Rules.WashTrade:
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleCtx);
+                        break;
+                    case DomainV2.Scheduling.Rules.UniverseFilter:
                         break;
                     default:
                         _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

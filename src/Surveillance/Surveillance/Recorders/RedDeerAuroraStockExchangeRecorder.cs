@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Frames;
+using DomainV2.Equity.Frames;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.Recorders.Interfaces;

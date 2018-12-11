@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Domain.Trades.Orders;
+using DomainV2.Trading;
 using Surveillance.Trades.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField
 
@@ -9,20 +9,20 @@ namespace Surveillance.Trades
 {
     public class TradingHistory : ITradingHistory
     {
-        private IList<TradeOrderFrame> _active;
+        private IList<Order> _active;
         // ReSharper disable once CollectionNeverQueried.Local
-        private readonly IList<TradeOrderFrame> _history;
+        private readonly IList<Order> _history;
         private readonly TimeSpan _activeTradeDuration;
 
         private readonly object _lock = new object();
 
         public TradingHistory(TimeSpan activeTradeDuration)
         {
-            _history = new List<TradeOrderFrame>();
+            _history = new List<Order>();
             _activeTradeDuration = activeTradeDuration;
         }
 
-        public void Add(TradeOrderFrame frame, DateTime currentTime)
+        public void Add(Order frame, DateTime currentTime)
         {
             if (frame == null)
             {
@@ -31,7 +31,7 @@ namespace Surveillance.Trades
 
             lock (_lock)
             {
-                if (currentTime.Subtract(frame.StatusChangedOn) <= _activeTradeDuration)
+                if (currentTime.Subtract(frame.MostRecentDateEvent()) <= _activeTradeDuration)
                 {
                     _active.Add(frame);
                 }
@@ -48,7 +48,7 @@ namespace Surveillance.Trades
             {
                 var itemsToArchive =
                     _active
-                        .Where(item => currentTime.Subtract(item.StatusChangedOn) > _activeTradeDuration)
+                        .Where(item => currentTime.Subtract(item.MostRecentDateEvent()) > _activeTradeDuration)
                         .ToList();
 
                 var newActive = _active.Except(itemsToArchive).ToList();
@@ -65,9 +65,9 @@ namespace Surveillance.Trades
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public IList<TradeOrderFrame> ActiveTradeHistory()
+        public IList<Order> ActiveTradeHistory()
         {
-            var activeTrades = new List<TradeOrderFrame>(_active);
+            var activeTrades = new List<Order>(_active);
 
             return activeTrades;
         }

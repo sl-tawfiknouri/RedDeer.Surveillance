@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -133,7 +133,7 @@ namespace Surveillance.Tests.Scheduler
 
             var schedule = new ScheduledExecution
             {
-                Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = Domain.Scheduling.Rules.Spoofing, Ids = new string[0]}},
+                Rules = new List<RuleIdentifier> { new RuleIdentifier {Rule = DomainV2.Scheduling.Rules.Spoofing, Ids = new string[0]}},
                 TimeSeriesInitiation = DateTime.UtcNow.AddMinutes(-10),
                 TimeSeriesTermination = DateTime.UtcNow
             };

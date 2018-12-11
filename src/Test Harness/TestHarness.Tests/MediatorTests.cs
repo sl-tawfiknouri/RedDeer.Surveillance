@@ -1,5 +1,5 @@
 ﻿using FakeItEasy;
-using NLog;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using TestHarness.Factory.Interfaces;
 
@@ -25,19 +25,6 @@ namespace TestHarness.Tests
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.DoesNotThrow(() => new Mediator(null));
-        }
-
-        [Test]
-        public void Terminate_LogsTermination_AndCallsTerminateWalk()
-        {
-            var mediator = new Mediator(_appFactory);
-
-            mediator.Initiate();
-            mediator.Terminate();
-
-            A
-                .CallTo(() => _appFactory.Logger.Log(LogLevel.Info, "Mediator Terminating"))
-                .MustHaveHappenedOnceExactly();
         }
     }
 }

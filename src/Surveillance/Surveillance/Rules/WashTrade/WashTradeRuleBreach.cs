@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity;
-using Domain.Finance;
+using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -13,7 +12,7 @@ namespace Surveillance.Rules.WashTrade
         public WashTradeRuleBreach(
             IWashTradeRuleParameters parameters,
             ITradePosition tradePosition,
-            Security security,
+            FinancialInstrument security,
             WashTradeAveragePositionBreach averagePositionBreach,
             WashTradePairingPositionBreach pairingPositionBreach,
             WashTradeClusteringPositionBreach clusteringPositionBreach)
@@ -33,7 +32,7 @@ namespace Surveillance.Rules.WashTrade
 
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
-        public Security Security { get; }
+        public FinancialInstrument Security { get; }
 
         public WashTradeAveragePositionBreach AveragePositionBreach { get; }
         public WashTradePairingPositionBreach PairingPositionBreach { get; }

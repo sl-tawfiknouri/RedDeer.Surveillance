@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Market.Interfaces;
-using Domain.Trades.Orders;
-using NLog;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator
@@ -23,7 +22,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         public TradingSpoofingProcess(
             IReadOnlyCollection<string> spoofingTargetSedols,
-            ITradeStrategy<TradeOrderFrame> orderStrategy,
+            ITradeStrategy<Order> orderStrategy,
             ILogger logger)
             : base(logger, orderStrategy)
         {
@@ -149,30 +148,36 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 var tradeTime = latestFrame.TimeStamp;
 
-                var volumeFrame = new TradeOrderFrame(
-                    null,
-                    i == 0 ? OrderType.Market : OrderType.Limit,
-                    headSecurity.Market,
+                var volumeOrder = new Order(
                     headSecurity.Security,
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new Price(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    i == 0 ? (int)tradedVolume : 0,
-                    (int)tradedVolume,
-                    i == 0 ? OrderPosition.Buy : OrderPosition.Sell,
-                    i == 0 ? OrderStatus.Fulfilled : OrderStatus.Cancelled,
-                    tradeTime.AddSeconds(i),
+                    headSecurity.Market,
+                    null,
+                    Guid.NewGuid().ToString(),
+                    tradeTime.AddSeconds(-i),
                     tradeTime.AddSeconds(-i),
                     null,
                     null,
+                    i == 0 ? null : (DateTime?) tradeTime.AddSeconds(i),
+                    i == 0 ? (DateTime?) tradeTime.AddSeconds(i) : null,
+                    i == 0 ? OrderTypes.MARKET : OrderTypes.LIMIT,
+                    i == 0 ? OrderPositions.BUY : OrderPositions.SELL,
+                    headSecurity.Spread.Price.Currency,
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    (int) tradedVolume,
+                    i == 0 ? (int) tradedVolume : 0,
                     null,
                     null,
                     null,
                     null,
                     null,
                     null,
-                    headSecurity.Spread.Price.Currency);
+                    null,
+                    null,
+                    null,
+                    new Trade[0]);
 
-                TradeStream.Add(volumeFrame);
+                TradeStream.Add(volumeOrder);
             }
         }
 

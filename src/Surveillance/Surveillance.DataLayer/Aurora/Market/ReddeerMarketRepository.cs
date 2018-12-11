@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Equity;
-using Domain.Equity.Frames;
-using Domain.Market;
+using DomainV2.Equity;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -27,26 +27,27 @@ namespace Surveillance.DataLayer.Aurora.Market
             INSERT INTO MarketData(MarketId, MarketName, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES(@MarketId, @MarketName, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
 
         private const string CopyAcrossMarketAndSecurityData = @"
-            INSERT INTO MarketStockExchange(MarketId, MarketName) SELECT DISTINCT (MarketId), MarketName FROM MarketData WHERE NOT MarketId in (SELECT MarketId FROM MarketStockExchange);
+            INSERT INTO Market(MarketId, MarketName) SELECT DISTINCT (MarketId), MarketName FROM MarketData WHERE NOT MarketId in (SELECT MarketId FROM Market);
 
-            INSERT INTO MarketStockExchangeSecurities(MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency)
-             SELECT  mse.id as MarketStockExchangeId, md.clientIdentifier as ClientIdentifier, md.Sedol as Sedol, md.Isin as Isin, md.Figi as Figi, md.Cusip as Cusip, md.Lei as Lei, md.ExchangeSymbol as ExchangeSymbol, md.BloombergTicker as BloombergTicker, md.SecurityName as SecurityName, md.Cfi as Cfi, md.IssuerIdentifier as IssuerIdentifier, md.SecurityCurrency as SecurityCurrency
-             FROM MarketData as md LEFT OUTER JOIN MarketStockExchange as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM MarketStockExchangeSecurities) AND NOT md.isin IN (SELECT Isin FROM MarketStockExchangeSecurities);
+            INSERT INTO FinancialInstruments(MarketId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency)
+             SELECT  mse.id as MarketId, md.clientIdentifier as ClientIdentifier, md.Sedol as Sedol, md.Isin as Isin, md.Figi as Figi, md.Cusip as Cusip, md.Lei as Lei, md.ExchangeSymbol as ExchangeSymbol, md.BloombergTicker as BloombergTicker, md.SecurityName as SecurityName, md.Cfi as Cfi, md.IssuerIdentifier as IssuerIdentifier, md.SecurityCurrency as SecurityCurrency
+             FROM MarketData as md LEFT OUTER JOIN Market as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM FinancialInstruments) AND NOT md.isin IN (SELECT Isin FROM FinancialInstruments);
 
             UPDATE MarketData
-            LEFT OUTER JOIN MarketStockExchangeSecurities on MarketData.isin = MarketStockExchangeSecurities.isin set MarketData.SecurityId = MarketStockExchangeSecurities.Id;
+            LEFT OUTER JOIN FinancialInstruments on MarketData.isin = FinancialInstruments.isin set MarketData.SecurityId = FinancialInstruments.Id;
             UPDATE MarketData
-            LEFT OUTER JOIN MarketStockExchangeSecurities on MarketData.sedol = MarketStockExchangeSecurities.sedol set MarketData.SecurityId = MarketStockExchangeSecurities.Id;";
+            LEFT OUTER JOIN FinancialInstruments on MarketData.sedol = FinancialInstruments.sedol set MarketData.SecurityId = FinancialInstruments.Id;";
         
         private const string InsertSecuritySql = @"
-            INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;
+            INSERT INTO FinancialInstruments (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;
 
             DROP TABLE MarketData;";
 
         private const string GetMarketSql =
             @"
             SELECT
-             MSE.MarketId as MarketId,
+             MSE.Id as MarketId,
+             MSE.MarketId as MarketIdentifierCode,
              MSE.MarketName as MarketName,
              MSES.ReddeerId as ReddeerId,
              MSES.ClientIdentifier as ClientIdentifier,
@@ -74,10 +75,10 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSEP.VolumeTradedInTick as VolumeTradedInTick,
              MSEP.DailyVolume as DailyVolume
              FROM MarketStockExchangePrices AS MSEP
-             LEFT JOIN MarketStockExchangeSecurities AS MSES
+             LEFT JOIN FinancialInstruments AS MSES
              ON MSEP.SecurityId = MSES.Id
-             LEFT JOIN MarketStockExchange AS MSE
-             ON MSES.MarketStockExchangeId = MSE.Id
+             LEFT JOIN Market AS MSE
+             ON MSES.MarketId = MSE.Id
              WHERE MSEP.Epoch >= @start
              AND MSEP.Epoch <= @end;";
 
@@ -98,14 +99,14 @@ namespace Surveillance.DataLayer.Aurora.Market
               sec.Cusip As Cusip,
               sec.Lei As Lei,
               sec.BloombergTicker As BloombergTicker
-              FROM MarketStockExchangeSecurities as sec
-              left join MarketStockExchange as mse
-              on sec.MarketStockExchangeId = mse.Id
+              FROM FinancialInstruments as sec
+              left join Market as mse
+              on sec.MarketId = mse.Id
               WHERE sec.Enrichment is null
               LIMIT 10000;";
 
         private const string UpdateUnEnrichedSecuritiesSql =
-            @"UPDATE MarketStockExchangeSecurities
+            @"UPDATE FinancialInstruments
               SET ReddeerId = @ReddeerId,
               SecurityName = @SecurityName,
               Cfi = @Cfi,
@@ -122,29 +123,29 @@ namespace Surveillance.DataLayer.Aurora.Market
               WHERE Id = @Id;";
 
         private const string MarketMatchOrInsertSql = @"
-            INSERT INTO MarketStockExchange(MarketId, MarketName)
+            INSERT INTO Market(MarketId, MarketName)
             SELECT @MarketId, @MarketName
             FROM DUAL
             WHERE NOT EXISTS(
                 SELECT 1
-                FROM MarketStockExchange
+                FROM Market
                 WHERE MarketId = @MarketId)
             LIMIT 1;
 
-            SELECT Id FROM MarketStockExchange WHERE MarketId = @MarketId;";
+            SELECT Id FROM Market WHERE MarketId = @MarketId;";
 
         private const string SecurityMatchOrInsertSql = @"
-            INSERT INTO MarketStockExchangeSecurities(MarketStockExchangeId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, ReddeerId)
+            INSERT INTO FinancialInstruments(MarketId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, ReddeerId)
             SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId
             FROM DUAL
             WHERE NOT EXISTS(
 	            SELECT 1
-	            FROM MarketStockExchangeSecurities
+	            FROM FinancialInstruments
 	            WHERE Sedol = @Sedol
-                Or (Isin = @Isin and MarketStockExchangeId = @MarketIdPrimaryKey))
+                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey))
             LIMIT 1;
 
-            SELECT Id FROM MarketStockExchangeSecurities WHERE Sedol = @sedol or (Isin = @Isin and MarketStockExchangeId = @MarketIdPrimaryKey);";
+            SELECT Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey);";
 
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -300,17 +301,18 @@ namespace Surveillance.DataLayer.Aurora.Market
                     var groupedByExchange =
                         response
                             .GroupBy(rep =>
-                                new { rep.MarketId, rep.MarketName, rep.Epoch},
+                                new { rep.MarketId, Mic = rep.MarketIdentifierCode, rep.MarketName, rep.Epoch},
                                 (key, group) => new
                                 {
                                     Key1 = key.MarketId,
                                     Key2 = key.MarketName,
                                     Key3 = key.Epoch,
+                                    Key4 = key.Mic,
                                     Result = group.ToList()
                                 })
                             .Select(i =>
                             {
-                                var market = new StockExchange(new Domain.Market.Market.MarketId(i.Key1), i.Key2);
+                                var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new ExchangeFrame(
                                         market,
@@ -343,24 +345,25 @@ namespace Surveillance.DataLayer.Aurora.Market
         /// Otherwise create a new entry and provide the market ids and security ids
         /// Future caching possibility if you're investigating slow inserts
         /// </summary>
-        public async Task<string> CreateAndOrGetSecurityId(MarketDataPair pair)
+        public async Task<MarketSecurityIds> CreateAndOrGetSecurityId(MarketDataPair pair)
         {
             if (pair == null)
             {
                 _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId was passed a null market data pair.");
-                return string.Empty;
+                return new MarketSecurityIds();
             }
 
-            if (!string.IsNullOrWhiteSpace(pair.Security?.Identifiers.Id))
+            if (!string.IsNullOrWhiteSpace(pair.Security?.Identifiers.Id)
+                && !string.IsNullOrWhiteSpace(pair.Exchange?.Id))
             {
-                return pair.Security?.Identifiers.Id;
+                return new MarketSecurityIds { MarketId = pair.Exchange.Id, SecurityId = pair.Security?.Identifiers.Id};
             }
 
             if (pair.Exchange == null
-                || string.IsNullOrWhiteSpace(pair.Exchange?.Id.Id))
+                || string.IsNullOrWhiteSpace(pair.Exchange?.MarketIdentifierCode))
             {
                 _logger.LogError("Reddeer Market Repository CreateAndOrGetSecurityId either received a null exchange object or an empty market id for a trade. Not able to continue.");
-                return string.Empty;
+                return new MarketSecurityIds();
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
@@ -384,7 +387,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     securityId = await conn;
                 }
 
-                return securityId;
+                return new MarketSecurityIds {MarketId = marketId, SecurityId = securityId};
             }
             catch (Exception e)
             {
@@ -396,7 +399,13 @@ namespace Surveillance.DataLayer.Aurora.Market
                 dbConnection.Dispose();
             }
 
-            return string.Empty;
+            return new MarketSecurityIds();
+        }
+
+        public class MarketSecurityIds
+        {
+            public string MarketId { get; set; } = string.Empty;
+            public string SecurityId { get; set; } = string.Empty;
         }
 
         private class MarketUpdateDto
@@ -404,9 +413,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketUpdateDto()
             { }
 
-            public MarketUpdateDto(Domain.Market.Market market)
+            public MarketUpdateDto(DomainV2.Financial.Market market)
             {
-                MarketId = market.Id.Id;
+                MarketId = market.MarketIdentifierCode;
                 MarketName = market.Name;
             }
 
@@ -416,7 +425,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, StockExchange market)
+        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
         {
             if (dto == null)
             {
@@ -424,8 +433,9 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
 
             var security =
-                new Security(
-                    new SecurityIdentifiers(
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers(
                         dto.Id,
                         dto.ReddeerId,
                         dto.ClientIdentifier,
@@ -442,16 +452,16 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var spread =
                 new Spread(
-                    new Price(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var intradayPrices =
                 new IntradayPrices(
-                    new Price(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Price(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var tick =
                 new SecurityTick(
@@ -487,7 +497,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     return;
                 }
 
-                MarketId = entity?.Exchange?.Id?.Id;
+                MarketId = entity?.Exchange?.MarketIdentifierCode;
                 MarketName = entity?.Exchange?.Name;
             }
 
@@ -503,14 +513,13 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketStockExchangeId)
+            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketId)
             {
                 if (entity == null)
                 {
                     return;
                 }
 
-                MarketStockExchangeId = marketStockExchangeId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 Sedol = entity.Security?.Identifiers.Sedol;
@@ -524,12 +533,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency
-                    ?? entity.Spread.Ask.Currency
-                    ?? entity.Spread.Bid.Currency;
-
-
-
+                    entity.Spread.Price.Currency.Value
+                    ?? entity.Spread.Ask.Currency.Value
+                    ?? entity.Spread.Bid.Currency.Value;
 
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.Spread.Bid.Value;
@@ -543,11 +549,10 @@ namespace Surveillance.DataLayer.Aurora.Market
                 MarketCap = entity.MarketCap;
                 VolumeTradedInTick = entity.Volume.Traded;
                 DailyVolume = entity.DailyVolume.Traded;
+                MarketId = marketId.ToString();
             }
 
             public string Id { get; set; }
-
-            public int MarketStockExchangeId { get; set; }
 
             public string ClientIdentifier { get; set; }
 
@@ -605,9 +610,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
 
 
-
             // dont set these two for writes they're just for reads
             public string MarketId { get; set; }
+            public string MarketIdentifierCode { get; set; }
             public string MarketName { get; set; }
         }
 
@@ -626,7 +631,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 }
 
                 Id = entity?.Security?.Identifiers.Id ?? string.Empty;
-                MarketId = entity.Market?.Id?.Id;
+                MarketId = entity.Market?.MarketIdentifierCode;
                 MarketName = entity.Market?.Name;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
@@ -641,9 +646,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency
-                    ?? entity.Spread.Ask.Currency
-                    ?? entity.Spread.Bid.Currency;
+                    entity.Spread.Price.Currency.Value
+                    ?? entity.Spread.Ask.Currency.Value
+                    ?? entity.Spread.Bid.Currency.Value;
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.Spread.Bid.Value;
                 AskPrice = entity.Spread.Ask.Value;
@@ -658,7 +663,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
             }
 
-            public InsertSecurityDto(Security security, string marketIdForeignKey)
+            public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey)
             {
                 MarketIdPrimaryKey = marketIdForeignKey;
 

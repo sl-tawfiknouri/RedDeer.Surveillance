@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Equity.Frames;
-using Domain.Market;
-using Domain.Scheduling;
-using Domain.Trades.Orders;
+using DomainV2.Equity.Frames;
+using DomainV2.Financial;
+using DomainV2.Scheduling;
+using DomainV2.Trading;
 using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Tests.Helpers;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
-using Surveillance.Tests.Helpers;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
@@ -97,7 +97,7 @@ namespace Surveillance.Tests.Universe
                 TimeSeriesInitiation = timeSeriesInitiation,
                 TimeSeriesTermination = timeSeriesTermination
             };
-            var frame = ((TradeOrderFrame)null).Random();
+            var frame = ((Order)null).Random();
 
             A
                 .CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
@@ -181,13 +181,12 @@ namespace Surveillance.Tests.Universe
             var exchangeFrames = new[]
             {
                 new ExchangeFrame(
-                    new StockExchange(
-                        new Market.MarketId("xlon"), "London Stock Exchange"),
+                    new Market("1", "xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesInitiation,
                     new List<SecurityTick>()),
                 new ExchangeFrame(
-                    new StockExchange(
-                        new Market.MarketId("xlon"), "London Stock Exchange"),
+                    new Market(
+                        "1","xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesTermination,
                     new List<SecurityTick>())
             };

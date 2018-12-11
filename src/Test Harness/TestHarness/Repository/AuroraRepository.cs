@@ -13,22 +13,31 @@ namespace TestHarness.Repository
         private readonly IConsole _console;
 
         private const string DeleteSql = @"
-            DELETE FROM TradeReddeer WHERE ID > -1;
+			DELETE FROM TradeReddeer WHERE ID > -1;
+            DELETE FROM Transactions WHERE ID > -1;
+            DELETE FROM Trades WHERE ID > -1;
+            DELETE FROM Orders WHERE ID > -1;
             DELETE FROM MarketStockExchangePrices WHERE ID > -1;
-            DELETE FROM MarketStockExchangeSecurities WHERE ID > -1;
-            DELETE FROM MarketStockExchange WHERE ID > -1;";
+            DELETE FROM FinancialInstruments WHERE ID > -1;
+            DELETE FROM Market WHERE ID > -1;";
 
         private const string DeleteTradeSql = @"
-            DELETE FROM TradeReddeer
-            WHERE TradeSubmittedOn >= @FromDate
-            AND TradeSubmittedOn < @ToDate;";
+            DELETE FROM Transactions
+            WHERE PlacedDate >= @FromDate
+            AND PlacedDate <@ToDate;
+            DELETE FROM Trades
+            WHERE PlacedDate >= @FromDate
+            AND PlacedDate < @ToDate;
+            DELETE FROM Orders
+            WHERE PlacedDate >= @FromDate
+            AND PlacedDate < @ToDate;";
 
         private const string DeleteSecurityPriceSql = @"
             DELETE msep FROM MarketStockExchangePrices msep
-            LEFT OUTER JOIN MarketStockExchangeSecurities mses
+            LEFT OUTER JOIN FinancialInstruments mses
             ON msep.SecurityId = mses.Id
-            LEFT OUTER JOIN MarketStockExchange mse
-            ON mse.Id = mses.MarketStockExchangeId
+            LEFT OUTER JOIN Market mse
+            ON mse.Id = mses.MarketId
             WHERE mse.MarketId = @MarketId
             AND Epoch >= @FromDate
             AND Epoch < @ToDate;";

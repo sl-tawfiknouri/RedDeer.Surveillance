@@ -1,7 +1,7 @@
 ﻿using System;
 using DataImport.Processors.Interfaces;
-using Domain.Equity.Frames;
-using Domain.Equity.Streams.Interfaces;
+using DomainV2.Equity.Frames;
+using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Processors

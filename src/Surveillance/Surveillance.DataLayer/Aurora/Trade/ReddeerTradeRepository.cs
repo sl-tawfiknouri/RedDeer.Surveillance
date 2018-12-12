@@ -163,7 +163,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         private const string GetSql = @"
             SELECT
-	            ord.Id as Id,
+	            ord.Id as ReddeerOrderId,
                 ord.ClientOrderId as OrderId,
                 ord.SecurityId as SecurityId,
                 ord.PlacedDate as OrderPlacedDate,
@@ -212,14 +212,63 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 mark.Id AS MarketId,
                 mark.MarketId AS MarketIdentifierCode,
                 mark.MarketName AS MarketName
-            FROM orders as ord
-            LEFT OUTER JOIN financialinstruments as fi
+            FROM Orders as ord
+            LEFT OUTER JOIN FinancialInstruments as fi
             ON fi.Id = ord.SecurityId
-            LEFT OUTER JOIN market as mark
+            LEFT OUTER JOIN Market as mark
             on mark.Id = ord.MarketId
-            WHERE 
+            WHERE
             ord.PlacedDate >= @Start
             AND Ord.StatusChangedDate <= @End;";
+
+        private const string GetTradeSql = @"
+            SELECT
+                Id as ReddeerTradeId,
+                OrderId as OrderId,
+                ClientTradeId as ClientTradeId,
+                PlacedDate as PlacedDate,
+                BookedDate as BookedDate,
+                AmendedDate as AmendedDate,
+                RejectedDate as RejectedDate,
+                CancelledDate as CancelledDate,
+                FilledDate as FilledDate,
+                TraderId as TraderId,
+                TradeCounterParty as TradeCounterParty,
+                OrderType as OrderType,
+                Position as Position,
+                Currency as Currency,
+                LimitPrice as LimitPrice,
+                AveragePrice as AveragePrice,
+                OrderedVolume as OrderedVolume,
+                FilledVolume as FilledVolume,
+                OptionStrikePrice as OptionStrikePrice,
+                OptionExpirationDate as OptionExpirationDate,
+                OptionEuropeanAmerican as OptionEuropeanAmerican
+            FROM Trades
+            WHERE OrderId IN @OrderIds";
+
+        private const string GetTransactionSql = @"
+            SELECT
+                Id as ReddeerTransactionId,
+                TradeId as TradeId,
+                ClientTransactionId as ClientTransactionId,
+                PlacedDate as PlacedDate,
+                BookedDate as BookedDate,
+                AmendedDate as AmendedDate,
+                RejectedDate as RejectedDate,
+                CancelledDate as CancelledDate,
+                FilledDate as FilledDate,
+                TraderId as TraderId,
+                CounterParty as CounterParty,
+                OrderType as OrderType,
+                Position as Position,
+                Currency as Currency,
+                LimitPrice as LimitPrice,
+                AveragePrice as AveragePrice,
+                OrderedVolume as OrderedVolume,
+                FilledVolume as FilledVolume
+            FROM Transactions
+            WHERE TradeId IN @TradeIds";
 
         public ReddeerTradeRepository(
             IConnectionStringFactory connectionStringFactory,
@@ -343,13 +392,62 @@ namespace Surveillance.DataLayer.Aurora.Trade
             {
                 dbConnection.Open();
 
+                // GET ORDERS
+                var orders = new List<Order>();
                 var query = new GetQuery { Start = start, End = end };
                 using (var conn = dbConnection.QueryAsync<OrderDto>(GetSql, query))
                 {
                     var rawResult = await conn;
 
-                    return rawResult?.Select(Project).ToList();
+                    orders = rawResult?.Select(Project).ToList();
                 }
+
+                // GET TRADES
+                var orderIds = orders.Select(ord => ord.ReddeerOrderId?.ToString()).Where(x => x != null).ToList();
+                var tradeIds = new List<string>();
+                var tradeDtos = new List<TradeDto>();
+                using (var conn = dbConnection.QueryAsync<TradeDto>(GetTradeSql, new { OrderIds = orderIds }))
+                {
+                    tradeDtos = (await conn).ToList();
+                    tradeIds = tradeDtos.Select(tfo => tfo.ReddeerTradeId?.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                }
+
+                // GET TRANSACTIONS
+                var transactionDtos = new List<TransactionDto>();
+                using (var conn = dbConnection.QueryAsync<TransactionDto>(GetTransactionSql, new { TradeIds = tradeIds }))
+                {
+                    transactionDtos = (await conn).ToList();
+                }
+
+                // JOIN transactions to trades
+                var transGroups = transactionDtos.GroupBy(tfo => tfo.ReddeerTransactionId);
+                foreach (var grp in transGroups)
+                {
+                    var trade = tradeDtos.FirstOrDefault(td => td.ReddeerTradeId == grp.Key);
+                    if (trade == null)
+                    {
+                        continue;
+                    }
+
+                    trade.Transactions = grp.ToList();
+                }
+
+                // JOIN trades to orders
+                var groups = tradeDtos.GroupBy(tfo => tfo.OrderId);
+                foreach (var grp in groups)
+                {
+                    var order = orders.FirstOrDefault(ord => ord.ReddeerOrderId == grp.Key);
+                    if (order == null)
+                    {
+                        continue;
+                    }
+
+                    order.Trades = grp.Select(tr => Project(tr, order.Instrument)).ToList();
+                    foreach (var trad in order.Trades)
+                        trad.ParentOrder = order;
+                }
+
+                return orders;
             }
             catch (Exception e)
             {
@@ -404,8 +502,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
             var averagePrice = new CurrencyAmount(dto.OrderAveragePrice, dto.OrderCurrency);
 
             var market = new DomainV2.Financial.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+            var trades = dto.Trades?.Select(tr => Project(tr, financialInstrument)).ToList() ?? new List<DomainV2.Trading.Trade>();
 
-            return new Order(
+            var order = new Order(
                 financialInstrument,
                 market,
                 dto.ReddeerOrderId,
@@ -432,7 +531,93 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.OrderRationale,
                 dto.OrderFund,
                 dto.OrderClientAccountAttributionId,
-                new DomainV2.Trading.Trade[0]);
+                trades);
+
+            foreach (var trad in trades)
+                trad.ParentOrder = order;
+
+            return order;
+        }
+
+        private DomainV2.Trading.Trade Project(TradeDto dto, FinancialInstrument fi)
+        {
+            var orderType = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
+            var orderPosition = (OrderPositions)dto.Position.GetValueOrDefault(0);
+            var orderCurrency = new Currency(dto.Currency);
+            var orderLimit =
+                dto.LimitPrice != null
+                    ? (CurrencyAmount?)new CurrencyAmount(dto.LimitPrice, dto.Currency)
+                    : null;
+            var orderAveragePrice =
+                dto.AveragePrice != null
+                    ? (CurrencyAmount?)new CurrencyAmount(dto.AveragePrice, dto.Currency)
+                    : null;
+
+            var trans = dto.Transactions?.Select(tr => Project(tr, fi)).ToList();
+
+            var trade = new DomainV2.Trading.Trade(
+                fi,
+                dto.ReddeerTradeId?.ToString(),
+                dto.ClientTradeId,
+                dto.PlacedDate,
+                dto.BookedDate,
+                dto.AmendedDate,
+                dto.RejectedDate,
+                dto.CancelledDate,
+                dto.FilledDate,
+                dto.TraderId,
+                dto.TradeCounterParty,
+                orderType,
+                orderPosition,
+                orderCurrency,
+                orderLimit,
+                orderAveragePrice,
+                dto.OrderedVolume, 
+                dto.FilledVolume,
+                dto.OptionStrikePrice,
+                dto.OptionExpirationDate,
+                dto.OptionEuropeanAmerican,
+                trans);
+
+            foreach (var tran in trade.Transactions)
+                tran.ParentTrade = trade;
+
+            return trade;
+        }
+
+        private Transaction Project(TransactionDto dto, FinancialInstrument fi)
+        {
+            var orderType = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
+            var orderPosition = (OrderPositions)dto.Position.GetValueOrDefault(0);
+            var orderCurrency = new Currency(dto.Currency);
+            var orderLimit =
+                dto.LimitPrice != null
+                    ? (CurrencyAmount?)new CurrencyAmount(dto.LimitPrice, dto.Currency)
+                    : null;
+            var orderAveragePrice =
+                dto.AveragePrice != null
+                    ? (CurrencyAmount?)new CurrencyAmount(dto.AveragePrice, dto.Currency)
+                    : null;
+
+            return new Transaction(
+                fi,
+                dto.ReddeerTransactionId?.ToString(),
+                dto.ClientTransactionId,
+                dto.PlacedDate,
+                dto.BookedDate,
+                dto.AmendedDate,
+                dto.RejectedDate,
+                dto.CancelledDate,
+                dto.FilledDate,
+                dto.TraderId,
+                dto.CounterParty,
+                orderType,
+                orderPosition,
+                orderCurrency,
+                orderLimit,
+                orderAveragePrice,
+                dto.OrderedVolume,
+                dto.FilledVolume);
         }
 
         private class GetQuery
@@ -596,6 +781,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public string OrderRationale { get; set; }
             public string OrderFund { get; set; }
             public string OrderClientAccountAttributionId { get; set; }
+            public IList<TradeDto> Trades { get; set; } = new List<TradeDto>();
         }
 
         public class TradeDto
@@ -664,6 +850,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public decimal? OptionStrikePrice { get; set; }
             public DateTime? OptionExpirationDate { get; set; }
             public string OptionEuropeanAmerican { get; set; }
+
+            public IList<TransactionDto> Transactions { get; set; } = new List<TransactionDto>();
         }
 
         public class TransactionDto

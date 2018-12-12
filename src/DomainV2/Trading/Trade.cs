@@ -76,7 +76,7 @@ namespace DomainV2.Trading
         public decimal? TradeOptionStrikePrice { get; }
         public DateTime? TradeOptionExpirationDate { get; }
         public string TradeOptionEuropeanAmerican { get; }
-        public IReadOnlyCollection<Transaction> Transactions { get; }
+        public IReadOnlyCollection<Transaction> Transactions { get; set; }
         public Order ParentOrder { get; set; }
     }
 }

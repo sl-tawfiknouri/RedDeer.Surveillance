@@ -65,6 +65,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             await repo.Create(row1);
             await repo.Create(row2);
+
             var result = await repo.Get(start, end, _opCtx);
 
             Assert.IsTrue(true);

@@ -125,7 +125,7 @@ namespace DataImport.Disk_IO
 
             _fileSystemWatcher = new FileSystemWatcher(UploadDirectoryPath())
             {
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size,
+                NotifyFilter = NotifyFilters.FileName,
                 Filter = "*.csv",
                 IncludeSubdirectories = false
             };

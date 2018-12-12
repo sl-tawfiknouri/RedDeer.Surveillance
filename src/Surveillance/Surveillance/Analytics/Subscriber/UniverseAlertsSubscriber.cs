@@ -116,7 +116,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                Analytics.CancelledOrderAlertsAdjusted = _cancelledOrderMessageSender.Flush(alert.Context);
+                Analytics.CancelledOrderAlertsAdjusted += _cancelledOrderMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -130,7 +130,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                Analytics.HighProfitAlertsAdjusted = _highProfitMessageSender.Flush(alert.Context);
+                Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                Analytics.HighVolumeAlertsAdjusted = _highVolumeMessageSender.Flush(alert.Context);
+                Analytics.HighVolumeAlertsAdjusted += _highVolumeMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -164,7 +164,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                Analytics.LayeringAlertsAdjusted = _layeringCachedMessageSender.Flush(alert.Context);
+                Analytics.LayeringAlertsAdjusted += _layeringCachedMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -206,7 +206,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                Analytics.WashTradeAlertsAdjusted = _washTradeMessageSender.Flush(alert.Context);
+                Analytics.WashTradeAlertsAdjusted += _washTradeMessageSender.Flush(alert.Context);
                 return;
             }
 

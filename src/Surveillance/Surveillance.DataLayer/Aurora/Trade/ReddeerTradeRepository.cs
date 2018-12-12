@@ -50,7 +50,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ClientAccountAttributionId)
             VALUES(
                 @MarketId,
-                @SecurityId,
+                @SecurityReddeerId,
                 @OrderId,
                 @OrderPlacedDate,
                 @OrderBookedDate,
@@ -249,11 +249,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 var dto = new OrderDto(entity);
 
-                if (string.IsNullOrWhiteSpace(dto.SecurityId))
+                if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
+                || string.IsNullOrWhiteSpace(dto.MarketId))
                 {
                     var marketDataPair = new MarketDataPair { Exchange = entity.Market, Security = entity.Instrument };
                     var marketSecurityId = await _marketRepository.CreateAndOrGetSecurityId(marketDataPair);
-                    dto.SecurityId = marketSecurityId.SecurityId;
+                    dto.SecurityReddeerId = marketSecurityId.SecurityId;
                     dto.MarketId = marketSecurityId.MarketId;
                 }
 
@@ -633,6 +634,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OptionStrikePrice = trade.TradeOptionStrikePrice;
                 OptionExpirationDate = trade.TradeOptionExpirationDate;
                 OptionEuropeanAmerican = trade.TradeOptionEuropeanAmerican;
+
+                if (string.IsNullOrWhiteSpace(OptionEuropeanAmerican))
+                    OptionEuropeanAmerican = null;
             }
 
             public int? ReddeerTradeId { get; set; }

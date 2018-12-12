@@ -1,4 +1,6 @@
-﻿using StructureMap;
+﻿using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
+using StructureMap;
 using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
@@ -36,6 +38,7 @@ namespace Surveillance.DataLayer
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
             For<IRuleAnalyticsUniverseRepository>().Use<RuleAnalyticsUniverseRepository>();
             For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
+            For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
         }
     }
 }

@@ -427,7 +427,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     marketId = await conn;                 
                 }
 
-                var securityUpdate = new InsertSecurityDto(pair.Security, marketId);
+                var securityUpdate = new InsertSecurityDto(pair.Security, marketId, _cfiMapper);
                 using (var conn = dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate))
                 {
                     securityId = await conn;
@@ -559,7 +559,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketId)
+            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -596,6 +596,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 VolumeTradedInTick = entity.Volume.Traded;
                 DailyVolume = entity.DailyVolume.Traded;
                 MarketId = marketId.ToString();
+                InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
             }
 
             public string Id { get; set; }
@@ -626,6 +627,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public string SecurityCurrency { get; set; }
 
+            public int InstrumentType { get; set; }
 
 
 
@@ -664,12 +666,12 @@ namespace Surveillance.DataLayer.Aurora.Market
 
         private InsertSecurityDto Project(SecurityTick tick)
         {
-            return new InsertSecurityDto(tick);
+            return new InsertSecurityDto(tick, _cfiMapper);
         }
 
         private class InsertSecurityDto
         {
-            public InsertSecurityDto(SecurityTick entity)
+            public InsertSecurityDto(SecurityTick entity, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -707,9 +709,10 @@ namespace Surveillance.DataLayer.Aurora.Market
                 MarketCap = entity.MarketCap;
                 VolumeTradedInTick = entity.Volume.Traded;
                 DailyVolume = entity.DailyVolume.Traded;
+                InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
             }
 
-            public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey)
+            public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
                 MarketIdPrimaryKey = marketIdForeignKey;
 
@@ -726,6 +729,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 SecurityName = security.Name;
                 Cfi = security.Cfi;
                 IssuerIdentifier = security.IssuerIdentifier;
+                InstrumentType = (int)cfiMapper.MapCfi(security.Cfi);
             }
 
             public string MarketIdPrimaryKey { get; set; }
@@ -760,6 +764,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string IssuerIdentifier { get; set; }
 
             public string SecurityCurrency { get; set; }
+            public int InstrumentType { get; set; }
 
 
 

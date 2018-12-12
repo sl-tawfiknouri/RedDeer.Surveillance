@@ -12,7 +12,7 @@ namespace DomainV2.Files
         {
             // Market
             RuleFor(x => x.MarketIdentifierCode).NotEmpty();
-            RuleFor(x => x.MarketType).NotEmpty().SetValidator(new EnumParseableValidator<MarketTypes>());
+            RuleFor(x => x.MarketType).NotEmpty().SetValidator(new EnumParseableValidator<MarketTypes>("MarketType"));
 
             // Instrument
             RulesForSufficientInstrumentIdentificationCodes();
@@ -97,16 +97,16 @@ namespace DomainV2.Files
         {
             RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1);
             RuleFor(x => x.OrderCurrency).NotEmpty().MaximumLength(3).MinimumLength(3);
-            RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>());
-            RuleFor(x => x.OrderPosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>());
+            RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"));
+            RuleFor(x => x.OrderPosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>("OrderPosition"));
             RuleFor(x => x.OrderLimitPrice)
                 .NotEmpty()
                 .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
 
-            RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator());
-            RuleFor(x => x.OrderAveragePrice).SetValidator(new DecimalParseableValidator());
-            RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator());
-            RuleFor(x => x.OrderOrderedVolume).SetValidator(new LongParseableValidator());
+            RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
+            RuleFor(x => x.OrderAveragePrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
+            RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
+            RuleFor(x => x.OrderOrderedVolume).SetValidator(new LongParseableValidator("OrderOrderedVolume"));
         }
 
         private void RulesForTradeProperties()
@@ -114,8 +114,8 @@ namespace DomainV2.Files
             RuleFor(x => x.TradeId).NotEmpty().When(HasTradeOrTransactionData);
             RuleFor(x => x.TraderId).NotEmpty().When(HasTradeOrTransactionData);
             RuleFor(x => x.TradeCurrency).NotEmpty().When(HasTradeOrTransactionData).Length(3).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>()).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradePosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradePosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>("TradePosition")).When(HasTradeOrTransactionData);
 
             RuleFor(x => x.TradeLimitPrice)
                 .NotEmpty()
@@ -123,10 +123,10 @@ namespace DomainV2.Files
                     string.Equals(x.TradeType, "LIMIT", StringComparison.InvariantCultureIgnoreCase)
                     && HasTransactionData(x));
 
-            RuleFor(x => x.TradeLimitPrice).SetValidator(new DecimalParseableValidator()).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator()).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator()).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator()).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator("TradeOrderedVolume")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasTradeOrTransactionData);
 
             RulesForTradeOptionsProperties();
         }
@@ -188,15 +188,15 @@ namespace DomainV2.Files
             RuleFor(x => x.TransactionCurrency).Length(3).When(HasTransactionData);
 
             RuleFor(x => x.TransactionType).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionType).SetValidator(new EnumParseableValidator<MarketTypes>()).When(HasTransactionData);
+            RuleFor(x => x.TransactionType).SetValidator(new EnumParseableValidator<OrderTypes>("TransactionType")).When(HasTransactionData);
             RuleFor(x => x.TransactionPosition).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionPosition).SetValidator(new EnumParseableValidator<OrderPositions>()).When(HasTransactionData);
+            RuleFor(x => x.TransactionPosition).SetValidator(new EnumParseableValidator<OrderPositions>("TransactionPosition")).When(HasTransactionData);
 
-            RuleFor(x => x.TransactionLimitPrice).SetValidator(new DecimalParseableValidator()).When(HasTransactionData);
-            RuleFor(x => x.TransactionAveragePrice).SetValidator(new DecimalParseableValidator()).When(HasTransactionData);
+            RuleFor(x => x.TransactionLimitPrice).SetValidator(new DecimalParseableValidator("TransactionLimitPrice")).When(HasTransactionData);
+            RuleFor(x => x.TransactionAveragePrice).SetValidator(new DecimalParseableValidator("TransactionAveragePrice")).When(HasTransactionData);
 
-            RuleFor(x => x.TransactionFilledVolume).SetValidator(new LongParseableValidator()).When(HasTransactionData);
-            RuleFor(x => x.TransactionOrderedVolume).SetValidator(new LongParseableValidator()).When(HasTransactionData);
+            RuleFor(x => x.TransactionFilledVolume).SetValidator(new LongParseableValidator("TransactionFilledVolume")).When(HasTransactionData);
+            RuleFor(x => x.TransactionOrderedVolume).SetValidator(new LongParseableValidator("TransactionOrderedVolume2")).When(HasTransactionData);
         }
 
         private bool HasTransactionData(TradeFileCsv csv)
@@ -227,7 +227,7 @@ namespace DomainV2.Files
 
     public class LongParseableValidator : PropertyValidator
     {
-        public LongParseableValidator() : base("Property had a value but could not be parsed to long")
+        public LongParseableValidator(string longPropertyName) : base($"Property had a value but could not be parsed to long {longPropertyName}")
         { }
 
         protected override bool IsValid(PropertyValidatorContext context)
@@ -245,7 +245,7 @@ namespace DomainV2.Files
 
     public class DecimalParseableValidator : PropertyValidator
     {
-        public DecimalParseableValidator() : base("Property had a value but could not be parsed to decimal")
+        public DecimalParseableValidator(string decimalPropertyName) : base($"Property had a value but could not be parsed to decimal {decimalPropertyName}")
         { }
 
         protected override bool IsValid(PropertyValidatorContext context)
@@ -263,7 +263,7 @@ namespace DomainV2.Files
 
     public class EnumParseableValidator<T> : PropertyValidator where T: struct, IConvertible
     {
-        public EnumParseableValidator() : base("Property out of enum range")
+        public EnumParseableValidator(string enumPropertyName) : base($"Property out of enum range {enumPropertyName}")
         { }
 
         protected override bool IsValid(PropertyValidatorContext context)

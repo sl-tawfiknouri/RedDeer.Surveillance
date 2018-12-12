@@ -304,7 +304,7 @@ namespace DomainV2.Files
             var cancelledDate = MapDate(csv.TransactionCancelledDate);
             var filledDate = MapDate(csv.TransactionFilledDate);
 
-            var tradeType = MapToEnum<OrderTypes>(csv.TransactionPosition);
+            var tradeType = MapToEnum<OrderTypes>(csv.TransactionType);
             var tradePosition = MapToEnum<OrderPositions>(csv.TransactionPosition);
             var tradeCurrency = new Currency(csv.TransactionCurrency);
             var limitPrice = new CurrencyAmount(MapDecimal(csv.TransactionLimitPrice), csv.TransactionCurrency);

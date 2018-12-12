@@ -188,7 +188,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ord.Rationale as OrderRationale,
                 ord.Fund as OrderFund,
                 ord.ClientAccountAttributionId as OrderClientAccountAttributionId,
-	            fi.ReddeerId AS SecurityReddeerId,
+	            fi.Id AS SecurityReddeerId,
 	            fi.ClientIdentifier AS SecurityClientIdentifier,
 	            fi.Sedol AS SecuritySedol,
 	            fi.Isin AS SecurityIsin,

@@ -437,7 +437,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message}");
+                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message} {e.InnerException?.Message}");
             }
             finally
             {
@@ -450,7 +450,10 @@ namespace Surveillance.DataLayer.Aurora.Market
 
         public class MarketSecurityIds
         {
+            // primary key
             public string MarketId { get; set; } = string.Empty;
+
+            // primary key
             public string SecurityId { get; set; } = string.Empty;
         }
 

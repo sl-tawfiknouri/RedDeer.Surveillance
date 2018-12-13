@@ -298,6 +298,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 var dto = new OrderDto(entity);
 
+                _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
+
                 if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
                 || string.IsNullOrWhiteSpace(dto.MarketId))
                 {
@@ -364,6 +366,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         }
                     }
                 }
+
+                _logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
             }
             catch (Exception e)
             {

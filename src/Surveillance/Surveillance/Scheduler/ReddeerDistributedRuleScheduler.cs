@@ -112,8 +112,8 @@ namespace Surveillance.Scheduler
                 switch (rule.Rule)
                 {
                     case DomainV2.Scheduling.Rules.CancelledOrders:
-                        var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
+                        // var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
                         break;
                     case DomainV2.Scheduling.Rules.HighProfits:
                         var highProfitRuleRuns = parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
@@ -124,16 +124,16 @@ namespace Surveillance.Scheduler
                         await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleCtx);
                         break;
                     case DomainV2.Scheduling.Rules.Layering:
-                        var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
+                        // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
                     case DomainV2.Scheduling.Rules.MarkingTheClose:
-                        var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
+                        // var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
                         break;
                     case DomainV2.Scheduling.Rules.Spoofing:
-                        var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
+                        // var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
                     case DomainV2.Scheduling.Rules.WashTrade:
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();

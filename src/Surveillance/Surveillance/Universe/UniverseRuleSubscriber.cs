@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DomainV2.Scheduling;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -57,25 +58,9 @@ namespace Surveillance.Universe
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
-            var spoofingSubscriptions = _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
             var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
             var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            foreach (var sub in spoofingSubscriptions)
-                player.Subscribe(sub);
-
-            foreach (var sub in cancelledSubscriptions)
-                player.Subscribe(sub);
 
             foreach (var sub in highProfitSubscriptions)
                 player.Subscribe(sub);
@@ -83,13 +68,35 @@ namespace Surveillance.Universe
             foreach (var sub in highVolumeSubscriptions)
                 player.Subscribe(sub);
 
+
+            foreach (var sub in washTradeSubscriptions)
+                player.Subscribe(sub);
+
+             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
+        }
+
+        private void _RegisterNotSupportedSubscriptions(
+            RuleParameterDto ruleParameters,
+            ScheduledExecution execution,
+            IUniversePlayer player,
+            IUniverseAlertStream alertStream,
+            ISystemProcessOperationContext opCtx)
+        {
+            var spoofingSubscriptions = _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+
+            foreach (var sub in spoofingSubscriptions)
+                player.Subscribe(sub);
+
+            foreach (var sub in cancelledSubscriptions)
+                player.Subscribe(sub);
+
             foreach (var sub in markingTheCloseSubscriptions)
                 player.Subscribe(sub);
 
             foreach (var sub in layeringSubscriptions)
-                player.Subscribe(sub);
-
-            foreach (var sub in washTradeSubscriptions)
                 player.Subscribe(sub);
         }
     }

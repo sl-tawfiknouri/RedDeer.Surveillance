@@ -79,8 +79,18 @@ namespace Surveillance.Rules.HighProfits
                 .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
-            var costCalculator = GetCostCalculator();
-            var revenueCalculator = GetRevenueCalculator();
+            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+
+            var allTradesInCommonCurrency =
+                liveTrades.Any()
+                 && (liveTrades.All(x =>
+                     string.Equals(
+                         x.OrderCurrency.Value,
+                         targetCurrency.Value,
+                         StringComparison.InvariantCultureIgnoreCase)));
+
+            var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
+            var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
             var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, LatestExchangeFrameBook);
@@ -154,20 +164,23 @@ namespace Surveillance.Rules.HighProfits
             return exchangeRateProfits;
         }
 
-        private ICostCalculator GetCostCalculator()
+        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, DomainV2.Financial.Currency targetCurrency)
         {
-            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            if (!_parameters.UseCurrencyConversions
+                || allTradesInCommonCurrency
+                || string.IsNullOrWhiteSpace(targetCurrency.Value))
+            {
+                return _costCalculatorFactory.CostCalculator();
+            }
 
-            var costCalculator = _parameters.UseCurrencyConversions
-                ? _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency)
-                : _costCalculatorFactory.CostCalculator();
-
-            return costCalculator;
+            return _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
 
-        private IRevenueCalculator GetRevenueCalculator()
+        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, DomainV2.Financial.Currency targetCurrency)
         {
-            if (!_parameters.UseCurrencyConversions)
+            if (!_parameters.UseCurrencyConversions
+                || allTradesInCommonCurrency
+                || string.IsNullOrWhiteSpace(targetCurrency.Value))
             {
                 var calculator =
                     MarketClosureRule
@@ -176,9 +189,7 @@ namespace Surveillance.Rules.HighProfits
 
                 return calculator;
             }
-
-            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-            
+           
             var currencyConvertingCalculator =
                 MarketClosureRule
                     ? _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency)

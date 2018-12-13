@@ -44,6 +44,7 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 dbConnection.Open();
 
+                _logger.LogInformation($"SystemProcessOperationDistributeRuleRepository SAVING {entity}");
                 using (var conn = dbConnection.QuerySingleAsync<int>(CreateSql, entity))
                 {
                     entity.Id = await conn;

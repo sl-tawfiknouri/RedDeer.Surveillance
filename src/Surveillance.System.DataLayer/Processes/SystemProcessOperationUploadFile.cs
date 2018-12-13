@@ -19,5 +19,10 @@ namespace Surveillance.System.DataLayer.Processes
         public string FilePath { get; set; }
 
         public int FileType { get; set; }
+
+        public override string ToString()
+        {
+            return $"SystemProcessOperationUploadFile | Id {Id} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | FilePath {FilePath} | FileType {FileType}";
+        }
     }
 }

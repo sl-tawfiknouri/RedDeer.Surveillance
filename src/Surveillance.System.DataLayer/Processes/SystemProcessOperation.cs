@@ -29,5 +29,10 @@ namespace Surveillance.System.DataLayer.Processes
         /// Operation state
         /// </summary>
         public OperationState OperationState { get; set; }
+
+        public override string ToString()
+        {
+            return $"SystemProcessOperation | Id {Id} | SystemProcessId {SystemProcessId} | OperationStart {OperationStart} | OperationEnd {OperationEnd} | OperationState {OperationState}";
+        }
     }
 }

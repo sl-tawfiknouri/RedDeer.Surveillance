@@ -41,5 +41,10 @@ namespace Surveillance.System.DataLayer.Processes
         /// The end point for the rule run data
         /// </summary>
         public DateTime? ScheduleRuleEnd { get; set; }
+
+        public override string ToString()
+        {
+            return $"SystemProcessOperationRuleRun | Id {Id} | CorrelationId {CorrelationId} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | RuleDescription {RuleDescription} | RuleVersion {RuleVersion} | ScheduleRuleStart {ScheduleRuleStart} | ScheduleRuleEnd {ScheduleRuleEnd}";
+        }
     }
 }

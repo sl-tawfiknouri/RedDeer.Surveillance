@@ -68,7 +68,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
             if (!result.IsSuccessStatusCode)
                 _logger.LogError($"RuleParameterApiRepository HEARTBEAT NEGATIVE");
             else
-                _logger.LogInformation($"RuleParameterApiRepository HEARTBEAT POSITIVE");
+                _logger.LogInformation($"HEARTBEAT POSITIVE FOR RULE PARAMETER API REPOSITORY");
 
             return result.IsSuccessStatusCode;
         }

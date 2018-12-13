@@ -28,6 +28,8 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
         public async Task<IDictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>> Get(DateTime commencement, DateTime termination)
         {
             var httpClient = BuildHttpClient();
+            
+            _logger.LogInformation($"ExchangeRateApiRepository GET request for date {commencement} to {termination}");
 
             try
             {
@@ -53,11 +55,13 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
                 if (deserialisedResponse == null
                     || !deserialisedResponse.Any())
                 {
+                    _logger.LogWarning($"ExchangeRateApiRepository GET request returned a null or empty response");
                     return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
                 }
 
                 var result = deserialisedResponse.GroupBy(dr => dr.DateTime).ToDictionary(i => i.Key, i => i.ToList() as IReadOnlyCollection<ExchangeRateDto>);
 
+                _logger.LogInformation($"ExchangeRateApiRepository GET request returning results");
                 return result;
             }
             catch (Exception e)
@@ -73,6 +77,13 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             var httpClient = BuildHttpClient();
 
             var response = await httpClient.GetAsync(HeartbeatRoute, token);
+
+            if (!response.IsSuccessStatusCode)
+                _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
+            else
+            {
+                _logger.LogInformation($"ExchangeRateApiRepository HEARTBEAT POSITIVE FOR API END POINT");
+            }
 
             return response.IsSuccessStatusCode;
         }

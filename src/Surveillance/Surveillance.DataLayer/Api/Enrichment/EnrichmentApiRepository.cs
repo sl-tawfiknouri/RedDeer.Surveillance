@@ -29,6 +29,8 @@ namespace Surveillance.DataLayer.Api.Enrichment
         {
             var httpClient = BuildHttpClient();
 
+            _logger.LogInformation($"EnrichmentApiRepository about to make a GET request");
+
             try
             {
                 var json = JsonConvert.SerializeObject(message);
@@ -47,9 +49,11 @@ namespace Surveillance.DataLayer.Api.Enrichment
 
                 if (deserialisedResponse == null)
                 {
+                    _logger.LogError($"EnrichmentApiRepository was unable to deserialise the response");
                     return new SecurityEnrichmentMessage();
                 }
 
+                _logger.LogInformation($"Enrichment Api Repository returning deserialised GET response");
                 return deserialisedResponse;
             }
             catch (Exception e)
@@ -65,6 +69,11 @@ namespace Surveillance.DataLayer.Api.Enrichment
             var httpClient = BuildHttpClient();
 
             var response = await httpClient.GetAsync(HeartbeatRoute, token);
+
+            if (!response.IsSuccessStatusCode)
+                _logger.LogError($"HEARTBEAT FOR ENRICHMENT API REPOSITORY NEGATIVE");
+            else
+                _logger.LogInformation($"HEARTBEAT POSITIVE FOR ENRICHMENT API REPOSITORY");
 
             return response.IsSuccessStatusCode;
         }

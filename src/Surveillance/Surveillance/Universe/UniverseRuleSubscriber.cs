@@ -58,12 +58,8 @@ namespace Surveillance.Universe
 
             var ruleParameters = await _ruleParameterApiRepository.Get();
 
-            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            foreach (var sub in highProfitSubscriptions)
-                player.Subscribe(sub);
 
             foreach (var sub in highVolumeSubscriptions)
                 player.Subscribe(sub);
@@ -86,6 +82,10 @@ namespace Surveillance.Universe
             var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+
+            foreach (var sub in highProfitSubscriptions)
+                player.Subscribe(sub);
 
             foreach (var sub in spoofingSubscriptions)
                 player.Subscribe(sub);

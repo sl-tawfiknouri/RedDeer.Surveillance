@@ -176,8 +176,10 @@ namespace DomainV2.Files
             }
             
             var transaction = MapTransaction(csv);
-            var trade = MapTrade(csv, new [] {transaction});
-            var order = MapOrder(csv, new [] {trade});
+            var transactions = transaction != null ? new[] {transaction} : null;
+            var trade = MapTrade(csv, transactions);
+            var trades = trade != null ? new[] {trade} : null;
+            var order = MapOrder(csv, trades);
 
             return order;
         }
@@ -242,6 +244,9 @@ namespace DomainV2.Files
 
         private Trade MapTrade(TradeFileCsv csv, IReadOnlyCollection<Transaction> transactions)
         {
+            if (string.IsNullOrWhiteSpace(csv.TradeId))
+                return null;
+
             if (transactions == null)
             {
                 transactions = new Transaction[0];
@@ -295,6 +300,9 @@ namespace DomainV2.Files
 
         private Transaction MapTransaction(TradeFileCsv csv)
         {
+            if (string.IsNullOrWhiteSpace(csv.TransactionId))
+                return null;
+
             var instrument = MapInstrument(csv);
 
             var placedDate = MapDate(csv.TransactionPlacedDate);
@@ -304,7 +312,7 @@ namespace DomainV2.Files
             var cancelledDate = MapDate(csv.TransactionCancelledDate);
             var filledDate = MapDate(csv.TransactionFilledDate);
 
-            var tradeType = MapToEnum<OrderTypes>(csv.TransactionPosition);
+            var tradeType = MapToEnum<OrderTypes>(csv.TransactionType);
             var tradePosition = MapToEnum<OrderPositions>(csv.TransactionPosition);
             var tradeCurrency = new Currency(csv.TransactionCurrency);
             var limitPrice = new CurrencyAmount(MapDecimal(csv.TransactionLimitPrice), csv.TransactionCurrency);

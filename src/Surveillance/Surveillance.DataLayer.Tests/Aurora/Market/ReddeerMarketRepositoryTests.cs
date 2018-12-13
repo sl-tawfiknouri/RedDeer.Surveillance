@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DomainV2.Equity;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Financial.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -19,12 +20,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
     {
         private ILogger<ReddeerMarketRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
+        private ICfiInstrumentTypeMapper _cfiInstrumentMapper;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerMarketRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
+            _cfiInstrumentMapper = new CfiInstrumentTypeMapper();
         }
 
         [Test]
@@ -37,7 +40,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             };
 
             var factory = new ConnectionStringFactory(config);
-            var repo = new ReddeerMarketRepository(factory, _logger);
+            var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
             await repo.Create(Frame());
 
@@ -54,7 +57,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             };
 
             var factory = new ConnectionStringFactory(config);
-            var repo = new ReddeerMarketRepository(factory, _logger);
+            var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
             await repo.Create(Frame());
             await repo.Create(Frame());

@@ -65,6 +65,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             await repo.Create(row1);
             await repo.Create(row2);
+
             var result = await repo.Get(start, end, _opCtx);
 
             Assert.IsTrue(true);
@@ -72,13 +73,15 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         private Order Frame()
         {
-            var exch = new DomainV2.Financial.Market("1","id", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new DomainV2.Financial.Market("3","id", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.Now;
+            var tradeDates = DateTime.Now;
+            var transactionDates = DateTime.Now;
 
             var securityIdentifiers =
                 new InstrumentIdentifiers(
                     "1",
-                    "stan",
+                    "7",
                     "stan",
                     "st12345",
                     "sta123456789",
@@ -95,11 +98,23 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "CFI",
                 "Standard Chartered Bank");
 
+            var transaction1 = new Transaction(security, null, "my-transaction", transactionDates, transactionDates, transactionDates, transactionDates, transactionDates, transactionDates, "transcation-trader", "counter-party", OrderTypes.MARKET, OrderPositions.BUY, new Currency("GBP"), new CurrencyAmount(1000, "GBP"), new CurrencyAmount(1000, "GBP"), 1000, 1000);
+
+            var trade1 = new DomainV2.Trading.Trade(security, null, "my-trade", tradeDates, tradeDates,
+                tradeDates, tradeDates, tradeDates, tradeDates, "trader-1", "counter-party", OrderTypes.MARKET,
+                OrderPositions.BUY, new Currency("GBP"), new CurrencyAmount(100, "GBP"), new CurrencyAmount(100, "GBP"),
+                1000, 1000, null, null, null, new [] { transaction1 });
+
+            var trade2 = new DomainV2.Trading.Trade(security, null, "my-trade-2", tradeDates, tradeDates,
+                tradeDates, tradeDates, tradeDates, tradeDates, "trader-2", "counter-party", OrderTypes.MARKET,
+                OrderPositions.BUY, new Currency("GBP"), new CurrencyAmount(100, "GBP"), new CurrencyAmount(100, "GBP"),
+                1000, 1000, null, null, null, null);
+
             var order2 = new Order(security, exch, null, "order-1", orderDates, orderDates, orderDates, orderDates,
                 orderDates, orderDates, OrderTypes.MARKET, OrderPositions.BUY, new Currency("GBP"),
                 new CurrencyAmount(100, "GBP"), new CurrencyAmount(100, "GBP"), 1000, 1000, "Mr Portfolio Manager",
                 "Ry-1", "Goldman Sachs", "Clear Bank", "Process ASAP", "Clever Strategy", "Order rationale",
-                "Order fund", "client-account-x", new DomainV2.Trading.Trade[0]);
+                "Order fund", "client-account-x", new [] { trade1, trade2 });
 
             return order2;
         }

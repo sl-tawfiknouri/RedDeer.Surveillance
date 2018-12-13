@@ -124,6 +124,7 @@ namespace DataImport.S3_IO
             {
                 try
                 {
+                    _logger.LogInformation($"S3 processing {file}");
                     var result = _uploadTradeFileMonitor.ProcessFile(file);
 
                     if (result == false)
@@ -133,6 +134,7 @@ namespace DataImport.S3_IO
 
                     if (File.Exists(file))
                     {
+                        _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
                         File.Delete(file);
                     }
                 }
@@ -192,6 +194,9 @@ namespace DataImport.S3_IO
 
             var newPath = Path.Combine(ftpDirectoryPath, filePath);
             var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, newPath);
+
+            if (retries <= 0)
+                _logger.LogInformation($"S3 Process File ran out of retries for processing file {dto.FileName}");
 
             if (result || retries <= 0)
             {

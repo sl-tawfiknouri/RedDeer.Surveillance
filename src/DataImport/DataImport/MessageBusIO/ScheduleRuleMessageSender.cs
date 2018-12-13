@@ -32,6 +32,7 @@ namespace DataImport.MessageBusIO
         {
             if (message == null)
             {
+                _logger.LogWarning($"ScheduleRuleMessageSender was asked to send a null message. Will not be sending anything.");
                 return;
             }
 
@@ -40,7 +41,9 @@ namespace DataImport.MessageBusIO
 
             try
             {
+                _logger.LogInformation($"ScheduleRuleMessageSender dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
                 await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token);
+                _logger.LogInformation($"ScheduleRuleMessageSender finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
             }
             catch (Exception e)
             {

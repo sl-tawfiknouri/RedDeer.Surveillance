@@ -39,6 +39,8 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+
             description = description ?? string.Empty;
 
             var caseMessage = new CaseMessage

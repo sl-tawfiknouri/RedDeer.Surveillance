@@ -32,6 +32,7 @@ namespace Surveillance.MessageBusIO
         {
             if (message == null)
             {
+                _logger.LogWarning("CaseMessageSender tried to send a null case message. Did not send to AWS.");
                 return;
             }
 
@@ -40,7 +41,9 @@ namespace Surveillance.MessageBusIO
 
             try
             {
+                _logger.LogInformation($"CaseMessageSender Send | about to dispatch case {message.Case?.Title} to AWS queue | start of period {message.Case?.StartOfPeriodUnderInvestigation} | end of period {message.Case?.EndOfPeriodUnderInvestigation} | {message.CaseLogs?.Length} case log entries");
                 await _awsQueueClient.SendToQueue(_awsConfiguration.CaseMessageQueueName, caseMessage, messageBusCts.Token);
+                _logger.LogInformation($"CaseMessageSender Send | now dispatched case with title {message.Case?.Title}");
             }
             catch (Exception e)
             {

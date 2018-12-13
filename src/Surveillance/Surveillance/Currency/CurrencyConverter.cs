@@ -50,8 +50,8 @@ namespace Surveillance.Currency
             if (rates == null
                 || !rates.Any())
             {
-                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency} on {dayOfConversion.ToShortDateString()}");
-                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency} on {dayOfConversion.ToShortDateString()}");
+                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()}");
+                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()}");
 
                 return null;
             }

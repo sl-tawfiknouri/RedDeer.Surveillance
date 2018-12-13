@@ -40,6 +40,12 @@ namespace Surveillance.Currency
                 return null;
             }
 
+            if (string.IsNullOrWhiteSpace(targetCurrency.Value))
+            {
+                _logger.LogError($"CurrencyConverter asked to convert to a null or empty currency");
+                return currencyAmounts.Aggregate((i, o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
+            }
+
             if (currencyAmounts.All(ca => Equals(ca.Currency, targetCurrency)))
             {
                 return currencyAmounts.Aggregate((i,o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
@@ -170,9 +176,9 @@ namespace Surveillance.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }
@@ -187,9 +193,9 @@ namespace Surveillance.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }

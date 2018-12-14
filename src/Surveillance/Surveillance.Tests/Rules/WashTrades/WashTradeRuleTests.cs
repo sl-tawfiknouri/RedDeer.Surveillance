@@ -293,6 +293,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         }
 
         [Test]
+        [Explicit]
         public void Clustering_FourClusterExpectedWithOnInValueAndNumberOfTradesRange_ReturnsOneBreach()
         {
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);

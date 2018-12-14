@@ -48,7 +48,7 @@ namespace DataImport.Recorders
             {
                 return;
             }
-
+            
             await _tradeRepository.Create(value);
 
             if (_configuration.AutoSchedule)
@@ -106,7 +106,9 @@ namespace DataImport.Recorders
                 if (schedulePair.Count == value.BatchSize)
                 {
                     _batchTracker.Remove(value.InputBatchId);
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule auto scheduling now dispatching run rule request as full batch size of {value.BatchSize} has been met.");
                     _sender.Send(schedulePair.Schedule);
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule batch dispatched");
                 }
             }
         }
@@ -118,7 +120,16 @@ namespace DataImport.Recorders
 
             foreach (var item in allRules)
             {
-                allRulesList.Add((Rules)item);
+                var rule = (Rules)item;
+                if (rule == Rules.UniverseFilter 
+                    || rule == Rules.CancelledOrders
+                    || rule == Rules.HighProfits
+                    || rule == Rules.Layering
+                    || rule == Rules.MarkingTheClose
+                    || rule == Rules.Spoofing)
+                    continue;
+
+                allRulesList.Add(rule);
             }
 
             return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0]}).ToList();

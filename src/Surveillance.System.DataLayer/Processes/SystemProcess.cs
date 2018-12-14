@@ -41,5 +41,10 @@ namespace Surveillance.System.DataLayer.Processes
             // ReSharper disable once UseFormatSpecifierInInterpolation
             return $"{ProcessId}-{InstanceInitiated.ToString("yyyy/MM/dd hh:mm:ss")}";
         }
+
+        public override string ToString()
+        {
+            return $"SystemProcess | Id {Id} | InstanceInitiated {InstanceInitiated} | MachineId {MachineId} | ProcessId {ProcessId} | SystemProcessType {SystemProcessType} | Heartbeat {Heartbeat} | InstanceId {GenerateInstanceId()}";
+        }
     }
 }

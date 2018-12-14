@@ -45,7 +45,8 @@ namespace Surveillance.System.DataLayer.Repositories
 
                 using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
-                    return await conn;
+                    var highestMigrationExecuted = await conn;
+                    _logger.LogInformation($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
                 }
             }
             catch (Exception e)
@@ -83,7 +84,9 @@ namespace Surveillance.System.DataLayer.Repositories
                 return 0;
             }
 
-            return availableMigrationIds.Max();
+            var result = availableMigrationIds.Max();
+            _logger.LogInformation($"MigrationRepository checked for most recent migration available and found {result}");
+            return result;
         }
 
         private int? IndexPrefix(string fileName)

@@ -168,6 +168,7 @@ namespace Surveillance.Scheduler
                 return;
             }
 
+            _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
             var subscriber = _analyticsSubscriber.Build(opCtx.Id);
@@ -183,6 +184,7 @@ namespace Surveillance.Scheduler
             await _ruleAnalyticsRepository.Create(subscriber.Analytics);
             await _alertsRepository.Create(alertSubscriber.Analytics);
 
+            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();
         }
     }

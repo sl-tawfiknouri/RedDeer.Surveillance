@@ -26,6 +26,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
         public async Task<RuleParameterDto> Get()
         {
             var httpClient = BuildHttpClient();
+            _logger.LogInformation($"RuleParameterApiRepository GET request initiating");
 
             try
             {
@@ -42,6 +43,13 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
 
+                if (deserialisedResponse == null)
+                {
+                    _logger.LogWarning($"RuleParameterApiRepository has a null deserialised response for GET request");
+                }
+
+                _logger.LogInformation($"RuleParameterApiRepository GET request returning response");
+
                 return deserialisedResponse ?? new RuleParameterDto();
             }
             catch (Exception e)
@@ -56,6 +64,11 @@ namespace Surveillance.DataLayer.Api.RuleParameter
         {
             var client = BuildHttpClient();
             var result = await client.GetAsync(HeartbeatRoute, token);
+
+            if (!result.IsSuccessStatusCode)
+                _logger.LogError($"RuleParameterApiRepository HEARTBEAT NEGATIVE");
+            else
+                _logger.LogInformation($"HEARTBEAT POSITIVE FOR RULE PARAMETER API REPOSITORY");
 
             return result.IsSuccessStatusCode;
         }

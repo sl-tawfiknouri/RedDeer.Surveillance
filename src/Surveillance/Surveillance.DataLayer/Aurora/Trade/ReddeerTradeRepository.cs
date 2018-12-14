@@ -298,6 +298,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 var dto = new OrderDto(entity);
 
+                _logger.LogInformation($"ReddeerTradeRepository beginning save for order {entity.OrderId}");
+
                 if (string.IsNullOrWhiteSpace(dto.SecurityReddeerId)
                 || string.IsNullOrWhiteSpace(dto.MarketId))
                 {
@@ -364,10 +366,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         }
                     }
                 }
+
+                _logger.LogInformation($"ReddeerTradeRepository finished save for order {entity.OrderId}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message}");
+                _logger.LogError($"ReddeerTradeRepository Create Method For {entity.Instrument?.Name} {e.Message} {e.InnerException?.Message}");
             }
             finally
             {
@@ -451,7 +455,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message}");
+                _logger.LogError($"ReddeerTradeRepository Get Method For {start.ToShortDateString()} to {end.ToShortDateString()} {e.Message} {e.InnerException?.Message}");
                 opCtx.EventError(e);
             }
             finally

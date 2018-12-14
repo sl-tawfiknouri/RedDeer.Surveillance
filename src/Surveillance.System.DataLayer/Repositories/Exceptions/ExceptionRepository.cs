@@ -40,6 +40,8 @@ namespace Surveillance.System.DataLayer.Repositories.Exceptions
             {
                 dbConnection.Open();
 
+                _logger.LogError($"ExceptionRepository SAVING {dto}");
+
                 using (var conn = dbConnection.ExecuteAsync(ExceptionInsertSql, dto))
                 {
                     conn.Wait();

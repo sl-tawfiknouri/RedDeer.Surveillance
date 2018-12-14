@@ -11,5 +11,10 @@
         public int? SystemProcessOperationRuleRunId { get; set; }
         public int? SystemProcessOperationDistributeRuleId { get; set; }
         public int? SystemProcessOperationUploadFileRuleId { get; set; }
+
+        public override string ToString()
+        {
+            return $"Exception| ID {Id} | ExceptionMessage {ExceptionMessage} | InnerExceptionMessage {InnerExceptionMessage} | StackTrace {StackTrace} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | SystemProcessOperationRuleRunId {SystemProcessOperationRuleRunId} | SystemProcessOperationDistributeRuleId {SystemProcessOperationDistributeRuleId} | SystemProcessOperationUploadFileRuleId {SystemProcessOperationUploadFileRuleId}";
+        }
     }
 }

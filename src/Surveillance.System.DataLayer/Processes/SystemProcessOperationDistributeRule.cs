@@ -16,5 +16,10 @@ namespace Surveillance.System.DataLayer.Processes
         public DateTime? ScheduleRuleInitialEnd { get; set; }
 
         public string RulesDistributed { get; set; }
+
+        public override string ToString()
+        {
+            return $"SystemProcessOperationDistributeRule | Id {Id} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | Initial Start {ScheduleRuleInitialStart} | Initial End {ScheduleRuleInitialEnd} | RulesDistributed {RulesDistributed}";
+        }
     }
 }

@@ -28,6 +28,8 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
         {
             var httpClient = BuildHttpClient();
 
+            _logger.LogInformation($"MarketOpenCloseApiRepository GET request initiating");
+
             try
             {
                 var response = await httpClient.GetAsync(Route);
@@ -43,6 +45,12 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var deserialisedResponse = JsonConvert.DeserializeObject<ExchangeDto[]>(jsonResponse);
 
+                if (deserialisedResponse == null)
+                {
+                    _logger.LogWarning($"MarketOpenCloseApiRepository had a null deserialised response");
+                }
+
+                _logger.LogInformation($"MarketOpenCloseApiRepository returning result");
                 return deserialisedResponse ?? new ExchangeDto[0];
             }
             catch (Exception e)
@@ -58,6 +66,11 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
             var client = BuildHttpClient();
 
             var result = await client.GetAsync(HeartbeatRoute, token);
+
+            if (!result.IsSuccessStatusCode)
+                _logger.LogError($"MarketOpenCloseApiRepository HEARTBEAT NEGATIVE");
+            else
+                _logger.LogInformation($"HEARTBEAT POSITIVE FOR MARKET OPEN CLOSE API REPOSITORY");
 
             return result.IsSuccessStatusCode;
         }

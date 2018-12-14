@@ -437,7 +437,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message}");
+                _logger.LogError($"ReddeerMarketRepository CreateAndOrGetSecurityId {e.Message} {e.InnerException?.Message}");
             }
             finally
             {
@@ -450,7 +450,10 @@ namespace Surveillance.DataLayer.Aurora.Market
 
         public class MarketSecurityIds
         {
+            // primary key
             public string MarketId { get; set; } = string.Empty;
+
+            // primary key
             public string SecurityId { get; set; } = string.Empty;
         }
 
@@ -597,6 +600,17 @@ namespace Surveillance.DataLayer.Aurora.Market
                 DailyVolume = entity.DailyVolume.Traded;
                 MarketId = marketId.ToString();
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+
+                UnderlyingCfi = entity?.Security?.UnderlyingCfi;
+                UnderlyingName = entity?.Security?.UnderlyingName;
+                UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
+                UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
+                UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
+                UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
+                UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
+                UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
+                UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
+                UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
             }
 
             public string Id { get; set; }
@@ -630,6 +644,16 @@ namespace Surveillance.DataLayer.Aurora.Market
             public int InstrumentType { get; set; }
 
 
+            public string UnderlyingCfi { get; set; }
+            public string UnderlyingName { get; set; }
+            public string UnderlyingSedol { get; set; }
+            public string UnderlyingIsin { get; set; }
+            public string UnderlyingFigi { get; set; }
+            public string UnderlyingCusip { get; set; }
+            public string UnderlyingLei { get; set; }
+            public string UnderlyingExchangeSymbol { get; set; }
+            public string UnderlyingBloombergTicker { get; set; }
+            public string UnderlyingClientIdentifier { get; set; }
 
 
             public DateTime Epoch { get; set; }
@@ -710,6 +734,17 @@ namespace Surveillance.DataLayer.Aurora.Market
                 VolumeTradedInTick = entity.Volume.Traded;
                 DailyVolume = entity.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+
+                UnderlyingCfi = entity?.Security?.UnderlyingCfi;
+                UnderlyingName = entity?.Security?.UnderlyingName;
+                UnderlyingSedol = entity?.Security?.Identifiers.UnderlyingSedol;
+                UnderlyingIsin = entity?.Security?.Identifiers.UnderlyingIsin;
+                UnderlyingFigi = entity?.Security?.Identifiers.UnderlyingFigi;
+                UnderlyingCusip = entity?.Security?.Identifiers.UnderlyingCusip;
+                UnderlyingLei = entity?.Security?.Identifiers.UnderlyingLei;
+                UnderlyingExchangeSymbol = entity?.Security?.Identifiers.UnderlyingExchangeSymbol;
+                UnderlyingBloombergTicker = entity?.Security?.Identifiers.UnderlyingBloombergTicker;
+                UnderlyingClientIdentifier = entity?.Security?.Identifiers.UnderlyingClientIdentifier;
             }
 
             public InsertSecurityDto(FinancialInstrument security, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
@@ -730,6 +765,17 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = security.Cfi;
                 IssuerIdentifier = security.IssuerIdentifier;
                 InstrumentType = (int)cfiMapper.MapCfi(security.Cfi);
+
+                UnderlyingCfi = security.UnderlyingCfi;
+                UnderlyingName = security.UnderlyingName;
+                UnderlyingSedol = security.Identifiers.UnderlyingSedol;
+                UnderlyingIsin = security.Identifiers.UnderlyingIsin;
+                UnderlyingFigi = security.Identifiers.UnderlyingFigi;
+                UnderlyingCusip = security.Identifiers.UnderlyingCusip;
+                UnderlyingLei = security.Identifiers.UnderlyingLei;
+                UnderlyingExchangeSymbol = security.Identifiers.UnderlyingExchangeSymbol;
+                UnderlyingBloombergTicker = security.Identifiers.UnderlyingBloombergTicker;
+                UnderlyingClientIdentifier = security.Identifiers.UnderlyingClientIdentifier;
             }
 
             public string MarketIdPrimaryKey { get; set; }
@@ -765,7 +811,17 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public string SecurityCurrency { get; set; }
             public int InstrumentType { get; set; }
-
+            
+            public string UnderlyingCfi { get; set; }
+            public string UnderlyingName { get; set; }
+            public string UnderlyingSedol { get; set; }
+            public string UnderlyingIsin { get; set; }
+            public string UnderlyingFigi { get; set; }
+            public string UnderlyingCusip { get; set; }
+            public string UnderlyingLei { get; set; }
+            public string UnderlyingExchangeSymbol { get; set; }
+            public string UnderlyingBloombergTicker { get; set; }
+            public string UnderlyingClientIdentifier { get; set; }
 
 
             public DateTime Epoch { get; set; }

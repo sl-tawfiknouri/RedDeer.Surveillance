@@ -299,7 +299,7 @@ namespace Surveillance.Scheduler
             _logger.LogInformation($"Reddeer Smart Rule Scheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
 
             _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
-
+            
             await _awsQueueClient.SendToQueue(
                 _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
                 serialisedDistributedExecution,

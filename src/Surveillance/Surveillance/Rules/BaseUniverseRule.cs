@@ -76,6 +76,8 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger?.LogInformation($"{value} universe event passed to {_name} at universe time {value.EventTime}.");
+
             lock (_lock)
             {
                 switch (value.StateChange)
@@ -102,7 +104,7 @@ namespace Surveillance.Rules
                         Eschaton(value);
                         break;
                     case UniverseStateEvent.Unknown:
-                        _logger.LogWarning($"Universe rule {_name} received an unknown event");
+                        _logger?.LogWarning($"Universe rule {_name} received an unknown event");
                         RuleCtx.EventException($"Universe rule {_name} received an unknown event");
                         break;
                 }
@@ -116,6 +118,8 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger?.LogInformation($"Genesis event in base universe rule occuring for rule {_name} | event/universe time {universeEvent.EventTime} | correlation id {value.CorrelationId} | time series initiation  {value.TimeSeriesInitiation} | time series termination {value.TimeSeriesTermination}");
+
             Schedule = value;
             UniverseDateTime = universeEvent.EventTime;
             Genesis();
@@ -127,6 +131,8 @@ namespace Surveillance.Rules
             {
                 return;
             }
+
+            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.TimeStamp} | security count {value.Securities?.Count ?? 0}");
 
             if (LatestExchangeFrameBook.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
@@ -162,6 +168,8 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger?.LogInformation($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.OrderPlacedDate}");
+
             UniverseDateTime = universeEvent.EventTime;
 
             if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
@@ -189,6 +197,8 @@ namespace Surveillance.Rules
             {
                 return;
             }
+
+            _logger?.LogInformation($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
 
@@ -218,6 +228,8 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger?.LogInformation($"Market opened event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
+
             UniverseDateTime = universeEvent.EventTime;
             MarketOpen(value);
         }
@@ -229,12 +241,16 @@ namespace Surveillance.Rules
                 return;
             }
 
+            _logger?.LogInformation($"Market closed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
+
             UniverseDateTime = universeEvent.EventTime;
             MarketClose(value);
         }
 
         private void Eschaton(IUniverseEvent universeEvent)
         {
+            _logger?.LogInformation($"Eschaton in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime}");
+
             UniverseDateTime = universeEvent.EventTime;
             HasReachedEndOfUniverse = true;
             EndOfUniverse();
@@ -244,6 +260,7 @@ namespace Surveillance.Rules
         {
             lock (_lock)
             {
+                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all trading histories {currentTimeInUniverse}");
                 foreach (var history in TradingHistory)
                 {
                     if (currentTimeInUniverse != null)
@@ -263,6 +280,8 @@ namespace Surveillance.Rules
                 {
                     return;
                 }
+
+                _logger?.LogInformation($"Base universe rule for {_name} - Run rule for all trading histories for the market {closeOpen.MarketId} {currentTimeInUniverse}");
 
                 var filteredTradingHistories =
                     TradingHistory

@@ -243,21 +243,23 @@ namespace Surveillance.Universe.Multiverse
         
         public object Clone()
         {
-            var initialClone = (MarketCloseMultiverseTransformer)this.MemberwiseClone();
+            return this;
 
-            _subscribedRules = new List<IUniverseCloneableRule>(_subscribedRules); // change the list by reference
-            initialClone.RemoveSubscribers(_subscribedRules);
-            initialClone.ResetRuleSubscribers();
+            //var initialClone = (MarketCloseMultiverseTransformer)this.MemberwiseClone();
 
-            var subscriberClones =
-                _subscribedRules
-                    .Select(subs => (IUniverseCloneableRule)subs.Clone())
-                    .ToList();
+            //_subscribedRules = new List<IUniverseCloneableRule>(_subscribedRules); // change the list by reference
+            //initialClone.RemoveSubscribers(_subscribedRules);
+            //initialClone.ResetRuleSubscribers();
 
-            foreach (var subClone in subscriberClones)
-                initialClone.Subscribe(subClone);
+            //var subscriberClones =
+            //    _subscribedRules
+            //        .Select(subs => (IUniverseCloneableRule)subs.Clone())
+            //        .ToList();
 
-            return initialClone;
+            //foreach (var subClone in subscriberClones)
+            //    initialClone.Subscribe(subClone);
+
+            //return initialClone;
         }
     }
 }

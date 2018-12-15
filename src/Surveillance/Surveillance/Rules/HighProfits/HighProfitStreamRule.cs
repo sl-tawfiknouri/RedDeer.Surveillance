@@ -79,6 +79,11 @@ namespace Surveillance.Rules.HighProfits
                 .Where(at => at.OrderStatus() == OrderStatus.Filled)
                 .ToList();
 
+            if (!liveTrades.Any())
+            {
+                return;
+            }
+
             var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency =
@@ -148,8 +153,13 @@ namespace Surveillance.Rules.HighProfits
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
             var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
-            var buys = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.BUY).ToList());
-            var sells = new TradePosition(liveTrades.Where(lt => lt.OrderPosition == OrderPositions.SELL).ToList());
+            var buys = new TradePosition(liveTrades.Where(lt =>
+                lt.OrderPosition == OrderPositions.BUY 
+                || lt.OrderPosition == OrderPositions.SHORT).ToList());
+
+            var sells = new TradePosition(liveTrades.Where(lt =>
+                lt.OrderPosition == OrderPositions.SELL
+                || lt.OrderPosition == OrderPositions.COVER).ToList());
 
             var exchangeRateProfitsTask =
                 _exchangeRateProfitCalculator.ExchangeRateMovement(

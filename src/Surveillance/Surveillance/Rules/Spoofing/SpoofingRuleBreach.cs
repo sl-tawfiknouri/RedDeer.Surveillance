@@ -38,5 +38,7 @@ namespace Surveillance.Rules.Spoofing
         /// The trade whose fulfillment triggered the rule breach. This is a constituent of trades but not cancelled trades.
         /// </summary>
         public Order MostRecentTrade { get; }
+
+        public bool IsBackTestRun { get; set; }
     }
 }

@@ -38,6 +38,8 @@ namespace Surveillance.Rules.WashTrade
         public WashTradePairingPositionBreach PairingPositionBreach { get; }
         public WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }
 
+        public bool IsBackTestRun { get; set; }
+        
         public class WashTradeAveragePositionBreach
         {
             public WashTradeAveragePositionBreach(

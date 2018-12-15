@@ -65,10 +65,11 @@ namespace Surveillance.Analytics.Subscriber.Factory
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseAlertSubscriber Build(int opCtxId)
+        public IUniverseAlertSubscriber Build(int opCtxId, bool isBackTest)
         {
             return new UniverseAlertsSubscriber(
                 opCtxId,
+                isBackTest,
                 _cancelledOrderMessageSender,
                 _highProfitMessageSender,
                 _highVolumeMessageSender,

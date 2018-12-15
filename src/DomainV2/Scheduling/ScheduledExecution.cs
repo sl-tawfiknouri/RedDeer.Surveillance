@@ -27,5 +27,7 @@ namespace DomainV2.Scheduling
         /// Typically the op id of the distributed rule
         /// </summary>
         public string CorrelationId { get; set; }
+
+        public bool IsBackTest { get; set; }
     }
 }

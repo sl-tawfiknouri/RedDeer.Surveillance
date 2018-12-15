@@ -1,5 +1,4 @@
 ﻿using System;
-using DomainV2.Equity;
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -42,6 +41,8 @@ namespace Surveillance.Rules.HighVolume
         public BreachDetails MarketCapBreach { get; }
 
         public long TotalOrdersTradedInWindow { get; }
+
+        public bool IsBackTestRun { get; set; }
 
         public class BreachDetails
         {

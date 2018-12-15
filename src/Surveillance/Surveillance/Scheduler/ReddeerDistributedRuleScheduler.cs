@@ -241,7 +241,8 @@ namespace Surveillance.Scheduler
                 Rules = new List<RuleIdentifier> { rule },
                 TimeSeriesInitiation = execution.TimeSeriesInitiation,
                 TimeSeriesTermination = execution.TimeSeriesTermination,
-                CorrelationId = correlationId
+                CorrelationId = correlationId,
+                IsBackTest = execution.IsBackTest
             };
 
             await ScheduleExecution(distributedExecution);
@@ -271,7 +272,8 @@ namespace Surveillance.Scheduler
                     Rules = new List<RuleIdentifier> { rule },
                     TimeSeriesInitiation = currentInitiationPoint,
                     TimeSeriesTermination = currentEndPoint,
-                    CorrelationId = correlationId
+                    CorrelationId = correlationId,
+                    IsBackTest = execution.IsBackTest
                 };
 
                 executions.Add(distributedExecution);

@@ -48,5 +48,7 @@ namespace Surveillance.Rules.HighProfits
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; }
+
+        public bool IsBackTestRun { get; set; }
     }
 }

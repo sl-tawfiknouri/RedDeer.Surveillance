@@ -37,5 +37,7 @@ namespace Surveillance.Rules.Layering
         public RuleBreachDescription DailyVolumeTradeBreach { get; }
         public RuleBreachDescription WindowVolumeTradeBreach { get; }
         public RuleBreachDescription PriceMovementBreach { get; }
+
+        public bool IsBackTestRun { get; set; }
     }
 }

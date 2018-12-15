@@ -6,6 +6,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter.Interfaces
 {
     public interface IRuleParameterApiRepository : IHeartbeatApi
     {
-    Task<RuleParameterDto> Get();
+        Task<RuleParameterDto> Get();
+        Task<RuleParameterDto> Get(string id);
     }
 }

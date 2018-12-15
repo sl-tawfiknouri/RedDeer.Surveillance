@@ -63,18 +63,19 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         sm.Lei,
                                         sm.BloombergTicker),
                                     sm.SecurityName,
-                                    sm.Cfi,
+                                    SetCfi(sm.Cfi),
+                                    sm.SecurityCurrency,
                                     sm.IssuerIdentifier), 
                                 new Spread(
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        sm.SecurityCurrency),
+                                        SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        sm.SecurityCurrency),
+                                        SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        sm.SecurityCurrency)),
+                                        SetCurrency(sm.SecurityCurrency))),
                                 new Volume(volume((double)CalculateADailyVolume(smp.Value))),
                                 new Volume(CalculateADailyVolume(smp.Value)),
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
@@ -82,16 +83,16 @@ namespace TestHarness.Engine.EquitiesGenerator
                                 new IntradayPrices(
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        sm.SecurityCurrency),
+                                        SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.ClosePrice,
-                                        sm.SecurityCurrency),
+                                        SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.HighIntradayPrice,
-                                        sm.SecurityCurrency),
+                                        SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.LowIntradayPrice,
-                                        sm.SecurityCurrency)),
+                                        SetCurrency(sm.SecurityCurrency))),
                                 null,
                                 new Market(
                                     null,
@@ -133,6 +134,26 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
 
             return (long)(dto.MarketCapUsd / dto.OpenPrice);
+        }
+
+        private string SetCfi(string cfi)
+        {
+            if (!string.IsNullOrWhiteSpace(cfi))
+            {
+                return cfi;
+            }
+
+            return "entspb";
+        }
+
+        private string SetCurrency(string currency)
+        {
+            if (!string.IsNullOrWhiteSpace(currency))
+            {
+                return currency;
+            }
+
+            return "GBP";
         }
     }
 }

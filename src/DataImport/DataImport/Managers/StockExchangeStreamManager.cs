@@ -60,10 +60,10 @@ namespace DataImport.Managers
             //stockExchangeStream.Subscribe(_equityRelaySubscriber);
 
             // hook the equity processor to receive the incoming network stream
-            _stockExchangeStream.Subscribe(equityProcessor);
+            stockExchangeStream.Subscribe(equityProcessor);
 
             // hook up the data recorder
-            _stockExchangeStream.Subscribe(_stockExchangeRecorder);
+            stockExchangeStream.Subscribe(_stockExchangeRecorder);
 
             //Initiate communication with downstream process (surveillance service)
             //_equityRelaySubscriber.Initiate(
@@ -71,7 +71,7 @@ namespace DataImport.Managers
             //    _networkConfiguration.SurveillanceServiceEquityPort);
 
             // begin hosting connection for upstream processes (i.e. test harness etc)
-            HostOverWebsockets();
+            HostOverWebsockets(stockExchangeStream);
 
             // set up trading file monitor and wire it into the stream
             var fileMonitor = _equityFileMonitorFactory.Build(stockExchangeStream);
@@ -80,9 +80,9 @@ namespace DataImport.Managers
             return fileMonitor;
         }
 
-        private void HostOverWebsockets()
+        private void HostOverWebsockets(IStockExchangeStream stockExchangeStream)
         {
-            var networkDuplexer = new RelayEquityNetworkDuplexer(_stockExchangeStream);
+            var networkDuplexer = new RelayEquityNetworkDuplexer(stockExchangeStream);
             var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
             exchange.Initialise(
                 $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");

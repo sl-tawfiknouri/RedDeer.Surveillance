@@ -21,22 +21,20 @@ namespace Surveillance.Rules
     public abstract class BaseUniverseRule : IUniverseRule
     {
         private readonly string _name;
-
         protected readonly TimeSpan WindowSize;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
-        protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
-
-        private readonly ILogger _logger;
-        private readonly object _lock = new object();
-
-        protected IDictionary<string, ExchangeFrame> LatestExchangeFrameBook;
 
         protected ConcurrentDictionary<string, IMarketHistoryStack> MarketHistory;
+        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+        protected IDictionary<string, ExchangeFrame> LatestExchangeFrameBook;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
+        protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
+
+        private readonly ILogger _logger;
+        private readonly object _lock = new object();
 
         protected BaseUniverseRule(
             TimeSpan windowSize,

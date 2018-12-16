@@ -67,27 +67,11 @@ namespace Surveillance.Rules.HighVolume
             var tradePosition = new TradePosition(tradeWindow.ToList());
             var mostRecentTrade = tradeWindow.Pop();
 
-            HighVolumeRuleBreach.BreachDetails dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageDaily.HasValue)
-            {
-                dailyBreach = DailyVolumeCheck(mostRecentTrade, tradedVolume);
-            }
+            var dailyBreach = CheckDailyVolume(mostRecentTrade, tradedVolume);
+            var windowBreach = CheckWindowVolume(mostRecentTrade, tradedVolume);
+            var marketCapBreach = CheckMarketCap(mostRecentTrade, tradedSecurities);
 
-            HighVolumeRuleBreach.BreachDetails windowBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageWindow.HasValue)
-            {
-                windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
-            }
-
-            HighVolumeRuleBreach.BreachDetails marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageMarketCap.HasValue)
-            {
-                marketCapBreach = MarketCapCheck(mostRecentTrade, tradedSecurities);
-            }
-
-            if ((!dailyBreach?.HasBreach ?? true)
-                && (!windowBreach?.HasBreach ?? true)
-                && (!marketCapBreach?.HasBreach ?? true))
+            if (HasNoBreach(dailyBreach, windowBreach, marketCapBreach))
             {
                 return;
             }
@@ -107,6 +91,50 @@ namespace Surveillance.Rules.HighVolume
             _alertStream.Add(message);
         }
 
+        private HighVolumeRuleBreach.BreachDetails CheckDailyVolume(Order mostRecentTrade, long tradedVolume)
+        {
+            var dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
+            if (_parameters.HighVolumePercentageDaily.HasValue)
+            {
+                dailyBreach = DailyVolumeCheck(mostRecentTrade, tradedVolume);
+            }
+
+            return dailyBreach;
+        }
+
+        private HighVolumeRuleBreach.BreachDetails CheckWindowVolume(Order mostRecentTrade, long tradedVolume)
+        {
+            var windowBreach = HighVolumeRuleBreach.BreachDetails.None();
+            if (_parameters.HighVolumePercentageWindow.HasValue)
+            {
+                windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
+            }
+
+            return windowBreach;
+        }
+
+        private HighVolumeRuleBreach.BreachDetails CheckMarketCap(Order mostRecentTrade, List<Order> tradedSecurities)
+        {
+            var marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
+            if (_parameters.HighVolumePercentageMarketCap.HasValue)
+            {
+                marketCapBreach = MarketCapCheck(mostRecentTrade, tradedSecurities);
+            }
+
+            return marketCapBreach;
+        }
+
+        private bool HasNoBreach(
+            HighVolumeRuleBreach.BreachDetails dailyBreach,
+            HighVolumeRuleBreach.BreachDetails windowBreach,
+            HighVolumeRuleBreach.BreachDetails marketCapBreach)
+        {
+            return (!dailyBreach?.HasBreach ?? true)
+                   && (!windowBreach?.HasBreach ?? true)
+                   && (!marketCapBreach?.HasBreach ?? true);
+        }
+
+        // refactor to class
         private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
             if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
@@ -155,6 +183,7 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
+        // refactor to class
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
             if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
@@ -197,6 +226,7 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
+        // refactor to class
         private HighVolumeRuleBreach.BreachDetails MarketCapCheck(Order mostRecentTrade, List<Order> trades)
         {
             if (trades == null

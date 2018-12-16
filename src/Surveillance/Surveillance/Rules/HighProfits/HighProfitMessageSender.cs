@@ -104,7 +104,7 @@ namespace Surveillance.Rules.HighProfits
                 return string.Empty;
             }
 
-            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency}/ {ruleBreach.ExchangeRateProfits.VariableCurrency}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
+            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency.Value}/ {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
         }
     }
 }

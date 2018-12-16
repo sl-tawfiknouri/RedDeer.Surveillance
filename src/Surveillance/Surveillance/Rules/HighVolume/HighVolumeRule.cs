@@ -159,7 +159,7 @@ namespace Surveillance.Rules.HighVolume
             }
 
             var security = securityResult.Response;
-            var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailyVolume.Traded);
+            var threshold = (long)Math.Ceiling(_parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailyVolume.Traded);
 
             if (threshold <= 0)
             {
@@ -202,7 +202,7 @@ namespace Surveillance.Rules.HighVolume
 
             var securityDataTicks = marketResult.Response;           
             var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
-            var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+            var threshold = (long)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
 
             var breachPercentage =
                 windowVolume != 0 && tradedVolume != 0

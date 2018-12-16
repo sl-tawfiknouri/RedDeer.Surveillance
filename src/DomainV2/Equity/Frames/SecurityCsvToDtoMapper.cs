@@ -160,6 +160,7 @@ namespace DomainV2.Equity.Frames
                     csv.BloombergTicker),
                 csv.SecurityName,
                 csv.Cfi,
+                csv.Currency,
                 csv.IssuerIdentifier,
                 string.Empty,
                 string.Empty,

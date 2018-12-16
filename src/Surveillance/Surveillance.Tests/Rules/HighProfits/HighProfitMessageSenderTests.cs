@@ -37,6 +37,7 @@ namespace Surveillance.Tests.Rules.HighProfits
                     new InstrumentIdentifiers("id", "id", "id", "id", "id", "id", "id", "id", "id", "id"),
                     "security",
                     "cfi", 
+                    "USD",
                     "issuer-identifier");
         }
 

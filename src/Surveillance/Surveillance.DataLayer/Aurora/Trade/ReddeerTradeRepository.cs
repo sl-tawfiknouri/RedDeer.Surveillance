@@ -493,6 +493,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         dto.UnderlyingClientIdentifier),
                     dto.SecurityName,
                     dto.SecurityCfi,
+                    dto.OrderCurrency,
                     dto.SecurityIssuerIdentifier,
                     dto.UnderlyingSecurityName,
                     dto.UnderlyingSecurityCfi,

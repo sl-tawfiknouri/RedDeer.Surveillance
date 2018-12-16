@@ -101,7 +101,7 @@ namespace Surveillance.Rules.HighProfits
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
-            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, LatestExchangeFrameBook);
+            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, UniverseMarketCache);
 
             costTask.Wait();
             revenueTask.Wait();

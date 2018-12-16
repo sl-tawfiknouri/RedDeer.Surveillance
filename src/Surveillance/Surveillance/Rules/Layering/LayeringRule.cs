@@ -14,6 +14,7 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets;
 using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Rules.Layering
@@ -75,7 +76,7 @@ namespace Surveillance.Rules.Layering
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.OrderPosition == OrderPositions.BUY
+                (mostRecentTrade.OrderPosition == OrderPositions.BUY)
                     ? buyPosition
                     : sellPosition;
 
@@ -180,8 +181,6 @@ namespace Surveillance.Rules.Layering
             }
 
             opposingPosition.Add(mostRecentTrade);
-
-
             var allTradesInPositions = opposingPosition.Get().Concat(tradingPosition.Get()).ToList();
             var allTrades = new TradePosition(allTradesInPositions);
 
@@ -214,46 +213,23 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var marketId = mostRecentTrade.Market.MarketIdentifierCode;
+            var marketRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Identifiers,
+                    null,
+                    null);
 
-            if (marketId == null)
+            var marketResult = UniverseMarketCache.Get(marketRequest);
+            if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"Layering unable to evaluate the market id for the most recent trade {mostRecentTrade?.Instrument?.Identifiers}");
+                _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
             }
 
-            if (!LatestExchangeFrameBook.ContainsKey(marketId))
-            {
-                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers}");
-
-                _hadMissingData = true;
-                return RuleBreachDescription.False();
-            }
-
-            LatestExchangeFrameBook.TryGetValue(marketId, out var frame);
-
-            if (frame == null)
-            {
-                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the frame was null");
-
-                _hadMissingData = true;
-                return RuleBreachDescription.False();
-            }
-
-            var marketSecurityData = frame
-                .Securities
-                ?.FirstOrDefault(sec => Equals(sec.Security?.Identifiers, mostRecentTrade.Instrument.Identifiers));
-
-            if (marketSecurityData == null)
-            {
-                _logger.LogInformation($"Layering unable to fetch market data for ({marketId}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
-
-                _hadMissingData = true;
-                return RuleBreachDescription.False();
-            }
-
+            var marketSecurityData = marketResult.Response;
             if (marketSecurityData?.DailyVolume.Traded <= 0
                 || opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
@@ -280,7 +256,15 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
+            var marketDataRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Identifiers,
+                    null,
+                    null);
+
+            var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            if (securityResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
@@ -288,17 +272,7 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
 
-            var securityDataTicks = marketStack
-                .ActiveMarketHistory()
-                .Where(amh => amh != null)
-                .Select(amh =>
-                    amh.Securities?.FirstOrDefault(sec =>
-                        Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers)))
-                .Where(sec => sec != null)
-                .ToList();
-
-            var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
-
+            var windowVolume = securityResult.Response.Sum(sdt => sdt.Volume.Traded);
             if (windowVolume <= 0)
             {
                 _logger.LogInformation($"Layering unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
@@ -332,31 +306,23 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
+            var marketRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Identifiers,
+                    null,
+                    null);
+
+            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+
+            if (marketResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
             }
-
-            var securityDataTicks = marketStack
-                .ActiveMarketHistory()
-                .Where(amh => amh != null)
-                .Select(amh =>
-                    amh.Securities?.FirstOrDefault(sec =>
-                        Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers)))
-                .Where(sec => sec != null)
-                .ToList();
-
-            if (!securityDataTicks.Any())
-            {
-                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
-
-                _hadMissingData = true;
-                return RuleBreachDescription.False();
-            }
-
+            
             var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
             var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
 
@@ -365,6 +331,7 @@ namespace Surveillance.Rules.Layering
                 endDate = mostRecentTrade.OrderPlacedDate.GetValueOrDefault();
             }
 
+            var securityDataTicks = marketResult.Response;
             var startTick = StartTick(securityDataTicks, startDate);
             if (startTick == null)
             {
@@ -382,8 +349,18 @@ namespace Surveillance.Rules.Layering
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
             }
-            
+
             var priceMovement = endTick.Spread.Price.Value - startTick.Spread.Price.Value;
+
+            return BuildDescription(mostRecentTrade, priceMovement, startTick, endTick);
+        }
+
+        private RuleBreachDescription BuildDescription(
+            Order mostRecentTrade,
+            decimal priceMovement,
+            SecurityTick startTick,
+            SecurityTick endTick)
+        {
             switch (mostRecentTrade.OrderPosition)
             {
                 case OrderPositions.BUY:
@@ -396,10 +373,8 @@ namespace Surveillance.Rules.Layering
                 default:
                     _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderPosition} (Arg Out of Range)");
                     _ruleCtx.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderPosition} (Arg Out of Range)");
-                    break;
+                    return RuleBreachDescription.False();
             }
-
-            return RuleBreachDescription.False();
         }
 
         private SecurityTick StartTick(List<SecurityTick> securityDataTicks, DateTime startDate)

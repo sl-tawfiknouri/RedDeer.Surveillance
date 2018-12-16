@@ -6,6 +6,8 @@ using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
+using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -30,7 +32,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IDictionary<string, ExchangeFrame> latestExchangeFrameBook)
+            IUniverseMarketCache universeMarketCache)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -56,8 +58,15 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var marketId = activeFulfilledTradeOrders.FirstOrDefault()?.Market?.MarketIdentifierCode;
-            if (marketId == null)
+            var marketDataRequest =
+                new MarketDataRequest(
+                    activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
+                    security.Identifiers,
+                    null,
+                    null);
+
+            var marketDataResult = universeMarketCache.Get(marketDataRequest);
+            if (marketDataResult.HadMissingData)
             {
                 return CalculateInferredVirtualProfit(
                     activeFulfilledTradeOrders,
@@ -65,29 +74,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                     sizeOfVirtualPosition);
             }
 
-            if (!latestExchangeFrameBook.ContainsKey(marketId))
-            {
-                return CalculateInferredVirtualProfit(
-                    activeFulfilledTradeOrders,
-                    realisedRevenue,
-                    sizeOfVirtualPosition);
-            }
-
-            latestExchangeFrameBook.TryGetValue(marketId, out var frame);
-
-            var securityTick =
-                frame
-                    ?.Securities
-                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, security.Identifiers));
-
-            if (securityTick == null)
-            {
-                return CalculateInferredVirtualProfit(
-                    activeFulfilledTradeOrders,
-                    realisedRevenue,
-                    sizeOfVirtualPosition);
-            }
-
+            var securityTick = marketDataResult.Response;           
             var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
 

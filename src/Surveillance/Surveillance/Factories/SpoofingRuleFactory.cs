@@ -12,10 +12,12 @@ namespace Surveillance.Factories
 {
     public class SpoofingRuleFactory : ISpoofingRuleFactory
     {
+        private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<SpoofingRule> _logger;
 
-        public SpoofingRuleFactory(ILogger<SpoofingRule> logger)
+        public SpoofingRuleFactory(IUniverseMarketCacheFactory factory, ILogger<SpoofingRule> logger)
         {
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -28,6 +30,7 @@ namespace Surveillance.Factories
                 spoofingParameters,
                 ruleCtx,
                 alertStream,
+                _factory,
                 _logger);
         }
 

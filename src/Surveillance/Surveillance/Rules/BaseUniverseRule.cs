@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
+using Surveillance.Factories.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -23,10 +23,9 @@ namespace Surveillance.Rules
         private readonly string _name;
         protected readonly TimeSpan WindowSize;
 
-        protected ConcurrentDictionary<string, IMarketHistoryStack> MarketHistory;
+        protected readonly IUniverseMarketCache UniverseMarketCache;
         protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
         protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
-        protected IDictionary<string, ExchangeFrame> LatestExchangeFrameBook;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
@@ -42,16 +41,15 @@ namespace Surveillance.Rules
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseMarketCacheFactory marketCacheFactory,
             ILogger logger)
         {
             WindowSize = windowSize;
             Rule = rules;
             Version = version ?? string.Empty;
+            UniverseMarketCache = marketCacheFactory?.Build(windowSize) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
-            MarketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>();
-            LatestExchangeFrameBook = new ConcurrentDictionary<string, ExchangeFrame>();
-
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -132,31 +130,8 @@ namespace Surveillance.Rules
 
             _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.TimeStamp} | security count {value.Securities?.Count ?? 0}");
 
-            if (LatestExchangeFrameBook.ContainsKey(value.Exchange.MarketIdentifierCode))
-            {
-                LatestExchangeFrameBook.Remove(value.Exchange.MarketIdentifierCode);
-                LatestExchangeFrameBook.Add(value.Exchange.MarketIdentifierCode, value);
-            }
-            else
-            {
-                LatestExchangeFrameBook.Add(value.Exchange.MarketIdentifierCode, value);
-            }
-
             UniverseDateTime = universeEvent.EventTime;
-
-            if (!MarketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
-            {
-                var history = new MarketHistoryStack(WindowSize);
-                history.Add(value, value.TimeStamp);
-                MarketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
-            }
-            else
-            {
-                MarketHistory.TryGetValue(value.Exchange.MarketIdentifierCode, out var history);
-
-                history?.Add(value, value.TimeStamp);
-                history?.ArchiveExpiredActiveItems(value.TimeStamp);
-            }
+            UniverseMarketCache.Add(value);
         }
 
         private void TradeSubmitted(IUniverseEvent universeEvent)

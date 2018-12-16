@@ -21,6 +21,7 @@ namespace Surveillance.Factories
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+        private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
@@ -28,6 +29,7 @@ namespace Surveillance.Factories
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<HighProfitsRule> logger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -36,6 +38,7 @@ namespace Surveillance.Factories
             _exchangeRateProfitCalculator =
                 exchangeRateProfitCalculator
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -53,6 +56,7 @@ namespace Surveillance.Factories
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
+                _marketCacheFactory,
                 _logger);
 
             var marketClosure = new HighProfitMarketClosureRule(
@@ -62,6 +66,7 @@ namespace Surveillance.Factories
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
+                _marketCacheFactory,
                 _logger);
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);

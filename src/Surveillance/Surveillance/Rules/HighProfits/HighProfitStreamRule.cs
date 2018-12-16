@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -40,6 +41,7 @@ namespace Surveillance.Rules.HighProfits
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            IUniverseMarketCacheFactory factory,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -47,6 +49,7 @@ namespace Surveillance.Rules.HighProfits
                 HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

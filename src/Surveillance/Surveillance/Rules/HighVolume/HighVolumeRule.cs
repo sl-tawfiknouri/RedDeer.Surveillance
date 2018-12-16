@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Factories.Interfaces;
+using Surveillance.Markets;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -29,6 +31,7 @@ namespace Surveillance.Rules.HighVolume
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseMarketCacheFactory factory,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -36,6 +39,7 @@ namespace Surveillance.Rules.HighVolume
                 HighVolumeRuleFactory.Version,
                 "High Volume Rule",
                 opCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -134,39 +138,28 @@ namespace Surveillance.Rules.HighVolume
                    && (!marketCapBreach?.HasBreach ?? true);
         }
 
-        // refactor to class
         private HighVolumeRuleBreach.BreachDetails DailyVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
+            if (mostRecentTrade == null)
             {
-                _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var exchangeFrame);
+            var marketDataRequest = new MarketDataRequest(mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Identifiers, mostRecentTrade.MostRecentDateEvent(),
+                mostRecentTrade.MostRecentDateEvent());
 
-            if (exchangeFrame == null)
+            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+
+            if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
+                _logger.LogError($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var security = exchangeFrame
-                .Securities
-                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers));
-
-            if (security == null)
-            {
-                _hadMissingData = true;
-                return HighVolumeRuleBreach.BreachDetails.None();
-            }
-
+            var security = securityResult.Response;
             var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailyVolume.Traded);
-
-            var breachPercentage = 
-                security.DailyVolume.Traded != 0 && tradedVolume != 0
-                ? (decimal)tradedVolume / (decimal)security.DailyVolume.Traded
-                : 0;
 
             if (threshold <= 0)
             {
@@ -174,6 +167,11 @@ namespace Surveillance.Rules.HighVolume
                 _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
+
+            var breachPercentage =
+                security.DailyVolume.Traded != 0 && tradedVolume != 0
+                    ? (decimal)tradedVolume / (decimal)security.DailyVolume.Traded
+                    : 0;
 
             if (tradedVolume >= threshold)
             {
@@ -183,26 +181,26 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        // refactor to class
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            if (!MarketHistory.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var marketStack))
+            var marketRequest =
+                new MarketDataRequest(
+                    mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Identifiers,
+                    null,
+                    null);
+
+            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+
+            if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var securityDataTicks = marketStack
-                .ActiveMarketHistory()
-                .Where(amh => amh != null)
-                .Select(amh =>
-                    amh.Securities?.FirstOrDefault(sec =>
-                        Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers)))
-                .Where(sec => sec != null)
-                .ToList();
-
+            var securityDataTicks = marketResult.Response;           
             var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
             var threshold = (int)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
 
@@ -226,7 +224,6 @@ namespace Surveillance.Rules.HighVolume
             return HighVolumeRuleBreach.BreachDetails.None();
         }
 
-        // refactor to class
         private HighVolumeRuleBreach.BreachDetails MarketCapCheck(Order mostRecentTrade, List<Order> trades)
         {
             if (trades == null
@@ -235,30 +232,20 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            if (!LatestExchangeFrameBook.ContainsKey(mostRecentTrade.Market.MarketIdentifierCode))
+            var marketDataRequest = new MarketDataRequest(mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Identifiers, mostRecentTrade.MostRecentDateEvent(),
+                mostRecentTrade.MostRecentDateEvent());
+
+            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+
+            if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
+                _logger.LogError($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            LatestExchangeFrameBook.TryGetValue(mostRecentTrade.Market.MarketIdentifierCode, out var exchangeFrame);
-
-            if (exchangeFrame == null)
-            {
-                _hadMissingData = true;
-                return HighVolumeRuleBreach.BreachDetails.None();
-            }
-
-            var security = exchangeFrame
-                .Securities
-                .FirstOrDefault(sec => Equals(sec.Security.Identifiers, mostRecentTrade.Instrument.Identifiers));
-
-            if (security == null)
-            {
-                _hadMissingData = true;
-                return HighVolumeRuleBreach.BreachDetails.None();
-            }
-
+            var security = securityResult.Response;
             double thresholdValue =
                 (double)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
                 * security.MarketCap.GetValueOrDefault(0));

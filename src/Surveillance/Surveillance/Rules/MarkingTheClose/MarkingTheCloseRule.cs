@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -30,6 +31,7 @@ namespace Surveillance.Rules.MarkingTheClose
             IMarkingTheCloseParameters parameters,
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseMarketCacheFactory factory,
             ILogger<MarkingTheCloseRule> logger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
@@ -37,6 +39,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 MarkingTheCloseRuleFactory.Version,
                 "Marking The Close",
                 ruleCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

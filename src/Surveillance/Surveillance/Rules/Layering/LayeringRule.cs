@@ -13,6 +13,7 @@ using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Rules.Layering
@@ -29,6 +30,7 @@ namespace Surveillance.Rules.Layering
             ILayeringRuleParameters parameters,
             IUniverseAlertStream alertStream,
             ILogger logger,
+            IUniverseMarketCacheFactory factory,
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
@@ -36,6 +38,7 @@ namespace Surveillance.Rules.Layering
                 LayeringRuleFactory.Version,
                 "Layering Rule",
                 opCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

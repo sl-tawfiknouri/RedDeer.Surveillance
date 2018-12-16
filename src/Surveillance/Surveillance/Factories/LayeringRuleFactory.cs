@@ -12,10 +12,12 @@ namespace Surveillance.Factories
 {
     public class LayeringRuleFactory : ILayeringRuleFactory
     {
+        private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<LayeringRuleFactory> _logger;
 
-        public LayeringRuleFactory(ILogger<LayeringRuleFactory> logger)
+        public LayeringRuleFactory(IUniverseMarketCacheFactory factory, ILogger<LayeringRuleFactory> logger)
         {
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -24,7 +26,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream)
         {
-            return new LayeringRule(parameters, alertStream, _logger, ruleCtx);
+            return new LayeringRule(parameters, alertStream, _logger, _factory, ruleCtx);
         }
 
         public static string Version => Versioner.Version(1, 0);

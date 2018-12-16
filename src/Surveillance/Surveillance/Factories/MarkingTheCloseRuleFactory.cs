@@ -11,16 +11,18 @@ namespace Surveillance.Factories
 {
     public class MarkingTheCloseRuleFactory : IMarkingTheCloseRuleFactory
     {
+        private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<MarkingTheCloseRule> _logger;
 
-        public MarkingTheCloseRuleFactory(ILogger<MarkingTheCloseRule> logger)
+        public MarkingTheCloseRuleFactory(IUniverseMarketCacheFactory factory, ILogger<MarkingTheCloseRule> logger)
         {
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IMarkingTheCloseRule Build(IMarkingTheCloseParameters parameters, ISystemProcessOperationRunRuleContext ruleCtx, IUniverseAlertStream alertStream)
         {
-            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _logger);
+            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _factory, _logger);
         }
 
         public static string Version => Versioner.Version(1, 0);

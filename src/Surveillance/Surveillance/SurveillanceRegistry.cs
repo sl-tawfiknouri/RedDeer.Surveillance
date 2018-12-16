@@ -189,6 +189,7 @@ namespace Surveillance
             For<IRuleProjector>().Use<RuleProjector>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
+            For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
         }
     }
 }

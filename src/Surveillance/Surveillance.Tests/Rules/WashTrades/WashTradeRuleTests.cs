@@ -8,6 +8,8 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -26,6 +28,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         private IWashTradeClustering _clustering;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleParameters _parameters;
+        private IUniverseMarketCacheFactory _factory;
         private ILogger _logger;
 
         [SetUp]
@@ -39,6 +42,7 @@ namespace Surveillance.Tests.Rules.WashTrades
             _parameters = A.Fake<IWashTradeRuleParameters>();
             _logger = A.Fake<ILogger>();
 
+            _factory = new UniverseMarketCacheFactory();
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
             A.CallTo(() => _parameters.ClusteringPercentageValueDifferenceThreshold).Returns(0.05m);
         }
@@ -56,6 +60,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var result = rule.ClusteringTrades(null);
@@ -75,6 +80,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
            var result = rule.ClusteringTrades(null);
@@ -94,6 +100,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var trades = new List<Order> {new Order().Random()};
@@ -114,6 +121,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(19);
@@ -144,6 +152,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(19);
@@ -175,6 +184,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(21);
@@ -216,6 +226,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(21);
@@ -253,6 +264,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(21);
@@ -306,6 +318,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _factory,
                 _logger);
 
             var tr1 = new Order().Random(21);

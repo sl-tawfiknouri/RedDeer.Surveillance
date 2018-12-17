@@ -24,6 +24,8 @@ using Surveillance.Factories;
 using Surveillance.Interfaces;
 using Surveillance.Mappers;
 using Surveillance.Mappers.Interfaces;
+using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.NetworkIO;
@@ -190,6 +192,7 @@ namespace Surveillance
 
             For<IEnrichmentService>().Use<EnrichmentService>();
             For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
+            For<IMarketTradingHoursManager>().Use<MarketTradingHoursManager>();
         }
     }
 }

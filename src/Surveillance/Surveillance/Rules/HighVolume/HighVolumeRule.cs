@@ -9,6 +9,7 @@ using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -23,6 +24,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -32,6 +34,7 @@ namespace Surveillance.Rules.HighVolume
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseMarketCacheFactory factory,
+            IMarketTradingHoursManager tradingHoursManager,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -45,6 +48,7 @@ namespace Surveillance.Rules.HighVolume
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -145,9 +149,17 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var marketDataRequest = new MarketDataRequest(mostRecentTrade.Market?.MarketIdentifierCode,
-                mostRecentTrade.Instrument.Identifiers, mostRecentTrade.MostRecentDateEvent(),
-                mostRecentTrade.MostRecentDateEvent());
+            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+            }
+
+            var marketDataRequest = new MarketDataRequest(
+                mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Identifiers,
+                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime)); 
 
             var securityResult = UniverseMarketCache.Get(marketDataRequest);
 
@@ -183,12 +195,18 @@ namespace Surveillance.Rules.HighVolume
 
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
+            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+            }
+
             var marketRequest =
                 new MarketDataRequest(
-                    mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
-                    null,
-                    null);
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHours.ClosingInUtcForDay(UniverseDateTime));
 
             var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
 
@@ -232,9 +250,17 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var marketDataRequest = new MarketDataRequest(mostRecentTrade.Market?.MarketIdentifierCode,
-                mostRecentTrade.Instrument.Identifiers, mostRecentTrade.MostRecentDateEvent(),
-                mostRecentTrade.MostRecentDateEvent());
+            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+            }
+
+            var marketDataRequest = new MarketDataRequest(
+                mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Identifiers,
+                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime));
 
             var securityResult = UniverseMarketCache.Get(marketDataRequest);
 

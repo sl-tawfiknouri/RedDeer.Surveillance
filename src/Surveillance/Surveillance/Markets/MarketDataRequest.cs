@@ -8,8 +8,8 @@ namespace Surveillance.Markets
         public MarketDataRequest(
             string marketIdentifierCode,
             InstrumentIdentifiers identifiers,
-            DateTime? universeEventTimeTo,
-            DateTime? universeEventTimeFrom)
+            DateTime? universeEventTimeFrom,
+            DateTime? universeEventTimeTo)
         {
             MarketIdentifierCode = marketIdentifierCode ?? string.Empty;
             Identifiers = identifiers;

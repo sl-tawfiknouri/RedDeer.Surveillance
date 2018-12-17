@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Universe.Subscribers.Interfaces;
 
-namespace Surveillance.Universe.Subscribers
+namespace Surveillance.Universe.Subscribers.Factories
 {
     public class UniversePercentageOfTimeCompletionLoggerFactory : IUniversePercentageOfTimeCompletionLoggerFactory
     {

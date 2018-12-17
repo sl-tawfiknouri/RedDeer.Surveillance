@@ -69,6 +69,7 @@ using Surveillance.Universe.Multiverse.Interfaces;
 using Surveillance.Universe.OrganisationalFactors;
 using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers;
+using Surveillance.Universe.Subscribers.Factories;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;

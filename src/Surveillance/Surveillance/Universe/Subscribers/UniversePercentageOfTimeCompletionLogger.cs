@@ -7,6 +7,7 @@ namespace Surveillance.Universe.Subscribers
 {
     public class UniversePercentageOfTimeCompletionLogger : IUniversePercentageOfTimeCompletionLogger
     {
+        
 
         public void InitiateTimeLogger(ScheduledExecution execution)
         {

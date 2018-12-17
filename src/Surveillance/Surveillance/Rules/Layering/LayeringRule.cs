@@ -15,6 +15,7 @@ using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 
 namespace Surveillance.Rules.Layering
@@ -22,6 +23,7 @@ namespace Surveillance.Rules.Layering
     public class LayeringRule : BaseUniverseRule, ILayeringRule
     {
         private readonly ILogger _logger;
+        private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ILayeringRuleParameters _parameters;
@@ -32,6 +34,7 @@ namespace Surveillance.Rules.Layering
             IUniverseAlertStream alertStream,
             ILogger logger,
             IUniverseMarketCacheFactory factory,
+            IMarketTradingHoursManager tradingHoursManager,
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
@@ -44,6 +47,7 @@ namespace Surveillance.Rules.Layering
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
         }
@@ -213,12 +217,22 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
+            var tradingHoursManager = _tradingHoursManager.Get(mostRecentTrade.Market.MarketIdentifierCode);
+
+            if (!tradingHoursManager.IsValid)
+            {
+                _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
+
+                _hadMissingData = true;
+                return RuleBreachDescription.False();
+            }
+
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
-                    null,
-                    null);
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHoursManager.ClosingInUtcForDay(UniverseDateTime));
 
             var marketResult = UniverseMarketCache.Get(marketRequest);
             if (marketResult.HadMissingData)
@@ -260,8 +274,8 @@ namespace Surveillance.Rules.Layering
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
-                    null,
-                    null);
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime);
 
             var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
             if (securityResult.HadMissingData)
@@ -306,12 +320,15 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
+            var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
+            var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
+
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
-                    null,
-                    null);
+                    startDate,
+                    endDate);
 
             var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
 
@@ -323,9 +340,6 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
             
-            var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
-            var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
-
             if (mostRecentTrade.OrderPlacedDate > endDate)
             {
                 endDate = mostRecentTrade.OrderPlacedDate.GetValueOrDefault();

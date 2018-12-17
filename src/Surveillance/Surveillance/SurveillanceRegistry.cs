@@ -189,6 +189,9 @@ namespace Surveillance
             For<IRuleProjector>().Use<RuleProjector>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
+            For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
+            For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
+            For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
         }
     }
 }

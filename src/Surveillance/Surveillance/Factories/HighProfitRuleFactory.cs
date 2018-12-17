@@ -47,7 +47,8 @@ namespace Surveillance.Factories
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            DomainV2.Scheduling.ScheduledExecution scheduledExecution)
         {
             var stream = new HighProfitStreamRule(
                 parameters,
@@ -70,7 +71,9 @@ namespace Surveillance.Factories
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);
-            multiverseTransformer.Subscribe(_percentageCompleteFactory.Build());
+            var percentageCompletionLogger = _percentageCompleteFactory.Build();
+            percentageCompletionLogger.InitiateTimeLogger(scheduledExecution);
+            multiverseTransformer.Subscribe(percentageCompletionLogger);
                 
             return new HighProfitsRule(stream, multiverseTransformer);
         }

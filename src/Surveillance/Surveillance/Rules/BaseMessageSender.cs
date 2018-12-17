@@ -46,7 +46,8 @@ namespace Surveillance.Rules
             var caseMessage = new CaseMessage
             {
                 Case = CaseDataItem(ruleBreach, description),
-                CaseLogs = CaseLogsInPosition(ruleBreach.Trades?.Get())
+                CaseLogs = CaseLogsInPosition(ruleBreach.Trades?.Get()),
+                IsBackTest = ruleBreach.IsBackTestRun
             };
 
             try

@@ -101,6 +101,7 @@ namespace DataImport
             For<IRedDeerAuroraStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+            For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
 
             For<ITradeFileCsvValidator>().Use<TradeFileCsvValidator>();
             For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();

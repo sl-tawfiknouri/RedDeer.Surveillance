@@ -123,7 +123,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler = 
                 new ReddeerDistributedRuleScheduler(
@@ -162,7 +162,7 @@ namespace Surveillance.Tests.Scheduler
                         HighProfits = null
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -206,7 +206,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -250,7 +250,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -293,7 +293,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     }});
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -338,7 +338,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -384,7 +384,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -430,7 +430,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -476,7 +476,7 @@ namespace Surveillance.Tests.Scheduler
                         }
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(
@@ -525,7 +525,7 @@ namespace Surveillance.Tests.Scheduler
                         }}
                     });
 
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
             var scheduler =
                 new ReddeerDistributedRuleScheduler(

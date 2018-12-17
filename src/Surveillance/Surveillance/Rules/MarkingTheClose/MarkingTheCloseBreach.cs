@@ -42,5 +42,6 @@ namespace Surveillance.Rules.MarkingTheClose
         public VolumeBreach DailyBreach { get; }
         public VolumeBreach WindowBreach { get; }
 
+        public bool IsBackTestRun { get; set; }
     }
 }

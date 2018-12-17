@@ -13,6 +13,8 @@ namespace Surveillance.DataLayer.Api.RuleParameter
     {
         private const string HeartbeatRoute = "api/surveillanceruleparameter/heartbeat";
         private const string Route = "api/surveillanceruleparameter/get/v1";
+        private const string RouteV2 = "api/surveillanceruleparameter/get/v2";
+
         private readonly ILogger _logger;
 
         public RuleParameterApiRepository(
@@ -21,6 +23,43 @@ namespace Surveillance.DataLayer.Api.RuleParameter
             : base(dataLayerConfiguration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<RuleParameterDto> Get(string id)
+        {
+            var httpClient = BuildHttpClient();
+            _logger.LogInformation($"RuleParameterApiRepository GET by ID {id} request initiating");
+
+            try
+            {
+                var response = await httpClient.GetAsync($"{RouteV2}/{id}");
+
+                if (response == null
+                    || !response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning($"Unsuccessful rule parameter api repository GET by id {id} request. {response?.StatusCode}");
+
+                    return new RuleParameterDto();
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
+
+                if (deserialisedResponse == null)
+                {
+                    _logger.LogWarning($"RuleParameterApiRepository has a null deserialised response for GET by id {id} request");
+                }
+
+                _logger.LogInformation($"RuleParameterApiRepository GET by ID {id} request returning response");
+
+                return deserialisedResponse ?? new RuleParameterDto();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+            }
+
+            return new RuleParameterDto();
         }
 
         public async Task<RuleParameterDto> Get()

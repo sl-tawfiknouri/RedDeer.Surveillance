@@ -187,7 +187,7 @@ namespace Surveillance.Tests.Scheduler
         [Explicit("Takes over a minute to run")]
         public async Task ExecuteDistributedMessage_ContinuesOnNormalLogicIfServicesRunning()
         {
-            var serialiser = new ScheduledExecutionMessageBusSerialiser();
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
             A.CallTo(() => _messageBusSerialiser.DeserialisedScheduledExecution(A<string>.Ignored)).Returns(null);
 
             var scheduler = new ReddeerRuleScheduler(

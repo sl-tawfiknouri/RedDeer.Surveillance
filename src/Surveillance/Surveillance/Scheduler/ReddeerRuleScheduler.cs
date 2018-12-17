@@ -10,7 +10,6 @@ using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
-using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -172,7 +171,7 @@ namespace Surveillance.Scheduler
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
             var subscriber = _analyticsSubscriber.Build(opCtx.Id);
-            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id);
+            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();
 
             alertStream.Subscribe(alertSubscriber);

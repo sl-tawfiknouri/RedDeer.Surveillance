@@ -9,5 +9,6 @@ namespace Surveillance.Rules.Interfaces
         TimeSpan Window { get; }
         ITradePosition Trades { get; }
         FinancialInstrument Security { get; }
+        bool IsBackTestRun { get; set; }
     }
 }

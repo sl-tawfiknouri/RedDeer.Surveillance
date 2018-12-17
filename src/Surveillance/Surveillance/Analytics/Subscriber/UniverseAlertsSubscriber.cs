@@ -7,6 +7,7 @@ using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
+using Surveillance.Rules.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
@@ -32,8 +33,11 @@ namespace Surveillance.Analytics.Subscriber
         private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
+        private readonly bool _isBackTest;
+
         public UniverseAlertsSubscriber(
             int opCtxId,
+            bool isBackTest,
             ICancelledOrderRuleCachedMessageSender cancelledOrderMessageSender,
             IHighProfitRuleCachedMessageSender highProfitMessageSender,
             IHighVolumeRuleCachedMessageSender highVolumeMessageSender,
@@ -43,6 +47,8 @@ namespace Surveillance.Analytics.Subscriber
             IWashTradeCachedMessageSender washTradeMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
+            _isBackTest = isBackTest;
+
             _cancelledOrderMessageSender =
                 cancelledOrderMessageSender
                 ?? throw new ArgumentNullException(nameof(cancelledOrderMessageSender));
@@ -121,6 +127,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (ICancelledOrderRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _cancelledOrderMessageSender.Send(ruleBreach);
 
             Analytics.CancelledOrderAlertsRaw += 1;
@@ -141,6 +148,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (IHighProfitRuleBreach) alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _highProfitMessageSender.Send(ruleBreach);
 
             Analytics.HighProfitAlertsRaw += 1;
@@ -155,6 +163,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (IHighVolumeRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _highVolumeMessageSender.Send(ruleBreach);
 
             Analytics.HighVolumeAlertsRaw += 1;
@@ -169,6 +178,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (ILayeringRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _layeringCachedMessageSender.Send(ruleBreach);
 
             Analytics.LayeringAlertsRaw += 1;
@@ -182,6 +192,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (IMarkingTheCloseBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _markingTheCloseMessageSender.Send(ruleBreach, alert.Context);
 
             Analytics.MarkingTheCloseAlertsRaw += 1;
@@ -196,6 +207,7 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (ISpoofingRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _spoofingMessageSender.Send(ruleBreach, alert.Context);
 
             Analytics.SpoofingAlertsRaw += 1;
@@ -211,11 +223,21 @@ namespace Surveillance.Analytics.Subscriber
             }
 
             var ruleBreach = (IWashTradeRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
             _washTradeMessageSender.Send(ruleBreach);
 
             Analytics.WashTradeAlertsRaw += 1;
         }
 
+        private void SetIsBackTest(IRuleBreach ruleBreach)
+        {
+            if (ruleBreach == null)
+            {
+                return;
+            }
+
+            ruleBreach.IsBackTestRun = _isBackTest;
+        }
         public AlertAnalytics Analytics { get; }
     }
 }

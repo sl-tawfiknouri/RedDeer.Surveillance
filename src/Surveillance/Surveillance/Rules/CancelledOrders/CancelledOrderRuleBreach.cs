@@ -41,13 +41,13 @@ namespace Surveillance.Rules.CancelledOrders
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }
-
-
         public bool ExceededPercentagePositionCancellations { get; }
         public decimal? PercentagePositionCancelled { get; }
         public int? AmountOfPositionCancelled { get; }
         public int? AmountOfPositionInTotal { get; }
         public bool ExceededPercentageTradeCountCancellations { get; }
         public decimal? PercentageTradeCountCancelled { get; }
+
+        public bool IsBackTestRun { get; set; }
     }
 }

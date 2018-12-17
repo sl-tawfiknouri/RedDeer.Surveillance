@@ -123,7 +123,6 @@ namespace DataImport.Recorders
                 var rule = (Rules)item;
                 if (rule == Rules.UniverseFilter 
                     || rule == Rules.CancelledOrders
-                    || rule == Rules.HighProfits
                     || rule == Rules.Layering
                     || rule == Rules.MarkingTheClose
                     || rule == Rules.Spoofing)

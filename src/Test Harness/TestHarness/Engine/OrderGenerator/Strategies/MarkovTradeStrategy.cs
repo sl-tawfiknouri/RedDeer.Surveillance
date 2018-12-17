@@ -116,10 +116,10 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
             var orderSubmittedOn = tick.TimeStamp;
-            var traderId = GenerateIdString();
-            var traderClientId = GenerateProbabilisticIdString();
+            var traderId = GenerateClientFactorString();
+            var traderClientId = GenerateClientFactorString();
             var dealerInstructions = "Process Asap";
-            var counterPartyBrokerId = GenerateIdString();
+            var counterPartyBrokerId = GenerateClientFactorString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
             var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
@@ -157,21 +157,9 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 new Trade[0]);
         }
 
-        private string GenerateIdString()
+        private string GenerateClientFactorString()
         {
-            return DiscreteUniform.Sample(1, 999999).ToString();
-        }
-
-        private string GenerateProbabilisticIdString()
-        {
-            var generateId = DiscreteUniform.Sample(0, 1) == 0;
-
-            if (generateId)
-            {
-                return string.Empty;
-            }
-
-            return GenerateIdString();
+            return DiscreteUniform.Sample(1, 50).ToString();
         }
 
         private OrderStatus CalculateOrderStatus()

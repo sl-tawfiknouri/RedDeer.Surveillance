@@ -62,6 +62,7 @@ namespace Surveillance.Universe
 
             var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
 
             foreach (var sub in highVolumeSubscriptions)
                 player.Subscribe(sub);
@@ -69,7 +70,10 @@ namespace Surveillance.Universe
             foreach (var sub in washTradeSubscriptions)
                 player.Subscribe(sub);
 
-             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
+            foreach (var sub in highProfitSubscriptions)
+                player.Subscribe(sub);
+
+            // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
         }
 
         private async Task<RuleParameterDto> RuleParameters(ScheduledExecution execution)
@@ -131,10 +135,6 @@ namespace Surveillance.Universe
             var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            foreach (var sub in highProfitSubscriptions)
-                player.Subscribe(sub);
 
             foreach (var sub in spoofingSubscriptions)
                 player.Subscribe(sub);

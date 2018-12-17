@@ -47,6 +47,7 @@ namespace TestHarness.Tests.Display
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",
+                "USD",
                 "Standard Chartered Bank");
 
             var order = new Order(

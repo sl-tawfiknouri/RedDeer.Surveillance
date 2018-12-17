@@ -96,6 +96,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",
+                "USD",
                 "Standard Chartered Bank");
 
             var transaction1 = new Transaction(security, null, "my-transaction", transactionDates, transactionDates, transactionDates, transactionDates, transactionDates, transactionDates, "transcation-trader", "counter-party", OrderTypes.MARKET, OrderPositions.BUY, new Currency("GBP"), new CurrencyAmount(1000, "GBP"), new CurrencyAmount(1000, "GBP"), 1000, 1000);

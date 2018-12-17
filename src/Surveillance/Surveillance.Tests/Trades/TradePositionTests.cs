@@ -143,6 +143,7 @@ namespace Surveillance.Tests.Trades
                     securityIdentifiers,
                     "Test Security",
                     "CFI",
+                    "USD",
                     "Issuer Identifier");
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.Now : null;

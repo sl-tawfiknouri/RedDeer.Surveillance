@@ -113,7 +113,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
-                        "Standard Chartered", "CFI", "ISSUER-IDENTIFIER"), 
+                        "Standard Chartered", "CFI", "USD", "ISSUER-IDENTIFIER"), 
                     new Spread(new CurrencyAmount((decimal)buyPrice, "GBP"), new CurrencyAmount((decimal)sellPrice, "GBP"), new CurrencyAmount((decimal)buyPrice, "GBP")),
                     new Volume(volume),
                     new Volume(volume),

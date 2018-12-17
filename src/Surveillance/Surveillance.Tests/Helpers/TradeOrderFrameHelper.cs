@@ -16,6 +16,7 @@ namespace Surveillance.Tests.Helpers
                         "bloomberg"),
                     "random-security",
                     "ENTSPB",
+                    "USD",
                     "Random Inc"),
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 null,

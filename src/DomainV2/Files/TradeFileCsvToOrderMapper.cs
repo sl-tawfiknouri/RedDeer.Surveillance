@@ -422,6 +422,7 @@ namespace DomainV2.Files
                 identifiers,
                 csv.InstrumentName ?? string.Empty,
                 csv.InstrumentCfi ?? string.Empty,
+                csv.OrderCurrency ?? csv.TradeCurrency ?? string.Empty,
                 csv.InstrumentIssuerIdentifier ?? string.Empty,
                 csv.InstrumentUnderlyingName ?? string.Empty,
                 csv.InstrumentUnderlyingCfi ?? string.Empty,

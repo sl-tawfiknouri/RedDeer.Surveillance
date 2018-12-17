@@ -497,6 +497,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                         dto.BloombergTicker),
                     dto.SecurityName,
                     dto.Cfi,
+                    dto.SecurityCurrency,
                     dto.IssuerIdentifier);
 
             var spread =
@@ -720,7 +721,8 @@ namespace Surveillance.DataLayer.Aurora.Market
                 SecurityCurrency =
                     entity.Spread.Price.Currency.Value
                     ?? entity.Spread.Ask.Currency.Value
-                    ?? entity.Spread.Bid.Currency.Value;
+                    ?? entity.Spread.Bid.Currency.Value
+                    ?? entity.Spread.Price.Currency.Value;
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.Spread.Bid.Value;
                 AskPrice = entity.Spread.Ask.Value;
@@ -765,6 +767,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = security.Cfi;
                 IssuerIdentifier = security.IssuerIdentifier;
                 InstrumentType = (int)cfiMapper.MapCfi(security.Cfi);
+                SecurityCurrency = security.SecurityCurrency;
 
                 UnderlyingCfi = security.UnderlyingCfi;
                 UnderlyingName = security.UnderlyingName;

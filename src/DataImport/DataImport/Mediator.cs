@@ -36,13 +36,20 @@ namespace DataImport
 
         public void Initiate()
         {
-            _logger.LogInformation("Initiating relay in mediator");
+            try
+            {
+                _logger.LogInformation("Initiating relay in mediator");
 
-            var tradeFileMonitor = _tradeOrderStreamManager.Initialise();
-            var equityFileMonitor = _stockExchangeStreamManager.Initialise();
-            _s3FileUploadProcess.Initialise(tradeFileMonitor, equityFileMonitor);
+                var tradeFileMonitor = _tradeOrderStreamManager.Initialise();
+                var equityFileMonitor = _stockExchangeStreamManager.Initialise();
+                _s3FileUploadProcess.Initialise(tradeFileMonitor, equityFileMonitor);
 
-            _logger.LogInformation("Completed initiating relay in mediator");
+                _logger.LogInformation("Completed initiating relay in mediator");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Mediator exception {e.Message} - {e?.InnerException?.Message}");
+            }
         }
     }
 }

@@ -46,15 +46,21 @@ namespace DataImport.S3_IO
             IUploadTradeFileMonitor uploadTradeFileMonitor,
             IUploadEquityFileMonitor uploadEquityFileMonitor)
         {
-            _logger.LogInformation("Initialising file upload monitoring process");
+            try
+            {
+                 _logger.LogInformation("Initialising file upload monitoring process");
 
-            _uploadTradeFileMonitor = uploadTradeFileMonitor;
-            _uploadEquityFileMonitor = uploadEquityFileMonitor;
+                _uploadTradeFileMonitor = uploadTradeFileMonitor;
+                _uploadEquityFileMonitor = uploadEquityFileMonitor;
+                _cts = new CancellationTokenSource();
+                _token = new AwsResusableCancellationToken();
 
-            _cts = new CancellationTokenSource();
-            _token = new AwsResusableCancellationToken();
-
-            _queueClient.SubscribeToQueueAsync(_configuration.RelayS3UploadQueueName , ReadMessage, _cts.Token, _token);
+                _queueClient.SubscribeToQueueAsync(_configuration.RelayS3UploadQueueName, ReadMessage, _cts.Token, _token);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.Message} - {e.InnerException?.Message}");
+            }
         }
 
         private async Task ReadMessage(string messageId, string messageBody)

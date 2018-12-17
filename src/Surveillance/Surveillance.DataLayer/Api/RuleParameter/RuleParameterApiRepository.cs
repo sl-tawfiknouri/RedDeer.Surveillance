@@ -101,15 +101,24 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
         public async Task<bool> HeartBeating(CancellationToken token)
         {
-            var client = BuildHttpClient();
-            var result = await client.GetAsync(HeartbeatRoute, token);
+            try
+            {
+                var client = BuildHttpClient();
+                var result = await client.GetAsync(HeartbeatRoute, token);
 
-            if (!result.IsSuccessStatusCode)
+                if (!result.IsSuccessStatusCode)
+                    _logger.LogError($"RuleParameterApiRepository HEARTBEAT NEGATIVE");
+                else
+                    _logger.LogInformation($"HEARTBEAT POSITIVE FOR RULE PARAMETER API REPOSITORY");
+
+                return result.IsSuccessStatusCode;
+            }
+            catch (Exception e)
+            {
                 _logger.LogError($"RuleParameterApiRepository HEARTBEAT NEGATIVE");
-            else
-                _logger.LogInformation($"HEARTBEAT POSITIVE FOR RULE PARAMETER API REPOSITORY");
+            }
 
-            return result.IsSuccessStatusCode;
+            return false;
         }
     }
 }

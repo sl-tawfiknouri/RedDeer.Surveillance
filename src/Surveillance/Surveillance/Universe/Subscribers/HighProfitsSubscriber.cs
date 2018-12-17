@@ -117,7 +117,7 @@ namespace Surveillance.Universe.Subscribers
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);
 
-            var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream);
+            var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, execution);
 
             if (param.HasFilters())
             {

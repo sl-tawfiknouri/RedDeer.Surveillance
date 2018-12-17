@@ -54,7 +54,7 @@ namespace Surveillance.Utility
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError($"{e.Message} - {e?.InnerException?.Message}");
                 return false;
             }
         }

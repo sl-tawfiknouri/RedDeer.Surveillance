@@ -13,6 +13,7 @@ using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
+using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -34,6 +35,7 @@ namespace Surveillance.Scheduler
         private readonly IUniverseAlertStreamFactory _alertStreamFactory;
         private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
+        private readonly IUniversePercentageCompletionLogger _universeCompletionLogger;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
         private CancellationTokenSource _messageBusCts;
@@ -53,6 +55,7 @@ namespace Surveillance.Scheduler
             IUniverseAlertStreamFactory alertStreamFactory,
             IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
             IRuleAnalyticsAlertsRepository alertsRepository,
+            IUniversePercentageCompletionLogger universeCompletionLogger,
             ILogger<ReddeerRuleScheduler> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -72,6 +75,7 @@ namespace Surveillance.Scheduler
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
+            _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -170,6 +174,11 @@ namespace Surveillance.Scheduler
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
+
+            _universeCompletionLogger.InitiateTimeLogger(execution);
+            _universeCompletionLogger.InitiateEventLogger(universe);
+            player.Subscribe(_universeCompletionLogger);
+
             var subscriber = _analyticsSubscriber.Build(opCtx.Id);
             var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();

@@ -191,8 +191,15 @@ namespace Surveillance
             For<IRuleProjector>().Use<RuleProjector>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
+            For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
+            For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
             For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
             For<IMarketTradingHoursManager>().Use<MarketTradingHoursManager>();
+            For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
+
+            For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();
+            For<IUniversePercentageOfTimeCompletionLoggerFactory>().Use<UniversePercentageOfTimeCompletionLoggerFactory>();
+            For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
         }
     }
 }

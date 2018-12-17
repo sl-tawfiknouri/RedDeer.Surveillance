@@ -74,18 +74,27 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 
         public async Task<bool> HeartBeating(CancellationToken token)
         {
-            var httpClient = BuildHttpClient();
-
-            var response = await httpClient.GetAsync(HeartbeatRoute, token);
-
-            if (!response.IsSuccessStatusCode)
-                _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
-            else
+            try
             {
-                _logger.LogInformation($"HEARTBEAT POSITIVE FOR EXCHANGE RATE API REPOSITORY");
+                var httpClient = BuildHttpClient();
+
+                var response = await httpClient.GetAsync(HeartbeatRoute, token);
+
+                if (!response.IsSuccessStatusCode)
+                    _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
+                else
+                {
+                    _logger.LogInformation($"HEARTBEAT POSITIVE FOR EXCHANGE RATE API REPOSITORY");
+                }
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
             }
 
-            return response.IsSuccessStatusCode;
+            return false;
         }
     }
 }

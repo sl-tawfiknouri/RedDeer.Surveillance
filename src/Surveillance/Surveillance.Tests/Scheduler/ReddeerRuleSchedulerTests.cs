@@ -17,6 +17,7 @@ using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
+using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
@@ -42,6 +43,7 @@ namespace Surveillance.Tests.Scheduler
         private IUniverseAlertStreamFactory _alertStreamFactory;
         private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private IRuleAnalyticsAlertsRepository _alertsRepository;
+        private IUniversePercentageCompletionLogger _percentageCompletionLogger;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -65,6 +67,7 @@ namespace Surveillance.Tests.Scheduler
             _alertStreamFactory = A.Fake<IUniverseAlertStreamFactory>();
             _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
             _alertsRepository = A.Fake<IRuleAnalyticsAlertsRepository>();
+            _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLogger>();
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -87,6 +90,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
+                    _percentageCompletionLogger,
                     _logger));
         }
 
@@ -109,6 +113,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
+                    _percentageCompletionLogger,
                     _logger));
         }
 
@@ -129,6 +134,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _percentageCompletionLogger,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -165,6 +171,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _percentageCompletionLogger,
                 _logger);
 
             var schedule = new ScheduledExecution
@@ -204,6 +211,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _percentageCompletionLogger,
                 _logger);
 
             var schedule = new ScheduledExecution

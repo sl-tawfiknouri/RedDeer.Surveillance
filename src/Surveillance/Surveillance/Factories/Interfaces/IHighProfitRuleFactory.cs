@@ -11,6 +11,7 @@ namespace Surveillance.Factories.Interfaces
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
-            IUniverseAlertStream alertStream);
+            IUniverseAlertStream alertStream,
+            DomainV2.Scheduling.ScheduledExecution scheduledExecution);
     }
 }

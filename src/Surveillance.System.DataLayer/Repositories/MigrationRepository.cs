@@ -47,6 +47,8 @@ namespace Surveillance.System.DataLayer.Repositories
                 {
                     var highestMigrationExecuted = await conn;
                     _logger.LogInformation($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
+
+                    return highestMigrationExecuted;
                 }
             }
             catch (Exception e)

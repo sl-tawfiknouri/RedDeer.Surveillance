@@ -10,6 +10,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
@@ -23,6 +24,7 @@ namespace Surveillance.Rules.MarkingTheClose
         private readonly IMarkingTheCloseParameters _parameters;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
@@ -33,6 +35,7 @@ namespace Surveillance.Rules.MarkingTheClose
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory factory,
+            IMarketTradingHoursManager tradingHoursManager,
             ILogger<MarkingTheCloseRule> logger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
@@ -46,6 +49,7 @@ namespace Surveillance.Rules.MarkingTheClose
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -66,11 +70,13 @@ namespace Surveillance.Rules.MarkingTheClose
                 return;
             }
 
+            var tradingHours = _tradingHoursManager.Get(securities.Peek().Market.MarketIdentifierCode);
+
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Identifiers,
-                null,
-                null);
+                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime));
 
             var dataResponse = UniverseMarketCache.Get(marketDataRequest);
 
@@ -120,6 +126,28 @@ namespace Surveillance.Rules.MarkingTheClose
             // do nothing
         }
 
+        private VolumeBreach CheckDailyVolumeTraded(
+            Stack<Order> securities,
+            SecurityTick tradedSecurity)
+        {
+            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
+
+            if (thresholdVolumeTraded == null)
+            {
+                _hadMissingData = true;
+                return new VolumeBreach();
+            }
+
+            var result =
+                CalculateVolumeBreaches(
+                    securities,
+                    tradedSecurity,
+                    thresholdVolumeTraded.GetValueOrDefault(0),
+                    tradedSecurity.DailyVolume.Traded);
+
+            return result;
+        }
+
         private VolumeBreach CheckWindowVolumeTraded(
             Stack<Order> securities,
             SecurityTick tradedSecurity)
@@ -128,8 +156,8 @@ namespace Surveillance.Rules.MarkingTheClose
                 new MarketDataRequest(
                     tradedSecurity.Market.MarketIdentifierCode,
                     tradedSecurity.Security.Identifiers,
-                    null,
-                    null);
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime);
 
             var marketResult = UniverseMarketCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
@@ -154,28 +182,6 @@ namespace Surveillance.Rules.MarkingTheClose
                     tradedSecurity,
                     thresholdVolumeTraded.GetValueOrDefault(0),
                     securityVolume);
-
-            return result;
-        }
-
-        private VolumeBreach CheckDailyVolumeTraded(
-            Stack<Order> securities,
-            SecurityTick tradedSecurity)
-        {
-            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
-
-            if (thresholdVolumeTraded == null)
-            {
-                _hadMissingData = true;
-                return new VolumeBreach();
-            }
-
-            var result =
-                CalculateVolumeBreaches(
-                    securities,
-                    tradedSecurity,
-                    thresholdVolumeTraded.GetValueOrDefault(0),
-                    tradedSecurity.DailyVolume.Traded);
 
             return result;
         }

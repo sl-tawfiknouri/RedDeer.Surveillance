@@ -1,13 +1,23 @@
-﻿using DomainV2.Scheduling.Interfaces;
+﻿using System;
+using DomainV2.Scheduling.Interfaces;
 using Newtonsoft.Json;
 
 namespace DomainV2.Scheduling
 {
     public class ScheduledExecutionMessageBusSerialiser : IScheduledExecutionMessageBusSerialiser
     {
+        private readonly IScheduleExecutionDtoMapper _mapper;
+
+        public ScheduledExecutionMessageBusSerialiser(IScheduleExecutionDtoMapper mapper)
+        {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+
         public string SerialiseScheduledExecution(ScheduledExecution execution)
         {
-            return JsonConvert.SerializeObject(execution);
+            var initialMapping = _mapper.MapToDto(execution);
+                
+            return JsonConvert.SerializeObject(initialMapping);
         }
 
         public ScheduledExecution DeserialisedScheduledExecution(string serialisedExecution)
@@ -17,7 +27,10 @@ namespace DomainV2.Scheduling
                 return null;
             }
 
-            return JsonConvert.DeserializeObject<ScheduledExecution>(serialisedExecution);
+            var deserialisedScheduledExecution = JsonConvert.DeserializeObject<RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution>(serialisedExecution);
+            var mappedDeserialisedExecution = _mapper.MapToDomain(deserialisedScheduledExecution);
+
+            return mappedDeserialisedExecution;
         }
     }
 }

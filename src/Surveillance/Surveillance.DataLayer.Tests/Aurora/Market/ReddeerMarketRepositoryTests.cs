@@ -78,6 +78,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                 securityIdentifiers,
                 "Standard Chartered",
                 "CFI",
+                "USD",
                 "Standard Chartered Bank");
 
             var securities = new List<SecurityTick>

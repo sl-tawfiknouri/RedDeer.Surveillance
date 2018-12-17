@@ -76,7 +76,7 @@ namespace TestHarness.Factory
             WashTradeFactory = new TradeWashTradeFactory.TradeWashTradeFactory(Logger);
 
             AwsQueueClient = new AwsQueueClient(null);
-            ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser();
+            ScheduledExecutionSerialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
             Configuration = networkConfiguration;
             AuroraRepository = new AuroraRepository(networkConfiguration, Console);
 

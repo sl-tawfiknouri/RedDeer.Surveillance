@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Scheduling;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
@@ -56,19 +58,70 @@ namespace Surveillance.Universe
                 return;
             }
 
-            var ruleParameters = await _ruleParameterApiRepository.Get();
+            var ruleParameters = await RuleParameters(execution);
 
             var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
 
             foreach (var sub in highVolumeSubscriptions)
                 player.Subscribe(sub);
 
-
             foreach (var sub in washTradeSubscriptions)
                 player.Subscribe(sub);
 
-             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
+            foreach (var sub in highProfitSubscriptions)
+                player.Subscribe(sub);
+
+            // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
+        }
+
+        private async Task<RuleParameterDto> RuleParameters(ScheduledExecution execution)
+        {
+            if (!execution.IsBackTest)
+            {
+                return await _ruleParameterApiRepository.Get();
+            }
+
+            var ids = execution.Rules.SelectMany(ru => ru.Ids).ToList();
+
+            var ruleDtos = new List<RuleParameterDto>();
+            foreach (var id in ids)
+            {
+                var apiResult = await _ruleParameterApiRepository.Get(id);
+
+                if (apiResult != null)
+                    ruleDtos.Add(apiResult);
+            }
+
+            if (!ruleDtos.Any())
+            {
+                return new RuleParameterDto();
+            }
+
+            if (ruleDtos.Count == 1)
+            {
+                return ruleDtos.First();
+            }
+
+            var allCancelledOrders = ruleDtos.SelectMany(ru => ru.CancelledOrders).ToArray();
+            var allHighProfits = ruleDtos.SelectMany(ru => ru.HighProfits).ToArray();
+            var allMarkingTheClose = ruleDtos.SelectMany(ru => ru.MarkingTheCloses).ToArray();
+            var allSpoofings = ruleDtos.SelectMany(ru => ru.Spoofings).ToArray();
+            var allLayerings = ruleDtos.SelectMany(ru => ru.Layerings).ToArray();
+            var allHighVolumes = ruleDtos.SelectMany(ru => ru.HighVolumes).ToArray();
+            var allWashTrades = ruleDtos.SelectMany(ru => ru.WashTrades).ToArray();
+
+            return new RuleParameterDto
+            {
+                CancelledOrders = allCancelledOrders,
+                HighProfits = allHighProfits,
+                MarkingTheCloses = allMarkingTheClose,
+                Spoofings = allSpoofings,
+                Layerings = allLayerings,
+                HighVolumes = allHighVolumes,
+                WashTrades = allWashTrades
+            };
         }
 
         private void _RegisterNotSupportedSubscriptions(
@@ -82,10 +135,6 @@ namespace Surveillance.Universe
             var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-
-            foreach (var sub in highProfitSubscriptions)
-                player.Subscribe(sub);
 
             foreach (var sub in spoofingSubscriptions)
                 player.Subscribe(sub);

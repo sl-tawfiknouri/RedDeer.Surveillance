@@ -14,6 +14,7 @@ namespace DomainV2.Financial
             InstrumentIdentifiers identifiers,
             string name,
             string cfi,
+            string securityCurrency,
             string issuerIdentifier,
             string underlyingName,
             string underlyingCfi,
@@ -23,6 +24,7 @@ namespace DomainV2.Financial
             Identifiers = identifiers;
             Name = name;
             Cfi = cfi;
+            SecurityCurrency = securityCurrency;
             IssuerIdentifier = issuerIdentifier;
             UnderlyingName = underlyingName;
             UnderlyingCfi = underlyingCfi;
@@ -34,12 +36,14 @@ namespace DomainV2.Financial
             InstrumentIdentifiers identifiers,
             string name,
             string cfi,
+            string securityCurrency,
             string issuerIdentifier)
         {
             Type = types;
             Identifiers = identifiers;
             Name = name;
             Cfi = cfi;
+            SecurityCurrency = securityCurrency;
             IssuerIdentifier = issuerIdentifier;
             UnderlyingName = string.Empty;
             UnderlyingCfi = string.Empty;
@@ -59,6 +63,8 @@ namespace DomainV2.Financial
         /// Classification Financial Instrument code
         /// </summary>
         public string Cfi { get; set; }
+
+        public string SecurityCurrency { get; set; }
 
         public string IssuerIdentifier { get; set; }
 

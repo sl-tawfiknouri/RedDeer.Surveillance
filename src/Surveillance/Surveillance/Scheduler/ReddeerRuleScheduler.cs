@@ -174,16 +174,17 @@ namespace Surveillance.Scheduler
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
+
+            _universeCompletionLogger.InitiateTimeLogger(execution);
+            _universeCompletionLogger.InitiateEventLogger(universe);
+            player.Subscribe(_universeCompletionLogger);
+
             var subscriber = _analyticsSubscriber.Build(opCtx.Id);
             var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();
 
             alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
-
-            _universeCompletionLogger.InitiateTimeLogger(execution);
-            _universeCompletionLogger.InitiateEventLogger(universe);
-            player.Subscribe(_universeCompletionLogger);
 
             player.Subscribe(subscriber);
             player.Play(universe);

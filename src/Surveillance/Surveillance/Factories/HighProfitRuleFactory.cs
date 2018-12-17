@@ -12,11 +12,13 @@ using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Multiverse;
+using Surveillance.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Factories
 {
     public class HighProfitRuleFactory : IHighProfitRuleFactory
     {
+        private readonly IUniversePercentageCompletionLoggerFactory _percentageCompleteFactory;
         private readonly IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -28,6 +30,7 @@ namespace Surveillance.Factories
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             ILogger<HighProfitsRule> logger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -37,6 +40,7 @@ namespace Surveillance.Factories
                 exchangeRateProfitCalculator
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
         }
 
         public IHighProfitRule Build(
@@ -66,7 +70,8 @@ namespace Surveillance.Factories
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);
-
+            multiverseTransformer.Subscribe(_percentageCompleteFactory.Build());
+                
             return new HighProfitsRule(stream, multiverseTransformer);
         }
 

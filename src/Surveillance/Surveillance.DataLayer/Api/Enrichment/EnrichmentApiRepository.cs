@@ -66,16 +66,25 @@ namespace Surveillance.DataLayer.Api.Enrichment
 
         public async Task<bool> HeartBeating(CancellationToken token)
         {
-            var httpClient = BuildHttpClient();
+            try
+            {
+                var httpClient = BuildHttpClient();
 
-            var response = await httpClient.GetAsync(HeartbeatRoute, token);
+                var response = await httpClient.GetAsync(HeartbeatRoute, token);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                    _logger.LogError($"HEARTBEAT FOR ENRICHMENT API REPOSITORY NEGATIVE");
+                else
+                    _logger.LogInformation($"HEARTBEAT POSITIVE FOR ENRICHMENT API REPOSITORY");
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception e)
+            {
                 _logger.LogError($"HEARTBEAT FOR ENRICHMENT API REPOSITORY NEGATIVE");
-            else
-                _logger.LogInformation($"HEARTBEAT POSITIVE FOR ENRICHMENT API REPOSITORY");
+            }
 
-            return response.IsSuccessStatusCode;
+            return false;
         }
     }
 }

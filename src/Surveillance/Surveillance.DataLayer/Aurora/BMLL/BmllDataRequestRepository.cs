@@ -14,7 +14,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         private readonly ILogger<BmllDataRequestRepository> _logger;
 
         private const string CreateDataRequestSql = @"
-            INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime);";
+            INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime, 0);";
 
         public BmllDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -65,8 +65,8 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 SystemProcessOperationRuleRunId = dto.SystemProcessOperationRuleRunId;
                 MarketIdentifierCode = dto.MarketIdentifierCode;
                 FinancialInstrumentId = dto.Identifiers.Id;
-                StartTime = dto.UniverseEventTimeTo;
-                EndTime = dto.UniverseEventTimeFrom;
+                StartTime = dto.UniverseEventTimeFrom;
+                EndTime = dto.UniverseEventTimeTo;
             }
 
             public string SystemProcessOperationRuleRunId { get; set; }

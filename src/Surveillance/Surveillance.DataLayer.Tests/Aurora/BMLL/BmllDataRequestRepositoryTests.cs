@@ -31,10 +31,11 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
             };
 
             var repo = new BmllDataRequestRepository(new ConnectionStringFactory(config), _logger);
+
             var marketDataRequest =
                 new MarketDataRequest(
                     "XLON",
-                    new InstrumentIdentifiers(),
+                    new InstrumentIdentifiers { Id = "1" },
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(1),
                     "1");

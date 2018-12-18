@@ -18,11 +18,13 @@ namespace Surveillance.Rules.HighProfits.Calculators
     /// </summary>
     public class RevenueCalculator : IRevenueCalculator
     {
-        private readonly ILogger _logger;
+        protected readonly IMarketTradingHoursManager TradingHoursManager;
+        protected readonly ILogger Logger;
 
-        public RevenueCalculator(ILogger<RevenueCalculator> logger)
+        public RevenueCalculator(IMarketTradingHoursManager tradingHoursManager, ILogger<RevenueCalculator> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            TradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -58,12 +60,16 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var marketDataRequest =
-                new MarketDataRequest(
+            var marketDataRequest = 
+                MarketDataRequest(
                     activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
                     security.Identifiers,
-                    null,
-                    null);
+                    universeDateTime);
+
+            if (marketDataRequest == null)
+            {
+                return null;
+            }
 
             var marketDataResult = universeMarketCache.Get(marketDataRequest);
             if (marketDataResult.HadMissingData)
@@ -146,7 +152,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             CurrencyAmount? realisedRevenue,
             long sizeOfVirtualPosition)
         {
-            _logger.LogInformation(
+            Logger.LogInformation(
                 "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
 
             var mostRecentTrade =
@@ -169,6 +175,22 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return realisedRevenue + currencyAmount;
+        }
+
+        protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime)
+        {
+            var tradingHours = TradingHoursManager.Get(mic);
+            if (!tradingHours.IsValid)
+            {
+                Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                return null;
+            }
+
+            return new MarketDataRequest(
+                mic,
+                identifiers,
+                tradingHours.OpeningInUtcForDay(universeDateTime),
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime));
         }
 
         protected virtual CurrencyAmount? SecurityTickToPrice(SecurityTick tick)

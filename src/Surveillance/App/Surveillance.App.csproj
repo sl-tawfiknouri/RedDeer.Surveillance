@@ -69,7 +69,7 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Migrations\15 - Create Rule Params tbl.sql">
+    <None Update="Migrations\15 - Rule data request.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\14 - InstrumentTable update.sql">

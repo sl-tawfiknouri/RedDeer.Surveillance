@@ -6,8 +6,10 @@
 
 START TRANSACTION;
 
- INSERT INTO Migrations VALUES(15, "Create Rule Params tbl.sql", now());
+ INSERT INTO Migrations VALUES(15, "Rule data request.sql", now());
 
  CREATE TABLE RuleDataRequest(Id INT NOT NULL PRIMARY KEY, SystemProcessOperationRuleRunId INT NOT NULL, FinancialInstrumentId INT NOT NULL, StartTime DATETIME NOT NULL, EndTime DATETIME NOT NULL, Completed BIT NOT NULL);
+
+ DROP TABLE MarketData;
 
 COMMIT;

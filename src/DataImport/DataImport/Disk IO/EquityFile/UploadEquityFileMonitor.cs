@@ -96,6 +96,7 @@ namespace DataImport.Disk_IO.EquityFile
             {
                 _logger.LogInformation($"Upload equity file monitor had successful reads, beginning to add to stream ({orderedSuccessfulReads.Count})");
             }
+
             foreach (var item in orderedSuccessfulReads)
             {
                 _stream.Add(item);

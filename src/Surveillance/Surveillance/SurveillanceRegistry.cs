@@ -30,8 +30,6 @@ using Surveillance.MessageBusIO;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.NetworkIO;
 using Surveillance.NetworkIO.Interfaces;
-using Surveillance.Recorders.Interfaces;
-using Surveillance.Recorders;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.RuleParameters.Filter.Interfaces;
@@ -91,15 +89,8 @@ namespace Surveillance
             For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
             For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
-            For<IRedDeerAuroraTradeRecorder>().Use<RedDeerAuroraTradeRecorder>();
-            For<IRedDeerAuroraTradeRecorderAutoSchedule>().Use<RedDeerAuroraTradeRecorderAutoSchedule>();
-
             For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
-
-            //For<IRedDeerStockExchangeRecorder>().Use<RedDeerStubStockExchangeRecorder>();
-            For<IRedDeerStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
-
             For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
             For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));

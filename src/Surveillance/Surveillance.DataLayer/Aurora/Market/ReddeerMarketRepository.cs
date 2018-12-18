@@ -20,30 +20,6 @@ namespace Surveillance.DataLayer.Aurora.Market
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ICfiInstrumentTypeMapper _cfiMapper;
         private readonly ILogger<ReddeerMarketRepository> _logger;
-        private readonly object _lock = new object();
-
-        private const string CreateTmp = @"
-            CREATE TEMPORARY TABLE IF NOT EXISTS MarketData(MarketId nvarchar(16), MarketName nvarchar(255), ClientIdentifier nvarchar(255), Sedol nvarchar(8), Isin nvarchar(20), Figi nvarchar(12), Cusip nvarchar(9), Lei nvarchar(20), ExchangeSymbol nvarchar(4000), BloombergTicker nvarchar(4000), SecurityName nvarchar(255), Cfi nvarchar(6), IssuerIdentifier nvarchar(255), SecurityCurrency nvarchar(10),InstrumentType int null, UnderlyingCfi nvarchar(6), UnderlyingName nvarchar(255), UnderlyingSedol nvarchar(8), UnderlyingIsin nvarchar(20), UnderlyingFigi nvarchar(12), UnderlyingCusip nvarchar(9), UnderlyingLei nvarchar(20), UnderlyingExchangeSymbol nvarchar(4000), UnderlyingBloombergTicker nvarchar(4000), UnderlyingClientIdentifier nvarchar(255), Epoch datetime, BidPrice decimal(18, 3), AskPrice decimal(18, 3), MarketPrice decimal(18, 3), OpenPrice decimal(18, 3), ClosePrice decimal(18, 3), HighIntradayPrice decimal(18, 3), LowIntradayPrice decimal(18, 3), ListedSecurities bigint, MarketCap decimal(18, 3), VolumeTradedInTick bigint, DailyVolume bigint, SecurityId bigint, INDEX(Epoch));";
-
-        private const string InsertIntoTmp = @"
-            INSERT INTO MarketData(MarketId, MarketName, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, InstrumentType, UnderlyingCfi, UnderlyingName, UnderlyingSedol, UnderlyingIsin, UnderlyingFigi, UnderlyingCusip, UnderlyingLei, UnderlyingExchangeSymbol, UnderlyingBloombergTicker, UnderlyingClientIdentifier, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES(@MarketId, @MarketName, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin, @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
-
-        private const string CopyAcrossMarketAndSecurityData = @"
-            INSERT INTO Market(MarketId, MarketName) SELECT DISTINCT (MarketId), MarketName FROM MarketData WHERE NOT MarketId in (SELECT MarketId FROM Market);
-
-            INSERT INTO FinancialInstruments(MarketId, ClientIdentifier, Sedol, Isin, Figi, Cusip, Lei, ExchangeSymbol, BloombergTicker, SecurityName, Cfi, IssuerIdentifier, SecurityCurrency, InstrumentType, UnderlyingCfi, UnderlyingName, UnderlyingSedol, UnderlyingIsin, UnderlyingFigi, UnderlyingCusip, UnderlyingLei, UnderlyingExchangeSymbol, UnderlyingBloombergTicker, UnderlyingClientIdentifier)
-             SELECT  mse.id as MarketId, md.clientIdentifier as ClientIdentifier, md.Sedol as Sedol, md.Isin as Isin, md.Figi as Figi, md.Cusip as Cusip, md.Lei as Lei, md.ExchangeSymbol as ExchangeSymbol, md.BloombergTicker as BloombergTicker, md.SecurityName as SecurityName, md.Cfi as Cfi, md.IssuerIdentifier as IssuerIdentifier, md.SecurityCurrency as SecurityCurrency, md.InstrumentType as InstrumentType, md.UnderlyingCfi as UnderlyingCfi, md.UnderlyingName as UnderlyingName, md.UnderlyingSedol as UnderlyingSedol, md.UnderlyingIsin as UnderlyingIsin, md.UnderlyingFigi as UnderlyingFigi, md.UnderlyingCusip as UnderlyingCusip, md.UnderlyingLei as UnderlyingLei, md.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol, md.UnderlyingBloombergTicker as UnderlyingBloombergTicker, md.UnderlyingClientIdentifier as UnderlyingClientIdentifier 
-             FROM MarketData as md LEFT OUTER JOIN Market as mse ON md.MarketId = mse.MarketId WHERE NOT md.sedol in (SELECT Sedol FROM FinancialInstruments) AND NOT md.isin IN (SELECT Isin FROM FinancialInstruments);
-
-            UPDATE MarketData
-            LEFT OUTER JOIN FinancialInstruments on MarketData.isin = FinancialInstruments.isin set MarketData.SecurityId = FinancialInstruments.Id;
-            UPDATE MarketData
-            LEFT OUTER JOIN FinancialInstruments on MarketData.sedol = FinancialInstruments.sedol set MarketData.SecurityId = FinancialInstruments.Id;";
-        
-        private const string InsertSecuritySql = @"
-            INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) SELECT SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume FROM MarketData;
-
-            DROP TABLE MarketData;";
 
         private const string GetMarketSql =
             @"
@@ -187,6 +163,47 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             SELECT Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey);";
 
+        private const string SecurityMatchOrInsertSqlv2 = @"
+            INSERT INTO FinancialInstruments(
+                MarketId,
+                ClientIdentifier,
+                Sedol,
+                Isin,
+                Figi,
+                Cusip,
+                Lei,
+                ExchangeSymbol,
+                BloombergTicker,
+                SecurityName,
+                Cfi,
+                IssuerIdentifier,
+                SecurityCurrency,
+                ReddeerId,
+                InstrumentType,
+                UnderlyingCfi,
+                UnderlyingName,
+                UnderlyingSedol,
+                UnderlyingIsin,
+                UnderlyingFigi,
+                UnderlyingCusip,
+                UnderlyingLei,
+                UnderlyingExchangeSymbol,
+                UnderlyingBloombergTicker,
+                UnderlyingClientIdentifier)
+            SELECT @MarketIdPrimaryKey, @ClientIdentifier, @Sedol, @Isin, @Figi, @Cusip, @Lei, @ExchangeSymbol, @BloombergTicker, @SecurityName, @Cfi, @IssuerIdentifier, @SecurityCurrency, @ReddeerId, @InstrumentType, @UnderlyingCfi, @UnderlyingName, @UnderlyingSedol, @UnderlyingIsin,
+                @UnderlyingFigi, @UnderlyingCusip, @UnderlyingLei, @UnderlyingExchangeSymbol, @UnderlyingBloombergTicker, @UnderlyingClientIdentifier
+            FROM DUAL
+            WHERE NOT EXISTS(
+	            SELECT 1
+	            FROM FinancialInstruments
+	            WHERE Sedol = @Sedol
+                Or (Isin = @Isin and MarketId = @MarketIdPrimaryKey))
+            LIMIT 1;
+
+            SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey) LIMIT 1;
+
+             INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
+
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
             ICfiInstrumentTypeMapper cfiMapper,
@@ -271,50 +288,37 @@ namespace Surveillance.DataLayer.Aurora.Market
                 return;
             }
 
-            lock (_lock)
+            var dbConnection = _dbConnectionFactory.BuildConn();
+            try
             {
+                dbConnection.Open();
 
-                var dbConnection = _dbConnectionFactory.BuildConn();
-
-                try
+                if (!entity.Securities?.Any() ?? true)
                 {
-                    dbConnection.Open();
-
-                    using (var conn = dbConnection.ExecuteAsync(CreateTmp))
-                    {
-                        conn.Wait();
-                    }
-
-                    if (!entity.Securities?.Any() ?? true)
-                    {
-                        return;
-                    }
-
-                    var projectedSecurities = entity.Securities.Select(Project).ToList();
-                    using (var conn = dbConnection.ExecuteAsync(InsertIntoTmp, projectedSecurities))
-                     {
-                        conn.Wait();
-                    }
-
-                    using (var conn = dbConnection.ExecuteAsync(CopyAcrossMarketAndSecurityData))
-                    {
-                        conn.Wait();
-                    }
-
-                    using (var conn = dbConnection.ExecuteAsync(InsertSecuritySql))
-                    {
-                        conn.Wait();
-                    }
+                    return;
                 }
-                catch (Exception e)
+
+                var marketId = string.Empty;
+                var marketUpdate = new MarketUpdateDto(entity.Exchange);
+                using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
                 {
-                    _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} {e.Message}");
+                    marketId = await conn;
                 }
-                finally
+
+                foreach (var security in entity.Securities)
                 {
-                    dbConnection.Close();
-                    dbConnection.Dispose();
-                }
+                    var securityUpdate = new InsertSecurityDto(security, marketId, _cfiMapper);
+                     dbConnection.Execute(SecurityMatchOrInsertSqlv2, securityUpdate);
+                }        
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
             }
         }
 
@@ -691,12 +695,12 @@ namespace Surveillance.DataLayer.Aurora.Market
 
         private InsertSecurityDto Project(SecurityTick tick)
         {
-            return new InsertSecurityDto(tick, _cfiMapper);
+            return new InsertSecurityDto(tick, null, _cfiMapper);
         }
 
         private class InsertSecurityDto
         {
-            public InsertSecurityDto(SecurityTick entity, ICfiInstrumentTypeMapper cfiMapper)
+            public InsertSecurityDto(SecurityTick entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -704,6 +708,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 }
 
                 Id = entity?.Security?.Identifiers.Id ?? string.Empty;
+                MarketIdPrimaryKey = marketIdForeignKey;
                 MarketId = entity.Market?.MarketIdentifierCode;
                 MarketName = entity.Market?.Name;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
@@ -826,6 +831,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string UnderlyingBloombergTicker { get; set; }
             public string UnderlyingClientIdentifier { get; set; }
 
+            public string FinancialInstrumentId { get; set; }
 
             public DateTime Epoch { get; set; }
 

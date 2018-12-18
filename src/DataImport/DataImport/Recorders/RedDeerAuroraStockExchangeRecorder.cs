@@ -10,6 +10,7 @@ namespace DataImport.Recorders
     {
         private readonly IReddeerMarketRepository _repository;
         private readonly ILogger<RedDeerAuroraStockExchangeRecorder> _logger;
+        private readonly object _lock = new object();
 
         public RedDeerAuroraStockExchangeRecorder(
             IReddeerMarketRepository repository,
@@ -37,7 +38,10 @@ namespace DataImport.Recorders
 
             try
             {
-                _repository.Create(value).Wait();
+                lock (_lock)
+                {
+                    _repository.Create(value).Wait();
+                }
             }
             catch (Exception e)
             {

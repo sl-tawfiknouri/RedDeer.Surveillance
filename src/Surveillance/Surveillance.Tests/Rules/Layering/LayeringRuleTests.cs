@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;
@@ -164,6 +165,15 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderPosition = OrderPositions.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
+            A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
+                .Returns(new TradingHours
+            {
+                IsValid = true,
+                Mic = "XLON",
+                OpenOffsetInUtc = TimeSpan.FromHours(8),
+                CloseOffsetInUtc = TimeSpan.FromHours(16)
+            });
+
             tradeBuy.OrderFilledVolume = 987;
             tradeSell.OrderFilledVolume = 1019;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
@@ -206,6 +216,15 @@ namespace Surveillance.Tests.Rules.Layering
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
             tradeSell.OrderPosition = OrderPositions.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
+
+            A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
+                .Returns(new TradingHours
+                {
+                    IsValid = true,
+                    Mic = "XLON",
+                    OpenOffsetInUtc = TimeSpan.FromHours(8),
+                    CloseOffsetInUtc = TimeSpan.FromHours(16)
+                });
 
             tradeBuy.OrderFilledVolume = 100;
             tradeSell.OrderFilledVolume = 100;

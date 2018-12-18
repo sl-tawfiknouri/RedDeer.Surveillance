@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Markets;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
@@ -232,7 +233,8 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
-                    tradingHoursManager.ClosingInUtcForDay(UniverseDateTime));
+                    tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
+                    _ruleCtx?.Id());
 
             var marketResult = UniverseMarketCache.Get(marketRequest);
             if (marketResult.HadMissingData)
@@ -275,7 +277,8 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
                     UniverseDateTime.Subtract(WindowSize),
-                    UniverseDateTime);
+                    UniverseDateTime,
+                    _ruleCtx?.Id());
 
             var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
             if (securityResult.HadMissingData)
@@ -328,7 +331,8 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Identifiers,
                     startDate,
-                    endDate);
+                    endDate,
+                    _ruleCtx?.Id());
 
             var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
 

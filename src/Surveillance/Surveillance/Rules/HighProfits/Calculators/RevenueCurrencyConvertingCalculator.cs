@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Markets;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
@@ -70,7 +71,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 MarketDataRequest(
                     activeFulfilledTradeOrders.FirstOrDefault()?.Market?.MarketIdentifierCode,
                     security.Identifiers,
-                    universeDateTime);
+                    universeDateTime,
+                    ctx);
 
             if (marketDataRequest == null)
             {
@@ -217,7 +219,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             return realisedRevenue + convertedCurrencyAmount;
         }
 
-        protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime)
+        protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
         {
             var tradingHours = TradingHoursManager.Get(mic);
             if (!tradingHours.IsValid)
@@ -230,7 +232,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 mic,
                 identifiers,
                 tradingHours.OpeningInUtcForDay(universeDateTime),
-                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime));
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
+                ctx?.Id());
         }
 
         protected virtual CurrencyAmount? SecurityTickToPrice(SecurityTick tick)

@@ -5,6 +5,7 @@ using System.Linq;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
+using DomainV2.Markets;
 using Surveillance.Markets.Interfaces;
 
 namespace Surveillance.Markets

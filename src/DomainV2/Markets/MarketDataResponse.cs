@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Markets
+﻿namespace DomainV2.Markets
 {
     public class MarketDataResponse<T> where T : class
     {

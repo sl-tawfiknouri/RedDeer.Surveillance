@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DomainV2.Equity.Frames;
+using DomainV2.Markets;
 
 namespace Surveillance.Markets.Interfaces
 {

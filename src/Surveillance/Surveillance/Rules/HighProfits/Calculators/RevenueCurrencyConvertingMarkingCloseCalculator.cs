@@ -1,10 +1,12 @@
 ﻿using System;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators
 {
@@ -25,7 +27,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
         protected override MarketDataRequest MarketDataRequest(
             string mic,
             InstrumentIdentifiers identifiers,
-            DateTime universeDateTime)
+            DateTime universeDateTime,
+            ISystemProcessOperationRunRuleContext ctx)
         {
             var tradingHours = TradingHoursManager.Get(mic);
             if (!tradingHours.IsValid)
@@ -38,7 +41,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 mic,
                 identifiers,
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
-                tradingHours.ClosingInUtcForDay(universeDateTime));
+                tradingHours.ClosingInUtcForDay(universeDateTime),
+                ctx?.Id());
         }
 
         protected override CurrencyAmount? SecurityTickToPrice(SecurityTick tick)

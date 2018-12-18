@@ -8,7 +8,7 @@ START TRANSACTION;
 
  INSERT INTO Migrations VALUES(15, "Rule data request.sql", now());
 
- CREATE TABLE RuleDataRequest(Id INT auto_increment PRIMARY KEY, SystemProcessOperationRuleRunId INT NOT NULL, FinancialInstrumentId INT NOT NULL, MarketIdentifierCode nvarchar(20), StartTime DATETIME NOT NULL, EndTime DATETIME NOT NULL, Completed BIT NOT NULL);
+ CREATE TABLE RuleDataRequest(Id INT auto_increment PRIMARY KEY, SystemProcessOperationRuleRunId INT NOT NULL, FinancialInstrumentId INT NOT NULL, MarketIdentifierCode nvarchar(20), StartTime DATETIME NOT NULL, EndTime DATETIME NOT NULL, Completed BIT NOT NULL, FOREIGN KEY (SystemProcessOperationRuleRunId) REFERENCES SystemProcessOperationRuleRun(Id), FOREIGN KEY (FinancialInstrumentId) REFERENCES FinancialInstruments(Id));
 
  DROP TABLE MarketData;
 

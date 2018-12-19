@@ -219,7 +219,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             on mark.Id = ord.MarketId
             WHERE
             ord.PlacedDate >= @Start
-            AND Ord.StatusChangedDate <= @End;";
+            AND ord.StatusChangedDate <= @End;";
 
         private const string GetTradeSql = @"
             SELECT
@@ -410,18 +410,27 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 var orderIds = orders.Select(ord => ord.ReddeerOrderId?.ToString()).Where(x => x != null).ToList();
                 var tradeIds = new List<string>();
                 var tradeDtos = new List<TradeDto>();
-                using (var conn = dbConnection.QueryAsync<TradeDto>(GetTradeSql, new { OrderIds = orderIds }))
-                {
-                    tradeDtos = (await conn).ToList();
-                    tradeIds = tradeDtos.Select(tfo => tfo.ReddeerTradeId?.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-                }
 
                 // GET TRANSACTIONS
                 var transactionDtos = new List<TransactionDto>();
-                using (var conn = dbConnection.QueryAsync<TransactionDto>(GetTransactionSql, new { TradeIds = tradeIds }))
+
+                if (orderIds?.Any() ?? false)
                 {
-                    transactionDtos = (await conn).ToList();
+                    using (var conn = dbConnection.QueryAsync<TradeDto>(GetTradeSql, new { OrderIds = orderIds }))
+                    {
+                        tradeDtos = (await conn).ToList();
+                        tradeIds = tradeDtos.Select(tfo => tfo.ReddeerTradeId?.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    }
+
+                    if (tradeIds?.Any() ?? false)
+                    {
+                        using (var conn = dbConnection.QueryAsync<TransactionDto>(GetTransactionSql, new { TradeIds = tradeIds }))
+                        {
+                            transactionDtos = (await conn).ToList();
+                        }
+                    }
                 }
+
 
                 // JOIN transactions to trades
                 var transGroups = transactionDtos.GroupBy(tfo => tfo.ReddeerTransactionId);

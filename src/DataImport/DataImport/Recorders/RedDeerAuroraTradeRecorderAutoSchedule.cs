@@ -93,9 +93,9 @@ namespace DataImport.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.MostRecentDateEvent() < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.OrderPlacedDate.HasValue && value.OrderPlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    schedulePair.Schedule.TimeSeriesInitiation = value.MostRecentDateEvent();
+                    schedulePair.Schedule.TimeSeriesInitiation = value.OrderPlacedDate.Value;
                 }
 
                 if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)

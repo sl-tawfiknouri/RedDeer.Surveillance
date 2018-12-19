@@ -9,6 +9,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
@@ -31,7 +32,9 @@ namespace Surveillance.Tests.Rules.High_Volume
         private ISystemProcessOperationContext _opCtx;
         private IUniverseMarketCacheFactory _factory;
         private IMarketTradingHoursManager _tradingHoursManager;
+        private IBmllDataRequestRepository _dataRequestRepository;
         private ILogger<IHighVolumeRule> _logger;
+        private ILogger<UniverseMarketCacheFactory> _factoryCache;
 
         [SetUp]
         public void Setup()
@@ -40,7 +43,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             _parameters = A.Fake<IHighVolumeRuleParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
-            _factory = A.Fake<IUniverseMarketCacheFactory>();
+            _dataRequestRepository = A.Fake<IBmllDataRequestRepository>();
+
+            _factoryCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
+            _factory = new UniverseMarketCacheFactory(_dataRequestRepository, _factoryCache);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
 
@@ -71,7 +77,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         [Test]
         public void Eschaton_UpdatesAlertCountAndEndsEvent_ForCtx()
         {
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _factory, _tradingHoursManager, _logger);
 
             highVolumeRule.OnNext(Eschaton());
 
@@ -82,7 +88,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         public void Eschaton_SetsMissingData_WhenExchangeDataMissing()
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _factory, _tradingHoursManager, _logger);
 
             highVolumeRule.OnNext(Trade());
             highVolumeRule.OnNext(Eschaton());
@@ -96,7 +102,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _factory, _tradingHoursManager, _logger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
@@ -133,7 +139,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _factory, _tradingHoursManager, _logger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
@@ -169,7 +175,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageWindow).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _factory, _tradingHoursManager, _logger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;

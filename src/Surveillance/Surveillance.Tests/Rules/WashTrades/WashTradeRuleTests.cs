@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
@@ -31,6 +32,10 @@ namespace Surveillance.Tests.Rules.WashTrades
         private IUniverseMarketCacheFactory _factory;
         private ILogger _logger;
 
+        private IBmllDataRequestRepository _bmllRepository;
+        private ILogger<UniverseMarketCacheFactory> _loggerCache;
+
+
         [SetUp]
         public void Setup()
         {
@@ -42,7 +47,7 @@ namespace Surveillance.Tests.Rules.WashTrades
             _parameters = A.Fake<IWashTradeRuleParameters>();
             _logger = A.Fake<ILogger>();
 
-            _factory = new UniverseMarketCacheFactory();
+            _factory = new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
             A.CallTo(() => _parameters.ClusteringPercentageValueDifferenceThreshold).Returns(0.05m);
         }

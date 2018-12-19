@@ -28,7 +28,8 @@ namespace DomainV2.Markets
 
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(MarketIdentifierCode);
+            return !string.IsNullOrWhiteSpace(MarketIdentifierCode)
+                && UniverseEventTimeTo >= UniverseEventTimeFrom;
         }
 
         public override string ToString()

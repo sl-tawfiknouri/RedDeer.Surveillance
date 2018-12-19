@@ -7,6 +7,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters;
@@ -25,7 +26,9 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         private ICancelledOrderRuleParameters _parameters;
         private IUniverseAlertStream _alertStream;
         private IUniverseMarketCacheFactory _cacheFactory;
+        private IBmllDataRequestRepository _bmllRepository;
         private ILogger<CancelledOrderRule> _logger;
+        private ILogger<UniverseMarketCacheFactory> _loggerCache;
 
         [SetUp]
         public void Setup()
@@ -34,6 +37,8 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             _parameters = A.Fake<ICancelledOrderRuleParameters>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _cacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            _bmllRepository = A.Fake<IBmllDataRequestRepository>();
+            _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
         }
 
@@ -79,7 +84,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
-            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, BuildFactory(), _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -125,7 +130,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, BuildFactory(), _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -163,7 +168,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, BuildFactory(), _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -202,7 +207,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, BuildFactory(), _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -237,7 +242,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, new UniverseMarketCacheFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, BuildFactory(), _logger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -268,6 +273,11 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             }
 
             return order;
+        }
+
+        private UniverseMarketCacheFactory BuildFactory()
+        {
+            return new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
         }
     }
 }

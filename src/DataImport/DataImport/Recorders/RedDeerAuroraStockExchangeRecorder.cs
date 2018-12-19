@@ -33,6 +33,7 @@ namespace DataImport.Recorders
         {
             if (value == null)
             {
+                _logger.LogError($"RedDeerAuroraStockExchangeRecorder OnNext was passed a null value. Returning.");
                 return;
             }
 
@@ -40,6 +41,7 @@ namespace DataImport.Recorders
             {
                 lock (_lock)
                 {
+                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
                     _repository.Create(value).Wait();
                 }
             }

@@ -8,6 +8,7 @@ using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
@@ -295,6 +296,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 if (!entity.Securities?.Any() ?? true)
                 {
+                    _logger.LogInformation($"ReddeerMarketRepository did not detect any securities for {entity.TimeStamp} - {entity.Exchange?.MarketIdentifierCode}");
                     return;
                 }
 
@@ -302,18 +304,24 @@ namespace Surveillance.DataLayer.Aurora.Market
                 var marketUpdate = new MarketUpdateDto(entity.Exchange);
                 using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
                 {
+                    _logger.LogInformation($"ReddeerMarketRepository Create method about to write market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName}");
                     marketId = await conn;
+                    _logger.LogInformation($"ReddeerMarketRepository Create method finished writing market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName} and fetched id of {marketId}");
                 }
 
+                _logger.LogInformation($"ReddeerMarketRepository about to write {entity.Securities?.Count} rows to database");
                 foreach (var security in entity.Securities)
                 {
                     var securityUpdate = new InsertSecurityDto(security, marketId, _cfiMapper);
+                    var jsonUpdate = JsonConvert.SerializeObject(securityUpdate);
+                    _logger.LogInformation($"ReddeerMarketRepository about to write row {jsonUpdate}");
                      dbConnection.Execute(SecurityMatchOrInsertSqlv2, securityUpdate);
+                    _logger.LogInformation($"ReddeerMarketRepository finished writing row {jsonUpdate}");
                 }        
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} {e.Message}");
+                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message}) INNER INNER ERROR MESSAGE ({e?.InnerException?.InnerException?.Message})");
             }
             finally
             {

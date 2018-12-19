@@ -290,6 +290,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
+            _logger.LogInformation($"ReddeerMarketRepository opened connection to {dbConnection.ConnectionString}");
             try
             {
                 dbConnection.Open();
@@ -302,12 +303,10 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 var marketId = string.Empty;
                 var marketUpdate = new MarketUpdateDto(entity.Exchange);
-                using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
-                {
-                    _logger.LogInformation($"ReddeerMarketRepository Create method about to write market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName}");
-                    marketId = await conn;
-                    _logger.LogInformation($"ReddeerMarketRepository Create method finished writing market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName} and fetched id of {marketId}");
-                }
+
+                _logger.LogInformation($"ReddeerMarketRepository Create method about to write market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName}");
+                marketId = dbConnection.ExecuteScalar<string>(MarketMatchOrInsertSql, marketUpdate);
+                _logger.LogInformation($"ReddeerMarketRepository Create method finished writing market match or insert sql for market {marketUpdate.MarketId} {marketUpdate.MarketName} and fetched id of {marketId}");
 
                 _logger.LogInformation($"ReddeerMarketRepository about to write {entity.Securities?.Count} rows to database");
                 foreach (var security in entity.Securities)

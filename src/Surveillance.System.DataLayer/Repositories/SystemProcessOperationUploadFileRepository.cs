@@ -17,7 +17,7 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly ILogger<SystemProcessOperationUploadFileRepository> _logger;
 
         private const string CreateSql = @"INSERT INTO SystemProcessOperationUploadFile(SystemProcessOperationId, FilePath, FileType) VALUES (@SystemProcessOperationId, @FilePath, @FileType); SELECT LAST_INSERT_ID();";
-        private const string GetDashboardSql = @"SELECT * FROM dev_surveillance.systemprocessoperationuploadfile ORDER BY Id desc LIMIT 10;";
+        private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperationUploadFile ORDER BY Id desc LIMIT 10;";
 
         public SystemProcessOperationUploadFileRepository(
             IConnectionStringFactory dbConnectionFactory,

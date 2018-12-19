@@ -35,7 +35,8 @@ namespace TestHarness.Engine.EquitiesGenerator
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(
                             string.Empty,
-                            raw.Symbol,
+                            string.Empty,
+                            string.Empty,
                             raw.Symbol,
                             raw.Symbol,
                             raw.Symbol,

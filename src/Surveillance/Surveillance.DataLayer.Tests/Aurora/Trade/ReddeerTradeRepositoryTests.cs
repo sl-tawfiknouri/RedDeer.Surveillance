@@ -82,6 +82,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 new InstrumentIdentifiers(
                     "1",
                     "7",
+                    null,
                     "stan",
                     "st12345",
                     "sta123456789",

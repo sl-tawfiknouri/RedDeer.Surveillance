@@ -200,6 +200,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 	            fi.SecurityName AS SecurityName,
 	            fi.Cfi AS SecurityCfi,
 	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+                fi.ReddeerId AS SecurityReddeerEnrichmentId,
 	            fi.UnderlyingSedol AS UnderlyingSedol,
 	            fi.UnderlyingIsin AS UnderlyingIsin,
 	            fi.UnderlyingFigi AS UnderlyingFigi,
@@ -484,6 +485,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     new InstrumentIdentifiers(
                         dto.SecurityId,
                         dto.SecurityReddeerId,
+                        dto.SecurityReddeerEnrichmentId,
                         dto.SecurityClientIdentifier,
                         dto.SecuritySedol,
                         dto.SecurityIsin,
@@ -661,6 +663,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 SecurityId = order?.Instrument.Identifiers.Id;
                 SecurityReddeerId = order?.Instrument.Identifiers.ReddeerId;
+                SecurityReddeerEnrichmentId = order?.Instrument.Identifiers.ReddeerEnrichmentId;
                 SecurityClientIdentifier = order?.Instrument.Identifiers.ClientIdentifier;
 
                 SecurityName = order?.Instrument.Name;
@@ -738,9 +741,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
             /// </summary>
             public int? MarketType { get; set; }
 
-
+            // client key
             public string SecurityId { get; set; }
+            // primary key
             public string SecurityReddeerId { get; set; }
+            // primary key in the sql server db
+            public string SecurityReddeerEnrichmentId { get; set; }
             public string SecurityClientIdentifier { get; set; }
 
             public string SecurityName { get; set; }

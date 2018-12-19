@@ -41,7 +41,7 @@ namespace DataImport.Recorders
             {
                 lock (_lock)
                 {
-                    _logger.LogInformation($"{value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
+                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
                     _repository.Create(value).Wait();
                 }
             }

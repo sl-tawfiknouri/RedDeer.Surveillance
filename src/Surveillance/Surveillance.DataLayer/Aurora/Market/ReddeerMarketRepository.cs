@@ -290,7 +290,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
-            _logger.LogInformation($"ReddeerMarketRepository opened connection to {dbConnection.ConnectionString}");
+            _logger.LogInformation($"ReddeerMarketRepository opened connection to the database");
+
             try
             {
                 dbConnection.Open();
@@ -312,15 +313,14 @@ namespace Surveillance.DataLayer.Aurora.Market
                 foreach (var security in entity.Securities)
                 {
                     var securityUpdate = new InsertSecurityDto(security, marketId, _cfiMapper);
-                    var jsonUpdate = JsonConvert.SerializeObject(securityUpdate);
-                    _logger.LogInformation($"ReddeerMarketRepository about to write row {jsonUpdate}");
+                    _logger.LogInformation($"ReddeerMarketRepository about to write row to database {security.Security?.Identifiers} {security?.TimeStamp}");
                      dbConnection.Execute(SecurityMatchOrInsertSqlv2, securityUpdate);
-                    _logger.LogInformation($"ReddeerMarketRepository finished writing row {jsonUpdate}");
-                }        
+                    _logger.LogInformation($"ReddeerMarketRepository finished writing row to database {security.Security?.Identifiers} {security?.TimeStamp}");
+                }
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message}) INNER INNER ERROR MESSAGE ({e?.InnerException?.InnerException?.Message})");
+                _logger.LogError($"ReddeerMarketRepository Create Method For {entity.Exchange?.Name} ERROR MESSAGE ({e.Message}) INNER ERROR MESSAGE ({e?.InnerException.Message})");
             }
             finally
             {

@@ -400,6 +400,7 @@ namespace DomainV2.Files
                 new InstrumentIdentifiers(
                     string.Empty,
                     string.Empty,
+                    null,
                     csv.InstrumentClientIdentifier,
                     csv.InstrumentSedol,
                     csv.InstrumentSedol,

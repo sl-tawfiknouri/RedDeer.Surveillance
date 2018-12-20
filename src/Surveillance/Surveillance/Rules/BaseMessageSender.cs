@@ -68,14 +68,14 @@ namespace Surveillance.Rules
             var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
 
             var entityReferences =
-               string.IsNullOrWhiteSpace(ruleBreach.Security.Identifiers.ReddeerId)
+               string.IsNullOrWhiteSpace(ruleBreach.Security.Identifiers.ReddeerEnrichmentId)
                 ? new EntityReference[0]
                 : 
                 new[]
                 {
                     new EntityReference
                     {
-                        EntityId = ruleBreach.Security.Identifiers.ReddeerId,
+                        EntityId = ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
                         EntityType = EntityReferenceType.SecurityId
                     }
                 };

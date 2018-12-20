@@ -11,7 +11,7 @@ namespace Surveillance.Tests.Helpers
             return new Order(
                 new FinancialInstrument(
                     InstrumentTypes.Equity,
-                    new InstrumentIdentifiers(string.Empty, "reddeer-id", "client-identifier", "sedol", "isin", "figi",
+                    new InstrumentIdentifiers(string.Empty, "reddeer-id", null, "client-identifier", "sedol", "isin", "figi",
                         "cusip", "xlon", "lei",
                         "bloomberg"),
                     "random-security",

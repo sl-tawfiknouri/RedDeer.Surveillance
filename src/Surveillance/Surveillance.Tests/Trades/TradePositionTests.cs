@@ -128,6 +128,7 @@ namespace Surveillance.Tests.Trades
                 new InstrumentIdentifiers(
                     string.Empty,
                     "reddeer id",
+                    null,
                     "client id",
                     "1234567",
                     "12345678912",

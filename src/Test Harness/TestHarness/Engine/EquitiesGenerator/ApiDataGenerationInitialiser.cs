@@ -55,6 +55,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         string.Empty,
                                         string.Empty,
                                         string.Empty,
+                                        string.Empty,
                                         sm.Sedol,
                                         sm.Isin,
                                         sm.Figi,

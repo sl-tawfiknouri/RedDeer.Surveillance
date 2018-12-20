@@ -36,7 +36,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new InstrumentIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
             var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 
@@ -68,7 +68,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
         public void TickSecurity_UpdatesWithNewTickData_Printing100IterationWalk()
         {
             var strategy = new MarkovEquityStrategy();
-            var identifiers = new InstrumentIdentifiers(string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
+            var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, string.Empty, "MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
             var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
 

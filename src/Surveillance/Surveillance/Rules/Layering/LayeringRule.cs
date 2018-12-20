@@ -326,6 +326,11 @@ namespace Surveillance.Rules.Layering
             var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
             var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
 
+            if (endDate.Subtract(startDate) < TimeSpan.FromMinutes(1))
+            {
+                endDate = endDate.AddMinutes(1);
+            }
+
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,

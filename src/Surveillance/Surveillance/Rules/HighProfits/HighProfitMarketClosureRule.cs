@@ -3,6 +3,7 @@ using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -24,6 +25,7 @@ namespace Surveillance.Rules.HighProfits
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
+            IUniverseMarketCacheFactory factory,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters, 
@@ -34,6 +36,7 @@ namespace Surveillance.Rules.HighProfits
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
                 orderFilter,
+                factory,
                 logger)
         {
             MarketClosureRule = true;

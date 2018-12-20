@@ -25,6 +25,7 @@ namespace Surveillance.Factories
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+        private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
@@ -34,6 +35,7 @@ namespace Surveillance.Factories
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             IUniverseOrderFilter orderFilter,
+            IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<HighProfitsRule> logger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -42,6 +44,7 @@ namespace Surveillance.Factories
             _exchangeRateProfitCalculator =
                 exchangeRateProfitCalculator
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -63,6 +66,7 @@ namespace Surveillance.Factories
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
                 _orderFilter,
+                _marketCacheFactory,
                 _logger);
 
             var marketClosure = new HighProfitMarketClosureRule(
@@ -73,6 +77,7 @@ namespace Surveillance.Factories
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
                 _orderFilter,
+                _marketCacheFactory,
                 _logger);
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);

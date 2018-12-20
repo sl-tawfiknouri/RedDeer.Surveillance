@@ -24,6 +24,8 @@ using Surveillance.Factories;
 using Surveillance.Interfaces;
 using Surveillance.Mappers;
 using Surveillance.Mappers.Interfaces;
+using Surveillance.Markets;
+using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.NetworkIO;
@@ -65,6 +67,7 @@ using Surveillance.Universe.Multiverse.Interfaces;
 using Surveillance.Universe.OrganisationalFactors;
 using Surveillance.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Universe.Subscribers;
+using Surveillance.Universe.Subscribers.Factories;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
@@ -182,6 +185,8 @@ namespace Surveillance
             For<IEnrichmentService>().Use<EnrichmentService>();
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
+            For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
+            For<IMarketTradingHoursManager>().Use<MarketTradingHoursManager>();
             For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
 
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();

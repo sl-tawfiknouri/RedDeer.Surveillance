@@ -49,7 +49,7 @@ namespace Surveillance.Rules.HighVolume
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
-                int breachThresholdAmount)
+                long breachThresholdAmount)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
@@ -70,7 +70,7 @@ namespace Surveillance.Rules.HighVolume
 
             public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
-            public int BreachThresholdAmount { get; }
+            public long BreachThresholdAmount { get; }
             public CurrencyAmount BreachThresholdAmountCurrency { get; }
             public CurrencyAmount BreachTradedAmountCurrency { get; }
 

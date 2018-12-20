@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -44,6 +45,7 @@ namespace Surveillance.Rules.HighProfits
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
+            IUniverseMarketCacheFactory factory,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -51,6 +53,7 @@ namespace Surveillance.Rules.HighProfits
                 HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -108,7 +111,7 @@ namespace Surveillance.Rules.HighProfits
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
-            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, LatestExchangeFrameBook);
+            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, UniverseMarketCache);
 
             costTask.Wait();
             revenueTask.Wait();

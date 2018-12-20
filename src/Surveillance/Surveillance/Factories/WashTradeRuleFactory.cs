@@ -18,6 +18,7 @@ namespace Surveillance.Factories
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
         private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
 
         public static string Version { get; } = Versioner.Version(1, 0);
@@ -27,12 +28,14 @@ namespace Surveillance.Factories
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
             IUniverseOrderFilter orderFilter,
+            IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -51,7 +54,16 @@ namespace Surveillance.Factories
                 throw new ArgumentNullException(nameof(parameters));
             }
 
-            return new WashTradeRule(parameters, ruleCtx, _positionPairer, _clustering, alertStream, _currencyConverter, _orderFilter, _logger);
+            return new WashTradeRule(
+                parameters,
+                ruleCtx,
+                _positionPairer,
+                _clustering,
+                alertStream,
+                _currencyConverter,
+                _orderFilter,
+                _factory,
+                _logger);
         }
     }
 }

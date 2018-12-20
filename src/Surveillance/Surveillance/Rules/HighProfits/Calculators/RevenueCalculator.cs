@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
+using DomainV2.Markets;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
+using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -16,11 +18,13 @@ namespace Surveillance.Rules.HighProfits.Calculators
     /// </summary>
     public class RevenueCalculator : IRevenueCalculator
     {
-        private readonly ILogger _logger;
+        protected readonly IMarketTradingHoursManager TradingHoursManager;
+        protected readonly ILogger Logger;
 
-        public RevenueCalculator(ILogger<RevenueCalculator> logger)
+        public RevenueCalculator(IMarketTradingHoursManager tradingHoursManager, ILogger<RevenueCalculator> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            TradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IDictionary<string, ExchangeFrame> latestExchangeFrameBook)
+            IUniverseMarketCache universeMarketCache)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -56,8 +60,20 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return realisedRevenue;
             }
 
-            var marketId = activeFulfilledTradeOrders.FirstOrDefault()?.Market?.MarketIdentifierCode;
-            if (marketId == null)
+            var marketDataRequest = 
+                MarketDataRequest(
+                    activeFulfilledTradeOrders.First().Market.MarketIdentifierCode,
+                    security.Identifiers,
+                    universeDateTime,
+                    ctx);
+
+            if (marketDataRequest == null)
+            {
+                return null;
+            }
+
+            var marketDataResult = universeMarketCache.Get(marketDataRequest);
+            if (marketDataResult.HadMissingData)
             {
                 return CalculateInferredVirtualProfit(
                     activeFulfilledTradeOrders,
@@ -65,29 +81,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                     sizeOfVirtualPosition);
             }
 
-            if (!latestExchangeFrameBook.ContainsKey(marketId))
-            {
-                return CalculateInferredVirtualProfit(
-                    activeFulfilledTradeOrders,
-                    realisedRevenue,
-                    sizeOfVirtualPosition);
-            }
-
-            latestExchangeFrameBook.TryGetValue(marketId, out var frame);
-
-            var securityTick =
-                frame
-                    ?.Securities
-                    ?.FirstOrDefault(sec => Equals(sec.Security.Identifiers, security.Identifiers));
-
-            if (securityTick == null)
-            {
-                return CalculateInferredVirtualProfit(
-                    activeFulfilledTradeOrders,
-                    realisedRevenue,
-                    sizeOfVirtualPosition);
-            }
-
+            var securityTick = marketDataResult.Response;           
             var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
             var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
 
@@ -159,7 +153,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             CurrencyAmount? realisedRevenue,
             long sizeOfVirtualPosition)
         {
-            _logger.LogInformation(
+            Logger.LogInformation(
                 "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
 
             var mostRecentTrade =
@@ -182,6 +176,23 @@ namespace Surveillance.Rules.HighProfits.Calculators
             }
 
             return realisedRevenue + currencyAmount;
+        }
+
+        protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
+        {
+            var tradingHours = TradingHoursManager.Get(mic);
+            if (!tradingHours.IsValid)
+            {
+                Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
+                return null;
+            }
+
+            return new MarketDataRequest(
+                mic,
+                identifiers,
+                tradingHours.OpeningInUtcForDay(universeDateTime),
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
+                ctx?.Id());
         }
 
         protected virtual CurrencyAmount? SecurityTickToPrice(SecurityTick tick)

@@ -56,5 +56,10 @@ namespace Surveillance.System.Auditing.Context
         {
             return _processOperationContext;
         }
+
+        public string Id()
+        {
+            return _ruleRun?.Id.ToString() ?? string.Empty;
+        }
     }
 }

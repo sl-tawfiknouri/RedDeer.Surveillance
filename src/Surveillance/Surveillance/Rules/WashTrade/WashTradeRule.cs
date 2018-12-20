@@ -9,6 +9,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -44,6 +45,7 @@ namespace Surveillance.Rules.WashTrade
             IUniverseAlertStream alertStream,
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,
+            IUniverseMarketCacheFactory factory,
             ILogger logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -51,6 +53,7 @@ namespace Surveillance.Rules.WashTrade
                 WashTradeRuleFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

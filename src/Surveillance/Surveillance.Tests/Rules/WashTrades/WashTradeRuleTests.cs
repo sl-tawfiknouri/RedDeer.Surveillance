@@ -46,6 +46,8 @@ namespace Surveillance.Tests.Rules.WashTrades
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _parameters = A.Fake<IWashTradeRuleParameters>();
             _logger = A.Fake<ILogger>();
+            _bmllRepository = A.Fake<IBmllDataRequestRepository>();
+            _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
 
             _factory = new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);

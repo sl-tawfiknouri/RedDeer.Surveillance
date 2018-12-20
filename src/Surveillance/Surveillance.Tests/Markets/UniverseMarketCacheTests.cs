@@ -34,6 +34,7 @@ namespace Surveillance.Tests.Markets
                 new InstrumentIdentifiers(
                     string.Empty,
                     "reddeer id",
+                    string.Empty,
                     "client id",
                     "1234567",
                     "12345678912",
@@ -93,6 +94,7 @@ namespace Surveillance.Tests.Markets
                 new InstrumentIdentifiers(
                     string.Empty,
                     "reddeer id",
+                    string.Empty,
                     "client id",
                     "1234567",
                     "12345678912",
@@ -152,6 +154,7 @@ namespace Surveillance.Tests.Markets
                 new InstrumentIdentifiers(
                     string.Empty,
                     "reddeer id",
+                    string.Empty,
                     "client id",
                     "1234567",
                     "12345678912",
@@ -210,6 +213,7 @@ namespace Surveillance.Tests.Markets
                 new InstrumentIdentifiers(
                     string.Empty,
                     "reddeer id",
+                    string.Empty,
                     "client id",
                     "1234567",
                     "12345678912",

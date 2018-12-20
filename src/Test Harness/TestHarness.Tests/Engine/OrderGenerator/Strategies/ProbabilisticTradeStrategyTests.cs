@@ -112,7 +112,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                 var frame = new SecurityTick(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
-                        new InstrumentIdentifiers(string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
+                        new InstrumentIdentifiers(string.Empty, string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
                         "Standard Chartered", "CFI", "USD", "ISSUER-IDENTIFIER"), 
                     new Spread(new CurrencyAmount((decimal)buyPrice, "GBP"), new CurrencyAmount((decimal)sellPrice, "GBP"), new CurrencyAmount((decimal)buyPrice, "GBP")),
                     new Volume(volume),

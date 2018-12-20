@@ -150,6 +150,7 @@ namespace DomainV2.Equity.Frames
                 new InstrumentIdentifiers(
                     string.Empty,
                     string.Empty,
+                    null,
                     csv.SecurityClientIdentifier,
                     csv.Sedol,
                     csv.Isin,

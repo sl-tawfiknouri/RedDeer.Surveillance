@@ -7,6 +7,7 @@ namespace DomainV2.Financial
         public InstrumentIdentifiers(
             string id,
             string reddeerId,
+            string reddeerEnrichmentId,
             string clientIdentifier,
             string sedol,
             string isin,
@@ -17,6 +18,7 @@ namespace DomainV2.Financial
             string bloombergTicker) : this(
                 id,
                 reddeerId,
+                reddeerEnrichmentId,
                 clientIdentifier,
                 sedol,
                 isin,
@@ -38,6 +40,7 @@ namespace DomainV2.Financial
         public InstrumentIdentifiers(
             string id,
             string reddeerId,
+            string reddeerEnrichmentId,
             string clientIdentifier,
             string sedol,
             string isin,
@@ -57,6 +60,7 @@ namespace DomainV2.Financial
         {
             Id = id ?? string.Empty;
             ReddeerId = reddeerId ?? string.Empty;
+            ReddeerEnrichmentId = reddeerEnrichmentId ?? string.Empty;
             ClientIdentifier = clientIdentifier ?? string.Empty;
             Sedol = sedol ?? string.Empty;
             Isin = isin ?? string.Empty;
@@ -81,6 +85,7 @@ namespace DomainV2.Financial
         /// </summary>
         public string Id { get; set; }
         public string ReddeerId { get; set; }
+        public string ReddeerEnrichmentId { get; set; }
         public string ClientIdentifier { get; set; }
         public string Sedol { get; set; }
         public string Isin { get; set; }

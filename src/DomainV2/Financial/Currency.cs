@@ -29,5 +29,10 @@ namespace DomainV2.Financial
 
             return string.Equals(currencyObj.Value, Value, StringComparison.InvariantCultureIgnoreCase);
         }
+
+        public override string ToString()
+        {
+            return Value ?? string.Empty;
+        }
     }
 }

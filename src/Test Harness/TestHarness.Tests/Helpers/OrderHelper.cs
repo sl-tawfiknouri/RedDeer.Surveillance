@@ -12,6 +12,7 @@ namespace TestHarness.Tests.Helpers
             var securityIdentifiers =
                 new InstrumentIdentifiers(
                     string.Empty,
+                    string.Empty,
                     "STAN",
                     "STAN",
                     "st12345",

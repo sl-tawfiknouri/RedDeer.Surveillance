@@ -74,7 +74,7 @@ namespace DomainV2.Trading
         public FinancialInstrument Instrument { get; set; }
         public Market Market { get; set; }
 
-        public int? ReddeerOrderId { get; set; } // primary key
+        public int? ReddeerOrderId { get; set; } // primary key for the order
         public string OrderId { get; set; } // the client id for the order
         public DateTime? OrderPlacedDate { get; set; }
         public DateTime? OrderBookedDate { get; set; }

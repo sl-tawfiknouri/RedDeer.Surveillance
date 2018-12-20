@@ -16,6 +16,8 @@ using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Tests.Rules.WashTrades
 {
@@ -29,6 +31,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         private IWashTradeClustering _clustering;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleParameters _parameters;
+        private IUniverseOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private ILogger _logger;
 
@@ -49,7 +52,10 @@ namespace Surveillance.Tests.Rules.WashTrades
             _bmllRepository = A.Fake<IBmllDataRequestRepository>();
             _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
 
+            _orderFilter = A.Fake<IUniverseOrderFilter>();
             _factory = new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
+            A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
+
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
             A.CallTo(() => _parameters.ClusteringPercentageValueDifferenceThreshold).Returns(0.05m);
         }
@@ -67,6 +73,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -87,6 +94,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -107,6 +115,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -128,6 +137,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -159,6 +169,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -191,6 +202,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -233,6 +245,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -271,6 +284,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 
@@ -325,6 +339,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _clustering,
                 _alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
 

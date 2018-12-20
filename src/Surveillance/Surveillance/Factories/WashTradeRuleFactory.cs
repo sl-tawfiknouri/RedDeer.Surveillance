@@ -8,6 +8,7 @@ using Surveillance.Rules;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Factories
 {
@@ -16,6 +17,7 @@ namespace Surveillance.Factories
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
 
@@ -25,12 +27,14 @@ namespace Surveillance.Factories
             ICurrencyConverter currencyConverter,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -57,6 +61,7 @@ namespace Surveillance.Factories
                 _clustering,
                 alertStream,
                 _currencyConverter,
+                _orderFilter,
                 _factory,
                 _logger);
         }

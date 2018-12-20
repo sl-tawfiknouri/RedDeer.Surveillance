@@ -15,6 +15,8 @@ using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.HighProfits
@@ -30,6 +32,7 @@ namespace Surveillance.Rules.HighProfits
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
+        private readonly IUniverseOrderFilter _orderFilter;
 
         protected bool MarketClosureRule = false;
 
@@ -41,6 +44,7 @@ namespace Surveillance.Rules.HighProfits
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<HighProfitsRule> logger)
             : base(
@@ -61,12 +65,18 @@ namespace Surveillance.Rules.HighProfits
             _exchangeRateProfitCalculator =
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected virtual bool RunRuleGuard(ITradingHistoryStack history)
         {
             return true;
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

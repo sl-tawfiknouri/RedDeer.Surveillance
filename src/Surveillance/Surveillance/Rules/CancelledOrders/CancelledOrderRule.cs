@@ -12,6 +12,8 @@ using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.CancelledOrders
@@ -21,6 +23,7 @@ namespace Surveillance.Rules.CancelledOrders
         private readonly ICancelledOrderRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _opCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IUniverseOrderFilter _orderFilter;
 
         private readonly ILogger _logger;
         
@@ -28,6 +31,7 @@ namespace Surveillance.Rules.CancelledOrders
             ICancelledOrderRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<CancelledOrderRule> logger)
             : base(
@@ -42,7 +46,13 @@ namespace Surveillance.Rules.CancelledOrders
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

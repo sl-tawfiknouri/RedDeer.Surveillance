@@ -15,6 +15,8 @@ using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.WashTrade
@@ -33,6 +35,7 @@ namespace Surveillance.Rules.WashTrade
         private readonly IWashTradeClustering _clustering;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ICurrencyConverter _currencyConverter;
+        private readonly IUniverseOrderFilter _orderFilter;
 
         public WashTradeRule(
             IWashTradeRuleParameters parameters,
@@ -41,6 +44,7 @@ namespace Surveillance.Rules.WashTrade
             IWashTradeClustering clustering,
             IUniverseAlertStream alertStream,
             ICurrencyConverter currencyConverter,
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger logger)
             : base(
@@ -56,8 +60,14 @@ namespace Surveillance.Rules.WashTrade
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

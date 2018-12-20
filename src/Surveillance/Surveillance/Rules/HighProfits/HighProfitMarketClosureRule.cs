@@ -11,6 +11,7 @@ using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Rules.HighProfits
 {
@@ -23,6 +24,7 @@ namespace Surveillance.Rules.HighProfits
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<HighProfitsRule> logger)
             : base(
@@ -33,6 +35,7 @@ namespace Surveillance.Rules.HighProfits
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
+                orderFilter,
                 factory,
                 logger)
         {

@@ -7,20 +7,23 @@ using Surveillance.Rules;
 using Surveillance.Rules.MarkingTheClose;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Factories
 {
     public class MarkingTheCloseRuleFactory : IMarkingTheCloseRuleFactory
     {
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ILogger<MarkingTheCloseRule> _logger;
 
-        public MarkingTheCloseRuleFactory(
+        public MarkingTheCloseRuleFactory(IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<MarkingTheCloseRule> logger)
         {
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -31,7 +34,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream)
         {
-            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _factory, _tradingHoursManager, _logger);
+            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _orderFilter, _factory, _tradingHoursManager, _logger);
         }
 
         public static string Version => Versioner.Version(1, 0);

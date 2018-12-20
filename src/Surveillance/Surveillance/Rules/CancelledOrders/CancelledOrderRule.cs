@@ -6,6 +6,7 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -27,6 +28,7 @@ namespace Surveillance.Rules.CancelledOrders
             ICancelledOrderRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseMarketCacheFactory factory,
             ILogger<CancelledOrderRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
@@ -34,6 +36,7 @@ namespace Surveillance.Rules.CancelledOrders
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 opCtx,
+                factory,
                 logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

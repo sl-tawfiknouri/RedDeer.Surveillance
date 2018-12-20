@@ -10,6 +10,7 @@ using DomainV2.Trading;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -27,6 +28,7 @@ namespace Surveillance.Rules.Spoofing
             ISpoofingRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
+            IUniverseMarketCacheFactory factory,
             ILogger logger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
@@ -34,6 +36,7 @@ namespace Surveillance.Rules.Spoofing
                   SpoofingRuleFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
+                  factory,
                   logger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));

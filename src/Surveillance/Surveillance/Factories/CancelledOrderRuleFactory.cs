@@ -12,11 +12,14 @@ namespace Surveillance.Factories
 {
     public class CancelledOrderRuleFactory : ICancelledOrderRuleFactory
     {
+        private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<CancelledOrderRule> _logger;
 
         public CancelledOrderRuleFactory(
+            IUniverseMarketCacheFactory factory,
             ILogger<CancelledOrderRule> logger)
         {
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -25,7 +28,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream)
         {
-            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _logger);
+            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _factory, _logger);
         }
 
         public static string Version => Versioner.Version(2, 0);

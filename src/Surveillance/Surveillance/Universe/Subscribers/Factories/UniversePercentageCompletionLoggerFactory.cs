@@ -1,6 +1,6 @@
 ﻿using Surveillance.Universe.Subscribers.Interfaces;
 
-namespace Surveillance.Universe.Subscribers
+namespace Surveillance.Universe.Subscribers.Factories
 {
     public class UniversePercentageCompletionLoggerFactory : IUniversePercentageCompletionLoggerFactory
     {

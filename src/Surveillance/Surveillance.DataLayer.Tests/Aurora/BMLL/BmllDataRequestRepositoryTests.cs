@@ -4,6 +4,7 @@ using DomainV2.Financial;
 using DomainV2.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.BMLL;
@@ -19,7 +20,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
         [SetUp]
         public void Setup()
         {
-            _logger = A.Fake<ILogger<BmllDataRequestRepository>>();
+            _logger = new NullLogger<BmllDataRequestRepository>();
         }
 
         [Test]

@@ -94,7 +94,6 @@ namespace Surveillance.Markets
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
 
-            // this line is a bit dodgy going forward but works backwards
             if (exchangeFrame.TimeStamp > request.UniverseEventTimeTo
                 || exchangeFrame.TimeStamp < request.UniverseEventTimeFrom)
             {

@@ -42,9 +42,11 @@ namespace Surveillance.Markets
         public DateTime MinimumOfCloseInUtcForDayOrUniverse(DateTime universeTime)
         {
             var closeForDay = ClosingInUtcForDay(universeTime);
+            var openForDay = OpeningInUtcForDay(universeTime);
+            var adjustedUniverseDate = openForDay > universeTime ? openForDay : universeTime;
 
-            return closeForDay > universeTime
-                ? universeTime
+            return closeForDay > adjustedUniverseDate
+                ? adjustedUniverseDate
                 : closeForDay;
         }
     }

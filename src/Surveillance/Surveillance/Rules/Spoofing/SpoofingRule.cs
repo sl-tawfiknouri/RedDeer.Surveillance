@@ -12,6 +12,8 @@ using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.Spoofing
@@ -21,12 +23,14 @@ namespace Surveillance.Rules.Spoofing
         private readonly ISpoofingRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
 
         public SpoofingRule(
             ISpoofingRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
+            IUniverseOrderFilter orderFilter,
             ILogger logger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
@@ -39,6 +43,7 @@ namespace Surveillance.Rules.Spoofing
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
@@ -174,6 +179,11 @@ namespace Surveillance.Rules.Spoofing
 
             var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

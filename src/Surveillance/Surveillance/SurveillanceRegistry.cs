@@ -187,6 +187,7 @@ namespace Surveillance
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();
             For<IUniversePercentageOfTimeCompletionLoggerFactory>().Use<UniversePercentageOfTimeCompletionLoggerFactory>();
             For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
+            For<IUniverseOrderFilter>().Use<UniverseOrderFilter>();
         }
     }
 }

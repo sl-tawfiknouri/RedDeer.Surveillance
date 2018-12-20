@@ -7,15 +7,20 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Factories
 {
     public class LayeringRuleFactory : ILayeringRuleFactory
     {
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger<LayeringRuleFactory> _logger;
 
-        public LayeringRuleFactory(ILogger<LayeringRuleFactory> logger)
+        public LayeringRuleFactory(
+            IUniverseOrderFilter orderFilter,
+            ILogger<LayeringRuleFactory> logger)
         {
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -24,7 +29,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream)
         {
-            return new LayeringRule(parameters, alertStream, _logger, ruleCtx);
+            return new LayeringRule(parameters, alertStream, _orderFilter, _logger, ruleCtx);
         }
 
         public static string Version => Versioner.Version(1, 0);

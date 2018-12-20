@@ -12,6 +12,8 @@ using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.MarkingTheClose
@@ -21,6 +23,7 @@ namespace Surveillance.Rules.MarkingTheClose
         private readonly IMarkingTheCloseParameters _parameters;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
@@ -30,6 +33,7 @@ namespace Surveillance.Rules.MarkingTheClose
             IMarkingTheCloseParameters parameters,
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseOrderFilter orderFilter,
             ILogger<MarkingTheCloseRule> logger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
@@ -42,7 +46,13 @@ namespace Surveillance.Rules.MarkingTheClose
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

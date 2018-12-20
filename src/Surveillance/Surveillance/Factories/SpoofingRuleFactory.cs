@@ -7,15 +7,20 @@ using Surveillance.Rules;
 using Surveillance.Rules.Spoofing;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Factories
 {
     public class SpoofingRuleFactory : ISpoofingRuleFactory
     {
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger<SpoofingRule> _logger;
 
-        public SpoofingRuleFactory(ILogger<SpoofingRule> logger)
+        public SpoofingRuleFactory(
+            IUniverseOrderFilter orderFilter,
+            ILogger<SpoofingRule> logger)
         {
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -28,6 +33,7 @@ namespace Surveillance.Factories
                 spoofingParameters,
                 ruleCtx,
                 alertStream,
+                _orderFilter,
                 _logger);
         }
 

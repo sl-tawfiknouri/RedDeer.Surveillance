@@ -7,16 +7,20 @@ using Surveillance.Rules;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
 
 namespace Surveillance.Factories
 {
     public class CancelledOrderRuleFactory : ICancelledOrderRuleFactory
     {
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger<CancelledOrderRule> _logger;
-
+        
         public CancelledOrderRuleFactory(
+            IUniverseOrderFilter orderFilter,
             ILogger<CancelledOrderRule> logger)
         {
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -25,7 +29,7 @@ namespace Surveillance.Factories
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream)
         {
-            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _logger);
+            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _orderFilter, _logger);
         }
 
         public static string Version => Versioner.Version(2, 0);

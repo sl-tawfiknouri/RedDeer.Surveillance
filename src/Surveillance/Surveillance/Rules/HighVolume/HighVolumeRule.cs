@@ -12,6 +12,8 @@ using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.HighVolume
@@ -21,6 +23,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IHighVolumeRuleParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -29,6 +32,7 @@ namespace Surveillance.Rules.HighVolume
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseOrderFilter orderFilter,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -41,7 +45,13 @@ namespace Surveillance.Rules.HighVolume
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

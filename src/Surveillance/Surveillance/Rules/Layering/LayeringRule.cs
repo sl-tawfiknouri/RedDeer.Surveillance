@@ -14,6 +14,8 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Universe.Filter.Interfaces;
+using Surveillance.Universe.Interfaces;
 
 namespace Surveillance.Rules.Layering
 {
@@ -22,12 +24,14 @@ namespace Surveillance.Rules.Layering
         private readonly ILogger _logger;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILayeringRuleParameters _parameters;
         private bool _hadMissingData = false;
 
         public LayeringRule(
             ILayeringRuleParameters parameters,
             IUniverseAlertStream alertStream,
+            IUniverseOrderFilter orderFilter,
             ILogger logger,
             ISystemProcessOperationRunRuleContext opCtx)
             : base(
@@ -42,6 +46,12 @@ namespace Surveillance.Rules.Layering
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+        }
+
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

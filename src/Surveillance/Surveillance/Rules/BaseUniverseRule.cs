@@ -81,6 +81,7 @@ namespace Surveillance.Rules
             var filteredValue = Filter(value);
             if (filteredValue == null)
             {
+                _logger?.LogInformation($"base universe event at {value.EventTime} filtered out. Skipping event.");
                 return;
             }
 

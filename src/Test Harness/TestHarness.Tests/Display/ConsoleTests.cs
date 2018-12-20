@@ -33,6 +33,7 @@ namespace TestHarness.Tests.Display
                 new InstrumentIdentifiers(
                     string.Empty,
                     "STAN",
+                    null,
                     "STAN",
                     "st12345",
                     "sta123456789",

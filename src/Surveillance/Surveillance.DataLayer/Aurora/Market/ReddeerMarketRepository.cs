@@ -498,6 +498,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     new InstrumentIdentifiers(
                         dto.Id,
                         dto.ReddeerId,
+                        dto.ReddeerEnrichmentId,
                         dto.ClientIdentifier,
                         dto.Sedol,
                         dto.Isin,
@@ -583,6 +584,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 ClientIdentifier = entity.Security?.Identifiers.ClientIdentifier;
                 ReddeerId = entity.Security?.Identifiers.ReddeerId;
+                ReddeerEnrichmentId = entity.Security?.Identifiers.ReddeerEnrichmentId;
                 Sedol = entity.Security?.Identifiers.Sedol;
                 Isin = entity.Security?.Identifiers.Isin;
                 Figi = entity.Security?.Identifiers.Figi;
@@ -630,6 +632,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string ClientIdentifier { get; set; }
 
             public string ReddeerId { get; set; }
+
+            public string ReddeerEnrichmentId { get; set; }
 
             public string Sedol { get; set; }
 

@@ -34,7 +34,7 @@ namespace Surveillance.Tests.Rules.HighProfits
             _security =
                 new FinancialInstrument(
                     InstrumentTypes.Equity,
-                    new InstrumentIdentifiers("id", "id", "id", "id", "id", "id", "id", "id", "id", "id"),
+                    new InstrumentIdentifiers("id", "id", "id", "id", "id", "id", "id", "id", "id", "id", "id"),
                     "security",
                     "cfi", 
                     "USD",

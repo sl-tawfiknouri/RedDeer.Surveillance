@@ -69,9 +69,17 @@ namespace Surveillance.Rules
             _logger?.LogError($"{_name} {Version} {error}");
         }
 
+        protected abstract IUniverseEvent Filter(IUniverseEvent value);
+
         public void OnNext(IUniverseEvent value)
         {
             if (value == null)
+            {
+                return;
+            }
+
+            var filteredValue = Filter(value);
+            if (filteredValue == null)
             {
                 return;
             }

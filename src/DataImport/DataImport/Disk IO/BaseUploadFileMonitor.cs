@@ -42,19 +42,24 @@ namespace DataImport.Disk_IO
             try
             {
                 var failedReadsPath = GetFailedReadsPath();
+                var uploadDirectoryPath = UploadDirectoryPath();
 
-                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders");
-                ReddeerDirectory.Create(UploadDirectoryPath());
+                Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Creating reddeer directory folders at {uploadDirectoryPath} - {failedReadsPath}");
+                ReddeerDirectory.Create(uploadDirectoryPath);
+                Logger.LogInformation($"Created {uploadDirectoryPath}");
                 ReddeerDirectory.Create(failedReadsPath);
+                Logger.LogInformation($"Created {failedReadsPath}");
                 Logger.Log(LogLevel.Information, $"{_uploadFileMonitorName} Completed creating reddeer directory folders");
 
                 var files = ReddeerDirectory.GetFiles(UploadDirectoryPath(), "*.csv");
 
                 if (files.Any())
                 {
+                    Logger.LogInformation($"BaseUploadFileMonitor for {_uploadFileMonitorName} detected existing files on initiation. About to process {files.Count} files.");   
                     ProcessInitialStartupFiles(files);
                 }
 
+                Logger.LogInformation($"BaseUploadFileMonitor for {_uploadFileMonitorName} setting file system watch");
                 SetFileSystemWatch();
             }
             catch (Exception e)
@@ -91,7 +96,9 @@ namespace DataImport.Disk_IO
 
                 foreach (var filePath in files)
                 {
+                    Logger.LogInformation($"BaseUploadFileMonitor About to process {filePath}");
                     ProcessFile(filePath);
+                    Logger.LogInformation($"BaseUploadFileMonitor Completed processing {filePath}");
                 }
 
                 Logger.LogInformation($"{_uploadFileMonitorName} has completed processing the initial start up files");

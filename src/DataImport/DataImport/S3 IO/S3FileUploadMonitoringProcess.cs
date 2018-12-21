@@ -90,6 +90,8 @@ namespace DataImport.S3_IO
                     var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
                     var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
 
+                    _logger.LogInformation($"S3Processor received message for {directoryName}");
+
                     switch (splitPath)
                     {
                         case "surveillance-trade":
@@ -130,11 +132,12 @@ namespace DataImport.S3_IO
             {
                 try
                 {
-                    _logger.LogInformation($"S3 processing {file}");
+                    _logger.LogInformation($"S3 processing trade file {file}");
                     var result = _uploadTradeFileMonitor.ProcessFile(file);
 
                     if (result == false)
                     {
+                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
                         _token.Cancel = true;
                     }
 
@@ -142,6 +145,10 @@ namespace DataImport.S3_IO
                     {
                         _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
                         File.Delete(file);
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"S3 Processor could not find file {file}");
                     }
                 }
                 catch (Exception e)
@@ -166,16 +173,23 @@ namespace DataImport.S3_IO
             {
                 try
                 {
+                    _logger.LogInformation($"S3 processing equity file {file}");
                     var result = _uploadEquityFileMonitor.ProcessFile(file);
 
                     if (result == false)
                     {
+                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
                         _token.Cancel = true;
                     }
 
                     if (File.Exists(file))
                     {
+                        _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
                         File.Delete(file);
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"S3 Processor could not find file {file}");
                     }
                 }
                 catch (Exception e)
@@ -197,6 +211,10 @@ namespace DataImport.S3_IO
                 _logger.LogInformation($"S3 File Upload Monitoring Process had a null or empty file path when reading from S3 message");
                 return;
             }
+            else
+            {
+                _logger.LogInformation($"S3 Processor about to process {filePath}");
+            }
 
             var newPath = Path.Combine(ftpDirectoryPath, filePath);
             var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, newPath);
@@ -204,8 +222,15 @@ namespace DataImport.S3_IO
             if (retries <= 0)
                 _logger.LogInformation($"S3 Process File ran out of retries for processing file {dto.FileName}");
 
-            if (result || retries <= 0)
+            if (result)
             {
+                _logger.LogInformation($"S3 Processor successfully retrieved file from {dto.Bucket} {dto.FileName} to {newPath}");
+                return;
+            }
+
+            if (retries <= 0)
+            {
+                _logger.LogError($"S3 Processor ran out of retries trying to fetch from {dto.Bucket} {dto.FileName} to {newPath}");
                 return;
             }
 
@@ -214,6 +239,7 @@ namespace DataImport.S3_IO
 
         public void Terminate()
         {
+            _logger.LogInformation($"S3 Processor terminating");
             _cts?.Cancel();
         }
     }

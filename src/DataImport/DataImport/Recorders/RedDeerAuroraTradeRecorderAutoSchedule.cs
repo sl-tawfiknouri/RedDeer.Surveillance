@@ -46,14 +46,22 @@ namespace DataImport.Recorders
         {
             if (value == null)
             {
+                _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule received a null order value");
                 return;
             }
-            
+
+            _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule passing value {value.OrderId} to trade repository");
             await _tradeRepository.Create(value);
+            _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule completed passing value {value.OrderId} to trade repository");
 
             if (_configuration.AutoSchedule)
             {
+                _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule about to schedule {value.OrderId}");
                 UpdateBatch(value);
+            }
+            else
+            {
+                _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule did not have auto scheduling enabled. Returning");
             }
         }
 
@@ -66,6 +74,7 @@ namespace DataImport.Recorders
 
             if (!value.IsInputBatch)
             {
+                _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} was not part of an input batch. Returning.");
                 return;
             }
 
@@ -95,20 +104,28 @@ namespace DataImport.Recorders
 
                 if (value.OrderPlacedDate.HasValue && value.OrderPlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
                 {
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an older placed date than the current time series initiation. Moving date backward to {value.OrderPlacedDate.Value}.");
+
                     schedulePair.Schedule.TimeSeriesInitiation = value.OrderPlacedDate.Value;
                 }
 
                 if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)
                 {
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an younger most recent event date than the current time series initiation. Moving date forward to {value.MostRecentDateEvent()}.");
+
                     schedulePair.Schedule.TimeSeriesTermination = value.MostRecentDateEvent();
                 }
-
+                
                 if (schedulePair.Count == value.BatchSize)
                 {
                     _batchTracker.Remove(value.InputBatchId);
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule auto scheduling now dispatching run rule request as full batch size of {value.BatchSize} has been met.");
                     _sender.Send(schedulePair.Schedule);
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule batch dispatched");
+                }
+                else
+                {
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule did not match batch message count {schedulePair.Count} to expected batch message total count {value.BatchSize}. Continuing to wait for further messages.");
                 }
             }
         }

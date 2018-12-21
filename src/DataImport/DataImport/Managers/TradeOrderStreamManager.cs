@@ -25,6 +25,7 @@ namespace DataImport.Managers
 
         private readonly ILogger<TradeProcessor<Order>> _tpLogger;
         private readonly ILogger<NetworkExchange> _exchangeLogger;
+        private readonly ILogger<RelayTradeNetworkDuplexer> _relayLogger;
 
         public TradeOrderStreamManager(
             OrderStream<Order> tradeOrderStream,
@@ -34,7 +35,8 @@ namespace DataImport.Managers
             IUploadTradeFileMonitorFactory fileMonitorFactory,
             IRedDeerAuroraTradeRecorderAutoSchedule tradeRecorder,
             ILogger<TradeProcessor<Order>> tpLogger,
-            ILogger<NetworkExchange> exchangeLogger)
+            ILogger<NetworkExchange> exchangeLogger,
+            ILogger<RelayTradeNetworkDuplexer> relayLogger)
         {
             _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
             _tradeRelaySubscriber = tradeRelaySubscriber ?? throw new ArgumentNullException(nameof(tradeRelaySubscriber));
@@ -49,6 +51,7 @@ namespace DataImport.Managers
 
             _tpLogger = tpLogger ?? throw new ArgumentNullException(nameof(tpLogger));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
+            _relayLogger = relayLogger ?? throw new ArgumentNullException(nameof(relayLogger));
         }
 
         public IUploadTradeFileMonitor Initialise()
@@ -82,8 +85,9 @@ namespace DataImport.Managers
         /// </summary>
         private void HostOverWebsockets()
         {
+            _exchangeLogger.LogInformation($"TradeOrderStreamManager hosting over websockets at ws://{_networkConfiguration.RelayServiceTradeDomain}:{_networkConfiguration.RelayServiceTradePort}");
             // begin hosting connection for downstream processes (i.e. surveillance service)
-            var networkDuplexer = new RelayTradeNetworkDuplexer(_tradeOrderStream);
+            var networkDuplexer = new RelayTradeNetworkDuplexer(_tradeOrderStream, _relayLogger);
             var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
 
             exchange.Initialise($"ws://{_networkConfiguration.RelayServiceTradeDomain}:{_networkConfiguration.RelayServiceTradePort}");

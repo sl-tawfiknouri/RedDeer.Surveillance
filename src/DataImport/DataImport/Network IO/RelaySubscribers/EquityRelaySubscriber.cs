@@ -45,6 +45,8 @@ namespace DataImport.Network_IO.RelaySubscribers
         {
             lock (_stateLock)
             {
+                _logger.LogInformation("Equity Relay Subscriber terminating network trunk");
+
                 _networkSwitch.Terminate();
                 _initiated = false;
             }
@@ -75,6 +77,7 @@ namespace DataImport.Network_IO.RelaySubscribers
             {
                 if (!_initiated)
                 {
+                    _logger.LogWarning($"EquityRelaySubscriber OnNext called before initiation");
                     return;
                 }
 

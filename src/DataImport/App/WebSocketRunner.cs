@@ -24,7 +24,9 @@ namespace RedDeer.DataImport.DataImport.App
             {
                 try
                 {
+                    _logger.LogInformation($"StartUpTaskRunner initiating mediator");
                     _mediator.Initiate();
+                    _logger.LogInformation($"StartUpTaskRunner initiated mediator");
                 }
                 catch (Exception e)
                 {

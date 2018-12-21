@@ -22,17 +22,20 @@ namespace DataImport.Managers
         private readonly IRedDeerAuroraStockExchangeRecorder _stockExchangeRecorder;
 
         private readonly ILogger<NetworkExchange> _exchangeLogger;
+        private readonly ILogger<RelayEquityNetworkDuplexer> _relayLogger;
 
         public StockExchangeStreamManager(
             IWebsocketHostFactory websocketHostFactory,
             INetworkConfiguration networkConfiguration,
             IUploadEquityFileMonitorFactory equityFileMonitorFactory,
             IRedDeerAuroraStockExchangeRecorder stockExchangeRecorder,
-            ILogger<NetworkExchange> exchangeLogger)
+            ILogger<NetworkExchange> exchangeLogger,
+            ILogger<RelayEquityNetworkDuplexer> relayLogger)
         {
             _websocketHostFactory = websocketHostFactory ?? throw new ArgumentNullException(nameof(websocketHostFactory));
             _networkConfiguration = networkConfiguration ?? throw new ArgumentNullException(nameof(networkConfiguration));
             _exchangeLogger = exchangeLogger ?? throw new ArgumentNullException(nameof(exchangeLogger));
+            _relayLogger = relayLogger ?? throw new ArgumentNullException(nameof(relayLogger));
             _stockExchangeRecorder = stockExchangeRecorder ?? throw new ArgumentNullException(nameof(stockExchangeRecorder));
             _equityFileMonitorFactory =
                 equityFileMonitorFactory
@@ -67,7 +70,9 @@ namespace DataImport.Managers
 
         private void HostOverWebsockets(IStockExchangeStream stockExchangeStream)
         {
-            var networkDuplexer = new RelayEquityNetworkDuplexer(stockExchangeStream);
+            _exchangeLogger.LogInformation($"Initialising web sockets hosting at ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");
+
+            var networkDuplexer = new RelayEquityNetworkDuplexer(stockExchangeStream, _relayLogger);
             var exchange = new NetworkExchange(_websocketHostFactory, networkDuplexer, _exchangeLogger);
             exchange.Initialise(
                 $"ws://{_networkConfiguration.RelayServiceEquityDomain}:{_networkConfiguration.RelayServiceEquityPort}");

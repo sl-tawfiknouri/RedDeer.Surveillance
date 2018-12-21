@@ -43,6 +43,7 @@ namespace DataImport.Recorders
                 {
                     _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
                     _repository.Create(value).Wait();
+                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Completed passing market data to repository");
                 }
             }
             catch (Exception e)

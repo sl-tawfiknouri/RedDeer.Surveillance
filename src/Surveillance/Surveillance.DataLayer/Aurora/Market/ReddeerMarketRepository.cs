@@ -229,12 +229,15 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             try
             {
+                _logger.LogInformation($"ReddeerMarketRepository opening db connection for unenriched securities");
+
                 dbConnection.Open();
-                
+                _logger.LogInformation($"ReddeerMarketRepository getting unenriched securities");
                 using (var conn = dbConnection.QueryAsync<SecurityEnrichmentDto>(GetUnEnrichedSecuritiesSql))
                 {
                     var result = await conn;
 
+                    _logger.LogInformation($"ReddeerMarketRepository returning {result?.Count() ?? 0} unenriched securities");
                     return result?.ToList();
                 }
             }
@@ -244,6 +247,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             finally
             {
+                _logger.LogInformation($"ReddeerMarketRepository closing db connection for unenriched securities");
+
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
@@ -256,6 +261,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"ReddeerMarketRepository update unenriched securities received none");
+
                 return;
             }
 
@@ -264,11 +271,15 @@ namespace Surveillance.DataLayer.Aurora.Market
             try
             {
                 dbConnection.Open();
+                _logger.LogInformation($"ReddeerMarketRepository opening db connection in update unenriched securities");
 
                 var projectedDtos = dtos.Select(dto => new SecurityEnrichmentDtoDapper(dto, _cfiMapper)).ToList();
+
+                _logger.LogInformation($"ReddeerMarketRepository about to update {projectedDtos.Count} unenriched securities");
                 using (var conn = dbConnection.ExecuteAsync(UpdateUnEnrichedSecuritiesSql, projectedDtos))
                 {
                     await conn;
+                    _logger.LogInformation($"ReddeerMarketRepository completed updating unenriched securities");
                 }
             }
             catch (Exception e)
@@ -277,6 +288,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             finally
             {
+                _logger.LogInformation($"ReddeerMarketRepository closing db connection for update unenriched securities");
+
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
@@ -286,14 +299,16 @@ namespace Surveillance.DataLayer.Aurora.Market
         {
             if (entity == null)
             {
+                _logger.LogInformation($"ReddeerMarketRepository create received a null entity");
+
                 return;
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
-            _logger.LogInformation($"ReddeerMarketRepository opened connection to the database");
 
             try
             {
+                _logger.LogInformation($"ReddeerMarketRepository opened connection to the database");
                 dbConnection.Open();
 
                 if (!entity.Securities?.Any() ?? true)
@@ -324,6 +339,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             finally
             {
+                _logger.LogInformation($"ReddeerMarketRepository closing db connection for create security");
+
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
@@ -336,6 +353,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             if (start > end)
             {
+                _logger.LogWarning($"ReddeerMarketRepository Get request had a start date larger than end date {start} {end}");
                 return new ExchangeFrame[0];
             }
 
@@ -350,10 +368,14 @@ namespace Surveillance.DataLayer.Aurora.Market
             try
             {
                 dbConnection.Open();
+                _logger.LogInformation($"ReddeerMarketRepository get opened connection to db");
 
+                _logger.LogInformation($"ReddeerMarketRepository get about to query for {start} and {end}");
                 using (var conn = dbConnection.QueryAsync<MarketStockExchangeSecuritiesDto>(GetMarketSql, query))
                 {
-                    var response = await conn;
+                    var response = (await conn)?.ToList() ?? new List<MarketStockExchangeSecuritiesDto>();
+
+                    _logger.LogInformation($"ReddeerMarketRepository get query for {start} and {end} received {response?.Count() ?? 0} results");
 
                     var groupedByExchange =
                         response
@@ -389,6 +411,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             finally
             {
+                _logger.LogInformation($"ReddeerMarketRepository get closed connection to db");
+
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
@@ -428,20 +452,27 @@ namespace Surveillance.DataLayer.Aurora.Market
             try
             {
                 dbConnection.Open();
+                _logger.LogInformation("Reddeer Market Repository CreateAndOrGetSecurityId opened connection to database");
 
                 var marketId = string.Empty;
                 var securityId = string.Empty;
 
                 var marketUpdate = new MarketUpdateDto(pair.Exchange);
+
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
                 using (var conn = dbConnection.ExecuteScalarAsync<string>(MarketMatchOrInsertSql, marketUpdate))
                 {
-                    marketId = await conn;                 
+                    marketId = await conn;
+                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId match market or insert sql for {pair.Exchange?.MarketIdentifierCode}");
                 }
 
                 var securityUpdate = new InsertSecurityDto(pair.Security, marketId, _cfiMapper);
+
+                _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId about to match security or insert sql for {pair.Security?.Name}");
                 using (var conn = dbConnection.ExecuteScalarAsync<string>(SecurityMatchOrInsertSql, securityUpdate))
                 {
                     securityId = await conn;
+                    _logger.LogInformation($"Reddeer Market Repository CreateAndOrGetSecurityId completed match security or insert sql for {pair.Security?.Name}");
                 }
 
                 return new MarketSecurityIds {MarketId = marketId, SecurityId = securityId};
@@ -452,6 +483,8 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             finally
             {
+                _logger.LogInformation("Reddeer Market Repository CreateAndOrGetSecurityId closed connection to database");
+
                 dbConnection.Close();
                 dbConnection.Dispose();
             }

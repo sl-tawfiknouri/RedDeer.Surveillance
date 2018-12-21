@@ -43,6 +43,7 @@ namespace RedDeer.DataImport.DataImport.App
         {
             try
             {
+                Logger.Log(LogLevel.Info, "Program.Main initialising dependency injection");
                 Container = new Container();
 
                 var builtConfig = BuildConfiguration();
@@ -65,6 +66,7 @@ namespace RedDeer.DataImport.DataImport.App
                 });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+                Logger.Log(LogLevel.Info, "Program.Main completed dependency injection");
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
@@ -162,6 +164,7 @@ namespace RedDeer.DataImport.DataImport.App
 
         private static void RegisterService()
         {
+            Logger.Log(LogLevel.Info, $"Program registering as service");
             // Environment.GetCommandLineArgs() includes the current DLL from a "dotnet my.dll --register-service" call, which is not passed to Main()
             var remainingArgs = Environment.GetCommandLineArgs()
                 .Where(arg => arg != RegisterServiceFlag)

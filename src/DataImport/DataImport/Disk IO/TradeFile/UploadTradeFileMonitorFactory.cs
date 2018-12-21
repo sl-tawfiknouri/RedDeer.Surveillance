@@ -33,6 +33,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         public IUploadTradeFileMonitor Create(OrderStream<Order> stream)
         {
+            _logger.LogInformation($"UploadTradeFileMonitorFactory creating a new trade file monitor");
             return new UploadTradeFileMonitor(
                 stream,
                 _uploadConfiguration,

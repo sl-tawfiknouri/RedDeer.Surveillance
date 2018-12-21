@@ -32,6 +32,8 @@ namespace DataImport.Disk_IO
                         new List<TCsv>());
             }
 
+            Logger.LogInformation($"BaseUploadFileProcessor processing {path}");
+
             var tradeOrders = new List<TFrame>();
             var failedTradeOrderReads = new List<TCsv>();
 
@@ -76,6 +78,7 @@ namespace DataImport.Disk_IO
                 Logger.LogError(e.Message);
             }
 
+            Logger.LogInformation($"BaseUploadFileProcessor processed {path}. Data in memory.");
             CheckAndLogFailedParsesFromDtoMapper(path);
 
             return new UploadFileProcessorResult<TCsv, TFrame>(tradeOrders, failedTradeOrderReads);

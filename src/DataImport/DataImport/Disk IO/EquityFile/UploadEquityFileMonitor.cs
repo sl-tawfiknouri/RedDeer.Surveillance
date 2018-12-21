@@ -68,11 +68,13 @@ namespace DataImport.Disk_IO.EquityFile
 
                     if (csvReadResults.UnsuccessfulReads.Any())
                     {
+                        _logger.LogInformation($"UploadEquityFileMonitor had unsuccessful reads count of {csvReadResults.UnsuccessfulReads.Count}");
                         FailedReads(path, csvReadResults, fileUpload);
                         return false;
                     }
                     else
                     {
+                        _logger.LogInformation($"UploadEquityFileMonitor had successful reads count of {csvReadResults.SuccessfulReads.Count}");
                         SuccessfulReads(path, csvReadResults, fileUpload);
                         return true;
                     }

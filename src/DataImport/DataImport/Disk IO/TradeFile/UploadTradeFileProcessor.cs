@@ -31,10 +31,12 @@ namespace DataImport.Disk_IO.TradeFile
             List<Order> marketUpdates,
             List<TradeFileCsv> failedMarketUpdateReads)
         {
+            Logger.LogInformation($"Upload Trade File Processor about to validate record {record?.RowId}");
             var validationResult = _tradeFileCsvValidator.Validate(record);
-
+            
             if (!validationResult.IsValid)
             {
+                Logger.LogInformation($"Upload Trade File Processor was unable to validate {record?.RowId}");
                 _csvToDtoMapper.FailedParseTotal += 1;
                 failedMarketUpdateReads.Add(record);
 
@@ -50,8 +52,10 @@ namespace DataImport.Disk_IO.TradeFile
             var mappedRecord = _csvToDtoMapper.Map(record);
             if (mappedRecord != null)
             {
+                Logger.LogInformation($"Upload Trade File Processor successfully validated and mapped record {record?.RowId}");
                 marketUpdates.Add(mappedRecord);
             }
+            Logger.LogInformation($"Upload Trade File Processor did not successfully map record {record?.RowId}");
         }
 
         protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
@@ -68,10 +72,12 @@ namespace DataImport.Disk_IO.TradeFile
         {
             if (rawRecord == null)
             {
+                Logger.LogInformation($"Upload Trade File Processor received a null record to map with row id {rowId}");
                 return null;
             }
 
-            return new TradeFileCsv
+            Logger.LogInformation($"Upload Trade File Processor about to map raw record to csv dto");
+            var tradeCsv = new TradeFileCsv
             {
                 MarketType = rawRecord["MarketType"],
                 MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
@@ -163,6 +169,9 @@ namespace DataImport.Disk_IO.TradeFile
 
                 RowId = rowId
             };
+
+            Logger.LogInformation($"Upload Trade File Processor has mapped raw record to csv dto");
+            return tradeCsv;
         }
     }
 }

@@ -71,11 +71,13 @@ namespace DataImport.Disk_IO.TradeFile
 
                     if (csvReadResults.UnsuccessfulReads.Any())
                     {
+                        _logger.LogInformation($"Upload Trade File Monitor had unsuccessful reads {csvReadResults.UnsuccessfulReads.Count}");
                         FailedRead(path, csvReadResults, fileUpload);
                         return false;
                     }
                     else
                     {
+                        _logger.LogInformation($"Upload Trade File Monitor had successful reads {csvReadResults.SuccessfulReads.Count}");
                         SuccessfulRead(path, csvReadResults, fileUpload);
                         return true;
                     }
@@ -97,7 +99,7 @@ namespace DataImport.Disk_IO.TradeFile
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
 
-            _logger.LogError($"Upload Trade File had errors when processing file for {path} and has {csvReadResults.UnsuccessfulReads.Count} failed uploads. About to write records to logs.");
+            _logger.LogError($"Upload Trade File had errors when processing file {path} and has {csvReadResults.UnsuccessfulReads.Count} failed uploads. About to write records to logs.");
 
             foreach (var row in csvReadResults.UnsuccessfulReads)
             {

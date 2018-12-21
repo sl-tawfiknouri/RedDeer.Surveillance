@@ -24,12 +24,15 @@ namespace DataImport.Disk_IO.EquityFile
         
         protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
+            Logger.LogInformation($"UploadEquityFileProcessor about to map a raw record with row id {rowId}");
             if (rawRecord == null)
             {
+                Logger.LogInformation($"UploadEquityFileProcessor received a null record. Returning");
                 return null;
             }
 
-            return new SecurityTickCsv
+            Logger.LogInformation($"UploadEquityFileProcessor mapping raw record from csv reader to dto");
+            var tickCsv = new SecurityTickCsv
             {
                 Timestamp = rawRecord["Timestamp"],
                 MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
@@ -67,6 +70,9 @@ namespace DataImport.Disk_IO.EquityFile
 
                 RowId = rowId
             };
+            Logger.LogInformation($"UploadEquityFileProcessor completed mapping raw record {rowId}");
+
+            return tickCsv;
         }
 
         protected override void MapRecord(

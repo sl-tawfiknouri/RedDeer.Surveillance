@@ -46,6 +46,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         public IUploadEquityFileMonitor Build(IStockExchangeStream exchangeStream)
         {
+            _logger.LogInformation($"Building an equity file monitor");
             return new UploadEquityFileMonitor(
                 exchangeStream,
                 _uploadConfiguration,

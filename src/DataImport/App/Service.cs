@@ -40,6 +40,7 @@ namespace RedDeer.DataImport.DataImport.App
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
+            _logger.LogInformation($"Service registering web host");
             _webHost
                 .Services
                 .GetRequiredService<IApplicationLifetime>()

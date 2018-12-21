@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using StructureMap;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
@@ -21,10 +22,13 @@ namespace RedDeer.DataImport.DataImport.App
 {
     public class Startup
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            Logger.Log(LogLevel.Info, $"StartUp configure services registering dependency injection");
             var container = new Container();
 
             var builtConfig = BuildConfiguration();
@@ -48,6 +52,7 @@ namespace RedDeer.DataImport.DataImport.App
             });
 
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+            Logger.Log(LogLevel.Info, $"Startup configure services completed registering dependency injection");
 
             return container.GetInstance<IServiceProvider>();
         }

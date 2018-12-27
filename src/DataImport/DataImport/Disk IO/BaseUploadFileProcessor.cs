@@ -84,6 +84,20 @@ namespace DataImport.Disk_IO
             return new UploadFileProcessorResult<TCsv, TFrame>(tradeOrders, failedTradeOrderReads);
         }
 
+        protected string PreProcess(string record)
+        {
+            if (string.IsNullOrWhiteSpace(record))
+                return string.Empty;
+
+            record = record.Replace('\u00A0', ' ');
+            record = record.Replace('\uFFFD', ' ');
+
+            if (string.IsNullOrWhiteSpace(record))
+                return string.Empty;
+
+            return record.Trim();
+        }
+
         protected abstract TCsv MapToCsvDto(CsvReader rawRecord, int rowId);
 
         protected abstract void MapRecord(TCsv record, List<TFrame> marketUpdates, List<TCsv> failedMarketUpdateReads);

@@ -195,7 +195,6 @@ namespace Surveillance.Rules.Layering
                 }
             }
 
-            opposingPosition.Add(mostRecentTrade);
             var allTradesInPositions = opposingPosition.Get().Concat(tradingPosition.Get()).ToList();
             var allTrades = new TradePosition(allTradesInPositions);
 

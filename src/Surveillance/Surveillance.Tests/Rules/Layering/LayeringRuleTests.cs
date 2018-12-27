@@ -214,9 +214,9 @@ namespace Surveillance.Tests.Rules.Layering
             rule.OnNext(sellEvent);
             rule.OnNext(eschaton);
 
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustNotHaveHappened();
         }
 
         [Test]

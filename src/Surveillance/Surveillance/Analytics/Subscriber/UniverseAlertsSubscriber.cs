@@ -34,6 +34,7 @@ namespace Surveillance.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
+        private bool _hasReceivedAHighProfitFlush;
 
         public UniverseAlertsSubscriber(
             int opCtxId,
@@ -135,6 +136,12 @@ namespace Surveillance.Analytics.Subscriber
 
         private void HighProfits(IUniverseAlertEvent alert)
         {
+            if (alert.IsFlushEvent && !_hasReceivedAHighProfitFlush)
+            {
+                _hasReceivedAHighProfitFlush = true;
+                return;
+            }
+
             if (alert.IsFlushEvent)
             {
                 Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush(alert.Context);

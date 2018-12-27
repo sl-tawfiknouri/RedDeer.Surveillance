@@ -19,6 +19,7 @@ namespace DomainV2.Files
             RulesForIdentificationCodes();
             RulesForDerivativeIdentificationCodes();
             RuleFor(x => x.InstrumentCfi).NotEmpty().MinimumLength(1).MaximumLength(6);
+            RuleFor(x => x.InstrumentCfi).Must(x => !string.IsNullOrWhiteSpace(x));
 
             // Order
             RulesForOrderProperties();

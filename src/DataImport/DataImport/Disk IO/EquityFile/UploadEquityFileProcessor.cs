@@ -34,39 +34,39 @@ namespace DataImport.Disk_IO.EquityFile
             Logger.LogInformation($"UploadEquityFileProcessor mapping raw record from csv reader to dto");
             var tickCsv = new SecurityTickCsv
             {
-                Timestamp = rawRecord["Timestamp"],
-                MarketIdentifierCode = rawRecord["MarketIdentifierCode"],
-                MarketName = rawRecord["MarketName"],
+                Timestamp = PreProcess(rawRecord["Timestamp"]),
+                MarketIdentifierCode = PreProcess(rawRecord["MarketIdentifierCode"]),
+                MarketName = PreProcess(rawRecord["MarketName"]),
 
-                SecurityName = rawRecord["SecurityClientIdentifier"],
-                Currency = rawRecord["Currency"],
+                SecurityName = PreProcess(rawRecord["SecurityClientIdentifier"]),
+                Currency = PreProcess(rawRecord["Currency"]),
 
-                SecurityClientIdentifier = rawRecord["SecurityClientIdentifier"],
-                Sedol = rawRecord["Sedol"],
-                Isin =  rawRecord["Isin"],
-                Figi = rawRecord["Figi"],
-                ExchangeSymbol = rawRecord["ExchangeSymbol"],
-                Cusip = rawRecord["Cusip"],
+                SecurityClientIdentifier = PreProcess(rawRecord["SecurityClientIdentifier"]),
+                Sedol = PreProcess(rawRecord["Sedol"]),
+                Isin = PreProcess(rawRecord["Isin"]),
+                Figi = PreProcess(rawRecord["Figi"]),
+                ExchangeSymbol = PreProcess(rawRecord["ExchangeSymbol"]),
+                Cusip = PreProcess(rawRecord["Cusip"]),
 
-                Cfi = rawRecord["Cfi"],
+                Cfi = PreProcess(rawRecord["Cfi"]),
 
-                Ask = rawRecord["Ask"],
-                Bid = rawRecord["Bid"],
-                Price = rawRecord["Price"],
+                Ask = PreProcess(rawRecord["Ask"]),
+                Bid = PreProcess(rawRecord["Bid"]),
+                Price = PreProcess(rawRecord["Price"]),
 
-                Open = rawRecord["Open"],
-                Close = rawRecord["Close"],
-                High = rawRecord["High"],
-                Low = rawRecord["Low"],
+                Open = PreProcess(rawRecord["Open"]),
+                Close = PreProcess(rawRecord["Close"]),
+                High = PreProcess(rawRecord["High"]),
+                Low = PreProcess(rawRecord["Low"]),
 
-                Volume = rawRecord["Volume"],
-                ListedSecurities = rawRecord["ListedSecurities"],
-                MarketCap = rawRecord["MarketCap"],
+                Volume = PreProcess(rawRecord["Volume"]),
+                ListedSecurities = PreProcess(rawRecord["ListedSecurities"]),
+                MarketCap = PreProcess(rawRecord["MarketCap"]),
 
-                IssuerIdentifier = rawRecord["IssuerIdentifier"],
-                Lei = rawRecord["Lei"],
-                BloombergTicker = rawRecord["BloombergTicker"],
-                DailyVolume = rawRecord["DailyVolume"],
+                IssuerIdentifier = PreProcess(rawRecord["IssuerIdentifier"]),
+                Lei = PreProcess(rawRecord["Lei"]),
+                BloombergTicker = PreProcess(rawRecord["BloombergTicker"]),
+                DailyVolume = PreProcess(rawRecord["DailyVolume"]),
 
                 RowId = rowId
             };

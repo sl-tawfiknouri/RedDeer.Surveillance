@@ -114,7 +114,7 @@ namespace Utilities.Aws_IO
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogError(ex.ToString());
+                    _logger?.LogError("AwsQueueClient: " + ex.Message + " " + ex.InnerException?.Message);
                 }
             }
 

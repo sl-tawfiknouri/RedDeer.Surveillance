@@ -59,7 +59,7 @@ namespace DataImport.S3_IO
             }
             catch (Exception e)
             {
-                _logger.LogError($"{e.Message} - {e.InnerException?.Message}");
+                _logger.LogError($"S3FileUploadMonitoringProcess - {e.Message} - {e.InnerException?.Message}");
             }
         }
 

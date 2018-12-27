@@ -39,6 +39,8 @@ namespace Surveillance.Rules.HighProfits
 
         public void OnNext(IUniverseEvent value)
         {
+            // if removing the market cap (multiverse transformer) rule
+            // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
             _streamRule.OnNext(value);
             _multiverseTransformer.OnNext(value);
         }

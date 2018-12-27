@@ -28,7 +28,7 @@ namespace DomainV2.Streams
 
         public void OnError(Exception error)
         {
-            _logger.Log(LogLevel.Error, error.Message);
+            _logger.LogError("RecordingObserver " + error.Message);
         }
 
         public void OnNext(T value)

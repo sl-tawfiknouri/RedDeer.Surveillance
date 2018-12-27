@@ -178,7 +178,7 @@ namespace Surveillance.Rules.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogWarning($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -281,7 +281,7 @@ namespace Surveillance.Rules.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogWarning($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 

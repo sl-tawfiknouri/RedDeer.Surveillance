@@ -292,7 +292,7 @@ namespace Surveillance.Rules.Layering
             var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
             if (securityResult.HadMissingData)
             {
-                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogWarning($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();

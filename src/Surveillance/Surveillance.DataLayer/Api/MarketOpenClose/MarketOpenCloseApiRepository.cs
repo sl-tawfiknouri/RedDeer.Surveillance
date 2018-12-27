@@ -55,7 +55,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError("MarketOpenCloseApiRepository: " + e.Message);
             }
 
             return new ExchangeDto[0];

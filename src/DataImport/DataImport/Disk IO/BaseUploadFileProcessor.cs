@@ -75,7 +75,7 @@ namespace DataImport.Disk_IO
             }
             catch (Exception e)
             {
-                Logger.LogError(e.Message);
+                Logger.LogError("BaseUploadFileProcessor: " + e.Message);
             }
 
             Logger.LogInformation($"BaseUploadFileProcessor processed {path}. Data in memory.");

@@ -46,24 +46,24 @@ namespace Surveillance.Tests.Currency
         }
 
         [Test]
-        public async Task Convert_NullCurrencyAmounts_ReturnsNull()
+        public async Task Convert_NullCurrencyAmounts_ReturnsNotNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
 
             var result = await converter.Convert(null, _currency, _conversionTime, _ruleCtx);
 
-            Assert.IsNull(result);
+            Assert.IsNotNull(result);
         }
 
         [Test]
-        public async Task Convert_EmptyCurrencyAmounts_ReturnsNull()
+        public async Task Convert_EmptyCurrencyAmounts_ReturnsNotNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
             var currencyAmounts = new List<CurrencyAmount>();
 
             var result = await converter.Convert(currencyAmounts, _currency, _conversionTime, _ruleCtx);
             
-            Assert.IsNull(result);
+            Assert.IsNotNull(result);
         }
 
         [Test]

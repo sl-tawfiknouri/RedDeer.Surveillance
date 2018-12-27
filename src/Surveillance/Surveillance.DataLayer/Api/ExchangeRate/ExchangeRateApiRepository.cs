@@ -66,7 +66,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError("ExchangeRateApiRepository: " + e.Message);
             }
 
             return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();

@@ -56,7 +56,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError("ruleParameterApiRepository: " + e.Message);
             }
 
             return new RuleParameterDto();
@@ -93,7 +93,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError("RuleParameterApiRepository: " + e.Message);
             }
 
             return new RuleParameterDto();

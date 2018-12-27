@@ -58,7 +58,7 @@ namespace Surveillance.DataLayer.Api.Enrichment
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError("EnrichmentApiRepository: " + e.Message);
             }
 
             return new SecurityEnrichmentMessage();

@@ -37,7 +37,7 @@ namespace Surveillance.Currency
             if (currencyAmounts == null
                 || !currencyAmounts.Any())
             {
-                return null;
+                return new CurrencyAmount(0, targetCurrency);
             }
 
             if (string.IsNullOrWhiteSpace(targetCurrency.Value))

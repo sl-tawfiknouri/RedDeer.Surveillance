@@ -115,7 +115,7 @@ namespace DataImport.S3_IO
                 }
                 catch (Exception e)
                 {
-                    _logger.Log(LogLevel.Critical, e.Message);
+                    _logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
                 }
             }
         }

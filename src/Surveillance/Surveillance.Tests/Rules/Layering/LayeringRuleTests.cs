@@ -173,8 +173,10 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
+            tradeBuy.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
             tradeBuy.OrderPosition = OrderPositions.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
+            tradeSell.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
             tradeSell.OrderPosition = OrderPositions.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 

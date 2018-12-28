@@ -2,6 +2,8 @@
 using NLog.Extensions.Logging;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Services;
+using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser
 {
@@ -14,6 +16,7 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
+            For<IDataRequestsService>().Use<DataRequestsService>();
         }
     }
 }

@@ -1,0 +1,1 @@
+dotnet RedDeer.ThirdPartySurveillanceDataSynchroniser.App.dll --register-service

@@ -10,6 +10,7 @@ using NLog;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;
+using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
@@ -37,15 +38,12 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
                 Container = new Container();
 
                 var builtConfig = BuildConfiguration();
+                Container.Inject(typeof(IAwsConfiguration), builtConfig);
+                
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 // Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 // SystemProcessContext.ProcessType = SystemProcessType.RelayService;
-
-
-                // var builtDataLayerConfig = BuildDataLayerConfiguration();
-                // Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
-
 
                 Container.Configure(config =>
                 {
@@ -77,17 +75,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
             return builder.Build(configurationBuilder);
         }
-
-        //private static IDataLayerConfiguration BuildDataLayerConfiguration()
-        //{
-        //    var configurationBuilder = new ConfigurationBuilder()
-        //        .AddJsonFile("appsettings.json", true, true)
-        //        .Build();
-
-        //    var builder = new ConfigBuilder.ConfigBuilder();
-
-        //    return builder.BuildData(configurationBuilder);
-        //}
 
         private static void ProcessArguments(string[] args)
         {

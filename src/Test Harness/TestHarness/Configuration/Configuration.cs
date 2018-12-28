@@ -9,6 +9,7 @@ namespace TestHarness.Configuration
 
         public string StockExchangeDomainUriDomainSegment { get; set; }
         public string StockExchangeDomainUriPort { get; set; }
+        public string DataSynchroniserRequestQueueName { get; set; }
         public string ScheduledRuleQueueName {get; set;}
         public string CaseMessageQueueName { get; set; }
         public string ScheduleRuleDistributedWorkQueueName { get; set; }

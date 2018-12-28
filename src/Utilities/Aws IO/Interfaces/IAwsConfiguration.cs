@@ -2,6 +2,7 @@
 {
     public interface IAwsConfiguration
     {
+        string DataSynchroniserRequestQueueName { get; }
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
         string ScheduleRuleDistributedWorkQueueName { get; }

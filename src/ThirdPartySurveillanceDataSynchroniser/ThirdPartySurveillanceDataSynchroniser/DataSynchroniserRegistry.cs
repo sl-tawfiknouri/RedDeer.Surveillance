@@ -4,6 +4,8 @@ using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
+using Utilities.Aws_IO;
+using Utilities.Aws_IO.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser
 {
@@ -17,6 +19,7 @@ namespace ThirdPartySurveillanceDataSynchroniser
 
             For<IMediator>().Use<Mediator>();
             For<IDataRequestsService>().Use<DataRequestsService>();
+            For<IAwsQueueClient>().Use<AwsQueueClient>();
         }
     }
 }

@@ -11,4 +11,12 @@
     <PackageReference Include="StructureMap" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
+  </ItemGroup>
+
 </Project>

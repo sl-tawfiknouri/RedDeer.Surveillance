@@ -27,6 +27,10 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             DateTime ruleScheduleEnd,
             string correlationId);
 
+        ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
+            string queueMessageId,
+            string ruleId);
+
         ISystemProcessContext EndEvent();
         ISystemProcessContext EndEventWithError(string message);
         ISystemProcessContext EndEventWithMissingDataError();

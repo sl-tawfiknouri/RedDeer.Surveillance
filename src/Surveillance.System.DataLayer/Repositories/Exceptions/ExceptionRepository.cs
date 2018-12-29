@@ -14,9 +14,9 @@ namespace Surveillance.System.DataLayer.Repositories.Exceptions
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ExceptionRepository> _logger;
 
-        private const string ExceptionInsertSql = @"INSERT INTO Exceptions(Exception, InnerException, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId, SystemProcessOperationFileUploadId) VALUES(@ExceptionMessage, @InnerExceptionMessage, @StackTrace, @SystemProcessId, @SystemProcessOperationId, @SystemProcessOperationRuleRunId, @SystemProcessOperationDistributeRuleId, @SystemProcessOperationUploadFileRuleId)";
+        private const string ExceptionInsertSql = @"INSERT INTO Exceptions(Exception, InnerException, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId, SystemProcessOperationFileUploadId, SystemProcessOperationThirdPartyDataRequestId) VALUES(@ExceptionMessage, @InnerExceptionMessage, @StackTrace, @SystemProcessId, @SystemProcessOperationId, @SystemProcessOperationRuleRunId, @SystemProcessOperationDistributeRuleId, @SystemProcessOperationUploadFileRuleId, @SystemProcessOperationThirdPartyDataRequestId)";
 
-        private const string ExceptionDashboardSql = @"SELECT Id as Id, Exception as ExceptionMessage, InnerException As InnerExceptionMessage, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId, SystemProcessOperationFileUploadId AS SystemProcessOperationUploadFileRuleId FROM Exceptions ORDER BY ID DESC Limit 30;";
+        private const string ExceptionDashboardSql = @"SELECT Id as Id, Exception as ExceptionMessage, InnerException As InnerExceptionMessage, StackTrace, SystemProcessId, SystemProcessOperationId, SystemProcessOperationRuleRunId, SystemProcessOperationDistributeRuleId, SystemProcessOperationFileUploadId AS SystemProcessOperationUploadFileRuleId, SystemProcessOperationThirdPartyDataRequestId AS SystemProcessOperationThirdPartyDataRequestId FROM Exceptions ORDER BY ID DESC Limit 30;";
 
         public ExceptionRepository(
             IConnectionStringFactory dbConnectionFactory,

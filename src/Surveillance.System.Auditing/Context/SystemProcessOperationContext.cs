@@ -16,6 +16,7 @@ namespace Surveillance.System.Auditing.Context
         private readonly ISystemProcessOperationRunRuleContextFactory _runRuleContextFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleContextFactory;
         private readonly ISystemProcessOperationFileUploadContextFactory _uploadFileFactory;
+        private readonly ISystemProcessOperationDataRequestContextFactory _dataRequestFactory;
         private readonly IOperationLogging _operationLogging;
         private bool _hasEnded = false;
 
@@ -25,6 +26,7 @@ namespace Surveillance.System.Auditing.Context
             ISystemProcessOperationRunRuleContextFactory runRuleContextFactory,
             ISystemProcessOperationDistributeRuleContextFactory distributeRuleContextFactory,
             ISystemProcessOperationFileUploadContextFactory uploadFileFactory,
+            ISystemProcessOperationDataRequestContextFactory dataRequestFactory,
             IOperationLogging operationLogging)
         {
             _systemProcessContext =
@@ -46,6 +48,10 @@ namespace Surveillance.System.Auditing.Context
             _uploadFileFactory =
                 uploadFileFactory
                 ?? throw new ArgumentNullException(nameof(uploadFileFactory));
+
+            _dataRequestFactory =
+                dataRequestFactory
+                ?? throw new ArgumentNullException(nameof(dataRequestFactory));
 
             _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
         }
@@ -118,6 +124,25 @@ namespace Surveillance.System.Auditing.Context
                 ScheduleRuleStart = ruleScheduleBegin,
                 ScheduleRuleEnd = ruleScheduleEnd,
                 CorrelationId = correlationId
+            };
+
+            ctx.StartEvent(startEvent);
+
+            return ctx;
+        }
+
+        public ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
+            string queueMessageId,
+            string ruleId)
+        {
+            var ctx = _dataRequestFactory.Build(this);
+
+            var startEvent = new SystemProcessOperationThirdPartyDataRequest
+            {
+                SystemProcessId = _systemProcessOperation.SystemProcessId,
+                SystemProcessOperationId = _systemProcessOperation.Id,
+                QueueMessageId = queueMessageId,
+                RuleId = ruleId
             };
 
             ctx.StartEvent(startEvent);

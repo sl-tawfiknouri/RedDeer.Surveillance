@@ -10,5 +10,6 @@ namespace Surveillance.System.Auditing.Logging.Interfaces
         void Log(Exception e, ISystemProcessOperationDistributeRule distributeRule);
         void Log(Exception e, ISystemProcessOperationRuleRun ruleRun);
         void Log(Exception e, ISystemProcessOperationUploadFile uploadRule);
+        void Log(Exception e, ISystemProcessOperationThirdPartyDataRequest request);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DomainV2.DTO;
+using DomainV2.DTO.Interfaces;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
@@ -20,6 +22,7 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For<IMediator>().Use<Mediator>();
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
+            For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
         }
     }
 }

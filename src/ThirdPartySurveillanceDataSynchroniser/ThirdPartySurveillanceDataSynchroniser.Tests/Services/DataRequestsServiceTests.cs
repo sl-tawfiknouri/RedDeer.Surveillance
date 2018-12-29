@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using DomainV2.DTO;
+using DomainV2.DTO.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -18,6 +20,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private ISystemProcessContext _sysCtx;
+        private IThirdPartyDataRequestSerialiser _serialiser;
 
         [SetUp]
         public void Setup()
@@ -26,33 +29,34 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _logger = A.Fake<ILogger<DataRequestsService>>();
             _sysCtx = A.Fake<ISystemProcessContext>();
+            _serialiser = new ThirdPartyDataRequestSerialiser();
         }
 
         [Test]
         public void Constructor_NullLogger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, null));
         }
 
         [Test]
         public void Constructor_NullAwsQueueClient_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(null, _awsConfiguration, _sysCtx, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(null, _awsConfiguration, _sysCtx, _serialiser, _logger));
         }
 
         [Test]
         public void Constructor_NullAwsConfiguration_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, null, _sysCtx, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, null, _sysCtx, _serialiser, _logger));
         }
 
         [Test]
         public void Initiate_Calls_AwsQueueClient_SubscribeToQueueAsync()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _logger);
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _logger);
 
             dataRequestsService.Initiate();
 

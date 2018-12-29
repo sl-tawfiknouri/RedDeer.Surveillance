@@ -8,10 +8,6 @@ namespace TestHarness.App
         {
             var networkConfiguration = new Configuration.Configuration
             {
-                TradeWebsocketUriPort = configurationBuilder.GetValue<string>("TradeWebsocketUriPort"),
-                TradeWebsocketUriDomain = configurationBuilder.GetValue<string>("TradeWebsocketUriDomain"),
-                StockExchangeDomainUriDomainSegment = configurationBuilder.GetValue<string>("StockExchangeDomainUriDomain"),
-                StockExchangeDomainUriPort = configurationBuilder.GetValue<string>("StockExchangeDomainUriPort"),
                 IsEc2Instance = configurationBuilder.GetValue<bool?>("IsEc2Instance") ?? false,
                 ScheduledRuleQueueName = configurationBuilder.GetValue<string>("ScheduledRuleQueueName"),
                 CaseMessageQueueName = configurationBuilder.GetValue<string>("CaseMessageQueueName"),

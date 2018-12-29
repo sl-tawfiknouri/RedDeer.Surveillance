@@ -4,11 +4,6 @@ namespace TestHarness.Configuration.Interfaces
 {
     public interface INetworkConfiguration : IAwsConfiguration
     {
-        string TradeWebsocketUriDomain { get; }
-        string TradeWebsocketUriPort { get; }
-
-        string StockExchangeDomainUriDomainSegment { get; }
-        string StockExchangeDomainUriPort { get; }
         string ClientServiceUrl { get; set; }
         string SurveillanceUserApiAccessToken { get; set; }
     }

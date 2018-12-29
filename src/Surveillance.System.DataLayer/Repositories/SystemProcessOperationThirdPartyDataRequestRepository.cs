@@ -13,7 +13,7 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<SystemProcessOperationThirdPartyDataRequestRepository> _logger;
 
-        private const string CreateSql = "INSERT INTO SystemProcessOperationDataSynchroniserRequest(SystemProcessOperationId, QueueMessageId, RuleId) VALUES(@SystemProcessOperationId, @QueueMessageId, @RuleId); SELECT LAST_INSERT_ID();";
+        private const string CreateSql = "INSERT INTO SystemProcessOperationDataSynchroniserRequest(SystemProcessOperationId, QueueMessageId, RuleRunId) VALUES(@SystemProcessOperationId, @QueueMessageId, @RuleRunId); SELECT LAST_INSERT_ID();";
 
         public SystemProcessOperationThirdPartyDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,

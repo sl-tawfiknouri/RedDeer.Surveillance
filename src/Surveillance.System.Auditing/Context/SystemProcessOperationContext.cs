@@ -142,7 +142,7 @@ namespace Surveillance.System.Auditing.Context
                 SystemProcessId = _systemProcessOperation.SystemProcessId,
                 SystemProcessOperationId = _systemProcessOperation.Id,
                 QueueMessageId = queueMessageId,
-                RuleId = ruleId
+                RuleRunId = ruleId
             };
 
             ctx.StartEvent(startEvent);

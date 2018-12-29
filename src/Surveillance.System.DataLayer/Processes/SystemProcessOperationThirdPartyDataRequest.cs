@@ -12,11 +12,11 @@ namespace Surveillance.System.DataLayer.Processes
         /// <summary>
         /// If requested via a rule - what was its id
         /// </summary>
-        public string RuleId { get; set; }
+        public string RuleRunId { get; set; }
 
         public override string ToString()
         {
-            return $"Id {Id} | SystemProcessOperationId {SystemProcessOperationId} | QueueMessageId {QueueMessageId} | RuleId {RuleId}";
+            return $"Id {Id} | SystemProcessOperationId {SystemProcessOperationId} | QueueMessageId {QueueMessageId} | RuleId {RuleRunId}";
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
+using DomainV2.DTO;
+using DomainV2.DTO.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
@@ -131,6 +133,9 @@ namespace Surveillance
 
             For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
+
+            For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
+            For<IDataRequestMessageSender>().Use<DataRequestMessageSender>();
 
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();

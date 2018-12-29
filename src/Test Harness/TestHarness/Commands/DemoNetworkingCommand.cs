@@ -3,7 +3,6 @@ using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -12,7 +11,6 @@ namespace TestHarness.Commands
         private readonly IAppFactory _appFactory;
         private IEquityDataGenerator _equityProcess;
         private IOrderDataGenerator _tradingProcess;
-        private INetworkManager _networkManager;
 
         public DemoNetworkingCommand(IAppFactory appFactory)
         {
@@ -83,36 +81,6 @@ namespace TestHarness.Commands
                 .TradingCancelledOrdersFactory
                 .Create();
 
-            _networkManager =
-                _appFactory
-                .NetworkManagerFactory
-                .CreateWebsockets();
-
-            // start networking processes
-            var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
-                return;
-            }
-
-            connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run demo networking.");
-                return;
-            }
-
-            connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run demo networking.");
-                return;
-            }
-
             // start updating equity data
             _equityProcess.InitiateWalk(equityStream);
 
@@ -124,8 +92,6 @@ namespace TestHarness.Commands
 
         private void Stop()
         {
-            _networkManager?.TerminateAllNetworkConnections();
-
             _tradingProcess?.TerminateTrading();
 
             _equityProcess?.TerminateWalk();

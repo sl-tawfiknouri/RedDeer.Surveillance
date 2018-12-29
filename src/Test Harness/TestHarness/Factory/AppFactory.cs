@@ -10,8 +10,6 @@ using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Factory.NetworkFactory;
-using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradingFactory;
 using TestHarness.Factory.TradingFactory.Interfaces;
 using TestHarness.State.Interfaces;
@@ -58,7 +56,6 @@ namespace TestHarness.Factory
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
             EquitiesDataGenerationProcessFactory = new EquitiesDataGenerationProcessFactory(Logger);
-            NetworkManagerFactory = new NetworkManagerFactory(Console, Logger, networkConfiguration);
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
@@ -131,8 +128,6 @@ namespace TestHarness.Factory
         public IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
         public IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }
-
-        public INetworkManagerFactory NetworkManagerFactory { get; } 
 
         public ITradingFactory TradingFactory { get; }
 

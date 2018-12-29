@@ -29,10 +29,6 @@ using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Disk_IO;
 using Utilities.Disk_IO.Interfaces;
-using Utilities.Network_IO.Websocket_Connections;
-using Utilities.Network_IO.Websocket_Connections.Interfaces;
-using Utilities.Network_IO.Websocket_Hosts;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace DataImport
 {
@@ -49,19 +45,8 @@ namespace DataImport
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<StockExchangeStream>();
 
-            For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
-
-            For<INetworkTrunk>().Use<NetworkTrunk>();
-            For<INetworkFailOver>().Use<NetworkFailOverLocalMemory>();
-            For<INetworkSwitch>().Use<NetworkSwitch>();
-
-            For<INetworkExchange>().Use<NetworkExchange>();
             For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
             For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
-
-            For<IDuplexMessageFactory>().Use<DuplexMessageFactory>();
-            For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
-            For<IWebsocketHost>().Use<RedDeerWebsocketHost>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IReddeerDirectory>().Use<ReddeerDirectory>();

@@ -66,5 +66,29 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
                 A<AwsResusableCancellationToken>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public async Task Execute_Deserialises_Message()
+        {
+            var mockSerialiser = A.Fake<IThirdPartyDataRequestSerialiser>();
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, mockSerialiser, _logger);
+
+            await dataRequestsService.Execute("123", "test-str");
+
+            A
+                .CallTo(() => mockSerialiser.Deserialise("test-str")).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Execute_Creates_NewOperationContext()
+        {
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _logger);
+
+            await dataRequestsService.Execute("123", "test-str");
+
+            A
+                .CallTo(() => _sysCtx.CreateAndStartOperationContext()).MustHaveHappenedOnceExactly();
+        }
+
     }
 }

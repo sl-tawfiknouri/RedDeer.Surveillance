@@ -11,6 +11,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -29,6 +30,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IDataRequestMessageSender _dataRequestSender;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -40,6 +42,7 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
+            IDataRequestMessageSender dataRequestSender,
             ILogger<IHighVolumeRule> logger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
@@ -55,6 +58,7 @@ namespace Surveillance.Rules.HighVolume
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _dataRequestSender = dataRequestSender ?? throw new ArgumentNullException(nameof(dataRequestSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -345,6 +349,8 @@ namespace Surveillance.Rules.HighVolume
 
             if (_hadMissingData)
             {
+                var requestTask = _dataRequestSender.Send(_ruleCtx.Id());
+                requestTask.Wait();
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else

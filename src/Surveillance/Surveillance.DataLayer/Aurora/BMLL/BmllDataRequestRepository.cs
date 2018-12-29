@@ -16,6 +16,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         private const string CreateDataRequestSql = @"
             INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime, 0);";
 
+        private const string CheckDataRequestSql = @"
+            SELECT EXISTS(SELECT * FROM RuleDataRequest WHERE SystemProcessOperationRuleRunId = @ruleRunId);";
+
         public BmllDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<BmllDataRequestRepository> logger)
@@ -56,6 +59,35 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
+        }
+
+        public async Task<bool> HasDataRequestForRuleRun(string ruleRunId)
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                _logger.LogInformation($"BmllDataRequestRepository checking if there's any market data requests from rule run {ruleRunId}");
+                using (var conn = dbConnection.QueryFirstAsync<bool>(CheckDataRequestSql, new { ruleRunId }))
+                {
+                    var result = await conn;
+
+                    _logger.LogInformation($"BmllDataRequestRepository checked if there's any market data requests and it was {result} for {ruleRunId}");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Bmll data request repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return false;
         }
 
         public class MarketDataRequestDto

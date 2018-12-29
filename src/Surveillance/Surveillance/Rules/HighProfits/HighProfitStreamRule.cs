@@ -8,6 +8,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;

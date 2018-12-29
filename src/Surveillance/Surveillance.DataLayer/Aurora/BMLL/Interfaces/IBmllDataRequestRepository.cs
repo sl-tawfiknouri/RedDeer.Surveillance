@@ -6,5 +6,6 @@ namespace Surveillance.DataLayer.Aurora.BMLL.Interfaces
     public interface IBmllDataRequestRepository
     {
         Task CreateDataRequest(MarketDataRequest request);
+        Task<bool> HasDataRequestForRuleRun(string ruleRunId);
     }
 }

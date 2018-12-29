@@ -8,6 +8,11 @@ using DasMulli.Win32.ServiceUtils;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
+using Surveillance.System.Auditing;
+using Surveillance.System.Auditing.Context;
+using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;
 using Utilities.Aws_IO.Interfaces;
@@ -39,17 +44,20 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IAwsConfiguration), builtConfig);
-                
+                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);
-                // Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                // SystemProcessContext.ProcessType = SystemProcessType.RelayService;
 
                 Container.Configure(config =>
                 {
                     config.IncludeRegistry<DataSynchroniserRegistry>();
+                    config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                    config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
+
+                SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
 
                 Logger.Log(LogLevel.Info, "Program.Main completed dependency injection");
 

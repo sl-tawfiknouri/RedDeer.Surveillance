@@ -65,7 +65,8 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
                 ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
                 ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
                 CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
-                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
             };
 
             return config;

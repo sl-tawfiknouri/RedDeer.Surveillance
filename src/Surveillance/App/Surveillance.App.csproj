@@ -69,6 +69,9 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\16 - Insert data synchroniser enum.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\15 - Rule data request.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

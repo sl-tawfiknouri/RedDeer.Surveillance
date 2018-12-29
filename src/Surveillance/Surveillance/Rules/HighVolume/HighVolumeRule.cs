@@ -9,7 +9,6 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;

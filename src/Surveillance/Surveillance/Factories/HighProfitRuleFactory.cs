@@ -3,6 +3,7 @@ using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighProfits;
@@ -26,6 +27,7 @@ namespace Surveillance.Factories
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IDataRequestMessageSender _messageSender;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitRuleFactory(
@@ -36,6 +38,7 @@ namespace Surveillance.Factories
             IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
+            IDataRequestMessageSender messageSender,
             ILogger<HighProfitsRule> logger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
@@ -46,6 +49,7 @@ namespace Surveillance.Factories
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
@@ -67,6 +71,7 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _messageSender,
                 _logger);
 
             var marketClosure = new HighProfitMarketClosureRule(
@@ -78,6 +83,7 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _messageSender,
                 _logger);
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -26,6 +27,7 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IDataRequestMessageSender messageSender,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters, 
@@ -37,6 +39,7 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator,
                 orderFilter,
                 factory,
+                messageSender,
                 logger)
         {
             MarketClosureRule = true;

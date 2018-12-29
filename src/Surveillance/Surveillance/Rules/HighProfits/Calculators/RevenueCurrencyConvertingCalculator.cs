@@ -8,7 +8,6 @@ using DomainV2.Markets;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -37,7 +36,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
         /// <summary>
         /// Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
-        public async Task<CurrencyAmount?> CalculateRevenueOfPosition(
+        public async Task<RevenueCurrencyAmount> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
@@ -57,14 +56,14 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (sizeOfVirtualPosition <= 0)
             {
                 // fully traded out position; return its value
-                return realisedRevenue;
+                return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 
             // has a virtual position; calculate its value
             var security = activeFulfilledTradeOrders.FirstOrDefault()?.Instrument;
             if (security == null)
             {
-                return realisedRevenue;
+                return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 
             var marketDataRequest =
@@ -76,7 +75,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (marketDataRequest == null)
             {
-                return null;
+                return new RevenueCurrencyAmount(false, null);
             }
 
             var marketResponse = universeMarketCache.Get(marketDataRequest);
@@ -85,13 +84,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             {
                 Logger.LogInformation($"Revenue currency converting calculator calculating for inferred virtual profits due to missing market data");
 
-                return await CalculateInferredVirtualProfit(
-                    activeFulfilledTradeOrders,
-                    realisedRevenue,
-                    sizeOfVirtualPosition,
-                    _targetCurrency,
-                    universeDateTime,
-                    ctx);
+                return new RevenueCurrencyAmount(true, null);
             }
 
             var securityTick = marketResponse.Response;
@@ -107,15 +100,17 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (realisedRevenue == null)
             {
-                return convertedVirtualRevenues;
+                return new RevenueCurrencyAmount(false, convertedVirtualRevenues);
             }
 
             if (convertedVirtualRevenues == null)
             {
-                return realisedRevenue;
+                return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 
-            return realisedRevenue + convertedVirtualRevenues;
+            var totalCurrencyAmounts = realisedRevenue + convertedVirtualRevenues;
+
+            return new RevenueCurrencyAmount(false, totalCurrencyAmounts);
         }
 
         private async Task<CurrencyAmount?> CalculateRealisedRevenue
@@ -173,52 +168,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
-
-        private async Task<CurrencyAmount?> CalculateInferredVirtualProfit(
-            IList<Order> activeFulfilledTradeOrders,
-            CurrencyAmount? realisedRevenue,
-            long sizeOfVirtualPosition,
-            DomainV2.Financial.Currency targetCurrency,
-            DateTime universeDateTime,
-            ISystemProcessOperationRunRuleContext ctx)
-        {
-            Logger.LogInformation(
-                "High Profit Rule - did not have access to exchange data. Attempting to infer the best price to use when pricing the virtual component of the profits.");
-
-            var mostRecentTrade =
-                activeFulfilledTradeOrders
-                    .Where(afto => afto.OrderAveragePrice != null)
-                    .OrderByDescending(afto => afto.MostRecentDateEvent())
-                    .FirstOrDefault();
-
-            if (mostRecentTrade == null)
-            {
-                return realisedRevenue;
-            }
-
-            var inferredVirtualProfits = mostRecentTrade.OrderAveragePrice.GetValueOrDefault().Value * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(inferredVirtualProfits, mostRecentTrade.OrderCurrency);
-            var convertedCurrencyAmount = await _currencyConverter.Convert(new[] { currencyAmount }, targetCurrency, universeDateTime, ctx);
-
-            if (realisedRevenue == null
-                && convertedCurrencyAmount == null)
-            {
-                return null;
-            }
-
-            if (realisedRevenue == null)
-            {
-                return convertedCurrencyAmount;
-            }
-
-            if (convertedCurrencyAmount == null)
-            {
-                return realisedRevenue;
-            }
-
-            return realisedRevenue + convertedCurrencyAmount;
-        }
-
+        
         protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
         {
             var tradingHours = TradingHoursManager.Get(mic);

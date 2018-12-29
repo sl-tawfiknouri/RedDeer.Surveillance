@@ -34,7 +34,9 @@ namespace Surveillance.Rules.HighProfits
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IDataRequestMessageSender _messageSender;
 
+        private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
 
         public HighProfitStreamRule(
@@ -47,6 +49,7 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IDataRequestMessageSender messageSender,
             ILogger<HighProfitsRule> logger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
@@ -67,6 +70,7 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -118,7 +122,15 @@ namespace Surveillance.Rules.HighProfits
             revenueTask.Wait();
 
             var cost = costTask.Result;
-            var revenue = revenueTask.Result;
+            var revenueResponse = revenueTask.Result;
+
+            if (revenueResponse.HadMissingMarketData)
+            {
+                _hasMissingData = true;
+                return;
+            }
+
+            var revenue = revenueResponse.CurrencyAmount;
 
             if (revenue == null)
             {
@@ -312,7 +324,18 @@ namespace Surveillance.Rules.HighProfits
                 _alertStream.Add(alert);
             }
 
-            _ruleCtx?.EndEvent();
+            if (_hasMissingData)
+            {
+                var requestTask = _messageSender.Send(_ruleCtx.Id());
+                requestTask.Wait();
+                var opCtx = _ruleCtx?.EndEvent();
+                opCtx?.EndEventWithMissingDataError();
+            }
+            else
+            {
+                var opCtx = _ruleCtx?.EndEvent();
+                opCtx?.EndEvent();
+            }
         }
 
         public object Clone()

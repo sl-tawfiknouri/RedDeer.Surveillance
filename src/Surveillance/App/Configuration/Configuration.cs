@@ -63,6 +63,7 @@ namespace RedDeer.Surveillance.App.Configuration
                     ScheduledRuleQueueName = GetValue("ScheduledRuleQueueName", configurationBuilder),
                     ScheduleRuleDistributedWorkQueueName = GetValue("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
                     CaseMessageQueueName = GetValue("CaseMessageQueueName", configurationBuilder),
+                    DataSynchroniserRequestQueueName = GetValue("DataSynchronizerQueueName", configurationBuilder),
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Timers;
-using Surveillance.Services.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.System.Auditing.Utilities.Interfaces;
 
-namespace Surveillance.Services
+namespace Surveillance.System.Auditing.Utilities
 {
     public class ApplicationHeartbeatService : IApplicationHeartbeatService
     {

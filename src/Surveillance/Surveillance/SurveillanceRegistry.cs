@@ -179,7 +179,6 @@ namespace Surveillance
             For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
-            For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
             For<IRuleProjector>().Use<RuleProjector>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();

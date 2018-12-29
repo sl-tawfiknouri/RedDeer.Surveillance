@@ -2,6 +2,7 @@
 using System;
 using Surveillance.Interfaces;
 using Surveillance.Scheduler.Interfaces;
+using Surveillance.System.Auditing.Utilities.Interfaces;
 
 namespace Surveillance
 {

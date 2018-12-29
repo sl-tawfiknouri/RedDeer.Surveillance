@@ -28,8 +28,6 @@ using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO;
 using Surveillance.MessageBusIO.Interfaces;
-using Surveillance.NetworkIO;
-using Surveillance.NetworkIO.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.RuleParameters.Filter.Interfaces;
@@ -85,9 +83,6 @@ namespace Surveillance
             For<IMediator>().Use<Mediator>();
             For<IOriginFactory>().Use<OriginFactory>();
             For<ISpoofingRule>().Use<SpoofingRule>();
-
-            For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
-            For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
 
             For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();

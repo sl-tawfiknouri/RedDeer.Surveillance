@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.DataSources;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 
@@ -37,17 +40,69 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             _logger.LogInformation($"DataRequestManager handling request with id {ruleRunId}");
 
             var dataRequests = await _dataRequestRepository.DataRequestsForRuleRun(ruleRunId);
+            var dataRequestWithSource = dataRequests.Select(CalculateDataSource).GroupBy(i => i.DataSource).ToList();
 
+            var bmllRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Bmll)?.ToList();
+            var markitRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Markit)?.ToList();
+            var otherRequests = dataRequestWithSource.Where(i => i.Key != DataSource.Bmll && i.Key != DataSource.Markit).SelectMany(i => i).ToList();
 
-
-            // alright so this can be beefed up a bit but lets save that fur laters
-            // i.e. creating proper time segments of requests per client id
-
-            // ok! so getting figis into enrichment is building
-            // whilst that's churning away lets roll on with this
-            // so I now have a list of data requests, first get their data source
+            SubmitToBmll(bmllRequests);
+            SubmitToMarkit(markitRequests);
+            SubmitOther(otherRequests);
 
             _logger.LogInformation($"DataRequestManager completed handling request with id {ruleRunId}");
+        }
+
+        private MarketDataRequestDataSource CalculateDataSource(MarketDataRequest request)
+        {
+            var source = _dataSourceClassifier.Classify(request.Cfi);
+
+            return new MarketDataRequestDataSource(source, request);
+        }
+
+        private void SubmitToBmll(List<MarketDataRequestDataSource> bmllRequests)
+        {
+            if (bmllRequests == null)
+            {
+                return;
+            }
+
+            if (!bmllRequests.Any())
+            {
+                return;
+            }
+
+            _logger.LogError($"DataRequestManager received {bmllRequests.Count} market data requests for BMLL (not deduplicated)");
+        }
+
+        private void SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
+        {
+            if (markitRequests == null)
+            {
+                return;
+            }
+
+            if (!markitRequests.Any())
+            {
+                return;
+            }
+
+            _logger.LogError($"DataRequestManager received {markitRequests.Count} market data requests for MARKIT which we have not implemented yet");
+        }
+
+        private void SubmitOther(List<MarketDataRequestDataSource> otherRequests)
+        {
+            if (otherRequests == null)
+            {
+                return;
+            }
+
+            if (!otherRequests.Any())
+            {
+                return;
+            }
+
+            _logger.LogError($"DataRequestManager received {otherRequests.Count} market data requests we do not have the necessary data suppliers for");
         }
     }
 }

@@ -20,10 +20,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.DataSources
         public void Classify_NonNull_WithNullCfi_Returns_None()
         {
             var classifier = BuildClassifier();
-            var instrument = TestHelpers.Helpers.FinancialInstrument();
-            instrument.Cfi = null;
 
-            var result = classifier.Classify(instrument);
+            var result = classifier.Classify(null);
 
             Assert.AreEqual(result, DataSource.None);
         }
@@ -32,10 +30,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.DataSources
         public void Classify_NonNull_WithEquityCfi_Returns_Bmll()
         {
             var classifier = BuildClassifier();
-            var instrument = TestHelpers.Helpers.FinancialInstrument();
-            instrument.Cfi = "entspb"; // equity shares
 
-            var result = classifier.Classify(instrument);
+            var result = classifier.Classify("entspb");
 
             Assert.AreEqual(result, DataSource.Bmll);
         }
@@ -44,10 +40,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.DataSources
         public void Classify_NonNull_WithDebtCfi_Returns_Markit()
         {
             var classifier = BuildClassifier();
-            var instrument = TestHelpers.Helpers.FinancialInstrument();
-            instrument.Cfi = "DBF"; // fixed interest rate bond
 
-            var result = classifier.Classify(instrument);
+            var result = classifier.Classify("DBF");
 
             Assert.AreEqual(result, DataSource.Markit);
         }

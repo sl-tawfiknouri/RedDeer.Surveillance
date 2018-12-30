@@ -1,24 +1,18 @@
-﻿using DomainV2.Financial;
-using DomainV2.Financial.Cfis;
+﻿using DomainV2.Financial.Cfis;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.DataSources
 {
     public class DataSourceClassifier : IDataSourceClassifier
     {       
-        public DataSource Classify(FinancialInstrument instrument)
+        public DataSource Classify(string cfiStr)
         {
-            if (instrument == null)
+            if (string.IsNullOrWhiteSpace(cfiStr))
             {
                 return DataSource.None;
             }
 
-            if (string.IsNullOrWhiteSpace(instrument.Cfi))
-            {
-                return DataSource.None;
-            }
-
-            var cfi = new Cfi(instrument.Cfi);
+            var cfi = new Cfi(cfiStr);
 
             switch (cfi.CfiCategory)
             {

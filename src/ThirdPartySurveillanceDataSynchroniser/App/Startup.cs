@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using StructureMap;
+using Surveillance.DataLayer;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
@@ -39,6 +40,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
             container.Configure(config =>
             {
+                config.IncludeRegistry<DataLayerRegistry>();
                 config.IncludeRegistry<DataSynchroniserRegistry>();
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();

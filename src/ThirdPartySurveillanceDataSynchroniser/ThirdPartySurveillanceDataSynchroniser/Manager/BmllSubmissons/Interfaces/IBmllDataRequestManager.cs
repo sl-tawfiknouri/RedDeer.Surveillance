@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces
 {
     public interface IBmllDataRequestManager
     {
-        void Submit(List<MarketDataRequestDataSource> bmllRequests);
+        Task Submit(List<MarketDataRequestDataSource> bmllRequests);
     }
 }

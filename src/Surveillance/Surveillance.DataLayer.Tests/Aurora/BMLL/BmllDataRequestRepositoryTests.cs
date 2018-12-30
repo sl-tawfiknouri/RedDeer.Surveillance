@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Markets;
-using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -24,11 +23,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
         }
 
         [Test]
+        [Explicit]
         public async Task CreateDataRequest_SavesToDb()
         {
             var config = new DataLayerConfiguration
             {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
+                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
             };
 
             var repo = new BmllDataRequestRepository(new ConnectionStringFactory(config), _logger);
@@ -42,6 +42,22 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                     "1");
 
             await repo.CreateDataRequest(marketDataRequest);
+        }
+
+        [Test]
+        [Explicit]
+        public async Task GetDataRequests_FetchesFromDb()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
+            };
+
+            var repo = new BmllDataRequestRepository(new ConnectionStringFactory(config), _logger);
+
+            var results = await repo.DataRequestsForRuleRun("13");
+
+            Assert.IsNotNull(results);
         }
     }
 }

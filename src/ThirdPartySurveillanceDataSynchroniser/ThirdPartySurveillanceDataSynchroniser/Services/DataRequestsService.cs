@@ -85,7 +85,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
                     return;
                 }
 
-                _dataRequestManager.Handle(request.SystemProcessOperationRuleRunId, dataCtx);
+                await _dataRequestManager.Handle(request.SystemProcessOperationRuleRunId, dataCtx);
             }
             catch (Exception e)
             {

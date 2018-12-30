@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -19,7 +20,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Handle(string ruleRunId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext)
+        public async Task Handle(string ruleRunId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext)
         {
             if (string.IsNullOrWhiteSpace(ruleRunId))
             {
@@ -30,24 +31,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
 
             _logger.LogInformation($"DataRequestManager handling request with id {ruleRunId}");
 
-            // get fi for rule run id
-
-
-
-
-            // ok so we need to first go get all the relevant rows matching the rule run id
-            // if none, return
-            // if has rows, group by data source maybe some kind of DataSourceFinancialInstrument object
-            // then submit to our own handler
-            // log warnings (?)
-
-            // how to handle unable to fetch market data issues and feed back to the client as well?
-            // lets make a table and just insert it into there for now
-            // chat to dev ops about making it an error
-
-
-
-
+            var dataRequests = await _dataRequestRepository.DataRequestsForRuleRun(ruleRunId);
 
             _logger.LogInformation($"DataRequestManager completed handling request with id {ruleRunId}");
         }

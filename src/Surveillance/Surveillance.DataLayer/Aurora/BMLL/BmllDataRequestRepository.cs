@@ -22,6 +22,34 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         private const string CheckDataRequestSql = @"
             SELECT EXISTS(SELECT * FROM RuleDataRequest WHERE SystemProcessOperationRuleRunId = @ruleRunId);";
 
+        private const string GetDataRequestSql = @"
+            SELECT DISTINCT
+                 rdr.SystemProcessOperationRuleRunId,
+                 rdr.FinancialInstrumentId,
+                 rdr.StartTime,
+                 rdr.EndTime,
+                 fi.Id as InstrumentId,
+                 fi.ReddeerId as InstrumentReddeerId,
+                 fi.ClientIdentifier as InstrumentClientIdentifier,
+                 fi.Sedol as InstrumentSedol,
+                 fi.Isin as InstrumentIsin,
+                 fi.Figi as InstrumentFigi,
+                 fi.Cusip as InstrumentCusip,
+                 fi.ExchangeSymbol as InstrumentExchangeSymbol,
+                 fi.Lei as InstrumentLei,
+                 fi.BloombergTicker as InstrumentBloombergTicker,
+                 fi.UnderlyingSedol as InstrumentUnderlyingSedol,
+                 fi.UnderlyingIsin as InstrumentUnderlyingIsin,
+                 fi.UnderlyingFigi as InstrumentUnderlyingFigi,
+                 fi.UnderlyingCusip as InstrumentUnderlyingCusip,
+                 fi.UnderlyingLei as InstrumentUnderlyingLei,
+                 fi.UnderlyingExchangeSymbol as InstrumentUnderlyingExchangeSymbol,
+                 fi.UnderlyingBloombergTicker as InstrumentUnderlyingBloombergTicker,
+                 fi.UnderlyingClientIdentifier as InstrumentUnderlyingClientIdentifier
+             FROM RuleDataRequest as rdr
+             LEFT OUTER JOIN FinancialInstruments as fi
+             on rdr.FinancialInstrumentId = fi.Id;";
+
         public BmllDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
             ILogger<BmllDataRequestRepository> logger)
@@ -39,7 +67,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 dbConnection.Open();
 
                 _logger.LogInformation($"BmllDataRequestRepository fetching market data requests for rule run {ruleRunId}");
-                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(CheckDataRequestSql, new { ruleRunId }))
+                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(GetDataRequestSql, new { ruleRunId }))
                 {
                     var result = (await conn).ToList();
 
@@ -53,32 +81,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
 
                     var mappedResults =
                         result
-                            .Select(re => 
-                                new MarketDataRequest(
-                                    re.MarketIdentifierCode,
-                                    new InstrumentIdentifiers(
-                                        re.InstrumentId,
-                                        re.InstrumentReddeerId,
-                                        re.InstrumentReddeerEnrichmentId,
-                                        re.InstrumentClientIdentifier,
-                                        re.InstrumentSedol,
-                                        re.InstrumentIsin,
-                                        re.InstrumentFigi,
-                                        re.InstrumentCusip,
-                                        re.InstrumentExchangeSymbol,
-                                        re.InstrumentLei,
-                                        re.InstrumentBloombergTicker,
-                                        re.InstrumentUnderlyingSedol,
-                                        re.InstrumentUnderlyingIsin,
-                                        re.InstrumentUnderlyingFigi,
-                                        re.InstrumentUnderlyingCusip,
-                                        re.InstrumentUnderlyingLei,
-                                        re.InstrumentUnderlyingExchangeSymbol,
-                                        re.InstrumentUnderlyingBloombergTicker,
-                                        re.InstrumentUnderlyingClientIdentifier), 
-                                    re.StartTime,
-                                    re.EndTime,
-                                    re.SystemProcessOperationRuleRunId))
+                            .Select(Map)
                             .ToList();
 
                     return mappedResults;
@@ -86,7 +89,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             }
             catch (Exception e)
             {
-                _logger.LogError($"Bmll data request repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"Bmll data request repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
             }
             finally
             {
@@ -160,8 +163,42 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             return false;
         }
 
+        private MarketDataRequest Map(MarketDataRequestDto re)
+        {
+            return new MarketDataRequest(
+                re.MarketIdentifierCode,
+                new InstrumentIdentifiers(
+                    re.InstrumentId,
+                    re.InstrumentReddeerId,
+                    string.Empty,
+                    re.InstrumentClientIdentifier,
+                    re.InstrumentSedol,
+                    re.InstrumentIsin,
+                    re.InstrumentFigi,
+                    re.InstrumentCusip,
+                    re.InstrumentExchangeSymbol,
+                    re.InstrumentLei,
+                    re.InstrumentBloombergTicker,
+                    re.InstrumentUnderlyingSedol,
+                    re.InstrumentUnderlyingIsin,
+                    re.InstrumentUnderlyingFigi,
+                    re.InstrumentUnderlyingCusip,
+                    re.InstrumentUnderlyingLei,
+                    re.InstrumentUnderlyingExchangeSymbol,
+                    re.InstrumentUnderlyingBloombergTicker,
+                    re.InstrumentUnderlyingClientIdentifier),
+                re.StartTime,
+                re.EndTime,
+                re.SystemProcessOperationRuleRunId);
+        }
+
         public class MarketDataRequestDto
         {
+            public MarketDataRequestDto()
+            {
+                // used by dapper
+            }
+
             public MarketDataRequestDto(MarketDataRequest dto)
             {
                 SystemProcessOperationRuleRunId = dto.SystemProcessOperationRuleRunId;
@@ -180,7 +217,6 @@ namespace Surveillance.DataLayer.Aurora.BMLL
 
             public string InstrumentId { get; set; }
             public string InstrumentReddeerId { get; set; }
-            public string InstrumentReddeerEnrichmentId { get; set; }
             public string InstrumentClientIdentifier { get; set; }
             public string InstrumentSedol { get; set; }
             public string InstrumentIsin { get; set; }

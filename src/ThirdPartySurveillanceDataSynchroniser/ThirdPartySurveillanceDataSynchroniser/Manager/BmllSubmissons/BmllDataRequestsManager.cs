@@ -7,7 +7,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {
-        private ILogger<BmllDataRequestsManager> _logger;
+        private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(ILogger<BmllDataRequestsManager> logger)
         {
@@ -16,7 +16,16 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons
 
         public void Submit(List<MarketDataRequestDataSource> bmllRequests)
         {
-            
+            if (bmllRequests == null)
+            {
+                return;
+            }
+
+            _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
+
+
+
+            _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
         }
     }
 }

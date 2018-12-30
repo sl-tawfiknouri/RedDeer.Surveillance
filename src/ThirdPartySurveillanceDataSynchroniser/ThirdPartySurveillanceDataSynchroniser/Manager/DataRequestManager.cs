@@ -8,6 +8,7 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.DataSources;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager
@@ -16,15 +17,18 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
     {
         private readonly IDataSourceClassifier _dataSourceClassifier;
         private readonly IBmllDataRequestRepository _dataRequestRepository;
+        private readonly IBmllDataRequestManager _bmllDataRequestManager;
         private readonly ILogger<DataRequestManager> _logger;
 
         public DataRequestManager(
             IDataSourceClassifier dataSourceClassifier,
             IBmllDataRequestRepository dataRequestRepository,
+            IBmllDataRequestManager bmllDataRequestManager,
             ILogger<DataRequestManager> logger)
         {
             _dataSourceClassifier = dataSourceClassifier ?? throw new ArgumentNullException(nameof(dataSourceClassifier));
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
+            _bmllDataRequestManager = bmllDataRequestManager ?? throw new ArgumentNullException(nameof(bmllDataRequestManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -72,7 +76,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
                 return;
             }
 
-            _logger.LogError($"DataRequestManager received {bmllRequests.Count} market data requests for BMLL (not deduplicated)");
+            _logger.LogInformation($"DataRequestManager received {bmllRequests.Count} market data requests for BMLL (not deduplicated)");
+
+            _bmllDataRequestManager.Submit(bmllRequests);
         }
 
         private void SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)

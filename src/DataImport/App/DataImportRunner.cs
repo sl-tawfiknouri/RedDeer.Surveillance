@@ -5,14 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace RedDeer.DataImport.DataImport.App
 {
-    public class WebSocketRunner : IStartUpTaskRunner
+    public class DataImportRunner : IStartUpTaskRunner
     {
         readonly IMediator _mediator;
         private readonly ILogger _logger;
 
-        public WebSocketRunner(
+        public DataImportRunner(
             IMediator mediator,
-            ILogger<WebSocketRunner> logger)
+            ILogger<DataImportRunner> logger)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

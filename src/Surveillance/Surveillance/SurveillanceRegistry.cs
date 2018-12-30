@@ -15,11 +15,7 @@ using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
-using Utilities.Network_IO.Websocket_Connections;
 using Surveillance.Services;
-using Utilities.Network_IO.Websocket_Hosts;
-using Utilities.Network_IO.Websocket_Connections.Interfaces;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
@@ -30,8 +26,6 @@ using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO;
 using Surveillance.MessageBusIO.Interfaces;
-using Surveillance.NetworkIO;
-using Surveillance.NetworkIO.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.RuleParameters.Filter.Interfaces;
@@ -88,13 +82,8 @@ namespace Surveillance
             For<IOriginFactory>().Use<OriginFactory>();
             For<ISpoofingRule>().Use<SpoofingRule>();
 
-            For<ISurveillanceNetworkExchangeFactory>().Use<SurveillanceNetworkExchangeFactory>();
-            For<ISurveillanceNetworkDuplexer>().Use<SurveillanceNetworkDuplexer>();
-
             For<ITradingHistory>().Use<TradingHistory>();
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
-            For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
-            For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IReddeerRuleScheduler>().Use<ReddeerRuleScheduler>();

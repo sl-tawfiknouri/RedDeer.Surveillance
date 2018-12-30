@@ -15,7 +15,7 @@ namespace RedDeer.DataImport.DataImport.App
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<ISystemDataLayerConfig>().Use<Configuration>();
-            For<IStartUpTaskRunner>().Use<WebSocketRunner>();
+            For<IStartUpTaskRunner>().Use<DataImportRunner>();
         }
     }
 }

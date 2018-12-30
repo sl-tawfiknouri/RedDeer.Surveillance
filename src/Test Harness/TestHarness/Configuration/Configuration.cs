@@ -4,11 +4,6 @@ namespace TestHarness.Configuration
 {
     public class Configuration : INetworkConfiguration
     {
-        public string TradeWebsocketUriDomain { get; set; }
-        public string TradeWebsocketUriPort { get; set; }
-
-        public string StockExchangeDomainUriDomainSegment { get; set; }
-        public string StockExchangeDomainUriPort { get; set; }
         public string DataSynchroniserRequestQueueName { get; set; }
         public string ScheduledRuleQueueName {get; set;}
         public string CaseMessageQueueName { get; set; }

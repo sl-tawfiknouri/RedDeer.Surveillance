@@ -66,16 +66,10 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 
             var networkConfiguration = new Configuration
             {
-
-                RelayServiceEquityDomain = GetSetting("RelayServiceEquityDomain", configurationBuilder),
-                RelayServiceEquityPort = GetSetting("RelayServiceEquityPort", configurationBuilder),
-                RelayServiceTradeDomain = GetSetting("RelayServiceTradeDomain", configurationBuilder),
-                RelayServiceTradePort = GetSetting("RelayServiceTradePort", configurationBuilder),
                 RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
                 RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
                     GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
                 SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
-                IsDeployedOnClientMachine = GetSetting("IsDeployedOnClientMachine", configurationBuilder),
                 RelayS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
                 RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
                 RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),

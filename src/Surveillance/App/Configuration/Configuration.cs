@@ -33,24 +33,6 @@ namespace RedDeer.Surveillance.App.Configuration
             _dynamoConfig = new Dictionary<string, string>();
         }
 
-        public INetworkConfiguration BuildNetworkConfiguration(IConfigurationRoot configurationBuilder)
-        {
-            lock (_lock)
-            {
-                Ec2Check();
-
-                var networkConfiguration = new NetworkConfiguration
-                {
-                    SurveillanceServiceEquityDomain = GetValue("SurveillanceServiceEquityDomain", configurationBuilder),
-                    SurveillanceServiceEquityPort = GetValue("SurveillanceServiceEquityPort", configurationBuilder),
-                    SurveillanceServiceTradeDomain = GetValue("SurveillanceServiceTradeDomain", configurationBuilder),
-                    SurveillanceServiceTradePort = GetValue("SurveillanceServiceTradePort", configurationBuilder),
-                };
-
-                return networkConfiguration;
-            }
-        }
-
         public IDataLayerConfiguration BuildDatabaseConfiguration(IConfigurationRoot configurationBuilder)
         {
             lock (_lock)

@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Factory\**" />
+    <Compile Remove="Network IO\**" />
+    <EmbeddedResource Remove="Factory\**" />
+    <EmbeddedResource Remove="Network IO\**" />
+    <None Remove="Factory\**" />
+    <None Remove="Network IO\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="4.9.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="NUnit" Version="3.11.0" />
@@ -13,11 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestHarness\TestHarness.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Factory\" />
-    <Folder Include="Network IO\" />
   </ItemGroup>
 
   <ItemGroup>

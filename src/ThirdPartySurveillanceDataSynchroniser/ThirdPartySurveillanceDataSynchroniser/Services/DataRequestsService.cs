@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DomainV2.DTO.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -16,6 +17,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IThirdPartyDataRequestSerialiser _serialiser;
+        private readonly IDataRequestManager _dataRequestManager;
         private readonly ILogger<DataRequestsService> _logger;
 
         private CancellationTokenSource _messageBusCts;
@@ -26,12 +28,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
             IAwsConfiguration awsConfiguration,
             ISystemProcessContext systemProcessContext,
             IThirdPartyDataRequestSerialiser serialiser,
+            IDataRequestManager dataRequestManager,
             ILogger<DataRequestsService> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
+            _dataRequestManager = dataRequestManager ?? throw new ArgumentNullException(nameof(dataRequestManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -81,14 +85,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
                     return;
                 }
 
-                // so how do we deal with this? 
-                // I think the better design is to have a manager which processes the request at this stage
-
-                // i.e. has a repository, goes fetches the relevant rows and completes the logic
-
-
-
-
+                _dataRequestManager.Handle(request.SystemProcessOperationRuleRunId, dataCtx);
             }
             catch (Exception e)
             {

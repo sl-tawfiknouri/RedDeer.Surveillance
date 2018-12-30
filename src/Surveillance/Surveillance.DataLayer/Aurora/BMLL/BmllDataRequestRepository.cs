@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
@@ -25,6 +28,73 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         {
             _dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForRuleRun(string ruleRunId)
+        {
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                _logger.LogInformation($"BmllDataRequestRepository fetching market data requests for rule run {ruleRunId}");
+                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(CheckDataRequestSql, new { ruleRunId }))
+                {
+                    var result = (await conn).ToList();
+
+                    if (!result.Any())
+                    {
+                        _logger.LogWarning($"BmllDataRequestRepository fetched market data requests for rule run {ruleRunId} and found no results");
+                        return new MarketDataRequest[0];
+                    }
+
+                    _logger.LogInformation($"BmllDataRequestRepository fetched market data requests for rule run {ruleRunId} and found {result.Count}");
+
+                    var mappedResults =
+                        result
+                            .Select(re => 
+                                new MarketDataRequest(
+                                    re.MarketIdentifierCode,
+                                    new InstrumentIdentifiers(
+                                        re.InstrumentId,
+                                        re.InstrumentReddeerId,
+                                        re.InstrumentReddeerEnrichmentId,
+                                        re.InstrumentClientIdentifier,
+                                        re.InstrumentSedol,
+                                        re.InstrumentIsin,
+                                        re.InstrumentFigi,
+                                        re.InstrumentCusip,
+                                        re.InstrumentExchangeSymbol,
+                                        re.InstrumentLei,
+                                        re.InstrumentBloombergTicker,
+                                        re.InstrumentUnderlyingSedol,
+                                        re.InstrumentUnderlyingIsin,
+                                        re.InstrumentUnderlyingFigi,
+                                        re.InstrumentUnderlyingCusip,
+                                        re.InstrumentUnderlyingLei,
+                                        re.InstrumentUnderlyingExchangeSymbol,
+                                        re.InstrumentUnderlyingBloombergTicker,
+                                        re.InstrumentUnderlyingClientIdentifier), 
+                                    re.StartTime,
+                                    re.EndTime,
+                                    re.SystemProcessOperationRuleRunId))
+                            .ToList();
+
+                    return mappedResults;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Bmll data request repository error for CreateDataRequest {e.Message} - {e?.InnerException?.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new MarketDataRequest[0];
         }
 
         public async Task CreateDataRequest(MarketDataRequest request)
@@ -106,6 +176,27 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             public string FinancialInstrumentId { get; set; }
             public DateTime? StartTime { get; set; }
             public DateTime? EndTime { get; set; }
+
+
+            public string InstrumentId { get; set; }
+            public string InstrumentReddeerId { get; set; }
+            public string InstrumentReddeerEnrichmentId { get; set; }
+            public string InstrumentClientIdentifier { get; set; }
+            public string InstrumentSedol { get; set; }
+            public string InstrumentIsin { get; set; }
+            public string InstrumentFigi { get; set; }
+            public string InstrumentCusip { get; set; }
+            public string InstrumentExchangeSymbol { get; set; }
+            public string InstrumentLei { get; set; }
+            public string InstrumentBloombergTicker { get; set; }
+            public string InstrumentUnderlyingSedol { get; set; }
+            public string InstrumentUnderlyingIsin { get; set; }
+            public string InstrumentUnderlyingFigi { get; set; }
+            public string InstrumentUnderlyingCusip { get; set; }
+            public string InstrumentUnderlyingLei { get; set; }
+            public string InstrumentUnderlyingExchangeSymbol { get; set; }
+            public string InstrumentUnderlyingBloombergTicker { get; set; }
+            public string InstrumentUnderlyingClientIdentifier { get; set; }
         }
     }
 }

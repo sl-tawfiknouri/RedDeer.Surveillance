@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;
@@ -20,9 +22,12 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
-            For<IDataRequestsService>().Use<DataRequestsService>();
+
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
+
+            For<IDataRequestsService>().Use<DataRequestsService>();
+            For<IDataRequestManager>().Use<DataRequestManager>();
         }
     }
 }

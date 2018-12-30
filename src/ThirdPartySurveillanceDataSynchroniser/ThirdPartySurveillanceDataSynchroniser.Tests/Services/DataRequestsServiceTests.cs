@@ -5,8 +5,10 @@ using DomainV2.DTO;
 using DomainV2.DTO.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Surveillance.System.Auditing.Context.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -21,6 +23,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
         private IAwsConfiguration _awsConfiguration;
         private ISystemProcessContext _sysCtx;
         private IThirdPartyDataRequestSerialiser _serialiser;
+        private IDataRequestManager _requestManager;
 
         [SetUp]
         public void Setup()
@@ -30,33 +33,34 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
             _logger = A.Fake<ILogger<DataRequestsService>>();
             _sysCtx = A.Fake<ISystemProcessContext>();
             _serialiser = new ThirdPartyDataRequestSerialiser();
+            _requestManager = A.Fake<IDataRequestManager>();
         }
 
         [Test]
         public void Constructor_NullLogger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, null));
         }
 
         [Test]
         public void Constructor_NullAwsQueueClient_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(null, _awsConfiguration, _sysCtx, _serialiser, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(null, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger));
         }
 
         [Test]
         public void Constructor_NullAwsConfiguration_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, null, _sysCtx, _serialiser, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, null, _sysCtx, _serialiser, _requestManager, _logger));
         }
 
         [Test]
         public void Initiate_Calls_AwsQueueClient_SubscribeToQueueAsync()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _logger);
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
 
             dataRequestsService.Initiate();
 
@@ -71,7 +75,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
         public async Task Execute_Deserialises_Message()
         {
             var mockSerialiser = A.Fake<IThirdPartyDataRequestSerialiser>();
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, mockSerialiser, _logger);
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, mockSerialiser, _requestManager, _logger);
 
             await dataRequestsService.Execute("123", "test-str");
 
@@ -82,7 +86,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
         [Test]
         public async Task Execute_Creates_NewOperationContext()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _logger);
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
 
             await dataRequestsService.Execute("123", "test-str");
 
@@ -90,5 +94,18 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
                 .CallTo(() => _sysCtx.CreateAndStartOperationContext()).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public async Task Execute_SendsRuleId_ToDataRequestManager()
+        {
+            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
+            var messageObj = new ThirdPartyDataRequestMessage { SystemProcessOperationRuleRunId = "123" };
+            var msg = JsonConvert.SerializeObject(messageObj);
+
+            await dataRequestsService.Execute("123", msg);
+
+            A
+                .CallTo(() => _requestManager.Handle("123", A<ISystemProcessOperationThirdPartyDataRequestContext>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }

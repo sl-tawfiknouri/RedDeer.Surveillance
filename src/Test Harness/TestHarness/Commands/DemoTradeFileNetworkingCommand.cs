@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -15,8 +14,6 @@ namespace TestHarness.Commands
 
         private readonly IAppFactory _appFactory;
         private IOrderDataGenerator _tradeFileProcessor;
-        private INetworkManager _networkManager;
-
         public DemoTradeFileNetworkingCommand(IAppFactory appFactory)
         {
             _appFactory = appFactory ?? throw new ArgumentNullException(nameof(appFactory));
@@ -107,36 +104,6 @@ namespace TestHarness.Commands
 
             var equityStream = _appFactory.StockExchangeStreamFactory.Create();
 
-            _networkManager =
-                _appFactory
-                    .NetworkManagerFactory
-                    .CreateWebsockets();
-
-            // start networking processes
-            var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
-                return;
-            }
-
-            connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run demo networking.");
-                return;
-            }
-
-            connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run demo networking.");
-                return;
-            }
-
             // start updating trading data
             _tradeFileProcessor.InitiateTrading(equityStream, tradeStream);
 
@@ -158,7 +125,6 @@ namespace TestHarness.Commands
         private void StopDemo()
         {
             _tradeFileProcessor?.TerminateTrading();
-            _networkManager?.TerminateAllNetworkConnections();
         }
     }
 }

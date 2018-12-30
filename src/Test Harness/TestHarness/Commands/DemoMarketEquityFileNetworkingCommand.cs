@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -15,7 +14,6 @@ namespace TestHarness.Commands
 
         private readonly IAppFactory _appFactory;
         private IEquityDataGenerator _fileProcessor;
-        private INetworkManager _networkManager;
 
         public DemoMarketEquityFileNetworkingCommand(IAppFactory appFactory)
         {
@@ -92,26 +90,7 @@ namespace TestHarness.Commands
             var equityStream = _appFactory.StockExchangeStreamFactory.CreateDisplayable(console);
             var filePath = GetEquityFilePath(command);
 
-            _networkManager = _appFactory.NetworkManagerFactory.CreateWebsockets();
             _fileProcessor = _appFactory.EquitiesFileRelayProcessFactory.Create(filePath);
-
-            // start networking processes
-            var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run demo networking.");
-                return;
-            }
-
-            connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-
-            if (!connectionEstablished)
-            {
-                console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run demo networking.");
-                return;
-            }
-
             _fileProcessor.InitiateWalk(equityStream);
         }
 
@@ -128,7 +107,6 @@ namespace TestHarness.Commands
         private void StopDemo()
         {
             _fileProcessor?.TerminateWalk();
-            _networkManager?.TerminateAllNetworkConnections();
         }
     }
 }

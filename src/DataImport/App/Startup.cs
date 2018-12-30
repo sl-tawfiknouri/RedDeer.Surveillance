@@ -32,7 +32,6 @@ namespace RedDeer.DataImport.DataImport.App
             var container = new Container();
 
             var builtConfig = BuildConfiguration();
-            container.Inject(typeof(INetworkConfiguration), builtConfig);
             container.Inject(typeof(IUploadConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             SystemProcessContext.ProcessType = SystemProcessType.RelayService;

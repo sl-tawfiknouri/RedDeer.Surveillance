@@ -5,7 +5,6 @@ using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;
-using TestHarness.Factory.NetworkFactory.Interfaces;
 using TestHarness.Factory.TradeCancelledFactory.Interfaces;
 using TestHarness.Factory.TradeHighProfitFactory.Interfaces;
 using TestHarness.Factory.TradeHighVolumeFactory.Interfaces;
@@ -54,8 +53,6 @@ namespace TestHarness.Factory.Interfaces
         IStockExchangeStreamFactory StockExchangeStreamFactory { get; }
 
         IOrderFileStorageProcessFactory OrderFileStorageProcessFactory { get; }
-
-        INetworkManagerFactory NetworkManagerFactory { get; }
 
         ITradingFactory TradingFactory { get; }
 

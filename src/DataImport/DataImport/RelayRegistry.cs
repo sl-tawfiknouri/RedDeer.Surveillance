@@ -8,12 +8,6 @@ using DataImport.Managers;
 using DataImport.Managers.Interfaces;
 using DataImport.MessageBusIO;
 using DataImport.MessageBusIO.Interfaces;
-using DataImport.Network_IO;
-using DataImport.Network_IO.Interfaces;
-using DataImport.Network_IO.RelaySubscribers;
-using DataImport.Network_IO.RelaySubscribers.Interfaces;
-using DataImport.Processors;
-using DataImport.Processors.Interfaces;
 using DataImport.Recorders;
 using DataImport.Recorders.Interfaces;
 using DataImport.S3_IO;
@@ -35,11 +29,6 @@ using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Disk_IO;
 using Utilities.Disk_IO.Interfaces;
-using Utilities.Network_IO.Interfaces;
-using Utilities.Network_IO.Websocket_Connections;
-using Utilities.Network_IO.Websocket_Connections.Interfaces;
-using Utilities.Network_IO.Websocket_Hosts;
-using Utilities.Network_IO.Websocket_Hosts.Interfaces;
 
 namespace DataImport
 {
@@ -53,32 +42,11 @@ namespace DataImport
 
             For<IMediator>().Use<Mediator>();
 
-            For(typeof(ITradeProcessor<>)).Use(typeof(TradeProcessor<>));
-            For<IEquityProcessor<ExchangeFrame>>().Use<EquityProcessor>();
-
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<StockExchangeStream>();
 
-            For<ITradeRelaySubscriber>().Use<TradeRelaySubscriber>();
-            For<IEquityRelaySubscriber>().Use<EquityRelaySubscriber>();
-
-            For<IWebsocketConnectionFactory>().Use<WebsocketConnectionFactory>();
-            For<IMessageWriter>().Use<LoggingMessageWriter>();
-
-            For<INetworkTrunk>().Use<NetworkTrunk>();
-            For<INetworkFailOver>().Use<NetworkFailOverLocalMemory>();
-            For<INetworkSwitch>().Use<NetworkSwitch>();
-
-            For<INetworkExchange>().Use<NetworkExchange>();
-            For<IRelayTradeNetworkDuplexer>().Use<RelayTradeNetworkDuplexer>();
-            For<IRelayEquityNetworkDuplexer>().Use<RelayEquityNetworkDuplexer>();
-
             For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
             For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
-
-            For<IDuplexMessageFactory>().Use<DuplexMessageFactory>();
-            For<IWebsocketHostFactory>().Use<WebsocketHostFactory>();
-            For<IWebsocketHost>().Use<RedDeerWebsocketHost>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IReddeerDirectory>().Use<ReddeerDirectory>();

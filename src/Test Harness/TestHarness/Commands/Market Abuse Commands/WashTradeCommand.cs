@@ -8,11 +8,9 @@ using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
-using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderStorage.Interfaces;
 using TestHarness.Engine.Plans;
 using TestHarness.Factory.Interfaces;
-using TestHarness.Network_IO.Interfaces;
 
 namespace TestHarness.Commands.Market_Abuse_Commands
 {
@@ -24,7 +22,6 @@ namespace TestHarness.Commands.Market_Abuse_Commands
         private readonly object _lock = new object();
         private readonly IAppFactory _appFactory;
 
-        private INetworkManager _networkManager;
         private IEquitiesDataGenerationMarkovProcess _equityProcess;
         private IOrderDataGenerator _tradingProcess;
         private IEquityDataStorage _equitiesFileStorageProcess;
@@ -204,33 +201,6 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                     _appFactory
                         .WashTradeFactory
                         .Build(BuildPlan(sedols, fromDate, marketData));
-
-                _networkManager =
-                    _appFactory
-                        .NetworkManagerFactory
-                        .CreateWebsockets();
-
-                var connectionEstablished = _networkManager.InitiateAllNetworkConnections();
-
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish network connections. Aborting run data generation.");
-                    return;
-                }
-
-                connectionEstablished = _networkManager.AttachTradeOrderSubscriberToStream(tradeStream);
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish trade network connections. Aborting run data generation.");
-                    return;
-                }
-
-                connectionEstablished = _networkManager.AttachStockExchangeSubscriberToStream(equityStream);
-                if (!connectionEstablished)
-                {
-                    console.WriteToUserFeedbackLine("Failed to establish stock market network connections. Aborting run data generation.");
-                    return;
-                }
 
                 equityStream.Subscribe(washTradeProcess);
                 washTradeProcess.InitiateTrading(equityStream, tradeStream);

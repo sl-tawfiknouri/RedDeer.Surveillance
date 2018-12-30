@@ -1,12 +1,11 @@
 ﻿using System;
 using DomainV2.Equity.Frames;
 using DomainV2.Trading;
-using Utilities.Network_IO.Interfaces;
 // ReSharper disable UnusedMember.Global
 
 namespace TestHarness.Display.Interfaces
 {
-    public interface IConsole : IMessageWriter
+    public interface IConsole
     {
         void OutputMarketFrame(ExchangeFrame frame);
 

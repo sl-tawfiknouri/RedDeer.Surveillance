@@ -75,7 +75,7 @@ namespace Surveillance.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
 
             cache.Add(frame);
 
@@ -135,7 +135,7 @@ namespace Surveillance.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
 
             cache.Add(frame);
 
@@ -195,7 +195,7 @@ namespace Surveillance.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
             cache.Add(frame);
 
             var result = cache.GetMarkets(marketData).Response;
@@ -254,7 +254,7 @@ namespace Surveillance.Tests.Markets
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
 
             cache.Add(frame);
 

@@ -240,6 +240,7 @@ namespace Surveillance.Rules.Layering
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
@@ -284,6 +285,7 @@ namespace Surveillance.Rules.Layering
             var marketDataRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,
@@ -343,6 +345,7 @@ namespace Surveillance.Rules.Layering
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     startDate,
                     endDate,

@@ -85,6 +85,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
+                securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
@@ -167,6 +168,7 @@ namespace Surveillance.Rules.MarkingTheClose
             var marketDataRequest =
                 new MarketDataRequest(
                     tradedSecurity.Market.MarketIdentifierCode,
+                    tradedSecurity.Security.Cfi,
                     tradedSecurity.Security.Identifiers,
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,

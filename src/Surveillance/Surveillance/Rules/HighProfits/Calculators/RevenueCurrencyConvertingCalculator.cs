@@ -169,7 +169,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 .Sum();
         }
         
-        protected virtual MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
+        protected virtual MarketDataRequest MarketDataRequest(
+            string mic,
+            InstrumentIdentifiers identifiers,
+            DateTime universeDateTime,
+            ISystemProcessOperationRunRuleContext ctx)
         {
             var tradingHours = TradingHoursManager.Get(mic);
             if (!tradingHours.IsValid)
@@ -180,6 +184,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return new MarketDataRequest(
                 mic,
+                string.Empty,
                 identifiers,
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),

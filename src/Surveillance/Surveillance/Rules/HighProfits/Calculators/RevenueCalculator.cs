@@ -162,6 +162,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return new MarketDataRequest(
                 mic,
+                string.Empty,
                 identifiers,
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),

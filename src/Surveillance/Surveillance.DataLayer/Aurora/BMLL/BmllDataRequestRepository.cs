@@ -45,7 +45,8 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                  fi.UnderlyingLei as InstrumentUnderlyingLei,
                  fi.UnderlyingExchangeSymbol as InstrumentUnderlyingExchangeSymbol,
                  fi.UnderlyingBloombergTicker as InstrumentUnderlyingBloombergTicker,
-                 fi.UnderlyingClientIdentifier as InstrumentUnderlyingClientIdentifier
+                 fi.UnderlyingClientIdentifier as InstrumentUnderlyingClientIdentifier,
+                 fi.Cfi as InstrumentCfi
              FROM RuleDataRequest as rdr
              LEFT OUTER JOIN FinancialInstruments as fi
              on rdr.FinancialInstrumentId = fi.Id;";
@@ -167,6 +168,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         {
             return new MarketDataRequest(
                 re.MarketIdentifierCode,
+                re.InstrumentCfi,
                 new InstrumentIdentifiers(
                     re.InstrumentId,
                     re.InstrumentReddeerId,
@@ -203,6 +205,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 SystemProcessOperationRuleRunId = dto.SystemProcessOperationRuleRunId;
                 MarketIdentifierCode = dto.MarketIdentifierCode;
+                InstrumentCfi = dto.Cfi;
                 FinancialInstrumentId = dto.Identifiers.Id;
                 StartTime = dto.UniverseEventTimeFrom;
                 EndTime = dto.UniverseEventTimeTo;
@@ -213,7 +216,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             public string FinancialInstrumentId { get; set; }
             public DateTime? StartTime { get; set; }
             public DateTime? EndTime { get; set; }
-
+            public string InstrumentCfi { get; set; }
 
             public string InstrumentId { get; set; }
             public string InstrumentReddeerId { get; set; }

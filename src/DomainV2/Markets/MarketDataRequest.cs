@@ -7,12 +7,14 @@ namespace DomainV2.Markets
     {
         public MarketDataRequest(
             string marketIdentifierCode,
+            string cfi,
             InstrumentIdentifiers identifiers,
             DateTime? universeEventTimeFrom,
             DateTime? universeEventTimeTo,
             string systemProcessOperationRuleRunId)
         {
             MarketIdentifierCode = marketIdentifierCode ?? string.Empty;
+            Cfi = cfi ?? string.Empty;
             Identifiers = identifiers;
             UniverseEventTimeTo = universeEventTimeTo;
             UniverseEventTimeFrom = universeEventTimeFrom;
@@ -20,6 +22,7 @@ namespace DomainV2.Markets
         }
 
         public string MarketIdentifierCode { get; }
+        public string Cfi { get; }
         public InstrumentIdentifiers Identifiers { get; }
         public DateTime? UniverseEventTimeTo { get; }
         public DateTime? UniverseEventTimeFrom { get; }

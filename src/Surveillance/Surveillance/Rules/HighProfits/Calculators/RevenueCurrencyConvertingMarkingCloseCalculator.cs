@@ -39,6 +39,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return new MarketDataRequest(
                 mic,
+                string.Empty,
                 identifiers,
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
                 tradingHours.ClosingInUtcForDay(universeDateTime),

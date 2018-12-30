@@ -171,6 +171,7 @@ namespace Surveillance.Rules.HighVolume
 
             var marketDataRequest = new MarketDataRequest(
                 mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
@@ -219,6 +220,7 @@ namespace Surveillance.Rules.HighVolume
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market?.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHours.OpeningInUtcForDay(UniverseDateTime),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
@@ -274,6 +276,7 @@ namespace Surveillance.Rules.HighVolume
 
             var marketDataRequest = new MarketDataRequest(
                 mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),

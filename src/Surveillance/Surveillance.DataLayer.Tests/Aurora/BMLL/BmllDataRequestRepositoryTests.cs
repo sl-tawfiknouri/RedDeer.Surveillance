@@ -36,6 +36,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
             var marketDataRequest =
                 new MarketDataRequest(
                     "XLON",
+                    "entsbp",
                     new InstrumentIdentifiers { Id = "1" },
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(1),

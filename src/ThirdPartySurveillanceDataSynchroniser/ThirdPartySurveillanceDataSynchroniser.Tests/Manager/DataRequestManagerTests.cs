@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
@@ -12,6 +13,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
     [TestFixture]
     public class DataRequestManagerTests
     {
+        private IDataSourceClassifier _dataSourceClassifier;
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
         private IBmllDataRequestRepository _repository;
         private ILogger<DataRequestManager> _logger;
@@ -19,6 +21,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
         [SetUp]
         public void Setup()
         {
+            _dataSourceClassifier = A.Fake<IDataSourceClassifier>();
             _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             _repository = A.Fake<IBmllDataRequestRepository>();
             _logger = A.Fake<ILogger<DataRequestManager>>();
@@ -28,14 +31,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
         public void Constructor_Null_Repository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, null, _logger));
         }
 
         [Test]
         public void Constructor_Null_Logger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_repository, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, _repository, null));
         }
 
         [Test]
@@ -50,10 +53,21 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
                 .MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public async Task Handle_FetchesDataFromRepo()
+        {
+            var manager = BuildManager();
+
+            await manager.Handle("1", _dataRequestContext);
+
+            A
+                .CallTo(() => _repository.DataRequestsForRuleRun("1"))
+                .MustHaveHappenedOnceExactly();
+        }
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_repository, _logger);
+            return new DataRequestManager(_dataSourceClassifier, _repository, _logger);
         }
     }
 }

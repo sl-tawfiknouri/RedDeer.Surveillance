@@ -75,6 +75,20 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
                 var request = _serialiser.Deserialise(messageBody);
                 dataCtx = opCtx.CreateAndStartDataRequestContext(messageId, request.SystemProcessOperationRuleRunId);
 
+                if (!ValidateDataRequest(request.SystemProcessOperationRuleRunId))
+                {
+                    _logger.LogError($"DataRequestsService received a null or empty rule run id. Exiting");
+                    return;
+                }
+
+                // so how do we deal with this? 
+                // I think the better design is to have a manager which processes the request at this stage
+
+                // i.e. has a repository, goes fetches the relevant rows and completes the logic
+
+
+
+
             }
             catch (Exception e)
             {
@@ -87,6 +101,11 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
 
                 _logger.LogInformation($"DataRequestsService completed processing a message with id of {messageId}");
             }
+        }
+
+        private bool ValidateDataRequest(string id)
+        {
+            return !(string.IsNullOrWhiteSpace(id));
         }
     }
 }

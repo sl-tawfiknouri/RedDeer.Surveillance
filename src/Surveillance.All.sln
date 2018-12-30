@@ -48,7 +48,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataSynchroniser", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.csproj", "{E1ACCFA8-244E-47E2-B822-2095C4040C0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThirdPartySurveillanceDataSynchroniser.Tests", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.Tests\ThirdPartySurveillanceDataSynchroniser.Tests.csproj", "{5A5281E7-5951-4829-9B7A-ED8494CF443B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataSynchroniser.Tests", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.Tests\ThirdPartySurveillanceDataSynchroniser.Tests.csproj", "{5A5281E7-5951-4829-9B7A-ED8494CF443B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainV2.Tests", "DomainV2.Tests\DomainV2.Tests.csproj", "{2DEE9B69-A106-481C-9118-F82A8A874F04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +142,10 @@ Global
 		{5A5281E7-5951-4829-9B7A-ED8494CF443B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A5281E7-5951-4829-9B7A-ED8494CF443B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A5281E7-5951-4829-9B7A-ED8494CF443B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DEE9B69-A106-481C-9118-F82A8A874F04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DEE9B69-A106-481C-9118-F82A8A874F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DEE9B69-A106-481C-9118-F82A8A874F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DEE9B69-A106-481C-9118-F82A8A874F04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

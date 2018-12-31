@@ -251,7 +251,7 @@ namespace Surveillance.Currency
 
             if (offset > 14)
             {
-                _logger.LogError($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate}.");
+                _logger.LogError($"High Profit Rule could not find an exchange rate in a 14 day date range around {dayOfRate}.");
                 ruleCtx.EventException($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate}.");
 
                 return new ExchangeRateDto[0];

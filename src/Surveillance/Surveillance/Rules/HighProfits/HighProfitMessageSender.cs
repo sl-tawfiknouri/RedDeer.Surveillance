@@ -78,6 +78,15 @@ namespace Surveillance.Rules.HighProfits
                 return string.Empty;
             }
 
+            if (string.Equals(
+                ruleBreach.ExchangeRateProfits.FixedCurrency.Value,
+                ruleBreach.ExchangeRateProfits.VariableCurrency.Value,
+                StringComparison.InvariantCultureIgnoreCase))
+            {
+                _logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
+                return string.Empty;
+            }
+
             var absAmount = Math.Round(
                 ruleBreach.ExchangeRateProfits.AbsoluteAmountDueToWer(),
                 2,
@@ -104,7 +113,7 @@ namespace Surveillance.Rules.HighProfits
                 return string.Empty;
             }
 
-            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency.Value}/ {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
+            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency.Value}/{ruleBreach.ExchangeRateProfits.VariableCurrency.Value}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
         }
     }
 }

@@ -145,7 +145,8 @@ namespace Surveillance.Rules.HighProfits
 
             IExchangeRateProfitBreakdown exchangeRateProfits = null;
 
-            if (_parameters.UseCurrencyConversions)
+            if (_parameters.UseCurrencyConversions
+                && !string.IsNullOrEmpty(_parameters.HighProfitCurrencyConversionTargetCurrency))
             {
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
@@ -280,7 +281,8 @@ namespace Surveillance.Rules.HighProfits
             }
 
             return absoluteProfits.Value >= _parameters.HighProfitAbsoluteThreshold;
-        }        
+        }    
+        
         protected override void Genesis()
         {
             _logger.LogInformation("Universe Genesis occurred in the High Profit Rule");

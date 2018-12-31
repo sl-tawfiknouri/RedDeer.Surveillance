@@ -46,12 +46,12 @@ namespace TestHarness.Factory
 
         public AppFactory(INetworkConfiguration networkConfiguration)
         {
-            Logger = new LoggerFactory().CreateLogger("TestHarnessLogger");
-
             DisableNuke = AwsTags.IsLiveEc2Instance();
 
+            Logger = new LoggerFactory().CreateLogger("TestHarnessLogger");
+
             State = new ProgramState();
-            Console = new Console();
+            Console = new Display.Console();
             CommandManifest = new CommandManifest();
             ProhibitedSecurityHeartbeat = new PulsatingHeartbeat(); // singleton
             SpoofedTradeHeartbeat = new PulsatingHeartbeat(); // singleton

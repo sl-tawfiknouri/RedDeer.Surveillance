@@ -11,24 +11,26 @@ namespace TestHarness.Repository.Aurora
     {
         public static string Environment = "Environment";
 
-        public static bool IsEc2Instances()
-        {
-            return Amazon.Util.EC2InstanceMetadata.InstanceId != null;
-        }
-
         public static bool IsLiveEc2Instance()
         {
-            if (!IsEc2Instances())
+            try
             {
-                return false;
+                if (!IsEc2Instances())
+                {
+                    return false;
+                }
+
+                var env = GetTag(Environment);
+
+                return string.Equals(env, "live", StringComparison.InvariantCultureIgnoreCase);
             }
-
-            var env = GetTag(Environment);
-
-            return string.Equals(env, "live", StringComparison.InvariantCultureIgnoreCase);
+            catch (Exception e)
+            {
+                return true;
+            }
         }
 
-        public static string GetTag(string name)
+        private static string GetTag(string name)
         {
             var instanceId = Amazon.Util.EC2InstanceMetadata.InstanceId;
             var client = new AmazonEC2Client(new AmazonEC2Config
@@ -47,6 +49,11 @@ namespace TestHarness.Repository.Aurora
             }).Result.Tags;
 
             return tags?.FirstOrDefault()?.Value;
+        }
+
+        private static bool IsEc2Instances()
+        {
+            return Amazon.Util.EC2InstanceMetadata.InstanceId != null;
         }
     }
 }

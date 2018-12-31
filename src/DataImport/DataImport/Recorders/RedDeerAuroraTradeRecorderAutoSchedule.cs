@@ -4,6 +4,7 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Recorders.Interfaces;
+using DataImport.Services.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ namespace DataImport.Recorders
 {
     public class RedDeerAuroraTradeRecorderAutoSchedule : IRedDeerAuroraTradeRecorderAutoSchedule
     {
+        private readonly IEnrichmentService _enrichmentService;
         private readonly IReddeerTradeRepository _tradeRepository;
         private readonly IScheduleRuleMessageSender _sender;
         private readonly IUploadConfiguration _configuration;
@@ -22,11 +24,13 @@ namespace DataImport.Recorders
         private readonly IDictionary<string, SchedulePair> _batchTracker;
 
         public RedDeerAuroraTradeRecorderAutoSchedule(
+            IEnrichmentService enrichmentService,
             IReddeerTradeRepository tradeRepository,
             IScheduleRuleMessageSender sender,
             IUploadConfiguration configuration,
             ILogger<RedDeerAuroraTradeRecorderAutoSchedule> logger)
         {
+            _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
             _tradeRepository = tradeRepository ?? throw new ArgumentNullException(nameof(tradeRepository));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -120,6 +124,11 @@ namespace DataImport.Recorders
                 {
                     _batchTracker.Remove(value.InputBatchId);
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule auto scheduling now dispatching run rule request as full batch size of {value.BatchSize} has been met.");
+
+                    var scanTask = _enrichmentService.Scan();
+                    var result = scanTask.Result;
+
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule scanned for enrichment tasks and {result} found results");
                     _sender.Send(schedulePair.Schedule);
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule batch dispatched");
                 }

@@ -1,7 +1,7 @@
-﻿using Surveillance.Services.Interfaces;
-using System;
+﻿using System;
 using Surveillance.Interfaces;
 using Surveillance.Scheduler.Interfaces;
+using Surveillance.Services.Interfaces;
 
 namespace Surveillance
 {
@@ -14,13 +14,11 @@ namespace Surveillance
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly IApplicationHeartbeatService _heartbeatService;
-        private readonly IEnrichmentService _enrichmentService;
 
         public Mediator(
             IReddeerRuleScheduler ruleScheduler,
             IReddeerDistributedRuleScheduler distributedRuleScheduler,
-            IApplicationHeartbeatService heartbeatService,
-            IEnrichmentService enrichmentService)
+            IApplicationHeartbeatService heartbeatService)
         {
             _ruleScheduler =
                 ruleScheduler
@@ -31,9 +29,6 @@ namespace Surveillance
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
-            _enrichmentService =
-                enrichmentService
-                ?? throw new ArgumentNullException(nameof(enrichmentService));
         }
 
         public void Initiate()
@@ -41,14 +36,12 @@ namespace Surveillance
             _distributedRuleScheduler.Initiate();
             _ruleScheduler.Initiate();
             _heartbeatService.Initialise();
-            _enrichmentService.Initialise();
         }
 
         public void Terminate()
         {
             _ruleScheduler.Terminate();
             _distributedRuleScheduler.Terminate();
-            _enrichmentService.Terminate();
             // we don't terminate the heart beat service as it will stop when the entire app has stopped
         }
     }

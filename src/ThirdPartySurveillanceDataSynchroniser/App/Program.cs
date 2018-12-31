@@ -41,7 +41,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
         {
             try
             {
-                Logger.Log(LogLevel.Info, "Program.Main initialising dependency injection");
                 Container = new Container();
 
                 var builtConfig = BuildConfiguration();
@@ -62,8 +61,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
                 });
 
                 SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
-
-                Logger.Log(LogLevel.Info, "Program.Main completed dependency injection");
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run();
@@ -92,11 +89,13 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
+                DisableConsoleLog();
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemServiceFlag))
             {
+                DisableConsoleLog();
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
@@ -201,6 +200,12 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             arg = Regex.Replace(arg, @"(\\*)" + "\"", @"$1$1\" + "\"");
             arg = "\"" + Regex.Replace(arg, @"(\\+)$", @"$1$1") + "\"";
             return arg;
+        }
+
+        private static void DisableConsoleLog()
+        {
+            LogManager.Configuration.RemoveTarget("console");
+            LogManager.Configuration.Reload();
         }
     }
 }

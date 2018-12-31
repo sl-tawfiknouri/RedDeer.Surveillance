@@ -25,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PlayMarketFiles\MarketDataEquity.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

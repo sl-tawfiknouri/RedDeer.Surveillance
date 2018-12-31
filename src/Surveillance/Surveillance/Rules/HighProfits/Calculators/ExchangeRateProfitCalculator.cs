@@ -25,7 +25,17 @@ namespace Surveillance.Rules.HighProfits.Calculators
             DomainV2.Financial.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
+            if (string.IsNullOrEmpty(variableCurrency.Value))
+            {
+                return null;
+            }
+
             var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Value))?.OrderCurrency;
+
+            if (string.Equals(orderCurrency?.Value, variableCurrency.Value, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
 
             if (string.IsNullOrWhiteSpace(orderCurrency.GetValueOrDefault().Value))
             {

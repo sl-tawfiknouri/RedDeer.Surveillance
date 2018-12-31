@@ -17,7 +17,7 @@ namespace Surveillance.Rules
         private readonly ICaseMessageSender _caseMessageSender;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
 
         protected BaseMessageSender(
             string caseTitle,

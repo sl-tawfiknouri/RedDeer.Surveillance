@@ -6,5 +6,6 @@ namespace DataImport.Services.Interfaces
     {
         Task Initialise();
         Task Terminate();
+        Task<bool> Scan();
     }
 }

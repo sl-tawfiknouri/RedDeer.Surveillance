@@ -48,6 +48,8 @@ using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
+using Surveillance.Services;
+using Surveillance.Services.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter;
 using Surveillance.Universe.Filter.Interfaces;

@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using DataImport.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.Services.Interfaces;
 using Timer = System.Timers.Timer;
 
-namespace Surveillance.Services
+namespace DataImport.Services
 {
     public class EnrichmentService : IEnrichmentService
     {
@@ -83,7 +83,7 @@ namespace Surveillance.Services
             }
         }
 
-        private async Task<bool> Scan()
+        public async Task<bool> Scan()
         {
             var securities = await _marketRepository.GetUnEnrichedSecurities();
 

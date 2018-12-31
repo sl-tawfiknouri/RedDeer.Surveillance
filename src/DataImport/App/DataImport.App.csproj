@@ -75,7 +75,7 @@
     <None Update="DeploymentScripts\BeforeInstall.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="relayservice.service">
+    <None Update="dataimportservice.service">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="_InstallService.bat">

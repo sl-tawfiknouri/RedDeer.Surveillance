@@ -87,7 +87,7 @@
     <None Update="Migrations\5 - Security Enrichment.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>    
-    <None Update="Migrations\6 - Relay Audit.sql">
+    <None Update="Migrations\6 - Relay DataImport.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\7 - Bloomberg Ticker.sql">

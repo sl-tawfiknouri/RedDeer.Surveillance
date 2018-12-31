@@ -88,7 +88,7 @@ namespace TestHarness.Commands
             var console = _appFactory.Console;
             var equityStream = _appFactory.StockExchangeStreamFactory.CreateDisplayable(console);
             var filePath = GetEquityFilePath(command);
-            _fileProcessor = _appFactory.EquitiesFileRelayProcessFactory.Create(filePath);
+            _fileProcessor = _appFactory.EquitiesFileDataImportProcessFactory.Create(filePath);
 
             _fileProcessor.InitiateWalk(equityStream);
         }

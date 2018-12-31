@@ -3,11 +3,11 @@
 -- DATE : 27/10/2018
 -- LAST MODIFIED: 27/10/2018 BY RYAN TRENCHARD
 -- JIRA (RDPB-3066)
--- PURPOSE : Allow for exceptions to be tracked within the relay service (may be called data import in future)
+-- PURPOSE : Allow for exceptions to be tracked within the data import service
 
 START TRANSACTION;
 
-INSERT INTO Migrations VALUES(6, "Relay Audit.sql", now());
+INSERT INTO Migrations VALUES(6, "Data Import Audit.sql", now());
 
 CREATE TABLE SystemProcessOperationUploadFileType(Id int primary key NOT NULL, FileType text);
 INSERT INTO SystemProcessOperationUploadFileType (Id, FileType) VALUES (0, "Market Data File"), (1, "Trade Data File");

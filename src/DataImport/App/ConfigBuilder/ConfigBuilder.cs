@@ -66,13 +66,13 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
 
             var networkConfiguration = new Configuration
             {
-                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
-                RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
+                DataImportTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
+                DataImportEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
                     GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
                 SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
-                RelayS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
-                RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
-                RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
+                DataImportS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
+                DataImportTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
+                DataImportEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
                 AutoSchedule = autoSchedule,
             };
 

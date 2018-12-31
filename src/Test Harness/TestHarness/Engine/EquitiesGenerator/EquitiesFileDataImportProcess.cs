@@ -12,13 +12,13 @@ using TestHarness.Engine.EquitiesGenerator.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
-    public class EquitiesFileRelayProcess : IEquityDataGenerator
+    public class EquitiesFileDataImportProcess : IEquityDataGenerator
     {
         private readonly string _filePath;
         private readonly ILogger _logger;
         private readonly ISecurityCsvToDtoMapper _securityMapper;
 
-        public EquitiesFileRelayProcess(
+        public EquitiesFileDataImportProcess(
             string filePath,
             ILogger logger,
             ISecurityCsvToDtoMapper securityMapper)

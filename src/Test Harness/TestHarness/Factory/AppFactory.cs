@@ -63,9 +63,9 @@ namespace TestHarness.Factory
             TradingFactory = new TradingFactory.TradingFactory(Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
-            TradingFileRelayProcessFactory = new TradingFileRelayProcessFactory(this);
+            TradingFileDataImportProcessFactory = new TradingFileDataImportProcessFactory(this);
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
-            EquitiesFileRelayProcessFactory = new EquitiesFileRelayProcessFactory(Logger);
+            EquitiesFileDataImportProcessFactory = new EquitiesFileDataImportProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
             OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeFileCsvToOrderMapper(), Logger);
             LayeringProcessFactory = new TradingLayeringFactory.TradingLayeringFactory(Logger);
@@ -139,7 +139,7 @@ namespace TestHarness.Factory
 
         public ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
 
-        public ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
+        public ITradingFileDataImportProcessFactory TradingFileDataImportProcessFactory { get; }
 
         public ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
 
@@ -153,7 +153,7 @@ namespace TestHarness.Factory
 
         public INetworkConfiguration Configuration { get; }
 
-        public IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
+        public IEquitiesFileDataImportProcessFactory EquitiesFileDataImportProcessFactory { get; }
 
         public IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         public IAuroraRepository AuroraRepository { get; }

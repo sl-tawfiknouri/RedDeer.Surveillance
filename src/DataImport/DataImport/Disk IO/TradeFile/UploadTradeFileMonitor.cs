@@ -42,7 +42,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         protected override string UploadDirectoryPath()
         {
-            return _uploadConfiguration.RelayTradeFileUploadDirectoryPath;
+            return _uploadConfiguration.DataImportTradeFileUploadDirectoryPath;
         }
 
         public override bool ProcessFile(string path)

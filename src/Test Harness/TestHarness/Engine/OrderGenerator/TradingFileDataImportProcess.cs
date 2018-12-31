@@ -12,12 +12,12 @@ using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
-    public class TradingFileRelayProcess : BaseTradingProcess
+    public class TradingFileDataImportProcess : BaseTradingProcess
     {
         private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
         private readonly string _filePath;
 
-        public TradingFileRelayProcess(
+        public TradingFileDataImportProcess(
             ILogger logger,
             ITradeFileCsvToOrderMapper csvToDtoMapper,
             string filePath)

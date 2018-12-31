@@ -31,6 +31,7 @@ using TestHarness.Factory.TradingSpoofingV2Factory.Interfaces;
 using TestHarness.Repository;
 using TestHarness.Repository.Api;
 using TestHarness.Repository.Api.Interfaces;
+using TestHarness.Repository.Aurora;
 using TestHarness.Repository.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -42,9 +43,12 @@ namespace TestHarness.Factory
     /// </summary>
     public class AppFactory : IAppFactory
     {
+
         public AppFactory(INetworkConfiguration networkConfiguration)
         {
             Logger = new LoggerFactory().CreateLogger("TestHarnessLogger");
+
+            DisableNuke = AwsTags.IsLiveEc2Instance();
 
             State = new ProgramState();
             Console = new Console();
@@ -155,5 +159,7 @@ namespace TestHarness.Factory
         public IAuroraRepository AuroraRepository { get; }
 
         public IMarketApiRepository MarketApiRepository { get; }
+
+        public bool DisableNuke { get; }
     }
 }

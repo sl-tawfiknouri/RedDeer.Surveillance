@@ -21,11 +21,21 @@ namespace TestHarness.Commands
                 return false;
             }
 
+            if (_appFactory.DisableNuke)
+            {
+                return false;
+            }
+
             return string.Equals(command, "Nuke", StringComparison.InvariantCultureIgnoreCase);
         }
 
         public void Run(string command)
         {
+            if (_appFactory.DisableNuke)
+            {
+                return;
+            }
+
             var cts = new CancellationTokenSource(TimeSpan.FromMinutes(3));
 
             var queueNuked = false;

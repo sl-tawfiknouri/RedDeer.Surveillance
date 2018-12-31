@@ -70,5 +70,7 @@ namespace TestHarness.Factory.Interfaces
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         IAuroraRepository AuroraRepository { get; }
         IMarketApiRepository MarketApiRepository { get; }
+        bool DisableNuke { get; }
+
     }
 }

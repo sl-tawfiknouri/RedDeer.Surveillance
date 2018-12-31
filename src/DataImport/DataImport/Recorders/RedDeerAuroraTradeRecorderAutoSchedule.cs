@@ -126,7 +126,6 @@ namespace DataImport.Recorders
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule auto scheduling now dispatching run rule request as full batch size of {value.BatchSize} has been met.");
 
                     var scanTask = _enrichmentService.Scan();
-                    scanTask.Wait();
                     var result = scanTask.Result;
 
                     _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule scanned for enrichment tasks and {result} found results");

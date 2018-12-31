@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
 using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
@@ -46,6 +47,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IAwsConfiguration), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+                Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
 
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);

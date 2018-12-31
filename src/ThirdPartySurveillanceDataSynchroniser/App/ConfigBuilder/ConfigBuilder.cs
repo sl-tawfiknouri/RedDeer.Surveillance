@@ -59,14 +59,16 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
                 }
             }
 
-            var config = new Config
+        var config = new Config
             {
                 DataSynchroniserRequestQueueName = GetSetting("DataSynchronizerQueueName", configurationBuilder), // american english for dev ops
                 ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
                 ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
                 CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
                 AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
-                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
+                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder)
             };
 
             return config;

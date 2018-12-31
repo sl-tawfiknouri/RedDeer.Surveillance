@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Firefly.MessageBus.Core.Infrastructure.Transport;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
+using RawRabbit.Configuration;
 using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons

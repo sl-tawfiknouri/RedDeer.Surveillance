@@ -36,6 +36,14 @@ namespace Surveillance.Markets
 
         public void Add(ExchangeFrame value)
         {
+            if (value == null)
+            {
+                _logger.LogInformation($"UniverseMarketCache was asked to add null. returning");
+                return;
+            }
+
+            _logger.LogInformation($"UniverseMarketCache adding {value.TimeStamp} - {value.Exchange?.MarketIdentifierCode}");
+
             if (_latestExchangeFrameBook.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
                 _latestExchangeFrameBook.Remove(value.Exchange.MarketIdentifierCode);
@@ -70,9 +78,12 @@ namespace Surveillance.Markets
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
 
+            _logger.LogInformation($"UniverseMarketCache fetching for market {request?.MarketIdentifierCode} from {request?.UniverseEventTimeFrom} to {request?.UniverseEventTimeTo} as part of rule run {request?.SystemProcessOperationRuleRunId}");
+
             if (!_latestExchangeFrameBook.ContainsKey(request.MarketIdentifierCode))
             {
                 _dataRequestRepository.CreateDataRequest(request);
+                _logger.LogInformation($"UniverseMarketCache was not able to find the MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
 
@@ -81,6 +92,7 @@ namespace Surveillance.Markets
             if (exchangeFrame == null)
             {
                 _dataRequestRepository.CreateDataRequest(request);
+                _logger.LogInformation($"UniverseMarketCache was not able to find the MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
 
@@ -91,6 +103,7 @@ namespace Surveillance.Markets
             if (security == null)
             {
                 _dataRequestRepository.CreateDataRequest(request);
+                _logger.LogInformation($"UniverseMarketCache was not able to find the security {request.Identifiers} for MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
 
@@ -98,9 +111,13 @@ namespace Surveillance.Markets
                 || exchangeFrame.TimeStamp < request.UniverseEventTimeFrom)
             {
                 _dataRequestRepository.CreateDataRequest(request);
+
+                _logger.LogInformation($"UniverseMarketCache was not able to find the security {request.Identifiers} for MIC {request.MarketIdentifierCode} in the latest exchange frame book within a suitable data range to {request.UniverseEventTimeTo} from {request.UniverseEventTimeFrom}. Recording missing data.");
+
                 return MarketDataResponse<SecurityTick>.MissingData();
             }
-          
+
+            _logger.LogInformation($"UniverseMarketCache was able to find a match for {request.Identifiers} returning data.");
             return new MarketDataResponse<SecurityTick>(security, false);
         }
 
@@ -118,6 +135,7 @@ namespace Surveillance.Markets
 
             if (!_marketHistory.TryGetValue(request.MarketIdentifierCode, out var marketStack))
             {
+                _logger.LogInformation($"UniverseMarketCache GetMarkets was not able to find a market history entry for {request.MarketIdentifierCode}");
                 _dataRequestRepository.CreateDataRequest(request);
                 return MarketDataResponse<List<SecurityTick>>.MissingData();
             }

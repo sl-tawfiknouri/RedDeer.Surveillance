@@ -153,10 +153,13 @@ namespace Surveillance.Markets
 
             if (!securityDataTicks.Any())
             {
+                _logger.LogInformation($"UniverseMarketCache GetMarkets was not able to find market data for the security on {request.MarketIdentifierCode} with ids {request.Identifiers}");
+
                 _dataRequestRepository.CreateDataRequest(request);
                 return MarketDataResponse<List<SecurityTick>>.MissingData();
             }
 
+            _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
             return new MarketDataResponse<List<SecurityTick>>(securityDataTicks, false);
         }
     }

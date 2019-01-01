@@ -33,18 +33,17 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
         {
             try
             {
-                Container = new Container();
+                SetSysLogOffIfService(args);
 
+                Container = new Container();
                 var builtConfig = BuildConfiguration();
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 // Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
-
                 // var builtDataLayerConfig = BuildDataLayerConfiguration();
                 // Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
-
 
                 Container.Configure(config =>
                 {
@@ -90,13 +89,11 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
@@ -114,6 +111,18 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             {
                 Logger.Info("No Flags Found.");
                 RunInteractive(args);
+            }
+        }
+
+        private static void SetSysLogOffIfService(string[] args)
+        {
+            if (args.Contains(RunAsServiceFlag))
+            {
+                DisableConsoleLog();
+            }
+            else if (args.Contains(RunAsSystemServiceFlag))
+            {
+                DisableConsoleLog();
             }
         }
 

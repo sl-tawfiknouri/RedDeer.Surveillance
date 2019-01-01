@@ -42,8 +42,9 @@ namespace RedDeer.DataImport.DataImport.App
         {
             try
             {
-                Container = new Container();
+                SetSysLogSettingIfService(args);
 
+                Container = new Container();
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
@@ -102,13 +103,11 @@ namespace RedDeer.DataImport.DataImport.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
@@ -126,6 +125,18 @@ namespace RedDeer.DataImport.DataImport.App
             {
                 Logger.Info("No Flags Found.");
                 RunInteractive(args);
+            }
+        }
+
+        private static void SetSysLogSettingIfService(string[] args)
+        {
+            if (args.Contains(RunAsServiceFlag))
+            {
+                DisableConsoleLog();
+            }
+            else if (args.Contains(RunAsSystemServiceFlag))
+            {
+                DisableConsoleLog();
             }
         }
 

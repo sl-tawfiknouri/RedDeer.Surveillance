@@ -21,7 +21,6 @@ using Surveillance.System.DataLayer.Processes;
 using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
-
 namespace RedDeer.DataImport.DataImport.App
 {
     public class Program
@@ -43,7 +42,6 @@ namespace RedDeer.DataImport.DataImport.App
         {
             try
             {
-                Logger.Log(LogLevel.Info, "Program.Main initialising dependency injection");
                 Container = new Container();
 
                 var builtConfig = BuildConfiguration();
@@ -65,7 +63,6 @@ namespace RedDeer.DataImport.DataImport.App
                 });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                Logger.Log(LogLevel.Info, "Program.Main completed dependency injection");
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();

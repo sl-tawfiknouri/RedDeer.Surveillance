@@ -24,10 +24,11 @@ namespace RedDeer.Surveillance.App
         {
             await Task.Run(() => 
             {
-                // trades on 69, stocks on 70 [ports]
                 try
                 {
+                    _logger.LogInformation($"MediatorBootstrapper bootstrapping the mediator");
                     _mediator.Initiate();
+                    _logger.LogInformation($"MediatorBootstrapper completed bootstrapping the mediator");
                 }
                 catch (Exception e)
                 {

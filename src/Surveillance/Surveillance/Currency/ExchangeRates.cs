@@ -46,6 +46,7 @@ namespace Surveillance.Currency
             if (string.IsNullOrWhiteSpace(fixedCurrency.Value)
                 || string.IsNullOrWhiteSpace(variableCurrency.Value))
             {
+                _logger.LogError($"ExchangeRate was asked to convert two currencies. Once of which was null or empty {fixedCurrency} {variableCurrency}");
                 return null;
             }
 
@@ -58,6 +59,8 @@ namespace Surveillance.Currency
                     VariableCurrency = variableCurrency.Value,
                     Rate = 1
                 };
+
+                _logger.LogInformation($"ExchangeRate was asked to convert two currencies but they were equal. Returning a rate of 1 for {fixedCurrency} and {variableCurrency}");
 
                 return noConversionRate;
             }
@@ -75,6 +78,8 @@ namespace Surveillance.Currency
 
             var rate = Convert(rates, fixedCurrency, variableCurrency, dayOfConversion, ruleCtx);
 
+            _logger.LogInformation($"ExchangeRate was asked to convert two currencies {fixedCurrency} and {variableCurrency} on {dayOfConversion}. Returning {rate.Rate} as the exchange rate");
+
             return rate;
         }
 
@@ -90,6 +95,8 @@ namespace Surveillance.Currency
 
             if (directConversion != null)
             {
+                _logger.LogInformation($"ExchangeRates was able to directly convert {fixedCurrency} to {variableCurrency} at rate of {directConversion.Rate} on {directConversion.DateTime}");
+
                 return directConversion;
             }
 
@@ -98,6 +105,8 @@ namespace Surveillance.Currency
 
             if (reciprocalConversion != null)
             {
+                _logger.LogInformation($"ExchangeRates was able to reciprocally convert {fixedCurrency} to {variableCurrency} at rate of {reciprocalConversion.Rate} on {reciprocalConversion.DateTime}");
+
                 return reciprocalConversion;
             }
 
@@ -108,7 +117,11 @@ namespace Surveillance.Currency
             {
                 _logger.LogError($"Exchange Rates was unable to convert {fixedCurrency.Value} to {variableCurrency.Value} on {dayOfConversion}");
                 ruleCtx.EventException($"Exchange Rates was unable to convert {fixedCurrency.Value} to {variableCurrency.Value} on {dayOfConversion}");
+
+                return null;
             }
+
+            _logger.LogInformation($"ExchangeRates was able to indirectly convert {fixedCurrency} to {variableCurrency} at rate of {indirectConversion.Rate} on {indirectConversion.DateTime}");
 
             return indirectConversion;
         }

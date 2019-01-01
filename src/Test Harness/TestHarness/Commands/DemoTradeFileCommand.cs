@@ -121,7 +121,7 @@ namespace TestHarness.Commands
             var playFileDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
             var playFileFullPath = Path.Combine(playFileDirectory, fileSegment);
 
-            _tradeFileProcessor = _appFactory.TradingFileRelayProcessFactory.Build(playFileFullPath);
+            _tradeFileProcessor = _appFactory.TradingFileDataImportProcessFactory.Build(playFileFullPath);
         }
 
         private void StopDemo()

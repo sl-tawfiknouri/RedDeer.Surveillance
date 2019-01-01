@@ -47,7 +47,7 @@ namespace TestHarness.Engine.EquitiesStorage
 
             if (string.IsNullOrWhiteSpace(_path))
             {
-                _logger.LogError("Equities File Relay Process did not find file because the path was empty or null");
+                _logger.LogError("Equities File Data Import Process did not find file because the path was empty or null");
                 return;
             }
 

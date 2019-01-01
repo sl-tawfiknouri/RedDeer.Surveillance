@@ -90,7 +90,7 @@ namespace DataImport.Tests.Disk_IO
         public void Initiate_SetConfigurationPath_Logs()
         {
             var monitor = new UploadTradeFileMonitor(_tradeOrderStream, _uploadConfiguration, _directory, _fileProcessor, _systemProcessContext, _logger);
-            A.CallTo(() => _uploadConfiguration.RelayTradeFileUploadDirectoryPath).Returns("testPath");
+            A.CallTo(() => _uploadConfiguration.DataImportTradeFileUploadDirectoryPath).Returns("testPath");
 
             monitor.Initiate();
 

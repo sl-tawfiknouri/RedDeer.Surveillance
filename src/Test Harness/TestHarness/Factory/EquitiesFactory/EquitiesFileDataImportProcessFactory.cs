@@ -7,18 +7,18 @@ using TestHarness.Factory.EquitiesFactory.Interfaces;
 
 namespace TestHarness.Factory.EquitiesFactory
 {
-    public class EquitiesFileRelayProcessFactory : IEquitiesFileRelayProcessFactory
+    public class EquitiesFileDataImportProcessFactory : IEquitiesFileDataImportProcessFactory
     {
         private readonly ILogger _logger;
 
-        public EquitiesFileRelayProcessFactory(ILogger logger)
+        public EquitiesFileDataImportProcessFactory(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IEquityDataGenerator Create(string filePath)
         {
-            return new EquitiesFileRelayProcess(filePath, _logger, new SecurityCsvToDtoMapper(null));
+            return new EquitiesFileDataImportProcess(filePath, _logger, new SecurityCsvToDtoMapper(null));
         }
     }
 }

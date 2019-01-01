@@ -45,14 +45,14 @@ namespace DataImport
         {
             try
             {
-                _logger.LogInformation("Initiating relay in mediator");
+                _logger.LogInformation("Initiating data import in mediator");
 
                 _enrichmentService.Initialise();
                 var tradeFileMonitor = _tradeOrderStreamManager.Initialise();
                 var equityFileMonitor = _stockExchangeStreamManager.Initialise();
                 _s3FileUploadProcess.Initialise(tradeFileMonitor, equityFileMonitor);
 
-                _logger.LogInformation("Completed initiating relay in mediator");
+                _logger.LogInformation("Completed initiating data import in mediator");
             }
             catch (Exception e)
             {

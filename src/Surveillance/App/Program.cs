@@ -43,8 +43,9 @@ namespace RedDeer.Surveillance.App
         {
             try
             {
-                Container = new Container();
+                SetSystemLoggingOffIfService(args);
 
+                Container = new Container();
                 var configurationBuilder = new ConfigurationBuilder()
                     .AddJsonFile("appsettings.json", true, true)
                     .Build();
@@ -84,13 +85,11 @@ namespace RedDeer.Surveillance.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
@@ -108,6 +107,18 @@ namespace RedDeer.Surveillance.App
             {
                 Logger.Info("No Flags Found.");
                 RunInteractive(args);
+            }
+        }
+
+        private static void SetSystemLoggingOffIfService(string[] args)
+        {
+            if (args.Contains(RunAsServiceFlag))
+            {
+                DisableConsoleLog();
+            }
+            else if (args.Contains(RunAsSystemServiceFlag))
+            {
+                DisableConsoleLog();
             }
         }
 

@@ -33,7 +33,8 @@ namespace Surveillance.Rules.Spoofing
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger logger)
+            ILogger logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                   DomainV2.Scheduling.Rules.Spoofing,
@@ -41,7 +42,8 @@ namespace Surveillance.Rules.Spoofing
                   "Spoofing Rule",
                   ruleCtx,
                   factory,
-                  logger)
+                  logger,
+                  tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

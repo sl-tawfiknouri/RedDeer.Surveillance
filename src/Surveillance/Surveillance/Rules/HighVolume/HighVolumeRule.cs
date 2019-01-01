@@ -40,7 +40,8 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            ILogger<IHighVolumeRule> logger) 
+            ILogger<IHighVolumeRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 DomainV2.Scheduling.Rules.HighVolume,
@@ -48,7 +49,8 @@ namespace Surveillance.Rules.HighVolume
                 "High Volume Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));

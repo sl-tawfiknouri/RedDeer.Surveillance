@@ -46,7 +46,8 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger<HighProfitsRule> logger)
+            ILogger<HighProfitsRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
                 DomainV2.Scheduling.Rules.HighProfits,
@@ -54,7 +55,8 @@ namespace Surveillance.Rules.HighProfits
                 "High Profit Rule",
                 ruleCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));

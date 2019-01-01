@@ -33,6 +33,7 @@ namespace Surveillance.Rules
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
 
         private readonly ILogger _logger;
+        private readonly ILogger<TradingHistoryStack> _tradingStackLogger;
         private readonly object _lock = new object();
 
         protected BaseUniverseRule(
@@ -42,7 +43,8 @@ namespace Surveillance.Rules
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
-            ILogger logger)
+            ILogger logger,
+            ILogger<TradingHistoryStack> tradingStackLogger)
         {
             WindowSize = windowSize;
             Rule = rules;
@@ -53,6 +55,7 @@ namespace Surveillance.Rules
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradingStackLogger = tradingStackLogger ?? throw new ArgumentNullException(nameof(tradingStackLogger));
         }
 
         public void OnCompleted()
@@ -156,7 +159,7 @@ namespace Surveillance.Rules
 
             if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.OrderPlacedDate.GetValueOrDefault());
+                var history = new TradingHistoryStack(WindowSize, i => i.OrderPlacedDate.GetValueOrDefault(), _tradingStackLogger);
                 history.Add(value, value.OrderPlacedDate.GetValueOrDefault());
                 TradingInitialHistory.TryAdd(value.Instrument.Identifiers, history);
             }
@@ -186,7 +189,7 @@ namespace Surveillance.Rules
 
             if (!TradingHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.MostRecentDateEvent());
+                var history = new TradingHistoryStack(WindowSize, i => i.MostRecentDateEvent(), _tradingStackLogger);
                 history.Add(value, value.MostRecentDateEvent());
                 TradingHistory.TryAdd(value.Instrument.Identifiers, history);
             }

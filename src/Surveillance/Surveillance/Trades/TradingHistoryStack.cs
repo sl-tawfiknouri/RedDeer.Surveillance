@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 
 namespace Surveillance.Trades
 {
@@ -16,15 +17,19 @@ namespace Surveillance.Trades
         private readonly object _lock = new object();
         private readonly TimeSpan _activeTradeDuration;
         private readonly Func<Order, DateTime> _getFrameTime;
-        
+        private readonly ILogger<TradingHistoryStack> _logger;
+
         public TradingHistoryStack(
             TimeSpan activeTradeDuration,
-            Func<Order, DateTime> getFrameTime)
+            Func<Order, DateTime> getFrameTime,
+            ILogger<TradingHistoryStack> logger)
         {
             _activeStack = new Stack<Order>();
             _history = new Queue<Order>();
             _activeTradeDuration = activeTradeDuration;
             _getFrameTime = getFrameTime;
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Add(Order frame, DateTime currentTime)

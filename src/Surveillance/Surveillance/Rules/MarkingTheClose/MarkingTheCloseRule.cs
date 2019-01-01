@@ -41,7 +41,8 @@ namespace Surveillance.Rules.MarkingTheClose
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            ILogger<MarkingTheCloseRule> logger)
+            ILogger<MarkingTheCloseRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
                 DomainV2.Scheduling.Rules.MarkingTheClose,
@@ -49,7 +50,8 @@ namespace Surveillance.Rules.MarkingTheClose
                 "Marking The Close",
                 ruleCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));

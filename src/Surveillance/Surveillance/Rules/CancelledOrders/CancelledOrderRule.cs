@@ -33,7 +33,8 @@ namespace Surveillance.Rules.CancelledOrders
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger<CancelledOrderRule> logger)
+            ILogger<CancelledOrderRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
                 DomainV2.Scheduling.Rules.CancelledOrders,
@@ -41,7 +42,8 @@ namespace Surveillance.Rules.CancelledOrders
                 "Cancelled Order Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));

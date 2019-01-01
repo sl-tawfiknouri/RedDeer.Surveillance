@@ -26,7 +26,8 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger<HighProfitsRule> logger)
+            ILogger<HighProfitsRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters, 
                 ruleCtx,
@@ -37,7 +38,8 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator,
                 orderFilter,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             MarketClosureRule = true;
         }

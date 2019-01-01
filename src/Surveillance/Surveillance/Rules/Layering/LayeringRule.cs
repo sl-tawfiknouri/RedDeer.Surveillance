@@ -40,7 +40,8 @@ namespace Surveillance.Rules.Layering
             ILogger logger,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            ISystemProcessOperationRunRuleContext opCtx)
+            ISystemProcessOperationRunRuleContext opCtx,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
                 DomainV2.Scheduling.Rules.Layering,
@@ -48,7 +49,8 @@ namespace Surveillance.Rules.Layering
                 "Layering Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

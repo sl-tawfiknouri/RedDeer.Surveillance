@@ -10,6 +10,7 @@ using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Multiverse;
@@ -27,6 +28,7 @@ namespace Surveillance.Factories
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly ILogger<HighProfitsRule> _logger;
+        private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public HighProfitRuleFactory(
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
@@ -36,7 +38,8 @@ namespace Surveillance.Factories
             IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
-            ILogger<HighProfitsRule> logger)
+            ILogger<HighProfitsRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -46,6 +49,7 @@ namespace Surveillance.Factories
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
@@ -67,7 +71,8 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
-                _logger);
+                _logger,
+                _tradingHistoryLogger);
 
             var marketClosure = new HighProfitMarketClosureRule(
                 parameters,
@@ -78,7 +83,8 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
-                _logger);
+                _logger,
+                _tradingHistoryLogger);
 
             var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
             multiverseTransformer.Subscribe(marketClosure);

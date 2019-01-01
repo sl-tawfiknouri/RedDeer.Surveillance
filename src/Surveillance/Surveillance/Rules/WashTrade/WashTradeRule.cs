@@ -46,7 +46,8 @@ namespace Surveillance.Rules.WashTrade
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger logger)
+            ILogger logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 DomainV2.Scheduling.Rules.WashTrade,
@@ -54,7 +55,8 @@ namespace Surveillance.Rules.WashTrade
                 "Wash Trade Rule",
                 ruleCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));

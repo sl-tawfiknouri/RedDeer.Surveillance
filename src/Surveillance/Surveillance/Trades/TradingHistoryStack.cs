@@ -32,22 +32,25 @@ namespace Surveillance.Trades
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Add(Order frame, DateTime currentTime)
+        public void Add(Order order, DateTime currentTime)
         {
-            if (frame == null)
+            if (order == null)
             {
+                _logger.LogInformation($"TradingHistoryStack add received a null frame at {currentTime}");
                 return;
             }
 
             lock (_lock)
             {
-                if (currentTime.Subtract(_getFrameTime(frame)) <= _activeTradeDuration)
+                if (currentTime.Subtract(_getFrameTime(order)) <= _activeTradeDuration)
                 {
-                    _activeStack.Push(frame);
+                    _logger.LogInformation($"TradingHistoryStack adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}");
+                    _activeStack.Push(order);
                 }
                 else
                 {
-                    _history.Enqueue(frame);
+                    _logger.LogInformation($"TradingHistoryStack adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}. Found it was outdated for an active trade duration of {_activeTradeDuration} so adding it to history");
+                    _history.Enqueue(order);
                 }
             }
         }
@@ -64,6 +67,8 @@ namespace Surveillance.Trades
                     var poppedItem = _activeStack.Pop();
                     if (currentTime.Subtract(_getFrameTime(poppedItem)) > _activeTradeDuration)
                     {
+                        _logger.LogInformation($"TradingHistoryStack archiving for {currentTime} and duration of {_activeTradeDuration}. Order with reddeer-order-id of {poppedItem.ReddeerOrderId} archived.");
+
                         _history.Enqueue(poppedItem);
                     }
                     else

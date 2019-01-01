@@ -8,7 +8,7 @@ namespace Surveillance.Trades.Interfaces
     public interface ITradingHistoryStack
     {
         Stack<Order> ActiveTradeHistory();
-        void Add(Order frame, DateTime currentTime);
+        void Add(Order order, DateTime currentTime);
         void ArchiveExpiredActiveItems(DateTime currentTime);
         Market Exchange();
     }

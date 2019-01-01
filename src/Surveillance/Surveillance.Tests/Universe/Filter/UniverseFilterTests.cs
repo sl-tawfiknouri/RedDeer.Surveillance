@@ -4,6 +4,7 @@ using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.RuleParameters.Filter;
 using Surveillance.Tests.Helpers;
@@ -18,12 +19,14 @@ namespace Surveillance.Tests.Universe.Filter
     {
         private IUnsubscriberFactory<IUniverseEvent> _unsubscriber;
         private IObserver<IUniverseEvent> _observer;
+        private ILogger<UniverseFilter> _logger;
 
         [SetUp]
         public void Setup()
         {
             _unsubscriber = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
             _observer = A.Fake<IObserver<IUniverseEvent>>();
+            _logger = A.Fake<ILogger<UniverseFilter>>();
         }
 
         [Test]
@@ -33,13 +36,14 @@ namespace Surveillance.Tests.Universe.Filter
             Assert.Throws<ArgumentNullException>(() => new UniverseFilter(null,
                 new RuleFilter(),
                 new RuleFilter(),
-                new RuleFilter()));
+                new RuleFilter(),
+                _logger));
         }
 
         [Test]
         public void OnCompleted_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilter(_unsubscriber, null, null, null);
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnCompleted();
@@ -50,7 +54,7 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnError_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilter(_unsubscriber, null, null, null);
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnError(new ArgumentNullException());
@@ -61,7 +65,7 @@ namespace Surveillance.Tests.Universe.Filter
         [Test]
         public void OnNext_CallsOnCompleted_ForSubscribers()
         {
-            var filter = new UniverseFilter(_unsubscriber, null, null, null);
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, _logger);
             filter.Subscribe(_observer);
 
             filter.OnNext(new UniverseEvent(UniverseStateEvent.Genesis, DateTime.UtcNow, new object()));
@@ -78,7 +82,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilter(_unsubscriber, account, null, null);
+            var filter = new UniverseFilter(_unsubscriber, account, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -106,7 +110,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilter(_unsubscriber, account, null, null);
+            var filter = new UniverseFilter(_unsubscriber, account, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -134,7 +138,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.None
             };
 
-            var filter = new UniverseFilter(_unsubscriber, account, null, null);
+            var filter = new UniverseFilter(_unsubscriber, account, null, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -162,7 +166,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilter(_unsubscriber, null, traders, null);
+            var filter = new UniverseFilter(_unsubscriber, null, traders, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -190,7 +194,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilter(_unsubscriber, null, traders, null);
+            var filter = new UniverseFilter(_unsubscriber, null, traders, null, _logger);
 
             filter.Subscribe(_observer);
 
@@ -218,7 +222,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Include
             };
 
-            var filter = new UniverseFilter(_unsubscriber, null, null, markets);
+            var filter = new UniverseFilter(_unsubscriber, null, null, markets, _logger);
 
             filter.Subscribe(_observer);
 
@@ -256,7 +260,7 @@ namespace Surveillance.Tests.Universe.Filter
                 Type = RuleFilterType.Exclude
             };
 
-            var filter = new UniverseFilter(_unsubscriber, null, null, markets);
+            var filter = new UniverseFilter(_unsubscriber, null, null, markets, _logger);
 
             filter.Subscribe(_observer);
 

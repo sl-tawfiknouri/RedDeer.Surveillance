@@ -29,6 +29,7 @@ namespace Surveillance.Factories
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
+        private readonly ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
 
         public HighProfitRuleFactory(
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
@@ -39,7 +40,8 @@ namespace Surveillance.Factories
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<HighProfitsRule> logger,
-            ILogger<TradingHistoryStack> tradingHistoryLogger)
+            ILogger<TradingHistoryStack> tradingHistoryLogger, 
+            ILogger<MarketCloseMultiverseTransformer> transformerLogger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -50,6 +52,7 @@ namespace Surveillance.Factories
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
+            _transformerLogger = transformerLogger ?? throw new ArgumentNullException(nameof(transformerLogger));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
@@ -86,7 +89,7 @@ namespace Surveillance.Factories
                 _logger,
                 _tradingHistoryLogger);
 
-            var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
+            var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory, _transformerLogger);
             multiverseTransformer.Subscribe(marketClosure);
             var percentageCompletionLogger = _percentageCompleteFactory.Build();
             percentageCompletionLogger.InitiateTimeLogger(scheduledExecution);

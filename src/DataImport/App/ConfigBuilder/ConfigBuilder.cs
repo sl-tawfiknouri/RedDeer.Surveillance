@@ -69,7 +69,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("DataImportTradeFileUploadDirectoryPath", configurationBuilder)),
                 DataImportEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
                     GetSetting("DataImportEquityFileUploadDirectoryPath", configurationBuilder)),
-                SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
+                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
                 DataImportS3UploadQueueName = GetSetting("DataImportS3UploadQueueName", configurationBuilder),
                 DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
                 DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),

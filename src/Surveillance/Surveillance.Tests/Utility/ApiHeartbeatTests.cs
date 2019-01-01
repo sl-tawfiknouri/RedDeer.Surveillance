@@ -16,7 +16,6 @@ namespace Surveillance.Tests.Utility
     [TestFixture]
     public class ApiHeartbeatTests
     {
-        private ISystemProcessContext _processContext;
         private IExchangeRateApiCachingDecoratorRepository _exchangeRateApi;
         private IMarketOpenCloseApiCachingDecoratorRepository _marketApi;
         private IRuleParameterApiRepository _ruleApi;
@@ -26,7 +25,6 @@ namespace Surveillance.Tests.Utility
         [SetUp]
         public void Setup()
         {
-            _processContext = A.Fake<ISystemProcessContext>();
             _exchangeRateApi = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
             _marketApi = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
             _ruleApi = A.Fake<IRuleParameterApiRepository>();
@@ -38,27 +36,27 @@ namespace Surveillance.Tests.Utility
         public void Constructor_NullExchangeRateApi_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(null, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(null, _marketApi, _ruleApi, _enrichmentApi, _logger));
         }
 
         [Test]
         public void Constructor_NullMarketApi_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, null, _ruleApi, _enrichmentApi, _processContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, null, _ruleApi, _enrichmentApi, _logger));
         }
 
         [Test]
         public void Constructor_NullRulesApi_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, _marketApi, null, _enrichmentApi, _processContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, _marketApi, null, _enrichmentApi, _logger));
         }
 
         [Test]
         public async Task HeartsBeating_AllReturnTrue_IsTrue()
         {
-            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger);
+            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _logger);
 
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
@@ -73,7 +71,7 @@ namespace Surveillance.Tests.Utility
         [Test]
         public async Task HeartsBeating_AllReturnTrueExceptExchange_IsFalse()
         {
-            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger);
+            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _logger);
 
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
@@ -87,8 +85,7 @@ namespace Surveillance.Tests.Utility
         [Test]
         public async Task HeartsBeating_AllReturnTrueExceptMarket_IsFalse()
         {
-            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger);
-
+            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _logger);
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
             A.CallTo(() => _ruleApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
@@ -101,7 +98,7 @@ namespace Surveillance.Tests.Utility
         [Test]
         public async Task HeartsBeating_AllReturnTrueExceptRules_IsFalse()
         {
-            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger);
+            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _logger);
 
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));
@@ -115,7 +112,7 @@ namespace Surveillance.Tests.Utility
         [Test]
         public async Task HeartsBeating_AllReturnFalse_IfInternalException()
         {
-            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _processContext, _logger);
+            var heartbeat = new ApiHeartbeat(_exchangeRateApi, _marketApi, _ruleApi, _enrichmentApi, _logger);
 
             A.CallTo(() => _exchangeRateApi.HeartBeating(A<CancellationToken>.Ignored)).Throws<ArgumentNullException>();
             A.CallTo(() => _marketApi.HeartBeating(A<CancellationToken>.Ignored)).Returns(Task.FromResult(true));

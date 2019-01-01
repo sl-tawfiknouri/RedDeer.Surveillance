@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Scheduling;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -23,6 +24,7 @@ namespace Surveillance.Universe
         private readonly IWashTradeSubscriber _washTradeSubscriber;
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly ILogger<UniverseRuleSubscriber> _logger;
 
         public UniverseRuleSubscriber(
             ISpoofingSubscriber spoofingSubscriber,
@@ -32,7 +34,8 @@ namespace Surveillance.Universe
             IMarkingTheCloseSubscriber markingTheCloseSubscriber,
             ILayeringSubscriber layeringSubscriber,
             IWashTradeSubscriber washTradeSubscriber,
-            IRuleParameterApiRepository ruleParameterApiRepository)
+            IRuleParameterApiRepository ruleParameterApiRepository,
+            ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingSubscriber = spoofingSubscriber ?? throw new ArgumentNullException(nameof(spoofingSubscriber));
             _cancelledOrderSubscriber = cancelledOrderSubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderSubscriber));
@@ -44,6 +47,7 @@ namespace Surveillance.Universe
 
             _ruleParameterApiRepository = ruleParameterApiRepository
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task SubscribeRules(
@@ -55,23 +59,35 @@ namespace Surveillance.Universe
             if (execution == null
                 || player == null)
             {
+                _logger.LogInformation($"UniverseRuleSubscriber received null execution or player. Returning");
                 return;
             }
 
+            _logger.LogInformation($"UniverseRuleSubscriber fetching rule parameters");
             var ruleParameters = await RuleParameters(execution);
+            _logger.LogInformation($"UniverseRuleSubscriber has fetched the rule parameters");
 
             var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
             var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
 
             foreach (var sub in highVolumeSubscriptions)
+            {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high volume rule");
                 player.Subscribe(sub);
+            }
 
             foreach (var sub in washTradeSubscriptions)
+            {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a wash trade rule");
                 player.Subscribe(sub);
+            }
 
             foreach (var sub in highProfitSubscriptions)
+            {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high profit rule");
                 player.Subscribe(sub);
+            }
 
             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
         }
@@ -80,6 +96,7 @@ namespace Surveillance.Universe
         {
             if (!execution.IsBackTest)
             {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules noted not a back test run. Fetching all dtos.");
                 return await _ruleParameterApiRepository.Get();
             }
 
@@ -88,6 +105,7 @@ namespace Surveillance.Universe
             var ruleDtos = new List<RuleParameterDto>();
             foreach (var id in ids)
             {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules fetching rule dto for {id}");
                 var apiResult = await _ruleParameterApiRepository.Get(id);
 
                 if (apiResult != null)
@@ -96,7 +114,13 @@ namespace Surveillance.Universe
 
             if (!ruleDtos.Any())
             {
+                _logger.LogError($"UniverseRuleSubscriber Subscribe Rules did not find any matching rule dtos");
                 return new RuleParameterDto();
+            }
+
+            if (ruleDtos.Count != ids.Count)
+            {
+                _logger.LogError($"UniverseRuleSubscriber Subscribe Rules did not finding a matching amount of ids to rule dtos");
             }
 
             if (ruleDtos.Count == 1)

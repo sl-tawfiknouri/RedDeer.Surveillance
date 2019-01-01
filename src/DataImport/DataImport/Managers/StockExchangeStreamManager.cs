@@ -26,7 +26,7 @@ namespace DataImport.Managers
         public IUploadEquityFileMonitor Initialise()
         {
             var unsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
-            var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO relay
+            var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO data import
 
             // hook up the data recorder
             stockExchangeStream.Subscribe(_stockExchangeRecorder);

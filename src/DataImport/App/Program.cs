@@ -33,9 +33,9 @@ namespace RedDeer.DataImport.DataImport.App
         private const string RegisterServiceFlag = "--register-service";
         private const string UnRegisterServiceFlag = "--unregister-service";
 
-        internal const string ServiceName = "RedDeer.RelayService";
-        private const string ServiceDisplayName = "RedDeer Relay Service";
-        private const string ServiceDescription = "RedDeer Relay Service";
+        internal const string ServiceName = "RedDeer.DataImportService";
+        private const string ServiceDisplayName = "RedDeer Data Import Service";
+        private const string ServiceDescription = "RedDeer Data Import Service";
 
         private static Container Container { get; set; }
 

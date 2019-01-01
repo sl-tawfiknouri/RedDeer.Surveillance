@@ -24,7 +24,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
             var builtConfig = BuildConfiguration();
             //container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-           // SystemProcessContext.ProcessType = SystemProcessType.RelayService;
+           // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
             // var builtDataConfig = BuildDataConfiguration();
             // container.Inject(typeof(IAwsConfiguration), builtDataConfig);

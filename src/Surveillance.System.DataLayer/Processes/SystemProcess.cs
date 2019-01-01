@@ -27,7 +27,7 @@ namespace Surveillance.System.DataLayer.Processes
         public string ProcessId { get; set; }
 
         /// <summary>
-        /// The type of system process i.e. surveillance or relay
+        /// The type of system process i.e. surveillance or data import
         /// </summary>
         public SystemProcessType SystemProcessType { get; set; }
 

@@ -39,7 +39,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 // Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                // SystemProcessContext.ProcessType = SystemProcessType.RelayService;
+                // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
 
                 // var builtDataLayerConfig = BuildDataLayerConfiguration();

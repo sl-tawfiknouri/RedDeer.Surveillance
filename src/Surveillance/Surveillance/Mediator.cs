@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Surveillance.Interfaces;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Services.Interfaces;
@@ -14,11 +15,13 @@ namespace Surveillance
         private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly IApplicationHeartbeatService _heartbeatService;
+        private readonly ILogger<Mediator> _logger;
 
         public Mediator(
             IReddeerRuleScheduler ruleScheduler,
             IReddeerDistributedRuleScheduler distributedRuleScheduler,
-            IApplicationHeartbeatService heartbeatService)
+            IApplicationHeartbeatService heartbeatService,
+            ILogger<Mediator> logger)
         {
             _ruleScheduler =
                 ruleScheduler
@@ -29,19 +32,24 @@ namespace Surveillance
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
+            _logger.LogInformation($"Mediator beginning initiate");
             _distributedRuleScheduler.Initiate();
             _ruleScheduler.Initiate();
             _heartbeatService.Initialise();
+            _logger.LogInformation($"Mediator completed initiate");
         }
 
         public void Terminate()
         {
+            _logger.LogInformation($"Mediator beginning terminate");
             _ruleScheduler.Terminate();
             _distributedRuleScheduler.Terminate();
+            _logger.LogInformation($"Mediator completed terminate");
             // we don't terminate the heart beat service as it will stop when the entire app has stopped
         }
     }

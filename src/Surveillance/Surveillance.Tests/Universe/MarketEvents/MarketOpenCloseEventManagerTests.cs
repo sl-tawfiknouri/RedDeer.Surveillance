@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
@@ -15,11 +16,13 @@ namespace Surveillance.Tests.Universe.MarketEvents
     public class MarketOpenCloseEventManagerTests
     {
         private IMarketOpenCloseApiCachingDecoratorRepository _repository;
+        private ILogger<MarketOpenCloseEventManager> _logger;
         private ExchangeDto _marketOpenClose;
 
         [SetUp]
         public void Setup()
         {
+            _logger = A.Fake<ILogger<MarketOpenCloseEventManager>>();
             _repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
             _marketOpenClose =
                 new ExchangeDto
@@ -49,13 +52,13 @@ namespace Surveillance.Tests.Universe.MarketEvents
         public void Constructor_NullRepository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new MarketOpenCloseEventManager(null));
+            Assert.Throws<ArgumentNullException>(() => new MarketOpenCloseEventManager(null, _logger));
         }
 
         [Test]
         public async Task AllOpenCloseEvents_TimespanTooShortForMarketBeforeOpen_ReturnEmpty()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 3, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 4, 0, 0);
 
@@ -67,7 +70,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanTooShortForMarketAfterClose_ReturnEmpty()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 19, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 20, 0, 0);
 
@@ -79,7 +82,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanOpenOnlyMarket_ReturnOnlyOneOpen()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 13, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 15, 0, 0);
 
@@ -95,7 +98,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanCloseOnlyMarket_ReturnFiveEventsClose()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 16, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 23, 0, 0);
 
@@ -111,7 +114,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanOpenCloseOneDayOnlyMarket_ReturnOnlyOneOpenAndClose()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 7, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 1, 23, 0, 0);
 
@@ -133,7 +136,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanOpenCloseOpenOnlyMarket_ReturnTwoOpenAndOneClose()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 10, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 2, 20, 0, 0);
 
@@ -160,7 +163,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanCloseOpenCloseOnlyMarket_ReturnOneOpenAndTwoClose()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var earlyStart = new DateTime(2000, 1, 1, 15, 0, 0);
             var earlyEnd = new DateTime(2000, 1, 2, 23, 0, 0);
 
@@ -187,7 +190,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanFiveDays_ReturnsTenEvents()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var start = new DateTime(2000, 1, 1, 5, 0, 0);
             var end = new DateTime(2000, 1, 5, 23, 0, 0);
 
@@ -199,7 +202,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanFiveDaysAfterOpen_ReturnsNineEvents()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var start = new DateTime(2000, 1, 1, 12, 0, 0);
             var end = new DateTime(2000, 1, 5, 20, 0, 0);
 
@@ -211,7 +214,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
         [Test]
         public async Task AllOpenCloseEvents_TimespanFiveDaysBeforeFinalClose_ReturnsNineEvents()
         {
-            var manager = new MarketOpenCloseEventManager(_repository);
+            var manager = new MarketOpenCloseEventManager(_repository, _logger);
             var start = new DateTime(2000, 1, 1, 13, 0, 0);
             var end = new DateTime(2000, 1, 5, 21, 0, 0);
 

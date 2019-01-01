@@ -47,7 +47,7 @@ namespace Surveillance.Universe.Filter
             }
 
             var leadingCharacter = cfi.ToLower().First();
-            var filter = leadingCharacter == 'e';
+            var filter = leadingCharacter != 'e';
 
             if (filter)
             {

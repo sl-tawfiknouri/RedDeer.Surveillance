@@ -403,7 +403,7 @@ namespace DomainV2.Files
                     null,
                     csv.InstrumentClientIdentifier,
                     csv.InstrumentSedol,
-                    csv.InstrumentSedol,
+                    csv.InstrumentIsin,
                     csv.InstrumentFigi,
                     csv.InstrumentCusip,
                     csv.InstrumentExchangeSymbol,

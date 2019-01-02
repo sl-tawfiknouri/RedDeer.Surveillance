@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
@@ -18,15 +19,16 @@ namespace Surveillance.Rules.MarkingTheClose
                 caseMessageSender)
         { }
 
-        public void Send(IMarkingTheCloseBreach breach, ISystemProcessOperationRunRuleContext ruleCtx)
+        public async Task Send(IMarkingTheCloseBreach breach, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (breach == null)
             {
+                Logger.LogInformation($"MarkingTheCloseMessageSender received a null breach for rule ctx {ruleCtx.Id()}. Returning.");
                 return;
             }
 
             var description = BuildDescription(breach);
-            Send(breach, description, ruleCtx);
+            await Send(breach, description, ruleCtx);
         }
 
         private string BuildDescription(IMarkingTheCloseBreach ruleBreach)

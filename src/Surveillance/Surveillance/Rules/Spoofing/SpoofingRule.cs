@@ -105,6 +105,7 @@ namespace Surveillance.Rules.Spoofing
 
             if (hasBreachedSpoofingRule)
             {
+                _logger.LogInformation($"SpoofingRule RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
                 RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
             }
         }

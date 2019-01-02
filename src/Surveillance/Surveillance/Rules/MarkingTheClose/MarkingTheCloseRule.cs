@@ -118,6 +118,7 @@ namespace Surveillance.Rules.MarkingTheClose
             if ((dailyVolumeBreach == null || !dailyVolumeBreach.HasBreach())
                 && (windowVolumeBreach == null || !windowVolumeBreach.HasBreach()))
             {
+                _logger.LogInformation($"MarkingTheCloseRule had no breaches for {tradedSecurity?.Security?.Identifiers} at {UniverseDateTime}");
                 return;
             }
 
@@ -131,6 +132,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
+            _logger.LogInformation($"MarkingTheCloseRule had a breach for {tradedSecurity?.Security?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
             var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
@@ -298,6 +300,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
             if (_hadMissingData)
             {
+                _logger.LogInformation("Marking The Close Rule had missing data at eschaton. Recording to op ctx.");
                 opCtx?.EndEventWithMissingDataError();
             }
         }

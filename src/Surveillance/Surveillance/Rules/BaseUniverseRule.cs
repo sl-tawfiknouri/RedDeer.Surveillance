@@ -15,6 +15,7 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
+// ReSharper disable InconsistentlySynchronizedField
 
 namespace Surveillance.Rules
 {

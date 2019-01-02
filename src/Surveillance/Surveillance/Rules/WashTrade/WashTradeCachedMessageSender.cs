@@ -30,6 +30,8 @@ namespace Surveillance.Rules.WashTrade
         {
             if (ruleBreach == null)
             {
+                // ReSharper disable once InconsistentlySynchronizedField
+                _logger.LogInformation($"Wash Trade Rule Cached Message Sender received a rule breach. Returning.");
                 return;
             }
 
@@ -39,6 +41,9 @@ namespace Surveillance.Rules.WashTrade
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
                 _messages = _messages.Except(duplicates).ToList();
+
+                _logger.LogInformation($"Wash Trade Rule Cached Message Sender de duplicated {_messages.Count} alerts when processing {ruleBreach.Security.Identifiers}.");
+
                 _messages.Add(ruleBreach);
             }
         }
@@ -54,6 +59,7 @@ namespace Surveillance.Rules.WashTrade
 
                 foreach (var msg in _messages)
                 {
+                    _logger.LogInformation($"Wash Trade Rule Cached Message Sender dispatching message for {msg.Security?.Identifiers}");
                     _messageSender.Send(msg, ruleCtx);
                 }
 

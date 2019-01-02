@@ -30,6 +30,8 @@ namespace Surveillance.Rules.HighVolume
         {
             if (ruleBreach == null)
             {
+                // ReSharper disable once InconsistentlySynchronizedField
+                _logger.LogInformation($"High Volume Rule Cached Message Sender received a rule breach that was null. Returning.");
                 return;
             }
 
@@ -54,6 +56,7 @@ namespace Surveillance.Rules.HighVolume
 
                 foreach (var msg in _messages)
                 {
+                    _logger.LogInformation($"High Volume Rule Cached Message Sender dispatching {msg.Security?.Identifiers} rule breach to message bus");
                     _messageSender.Send(msg, ruleCtx);
                 }
 

@@ -15,7 +15,6 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -113,6 +112,7 @@ namespace Surveillance.Rules.Layering
 
             if (layeringRuleBreach != null)
             {
+                _logger.LogInformation($"LayeringRule RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
                 var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
@@ -497,6 +497,7 @@ namespace Surveillance.Rules.Layering
 
             if (_hadMissingData)
             {
+                _logger.LogInformation($"LayeringRule had missing data. Updating rule context with state.");
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
@@ -20,12 +21,12 @@ namespace Surveillance.Rules.WashTrade
                 caseMessageSender)
         { }
 
-        public void Send(
+        public async Task Send(
             IWashTradeRuleBreach breach,
             ISystemProcessOperationRunRuleContext opCtx)
         {
             var description = BuildDescription(breach);
-            Send(breach, description, opCtx);
+            await Send(breach, description, opCtx);
         }
 
         private string BuildDescription(IWashTradeRuleBreach breach)

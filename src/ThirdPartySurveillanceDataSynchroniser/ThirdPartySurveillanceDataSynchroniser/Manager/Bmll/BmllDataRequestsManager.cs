@@ -3,23 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Firefly.MessageBus.Core.Infrastructure.Transport;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
-using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons
+namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {
-        private readonly IBus _bus;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
-            IBus bus,
             ILogger<BmllDataRequestsManager> logger)
         {
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,7 +33,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons
             foreach (var req in minuteBarRequests)
             {
                 var cts = new CancellationTokenSource();
-                var result = await _bus.RequestAsync<GetMinuteBarsRequest, GetMinuteBarsResponse>(req, cts.Token);
+                // var result = await _bus.RequestAsync<GetMinuteBarsRequest, GetMinuteBarsResponse>(req, cts.Token);
             }
 
             _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");

@@ -13,13 +13,13 @@ using ThirdPartySurveillanceDataSynchroniser.DataSources;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons;
 
 namespace ThirdPartySurveillanceDataSynchroniser
 {

@@ -7,7 +7,7 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
 {

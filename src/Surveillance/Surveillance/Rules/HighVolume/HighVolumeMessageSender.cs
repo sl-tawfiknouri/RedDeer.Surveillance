@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -18,15 +19,16 @@ namespace Surveillance.Rules.HighVolume
                 caseMessageSender)
         { }
 
-        public void Send(IHighVolumeRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx)
+        public async Task Send(IHighVolumeRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (ruleBreach == null)
             {
+                Logger.LogInformation($"HighVolumeMessageSender send {ruleCtx.Id()} had a null rule breach. Returning");
                 return;
             }
 
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description, ruleCtx);
+            await Send(ruleBreach, description, ruleCtx);
         }
 
         private string BuildDescription(IHighVolumeRuleBreach ruleBreach)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using DomainV2.Equity.Streams.Interfaces;
+using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 
 namespace Surveillance.Analytics.Streams
@@ -9,11 +10,15 @@ namespace Surveillance.Analytics.Streams
     {
         private readonly ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>> _observers;
         private readonly IUnsubscriberFactory<IUniverseAlertEvent> _factory;
+        private readonly ILogger<UniverseAlertStream> _logger;
 
-        public UniverseAlertStream(IUnsubscriberFactory<IUniverseAlertEvent> unsubscriberFactory)
+        public UniverseAlertStream(
+            IUnsubscriberFactory<IUniverseAlertEvent> unsubscriberFactory,
+            ILogger<UniverseAlertStream> logger)
         {
             _observers = new ConcurrentDictionary<IObserver<IUniverseAlertEvent>, IObserver<IUniverseAlertEvent>>();
             _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Add(IUniverseAlertEvent alertEvent)
@@ -22,6 +27,8 @@ namespace Surveillance.Analytics.Streams
             {
                 return;
             }
+
+            _logger.LogInformation($"UniverseAlertStream received a new alert for rule {alertEvent.Rule}. Part of rule run {alertEvent.Context?.Id()}");
 
             foreach (var sub in _observers)
                 sub.Value?.OnNext(alertEvent);
@@ -36,6 +43,7 @@ namespace Surveillance.Analytics.Streams
 
             if (!_observers.ContainsKey(observer))
             {
+                _logger.LogInformation($"UniverseAlertStream added a new observer {observer}");
                 _observers.TryAdd(observer, observer);
             }
 

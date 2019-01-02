@@ -7,6 +7,7 @@ using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
@@ -27,6 +28,7 @@ namespace Surveillance.Tests.Universe
         private IMarketOpenCloseEventManager _marketManager;
         private ISystemProcessOperationContext _opCtx;
         private IUniverseSortComparer _sortComparer;
+        private ILogger<UniverseBuilder> _logger;
 
         [SetUp]
         public void Setup()
@@ -36,6 +38,7 @@ namespace Surveillance.Tests.Universe
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _sortComparer = A.Fake<IUniverseSortComparer>();
+            _logger = A.Fake<ILogger<UniverseBuilder>>();
         }
 
         [Test]
@@ -46,7 +49,8 @@ namespace Surveillance.Tests.Universe
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager,
-                    _sortComparer);
+                    _sortComparer,
+                    _logger);
 
             var result = builder.Summon(null, _opCtx);
 
@@ -63,7 +67,8 @@ namespace Surveillance.Tests.Universe
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager,
-                    _sortComparer);
+                    _sortComparer,
+                    _logger);
 
             var schedule = new ScheduledExecution
             {
@@ -89,7 +94,8 @@ namespace Surveillance.Tests.Universe
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager,
-                    _sortComparer);
+                    _sortComparer,
+                    _logger);
 
             var schedule = new ScheduledExecution
             {
@@ -125,7 +131,8 @@ namespace Surveillance.Tests.Universe
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager,
-                    _sortComparer);
+                    _sortComparer,
+                    _logger);
 
             var schedule = new ScheduledExecution
             {
@@ -169,7 +176,8 @@ namespace Surveillance.Tests.Universe
                     _auroraTradeRepository,
                     _auroraMarketRepository,
                     _marketManager,
-                    _sortComparer);
+                    _sortComparer,
+                    _logger);
 
             var schedule = new ScheduledExecution
             {

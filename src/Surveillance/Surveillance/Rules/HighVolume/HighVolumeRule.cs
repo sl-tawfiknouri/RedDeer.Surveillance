@@ -9,7 +9,6 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -40,7 +39,8 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            ILogger<IHighVolumeRule> logger) 
+            ILogger<IHighVolumeRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 DomainV2.Scheduling.Rules.HighVolume,
@@ -48,7 +48,8 @@ namespace Surveillance.Rules.HighVolume
                 "High Volume Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
@@ -106,6 +107,7 @@ namespace Surveillance.Rules.HighVolume
                     marketCapBreach,
                     tradedVolume);
 
+            _logger.LogInformation($"HighVolumeRule RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
             var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }

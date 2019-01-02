@@ -33,7 +33,8 @@ namespace Surveillance.Rules.CancelledOrders
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            ILogger<CancelledOrderRule> logger)
+            ILogger<CancelledOrderRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
                 DomainV2.Scheduling.Rules.CancelledOrders,
@@ -41,7 +42,8 @@ namespace Surveillance.Rules.CancelledOrders
                 "Cancelled Order Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _opCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
@@ -79,8 +81,13 @@ namespace Surveillance.Rules.CancelledOrders
 
             if (ruleBreach.HasBreachedRule())
             {
+                _logger.LogInformation($"CancelledOrderRule RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
                 var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
                 _alertStream.Add(message);
+            }
+            else
+            {
+                _logger.LogInformation($"CancelledOrderRule RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
             }
         }
 

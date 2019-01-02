@@ -30,6 +30,8 @@ namespace Surveillance.Rules.Layering
         {
             if (ruleBreach == null)
             {
+                // ReSharper disable once InconsistentlySynchronizedField
+                _logger.LogInformation($"Layering Rule Cached Message Sender received a null rule breach. Returning.");
                 return;
             }
 
@@ -54,6 +56,7 @@ namespace Surveillance.Rules.Layering
 
                 foreach (var msg in _messages)
                 {
+                    _logger.LogInformation($"Layering Rule Cached Message Sender dispatching {msg.Security.Identifiers} rule breach to message bus");
                     _messageSender.Send(msg, ruleCtx);
                 }
 

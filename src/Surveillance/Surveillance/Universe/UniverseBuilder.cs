@@ -6,6 +6,7 @@ using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -23,17 +24,20 @@ namespace Surveillance.Universe
         private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
         private readonly IUniverseSortComparer _universeSorter;
+        private readonly ILogger<UniverseBuilder> _logger;
 
         public UniverseBuilder(
             IReddeerTradeRepository auroraTradeRepository,
             IReddeerMarketRepository auroraMarketRepository,
             IMarketOpenCloseEventManager marketManager,
-            IUniverseSortComparer universeSorter)
+            IUniverseSortComparer universeSorter,
+            ILogger<UniverseBuilder> logger)
         {
             _auroraTradeRepository = auroraTradeRepository ?? throw new ArgumentNullException(nameof(auroraTradeRepository));
             _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
             _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
             _universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -43,13 +47,23 @@ namespace Surveillance.Universe
         {
             if (execution == null)
             {
+                _logger.LogError($"UniverseBuilder had a null execution and therefore null data sets for {opCtx.Id} operation context");
                 return new Universe(null, null, null);
             }
 
+            _logger.LogInformation($"UniverseBuilder fetching aurora trade data");
             var projectedTrades = await TradeDataFetchAurora(execution, opCtx);
-            var exchangeFrames = await MarketEquityDataFetchAurora(execution, opCtx);
-            var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
+            _logger.LogInformation($"UniverseBuilder completed fetching aurora trade data");
 
+            _logger.LogInformation($"UniverseBuilder completed fetching market data for equities");
+            var exchangeFrames = await MarketEquityDataFetchAurora(execution, opCtx);
+            _logger.LogInformation($"UniverseBuilder completed fetching market data for equities");
+
+            _logger.LogInformation($"UniverseBuilder fetching universe event data");
+            var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
+            _logger.LogInformation($"UniverseBuilder completed fetching universe event data");
+
+            _logger.LogInformation($"UniverseBuilder returning a new universe");
             return new Universe(projectedTrades, exchangeFrames, universe);
         }
 

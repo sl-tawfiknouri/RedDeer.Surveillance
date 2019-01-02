@@ -32,15 +32,20 @@ namespace Surveillance.MessageBusIO
         {
             if (message == null)
             {
+                _logger.LogError($"ScheduleRuleMessageSender received a null message to send. Returning.");
                 return;
             }
 
-            var messageBusCts = new CancellationTokenSource();
-            var serialisedMessage = _serialiser.SerialiseScheduledExecution(message);
-
             try
             {
+                var messageBusCts = new CancellationTokenSource();
+                var serialisedMessage = _serialiser.SerialiseScheduledExecution(message);
+
+                _logger.LogInformation($"ScheduleRuleMessageSender sending a schedule rule request for {message.TimeSeriesInitiation} to {message.TimeSeriesTermination}");
+
                 await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token);
+
+                _logger.LogInformation($"ScheduleRuleMessageSender sent a schedule rule request for {message.TimeSeriesInitiation} to {message.TimeSeriesTermination}");
             }
             catch (Exception e)
             {

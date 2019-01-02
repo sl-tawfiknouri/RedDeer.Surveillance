@@ -15,7 +15,6 @@ using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -40,7 +39,8 @@ namespace Surveillance.Rules.Layering
             ILogger logger,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            ISystemProcessOperationRunRuleContext opCtx)
+            ISystemProcessOperationRunRuleContext opCtx,
+            ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
                 DomainV2.Scheduling.Rules.Layering,
@@ -48,7 +48,8 @@ namespace Surveillance.Rules.Layering
                 "Layering Rule",
                 opCtx,
                 factory,
-                logger)
+                logger,
+                tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -111,6 +112,7 @@ namespace Surveillance.Rules.Layering
 
             if (layeringRuleBreach != null)
             {
+                _logger.LogInformation($"LayeringRule RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
                 var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
@@ -495,6 +497,7 @@ namespace Surveillance.Rules.Layering
 
             if (_hadMissingData)
             {
+                _logger.LogInformation($"LayeringRule had missing data. Updating rule context with state.");
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else

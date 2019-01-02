@@ -1,4 +1,5 @@
-﻿using DomainV2.Financial;
+﻿using System.Threading.Tasks;
+using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
@@ -20,15 +21,16 @@ namespace Surveillance.Rules.Spoofing
                 caseMessageSender)
         { }
 
-        public void Send(ISpoofingRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ISpoofingRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (ruleBreach == null)
             {
+                Logger?.LogInformation($"SpoofingRuleMessageSender Send received a null rule breach for op ctx {opCtx?.Id()}. Returning.");
                 return;
             }
 
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(ISpoofingRuleBreach ruleBreach)

@@ -18,6 +18,7 @@ using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -37,6 +38,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IBmllDataRequestRepository _dataRequestRepository;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _factoryCache;
+        private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
         public void Setup()
@@ -51,6 +53,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             _factory = new UniverseMarketCacheFactory(_dataRequestRepository, _factoryCache);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
+            _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
@@ -62,27 +65,27 @@ namespace Surveillance.Tests.Rules.High_Volume
         public void Constructor_ConsidersNullParameters_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullOpCtx_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, null));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, null, _tradingLogger));
         }
 
         [Test]
         public void Eschaton_UpdatesAlertCountAndEndsEvent_ForCtx()
         {
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger);
 
             highVolumeRule.OnNext(Eschaton());
 
@@ -93,7 +96,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         public void Eschaton_SetsMissingData_WhenExchangeDataMissing()
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger);
 
             highVolumeRule.OnNext(Trade());
             highVolumeRule.OnNext(Eschaton());
@@ -107,7 +110,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
@@ -144,7 +147,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
@@ -180,7 +183,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             A.CallTo(() => _parameters.HighVolumePercentageWindow).Returns(0.1m);
             A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
-            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger);
+            var highVolumeRule = new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingLogger);
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;

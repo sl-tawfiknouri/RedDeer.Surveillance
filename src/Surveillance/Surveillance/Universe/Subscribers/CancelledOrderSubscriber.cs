@@ -78,7 +78,6 @@ namespace Surveillance.Universe.Subscribers
                 {
                     var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
                     var broker = _brokerFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-
                     subscriptions.Add(broker);
                 }
             }
@@ -109,6 +108,7 @@ namespace Surveillance.Universe.Subscribers
 
             if (param.HasFilters())
             {
+                _logger.LogInformation($"CancelledOrderSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(cancelledOrderRule);
 

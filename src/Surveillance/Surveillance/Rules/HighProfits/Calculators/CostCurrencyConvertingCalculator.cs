@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -14,13 +15,16 @@ namespace Surveillance.Rules.HighProfits.Calculators
     {
         private readonly ICurrencyConverter _currencyConverter;
         private readonly DomainV2.Financial.Currency _targetCurrency;
+        private readonly ILogger<CostCurrencyConvertingCalculator> _logger;
 
         public CostCurrencyConvertingCalculator(
             ICurrencyConverter currencyConverter,
-            DomainV2.Financial.Currency targetCurrency)
+            DomainV2.Financial.Currency targetCurrency,
+            ILogger<CostCurrencyConvertingCalculator> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
             _targetCurrency = targetCurrency;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<CurrencyAmount?> CalculateCostOfPosition(
@@ -31,6 +35,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
+                _logger.LogInformation($"CostCurrencyConvertingCalculator CalculateCostOfPosition had null or empty active fulfilled trade orders. Returning.");
                 return null;
             }
 
@@ -45,6 +50,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
                     .ToList();
 
             var adjustedToCurrencyPurchaseOrders = await _currencyConverter.Convert(purchaseOrders, _targetCurrency, universeDateTime, ctx);
+
+            _logger.LogInformation($"CostCurrencyConvertingCalculator CalculateCostOfPosition calculated for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} a cost of ({adjustedToCurrencyPurchaseOrders?.Currency}) {adjustedToCurrencyPurchaseOrders?.Value}");
 
             return adjustedToCurrencyPurchaseOrders;
         }

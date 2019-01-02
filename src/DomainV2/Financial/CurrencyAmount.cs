@@ -40,7 +40,7 @@
 
         public override string ToString()
         {
-            return $"{Currency.Value} {Value}";
+            return $"({Currency.Value}) {Value}";
         }
     }
 }

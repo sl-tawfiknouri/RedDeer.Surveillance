@@ -113,6 +113,8 @@ namespace Surveillance.Universe.Subscribers
 
             if (param.HasFilters())
             {
+                _logger.LogInformation($"WashTradeSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(washTrade);
 

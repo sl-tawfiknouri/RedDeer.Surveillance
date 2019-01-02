@@ -23,6 +23,7 @@ namespace Surveillance.Mappers
             if (factors == null
                 || !factors.Any())
             {
+                _logger.LogInformation($"ClientOrganisationalFactorMapper received 0 factors to map. Returning 0");
                 return new ClientOrganisationalFactors[0];
             }
 

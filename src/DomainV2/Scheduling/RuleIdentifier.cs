@@ -1,4 +1,6 @@
-﻿namespace DomainV2.Scheduling
+﻿using System.Linq;
+
+namespace DomainV2.Scheduling
 {
     public class RuleIdentifier
     {
@@ -11,5 +13,11 @@
         /// Rule instance identifiers
         /// </summary>
         public string[] Ids { get; set; }
+
+        public override string ToString()
+        {
+            var ids = !(Ids?.Any() ?? false) ? "" : Ids.Aggregate((x, y) => $"{x} {y}");
+            return $"RuleIdentifier Rule: {Rule} Ids {ids}";
+        }
     }
 }

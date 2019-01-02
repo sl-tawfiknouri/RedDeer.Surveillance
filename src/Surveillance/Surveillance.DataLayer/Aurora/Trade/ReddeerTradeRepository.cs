@@ -288,6 +288,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
         {
             if (entity == null)
             {
+                _logger.LogError($"ReddeerTradeRepository Create passed a null order entity. Returning.");
                 return;
             }
 
@@ -310,10 +311,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     dto.MarketId = marketSecurityId.MarketId;
                 }
 
+                _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new order");
                 using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertOrderSql, dto))
                 {
                     var orderId = await conn;
                     entity.ReddeerOrderId = orderId;
+                    _logger.LogInformation($"ReddeerTradeRepository Create completed for the new order {orderId}");
                 }
 
                 if (entity.ReddeerOrderId == null)
@@ -324,6 +327,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 if (entity.Trades == null
                     || !entity.Trades.Any())
                 {
+                    _logger.LogInformation($"ReddeerTradeRepository Create saved an order with id {entity.ReddeerOrderId} and it had no trades so returning.");
                     return;
                 }
 
@@ -334,11 +338,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
                         continue;
                     }
 
+                    _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
                     var tradeDto = new TradeDto(trade, entity.ReddeerOrderId);
                     using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertTradeSql, tradeDto))
                     {
                         var tradeId = await conn;
                         tradeDto.ReddeerTradeId = tradeId;
+                        _logger.LogInformation($"ReddeerTradeRepository Create inserted a new trade entry for order {entity.ReddeerOrderId} and it had an id of {tradeId}");
                     }
 
                     if (tradeDto.ReddeerTradeId == null)
@@ -359,11 +365,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
                             continue;
                         }
 
+                        _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new transaction for trade {trade.ReddeerTradeId}");
                         var transactionDto = new TransactionDto(transaction, tradeDto.ReddeerTradeId);
                         using (var conn = dbConnection.ExecuteScalarAsync<int?>(InsertTransactionSql, transactionDto))
                         {
                             var transactionId = await conn;
                             transactionDto.ReddeerTransactionId = transactionId;
+                            _logger.LogInformation($"ReddeerTradeRepository Create inserted a new transaction for trade {trade.ReddeerTradeId} with an id of {transactionId}");
                         }
                     }
                 }
@@ -383,11 +391,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         public async Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
+            _logger.LogInformation($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
+
             start = start.Date;
             end = end.Date.AddDays(1).AddMilliseconds(-1);
 
             if (end < start)
             {
+                _logger.LogError($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id} but the end date predated the start date!");
+
                 return new Order[0];
             }
 
@@ -400,9 +412,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 // GET ORDERS
                 var orders = new List<Order>();
                 var query = new GetQuery { Start = start, End = end };
+
+                _logger.LogInformation($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
                 using (var conn = dbConnection.QueryAsync<OrderDto>(GetSql, query))
                 {
                     var rawResult = await conn;
+
+                    _logger.LogInformation($"ReddeerTradeRepository has gotten orders {rawResult?.Count() ?? 0} from {start} to {end} for system process operation {opCtx?.Id}");
 
                     orders = rawResult?.Select(Project).ToList();
                 }
@@ -417,21 +433,24 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 if (orderIds?.Any() ?? false)
                 {
+                    _logger.LogInformation($"ReddeerTradeRepository getting trades from {start} to {end} for system process operation {opCtx?.Id}");
                     using (var conn = dbConnection.QueryAsync<TradeDto>(GetTradeSql, new { OrderIds = orderIds }))
                     {
                         tradeDtos = (await conn).ToList();
                         tradeIds = tradeDtos.Select(tfo => tfo.ReddeerTradeId?.ToString()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        _logger.LogInformation($"ReddeerTradeRepository completed getting trades from {start} to {end} for system process operation {opCtx?.Id}");
                     }
 
                     if (tradeIds?.Any() ?? false)
                     {
+                        _logger.LogInformation($"ReddeerTradeRepository getting transactions from {start} to {end} for system process operation {opCtx?.Id}");
                         using (var conn = dbConnection.QueryAsync<TransactionDto>(GetTransactionSql, new { TradeIds = tradeIds }))
                         {
                             transactionDtos = (await conn).ToList();
+                            _logger.LogInformation($"ReddeerTradeRepository completed getting transactions from {start} to {end} for system process operation {opCtx?.Id}");
                         }
                     }
                 }
-
 
                 // JOIN transactions to trades
                 var transGroups = transactionDtos.GroupBy(tfo => tfo.ReddeerTransactionId);
@@ -460,6 +479,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     foreach (var trad in order.Trades)
                         trad.ParentOrder = order;
                 }
+
+                _logger.LogInformation($"ReddeerTradeRepository returning from get orders from {start} to {end} for system process operation {opCtx?.Id} with {orders?.Count} orders");
 
                 return orders;
             }

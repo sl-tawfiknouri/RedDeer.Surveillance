@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
@@ -11,10 +12,14 @@ namespace Surveillance.Currency
     public class TradePositionWeightedAverageExchangeRateCalculator : ITradePositionWeightedAverageExchangeRateCalculator
     {
         private readonly IExchangeRates _exchangeRates;
-        
-        public TradePositionWeightedAverageExchangeRateCalculator(IExchangeRates exchangeRates)
+        private readonly ILogger<TradePositionWeightedAverageExchangeRateCalculator> _logger;
+
+        public TradePositionWeightedAverageExchangeRateCalculator(
+            IExchangeRates exchangeRates,
+            ILogger<TradePositionWeightedAverageExchangeRateCalculator> logger)
         {
             _exchangeRates = exchangeRates ?? throw new ArgumentNullException(nameof(exchangeRates));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<decimal> WeightedExchangeRate(
@@ -25,6 +30,7 @@ namespace Surveillance.Currency
             if (position == null
                 || position.TotalVolume() == 0)
             {
+                _logger.LogInformation($"Weighted Exchange Rate Calculator asked to calculate WER for either null position or position with 0 volume. Returning 0");
                 return 0;
             }
 
@@ -45,6 +51,14 @@ namespace Surveillance.Currency
                     ruleCtx);
                 
                 weightedRates.Add(new WeightedXRate(weight, ((decimal?)rate?.Rate ?? 0m)));
+            }
+
+            foreach (var item in weightedRates)
+            {
+                if (item == null)
+                    continue;
+
+                _logger.LogInformation($"Weighted Exchange Rate Calculator had a sub component with {item.Weight} and {item.XRate}");
             }
 
             var weightedAverage = weightedRates.Sum(wr => wr.Weight * wr.XRate);

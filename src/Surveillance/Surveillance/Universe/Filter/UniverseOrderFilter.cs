@@ -47,10 +47,15 @@ namespace Surveillance.Universe.Filter
             }
 
             var leadingCharacter = cfi.ToLower().First();
+            var filter = leadingCharacter != 'e';
 
-            return leadingCharacter == 'e'
-                ? universeEvent
-                : null;
+            if (filter)
+            {
+                _logger.LogInformation($"UniverseOrderFilter filtering out cfi of {cfi} as it had a leading character of e");
+                return null;
+            }
+
+            return universeEvent;
         }
     }
 }

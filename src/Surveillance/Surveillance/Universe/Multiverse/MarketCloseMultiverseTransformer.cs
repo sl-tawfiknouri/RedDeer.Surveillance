@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Financial;
+using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -19,6 +19,7 @@ namespace Surveillance.Universe.Multiverse
     public class MarketCloseMultiverseTransformer : IMarketCloseMultiverseTransformer
     {
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
+        private readonly ILogger<MarketCloseMultiverseTransformer> _logger;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
         private readonly IDictionary<string, List<FrameToDate>> _exchangeFrame;
         private readonly Queue<IUniverseEvent> _universeEvents;
@@ -27,10 +28,13 @@ namespace Surveillance.Universe.Multiverse
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private IList<IUniverseCloneableRule> _subscribedRules;
 
-        public MarketCloseMultiverseTransformer(IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory)
+        public MarketCloseMultiverseTransformer(
+            IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
+            ILogger<MarketCloseMultiverseTransformer> logger)
         {
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
             _universeUnsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _exchangeFrame = new Dictionary<string, List<FrameToDate>>();
             _universeEvents = new Queue<IUniverseEvent>();
             _subscribedRules = new List<IUniverseCloneableRule>();
@@ -38,6 +42,7 @@ namespace Surveillance.Universe.Multiverse
 
         public void OnCompleted()
         {
+            _logger.LogInformation($"MarketCloseMultiverseTransformer received OnCompleted() event forwarding to subscribers");
             foreach (var obs in _universeObservers)
             {
                 obs.Value?.OnCompleted();
@@ -46,6 +51,7 @@ namespace Surveillance.Universe.Multiverse
 
         public void OnError(Exception error)
         {
+            _logger.LogError($"MarketCloseMultiverseTransformer received OnError Event(). Forwarding to subscribers", error);
             foreach (var obs in _universeObservers)
             {
                 obs.Value?.OnError(error);
@@ -54,6 +60,8 @@ namespace Surveillance.Universe.Multiverse
 
         public void OnNext(IUniverseEvent value)
         {
+            _logger.LogInformation($"MarketCloseMultiverseTransformer received OnNext() event at {value.EventTime} of type {value.StateChange} forwarding to subscribers");
+
             lock (_lock)
             {
                 switch (value.StateChange)
@@ -128,6 +136,8 @@ namespace Surveillance.Universe.Multiverse
 
         private void UnloadQueue(DateTime tailOfQueue, bool flushQueue)
         {
+            _logger.LogInformation($"MarketCloseMultiverseTransformer beginning to unload queue to subscribers");
+
             if (flushQueue)
             {
                 while (_universeEvents.Count > 0)
@@ -186,6 +196,7 @@ namespace Surveillance.Universe.Multiverse
 
         public IDisposable Subscribe(IUniverseCloneableRule rule)
         {
+            _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer of cloneable rule type");
             _subscribedRules?.Add(rule);
 
             return Subscribe(rule as IObserver<IUniverseEvent>);
@@ -200,6 +211,7 @@ namespace Surveillance.Universe.Multiverse
 
             if (!_universeObservers.ContainsKey(observer))
             {
+                _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer for universe events");
                 _universeObservers.TryAdd(observer, observer);
             }
 

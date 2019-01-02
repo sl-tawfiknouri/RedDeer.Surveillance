@@ -53,6 +53,7 @@ namespace Surveillance.Scheduler
 
         public void Initiate()
         {
+            _logger.LogInformation($"ReddeerDistributedRuleScheduler initiating");
             _messageBusCts?.Cancel();
             _messageBusCts = new CancellationTokenSource();
             _token = new AwsResusableCancellationToken();
@@ -62,44 +63,56 @@ namespace Surveillance.Scheduler
                 async (s1, s2) => { await ExecuteNonDistributedMessage(s1, s2); },
                 _messageBusCts.Token,
                 _token);
+
+            _logger.LogInformation($"ReddeerDistributedRuleScheduler completed initiating");
         }
 
         public void Terminate()
         {
+            _logger.LogInformation($"ReddeerDistributedRuleScheduler sent terminate signal to cancellation token reading message bus");
             _messageBusCts?.Cancel();
             _messageBusCts = null;
         }
 
         public async Task ExecuteNonDistributedMessage(string messageId, string messageBody)
         {
-            var opCtx = _systemProcessContext.CreateAndStartOperationContext();
-
-            _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName}");
-
-            var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
-
-            if (execution == null)
+            try
             {
-                _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                return;
-            }
+                var opCtx = _systemProcessContext.CreateAndStartOperationContext();
 
-            if (execution?.Rules == null
-                || !execution.Rules.Any())
+                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
+
+                var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
+
+                if (execution == null)
+                {
+                    _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    return;
+                }
+
+                if (execution?.Rules == null
+                    || !execution.Rules.Any())
+                {
+                    _logger.LogError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    opCtx.EndEventWithError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    return;
+                }
+
+                var parameters = await _ruleParameterApiRepository.Get();
+                var ruleCtx = BuildRuleCtx(opCtx, execution);
+                await ScheduleRule(execution, parameters, ruleCtx);
+
+                ruleCtx
+                    .EndEvent()
+                    .EndEvent();
+
+                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id} has completed");
+            }
+            catch (Exception e)
             {
-                _logger.LogError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                opCtx.EndEventWithError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                return;
+                _logger.LogError($"ReddeerDistributedRuleScheduler execute non distributed message encountered a top level exception.", e);
             }
-
-            var parameters = await _ruleParameterApiRepository.Get();
-            var ruleCtx = BuildRuleCtx(opCtx, execution);
-            await ScheduleRule(execution, parameters, ruleCtx);
-
-            ruleCtx
-                .EndEvent()
-                .EndEvent();
         }
 
         private async Task ScheduleRule(
@@ -213,12 +226,14 @@ namespace Surveillance.Scheduler
             if (ruleParameterTimeWindow == null
                 || ruleTimespan.TotalDays < 7)
             {
+                _logger.LogInformation($"ReddeerDistributedRuleScheduler had a rule time span below 7 days. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
             if (ruleParameterTimeWindow.GetValueOrDefault().TotalDays >= ruleTimespan.TotalDays)
             {
+                _logger.LogInformation($"ReddeerDistributedRuleScheduler had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
@@ -227,10 +242,13 @@ namespace Surveillance.Scheduler
 
             if (daysToRunRuleFor >= ruleTimespan.TotalDays)
             {
+                _logger.LogInformation($"ReddeerDistributedRuleScheduler had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
+
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
+            _logger.LogInformation($"ReddeerDistributedRuleScheduler had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
             await TimeSplitter(ruleIdentifier, execution, ruleParameterTimeWindow, daysToRunRuleFor, correlationId);
         }
 

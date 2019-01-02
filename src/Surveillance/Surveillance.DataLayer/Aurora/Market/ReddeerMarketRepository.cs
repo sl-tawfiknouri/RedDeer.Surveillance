@@ -8,7 +8,6 @@ using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;

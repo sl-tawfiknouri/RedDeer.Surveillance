@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
@@ -18,10 +19,10 @@ namespace Surveillance.Rules.HighProfits
                 caseMessageSender)
         { }
 
-        public void Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             var description = BuildDescription(ruleBreach);
-            Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(IHighProfitRuleBreach ruleBreach)
@@ -83,7 +84,7 @@ namespace Surveillance.Rules.HighProfits
                 ruleBreach.ExchangeRateProfits.VariableCurrency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                _logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
+                Logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
                 return string.Empty;
             }
 

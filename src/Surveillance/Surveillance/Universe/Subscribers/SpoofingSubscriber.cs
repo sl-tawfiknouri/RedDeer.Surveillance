@@ -121,6 +121,8 @@ namespace Surveillance.Universe.Subscribers
 
             if (param.HasFilters())
             {
+                _logger.LogInformation($"SpoofingSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
                 filteredUniverse.Subscribe(spoofingRule);
 

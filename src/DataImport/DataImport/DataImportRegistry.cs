@@ -34,9 +34,9 @@ using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport
 {
-    public class RelayRegistry : Registry
+    public class DataImportRegistry : Registry
     {
-        public RelayRegistry()
+        public DataImportRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
             For(typeof(ILoggerFactory)).Use(loggerFactory);

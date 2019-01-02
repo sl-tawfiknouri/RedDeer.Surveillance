@@ -55,7 +55,7 @@ namespace DataImport.S3_IO
                 _cts = new CancellationTokenSource();
                 _token = new AwsResusableCancellationToken();
 
-                _queueClient.SubscribeToQueueAsync(_configuration.RelayS3UploadQueueName, ReadMessage, _cts.Token, _token);
+                _queueClient.SubscribeToQueueAsync(_configuration.DataImportS3UploadQueueName, ReadMessage, _cts.Token, _token);
             }
             catch (Exception e)
             {
@@ -97,15 +97,15 @@ namespace DataImport.S3_IO
                         case "surveillance-trade":
                             var ptf = ProcessTradeFile(
                                 dto,
-                                _configuration.RelayTradeFileFtpDirectoryPath,
-                                _configuration.RelayTradeFileUploadDirectoryPath);
+                                _configuration.DataImportTradeFileFtpDirectoryPath,
+                                _configuration.DataImportTradeFileUploadDirectoryPath);
                             ptf.Wait();
                             break;
                         case "surveillance-market":
                             var pef = ProcessEquityFile(
                                 dto,
-                                _configuration.RelayEquityFileFtpDirectoryPath,
-                                _configuration.RelayEquityFileUploadDirectoryPath);
+                                _configuration.DataImportEquityFileFtpDirectoryPath,
+                                _configuration.DataImportEquityFileUploadDirectoryPath);
                             pef.Wait();
                             break;
                         default:

@@ -7,12 +7,12 @@ namespace DataImport.Configuration
         ISystemDataLayerConfig,
         IUploadConfiguration
     {     
-        public string RelayTradeFileUploadDirectoryPath { get; set; }
-        public string RelayTradeFileFtpDirectoryPath { get; set; }
-        public string RelayEquityFileFtpDirectoryPath { get; set; }
+        public string DataImportTradeFileUploadDirectoryPath { get; set; }
+        public string DataImportTradeFileFtpDirectoryPath { get; set; }
+        public string DataImportEquityFileFtpDirectoryPath { get; set; }
 
-        public string RelayEquityFileUploadDirectoryPath { get; set; }
-        public string RelayS3UploadQueueName { get; set; }
+        public string DataImportEquityFileUploadDirectoryPath { get; set; }
+        public string DataImportS3UploadQueueName { get; set; }
         public bool AutoSchedule { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
     

@@ -2,13 +2,13 @@
 {
     public interface IUploadConfiguration
     {
-        string RelayTradeFileUploadDirectoryPath { get; }
-        string RelayTradeFileFtpDirectoryPath { get; }
+        string DataImportTradeFileUploadDirectoryPath { get; }
+        string DataImportTradeFileFtpDirectoryPath { get; }
 
-        string RelayEquityFileUploadDirectoryPath { get; }
-        string RelayEquityFileFtpDirectoryPath { get; }
+        string DataImportEquityFileUploadDirectoryPath { get; }
+        string DataImportEquityFileFtpDirectoryPath { get; }
 
-        string RelayS3UploadQueueName { get; }
+        string DataImportS3UploadQueueName { get; }
 
         bool AutoSchedule { get; }
     }

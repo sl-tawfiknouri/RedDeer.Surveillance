@@ -21,7 +21,6 @@ using Surveillance.System.DataLayer.Processes;
 using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
-
 namespace RedDeer.DataImport.DataImport.App
 {
     public class Program
@@ -33,9 +32,9 @@ namespace RedDeer.DataImport.DataImport.App
         private const string RegisterServiceFlag = "--register-service";
         private const string UnRegisterServiceFlag = "--unregister-service";
 
-        internal const string ServiceName = "RedDeer.RelayService";
-        private const string ServiceDisplayName = "RedDeer Relay Service";
-        private const string ServiceDescription = "RedDeer Relay Service";
+        internal const string ServiceName = "RedDeer.DataImportService";
+        private const string ServiceDisplayName = "RedDeer Data Import Service";
+        private const string ServiceDescription = "RedDeer Data Import Service";
 
         private static Container Container { get; set; }
 
@@ -43,13 +42,13 @@ namespace RedDeer.DataImport.DataImport.App
         {
             try
             {
-                Logger.Log(LogLevel.Info, "Program.Main initialising dependency injection");
-                Container = new Container();
+                SetSysLogSettingIfService(args);
 
+                Container = new Container();
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                SystemProcessContext.ProcessType = SystemProcessType.RelayService;
+                SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
                 var builtDataLayerConfig = BuildDataLayerConfiguration();
                 Container.Inject(typeof(IAwsConfiguration), builtDataLayerConfig);
@@ -57,7 +56,7 @@ namespace RedDeer.DataImport.DataImport.App
 
                 Container.Configure(config =>
                 {
-                    config.IncludeRegistry<RelayRegistry>();
+                    config.IncludeRegistry<DataImportRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                     config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
@@ -65,7 +64,6 @@ namespace RedDeer.DataImport.DataImport.App
                 });
 
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-                Logger.Log(LogLevel.Info, "Program.Main completed dependency injection");
 
                 var startUpTaskRunner = Container.GetInstance<IStartUpTaskRunner>();
                 startUpTaskRunner.Run().Wait();
@@ -105,13 +103,11 @@ namespace RedDeer.DataImport.DataImport.App
         {
             if (args.Contains(RunAsServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Service Flag Found ({RunAsServiceFlag}).");
                 RunAsService(args);
             }
             else if (args.Contains(RunAsSystemServiceFlag))
             {
-                DisableConsoleLog();
                 Logger.Info($"Run As Systemd Service Flag Found ({RunAsSystemServiceFlag}).");
                 RunAsSystemService(args);
             }
@@ -129,6 +125,18 @@ namespace RedDeer.DataImport.DataImport.App
             {
                 Logger.Info("No Flags Found.");
                 RunInteractive(args);
+            }
+        }
+
+        private static void SetSysLogSettingIfService(string[] args)
+        {
+            if (args.Contains(RunAsServiceFlag))
+            {
+                DisableConsoleLog();
+            }
+            else if (args.Contains(RunAsSystemServiceFlag))
+            {
+                DisableConsoleLog();
             }
         }
 

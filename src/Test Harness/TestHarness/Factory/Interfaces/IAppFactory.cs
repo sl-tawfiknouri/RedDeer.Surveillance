@@ -58,7 +58,7 @@ namespace TestHarness.Factory.Interfaces
 
         ITradeOrderStreamFactory TradeOrderStreamFactory { get; }
         ITradingSpoofingProcessFactory TradingSpoofingFactory { get; }
-        ITradingFileRelayProcessFactory TradingFileRelayProcessFactory { get; }
+        ITradingFileDataImportProcessFactory TradingFileDataImportProcessFactory { get; }
         ITradingCancelledFactory TradingCancelledOrdersFactory { get; }
         ITradingCancelled2Factory TradingCancelled2Factory { get; }
         ITradingHighVolumeFactory TradingHighVolumeFactory { get; }
@@ -66,7 +66,7 @@ namespace TestHarness.Factory.Interfaces
         IAwsQueueClient AwsQueueClient { get; }
         IScheduledExecutionMessageBusSerialiser ScheduledExecutionSerialiser { get; }
         INetworkConfiguration Configuration { get; }
-        IEquitiesFileRelayProcessFactory EquitiesFileRelayProcessFactory { get; }
+        IEquitiesFileDataImportProcessFactory EquitiesFileDataImportProcessFactory { get; }
         IEquitiesFileStorageProcessFactory EquitiesFileStorageProcessFactory { get; }
         IAuroraRepository AuroraRepository { get; }
         IMarketApiRepository MarketApiRepository { get; }

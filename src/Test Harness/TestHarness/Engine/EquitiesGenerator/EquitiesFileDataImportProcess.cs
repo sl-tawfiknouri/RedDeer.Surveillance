@@ -12,13 +12,13 @@ using TestHarness.Engine.EquitiesGenerator.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
-    public class EquitiesFileRelayProcess : IEquityDataGenerator
+    public class EquitiesFileDataImportProcess : IEquityDataGenerator
     {
         private readonly string _filePath;
         private readonly ILogger _logger;
         private readonly ISecurityCsvToDtoMapper _securityMapper;
 
-        public EquitiesFileRelayProcess(
+        public EquitiesFileDataImportProcess(
             string filePath,
             ILogger logger,
             ISecurityCsvToDtoMapper securityMapper)
@@ -32,13 +32,13 @@ namespace TestHarness.Engine.EquitiesGenerator
         {
             if (string.IsNullOrWhiteSpace(_filePath))
             {
-                _logger.LogError("Equities File Relay Process did not find file because the path was empty or null");
+                _logger.LogError("Equities File Data Import Process did not find file because the path was empty or null");
                 return;
             }
 
             if (!File.Exists(_filePath))
             {
-                _logger.LogError($"Equities File Relay Process did not find file {_filePath}");
+                _logger.LogError($"Equities File Data Import Process did not find file {_filePath}");
                 return;
             }
 
@@ -64,7 +64,7 @@ namespace TestHarness.Engine.EquitiesGenerator
 
             if (_securityMapper.FailedParseTotal > 0)
             {
-                _logger.LogError($"EquitiesFileRelayProcess had {_securityMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
+                _logger.LogError($"EquitiesFileDataImportProcess had {_securityMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
             }
 
             if (!securities.Any())

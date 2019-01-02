@@ -34,7 +34,7 @@ namespace RedDeer.DataImport.DataImport.App
             var builtConfig = BuildConfiguration();
             container.Inject(typeof(IUploadConfiguration), builtConfig);
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-            SystemProcessContext.ProcessType = SystemProcessType.RelayService;
+            SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
             var builtDataConfig = BuildDataConfiguration();
             container.Inject(typeof(IAwsConfiguration), builtDataConfig);
@@ -42,7 +42,7 @@ namespace RedDeer.DataImport.DataImport.App
 
             container.Configure(config =>
             {
-                config.IncludeRegistry<RelayRegistry>();
+                config.IncludeRegistry<DataImportRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();

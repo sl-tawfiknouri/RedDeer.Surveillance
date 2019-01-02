@@ -46,7 +46,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 if (IsEC2Instance)
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDBName = $"{environment}-relay-{GetTag("Customer")}".ToLower();
+                    var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
 
                     var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
@@ -62,17 +62,17 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 }
             }
 
-            bool.TryParse(GetSetting("RelayServiceAutoSchedule", configurationBuilder), out var autoSchedule);
+            bool.TryParse(GetSetting("DataImportServiceAutoSchedule", configurationBuilder), out var autoSchedule);
 
             var networkConfiguration = new Configuration
             {
-                RelayTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("RelayTradeFileUploadDirectoryPath", configurationBuilder)),
-                RelayEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
-                    GetSetting("RelayEquityFileUploadDirectoryPath", configurationBuilder)),
-                SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
-                RelayS3UploadQueueName = GetSetting("RelayS3UploadQueueName", configurationBuilder),
-                RelayTradeFileFtpDirectoryPath = GetSetting("RelayTradeFileFtpDirectoryPath", configurationBuilder),
-                RelayEquityFileFtpDirectoryPath = GetSetting("RelayEquityFileFtpDirectoryPath", configurationBuilder),
+                DataImportTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("DataImportTradeFileUploadDirectoryPath", configurationBuilder)),
+                DataImportEquityFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(),
+                    GetSetting("DataImportEquityFileUploadDirectoryPath", configurationBuilder)),
+                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                DataImportS3UploadQueueName = GetSetting("DataImportS3UploadQueueName", configurationBuilder),
+                DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
+                DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),
                 AutoSchedule = autoSchedule,
             };
 
@@ -95,7 +95,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 if (IsEC2Instance)
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDBName = $"{environment}-relay-{GetTag("Customer")}".ToLower();
+                    var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
 
                     var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();

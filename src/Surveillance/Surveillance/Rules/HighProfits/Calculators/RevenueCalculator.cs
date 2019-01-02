@@ -39,6 +39,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
+                Logger.LogInformation($"");
                 return null;
             }
 

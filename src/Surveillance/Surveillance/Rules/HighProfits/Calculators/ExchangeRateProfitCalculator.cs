@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -11,12 +12,16 @@ namespace Surveillance.Rules.HighProfits.Calculators
     public class ExchangeRateProfitCalculator : IExchangeRateProfitCalculator
     {
         private readonly ITradePositionWeightedAverageExchangeRateCalculator _werExchangeRateCalculator;
+        private readonly ILogger<ExchangeRateProfitCalculator> _logger;
 
-        public ExchangeRateProfitCalculator(ITradePositionWeightedAverageExchangeRateCalculator werExchangeRateCalculator)
+        public ExchangeRateProfitCalculator(
+            ITradePositionWeightedAverageExchangeRateCalculator werExchangeRateCalculator,
+            ILogger<ExchangeRateProfitCalculator> logger)
         {
             _werExchangeRateCalculator =
                 werExchangeRateCalculator
                 ?? throw new ArgumentNullException(nameof(werExchangeRateCalculator));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
@@ -27,6 +32,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
         {
             if (string.IsNullOrEmpty(variableCurrency.Value))
             {
+                _logger.LogInformation($"ExchangeRateProfitCalculator ExchangeRateMovement had a null or empty variable currency. Returning null.");
                 return null;
             }
 
@@ -34,6 +40,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (string.Equals(orderCurrency?.Value, variableCurrency.Value, StringComparison.InvariantCultureIgnoreCase))
             {
+                _logger.LogInformation($"ExchangeRateProfitCalculator ExchangeRateMovement could not find an order currency. Returning null.");
                 return null;
             }
 
@@ -49,13 +56,15 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var costRates = await _werExchangeRateCalculator.WeightedExchangeRate(positionCost, variableCurrency, ruleCtx);
             var revenueRates =  await _werExchangeRateCalculator.WeightedExchangeRate(positionRevenue, variableCurrency, ruleCtx);
 
-            return new ExchangeRateProfitBreakdown(
+            var breakdown = new ExchangeRateProfitBreakdown(
                 positionCost,
                 positionRevenue,
                 costRates,
                 revenueRates,
                 orderCurrency.GetValueOrDefault(),
                 variableCurrency);
+
+            return breakdown;
         }
     }
 }

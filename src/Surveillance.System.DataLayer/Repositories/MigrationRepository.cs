@@ -43,6 +43,7 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 dbConnection.Open();
 
+                _logger.LogInformation($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
                 using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
                     var highestMigrationExecuted = await conn;
@@ -61,6 +62,7 @@ namespace Surveillance.System.DataLayer.Repositories
                 dbConnection.Dispose();
             }
 
+            _logger.LogError($"MigrationRepository LatestMigrationVersion returning 0 on a bad code path");
             return 0;
         }
 
@@ -83,6 +85,8 @@ namespace Surveillance.System.DataLayer.Repositories
             var availableMigrationIds = entries.Select(IndexPrefix).Select(ent => ent.GetValueOrDefault(0)).ToList();
             if (!availableMigrationIds.Any())
             {
+                _logger.LogInformation("MigrationRepository LatestMigrationAvailable had 0 available migrations. OK.");
+
                 return 0;
             }
 
@@ -152,7 +156,9 @@ namespace Surveillance.System.DataLayer.Repositories
 
             foreach (var migration in availableMigrationIds)
             {
+                _logger.LogInformation($"MigrationRepository UpdateMigrations about to run the migration {migration?.ScriptIndex} {migration?.FileName}");
                 await GetScriptAndExecute(migration);
+                _logger.LogInformation($"MigrationRepository UpdateMigrations has ran the migration {migration?.ScriptIndex} {migration?.FileName}");
             }
         }
 
@@ -160,6 +166,7 @@ namespace Surveillance.System.DataLayer.Repositories
         {
             if (name == null)
             {
+                _logger.LogError($"MigrationRepository passed a null name in GetScriptAndExecute for some reason.");
                 return;
             }
 
@@ -175,18 +182,18 @@ namespace Surveillance.System.DataLayer.Repositories
                 using (var conn = dbConnection.ExecuteAsync(file))
                 {
                     await conn;
+                    _logger.LogInformation($"MigrationRepository get script and execute for migration {name?.FileName} has completed db operation");
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"MigrationRepository something went horribly wrong reading and writing the file {name.FileName}" + e.Message);
+                _logger.LogError($"MigrationRepository IMPORTANT something went wrong reading and writing the file {name.FileName}" + e.Message);
             }
             finally
             {
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
-
         }
 
         protected class PairFileNameAndScriptIndex

@@ -73,6 +73,7 @@ namespace Surveillance.Rules.HighProfits
 
             if (securitiesBrought > securitiesSold)
             {
+                Logger.LogInformation($"HighProfitMarketClosureRule RunRuleGuard securities brought {securitiesBrought} exceeded securities sold {securitiesSold}. Proceeding to evaluate market closure rule.");
                 return true;
             }
 
@@ -80,6 +81,8 @@ namespace Surveillance.Rules.HighProfits
 
             var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
             _alertStream.Add(message);
+
+            Logger.LogInformation($"HighProfitMarketClosureRule RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
             return false;
         }

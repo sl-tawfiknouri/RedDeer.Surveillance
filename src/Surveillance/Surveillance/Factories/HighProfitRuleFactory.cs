@@ -95,7 +95,7 @@ namespace Surveillance.Factories
             percentageCompletionLogger.InitiateTimeLogger(scheduledExecution);
             multiverseTransformer.Subscribe(percentageCompletionLogger);
                 
-            return new HighProfitsRule(stream, multiverseTransformer);
+            return new HighProfitsRule(stream, multiverseTransformer, _logger);
         }
 
         public static string Version => Versioner.Version(2, 0);

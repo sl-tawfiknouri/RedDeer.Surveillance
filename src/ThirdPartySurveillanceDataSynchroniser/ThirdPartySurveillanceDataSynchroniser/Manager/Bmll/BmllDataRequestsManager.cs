@@ -65,7 +65,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.BmllSubmissons
                 Figi = request.DataRequest.Identifiers.Figi,
                 From = request.DataRequest.UniverseEventTimeFrom.Value.Date,
                 To = request.DataRequest.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
-                Interval = "1m",
+                Interval = "1min",
             };
         }
     }

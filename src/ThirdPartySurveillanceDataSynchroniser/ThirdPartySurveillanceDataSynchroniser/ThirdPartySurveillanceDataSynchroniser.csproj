@@ -9,9 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Firefly.MessageBus.Core" Version="1.0.0" />
-    <PackageReference Include="Firefly.Service.Calculator.Exposure.Shared" Version="1.0.0" />
     <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.0" />
-    <PackageReference Include="Firefly.Service.Data.Positions.Shared" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />

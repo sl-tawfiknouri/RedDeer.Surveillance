@@ -15,8 +15,6 @@ using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
-using Surveillance.Services;
-using Surveillance.Services.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Interfaces;
@@ -175,7 +173,6 @@ namespace Surveillance
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IRuleProjector>().Use<RuleProjector>();
 
-            For<IEnrichmentService>().Use<EnrichmentService>();
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
             For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();

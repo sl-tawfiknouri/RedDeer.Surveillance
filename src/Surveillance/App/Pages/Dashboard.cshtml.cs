@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Exceptions;
 using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
@@ -20,6 +21,7 @@ namespace RedDeer.Surveillance.App.Pages
         private readonly ISystemProcessOperationUploadFileRepository _systemProcessUploadFileRepository;
         private readonly IExceptionRepository _exceptionRepository;
         private readonly IApiHeartbeat _apiHeartbeat;
+        private readonly ILogger<DashboardModel> _logger;
 
         public DashboardModel(
             ISystemProcessRepository systemProcessRepository,
@@ -28,7 +30,8 @@ namespace RedDeer.Surveillance.App.Pages
             ISystemProcessOperationDistributeRuleRepository systemProcessDistributeRepository,
             IExceptionRepository exceptionRepository,
             IApiHeartbeat apiHeartbeat, 
-            ISystemProcessOperationUploadFileRepository systemProcessUploadFileRepository)
+            ISystemProcessOperationUploadFileRepository systemProcessUploadFileRepository,
+            ILogger<DashboardModel> logger)
         {
             _systemProcessRepository =
                 systemProcessRepository
@@ -51,23 +54,31 @@ namespace RedDeer.Surveillance.App.Pages
             _systemProcessUploadFileRepository =
                 systemProcessUploadFileRepository
                 ?? throw new ArgumentNullException(nameof(systemProcessUploadFileRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task OnGet()
         {
-            ProcessId = Process.GetCurrentProcess().Id.ToString();
-            ProcessPeakWorkingSet = Process.GetCurrentProcess().PeakWorkingSet64.ToString();
-            ProcessStartTime = Process.GetCurrentProcess().StartTime.ToString();
-            ProcessMachineName = Process.GetCurrentProcess().MachineName;
-            ProcessProcessorTime = $"{Process.GetCurrentProcess().TotalProcessorTime.Days} DAYS {Process.GetCurrentProcess().TotalProcessorTime.Hours} HOURS {Process.GetCurrentProcess().TotalProcessorTime.Minutes} MINUTES {Process.GetCurrentProcess().TotalProcessorTime.Seconds} SECONDS";
+            try
+            {
+                ProcessId = Process.GetCurrentProcess().Id.ToString();
+                ProcessPeakWorkingSet = Process.GetCurrentProcess().PeakWorkingSet64.ToString();
+                ProcessStartTime = Process.GetCurrentProcess().StartTime.ToString();
+                ProcessMachineName = Process.GetCurrentProcess().MachineName;
+                ProcessProcessorTime = $"{Process.GetCurrentProcess().TotalProcessorTime.Days} DAYS {Process.GetCurrentProcess().TotalProcessorTime.Hours} HOURS {Process.GetCurrentProcess().TotalProcessorTime.Minutes} MINUTES {Process.GetCurrentProcess().TotalProcessorTime.Seconds} SECONDS";
 
-            SystemProcesses = await _systemProcessRepository.GetDashboard();
-            SystemProcessOperation = await _systemProcessOperationRepository.GetDashboard();
-            SystemProcessRuleRun = await _systemProcessRuleRunRepository.GetDashboard();
-            SystemProcessDistribute = await _systemProcessDistributeRepository.GetDashboard();
-            SystemProcessUploadFile = await _systemProcessUploadFileRepository.GetDashboard();
-            ApiHeartbeat = await _apiHeartbeat.HeartsBeating();
-            Exceptions = await _exceptionRepository.GetForDashboard();
+                SystemProcesses = await _systemProcessRepository.GetDashboard();
+                SystemProcessOperation = await _systemProcessOperationRepository.GetDashboard();
+                SystemProcessRuleRun = await _systemProcessRuleRunRepository.GetDashboard();
+                SystemProcessDistribute = await _systemProcessDistributeRepository.GetDashboard();
+                SystemProcessUploadFile = await _systemProcessUploadFileRepository.GetDashboard();
+                ApiHeartbeat = await _apiHeartbeat.HeartsBeating();
+                Exceptions = await _exceptionRepository.GetForDashboard();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"DashboardModel caught and swallowed an exception", e);
+            }
         }
 
         public string ProcessId { get; set; }

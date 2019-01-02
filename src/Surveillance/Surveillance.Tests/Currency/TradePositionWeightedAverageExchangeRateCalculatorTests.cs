@@ -21,6 +21,7 @@ namespace Surveillance.Tests.Currency
         private ILogger<ExchangeRates> _loggerExchRate;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IDataLayerConfiguration _configuration;
+        private ILogger<TradePositionWeightedAverageExchangeRateCalculator> _calculatorLogger;
 
         [SetUp]
         public void Setup()
@@ -28,7 +29,7 @@ namespace Surveillance.Tests.Currency
             _logger = A.Fake<ILogger<ExchangeRateApiRepository>>();
             _loggerExchRate = A.Fake<ILogger<ExchangeRates>>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-
+            _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateCalculator>>();
 
             _configuration = A.Fake<IDataLayerConfiguration>();
             _configuration.ClientServiceUrl = "http://localhost:8080";
@@ -42,11 +43,11 @@ namespace Surveillance.Tests.Currency
             var repo = new ExchangeRateApiRepository(_configuration, _logger);
             var repoDecorator = new ExchangeRateApiCachingDecoratorRepository(repo);
             var exchangeRates = new ExchangeRates(repoDecorator, _loggerExchRate);
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(exchangeRates);
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(exchangeRates, _calculatorLogger);
 
-            Order tradeOne = (new Order()).Random();
-            Order tradeTwo = (new Order()).Random();
-            Order tradeThree = (new Order()).Random();
+            var tradeOne = (new Order()).Random();
+            var tradeTwo = (new Order()).Random();
+            var tradeThree = (new Order()).Random();
 
             tradeOne.OrderFilledDate = new DateTime(2017, 01, 01);
             tradeTwo.OrderFilledDate = new DateTime(2017, 10, 25);

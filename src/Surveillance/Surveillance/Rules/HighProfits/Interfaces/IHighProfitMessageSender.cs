@@ -1,9 +1,10 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
+﻿using System.Threading.Tasks;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Interfaces
 {
     public interface IHighProfitMessageSender
     {
-        void Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx);
+        Task Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext ruleCtx);
     }
 }

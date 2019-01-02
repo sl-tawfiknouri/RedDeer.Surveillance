@@ -12,6 +12,9 @@ using Surveillance.System.Auditing.Context.Interfaces;
 // ReSharper disable MemberCanBeMadeStatic.Local
 namespace Surveillance.Currency
 {
+    /// <summary>
+    /// Performs similar work to exchange rates but also converts the underlying currency amounts
+    /// </summary>
     public class CurrencyConverter : ICurrencyConverter
     {
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
@@ -37,6 +40,7 @@ namespace Surveillance.Currency
             if (currencyAmounts == null
                 || !currencyAmounts.Any())
             {
+                _logger.LogInformation($"CurrencyConverter received null or empty currency amounts. Returning 0 currency amount in target currency of {targetCurrency} for rule {ruleCtx?.Id()}");
                 return new CurrencyAmount(0, targetCurrency);
             }
 
@@ -48,16 +52,18 @@ namespace Surveillance.Currency
 
             if (currencyAmounts.All(ca => Equals(ca.Currency, targetCurrency)))
             {
+                _logger.LogInformation($"CurrencyConverter inferred all currency amounts matched the target currency. Aggregating trades and returning.");
                 return currencyAmounts.Aggregate((i,o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
             }
 
+            _logger.LogInformation($"CurrencyConverter about to fetch exchange rates on {dayOfConversion}");
             var rates = await ExchangeRates(dayOfConversion, ruleCtx);
 
             if (rates == null
                 || !rates.Any())
             {
-                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()}");
-                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()}");
+                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()} due to missing rates");
+                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()} due to missing rates");
 
                 return null;
             }
@@ -72,6 +78,7 @@ namespace Surveillance.Currency
                 .Select(cc => cc.Value)
                 .Sum(cc => cc.Value);
 
+            _logger.LogInformation($"CurrencyConverter returning {totalInConvertedCurrency} ({targetCurrency})");
             return new CurrencyAmount(totalInConvertedCurrency, targetCurrency);
         }
 
@@ -84,6 +91,7 @@ namespace Surveillance.Currency
         {
             if (Equals(initial.Currency, targetCurrency))
             {
+                _logger.LogInformation($"CurrencyConverter asked to convert {initial.Currency} to {targetCurrency} and found they were the same. Returning initial amount.");
                 return initial;
             }
 
@@ -92,25 +100,33 @@ namespace Surveillance.Currency
 
             if (directConversion != null)
             {
+                _logger.LogInformation($"CurrencyConverter managed to directly convert {initial.Currency} {initial.Value} to {targetCurrency} {directConversion.Value.Value}.");
                 return directConversion;
             }
 
+            _logger.LogInformation($"CurrencyConverter failed to directly convert {initial.Currency} to {targetCurrency}. Trying reciprocal conversion.");
             // reciprocal exchange rate i.e. we want to do USD to GBP but we have GBP / USD
             var reciprocalConversion = TryReciprocalConversion(exchangeRates, initial, targetCurrency);
 
             if (reciprocalConversion != null)
             {
+                _logger.LogInformation($"CurrencyConverter managed to reciprocally convert {initial.Currency} {initial.Value} to {targetCurrency} {reciprocalConversion.Value.Value}.");
                 return reciprocalConversion;
             }
 
+            _logger.LogInformation($"CurrencyConverter failed to reciprocally convert {initial.Currency} to {targetCurrency}. Trying indirect conversion.");
             // implicit exchange rate i.e. we want to do EUR to GBP but we have EUR / USD and GBP / USD
             var indirectConversion = TryIndirectConversion(exchangeRates, initial, targetCurrency, dayOfConversion, ruleCtx);
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
                 ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
+
+                return null;
             }
+
+            _logger.LogInformation($"CurrencyConverter managed to indirectly convert {initial.Currency} {initial.Value} to {targetCurrency} {indirectConversion.Value.Value}.");
 
             return indirectConversion;
         }

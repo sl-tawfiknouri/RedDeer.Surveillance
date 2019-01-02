@@ -5,6 +5,7 @@ using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Streams;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Universe;
@@ -18,24 +19,26 @@ namespace Surveillance.Tests.Universe.Multiverse
     public class MarketCloseMultiverseTransformerTests
     {
         private IObserver<IUniverseEvent> _observer;
+        private ILogger<MarketCloseMultiverseTransformer> _logger;
 
         [SetUp]
         public void Setup()
         {
             _observer = A.Fake<IObserver<IUniverseEvent>>();
+            _logger = A.Fake<ILogger<MarketCloseMultiverseTransformer>>();
         }
 
         [Test]
         public void Constructor_NullUnsubscriberFactory_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new MarketCloseMultiverseTransformer(null));
+            Assert.Throws<ArgumentNullException>(() => new MarketCloseMultiverseTransformer(null, _logger));
         }
 
         [Test]
         public void OnCompleted_PassesOnCompleted_ToSubscribers()
         {
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
             transformer.Subscribe(_observer);
 
             transformer.OnCompleted();
@@ -46,7 +49,7 @@ namespace Surveillance.Tests.Universe.Multiverse
         [Test]
         public void OnError_PassesOnError_ToSubscribers()
         {
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
             transformer.Subscribe(_observer);
 
             transformer.OnError(new ArgumentNullException());
@@ -57,7 +60,7 @@ namespace Surveillance.Tests.Universe.Multiverse
         [Test]
         public void Subscribe_AddToSubscription_ThenUnsubscribes_OnUnSub()
         {
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
             var sub = transformer.Subscribe(_observer);
             transformer.OnCompleted();
 
@@ -72,7 +75,7 @@ namespace Surveillance.Tests.Universe.Multiverse
         public void Subscribe_WithObserverAndUniverseCloneableRule_CallsMostSpecificMethods()
         {
             var otherSub = A.Fake<IUniverseCloneableRule>();
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
 
             var sub = transformer.Subscribe(_observer);
             var sub2 = transformer.Subscribe(otherSub);
@@ -85,7 +88,7 @@ namespace Surveillance.Tests.Universe.Multiverse
             var otherSub = A.Fake<IUniverseCloneableRule>();
             var cloneSub = A.Fake<IUniverseCloneableRule>();
             A.CallTo(() => otherSub.Clone()).Returns(cloneSub);
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
 
             var sub = transformer.Subscribe(_observer);
             var sub2 = transformer.Subscribe(otherSub);
@@ -109,7 +112,7 @@ namespace Surveillance.Tests.Universe.Multiverse
                     }
                 });
 
-            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>());
+            var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
             transformer.Subscribe(_observer);
 
             var initial = Genesis(genesisDate);

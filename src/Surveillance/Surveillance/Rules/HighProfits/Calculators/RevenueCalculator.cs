@@ -39,6 +39,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
+                Logger.LogInformation($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had null or empty active fulfilled trade orders.");
                 return null;
             }
 
@@ -49,6 +50,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var sizeOfVirtualPosition = totalPurchaseVolume - totalSaleVolume;
             if (sizeOfVirtualPosition <= 0)
             {
+                Logger.LogInformation($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning realised profits only.");
+
                 // fully traded out position; return its value
                 return new RevenueCurrencyAmount(false, realisedRevenue);
             }
@@ -57,7 +60,9 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var security = activeFulfilledTradeOrders.FirstOrDefault()?.Instrument;
             if (security == null)
             {
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
                 return new RevenueCurrencyAmount(false, realisedRevenue);
+
             }
 
             var marketDataRequest = 
@@ -69,13 +74,17 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (marketDataRequest == null)
             {
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
                 return new RevenueCurrencyAmount(false, null);
+
             }
 
             var marketDataResult = universeMarketCache.Get(marketDataRequest);
             if (marketDataResult.HadMissingData)
             {
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
                 return new RevenueCurrencyAmount(true, null);
+
             }
 
             var securityTick = marketDataResult.Response;           
@@ -84,7 +93,9 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (realisedRevenue == null)
             {
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({currencyAmount.Currency}) {currencyAmount.Value}.");
                 return new RevenueCurrencyAmount(false, currencyAmount);
+
             }
 
             var totalCurrencyAmounts = realisedRevenue + currencyAmount;

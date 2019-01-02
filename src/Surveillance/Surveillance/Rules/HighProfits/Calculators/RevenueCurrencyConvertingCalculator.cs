@@ -45,6 +45,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
+                Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had a null or empty active fulfilled trade orders. Returning.");
                 return null;
             }
 
@@ -55,6 +56,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var sizeOfVirtualPosition = totalPurchaseVolume - totalSaleVolume;
             if (sizeOfVirtualPosition <= 0)
             {
+                Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
                 // fully traded out position; return its value
                 return new RevenueCurrencyAmount(false, realisedRevenue);
             }
@@ -63,7 +65,9 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var security = activeFulfilledTradeOrders.FirstOrDefault()?.Instrument;
             if (security == null)
             {
+                Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Could not find a security so just returning the realised revenue.");
                 return new RevenueCurrencyAmount(false, realisedRevenue);
+
             }
 
             var marketDataRequest =
@@ -75,7 +79,9 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             if (marketDataRequest == null)
             {
+                Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
                 return new RevenueCurrencyAmount(false, null);
+
             }
 
             var marketResponse = universeMarketCache.Get(marketDataRequest);
@@ -95,16 +101,19 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
             {
+                Logger.LogInformation($"Revenue currency converting calculator could not calculate converted virtual revenues, returning null.");
                 return null;
             }
 
             if (realisedRevenue == null)
             {
+                Logger.LogInformation($"Revenue currency converting calculator could not calculate realised revenues, returning realised revenues.");
                 return new RevenueCurrencyAmount(false, convertedVirtualRevenues);
             }
 
             if (convertedVirtualRevenues == null)
             {
+                Logger.LogInformation($"Revenue currency converting calculator could not calculate virtual revenues. Returning virtual revenues.");
                 return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 

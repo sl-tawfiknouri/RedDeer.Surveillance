@@ -39,7 +39,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         protected override string UploadDirectoryPath()
         {
-            return _uploadConfiguration.RelayEquityFileUploadDirectoryPath;
+            return _uploadConfiguration.DataImportEquityFileUploadDirectoryPath;
         }
 
         public override bool ProcessFile(string path)

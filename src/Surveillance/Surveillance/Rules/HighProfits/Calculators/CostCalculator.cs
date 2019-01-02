@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -14,6 +15,13 @@ namespace Surveillance.Rules.HighProfits.Calculators
     /// </summary>
     public class CostCalculator : ICostCalculator
     {
+        private readonly ILogger<CostCalculator> _logger;
+
+        public CostCalculator(ILogger<CostCalculator> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
         /// <summary>
         /// Sum the total buy in for the position
         /// </summary>
@@ -25,6 +33,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
             {
+                _logger.LogInformation($"CostCalculator CalculateCostOfPosition had null active trade orders or empty. Returning null.");
                 return null;
             }
 
@@ -38,7 +47,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
                             afto.OrderCurrency))
                     .ToList();
 
-            return new CurrencyAmount(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
+            var currencyAmount = new CurrencyAmount(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
+
+            _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({currencyAmount.Currency}) {currencyAmount.Value}.");
+
+            return currencyAmount;
         }
     }
 }

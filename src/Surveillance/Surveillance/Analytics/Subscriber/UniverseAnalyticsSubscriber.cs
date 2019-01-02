@@ -4,6 +4,7 @@ using System.Linq;
 using DomainV2.Equity.Frames;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Subscriber.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Universe;
@@ -17,33 +18,44 @@ namespace Surveillance.Analytics.Subscriber
         private readonly IDictionary<string, string> _traderIds;
         private readonly IDictionary<string, string> _marketIds;
         private readonly IDictionary<InstrumentIdentifiers, FinancialInstrument> _securityIds;
+        private readonly ILogger<UniverseAnalyticsSubscriber> _logger;
 
         private readonly object _traderIdLock = new object();
         private readonly object _marketIdLock = new object();
         private readonly object _securityIdLock = new object();
 
-        public UniverseAnalyticsSubscriber(int operationContextId)
+        public UniverseAnalyticsSubscriber(
+            int operationContextId,
+            ILogger<UniverseAnalyticsSubscriber> logger)
         {
             Analytics = new UniverseAnalytics {SystemProcessOperationId = operationContextId};
             _traderIds = new Dictionary<string, string>();
             _marketIds = new Dictionary<string, string>();
             _securityIds = new Dictionary<InstrumentIdentifiers, FinancialInstrument>();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public UniverseAnalytics Analytics { get; }
 
         public void OnCompleted()
-        {}
+        {
+            _logger.LogInformation($"UniverseAnalyticsSubscriber received the OnCompleted() event from the analytics stream");
+        }
 
         public void OnError(Exception error)
-        {}
+        {
+            _logger.LogError($"UniverseAnalyticsSubscriber received the OnError() event from the analytics stream", error);
+        }
 
         public void OnNext(IUniverseEvent value)
         {
             if (value == null)
             {
+                _logger.LogWarning($"UniverseAnalyticsSubscriber received a null analytics stream event.");
                 return;
             }
+
+            _logger.LogWarning($"UniverseAnalyticsSubscriber received an analytics event of type {value.StateChange} at {value.EventTime} universe time.");
 
             switch (value.StateChange)
             {
@@ -150,10 +162,11 @@ namespace Surveillance.Analytics.Subscriber
         private void Eschaton()
         {
             Analytics.EschatonEventCount += 1;
-
             Analytics.UniqueTradersCount = _traderIds.Count;
             Analytics.UniqueMarketsTradedOnCount = _marketIds.Count;
             Analytics.UniqueSecuritiesCount = _securityIds.Count;
+
+            _logger.LogInformation($"UniverseAnalyticsSubscriber received eschaton event considering there to be {Analytics.EschatonEventCount} eschaton events; {Analytics.UniqueTradersCount} unique traders; {Analytics.UniqueMarketsTradedOnCount} unique markets traded on; and {Analytics.UniqueSecuritiesCount} unique securities");
         }
     }
 }

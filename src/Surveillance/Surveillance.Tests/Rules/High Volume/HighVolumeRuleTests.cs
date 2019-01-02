@@ -19,6 +19,7 @@ using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -39,6 +40,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IDataRequestMessageSender _messageSender;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _factoryCache;
+        private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
         public void Setup()
@@ -54,6 +56,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _messageSender = A.Fake<IDataRequestMessageSender>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
+            _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
@@ -65,21 +68,24 @@ namespace Surveillance.Tests.Rules.High_Volume
         public void Constructor_ConsidersNullParameters_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger));
+
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullOpCtx_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger));
+
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, null));
+
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, null, _tradingLogger));
         }
 
         [Test]
@@ -224,7 +230,8 @@ namespace Surveillance.Tests.Rules.High_Volume
                 _factory,
                 _tradingHoursManager,
                 _messageSender,
-                _logger);
+                _logger,
+                _tradingLogger);
         }
 
         private IUniverseEvent Trade()

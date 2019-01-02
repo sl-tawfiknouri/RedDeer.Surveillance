@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -13,15 +14,16 @@ namespace Surveillance.Rules.Layering
             : base("Automated Layering Rule Breach Detected", "Layering Message Sender", logger, caseMessageSender)
         { }
 
-        public void Send(ILayeringRuleBreach breach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ILayeringRuleBreach breach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (breach == null)
             {
+                Logger.LogInformation($"LayeringAlertSender Send received a null rule breach. Returning.");
                 return;
             }
 
             var description = BuildDescription(breach);
-            Send(breach, description, opCtx);
+            await Send(breach, description, opCtx);
         }
 
         private string BuildDescription(ILayeringRuleBreach breach)

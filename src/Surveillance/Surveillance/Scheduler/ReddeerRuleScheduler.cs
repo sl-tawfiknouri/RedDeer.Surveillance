@@ -123,13 +123,14 @@ namespace Surveillance.Scheduler
                 var exitClientServiceBlock = servicesRunning;
                 while (!exitClientServiceBlock)
                 {
+                    _logger.LogInformation($"ReddeerRuleScheduler APIs down on heartbeat requests. Sleeping for 30 seconds.");
+
                     Thread.Sleep(30 * 1000);
                     var apiHeartBeat = _apiHeartbeat.HeartsBeating();
-                    apiHeartBeat.Wait();
                     exitClientServiceBlock = apiHeartBeat.Result;
                     servicesDownMinutes += 1;
 
-                    if (servicesDownMinutes == 60)
+                    if (servicesDownMinutes == 15)
                     {
                         _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
                         opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
@@ -151,10 +152,12 @@ namespace Surveillance.Scheduler
                     return;
                 }
 
+                _logger.LogInformation($"ReddeerRuleScheduler about to execute message {messageBody}");
                 await Execute(execution, opCtx);
             }
             catch (Exception e)
             {
+                _logger.LogError($"ReddeerRuleScheduler caught exception in execute distributed message for {messageBody}", e);
                 opCtx.EndEventWithError(e.Message);
             }
         }
@@ -187,9 +190,11 @@ namespace Surveillance.Scheduler
 
             alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
-
             player.Subscribe(subscriber);
+
+            _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
             player.Play(universe);
+            _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             await _ruleAnalyticsRepository.Create(subscriber.Analytics);
             await _alertsRepository.Create(alertSubscriber.Analytics);

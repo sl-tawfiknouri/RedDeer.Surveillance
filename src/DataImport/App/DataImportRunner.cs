@@ -30,7 +30,7 @@ namespace RedDeer.DataImport.DataImport.App
                 }
                 catch (Exception e)
                 {
-                    _logger.LogCritical("A critical error bubbled to web socket runner in relay app", e);
+                    _logger.LogCritical("A critical error bubbled to web socket runner in data import app", e);
                     throw;
                 }
             });

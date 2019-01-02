@@ -18,6 +18,7 @@ using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -38,12 +39,14 @@ namespace Surveillance.Tests.Rules.Layering
         private IMarketTradingHoursManager _tradingHoursManager;
         private IBmllDataRequestRepository _bmllRepository;
         private ILogger<UniverseMarketCacheFactory> _factoryLogger;
+        private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger>();
-            _alertStream = A.Fake<IUniverseAlertStream>();
+            _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
+             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _operationCtx = A.Fake<ISystemProcessOperationContext>();
             _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null, null, null, false);
@@ -63,27 +66,27 @@ namespace Surveillance.Tests.Rules.Layering
         public void Constructor_NullParametersConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullLoggerConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullRuleContextConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, _tradingLogger));
         }
 
         [Test]
         public void EndOfUniverse_RecordUpdateAlertAndEndEvent()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             rule.OnNext(eschaton);
@@ -95,7 +98,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -120,7 +123,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_NoRaisedAlertInEschaton_WhenBidirectionalTradeAndExceedsDailyThreshold_ButNoMarketData()
         {
             
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -145,7 +148,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -170,7 +173,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
@@ -224,7 +227,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -276,7 +279,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -320,7 +323,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -364,7 +367,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -408,7 +411,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -471,7 +474,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -534,7 +537,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -597,7 +600,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
             var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;

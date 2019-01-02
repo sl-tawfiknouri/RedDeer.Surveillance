@@ -44,6 +44,9 @@ namespace Surveillance.Rules.HighProfits
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
                 _messages = _messages.Except(duplicates).ToList();
+
+                _logger.LogInformation($"High Profit Rule Cached Message Sender deduplicating {_messages.Count()} for {ruleBreach.Security.Identifiers}");
+
                 _messages.Add(ruleBreach);
             }
         }
@@ -80,7 +83,8 @@ namespace Surveillance.Rules.HighProfits
 
                 foreach (var msg in _messages)
                 {
-                   _messageSender.Send(msg, ruleCtx);
+                    _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {msg?.Security?.Identifiers} rule breaches to message bus");
+                    _messageSender.Send(msg, ruleCtx);
                 }
 
                 var count = _messages.Count;

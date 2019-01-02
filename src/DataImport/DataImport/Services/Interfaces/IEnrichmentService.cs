@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
 
-namespace Surveillance.Services.Interfaces
+namespace DataImport.Services.Interfaces
 {
     public interface IEnrichmentService
     {
         Task Initialise();
         Task Terminate();
+        Task<bool> Scan();
     }
 }

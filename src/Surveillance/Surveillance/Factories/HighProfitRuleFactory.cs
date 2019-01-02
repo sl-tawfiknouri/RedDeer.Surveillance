@@ -11,6 +11,7 @@ using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Multiverse;
@@ -29,6 +30,8 @@ namespace Surveillance.Factories
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly IDataRequestMessageSender _messageSender;
         private readonly ILogger<HighProfitsRule> _logger;
+        private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
+        private readonly ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
 
         public HighProfitRuleFactory(
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
@@ -39,7 +42,9 @@ namespace Surveillance.Factories
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
             IDataRequestMessageSender messageSender,
-            ILogger<HighProfitsRule> logger)
+            ILogger<HighProfitsRule> logger,
+            ILogger<TradingHistoryStack> tradingHistoryLogger, 
+            ILogger<MarketCloseMultiverseTransformer> transformerLogger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -50,6 +55,8 @@ namespace Surveillance.Factories
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
+            _transformerLogger = transformerLogger ?? throw new ArgumentNullException(nameof(transformerLogger));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
@@ -72,7 +79,8 @@ namespace Surveillance.Factories
                 _orderFilter,
                 _marketCacheFactory,
                 _messageSender,
-                _logger);
+                _logger,
+                _tradingHistoryLogger);
 
             var marketClosure = new HighProfitMarketClosureRule(
                 parameters,
@@ -84,15 +92,16 @@ namespace Surveillance.Factories
                 _orderFilter,
                 _marketCacheFactory,
                 _messageSender,
-                _logger);
+                _logger,
+                _tradingHistoryLogger);
 
-            var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory);
+            var multiverseTransformer = new MarketCloseMultiverseTransformer(_unsubscriberFactory, _transformerLogger);
             multiverseTransformer.Subscribe(marketClosure);
             var percentageCompletionLogger = _percentageCompleteFactory.Build();
             percentageCompletionLogger.InitiateTimeLogger(scheduledExecution);
             multiverseTransformer.Subscribe(percentageCompletionLogger);
                 
-            return new HighProfitsRule(stream, multiverseTransformer);
+            return new HighProfitsRule(stream, multiverseTransformer, _logger);
         }
 
         public static string Version => Versioner.Version(2, 0);

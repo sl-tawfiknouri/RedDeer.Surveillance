@@ -12,6 +12,8 @@ using DataImport.Recorders;
 using DataImport.Recorders.Interfaces;
 using DataImport.S3_IO;
 using DataImport.S3_IO.Interfaces;
+using DataImport.Services;
+using DataImport.Services.Interfaces;
 using DomainV2.Equity.Frames;
 using DomainV2.Equity.Frames.Interfaces;
 using DomainV2.Equity.Streams;
@@ -32,9 +34,9 @@ using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport
 {
-    public class RelayRegistry : Registry
+    public class DataImportRegistry : Registry
     {
-        public RelayRegistry()
+        public DataImportRegistry()
         {
             var loggerFactory = new NLogLoggerFactory();
             For(typeof(ILoggerFactory)).Use(loggerFactory);
@@ -73,6 +75,8 @@ namespace DataImport
 
             For<ITradeFileCsvValidator>().Use<TradeFileCsvValidator>();
             For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();
+
+            For<IEnrichmentService>().Use<EnrichmentService>();
         }
     }
 }

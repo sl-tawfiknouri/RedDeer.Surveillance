@@ -1,9 +1,10 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
+﻿using System.Threading.Tasks;
+using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.CancelledOrders.Interfaces
 {
     public interface ICancelledOrderMessageSender
     {
-        void Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx);
+        Task Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx);
     }
 }

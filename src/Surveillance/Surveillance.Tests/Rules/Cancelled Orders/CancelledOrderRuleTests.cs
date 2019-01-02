@@ -15,6 +15,7 @@ using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -32,6 +33,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         private IBmllDataRequestRepository _bmllRepository;
         private ILogger<CancelledOrderRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _loggerCache;
+        private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         [SetUp]
         public void Setup()
@@ -43,6 +45,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             _bmllRepository = A.Fake<IBmllDataRequestRepository>();
             _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
+            _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
@@ -52,14 +55,14 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         public void Constructor_ConsidersNullParameters_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(null, _ruleCtx, _alertStream, _orderFilter, _cacheFactory, _logger));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(null, _ruleCtx, _alertStream, _orderFilter, _cacheFactory, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_parameters, _ruleCtx, _alertStream, _orderFilter,_cacheFactory, null));
+            Assert.Throws<ArgumentNullException>(() => new CancelledOrderRule(_parameters, _ruleCtx, _alertStream, _orderFilter,_cacheFactory, null, _tradingHistoryLogger));
         }
 
         [Test]
@@ -90,7 +93,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             };
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
-            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger, _tradingHistoryLogger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -136,7 +139,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger, _tradingHistoryLogger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -174,7 +177,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger, _tradingHistoryLogger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -213,7 +216,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger, _tradingHistoryLogger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize
@@ -248,7 +251,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var parameters = new CancelledOrderRuleParameters(TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
 
-            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger);
+            var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), _logger, _tradingHistoryLogger);
 
             var universeEvents =
                 cancelledOrdersByTradeSize

@@ -16,6 +16,7 @@ using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 
@@ -37,7 +38,7 @@ namespace Surveillance.Tests.Rules.WashTrades
 
         private IBmllDataRequestRepository _bmllRepository;
         private ILogger<UniverseMarketCacheFactory> _loggerCache;
-
+        private ILogger<TradingHistoryStack> _tradingLogger;
 
         [SetUp]
         public void Setup()
@@ -51,6 +52,7 @@ namespace Surveillance.Tests.Rules.WashTrades
             _logger = A.Fake<ILogger>();
             _bmllRepository = A.Fake<IBmllDataRequestRepository>();
             _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
+            _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
             _factory = new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
@@ -75,7 +77,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var result = rule.ClusteringTrades(null);
 
@@ -96,7 +99,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
            var result = rule.ClusteringTrades(null);
 
@@ -117,7 +121,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var trades = new List<Order> {new Order().Random()};
             var result = rule.ClusteringTrades(trades);
@@ -139,7 +144,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(19);
             var tr2 = new Order().Random(21);
@@ -171,7 +177,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(19);
             var tr2 = new Order().Random(21);
@@ -204,7 +211,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(21);
             var tr2 = new Order().Random(21);
@@ -247,7 +255,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(21);
             var tr2 = new Order().Random(21);
@@ -286,7 +295,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(21);
             var tr2 = new Order().Random(21);
@@ -341,7 +351,8 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
-                _logger);
+                _logger,
+                _tradingLogger);
 
             var tr1 = new Order().Random(21);
             var tr2 = new Order().Random(21);

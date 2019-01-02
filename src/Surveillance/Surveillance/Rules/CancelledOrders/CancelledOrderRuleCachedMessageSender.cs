@@ -30,6 +30,8 @@ namespace Surveillance.Rules.CancelledOrders
         {
             if (ruleBreach == null)
             {
+                // ReSharper disable once InconsistentlySynchronizedField
+                _logger.LogInformation($"Cancelled Order Rule Cached Message Sender received a null rule breach {ruleBreach.Security.Identifiers}. Returning.");
                 return;
             }
 
@@ -38,6 +40,12 @@ namespace Surveillance.Rules.CancelledOrders
                 _logger.LogInformation($"Cancelled Order Rule Cached Message Sender received rule breach for {ruleBreach.Security.Identifiers}");
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
+
+                if (duplicates?.Any() ?? false)
+                {
+                    _logger.LogInformation($"Cancelled Order Rule Cached Message Sender removing {duplicates.Count} duplicates for  {ruleBreach.Security.Identifiers}");
+                }
+
                 _messages = _messages.Except(duplicates).ToList();
                 _messages.Add(ruleBreach);
             }
@@ -54,11 +62,13 @@ namespace Surveillance.Rules.CancelledOrders
 
                 foreach (var msg in _messages)
                 {
+                    _logger.LogInformation($"Cancelled Order Rule Cached Message Sender sending message {msg.Security?.Identifiers} to message bus");
                     _messageSender.Send(msg, opCtx);
                 }
 
                 var count = _messages.Count;
                 _messages.RemoveAll(m => true);
+                _logger.LogInformation($"Cancelled Order Rule Cached Message Sender dispatched {_messages.Count} rule breaches to message bus");
 
                 return count;
             }

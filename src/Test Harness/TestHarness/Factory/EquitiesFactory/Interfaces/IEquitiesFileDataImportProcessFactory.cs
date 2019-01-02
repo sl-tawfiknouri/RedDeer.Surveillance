@@ -2,7 +2,7 @@
 
 namespace TestHarness.Factory.EquitiesFactory.Interfaces
 {
-    public interface IEquitiesFileRelayProcessFactory
+    public interface IEquitiesFileDataImportProcessFactory
     {
         IEquityDataGenerator Create(string filePath);
     }

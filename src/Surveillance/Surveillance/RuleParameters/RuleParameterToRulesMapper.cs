@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Mappers.Interfaces;
 using Surveillance.RuleParameters.Filter.Interfaces;
@@ -13,15 +14,18 @@ namespace Surveillance.RuleParameters
     {
         private readonly IRuleProjector _ruleProjector;
         private readonly IClientOrganisationalFactorMapper _organisationalFactorMapper;
+        private readonly ILogger<RuleParameterToRulesMapper> _logger;
 
         public RuleParameterToRulesMapper(
             IRuleProjector ruleProjector,
-            IClientOrganisationalFactorMapper organisationalFactorMapper)
+            IClientOrganisationalFactorMapper organisationalFactorMapper,
+            ILogger<RuleParameterToRulesMapper> logger)
         {
             _ruleProjector = ruleProjector ?? throw new ArgumentNullException(nameof(ruleProjector));
             _organisationalFactorMapper =
                 organisationalFactorMapper
                 ?? throw new ArgumentNullException(nameof(organisationalFactorMapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos)
@@ -29,6 +33,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty spoofing dtos");
                 return null;
             }
 
@@ -51,6 +56,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty cancelled order dtos");
                 return null;
             }
 
@@ -75,6 +81,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty high profits dtos");
                 return null;
             }
 
@@ -99,6 +106,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty marking the close dtos");
                 return null;
             }
 
@@ -122,6 +130,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty layering dtos");
                 return null;
             }
 
@@ -146,6 +155,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty high volume dtos");
                 return null;
             }
 
@@ -170,6 +180,7 @@ namespace Surveillance.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
+                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty wash trade dtos");
                 return null;
             }
 

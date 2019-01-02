@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.ComplianceCase;
 using Contracts.SurveillanceService.ComplianceCaseLog;
@@ -17,7 +18,7 @@ namespace Surveillance.Rules
         private readonly ICaseMessageSender _caseMessageSender;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
-        protected readonly ILogger _logger;
+        protected readonly ILogger Logger;
 
         protected BaseMessageSender(
             string caseTitle,
@@ -25,21 +26,22 @@ namespace Surveillance.Rules
             ILogger logger,
             ICaseMessageSender caseMessageSender)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
 
             _messageSenderName = messageSenderName ?? "unknown message sender";
             _caseTitle = caseTitle ?? "unknown rule breach detected";
         }
 
-        protected void Send(IRuleBreach ruleBreach, string description, ISystemProcessOperationRunRuleContext opCtx)
+        protected async Task Send(IRuleBreach ruleBreach, string description, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (ruleBreach?.Trades?.Get() == null)
             {
+                Logger.LogInformation($"BaseMessageSender for {_messageSenderName} had null trades. Returning.");
                 return;
             }
 
-            _logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+            Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
             description = description ?? string.Empty;
 
@@ -52,11 +54,13 @@ namespace Surveillance.Rules
 
             try
             {
-                _caseMessageSender.Send(caseMessage);
+                Logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+                await _caseMessageSender.Send(caseMessage);
+                Logger.LogInformation($"BaseMessageSender sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"{_messageSenderName} encountered an error sending the case message to the bus {e}");
+                Logger.LogError($"{_messageSenderName} encountered an error sending the case message to the bus {e}");
                 opCtx.EventException(e);
             }
         }

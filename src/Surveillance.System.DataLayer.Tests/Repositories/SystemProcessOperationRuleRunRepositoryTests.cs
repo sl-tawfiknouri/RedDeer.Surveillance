@@ -43,7 +43,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
                 InstanceInitiated = DateTime.Now,
                 Heartbeat = DateTime.Now,
-                SystemProcessType = SystemProcessType.RelayService
+                SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
 
@@ -87,7 +87,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
                 InstanceInitiated = DateTime.Now,
                 Heartbeat = DateTime.Now,
-                SystemProcessType = SystemProcessType.RelayService
+                SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
 

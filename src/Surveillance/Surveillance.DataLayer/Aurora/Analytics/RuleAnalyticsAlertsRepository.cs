@@ -27,6 +27,7 @@ namespace Surveillance.DataLayer.Aurora.Analytics
         {
             if (analytics == null)
             {
+                _logger.LogError($"RuleAnalyticsAlertsRepository asked to save a null analytics object. Returning.");
                 return;
             }
 
@@ -36,9 +37,11 @@ namespace Surveillance.DataLayer.Aurora.Analytics
             {
                 dbConnection.Open();
 
+                _logger.LogInformation($"RuleAnalyticsAlertsRepository Create about to save analytics for system process operation id  {analytics.SystemProcessOperationId}");
                 using (var conn = dbConnection.ExecuteAsync(CreateSql, analytics))
                 {
                     await conn;
+                    _logger.LogInformation($"RuleAnalyticsAlertsRepository Create has saved analytics for system process operation id  {analytics.SystemProcessOperationId}");
                 }
             }
             catch (Exception e)

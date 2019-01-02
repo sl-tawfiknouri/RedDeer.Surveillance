@@ -41,10 +41,12 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 dbConnection.Open();
 
+                _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest about to save bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 var dtoRequest = new MarketDataRequestDto(request);
                 using (var conn = dbConnection.ExecuteAsync(CreateDataRequestSql, dtoRequest))
                 {
                     await conn;
+                    _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest has saved bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 }
             }
             catch (Exception e)

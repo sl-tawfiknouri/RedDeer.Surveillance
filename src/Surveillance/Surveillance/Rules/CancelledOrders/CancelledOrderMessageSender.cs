@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
@@ -22,7 +23,7 @@ namespace Surveillance.Rules.CancelledOrders
                 caseMessageSender)
         { }
 
-        public void Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
         {
             if (ruleBreach?.Trades == null
                 || !ruleBreach.Trades.Get().Any())
@@ -31,7 +32,7 @@ namespace Surveillance.Rules.CancelledOrders
             }
 
             var description = BuildDescription(ruleBreach.Parameters, ruleBreach, ruleBreach.Trades.Get().FirstOrDefault());
-            Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description, opCtx);
         }
 
         private string BuildDescription(

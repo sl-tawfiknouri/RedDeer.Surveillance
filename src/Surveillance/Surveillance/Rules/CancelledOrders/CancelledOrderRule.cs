@@ -81,8 +81,13 @@ namespace Surveillance.Rules.CancelledOrders
 
             if (ruleBreach.HasBreachedRule())
             {
+                _logger.LogInformation($"CancelledOrderRule RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
                 var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
                 _alertStream.Add(message);
+            }
+            else
+            {
+                _logger.LogInformation($"CancelledOrderRule RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
             }
         }
 

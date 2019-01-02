@@ -83,7 +83,7 @@ namespace Surveillance.Rules.HighProfits
                 ruleBreach.ExchangeRateProfits.VariableCurrency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                _logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
+                Logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
                 return string.Empty;
             }
 

@@ -9,6 +9,7 @@ namespace Surveillance.RuleParameters
     public class CancelledOrderRuleParameters : ICancelledOrderRuleParameters
     {
         public CancelledOrderRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? cancelledOrderPositionPercentageThreshold,
             decimal? cancelledOrderCountPercentageThreshold,
@@ -20,6 +21,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
             CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
@@ -35,6 +38,7 @@ namespace Surveillance.RuleParameters
         }
 
         public CancelledOrderRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? cancelledOrderPositionPercentageThreshold,
             decimal? cancelledOrderCountPercentageThreshold,
@@ -43,6 +47,7 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
             WindowSize = windowSize;
             CancelledOrderPercentagePositionThreshold = cancelledOrderPositionPercentageThreshold;
             CancelledOrderCountPercentageThreshold = cancelledOrderCountPercentageThreshold;
@@ -57,6 +62,7 @@ namespace Surveillance.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        public string Id { get; }
         public TimeSpan WindowSize { get; }
         public decimal? CancelledOrderPercentagePositionThreshold { get; }
         public decimal? CancelledOrderCountPercentageThreshold { get; }

@@ -9,6 +9,7 @@ namespace Surveillance.RuleParameters
     public class MarkingTheCloseParameters : IMarkingTheCloseParameters
     {
         public MarkingTheCloseParameters(
+            string id,
             TimeSpan window,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
@@ -16,6 +17,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             Window = window;
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
@@ -30,6 +33,7 @@ namespace Surveillance.RuleParameters
         }
 
         public MarkingTheCloseParameters(
+            string id,
             TimeSpan window,
             decimal? percentageThresholdDailyVolume,
             decimal? percentageThresholdWindowVolume,
@@ -40,6 +44,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             Window = window;
             PercentageThresholdDailyVolume = percentageThresholdDailyVolume;
             PercentageThresholdWindowVolume = percentageThresholdWindowVolume;
@@ -53,6 +59,7 @@ namespace Surveillance.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        public string Id { get; }
         public TimeSpan Window { get; }
 
         /// <summary>

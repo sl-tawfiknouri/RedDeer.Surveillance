@@ -9,6 +9,7 @@ namespace Surveillance.RuleParameters
     public class HighProfitsRuleParameters : IHighProfitsRuleParameters
     {
         public HighProfitsRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
@@ -17,6 +18,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
@@ -32,6 +35,7 @@ namespace Surveillance.RuleParameters
         }
 
         public HighProfitsRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? highProfitPercentageThreshold,
             decimal? highProfitAbsoluteThreshold,
@@ -43,6 +47,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             HighProfitPercentageThreshold = highProfitPercentageThreshold;
             HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
@@ -56,6 +62,8 @@ namespace Surveillance.RuleParameters
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
+
+        public string Id { get; }
 
         public TimeSpan WindowSize { get; }
 

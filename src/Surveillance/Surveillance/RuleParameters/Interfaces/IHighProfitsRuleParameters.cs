@@ -4,7 +4,7 @@ using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
-    public interface IHighProfitsRuleParameters : IFilterableRule
+    public interface IHighProfitsRuleParameters : IFilterableRule, IRuleParameter
     {
         TimeSpan WindowSize { get; }
         decimal? HighProfitPercentageThreshold { get; }

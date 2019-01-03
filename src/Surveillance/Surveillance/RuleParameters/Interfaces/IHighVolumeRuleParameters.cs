@@ -4,7 +4,7 @@ using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
-    public interface IHighVolumeRuleParameters : IFilterableRule
+    public interface IHighVolumeRuleParameters : IFilterableRule, IRuleParameter
     {
         decimal? HighVolumePercentageDaily { get; }
         decimal? HighVolumePercentageWindow { get; }

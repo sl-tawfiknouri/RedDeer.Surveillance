@@ -40,6 +40,7 @@ namespace Surveillance.RuleParameters
             return dtos
                 .Select(dto =>
                     new SpoofingRuleParameters(
+                    dto.Id,
                     dto.WindowSize,
                     dto.CancellationThreshold,
                     dto.RelativeSizeMultipleForSpoofExceedingReal,
@@ -63,6 +64,7 @@ namespace Surveillance.RuleParameters
             return dtos
                 .Select(dto =>
                     new CancelledOrderRuleParameters(
+                        dto.Id,
                         dto.WindowSize,
                         dto.CancelledOrderPercentagePositionThreshold,
                         dto.CancelledOrderCountPercentageThreshold,
@@ -88,6 +90,7 @@ namespace Surveillance.RuleParameters
             return dtos
                 .Select(dto =>
                     new HighProfitsRuleParameters(
+                        dto.Id,
                         dto.WindowSize,
                         dto.HighProfitPercentageThreshold,
                         dto.HighProfitAbsoluteThreshold,
@@ -113,6 +116,7 @@ namespace Surveillance.RuleParameters
             return dtos
                 .Select(dto =>
                     new MarkingTheCloseParameters(
+                        dto.Id,
                         dto.WindowSize,
                         dto.PercentageThresholdDailyVolume,
                         dto.PercentageThresholdWindowVolume,
@@ -138,6 +142,7 @@ namespace Surveillance.RuleParameters
                 dtos
                     .Select(dto =>
                         new LayeringRuleParameters(
+                            dto.Id,
                             dto.WindowSize,
                             dto.PercentageOfMarketDailyVolume,
                             dto.PercentageOfMarketWindowVolume,
@@ -163,6 +168,7 @@ namespace Surveillance.RuleParameters
                 dtos
                     .Select(dto => 
                         new HighVolumeRuleParameters(
+                            dto.Id,
                             dto.WindowSize,
                             dto.HighVolumePercentageDaily,
                             dto.HighVolumePercentageWindow,
@@ -188,6 +194,7 @@ namespace Surveillance.RuleParameters
                 dtos
                     .Select(dto =>
                         new WashTradeRuleParameters(
+                            dto.Id,
                             dto.WindowSize,
                             dto.PerformAveragePositionAnalysis,
                             dto.PerformPairingPositionAnalysis,

@@ -9,6 +9,7 @@ namespace Surveillance.RuleParameters
     public class WashTradeRuleParameters : IWashTradeRuleParameters
     {
         public WashTradeRuleParameters(
+            string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,
             bool performPairingPositionAnalysis,
@@ -27,6 +28,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
@@ -56,6 +59,7 @@ namespace Surveillance.RuleParameters
         }
 
         public WashTradeRuleParameters(
+            string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,
             bool performPairingPositionAnalysis,
@@ -77,6 +81,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
@@ -104,6 +110,8 @@ namespace Surveillance.RuleParameters
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
+
+        public string Id { get; }
 
         public TimeSpan WindowSize { get; set; }
 

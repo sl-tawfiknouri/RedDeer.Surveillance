@@ -20,6 +20,7 @@ namespace Surveillance.Tests.Rules.WashTrades
         public void Setup()
         {
             _parameters = new WashTradeRuleParameters(
+                "id",
                 TimeSpan.FromHours(8),
                 true,
                 true,

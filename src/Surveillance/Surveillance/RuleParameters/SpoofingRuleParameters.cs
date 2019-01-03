@@ -9,12 +9,15 @@ namespace Surveillance.RuleParameters
     public class SpoofingRuleParameters : ISpoofingRuleParameters
     {
         public SpoofingRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal cancellationThreshold,
             decimal relativeSizeMultipleForSpoofingExceedingReal,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
@@ -28,6 +31,7 @@ namespace Surveillance.RuleParameters
         }
 
         public SpoofingRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal cancellationThreshold,
             decimal relativeSizeMultipleForSpoofingExceedingReal,
@@ -37,6 +41,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             CancellationThreshold = cancellationThreshold;
             RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
@@ -49,6 +55,7 @@ namespace Surveillance.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        public string Id { get; }
         public TimeSpan WindowSize { get; }
         public decimal CancellationThreshold { get; }
         public decimal RelativeSizeMultipleForSpoofExceedingReal { get; }

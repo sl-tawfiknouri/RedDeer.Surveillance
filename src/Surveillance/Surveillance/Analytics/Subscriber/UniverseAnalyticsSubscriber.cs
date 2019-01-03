@@ -55,7 +55,7 @@ namespace Surveillance.Analytics.Subscriber
                 return;
             }
 
-            _logger.LogWarning($"UniverseAnalyticsSubscriber received an analytics event of type {value.StateChange} at {value.EventTime} universe time.");
+            _logger.LogInformation($"UniverseAnalyticsSubscriber received an analytics event of type {value.StateChange} at {value.EventTime} universe time.");
 
             switch (value.StateChange)
             {

@@ -51,7 +51,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             if (!ruleRunIds.Any())
             {
-                _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
+                _logger?.LogWarning($"BmllDataRequestsRescheduleManager completing process did not find any rule run ids");
                 return;
             }
 

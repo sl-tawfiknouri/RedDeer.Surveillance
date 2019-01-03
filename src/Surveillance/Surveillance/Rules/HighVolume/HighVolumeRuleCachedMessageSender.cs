@@ -66,5 +66,14 @@ namespace Surveillance.Rules.HighVolume
                 return count;
             }
         }
+
+        public void Delete()
+        {
+            lock (_lock)
+            {
+                _logger.LogInformation($"HighVolumeRuleCachedMessageSender deleting alerts");
+                _messages = new List<IHighVolumeRuleBreach>();
+            }
+        }
     }
 }

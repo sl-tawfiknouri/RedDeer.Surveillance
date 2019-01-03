@@ -6,5 +6,6 @@ namespace Surveillance.Rules.HighVolume.Interfaces
     {
         void Send(IHighVolumeRuleBreach ruleBreach);
         int Flush(ISystemProcessOperationRunRuleContext ruleCtx);
+        void Delete();
     }
 }

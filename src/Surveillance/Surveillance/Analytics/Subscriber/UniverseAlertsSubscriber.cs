@@ -170,6 +170,12 @@ namespace Surveillance.Analytics.Subscriber
 
         private void HighVolume(IUniverseAlertEvent alert)
         {
+            if (alert.IsDeleteEvent)
+            {
+                _highVolumeMessageSender.Delete();
+                return;
+            }
+
             if (alert.IsFlushEvent)
             {
                 _logger.LogInformation($"UniverseAlertSubscriber high volume flushing alerts");

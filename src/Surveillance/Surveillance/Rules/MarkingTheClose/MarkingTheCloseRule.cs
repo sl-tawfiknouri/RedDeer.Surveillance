@@ -41,6 +41,7 @@ namespace Surveillance.Rules.MarkingTheClose
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
+            RuleRunMode runMode,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -50,6 +51,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 "Marking The Close",
                 ruleCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {

@@ -15,6 +15,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -69,7 +70,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -77,7 +78,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -85,7 +86,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, null, _tradingLogger));
         }
 
         [Test]
@@ -230,6 +231,7 @@ namespace Surveillance.Tests.Rules.High_Volume
                 _factory,
                 _tradingHoursManager,
                 _messageSender,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
         }

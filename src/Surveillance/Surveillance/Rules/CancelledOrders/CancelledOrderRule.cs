@@ -33,6 +33,7 @@ namespace Surveillance.Rules.CancelledOrders
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -42,6 +43,7 @@ namespace Surveillance.Rules.CancelledOrders
                 "Cancelled Order Rule",
                 opCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {

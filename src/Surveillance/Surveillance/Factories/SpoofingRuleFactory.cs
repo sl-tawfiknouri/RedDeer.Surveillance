@@ -33,7 +33,8 @@ namespace Surveillance.Factories
         public ISpoofingRule Build(
             ISpoofingRuleParameters spoofingParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
             return new SpoofingRule(
                 spoofingParameters,
@@ -41,6 +42,7 @@ namespace Surveillance.Factories
                 alertStream,
                 _orderFilter,
                 _factory,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
         }

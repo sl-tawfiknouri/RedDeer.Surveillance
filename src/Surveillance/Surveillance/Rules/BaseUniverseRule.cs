@@ -32,6 +32,7 @@ namespace Surveillance.Rules
         protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
+        protected readonly RuleRunMode RunMode;
 
         private readonly ILogger _logger;
         private readonly ILogger<TradingHistoryStack> _tradingStackLogger;
@@ -44,6 +45,7 @@ namespace Surveillance.Rules
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
         {
@@ -55,6 +57,7 @@ namespace Surveillance.Rules
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
+            RunMode = runMode;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingStackLogger = tradingStackLogger ?? throw new ArgumentNullException(nameof(tradingStackLogger));
         }

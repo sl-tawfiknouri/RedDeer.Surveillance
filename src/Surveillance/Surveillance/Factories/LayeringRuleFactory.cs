@@ -38,9 +38,19 @@ namespace Surveillance.Factories
         public ILayeringRule Build(
             ILayeringRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
-            return new LayeringRule(parameters, alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, ruleCtx, _tradingHistoryLogger);
+            return new LayeringRule(
+                parameters,
+                alertStream,
+                _orderFilter,
+                _logger,
+                _factory,
+                _tradingHoursManager,
+                ruleCtx,
+                runMode,
+                _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(1, 0);

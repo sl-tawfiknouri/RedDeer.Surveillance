@@ -68,6 +68,8 @@ namespace Surveillance.Factories
             IUniverseAlertStream alertStream,
             DomainV2.Scheduling.ScheduledExecution scheduledExecution)
         {
+            var runMode = scheduledExecution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+
             var stream = new HighProfitStreamRule(
                 parameters,
                 ruleCtxStream,
@@ -79,6 +81,7 @@ namespace Surveillance.Factories
                 _orderFilter,
                 _marketCacheFactory,
                 _messageSender,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
 
@@ -92,6 +95,7 @@ namespace Surveillance.Factories
                 _orderFilter,
                 _marketCacheFactory,
                 _messageSender,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
 

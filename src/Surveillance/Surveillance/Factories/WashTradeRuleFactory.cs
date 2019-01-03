@@ -46,7 +46,8 @@ namespace Surveillance.Factories
         public IWashTradeRule Build(
             IWashTradeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
             if (ruleCtx == null)
             {
@@ -67,6 +68,7 @@ namespace Surveillance.Factories
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
         }

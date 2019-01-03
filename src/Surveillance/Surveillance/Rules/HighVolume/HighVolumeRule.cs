@@ -42,6 +42,7 @@ namespace Surveillance.Rules.HighVolume
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
             IDataRequestMessageSender dataRequestSender,
+            RuleRunMode runMode,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
@@ -51,6 +52,7 @@ namespace Surveillance.Rules.HighVolume
                 "High Volume Rule",
                 opCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {

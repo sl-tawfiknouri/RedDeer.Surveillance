@@ -28,6 +28,7 @@ namespace Surveillance.Rules.HighProfits
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IDataRequestMessageSender messageSender,
+            RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -41,6 +42,7 @@ namespace Surveillance.Rules.HighProfits
                 orderFilter,
                 factory,
                 messageSender,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {

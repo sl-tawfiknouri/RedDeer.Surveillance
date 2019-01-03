@@ -8,6 +8,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -120,7 +121,8 @@ namespace Surveillance.Universe.Subscribers
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);
 
-            var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream);
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+            var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {

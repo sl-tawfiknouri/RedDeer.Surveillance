@@ -42,10 +42,11 @@ namespace Surveillance.Factories
         public IHighVolumeRule Build(
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
 
-            return new HighVolumeRule(parameters, opCtx, alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, _logger, _tradingHistoryLogger);
+            return new HighVolumeRule(parameters, opCtx, alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, runMode, _logger, _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(1, 0);

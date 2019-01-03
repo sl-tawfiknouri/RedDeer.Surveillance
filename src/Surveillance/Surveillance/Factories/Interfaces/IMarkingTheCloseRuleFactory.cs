@@ -1,4 +1,5 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -9,6 +10,7 @@ namespace Surveillance.Factories.Interfaces
         IMarkingTheCloseRule Build(
             IMarkingTheCloseParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream);
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode);
     }
 }

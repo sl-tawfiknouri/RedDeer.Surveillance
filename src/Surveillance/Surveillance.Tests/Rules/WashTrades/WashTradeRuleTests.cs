@@ -12,6 +12,7 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -77,6 +78,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -99,6 +101,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -121,6 +124,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -144,6 +148,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -177,6 +182,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -211,6 +217,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -255,6 +262,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -295,6 +303,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 
@@ -351,6 +360,7 @@ namespace Surveillance.Tests.Rules.WashTrades
                 _currencyConverter,
                 _orderFilter,
                 _factory,
+                RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
 

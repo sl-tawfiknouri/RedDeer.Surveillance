@@ -46,6 +46,7 @@ namespace Surveillance.Rules.WashTrade
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -55,6 +56,7 @@ namespace Surveillance.Rules.WashTrade
                 "Wash Trade Rule",
                 ruleCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {

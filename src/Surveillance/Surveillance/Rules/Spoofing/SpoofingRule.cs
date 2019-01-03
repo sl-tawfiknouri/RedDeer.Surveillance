@@ -33,6 +33,7 @@ namespace Surveillance.Rules.Spoofing
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -42,6 +43,7 @@ namespace Surveillance.Rules.Spoofing
                   "Spoofing Rule",
                   ruleCtx,
                   factory,
+                  runMode,
                   logger,
                   tradingHistoryLogger)
         {

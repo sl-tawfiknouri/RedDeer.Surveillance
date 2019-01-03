@@ -1,5 +1,6 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.CancelledOrders.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -10,7 +11,7 @@ namespace Surveillance.Factories.Interfaces
         ICancelledOrderRule Build(
             ICancelledOrderRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream);
-
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode);
     }
 }

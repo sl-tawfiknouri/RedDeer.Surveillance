@@ -24,6 +24,8 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             string ruleDescription,
             string ruleVersion,
             string ruleParameterId,
+            int ruleTypeId,
+            bool isBackTest,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
             string correlationId);

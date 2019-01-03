@@ -54,7 +54,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
                 .MustNotHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun())
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun(A<List<MarketDataRequestDataSource>>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -75,7 +75,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
                 .MustHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun())
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun(A<List<MarketDataRequestDataSource>>.Ignored))
                 .MustHaveHappened();
         }
 

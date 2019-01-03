@@ -7,5 +7,7 @@
 START TRANSACTION;
 
 	ALTER TABLE SystemProcessOperationRuleRun ADD RuleParameterId nvarchar(255);
+	ALTER TABLE SystemProcessOperationRuleRun ADD RuleTypeId int;
+	ALTER TABLE SystemProcessOperationRuleRun ADD IsBackTest bit;
 
 COMMIT;

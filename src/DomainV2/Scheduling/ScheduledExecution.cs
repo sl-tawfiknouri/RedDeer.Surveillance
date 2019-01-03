@@ -29,5 +29,10 @@ namespace DomainV2.Scheduling
         public string CorrelationId { get; set; }
 
         public bool IsBackTest { get; set; }
+
+        /// <summary>
+        /// Once we have as much market data as we can get, force a re-run
+        /// </summary>
+        public bool IsForceRerun { get; set; }
     }
 }

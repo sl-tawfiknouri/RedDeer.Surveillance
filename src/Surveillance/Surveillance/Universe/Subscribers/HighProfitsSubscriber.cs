@@ -106,6 +106,8 @@ namespace Surveillance.Universe.Subscribers
                         DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                         HighProfitRuleFactory.Version,
                         param.Id,
+                        (int)DomainV2.Scheduling.Rules.HighProfits,
+                        execution.IsBackTest,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
                         execution.CorrelationId);
@@ -115,6 +117,8 @@ namespace Surveillance.Universe.Subscribers
                     DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                     HighProfitRuleFactory.Version,
                     param.Id,
+                    (int)DomainV2.Scheduling.Rules.HighProfits,
+                    execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);

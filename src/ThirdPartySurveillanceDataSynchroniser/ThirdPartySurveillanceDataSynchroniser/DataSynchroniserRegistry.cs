@@ -1,5 +1,7 @@
 ﻿using DomainV2.DTO;
 using DomainV2.DTO.Interfaces;
+using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
@@ -36,6 +38,10 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
             For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
             For<IDataSourceClassifier>().Use<DataSourceClassifier>();
+
+            For<IAwsQueueClient>().Use<AwsQueueClient>();
+            For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+            For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
         }
     }
 }

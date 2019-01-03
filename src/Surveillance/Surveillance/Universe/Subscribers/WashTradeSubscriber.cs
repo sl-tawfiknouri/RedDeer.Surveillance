@@ -106,6 +106,8 @@ namespace Surveillance.Universe.Subscribers
                 DomainV2.Scheduling.Rules.WashTrade.GetDescription(),
                 WashTradeRuleFactory.Version,
                 param.Id,
+                (int)DomainV2.Scheduling.Rules.WashTrade,
+                execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
                 execution.TimeSeriesTermination.DateTime,
                 execution.CorrelationId);

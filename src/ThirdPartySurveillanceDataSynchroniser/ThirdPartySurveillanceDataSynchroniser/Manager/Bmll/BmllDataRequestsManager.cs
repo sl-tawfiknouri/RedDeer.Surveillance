@@ -51,10 +51,10 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             // STORE IT
-            _storageManager.Store();
+            await _storageManager.Store();
             
             // RESCHEDULE IT
-            _rescheduleManager.RescheduleRuleRun();
+            await _rescheduleManager.RescheduleRuleRun(bmllRequests);
 
             _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
         }

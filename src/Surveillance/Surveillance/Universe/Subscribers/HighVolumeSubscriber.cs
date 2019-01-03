@@ -109,6 +109,8 @@ namespace Surveillance.Universe.Subscribers
                     DomainV2.Scheduling.Rules.HighVolume.GetDescription(),
                     HighVolumeRuleFactory.Version,
                     param.Id,
+                    (int)DomainV2.Scheduling.Rules.HighVolume,
+                    execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);

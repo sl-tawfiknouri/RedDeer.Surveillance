@@ -23,6 +23,16 @@ namespace Surveillance.System.DataLayer.Processes
         public int SystemProcessOperationId { get; set; }
 
         /// <summary>
+        /// Link back to the rule enum
+        /// </summary>
+        public int RuleTypeId { get; set; }
+
+        /// <summary>
+        /// Record whether this is a back test
+        /// </summary>
+        public bool IsBackTest { get; set; }
+
+        /// <summary>
         /// The rule being executed
         /// </summary>
         public string RuleDescription { get; set; }
@@ -49,7 +59,7 @@ namespace Surveillance.System.DataLayer.Processes
 
         public override string ToString()
         {
-            return $"SystemProcessOperationRuleRun | Id {Id} | CorrelationId {CorrelationId} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | RuleDescription {RuleDescription} | RuleVersion {RuleVersion} | ScheduleRuleStart {ScheduleRuleStart} | ScheduleRuleEnd {ScheduleRuleEnd} | RuleParameterId {RuleParameterId}";
+            return $"SystemProcessOperationRuleRun | Id {Id} | CorrelationId {CorrelationId} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | RuleDescription {RuleDescription} | RuleVersion {RuleVersion} | ScheduleRuleStart {ScheduleRuleStart} | ScheduleRuleEnd {ScheduleRuleEnd} | RuleParameterId {RuleParameterId} | RuleTypeId {RuleTypeId} | IsBackTest {IsBackTest}";
         }
     }
 }

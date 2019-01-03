@@ -1,7 +1,9 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces
 {
     public interface IBmllDataRequestsStorageManager
     {
-        void Store();
+        Task Store();
     }
 }

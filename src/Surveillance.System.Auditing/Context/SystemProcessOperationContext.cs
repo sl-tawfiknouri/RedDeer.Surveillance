@@ -111,6 +111,8 @@ namespace Surveillance.System.Auditing.Context
             string ruleDescription,
             string ruleVersion,
             string ruleParameterId,
+            int ruleTypeId,
+            bool isBackTest,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
             string correlationId)
@@ -125,7 +127,9 @@ namespace Surveillance.System.Auditing.Context
                 RuleParameterId = ruleParameterId,
                 ScheduleRuleStart = ruleScheduleBegin,
                 ScheduleRuleEnd = ruleScheduleEnd,
-                CorrelationId = correlationId
+                CorrelationId = correlationId,
+                IsBackTest = isBackTest,
+                RuleTypeId = ruleTypeId
             };
 
             ctx.StartEvent(startEvent);

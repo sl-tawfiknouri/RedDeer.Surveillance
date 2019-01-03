@@ -8,5 +8,6 @@ namespace Surveillance.Rules.HighProfits.Interfaces
         int Flush(ISystemProcessOperationRunRuleContext ruleCtx);
         void Send(IHighProfitRuleBreach ruleBreach);
         void Remove(ITradePosition position);
+        void Delete();
     }
 }

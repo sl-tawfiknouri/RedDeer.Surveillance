@@ -93,5 +93,14 @@ namespace Surveillance.Rules.HighProfits
                 return count;
             }
         }
+
+        public void Delete()
+        {
+            lock (_lock)
+            {
+                _logger.LogInformation($"High Profit Rule Cached Message Sender deleting alert messages");
+                _messages = new List<IHighProfitRuleBreach>();
+            }
+        }
     }
 }

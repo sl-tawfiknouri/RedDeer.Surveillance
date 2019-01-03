@@ -34,7 +34,7 @@ namespace Surveillance.Rules.HighProfits
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IDataRequestMessageSender _messageSender;
+        private readonly IDataRequestMessageSender _dataRequestMessageSender;
 
         private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
@@ -74,7 +74,7 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _dataRequestMessageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -333,20 +333,26 @@ namespace Surveillance.Rules.HighProfits
             {
                 RunRuleForAllTradingHistories();
             }
+            
+            if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                Logger.LogInformation($"High Profit Stream Rule deleting alerts off the message sender");
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
 
-            if (_submitRuleBreaches)
+                var requestTask = _dataRequestMessageSender.Send(_ruleCtx.Id());
+                requestTask.Wait();
+                var opCtx = _ruleCtx?.EndEvent();
+                opCtx?.EndEventWithMissingDataError();
+            }
+            else if (_submitRuleBreaches)
             {
                 Logger.LogInformation($"High Profit Stream Rule submitting rule breach flush command to the alert stream");
                 var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
                 _alertStream.Add(alert);
-            }
 
-            if (_hasMissingData)
-            {
-                var requestTask = _messageSender.Send(_ruleCtx.Id());
-                requestTask.Wait();
                 var opCtx = _ruleCtx?.EndEvent();
-                opCtx?.EndEventWithMissingDataError();
+                opCtx?.EndEvent();
             }
             else
             {

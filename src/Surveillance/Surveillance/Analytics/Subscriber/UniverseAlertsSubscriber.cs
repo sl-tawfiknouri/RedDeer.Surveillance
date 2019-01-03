@@ -33,6 +33,7 @@ namespace Surveillance.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
+        private bool _hasHighProfitDeleteRequest;
 
         public UniverseAlertsSubscriber(
             int opCtxId,
@@ -144,6 +145,14 @@ namespace Surveillance.Analytics.Subscriber
 
         private void HighProfits(IUniverseAlertEvent alert)
         {
+            _hasHighProfitDeleteRequest = alert.IsDeleteEvent || _hasHighProfitDeleteRequest;
+
+            if (_hasHighProfitDeleteRequest)
+            {
+                _highProfitMessageSender.Delete();
+                return;
+            }
+
             if (alert.IsFlushEvent)
             {
                 _logger.LogInformation($"UniverseAlertSubscriber high profits flushing alerts");

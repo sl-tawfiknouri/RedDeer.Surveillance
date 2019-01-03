@@ -1,13 +1,7 @@
 ﻿using DomainV2.DTO;
 using DomainV2.DTO.Interfaces;
-using Firefly.MessageBus.Core.Infrastructure.Transport;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using RawRabbit;
-using RawRabbit.Channel;
-using RawRabbit.Channel.Abstraction;
-using RawRabbit.DependencyInjection;
-using RawRabbit.Pipe;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.DataSources;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
@@ -39,6 +33,8 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
             For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
+            For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
+            For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
             For<IDataSourceClassifier>().Use<DataSourceClassifier>();
         }
     }

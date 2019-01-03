@@ -38,6 +38,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IUniverseMarketCacheFactory _factory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IBmllDataRequestRepository _dataRequestRepository;
+        private IStubBmllDataRequestRepository _stubDataRequestRepository;
         private IDataRequestMessageSender _messageSender;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _factoryCache;
@@ -51,9 +52,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _dataRequestRepository = A.Fake<IBmllDataRequestRepository>();
+            _stubDataRequestRepository = A.Fake<IStubBmllDataRequestRepository>();
 
             _factoryCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
-            _factory = new UniverseMarketCacheFactory(_dataRequestRepository, _factoryCache);
+            _factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _factoryCache);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _messageSender = A.Fake<IDataRequestMessageSender>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();

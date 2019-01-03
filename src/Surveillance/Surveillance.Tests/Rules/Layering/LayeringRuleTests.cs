@@ -39,6 +39,7 @@ namespace Surveillance.Tests.Rules.Layering
 
         private IMarketTradingHoursManager _tradingHoursManager;
         private IBmllDataRequestRepository _bmllRepository;
+        private IStubBmllDataRequestRepository _stubBmllRepository;
         private ILogger<UniverseMarketCacheFactory> _factoryLogger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
@@ -56,8 +57,9 @@ namespace Surveillance.Tests.Rules.Layering
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
 
             _bmllRepository = A.Fake<IBmllDataRequestRepository>();
+            _stubBmllRepository = A.Fake<IStubBmllDataRequestRepository>();
             _factoryLogger = A.Fake<ILogger<UniverseMarketCacheFactory>>();
-            _factory = new UniverseMarketCacheFactory(_bmllRepository, _factoryLogger);
+            _factory = new UniverseMarketCacheFactory(_stubBmllRepository, _bmllRepository, _factoryLogger);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
 
             A.CallTo(() => _ruleCtx.EndEvent()).Returns(_operationCtx);

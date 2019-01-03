@@ -52,7 +52,7 @@ namespace Surveillance.Rules
             WindowSize = windowSize;
             Rule = rules;
             Version = version ?? string.Empty;
-            UniverseMarketCache = marketCacheFactory?.Build(windowSize) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            UniverseMarketCache = marketCacheFactory?.Build(windowSize, runMode) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));

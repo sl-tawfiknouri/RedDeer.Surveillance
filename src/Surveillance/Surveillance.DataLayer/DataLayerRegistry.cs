@@ -42,6 +42,7 @@ namespace Surveillance.DataLayer
             For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
             For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
             For<IBmllDataRequestRepository>().Use<BmllDataRequestRepository>();
+            For<IStubBmllDataRequestRepository>().Use<StubBmllDataRequestRepository>();
         }
     }
 }

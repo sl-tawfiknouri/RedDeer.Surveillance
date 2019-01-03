@@ -32,6 +32,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
         private IUniverseOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _cacheFactory;
         private IBmllDataRequestRepository _bmllRepository;
+        private IStubBmllDataRequestRepository _stubBmllRepository;
         private ILogger<CancelledOrderRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _loggerCache;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -44,6 +45,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             _alertStream = A.Fake<IUniverseAlertStream>();
             _cacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _bmllRepository = A.Fake<IBmllDataRequestRepository>();
+            _stubBmllRepository = A.Fake<IStubBmllDataRequestRepository>();
             _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
             _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
@@ -310,7 +312,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
         private UniverseMarketCacheFactory BuildFactory()
         {
-            return new UniverseMarketCacheFactory(_bmllRepository, _loggerCache);
+            return new UniverseMarketCacheFactory(_stubBmllRepository, _bmllRepository, _loggerCache);
         }
     }
 }

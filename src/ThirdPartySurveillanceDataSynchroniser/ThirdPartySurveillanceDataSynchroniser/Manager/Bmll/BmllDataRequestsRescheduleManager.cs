@@ -116,11 +116,11 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             var cts = new CancellationTokenSource();
             var serialisedMessage = _messageBusSerialiser.SerialiseScheduledExecution(scheduledExecution);
 
-            _logger?.LogWarning($"BmllDataRequestsRescheduleManager about to submit {serialisedMessage} to {_awsConfiguration.ScheduledRuleQueueName}");
+            _logger?.LogWarning($"BmllDataRequestsRescheduleManager about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-            await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, cts.Token);
+            await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
 
-            _logger?.LogWarning($"BmllDataRequestsRescheduleManager completed submitting {serialisedMessage} to {_awsConfiguration.ScheduledRuleQueueName}");
+            _logger?.LogWarning($"BmllDataRequestsRescheduleManager completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
         }
     }
 }

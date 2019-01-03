@@ -292,7 +292,7 @@ namespace Surveillance.Rules.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogWarning($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogInformation($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -351,17 +351,21 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
 
-            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
-            _alertStream.Add(alert);
-
-            if (_hadMissingData)
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
+                // delete event
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
+
                 var requestTask = _dataRequestSender.Send(_ruleCtx.Id());
                 requestTask.Wait();
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else
             {
+                // flush event
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
+                _alertStream.Add(alert);
                 _ruleCtx?.EndEvent();
             }
         }

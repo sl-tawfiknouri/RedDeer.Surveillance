@@ -26,6 +26,8 @@ namespace Surveillance.Rules.WashTrade
     /// These are attempts to manipulate the market at large through publicly observable information
     /// By making a large amount of trades in an otherwise unremarkable stock the objective is to increase
     /// interest in trading the stock which will open up opportunities to profit by the wash traders
+    ///
+    /// Does not use market data so doesn't leverage the run mode setting
     /// </summary>
     public class WashTradeRule : BaseUniverseRule, IWashTradeRule
     {

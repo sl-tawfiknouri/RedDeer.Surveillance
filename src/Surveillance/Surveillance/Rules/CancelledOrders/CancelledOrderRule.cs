@@ -18,6 +18,10 @@ using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.CancelledOrders
 {
+    /// <summary>
+    /// Cancelled Orders Rule
+    /// Ignores rule run mode as it doesn't use market data
+    /// </summary>
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
         private readonly ICancelledOrderRuleParameters _parameters;

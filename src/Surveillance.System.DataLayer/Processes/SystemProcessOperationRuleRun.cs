@@ -33,6 +33,11 @@ namespace Surveillance.System.DataLayer.Processes
         public string RuleVersion { get; set; }
 
         /// <summary>
+        /// The parameter id for the rule
+        /// </summary>
+        public string RuleParameterId { get; set; }
+
+        /// <summary>
         /// The starting point for the rule run data
         /// </summary>
         public DateTime? ScheduleRuleStart { get; set; }
@@ -44,7 +49,7 @@ namespace Surveillance.System.DataLayer.Processes
 
         public override string ToString()
         {
-            return $"SystemProcessOperationRuleRun | Id {Id} | CorrelationId {CorrelationId} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | RuleDescription {RuleDescription} | RuleVersion {RuleVersion} | ScheduleRuleStart {ScheduleRuleStart} | ScheduleRuleEnd {ScheduleRuleEnd}";
+            return $"SystemProcessOperationRuleRun | Id {Id} | CorrelationId {CorrelationId} | SystemProcessId {SystemProcessId} | SystemProcessOperationId {SystemProcessOperationId} | RuleDescription {RuleDescription} | RuleVersion {RuleVersion} | ScheduleRuleStart {ScheduleRuleStart} | ScheduleRuleEnd {ScheduleRuleEnd} | RuleParameterId {RuleParameterId}";
         }
     }
 }

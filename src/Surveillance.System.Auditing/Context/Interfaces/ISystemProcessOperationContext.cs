@@ -23,6 +23,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
             string ruleDescription,
             string ruleVersion,
+            string ruleParameterId,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
             string correlationId);

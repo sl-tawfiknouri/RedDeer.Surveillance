@@ -106,6 +106,7 @@ namespace Surveillance.Universe.Subscribers
                 .CreateAndStartRuleRunContext(
                     DomainV2.Scheduling.Rules.MarkingTheClose.GetDescription(),
                     MarkingTheCloseRuleFactory.Version,
+                    param.Id,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);

@@ -113,6 +113,7 @@ namespace Surveillance.Universe.Subscribers
                 .CreateAndStartRuleRunContext(
                     DomainV2.Scheduling.Rules.Spoofing.GetDescription(),
                     SpoofingRuleFactory.Version,
+                    param.Id,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);

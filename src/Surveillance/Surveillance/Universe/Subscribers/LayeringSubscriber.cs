@@ -107,6 +107,7 @@ namespace Surveillance.Universe.Subscribers
                 .CreateAndStartRuleRunContext(
                     DomainV2.Scheduling.Rules.Layering.GetDescription(),
                     LayeringRuleFactory.Version,
+                    param.Id,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
                     execution.CorrelationId);

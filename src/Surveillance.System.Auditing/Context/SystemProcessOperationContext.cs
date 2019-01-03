@@ -110,6 +110,7 @@ namespace Surveillance.System.Auditing.Context
         public ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
             string ruleDescription,
             string ruleVersion,
+            string ruleParameterId,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
             string correlationId)
@@ -121,6 +122,7 @@ namespace Surveillance.System.Auditing.Context
                 SystemProcessOperationId = _systemProcessOperation.Id,
                 RuleDescription = ruleDescription,
                 RuleVersion = ruleVersion,
+                RuleParameterId = ruleParameterId,
                 ScheduleRuleStart = ruleScheduleBegin,
                 ScheduleRuleEnd = ruleScheduleEnd,
                 CorrelationId = correlationId

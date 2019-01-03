@@ -105,6 +105,7 @@ namespace Surveillance.Universe.Subscribers
             var ctx = opCtx.CreateAndStartRuleRunContext(
                 DomainV2.Scheduling.Rules.WashTrade.GetDescription(),
                 WashTradeRuleFactory.Version,
+                param.Id,
                 execution.TimeSeriesInitiation.DateTime,
                 execution.TimeSeriesTermination.DateTime,
                 execution.CorrelationId);

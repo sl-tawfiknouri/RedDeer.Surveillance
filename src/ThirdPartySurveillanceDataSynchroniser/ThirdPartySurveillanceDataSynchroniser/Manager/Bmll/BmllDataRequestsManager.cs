@@ -50,7 +50,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             var requests = await _senderManager.Send(bmllRequests);
 
             // STORE IT
-            await _storageManager.Store();
+            await _storageManager.Store(requests);
             
             // RESCHEDULE IT
             await _rescheduleManager.RescheduleRuleRun(bmllRequests);

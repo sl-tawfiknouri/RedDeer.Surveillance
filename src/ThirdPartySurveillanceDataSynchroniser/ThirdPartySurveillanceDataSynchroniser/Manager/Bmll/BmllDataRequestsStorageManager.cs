@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
@@ -15,7 +16,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Store()
+        public async Task Store(IReadOnlyCollection<IGetTimeBarPair> timeBarPairs)
         {
             _logger.LogInformation($"BmllDataRequestsStorageManager beginning storage process for BMLL response data");
 

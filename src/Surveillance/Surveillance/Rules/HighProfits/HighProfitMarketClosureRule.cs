@@ -57,7 +57,7 @@ namespace Surveillance.Rules.HighProfits
                 activeWindow
                     .Where(aw => aw != null)
                     .Where(aw => aw.OrderPosition == OrderPositions.BUY
-                                 || aw.OrderPosition == OrderPositions.SHORT)
+                                 || aw.OrderPosition == OrderPositions.COVER)
                     .ToList();
 
             var tradeSell =
@@ -65,7 +65,7 @@ namespace Surveillance.Rules.HighProfits
                     .Where(aw => aw != null)
                     .Where(aw => 
                         aw.OrderPosition == OrderPositions.SELL
-                        || aw.OrderPosition == OrderPositions.COVER)
+                        || aw.OrderPosition == OrderPositions.SHORT)
                     .ToList();
 
             var securitiesBrought = tradeBuy.Sum(tb => tb.OrderFilledVolume);

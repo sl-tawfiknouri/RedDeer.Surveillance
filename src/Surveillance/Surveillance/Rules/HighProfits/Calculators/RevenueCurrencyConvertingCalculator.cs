@@ -140,7 +140,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             var filledOrders =
                 activeFulfilledTradeOrders
                 .Where(afto => afto.OrderPosition == OrderPositions.SELL
-                               || afto.OrderPosition == OrderPositions.COVER)
+                               || afto.OrderPosition == OrderPositions.SHORT)
                 .Select(afto =>
                     new CurrencyAmount(
                         afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
@@ -162,7 +162,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return activeFulfilledTradeOrders
                 .Where(afto => afto.OrderPosition == OrderPositions.BUY
-                               || afto.OrderPosition == OrderPositions.SHORT)
+                               || afto.OrderPosition == OrderPositions.COVER)
                 .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }
@@ -177,7 +177,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             return activeFulfilledTradeOrders
                 .Where(afto => afto.OrderPosition == OrderPositions.SELL
-                               || afto.OrderPosition == OrderPositions.COVER)
+                               || afto.OrderPosition == OrderPositions.SHORT)
                 .Select(afto => afto.OrderFilledVolume.GetValueOrDefault(0))
                 .Sum();
         }

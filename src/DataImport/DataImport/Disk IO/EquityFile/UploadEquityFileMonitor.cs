@@ -90,7 +90,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void SuccessfulReads(
             string path,
-            UploadFileProcessorResult<SecurityTickCsv, MarketTimeBarCollection> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.Epoch).ToList();
@@ -114,7 +114,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void FailedReads(
             string path,
-            UploadFileProcessorResult<SecurityTickCsv, MarketTimeBarCollection> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);

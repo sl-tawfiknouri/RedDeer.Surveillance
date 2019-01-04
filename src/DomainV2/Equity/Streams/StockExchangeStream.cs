@@ -6,7 +6,7 @@ using DomainV2.Equity.TimeBars;
 namespace DomainV2.Equity.Streams
 {
     /// <summary>
-    /// An observable stream of stock exchange ticks
+    /// An observable stream of stock exchange time bars
     /// </summary>
     public class StockExchangeStream : IStockExchangeStream
     {

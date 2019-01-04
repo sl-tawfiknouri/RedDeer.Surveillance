@@ -74,7 +74,7 @@ namespace TestHarness.Engine.EquitiesStorage
                 .Securities?
                 .Select(_securityMapper.Map)
                 .Where(w => w != null)
-                .ToList() ?? new List<SecurityTickCsv>();
+                .ToList() ?? new List<FinancialInstrumentTimeBarCsv>();
 
             if (!csvRecords.Any())
             {
@@ -88,7 +88,7 @@ namespace TestHarness.Engine.EquitiesStorage
             {
                 var csv = new CsvWriter(writer);
                 csv.Configuration.HasHeaderRecord = true;
-                csv.WriteRecords<SecurityTickCsv>(csvRecords);
+                csv.WriteRecords<FinancialInstrumentTimeBarCsv>(csvRecords);
             }
         }
 

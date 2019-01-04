@@ -50,7 +50,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 var csv = new CsvReader(reader);
                 csv.Configuration.HasHeaderRecord = true;
 
-                var csvRecords = csv.GetRecords<SecurityTickCsv>().ToList();
+                var csvRecords = csv.GetRecords<FinancialInstrumentTimeBarCsv>().ToList();
 
                 foreach (var record in csvRecords)
                 {

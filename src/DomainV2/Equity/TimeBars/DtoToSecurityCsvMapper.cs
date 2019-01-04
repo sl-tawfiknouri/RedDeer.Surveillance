@@ -18,16 +18,16 @@ namespace DomainV2.Equity.TimeBars
 
         public int FailedMapTotal { get; set; }
 
-        public SecurityTickCsv Map(FinancialInstrumentTimeBar financialInstrumentTimeBar)
+        public FinancialInstrumentTimeBarCsv Map(FinancialInstrumentTimeBar financialInstrumentTimeBar)
         {
             if (financialInstrumentTimeBar == null)
             {
                 FailedMapTotal += 1;
-                _logger?.LogError("Failed to map security tick to security tick csv due to being passed a null value");
+                _logger?.LogError("Failed to map security tick to financial instrument time bar csv due to being passed a null value");
                 return null;
             }
 
-            var securityTickCsv = new SecurityTickCsv
+            var financialInstrumentTimeBarCsv = new FinancialInstrumentTimeBarCsv
             {
                 Volume = financialInstrumentTimeBar.Volume.Traded.ToString(),
                 DailyVolume = financialInstrumentTimeBar.DailyVolume.Traded.ToString(),
@@ -46,39 +46,39 @@ namespace DomainV2.Equity.TimeBars
             // Market
             if(financialInstrumentTimeBar.Market != null)
             {
-                securityTickCsv.MarketIdentifierCode = financialInstrumentTimeBar.Market.MarketIdentifierCode;
-                securityTickCsv.MarketName = financialInstrumentTimeBar.Market.Name;
+                financialInstrumentTimeBarCsv.MarketIdentifierCode = financialInstrumentTimeBar.Market.MarketIdentifierCode;
+                financialInstrumentTimeBarCsv.MarketName = financialInstrumentTimeBar.Market.Name;
             }
 
             // Intraday Prices
             if (financialInstrumentTimeBar.IntradayPrices != null)
             {
-                securityTickCsv.Open = financialInstrumentTimeBar.IntradayPrices.Open?.Value.ToString();
-                securityTickCsv.Close = financialInstrumentTimeBar.IntradayPrices.Close?.Value.ToString();
-                securityTickCsv.Low = financialInstrumentTimeBar.IntradayPrices.Low?.Value.ToString();
-                securityTickCsv.High = financialInstrumentTimeBar.IntradayPrices.High?.Value.ToString();
+                financialInstrumentTimeBarCsv.Open = financialInstrumentTimeBar.IntradayPrices.Open?.Value.ToString();
+                financialInstrumentTimeBarCsv.Close = financialInstrumentTimeBar.IntradayPrices.Close?.Value.ToString();
+                financialInstrumentTimeBarCsv.Low = financialInstrumentTimeBar.IntradayPrices.Low?.Value.ToString();
+                financialInstrumentTimeBarCsv.High = financialInstrumentTimeBar.IntradayPrices.High?.Value.ToString();
             }
 
             // Security Identifiers
             if (financialInstrumentTimeBar.Security != null)
             {
                 // Security
-                securityTickCsv.SecurityName = financialInstrumentTimeBar.Security.Name;
-                securityTickCsv.Cfi = financialInstrumentTimeBar.Security.Cfi;
-                securityTickCsv.IssuerIdentifier = financialInstrumentTimeBar.Security.IssuerIdentifier;
+                financialInstrumentTimeBarCsv.SecurityName = financialInstrumentTimeBar.Security.Name;
+                financialInstrumentTimeBarCsv.Cfi = financialInstrumentTimeBar.Security.Cfi;
+                financialInstrumentTimeBarCsv.IssuerIdentifier = financialInstrumentTimeBar.Security.IssuerIdentifier;
 
                 // Security Identifiers
-                securityTickCsv.SecurityClientIdentifier = financialInstrumentTimeBar.Security.Identifiers.ClientIdentifier;
-                securityTickCsv.Sedol = financialInstrumentTimeBar.Security.Identifiers.Sedol;
-                securityTickCsv.Isin = financialInstrumentTimeBar.Security.Identifiers.Isin;
-                securityTickCsv.Figi = financialInstrumentTimeBar.Security.Identifiers.Figi;
-                securityTickCsv.Cusip = financialInstrumentTimeBar.Security.Identifiers.Cusip;
-                securityTickCsv.ExchangeSymbol = financialInstrumentTimeBar.Security.Identifiers.ExchangeSymbol;
-                securityTickCsv.Lei = financialInstrumentTimeBar.Security.Identifiers.Lei;
-                securityTickCsv.BloombergTicker = financialInstrumentTimeBar.Security.Identifiers.BloombergTicker;
+                financialInstrumentTimeBarCsv.SecurityClientIdentifier = financialInstrumentTimeBar.Security.Identifiers.ClientIdentifier;
+                financialInstrumentTimeBarCsv.Sedol = financialInstrumentTimeBar.Security.Identifiers.Sedol;
+                financialInstrumentTimeBarCsv.Isin = financialInstrumentTimeBar.Security.Identifiers.Isin;
+                financialInstrumentTimeBarCsv.Figi = financialInstrumentTimeBar.Security.Identifiers.Figi;
+                financialInstrumentTimeBarCsv.Cusip = financialInstrumentTimeBar.Security.Identifiers.Cusip;
+                financialInstrumentTimeBarCsv.ExchangeSymbol = financialInstrumentTimeBar.Security.Identifiers.ExchangeSymbol;
+                financialInstrumentTimeBarCsv.Lei = financialInstrumentTimeBar.Security.Identifiers.Lei;
+                financialInstrumentTimeBarCsv.BloombergTicker = financialInstrumentTimeBar.Security.Identifiers.BloombergTicker;
             }
 
-            return securityTickCsv;
+            return financialInstrumentTimeBarCsv;
         }
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.EquityFile
 {
-    public class UploadEquityFileProcessor : BaseUploadFileProcessor<SecurityTickCsv, MarketTimeBarCollection>, IUploadEquityFileProcessor
+    public class UploadEquityFileProcessor : BaseUploadFileProcessor<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection>, IUploadEquityFileProcessor
     {
         private readonly ISecurityCsvToDtoMapper _csvToDtoMapper;
 
@@ -22,7 +22,7 @@ namespace DataImport.Disk_IO.EquityFile
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
         }
         
-        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override FinancialInstrumentTimeBarCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             Logger.LogInformation($"UploadEquityFileProcessor about to map a raw record with row id {rowId}");
             if (rawRecord == null)
@@ -32,7 +32,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
 
             Logger.LogInformation($"UploadEquityFileProcessor mapping raw record from csv reader to dto");
-            var tickCsv = new SecurityTickCsv
+            var tickCsv = new FinancialInstrumentTimeBarCsv
             {
                 Timestamp = PreProcess(rawRecord["Timestamp"]),
                 MarketIdentifierCode = PreProcess(rawRecord["MarketIdentifierCode"]),
@@ -76,9 +76,9 @@ namespace DataImport.Disk_IO.EquityFile
         }
 
         protected override void MapRecord(
-            SecurityTickCsv record,
+            FinancialInstrumentTimeBarCsv record,
             List<MarketTimeBarCollection> marketUpdates,
-            List<SecurityTickCsv> failedMarketUpdateReads)
+            List<FinancialInstrumentTimeBarCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
 

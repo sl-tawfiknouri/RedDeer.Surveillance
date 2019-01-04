@@ -20,7 +20,7 @@ namespace DomainV2.Equity.TimeBars
 
         public int FailedParseTotal { get; set; }
 
-        public FinancialInstrumentTimeBar Map(SecurityTickCsv csv)
+        public FinancialInstrumentTimeBar Map(FinancialInstrumentTimeBarCsv csv)
         {
             if (csv == null)
             {
@@ -143,7 +143,7 @@ namespace DomainV2.Equity.TimeBars
                 market);
         }
 
-        private FinancialInstrument BuildSecurity(SecurityTickCsv csv)
+        private FinancialInstrument BuildSecurity(FinancialInstrumentTimeBarCsv csv)
         {
             return new FinancialInstrument(
                 InstrumentTypes.Equity,
@@ -169,7 +169,7 @@ namespace DomainV2.Equity.TimeBars
         }
 
         private Spread BuildSpread(
-            SecurityTickCsv csv,
+            FinancialInstrumentTimeBarCsv csv,
             decimal spreadAsk,
             decimal spreadBid,
             decimal spreadPrice)
@@ -181,7 +181,7 @@ namespace DomainV2.Equity.TimeBars
         }
 
         private IntradayPrices BuildIntradayPrices(
-            SecurityTickCsv csv,
+            FinancialInstrumentTimeBarCsv csv,
             decimal open,
             decimal close,
             decimal high,

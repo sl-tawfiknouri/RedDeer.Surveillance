@@ -1,6 +1,6 @@
 ﻿namespace DomainV2.Equity.TimeBars
 {
-    public class SecurityTickCsv
+    public class FinancialInstrumentTimeBarCsv
     {
         public string Timestamp { get; set; }
         public string MarketIdentifierCode { get; set; }

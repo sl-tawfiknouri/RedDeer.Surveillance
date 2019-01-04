@@ -13,7 +13,7 @@ namespace DomainV2.Equity.TimeBars
     public class MarketTimeBarCollection
     {
         public MarketTimeBarCollection(
-            DomainV2.Financial.Market exchange,
+            Financial.Market exchange,
             DateTime epoch,
             IReadOnlyCollection<FinancialInstrumentTimeBar> securities)
         {
@@ -25,7 +25,7 @@ namespace DomainV2.Equity.TimeBars
         /// <summary>
         /// The exchange the data update is issued by
         /// </summary>
-        public DomainV2.Financial.Market Exchange { get; }
+        public Financial.Market Exchange { get; }
 
         /// <summary>
         /// The securities with updated data

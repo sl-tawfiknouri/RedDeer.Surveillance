@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -30,7 +30,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -42,7 +42,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             var plan = PlanInDateRange(value);
             if (plan == null)
@@ -53,10 +53,10 @@ namespace TestHarness.Engine.OrderGenerator
             lock (_lock)
             {
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
-                if (plan.EquityInstructions.TerminationInUtc == value.TimeStamp)
+                if (plan.EquityInstructions.TerminationInUtc == value.Epoch)
                 {
                     CreateLayeringTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, false);
                     CreateLayeringTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, true);
@@ -68,7 +68,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private DataGenerationPlan PlanInDateRange(ExchangeFrame value)
+        private DataGenerationPlan PlanInDateRange(MarketTimeBarCollection value)
         {
             if (!_plan?.Any() ?? true)
             {
@@ -82,8 +82,8 @@ namespace TestHarness.Engine.OrderGenerator
 
             foreach (var plan in _plan)
             {
-                if (plan.EquityInstructions.CommencementInUtc <= value.TimeStamp
-                    && plan.EquityInstructions.TerminationInUtc >= value.TimeStamp)
+                if (plan.EquityInstructions.CommencementInUtc <= value.Epoch
+                    && plan.EquityInstructions.TerminationInUtc >= value.Epoch)
                 {
                     return plan;
                 }
@@ -94,8 +94,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateLayeringTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
-            ExchangeFrame latestFrame,
+            Stack<MarketTimeBarCollection> frames,
+            MarketTimeBarCollection latestFrame,
             bool realisedTrade)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -131,7 +131,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             // select a suitably low % of the traded volume so we don't fire a huge amount of other rules =)
             tradedVolume = (int)((decimal)tradedVolume * 0.04m);
-            var tradeTime = latestFrame.TimeStamp;
+            var tradeTime = latestFrame.Epoch;
 
             var volume = new Order(
                 headSecurity.Security,

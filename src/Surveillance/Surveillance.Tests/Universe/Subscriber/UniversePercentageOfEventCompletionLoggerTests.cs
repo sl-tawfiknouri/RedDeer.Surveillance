@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -51,7 +51,7 @@ namespace Surveillance.Tests.Universe.Subscriber
                 event10,
             };
 
-            var loggerUniverse = new Surveillance.Universe.Universe(new Order[0], new ExchangeFrame[0], universeEvents);
+            var loggerUniverse = new Surveillance.Universe.Universe(new Order[0], new MarketTimeBarCollection[0], universeEvents);
 
             var logger = new UniversePercentageOfEventCompletionLogger(_logger);
             logger.InitiateEventLogger(loggerUniverse);

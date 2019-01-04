@@ -4,7 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
@@ -49,7 +49,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         public void ExecuteTradeStrategy_NullTradeOrders_DoesThrow()
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE), 
                 DateTime.UtcNow,
                 null);
@@ -61,10 +61,10 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         public void ExecuteTradeStrategy_NoSecuritiesInFrame_Logs()
         {
             var tradeStrategy = new MarkovTradeStrategy(_logger, _tradeVolumeStrategy);
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
-                new List<SecurityTick>());
+                new List<FinancialInstrumentTimeBar>());
 
             tradeStrategy.ExecuteTradeStrategy(frame, _tradeOrderStream);
 
@@ -89,10 +89,10 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             Assert.IsTrue(frames >= 0);
         }
 
-        private ExchangeFrame GenerateFrame(int securityFrames)
+        private MarketTimeBarCollection GenerateFrame(int securityFrames)
         {
             var frames = GenerateSecurityFrames(securityFrames);
-            var exchFrame = new ExchangeFrame(
+            var exchFrame = new MarketTimeBarCollection(
                 new Market("1", "LSE", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
                 frames);
@@ -100,16 +100,16 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
             return exchFrame;
         }
 
-        private IReadOnlyCollection<SecurityTick> GenerateSecurityFrames(int number)
+        private IReadOnlyCollection<FinancialInstrumentTimeBar> GenerateSecurityFrames(int number)
         {
-            var results = new List<SecurityTick>();
+            var results = new List<FinancialInstrumentTimeBar>();
             for (var i = 0; i < number; i++)
             {
                 var buyPrice = Math.Round(ContinuousUniform.Sample(0.01, 30000), 2);
                 var sellPrice = buyPrice * ContinuousUniform.Sample(0.95, 1);
                 var volume = DiscreteUniform.Sample(0, 100000000);
                 
-                var frame = new SecurityTick(
+                var frame = new FinancialInstrumentTimeBar(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(string.Empty, string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 

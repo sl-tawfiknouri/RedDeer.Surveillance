@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -294,7 +294,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task Create(ExchangeFrame entity)
+        public async Task Create(MarketTimeBarCollection entity)
         {
             if (entity == null)
             {
@@ -312,7 +312,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 if (!entity.Securities?.Any() ?? true)
                 {
-                    _logger.LogInformation($"ReddeerMarketRepository did not detect any securities for {entity.TimeStamp} - {entity.Exchange?.MarketIdentifierCode}");
+                    _logger.LogInformation($"ReddeerMarketRepository did not detect any securities for {entity.Epoch} - {entity.Exchange?.MarketIdentifierCode}");
                     return;
                 }
 
@@ -345,7 +345,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task<IReadOnlyCollection<ExchangeFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<MarketTimeBarCollection>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date;
@@ -353,7 +353,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             if (start > end)
             {
                 _logger.LogWarning($"ReddeerMarketRepository Get request had a start date larger than end date {start} {end}");
-                return new ExchangeFrame[0];
+                return new MarketTimeBarCollection[0];
             }
 
             if (start == end)
@@ -392,7 +392,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                             {
                                 var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
-                                    new ExchangeFrame(
+                                    new MarketTimeBarCollection(
                                         market,
                                         i.Key3,
                                         i.Result.Select(o => ProjectToSecurity(o, market)).ToList());
@@ -416,7 +416,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 dbConnection.Dispose();
             }
 
-            return new ExchangeFrame[0];
+            return new MarketTimeBarCollection[0];
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
+        private FinancialInstrumentTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
         {
             if (dto == null)
             {
@@ -558,7 +558,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var tick =
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     security,
                     spread,
                     new Volume(dto.VolumeTradedInTick.GetValueOrDefault(0)),
@@ -584,7 +584,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeDto()
             { }
 
-            public MarketStockExchangeDto(ExchangeFrame entity)
+            public MarketStockExchangeDto(MarketTimeBarCollection entity)
             {
                 if (entity == null)
                 {
@@ -607,7 +607,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
+            public MarketStockExchangeSecuritiesDto(FinancialInstrumentTimeBar entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -736,14 +736,14 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string MarketName { get; set; }
         }
 
-        private InsertSecurityDto Project(SecurityTick tick)
+        private InsertSecurityDto Project(FinancialInstrumentTimeBar tick)
         {
             return new InsertSecurityDto(tick, null, _cfiMapper);
         }
 
         private class InsertSecurityDto
         {
-            public InsertSecurityDto(SecurityTick entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
+            public InsertSecurityDto(FinancialInstrumentTimeBar entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {

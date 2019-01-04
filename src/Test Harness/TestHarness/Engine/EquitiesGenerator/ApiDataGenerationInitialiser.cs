@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
@@ -27,7 +27,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             _securityPrices = securityPrices ?? throw new ArgumentNullException(nameof(securityPrices));
         }
 
-        public IReadOnlyCollection<ExchangeFrame> OrderedDailyFrames()
+        public IReadOnlyCollection<MarketTimeBarCollection> OrderedDailyFrames()
         {
             var close = _market.MarketCloseTime;
             var open = _market.MarketOpenTime;
@@ -48,7 +48,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _securityPrices
                     .SelectMany(sm =>
                         sm.Prices.Select(smp =>
-                            new SecurityTick(
+                            new FinancialInstrumentTimeBar(
                                 new FinancialInstrument(
                                     InstrumentTypes.Equity,
                                     new InstrumentIdentifiers(
@@ -107,7 +107,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             var frames = 
                 initialTicks
                     .Select(it =>
-                        new ExchangeFrame(
+                        new MarketTimeBarCollection(
                             new Market(
                                 null,
                                 _market.Code,

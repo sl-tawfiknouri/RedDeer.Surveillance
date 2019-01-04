@@ -1,9 +1,9 @@
-﻿using DomainV2.Equity.Frames;
+﻿using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {
     public interface IExchangeSeriesInitialiser
     {
-        ExchangeFrame InitialFrame();
+        MarketTimeBarCollection InitialFrame();
     }
 }

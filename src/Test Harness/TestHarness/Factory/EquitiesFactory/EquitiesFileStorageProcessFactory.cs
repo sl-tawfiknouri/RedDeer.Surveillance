@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesStorage;
 using TestHarness.Engine.EquitiesStorage.Interfaces;

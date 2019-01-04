@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
@@ -139,12 +139,12 @@ namespace Surveillance.Rules
 
         private void StockTick(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is ExchangeFrame value))
+            if (!(universeEvent.UnderlyingEvent is MarketTimeBarCollection value))
             {
                 return;
             }
 
-            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.TimeStamp} | security count {value.Securities?.Count ?? 0}");
+            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
             UniverseDateTime = universeEvent.EventTime;
             UniverseMarketCache.Add(value);

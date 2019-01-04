@@ -1,6 +1,6 @@
 ﻿using System;
 using DataImport.Recorders.Interfaces;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 
 namespace DataImport.Recorders
 {
@@ -15,7 +15,7 @@ namespace DataImport.Recorders
         {
         }
 
-        public void OnNext(ExchangeFrame value)
+        public void OnNext(MarketTimeBarCollection value)
         {
         }
     }

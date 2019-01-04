@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
@@ -39,7 +39,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 _limitStandardDeviation = limitStandardDeviation.Value;
         }
 
-        public void ExecuteTradeStrategy(ExchangeFrame frame, IOrderStream<Order> tradeOrders)
+        public void ExecuteTradeStrategy(MarketTimeBarCollection frame, IOrderStream<Order> tradeOrders)
         {
             if (tradeOrders == null)
             {
@@ -73,7 +73,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
         }
 
         private void GenerateAndSubmitTrades(
-            ExchangeFrame frame,
+            MarketTimeBarCollection frame,
             IOrderStream<Order> tradeOrders,
             int numberOfTradeOrders)
         {
@@ -89,7 +89,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _logger.LogInformation($"Submitted {trades.Count} trade orders in frame");
         }
 
-        private IReadOnlyCollection<int> SecuritiesToTrade(ExchangeFrame frame, int securitiesToTrade)
+        private IReadOnlyCollection<int> SecuritiesToTrade(MarketTimeBarCollection frame, int securitiesToTrade)
         {
             var upperLimit = frame.Securities.Count - 1;
             var securitiesToTradeIds = new List<int>();
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return securitiesToTradeIds;
         }
 
-        private Order GenerateTrade(SecurityTick tick, ExchangeFrame exchFrame)
+        private Order GenerateTrade(FinancialInstrumentTimeBar tick, MarketTimeBarCollection exchFrame)
         {
             if (tick == null)
             {
@@ -187,7 +187,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(SecurityTick tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
+        private CurrencyAmount? CalculateLimit(FinancialInstrumentTimeBar tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
@@ -212,7 +212,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return null;
         }
 
-        private int CalculateVolume(SecurityTick tick)
+        private int CalculateVolume(FinancialInstrumentTimeBar tick)
         {
             var upperLimit = Math.Max(tick.Volume.Traded, 1);
             var tradingVolume = (int)Math.Sqrt(upperLimit);

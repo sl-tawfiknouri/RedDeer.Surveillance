@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using DomainV2.Equity.Frames;
-using DomainV2.Equity.Frames.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
+using DomainV2.Equity.TimeBars.Interfaces;
 using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
@@ -42,7 +42,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 return;
             }
 
-            var securities = new List<SecurityTick>();
+            var securities = new List<FinancialInstrumentTimeBar>();
 
 
             using (var reader = File.OpenText(_filePath))
@@ -80,12 +80,12 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private IList<ExchangeFrame> ExtractDateBasedExchangeFramesOverMarkets(IReadOnlyCollection<SecurityTick> securities)
+        private IList<MarketTimeBarCollection> ExtractDateBasedExchangeFramesOverMarkets(IReadOnlyCollection<FinancialInstrumentTimeBar> securities)
         {
             if (securities == null
                 || !securities.Any())
             {
-                return new List<ExchangeFrame>();
+                return new List<MarketTimeBarCollection>();
             }
 
             return securities
@@ -93,7 +93,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 .Select(groupedExchange => groupedExchange.GroupBy(gb => gb.TimeStamp))
                 .SelectMany(io =>
                     io.Select(iio =>
-                        new ExchangeFrame(
+                        new MarketTimeBarCollection(
                             new Market(
                                 null,
                                 iio.FirstOrDefault()?.Market.Id,
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                 MarketTypes.STOCKEXCHANGE),
                         iio.Key,
                         iio.ToList())))
-                .OrderBy(io => io.TimeStamp)
+                .OrderBy(io => io.Epoch)
                 .ToList();
         }
 

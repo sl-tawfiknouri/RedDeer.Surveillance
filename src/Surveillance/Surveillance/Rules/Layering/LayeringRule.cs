@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using DomainV2.Trading;
@@ -397,8 +397,8 @@ namespace Surveillance.Rules.Layering
         private RuleBreachDescription BuildDescription(
             Order mostRecentTrade,
             decimal priceMovement,
-            SecurityTick startTick,
-            SecurityTick endTick)
+            FinancialInstrumentTimeBar startTick,
+            FinancialInstrumentTimeBar endTick)
         {
             switch (mostRecentTrade.OrderPosition)
             {
@@ -416,7 +416,7 @@ namespace Surveillance.Rules.Layering
             }
         }
 
-        private SecurityTick StartTick(List<SecurityTick> securityDataTicks, DateTime startDate)
+        private FinancialInstrumentTimeBar StartTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime startDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -424,7 +424,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            SecurityTick startTick;
+            FinancialInstrumentTimeBar startTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp < startDate))
             {
                 startTick =
@@ -444,7 +444,7 @@ namespace Surveillance.Rules.Layering
             return startTick;
         }
 
-        private SecurityTick EndTick(List<SecurityTick> securityDataTicks, DateTime endDate)
+        private FinancialInstrumentTimeBar EndTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime endDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -452,7 +452,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            SecurityTick endTick;
+            FinancialInstrumentTimeBar endTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp > endDate))
             {
                 endTick =

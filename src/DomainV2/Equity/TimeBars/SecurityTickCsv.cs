@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Equity.Frames
+﻿namespace DomainV2.Equity.TimeBars
 {
     public class SecurityTickCsv
     {

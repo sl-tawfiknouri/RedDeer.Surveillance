@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using FakeItEasy;
@@ -53,7 +53,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new SecurityTick(
+            var securityTick = new FinancialInstrumentTimeBar(
                 security,
                 new Spread(
                     new CurrencyAmount(0, "gbp"),
@@ -67,10 +67,10 @@ namespace Surveillance.Tests.Markets
                 15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.Now.AddDays(1),
-                new SecurityTick[]
+                new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
@@ -113,7 +113,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new SecurityTick(
+            var securityTick = new FinancialInstrumentTimeBar(
                 security,
                 new Spread(
                     new CurrencyAmount(0, "gbp"),
@@ -127,10 +127,10 @@ namespace Surveillance.Tests.Markets
                 15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.Now,
-                new SecurityTick[]
+                new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
@@ -173,7 +173,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new SecurityTick(
+            var securityTick = new FinancialInstrumentTimeBar(
                 security,
                 new Spread(
                     new CurrencyAmount(0, "gbp"),
@@ -187,10 +187,10 @@ namespace Surveillance.Tests.Markets
                 15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.Now.AddDays(1),
-                new SecurityTick[]
+                new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
@@ -232,7 +232,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new SecurityTick(
+            var securityTick = new FinancialInstrumentTimeBar(
                 security,
                 new Spread(
                     new CurrencyAmount(0, "gbp"),
@@ -246,10 +246,10 @@ namespace Surveillance.Tests.Markets
                 15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new ExchangeFrame(
+            var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.Now,
-                new SecurityTick[]
+                new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });

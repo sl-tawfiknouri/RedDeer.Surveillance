@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
@@ -24,7 +24,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
-        private ExchangeFrame _activeFrame;
+        private MarketTimeBarCollection _activeFrame;
         private readonly ILogger _logger;
 
         private readonly object _stateTransitionLock = new object();
@@ -86,16 +86,16 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private void AdvanceFrames(ExchangeDto market, ExchangeFrame frame)
+        private void AdvanceFrames(ExchangeDto market, MarketTimeBarCollection frame)
         {
-            if (frame.TimeStamp.TimeOfDay > market.MarketCloseTime)
+            if (frame.Epoch.TimeOfDay > market.MarketCloseTime)
             {
                 _logger.Log(LogLevel.Error, "ended up advancing a frame whose start exceeded market close time");
                 return;
             }
 
             var timeSpanList = new List<TickStrategy>();
-            var advanceTick = frame.TimeStamp.TimeOfDay;
+            var advanceTick = frame.Epoch.TimeOfDay;
 
             while (advanceTick <= market.MarketCloseTime)
             {
@@ -136,7 +136,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                     continue;
                 }
 
-                Tick(frame.TimeStamp.Date.Add(item.TickOffset), item.Strategy);
+                Tick(frame.Epoch.Date.Add(item.TickOffset), item.Strategy);
             }
         }
 
@@ -170,7 +170,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                     .Select(sec => strategy.AdvanceFrame(sec, advanceTick, false))
                     .ToArray();
 
-                var tickTock = new ExchangeFrame(_activeFrame.Exchange, advanceTick, tockedSecurities);
+                var tickTock = new MarketTimeBarCollection(_activeFrame.Exchange, advanceTick, tockedSecurities);
                 _activeFrame = tickTock;
 
                 _stream.Add(tickTock);

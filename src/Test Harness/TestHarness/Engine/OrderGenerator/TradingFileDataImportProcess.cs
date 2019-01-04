@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Files;
 using DomainV2.Files.Interfaces;
 using DomainV2.Trading;
@@ -77,7 +77,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
         }
 

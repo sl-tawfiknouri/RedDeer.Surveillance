@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
@@ -13,7 +13,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _fixedVolume = fixedVolume;
         }
 
-        public int CalculateSecuritiesToTrade(IReadOnlyCollection<SecurityTick> frames)
+        public int CalculateSecuritiesToTrade(IReadOnlyCollection<FinancialInstrumentTimeBar> frames)
         {
             if (frames == null)
             {

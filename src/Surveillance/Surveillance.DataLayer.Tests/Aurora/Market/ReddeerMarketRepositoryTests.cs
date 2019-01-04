@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using FakeItEasy;
@@ -67,7 +67,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             Assert.IsTrue(true);
         }
 
-        private ExchangeFrame Frame()
+        private MarketTimeBarCollection Frame()
         {
             var stockExchange = new DomainV2.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
@@ -81,9 +81,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                 "USD",
                 "Standard Chartered Bank");
 
-            var securities = new List<SecurityTick>
+            var securities = new List<FinancialInstrumentTimeBar>
             {
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     security,
                     new Spread(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP")),
                     new Volume(1000),
@@ -95,7 +95,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     stockExchange)
             };
 
-            return new ExchangeFrame(stockExchange, DateTime.UtcNow, securities);
+            return new MarketTimeBarCollection(stockExchange, DateTime.UtcNow, securities);
         }
     }
 }

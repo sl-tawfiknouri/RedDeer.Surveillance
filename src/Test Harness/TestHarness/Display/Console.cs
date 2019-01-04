@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using TestHarness.Display.Interfaces;
 
@@ -47,7 +47,7 @@ namespace TestHarness.Display
             }
         }
 
-        public void OutputMarketFrame(ExchangeFrame frame)
+        public void OutputMarketFrame(MarketTimeBarCollection frame)
         {
             lock (_lock)
             {
@@ -60,7 +60,7 @@ namespace TestHarness.Display
                 }
 
                 WriteToLine(_marketFrameOffset, "*****************************");
-                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({frame.TimeStamp}). {frame}");
+                WriteToLine(_marketFrameOffset + 1, $"Market Frame ({frame.Epoch}). {frame}");
                 WriteToLine(_marketFrameOffset + 2, "*****************************");
             }
         }

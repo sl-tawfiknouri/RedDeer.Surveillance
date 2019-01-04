@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -109,7 +109,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             Analytics.StockTickReddeerCount += 1;
 
-            var exchangeFrame = (ExchangeFrame) value.UnderlyingEvent;
+            var exchangeFrame = (MarketTimeBarCollection) value.UnderlyingEvent;
 
             if (exchangeFrame?.Securities == null)
             {

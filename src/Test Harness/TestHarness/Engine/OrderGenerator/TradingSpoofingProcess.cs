@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -38,18 +38,18 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
-                _executeOn = value.TimeStamp.Add(_executePoint);
+                _executeOn = value.Epoch.Add(_executePoint);
                 return;
             }
 
@@ -65,12 +65,12 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (value.TimeStamp < _executeOn.Value)
+                if (value.Epoch < _executeOn.Value)
                 {
                     return;
                 }
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
@@ -105,8 +105,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
-            ExchangeFrame latestFrame,
+            Stack<MarketTimeBarCollection> frames,
+            MarketTimeBarCollection latestFrame,
             int cancelledTrades)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -146,7 +146,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             for (var i = 0; i < cancelledTrades; i++)
             {
-                var tradeTime = latestFrame.TimeStamp;
+                var tradeTime = latestFrame.Epoch;
 
                 var volumeOrder = new Order(
                     headSecurity.Security,

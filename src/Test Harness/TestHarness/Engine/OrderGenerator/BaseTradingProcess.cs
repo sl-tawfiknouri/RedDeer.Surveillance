@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -76,7 +76,7 @@ namespace TestHarness.Engine.OrderGenerator
             Logger.LogError(error?.Message);
         }
 
-        public abstract void OnNext(ExchangeFrame value);
+        public abstract void OnNext(MarketTimeBarCollection value);
 
         /// <summary>
         /// Avoid calling this from inside another state transition

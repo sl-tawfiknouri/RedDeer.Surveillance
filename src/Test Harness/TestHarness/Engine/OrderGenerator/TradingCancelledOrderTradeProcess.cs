@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -33,7 +33,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -52,7 +52,7 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (!_hasProcessedCount && value.TimeStamp >= _triggerCount)
+                if (!_hasProcessedCount && value.Epoch >= _triggerCount)
                 {
                     var i = 0;
                     foreach (var sedol in _cancelTargetSedols)
@@ -91,7 +91,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByPosition(string sedol, ExchangeFrame value, decimal positionPercentageToCancel)
+        private void CancelForSedolByPosition(string sedol, MarketTimeBarCollection value, decimal positionPercentageToCancel)
         {
             if (value == null)
             {
@@ -125,11 +125,11 @@ namespace TestHarness.Engine.OrderGenerator
                 security.Market,
                 null,
                 Guid.NewGuid().ToString(),
-                value.TimeStamp,
-                value.TimeStamp,
+                value.Epoch,
+                value.Epoch,
                 null,
                 null,
-                value.TimeStamp,
+                value.Epoch,
                 null,
                 OrderTypes.MARKET,
                 OrderPositions.BUY,
@@ -158,11 +158,11 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
-                    value.TimeStamp.AddMinutes(1),
-                    value.TimeStamp.AddMinutes(1),
+                    value.Epoch.AddMinutes(1),
+                    value.Epoch.AddMinutes(1),
                     null,
                     null,
-                    value.TimeStamp.AddMinutes(1),
+                    value.Epoch.AddMinutes(1),
                     null,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
@@ -191,7 +191,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByCount(string sedol, ExchangeFrame value, int amountToCancel)
+        private void CancelForSedolByCount(string sedol, MarketTimeBarCollection value, int amountToCancel)
         {
             if (value == null)
             {
@@ -223,11 +223,11 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
-                    value.TimeStamp.AddMinutes(1),
-                    value.TimeStamp.AddMinutes(1),
+                    value.Epoch.AddMinutes(1),
+                    value.Epoch.AddMinutes(1),
                     null,
                     null,
-                    i < amountToCancel ? (DateTime?)value.TimeStamp.AddMinutes(1) : null,
+                    i < amountToCancel ? (DateTime?)value.Epoch.AddMinutes(1) : null,
                     null,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
@@ -127,10 +127,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledVolume = 10;
             underlyingTrade.OrderFilledDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(underlyingTrade.Instrument,
+                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
                         new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
                             underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -163,10 +163,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledVolume = 300;
             underlyingTrade.OrderPlacedDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(underlyingTrade.Instrument,
+                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
                         new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
                             underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -199,10 +199,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledDate = DateTime.Now;
             underlyingTrade.OrderFilledVolume = 300;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new ExchangeFrame(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(underlyingTrade.Instrument,
+                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
                         new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
                             underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,

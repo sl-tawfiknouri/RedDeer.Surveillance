@@ -1,14 +1,14 @@
 ﻿using System;
 using DomainV2.Financial;
 
-namespace DomainV2.Equity.Frames
+namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
-    /// Market update for a security trading data
+    /// Market update for financial instrument trading data
     /// </summary>
-    public class SecurityTick
+    public class FinancialInstrumentTimeBar
     {
-        public SecurityTick(
+        public FinancialInstrumentTimeBar(
             FinancialInstrument security,
             Spread spread,
             Volume volume,
@@ -17,7 +17,7 @@ namespace DomainV2.Equity.Frames
             decimal? marketCap,
             IntradayPrices intradayPrices,
             long? listedSecurities,
-            DomainV2.Financial.Market market)
+            Market market)
         {
             Security = security;
             Spread = spread;

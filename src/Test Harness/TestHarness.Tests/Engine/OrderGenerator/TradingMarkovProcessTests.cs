@@ -1,8 +1,8 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
             _logger = A.Fake<ILogger>();
 
             A
-                .CallTo(() => _stockStream.Subscribe(A<IObserver<ExchangeFrame>>.Ignored))
+                .CallTo(() => _stockStream.Subscribe(A<IObserver<MarketTimeBarCollection>>.Ignored))
                 .Returns(_unsubscriber);
         }
 

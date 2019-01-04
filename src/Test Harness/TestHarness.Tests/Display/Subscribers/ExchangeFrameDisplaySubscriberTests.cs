@@ -1,7 +1,7 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 
@@ -42,7 +42,7 @@ namespace TestHarness.Tests.Display.Subscribers
         public void OnNext_PassesFrame_ToConsole()
         {
             var subscriber = new ExchangeFrameDisplaySubscriber(_console);
-            var frame = new ExchangeFrame(null, DateTime.UtcNow, null);
+            var frame = new MarketTimeBarCollection(null, DateTime.UtcNow, null);
 
             subscriber.OnNext(frame);
 

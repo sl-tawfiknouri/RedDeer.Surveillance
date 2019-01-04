@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
@@ -34,7 +34,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 ctx?.Id());
         }
 
-        protected override CurrencyAmount? SecurityTickToPrice(SecurityTick tick)
+        protected override CurrencyAmount? SecurityTickToPrice(FinancialInstrumentTimeBar tick)
         {
             if (tick == null)
             {

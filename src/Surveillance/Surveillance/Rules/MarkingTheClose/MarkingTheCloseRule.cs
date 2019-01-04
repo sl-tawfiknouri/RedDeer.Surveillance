@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using DomainV2.Trading;
@@ -147,7 +147,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities,
-            SecurityTick tradedSecurity)
+            FinancialInstrumentTimeBar tradedSecurity)
         {
             var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
@@ -169,7 +169,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckWindowVolumeTraded(
             Stack<Order> securities,
-            SecurityTick tradedSecurity)
+            FinancialInstrumentTimeBar tradedSecurity)
         {
             var marketDataRequest =
                 new MarketDataRequest(
@@ -209,7 +209,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
-            SecurityTick tradedSecurity,
+            FinancialInstrumentTimeBar tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
         {

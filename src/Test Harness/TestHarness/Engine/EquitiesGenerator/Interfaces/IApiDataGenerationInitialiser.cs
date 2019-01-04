@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {
     public interface IApiDataGenerationInitialiser
     {
-        IReadOnlyCollection<ExchangeFrame> OrderedDailyFrames();
+        IReadOnlyCollection<MarketTimeBarCollection> OrderedDailyFrames();
     }
 }

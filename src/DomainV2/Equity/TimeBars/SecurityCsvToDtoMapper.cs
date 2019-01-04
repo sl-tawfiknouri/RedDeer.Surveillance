@@ -1,9 +1,9 @@
 ﻿using System;
-using DomainV2.Equity.Frames.Interfaces;
+using DomainV2.Equity.TimeBars.Interfaces;
 using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 
-namespace DomainV2.Equity.Frames
+namespace DomainV2.Equity.TimeBars
 {
     public class SecurityCsvToDtoMapper : ISecurityCsvToDtoMapper
     {
@@ -20,7 +20,7 @@ namespace DomainV2.Equity.Frames
 
         public int FailedParseTotal { get; set; }
 
-        public SecurityTick Map(SecurityTickCsv csv)
+        public FinancialInstrumentTimeBar Map(SecurityTickCsv csv)
         {
             if (csv == null)
             {
@@ -131,7 +131,7 @@ namespace DomainV2.Equity.Frames
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
             var market = new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
 
-            return new SecurityTick(
+            return new FinancialInstrumentTimeBar(
                 security,
                 spread,
                 new Volume(volume),

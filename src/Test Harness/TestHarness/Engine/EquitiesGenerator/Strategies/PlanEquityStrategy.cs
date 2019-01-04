@@ -1,6 +1,6 @@
 ﻿using System;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
@@ -20,8 +20,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             _baseStrategy = baseStrategy ?? throw new ArgumentNullException(nameof(baseStrategy));
         }
 
-        public SecurityTick AdvanceFrame(
-            SecurityTick tick,
+        public FinancialInstrumentTimeBar AdvanceFrame(
+            FinancialInstrumentTimeBar tick,
             DateTime advanceTick,
             bool walkIntraday)
         {
@@ -35,11 +35,11 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return AdjustToPlan(initialAdvancedFrame, tick);
         }
 
-        private SecurityTick AdjustToPlan(SecurityTick tick, SecurityTick precedingTick)
+        private FinancialInstrumentTimeBar AdjustToPlan(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
         {
             var adjustedSpread = AdjustedSpread(tick, precedingTick);
 
-            return new SecurityTick(
+            return new FinancialInstrumentTimeBar(
                 tick.Security,
                 adjustedSpread,
                 tick.Volume,
@@ -51,7 +51,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 tick.Market);
         }
 
-        private Spread AdjustedSpread(SecurityTick tick, SecurityTick precedingTick)
+        private Spread AdjustedSpread(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
         {
             switch (_plan.EquityInstructions.PriceManipulation)
             {
@@ -74,7 +74,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return tick.Spread;
         }
 
-        private Spread AdjustSpreadCalculation(decimal adjustmentFactor, SecurityTick precedingTick)
+        private Spread AdjustSpreadCalculation(decimal adjustmentFactor, FinancialInstrumentTimeBar precedingTick)
         {
             var adjustedBid =
                 new CurrencyAmount(precedingTick.Spread.Bid.Value * adjustmentFactor, precedingTick.Spread.Bid.Currency);

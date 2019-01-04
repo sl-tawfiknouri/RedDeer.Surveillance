@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
@@ -80,7 +80,7 @@ namespace Surveillance.Universe
             return trades ?? new List<Order>();
         }
 
-        private async Task<IReadOnlyCollection<ExchangeFrame>> MarketEquityDataFetchAurora(
+        private async Task<IReadOnlyCollection<MarketTimeBarCollection>> MarketEquityDataFetchAurora(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx)
         {
@@ -90,13 +90,13 @@ namespace Surveillance.Universe
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
-            return equities ?? new List<ExchangeFrame>();
+            return equities ?? new List<MarketTimeBarCollection>();
         }
 
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<ExchangeFrame> exchangeFrames)
+            IReadOnlyCollection<MarketTimeBarCollection> exchangeFrames)
         {
             var tradeSubmittedEvents =
                 trades
@@ -113,7 +113,7 @@ namespace Surveillance.Universe
 
             var exchangeEvents =
                 exchangeFrames
-                    .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.TimeStamp, exch))
+                    .Select(exch => new UniverseEvent(UniverseStateEvent.StockTickReddeer, exch.Epoch, exch))
                     .ToArray();
 
             var marketEvents =

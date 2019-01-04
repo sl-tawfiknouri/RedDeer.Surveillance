@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DomainV2.Equity.Frames
+namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
-    /// An aggregation of security frames
+    /// An aggregation of security time bars
     /// This represents a specific point in time
     /// All child security dates are considered cannon at the same point in time
     /// If you have security data spanning multiple points in time they need
-    /// to be split into multiple frames
+    /// to be split into multiple collections
     /// </summary>
-    public class ExchangeFrame
+    public class MarketTimeBarCollection
     {
-        public ExchangeFrame(
+        public MarketTimeBarCollection(
             DomainV2.Financial.Market exchange,
-            DateTime timeStamp,
-            IReadOnlyCollection<SecurityTick> securities)
+            DateTime epoch,
+            IReadOnlyCollection<FinancialInstrumentTimeBar> securities)
         {
             Exchange = exchange;
-            TimeStamp = timeStamp;
-            Securities = securities ?? new List<SecurityTick>();
+            Epoch = epoch;
+            Securities = securities ?? new List<FinancialInstrumentTimeBar>();
         }
 
         /// <summary>
@@ -30,9 +30,9 @@ namespace DomainV2.Equity.Frames
         /// <summary>
         /// The securities with updated data
         /// </summary>
-        public IReadOnlyCollection<SecurityTick> Securities { get; }
+        public IReadOnlyCollection<FinancialInstrumentTimeBar> Securities { get; }
 
-        public DateTime TimeStamp { get; }
+        public DateTime Epoch { get; }
 
         public override string ToString()
         {

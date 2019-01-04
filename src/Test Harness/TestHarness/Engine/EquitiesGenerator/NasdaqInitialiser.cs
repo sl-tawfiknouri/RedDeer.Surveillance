@@ -1,11 +1,11 @@
-﻿using DomainV2.Equity.Frames;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using DomainV2.Equity;
+using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -13,24 +13,24 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private string _nasdaqCurrency = "USD";
 
-        public ExchangeFrame InitialFrame()
+        public MarketTimeBarCollection InitialFrame()
         {
             var exchange = new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
-            var tick = new ExchangeFrame(exchange, DateTime.UtcNow, securities);
+            var tick = new MarketTimeBarCollection(exchange, DateTime.UtcNow, securities);
 
             return tick;
         }
 
-        private List<SecurityTick> ProjectToSecurities(NasdaqData[] nasdaqRaw)
+        private List<FinancialInstrumentTimeBar> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
             var volume = rnd.Next(5000, 1000000);
 
             return nasdaqRaw.Select(raw =>
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(

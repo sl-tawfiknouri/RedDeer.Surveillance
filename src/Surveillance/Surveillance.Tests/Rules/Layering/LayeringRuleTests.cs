@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
@@ -199,10 +199,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 1019;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
             
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
+                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
                         new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
                             tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -251,10 +251,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
+                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
                         new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
                             tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -294,10 +294,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 5;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
+                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
                         new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
                             tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -338,10 +338,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
+                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
                         new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
                             tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -382,10 +382,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
+                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
                         new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
                             tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
                         tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
@@ -442,18 +442,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp,  marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch,  marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -505,18 +505,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -568,18 +568,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -627,8 +627,8 @@ namespace Surveillance.Tests.Rules.Layering
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -644,17 +644,17 @@ namespace Surveillance.Tests.Rules.Layering
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
-        private ExchangeFrame SetExchangeFrameToPrice(
+        private MarketTimeBarCollection SetExchangeFrameToPrice(
             Market market,
             Order baseBuyFrame,
             Order baseSellFrame,
             decimal price,
             DateTime timestamp)
         {
-            return new ExchangeFrame(market, timestamp,
-                new List<SecurityTick>
+            return new MarketTimeBarCollection(market, timestamp,
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(baseBuyFrame.Instrument,
+                    new FinancialInstrumentTimeBar(baseBuyFrame.Instrument,
                         new Spread(baseBuyFrame.OrderAveragePrice.Value, baseSellFrame.OrderAveragePrice.Value,
                             new CurrencyAmount(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
                         timestamp, 100000,

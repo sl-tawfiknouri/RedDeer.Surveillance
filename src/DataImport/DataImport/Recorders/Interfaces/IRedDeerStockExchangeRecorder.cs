@@ -1,9 +1,9 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 
 namespace DataImport.Recorders.Interfaces
 {
-    public interface IRedDeerStockExchangeRecorder : IObserver<ExchangeFrame>
+    public interface IRedDeerStockExchangeRecorder : IObserver<MarketTimeBarCollection>
     {
     }
 }

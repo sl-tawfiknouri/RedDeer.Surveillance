@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.SurveillanceService.ComplianceCaseLog;
 using Dapper;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
@@ -203,7 +201,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey) LIMIT 1;
 
-             INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
+             INSERT INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice);
+
+             INSERT INTO InstrumentEquityDailySummary (SecurityId, Epoch, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
 
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,

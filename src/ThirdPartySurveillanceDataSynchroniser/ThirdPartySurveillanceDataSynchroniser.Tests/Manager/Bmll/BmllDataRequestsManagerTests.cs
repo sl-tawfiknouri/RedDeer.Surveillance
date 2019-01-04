@@ -52,7 +52,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
             await manager.Submit(null);
 
             A
-                .CallTo(() => _storageManager.Store())
+                .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
                 .MustNotHaveHappened();
 
             A
@@ -73,7 +73,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
             await manager.Submit(request);
 
             A
-                .CallTo(() => _storageManager.Store())
+                .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
                 .MustHaveHappened();
 
             A

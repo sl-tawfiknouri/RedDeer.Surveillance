@@ -17,7 +17,7 @@ COMMIT;
 START TRANSACTION;
 
 DELETE FROM TradeOrderPosition WHERE Id >= 0;
-INSERT INTO TradeOrderPosition(Id, Description) VALUES(0, "Unknown");
+INSERT INTO TradeOrderPosition(Id, Description) VALUES(0, "None");
 INSERT INTO TradeOrderPosition(Id, Description) VALUES(1, "Buy");
 INSERT INTO TradeOrderPosition(Id, Description) VALUES(2, "Sell");
 INSERT INTO TradeOrderPosition(Id, Description) VALUES(3, "Short");

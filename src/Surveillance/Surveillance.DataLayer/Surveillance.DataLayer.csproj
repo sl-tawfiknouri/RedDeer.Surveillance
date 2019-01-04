@@ -11,6 +11,7 @@
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.1.14" />
     <PackageReference Include="AWSSDK.SQS" Version="3.3.3.22" />
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="MySql.Data" Version="8.0.12" />
     <PackageReference Include="NEST" Version="6.2.0" />

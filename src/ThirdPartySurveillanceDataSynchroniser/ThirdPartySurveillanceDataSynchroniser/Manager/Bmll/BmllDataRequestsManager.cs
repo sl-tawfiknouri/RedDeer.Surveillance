@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
@@ -11,15 +10,18 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {
+        private readonly IBmllDataRequestsSenderManager _senderManager;
         private readonly IBmllDataRequestsStorageManager _storageManager;
         private readonly IBmllDataRequestsRescheduleManager _rescheduleManager;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
+            IBmllDataRequestsSenderManager senderManager,
             IBmllDataRequestsStorageManager storageManager,
             IBmllDataRequestsRescheduleManager rescheduleManager,
             ILogger<BmllDataRequestsManager> logger)
         {
+            _senderManager = senderManager ?? throw new ArgumentNullException(nameof(senderManager));
             _storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
             _rescheduleManager = rescheduleManager ?? throw new ArgumentNullException(nameof(rescheduleManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -44,11 +46,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 return;
             }
 
-            foreach (var req in minuteBarRequests)
-            {
-                var cts = new CancellationTokenSource();
-                // var result = await _bus.RequestAsync<GetMinuteBarsRequest, GetMinuteBarsResponse>(req, cts.Token);
-            }
+            // REQUEST IT
+            var requests = await _senderManager.Send(bmllRequests);
 
             // STORE IT
             await _storageManager.Store();

@@ -16,6 +16,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
     [TestFixture]
     public class BmllDataRequestsManagerTests
     {
+        private IBmllDataRequestsSenderManager _senderManager;
         private IBmllDataRequestsStorageManager _storageManager;
         private IBmllDataRequestsRescheduleManager _rescheduleManager;
         private ILogger<BmllDataRequestsManager> _logger;
@@ -23,6 +24,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         [SetUp]
         public void Setup()
         {
+            _senderManager = A.Fake<IBmllDataRequestsSenderManager>();
             _storageManager = A.Fake<IBmllDataRequestsStorageManager>();
             _rescheduleManager = A.Fake<IBmllDataRequestsRescheduleManager>();
             _logger = A.Fake<ILogger<BmllDataRequestsManager>>();
@@ -32,20 +34,20 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         public void Constructor_ConsidersNull_StorageManager_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(null, _rescheduleManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, null, _rescheduleManager, _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNull_Logger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_storageManager, _rescheduleManager, null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, null));
         }
 
         [Test]
         public async Task Submit_DoesNothing_When_BmllRequests_Null()
         {
-            var manager = new BmllDataRequestsManager(_storageManager, _rescheduleManager, _logger);
+            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
 
             await manager.Submit(null);
 
@@ -61,7 +63,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         [Test]
         public async Task Submit_DoesCall_Store_WhenBmllRequests_Submitted()
         {
-            var manager = new BmllDataRequestsManager(_storageManager, _rescheduleManager, _logger);
+            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
 
             var request = new List<MarketDataRequestDataSource>()
             {

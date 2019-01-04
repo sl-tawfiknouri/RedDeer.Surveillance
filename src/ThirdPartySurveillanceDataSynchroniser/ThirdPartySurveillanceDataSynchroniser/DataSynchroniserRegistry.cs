@@ -35,6 +35,7 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
             For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
+            For<IBmllDataRequestsSenderManager>().Use<BmllDataRequestsSenderManager>();
             For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
             For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
             For<IDataSourceClassifier>().Use<DataSourceClassifier>();

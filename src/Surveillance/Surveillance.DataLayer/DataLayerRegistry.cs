@@ -1,6 +1,8 @@
 ﻿using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using StructureMap;
+using Surveillance.DataLayer.Api.BmllMarketData;
+using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
@@ -43,6 +45,7 @@ namespace Surveillance.DataLayer
             For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
             For<IBmllDataRequestRepository>().Use<BmllDataRequestRepository>();
             For<IStubBmllDataRequestRepository>().Use<StubBmllDataRequestRepository>();
+            For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
         }
     }
 }

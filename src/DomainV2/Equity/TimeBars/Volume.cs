@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Equity
+﻿namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
     /// Volume traded within parent datetime range context

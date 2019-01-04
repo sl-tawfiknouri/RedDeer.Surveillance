@@ -49,20 +49,23 @@ namespace TestHarness.Engine.EquitiesGenerator
                         "CFI",
                         "USD",
                         raw.Symbol), 
-                     new Spread(
+                     new SpreadTimeBar(
                         new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency)),
-                    new Volume(volume),
-                    new Volume(volume),
+                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                         new Volume(volume)),
+
+                     new DailySummaryTimeBar(
+                         decimal.Parse(raw.Buy) * volume,
+                         new IntradayPrices(
+                             new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
+                         volume * 3,
+                         new Volume(volume),
+                         DateTime.UtcNow),
                     DateTime.UtcNow,
-                    decimal.Parse(raw.Buy) * volume,
-                    new IntradayPrices(
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
-                    volume * 3,
                     new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE)))
                 .ToList();
         }

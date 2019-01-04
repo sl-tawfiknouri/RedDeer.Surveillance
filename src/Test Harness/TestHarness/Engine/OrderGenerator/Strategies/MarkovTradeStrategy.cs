@@ -111,7 +111,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var position = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
             var limit = CalculateLimit(tick, position, orderType);
-            var executedPrice = tick.Spread.Price;
+            var executedPrice = tick.SpreadTimeBar.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
@@ -122,7 +122,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var counterPartyBrokerId = GenerateClientFactorString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
-            var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
+            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Value ?? string.Empty;
 
             var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
             var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;
@@ -196,17 +196,17 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (buyOrSell == OrderPositions.BUY)
             {
-                var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
+                var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.Spread.Bid.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
             }
             else if (buyOrSell == OrderPositions.SELL)
             {
-                var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
+                var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.Spread.Ask.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
             }
 
             return null;
@@ -214,7 +214,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
         private int CalculateVolume(FinancialInstrumentTimeBar tick)
         {
-            var upperLimit = Math.Max(tick.Volume.Traded, 1);
+            var upperLimit = Math.Max(tick.SpreadTimeBar.Volume.Traded, 1);
             var tradingVolume = (int)Math.Sqrt(upperLimit);
             var volume = DiscreteUniform.Sample(0, tradingVolume);
 

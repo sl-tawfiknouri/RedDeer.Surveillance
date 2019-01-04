@@ -139,7 +139,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             // _executeOn
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
 
             // select a suitably low % of the traded volume
             tradedVolume = (int)((decimal)tradedVolume * 0.03m);
@@ -161,9 +161,9 @@ namespace TestHarness.Engine.OrderGenerator
                     i == 0 ? (DateTime?) tradeTime.AddSeconds(i) : null,
                     i == 0 ? OrderTypes.MARKET : OrderTypes.LIMIT,
                     i == 0 ? OrderPositions.BUY : OrderPositions.SELL,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) tradedVolume,
                     i == 0 ? (int) tradedVolume : 0,
                     null,

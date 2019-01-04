@@ -3,7 +3,6 @@ using MathNet.Numerics.Distributions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Streams.Interfaces;
@@ -114,13 +113,18 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(string.Empty, string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
                         "Standard Chartered", "CFI", "USD", "ISSUER-IDENTIFIER"), 
-                    new Spread(new CurrencyAmount((decimal)buyPrice, "GBP"), new CurrencyAmount((decimal)sellPrice, "GBP"), new CurrencyAmount((decimal)buyPrice, "GBP")),
-                    new Volume(volume),
-                    new Volume(volume),
+                    new SpreadTimeBar(
+                        new CurrencyAmount((decimal)buyPrice, "GBP"),
+                        new CurrencyAmount((decimal)sellPrice, "GBP"),
+                        new CurrencyAmount((decimal)buyPrice, "GBP"),
+                        new Volume(volume)),
+                    new DailySummaryTimeBar(
+                        1000,
+                        null,
+                        1000,
+                        new Volume(volume),
+                        DateTime.UtcNow),
                     DateTime.UtcNow,
-                    3000,
-                    null,
-                    1000,
                     new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
                 results.Add(frame);

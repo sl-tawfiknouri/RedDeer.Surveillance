@@ -67,7 +67,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     SetCfi(sm.Cfi),
                                     sm.SecurityCurrency,
                                     sm.IssuerIdentifier), 
-                                new Spread(
+                                new SpreadTimeBar(
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         SetCurrency(sm.SecurityCurrency)),
@@ -76,25 +76,28 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        SetCurrency(sm.SecurityCurrency))),
-                                new Volume(volume((double)CalculateADailyVolume(smp.Value))),
-                                new Volume(CalculateADailyVolume(smp.Value)),
+                                        SetCurrency(sm.SecurityCurrency)),
+                                    new Volume(volume((double)CalculateADailyVolume(smp.Value)))
+                                    ),
+                                new DailySummaryTimeBar(
+                                    smp.Value.MarketCapUsd,
+                                    new IntradayPrices(
+                                        new CurrencyAmount(
+                                            smp.Value.OpenPrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.ClosePrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.HighIntradayPrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.LowIntradayPrice,
+                                            SetCurrency(sm.SecurityCurrency))),
+                                    null,
+                                    new Volume(CalculateADailyVolume(smp.Value)),
+                                    smp.Value.Epoch.Date.Add(_market.MarketOpenTime)),
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
-                                smp.Value.MarketCapUsd,
-                                new IntradayPrices(
-                                    new CurrencyAmount(
-                                        smp.Value.OpenPrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.ClosePrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.HighIntradayPrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.LowIntradayPrice,
-                                        SetCurrency(sm.SecurityCurrency))),
-                                null,
                                 new Market(
                                     null,
                                     _market.Code,

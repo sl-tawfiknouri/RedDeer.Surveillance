@@ -1,6 +1,6 @@
 ﻿using DomainV2.Financial;
 
-namespace DomainV2.Equity
+namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
     /// Daily high/lows open/close

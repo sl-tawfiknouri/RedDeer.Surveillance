@@ -89,7 +89,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var securityTick = marketDataResult.Response;           
             var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
+            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.SpreadTimeBar.Price.Currency);
 
             if (realisedRevenue == null)
             {
@@ -187,7 +187,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return null;
             }
 
-            return tick.Spread.Price;
+            return tick.SpreadTimeBar.Price;
         }
     }
 }

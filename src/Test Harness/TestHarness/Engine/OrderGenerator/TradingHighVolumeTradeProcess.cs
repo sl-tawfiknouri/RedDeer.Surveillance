@@ -130,7 +130,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
             var headSecurity = securities.FirstOrDefault();
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) +1) * 0.2m;
 
@@ -149,9 +149,9 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.TimeStamp.AddSeconds(30 * i),
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
                     (int)volumeForBreachesToTrade,
                     (int)volumeForBreachesToTrade,
                     null,
@@ -192,7 +192,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var tradedVolume = securities.DailyVolume.Traded;
+            var tradedVolume = securities.DailySummaryTimeBar.DailyVolume.Traded;
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
 
             for (var i = 0; i < 5; i++)
@@ -210,9 +210,9 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.TimeStamp.AddSeconds(30 * i),
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    securities.Spread.Price.Currency,
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    securities.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
                     null,

@@ -1,17 +1,22 @@
 ﻿using DomainV2.Financial;
 
-namespace DomainV2.Equity
+namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
     /// bid / ask / market clearing price
     /// </summary>
-    public struct Spread
+    public struct SpreadTimeBar
     {
-        public Spread(CurrencyAmount bid, CurrencyAmount ask, CurrencyAmount price)
+        public SpreadTimeBar(
+            CurrencyAmount bid,
+            CurrencyAmount ask,
+            CurrencyAmount price,
+            Volume volume)
         {
             Bid = bid;
             Ask = ask;
             Price = price;
+            Volume = volume;
         }
 
         /// <summary>
@@ -28,5 +33,10 @@ namespace DomainV2.Equity
         /// The price the market resolved to
         /// </summary>
         public CurrencyAmount Price { get; }
+
+        /// <summary>
+        /// The volume of the security traded since the last time bar
+        /// </summary>
+        public Volume Volume { get; }
     }
 }

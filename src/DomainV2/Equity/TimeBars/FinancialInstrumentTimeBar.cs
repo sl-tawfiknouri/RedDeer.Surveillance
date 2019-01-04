@@ -10,24 +10,16 @@ namespace DomainV2.Equity.TimeBars
     {
         public FinancialInstrumentTimeBar(
             FinancialInstrument security,
-            Spread spread,
-            Volume volume,
-            Volume dailyVolume,
+            SpreadTimeBar spreadTimeBar,
+            DailySummaryTimeBar dailySummaryTimeBar,
             DateTime timeStamp,
-            decimal? marketCap,
-            IntradayPrices intradayPrices,
-            long? listedSecurities,
             Market market)
         {
             Security = security;
-            Spread = spread;
-            Volume = volume;
+            SpreadTimeBar = spreadTimeBar;
             TimeStamp = timeStamp;
-            MarketCap = marketCap;
-            IntradayPrices = intradayPrices;
-            ListedSecurities = listedSecurities;
             Market = market;
-            DailyVolume = dailyVolume;
+            DailySummaryTimeBar = dailySummaryTimeBar;
         }
 
         /// <summary>
@@ -36,31 +28,14 @@ namespace DomainV2.Equity.TimeBars
         public FinancialInstrument Security { get; }
 
         /// <summary>
-        /// Valuation of the security
-        /// </summary>
-        public decimal? MarketCap { get; }
-
-        /// <summary>
         /// Price spread at the tick point
         /// </summary>
-        public Spread Spread { get; }
-
-        public IntradayPrices IntradayPrices { get; }
+        public SpreadTimeBar SpreadTimeBar { get; }
 
         /// <summary>
-        /// The number of the listed security on the exchange
+        /// Daily summary of data about the financial instrument
         /// </summary>
-        public long? ListedSecurities { get; }
-
-        /// <summary>
-        /// The volume of the security traded since the last tick
-        /// </summary>
-        public Volume Volume { get; }
-
-        /// <summary>
-        /// The daily volume traded of the security on the exchange
-        /// </summary>
-        public Volume DailyVolume { get; }
+        public DailySummaryTimeBar DailySummaryTimeBar { get; }
 
         /// <summary>
         /// The time point at which the data was canonical
@@ -70,6 +45,6 @@ namespace DomainV2.Equity.TimeBars
         /// <summary>
         /// The market the security is traded on
         /// </summary>
-        public DomainV2.Financial.Market Market { get; }
+        public Market Market { get; }
     }
 }

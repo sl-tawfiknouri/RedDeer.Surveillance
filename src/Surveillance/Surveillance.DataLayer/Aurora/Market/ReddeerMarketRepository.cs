@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.SurveillanceService.ComplianceCaseLog;
 using Dapper;
 using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
@@ -545,10 +546,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                     dto.IssuerIdentifier);
 
             var spread =
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Volume(dto.VolumeTradedInTick.GetValueOrDefault(0)));
 
             var intradayPrices =
                 new IntradayPrices(
@@ -557,16 +559,20 @@ namespace Surveillance.DataLayer.Aurora.Market
                     new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
+            var dailySummary =
+                new DailySummaryTimeBar(
+                    dto.MarketCap,
+                    intradayPrices,
+                    dto.ListedSecurities,
+                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
+                    dto.Epoch);
+
             var tick =
                 new FinancialInstrumentTimeBar(
                     security,
                     spread,
-                    new Volume(dto.VolumeTradedInTick.GetValueOrDefault(0)),
-                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
+                    dailySummary,
                     dto.Epoch,
-                    dto.MarketCap,
-                    intradayPrices,
-                    dto.ListedSecurities,
                     market);
 
             return tick;
@@ -628,22 +634,22 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency.Value
-                    ?? entity.Spread.Ask.Currency.Value
-                    ?? entity.Spread.Bid.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Value
+                    ?? entity.SpreadTimeBar.Ask.Currency.Value
+                    ?? entity.SpreadTimeBar.Bid.Currency.Value;
 
                 Epoch = entity.TimeStamp;
-                BidPrice = entity.Spread.Bid.Value;
-                AskPrice = entity.Spread.Ask.Value;
-                MarketPrice = entity.Spread.Price.Value;
-                OpenPrice = entity.IntradayPrices.Open?.Value;
-                ClosePrice = entity.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.ListedSecurities;
-                MarketCap = entity.MarketCap;
-                VolumeTradedInTick = entity.Volume.Traded;
-                DailyVolume = entity.DailyVolume.Traded;
+                BidPrice = entity.SpreadTimeBar.Bid.Value;
+                AskPrice = entity.SpreadTimeBar.Ask.Value;
+                MarketPrice = entity.SpreadTimeBar.Price.Value;
+                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                VolumeTradedInTick = entity.SpreadTimeBar.Volume.Traded;
+                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 MarketId = marketId.ToString();
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
 
@@ -767,22 +773,22 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency.Value
-                    ?? entity.Spread.Ask.Currency.Value
-                    ?? entity.Spread.Bid.Currency.Value
-                    ?? entity.Spread.Price.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Value
+                    ?? entity.SpreadTimeBar.Ask.Currency.Value
+                    ?? entity.SpreadTimeBar.Bid.Currency.Value
+                    ?? entity.SpreadTimeBar.Price.Currency.Value;
                 Epoch = entity.TimeStamp;
-                BidPrice = entity.Spread.Bid.Value;
-                AskPrice = entity.Spread.Ask.Value;
-                MarketPrice = entity.Spread.Price.Value;
-                OpenPrice = entity.IntradayPrices.Open?.Value;
-                ClosePrice = entity.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.ListedSecurities;
-                MarketCap = entity.MarketCap;
-                VolumeTradedInTick = entity.Volume.Traded;
-                DailyVolume = entity.DailyVolume.Traded;
+                BidPrice = entity.SpreadTimeBar.Bid.Value;
+                AskPrice = entity.SpreadTimeBar.Ask.Value;
+                MarketPrice = entity.SpreadTimeBar.Price.Value;
+                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                VolumeTradedInTick = entity.SpreadTimeBar.Volume.Traded;
+                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
 
                 UnderlyingCfi = entity?.Security?.UnderlyingCfi;

@@ -127,19 +127,16 @@ namespace DomainV2.Equity.TimeBars
             }
 
             var security = BuildSecurity(csv);
-            var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice);
+            var spread = BuildSpread(csv, spreadAsk, spreadBid, spreadPrice, new Volume(volume));
             var intradayPrices = BuildIntradayPrices(csv, open, close, high, low);
+            var dailySummary = new DailySummaryTimeBar(marketCap, intradayPrices, listedSecurities, new Volume(dailyVolume), timeStamp);
             var market = new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
 
             return new FinancialInstrumentTimeBar(
                 security,
                 spread,
-                new Volume(volume),
-                new Volume(dailyVolume),
+                dailySummary,
                 timeStamp,
-                marketCap,
-                intradayPrices,
-                listedSecurities,
                 market);
         }
 
@@ -168,16 +165,18 @@ namespace DomainV2.Equity.TimeBars
                 string.Empty);
         }
 
-        private Spread BuildSpread(
+        private SpreadTimeBar BuildSpread(
             FinancialInstrumentTimeBarCsv csv,
             decimal spreadAsk,
             decimal spreadBid,
-            decimal spreadPrice)
+            decimal spreadPrice,
+            Volume spreadVolume)
         {
-            return new Spread(
+            return new SpreadTimeBar(
                 new CurrencyAmount(spreadAsk, csv.Currency),
                 new CurrencyAmount(spreadBid, csv.Currency),
-                new CurrencyAmount(spreadPrice, csv.Currency));
+                new CurrencyAmount(spreadPrice, csv.Currency),
+                spreadVolume);
         }
 
         private IntradayPrices BuildIntradayPrices(

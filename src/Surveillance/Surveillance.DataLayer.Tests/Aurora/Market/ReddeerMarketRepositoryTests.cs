@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
@@ -85,13 +84,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             {
                 new FinancialInstrumentTimeBar(
                     security,
-                    new Spread(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP")),
-                    new Volume(1000),
-                    new Volume(10000),
+                    new SpreadTimeBar(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP"), new Volume(1000)),
+                    new DailySummaryTimeBar(
+                        1000000,
+                        new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
+                        1000,
+                        new Volume(10000),
+                        DateTime.UtcNow), 
                     DateTime.UtcNow,
-                    1000000,
-                    new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
-                    1000,
                     stockExchange)
             };
 

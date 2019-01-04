@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
@@ -55,16 +54,19 @@ namespace Surveillance.Tests.Markets
 
             var securityTick = new FinancialInstrumentTimeBar(
                 security,
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
                     new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp")),
-                new Volume(1000),
-                new Volume(2000),
+                    new CurrencyAmount(0, "gbp"),
+                    new Volume(1000)),
+                new DailySummaryTimeBar(
+                    10000,
+                    new IntradayPrices(null, null, null, null),
+                    1000,
+                    new Volume(2000),
+                    DateTime.Now.AddDays(1)
+                    ), 
                 DateTime.Now.AddDays(1),
-                10000,
-                new IntradayPrices(null, null, null, null),
-                15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
@@ -115,16 +117,18 @@ namespace Surveillance.Tests.Markets
 
             var securityTick = new FinancialInstrumentTimeBar(
                 security,
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
                     new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp")),
-                new Volume(1000),
-                new Volume(2000),
+                    new CurrencyAmount(0, "gbp"),
+                    new Volume(1000)),
+                new DailySummaryTimeBar(
+                    10000,
+                    new IntradayPrices(null, null, null, null),
+                    1000,
+                    new Volume(1000),
+                    DateTime.Now), 
                 DateTime.Now,
-                10000,
-                new IntradayPrices(null, null, null, null),
-                15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
@@ -175,16 +179,18 @@ namespace Surveillance.Tests.Markets
 
             var securityTick = new FinancialInstrumentTimeBar(
                 security,
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
                     new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp")),
-                new Volume(1000),
-                new Volume(2000),
+                    new CurrencyAmount(0, "gbp"),
+                    new Volume(1000)),
+                new DailySummaryTimeBar(
+                    1000,
+                    new IntradayPrices(null, null, null, null),
+                    10000,
+                    new Volume(2000),
+                    DateTime.Now.AddDays(1)), 
                 DateTime.Now.AddDays(1),
-                10000,
-                new IntradayPrices(null, null, null, null),
-                15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
@@ -234,16 +240,19 @@ namespace Surveillance.Tests.Markets
 
             var securityTick = new FinancialInstrumentTimeBar(
                 security,
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
                     new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp")),
-                new Volume(1000),
-                new Volume(2000),
+                    new CurrencyAmount(0, "gbp"),
+                    new Volume(1000)),
+                new DailySummaryTimeBar(
+                    1000,
+                    new IntradayPrices(null, null, null, null),
+                    1000,
+                    new Volume(2000),
+                    DateTime.Now
+                    ),
                 DateTime.Now,
-                10000,
-                new IntradayPrices(null, null, null, null),
-                15,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(

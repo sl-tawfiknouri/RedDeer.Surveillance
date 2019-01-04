@@ -116,7 +116,7 @@ namespace TestHarness.Engine.OrderGenerator
             var security = correctSecurity.FirstOrDefault();
             var frames = new List<Order>();
 
-            var totalPurchase = security.DailyVolume.Traded * 0.1m;
+            var totalPurchase = security.DailySummaryTimeBar.DailyVolume.Traded * 0.1m;
             var initialBuyShare = totalPurchase * positionPercentageToCancel;
             var splitShare = ((totalPurchase - initialBuyShare) * (1m / 9m)) - 1;
 
@@ -134,8 +134,8 @@ namespace TestHarness.Engine.OrderGenerator
                 OrderTypes.MARKET,
                 OrderPositions.BUY,
                 new Currency("GBP"),
-                new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                 (int)initialBuyShare,
                 (int)initialBuyShare,
                 null,
@@ -167,8 +167,8 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
                     new Currency("GBP"),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     (int)splitShare,
                     (int)splitShare,
                     null,
@@ -232,9 +232,9 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
                     new Currency("GBP"),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    i < amountToCancel ? 0 : (int)(security.DailyVolume.Traded * 0.01m),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    i < amountToCancel ? 0 : (int)(security.DailySummaryTimeBar.DailyVolume.Traded * 0.01m),
                     0,
                     null,
                     null,

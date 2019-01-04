@@ -214,7 +214,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private Order OrderForValue(OrderStatus status, decimal value, FinancialInstrumentTimeBar security, Market exchange)
         {
-            var volume = (int)((value / security.Spread.Ask.Value) + 1);
+            var volume = (int)((value / security.SpreadTimeBar.Ask.Value) + 1);
             var orderPosition = (OrderPositions)DiscreteUniform.Sample(0, 3);
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?) DateTime.UtcNow : null;
@@ -234,9 +234,9 @@ namespace TestHarness.Engine.OrderGenerator
                     filledDate,
                     OrderTypes.MARKET,
                     orderPosition,
-                    security.Spread.Price.Currency,
-                    security.Spread.Price,
-                    security.Spread.Price,
+                    security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price,
+                    security.SpreadTimeBar.Price,
                     volume,
                     volume,
                     null,

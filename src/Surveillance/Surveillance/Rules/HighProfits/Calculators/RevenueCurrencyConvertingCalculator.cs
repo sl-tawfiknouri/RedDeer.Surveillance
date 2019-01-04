@@ -95,7 +95,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var securityTick = marketResponse.Response;
             var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.Spread.Price.Currency);
+            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.SpreadTimeBar.Price.Currency);
             var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
@@ -207,7 +207,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return null;
             }
 
-            return tick.Spread.Price;
+            return tick.SpreadTimeBar.Price;
         }
     }
 }

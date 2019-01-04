@@ -129,7 +129,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
             // _executeOn
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
             var headSecurity = securities.FirstOrDefault();
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.18m;
 
@@ -151,9 +151,9 @@ namespace TestHarness.Engine.OrderGenerator
                     tradeTime,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
                     null,
@@ -196,14 +196,14 @@ namespace TestHarness.Engine.OrderGenerator
                      string.Equals(
                          sec?.Security.Identifiers.Sedol,
                          sedol,
-                         StringComparison.InvariantCultureIgnoreCase))?.Volume.Traded ?? 0);
+                         StringComparison.InvariantCultureIgnoreCase))?.SpreadTimeBar.Volume.Traded ?? 0);
 
             if (securities == null)
             {
                 return;
             }
 
-            var tradedVolume = securities.DailyVolume.Traded;
+            var tradedVolume = securities.DailySummaryTimeBar.DailyVolume.Traded;
             var volumeForBreachesToTrade = (((decimal) tradedVolume * percentageOfTraded) + 1);
 
             var adjustedVolumeForBreachesToTrade =
@@ -231,9 +231,9 @@ namespace TestHarness.Engine.OrderGenerator
                     tradeTime,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    securities.Spread.Price.Currency,
-                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    securities.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
                     (int)finalVolumeForBreachestoTrade,
                     (int)finalVolumeForBreachestoTrade,
                     null,

@@ -149,7 +149,7 @@ namespace Surveillance.Rules.MarkingTheClose
             Stack<Order> securities,
             FinancialInstrumentTimeBar tradedSecurity)
         {
-            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
+            var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
             if (thresholdVolumeTraded == null)
             {
@@ -162,7 +162,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     securities,
                     tradedSecurity,
                     thresholdVolumeTraded.GetValueOrDefault(0),
-                    tradedSecurity.DailyVolume.Traded);
+                    tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded);
 
             return result;
         }
@@ -188,7 +188,7 @@ namespace Surveillance.Rules.MarkingTheClose
             }
 
             var securityUpdates = marketResult.Response;
-            var securityVolume = securityUpdates.Sum(su => su.Volume.Traded);
+            var securityVolume = securityUpdates.Sum(su => su.SpreadTimeBar.Volume.Traded);
             var thresholdVolumeTraded = securityVolume * _parameters.PercentageThresholdWindowVolume;
 
             if (thresholdVolumeTraded == null)

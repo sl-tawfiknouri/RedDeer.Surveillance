@@ -29,18 +29,18 @@ namespace DomainV2.Equity.TimeBars
 
             var financialInstrumentTimeBarCsv = new FinancialInstrumentTimeBarCsv
             {
-                Volume = financialInstrumentTimeBar.Volume.Traded.ToString(),
-                DailyVolume = financialInstrumentTimeBar.DailyVolume.Traded.ToString(),
+                Volume = financialInstrumentTimeBar.SpreadTimeBar.Volume.Traded.ToString(),
+                DailyVolume = financialInstrumentTimeBar.DailySummaryTimeBar.DailyVolume.Traded.ToString(),
                 Timestamp = financialInstrumentTimeBar.TimeStamp.ToString(),
-                MarketCap = financialInstrumentTimeBar.MarketCap?.ToString(),
-                ListedSecurities = financialInstrumentTimeBar.ListedSecurities?.ToString(),
+                MarketCap = financialInstrumentTimeBar.DailySummaryTimeBar.MarketCap?.ToString(),
+                ListedSecurities = financialInstrumentTimeBar.DailySummaryTimeBar.ListedSecurities?.ToString(),
 
-                Currency = financialInstrumentTimeBar.Spread.Price.Currency.Value,
+                Currency = financialInstrumentTimeBar.SpreadTimeBar.Price.Currency.Value,
                 
                 // Spread
-                Ask = financialInstrumentTimeBar.Spread.Ask.Value.ToString(),
-                Bid = financialInstrumentTimeBar.Spread.Bid.Value.ToString(),
-                Price = financialInstrumentTimeBar.Spread.Price.Value.ToString(),
+                Ask = financialInstrumentTimeBar.SpreadTimeBar.Ask.Value.ToString(),
+                Bid = financialInstrumentTimeBar.SpreadTimeBar.Bid.Value.ToString(),
+                Price = financialInstrumentTimeBar.SpreadTimeBar.Price.Value.ToString(),
             };
 
             // Market
@@ -51,12 +51,12 @@ namespace DomainV2.Equity.TimeBars
             }
 
             // Intraday Prices
-            if (financialInstrumentTimeBar.IntradayPrices != null)
+            if (financialInstrumentTimeBar.DailySummaryTimeBar.IntradayPrices != null)
             {
-                financialInstrumentTimeBarCsv.Open = financialInstrumentTimeBar.IntradayPrices.Open?.Value.ToString();
-                financialInstrumentTimeBarCsv.Close = financialInstrumentTimeBar.IntradayPrices.Close?.Value.ToString();
-                financialInstrumentTimeBarCsv.Low = financialInstrumentTimeBar.IntradayPrices.Low?.Value.ToString();
-                financialInstrumentTimeBarCsv.High = financialInstrumentTimeBar.IntradayPrices.High?.Value.ToString();
+                financialInstrumentTimeBarCsv.Open = financialInstrumentTimeBar.DailySummaryTimeBar.IntradayPrices.Open?.Value.ToString();
+                financialInstrumentTimeBarCsv.Close = financialInstrumentTimeBar.DailySummaryTimeBar.IntradayPrices.Close?.Value.ToString();
+                financialInstrumentTimeBarCsv.Low = financialInstrumentTimeBar.DailySummaryTimeBar.IntradayPrices.Low?.Value.ToString();
+                financialInstrumentTimeBarCsv.High = financialInstrumentTimeBar.DailySummaryTimeBar.IntradayPrices.High?.Value.ToString();
             }
 
             // Security Identifiers

@@ -41,7 +41,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return null;
             }
 
-            return tick.IntradayPrices.Close ?? tick.Spread.Price;
+            return tick.DailySummaryTimeBar.IntradayPrices.Close ?? tick.SpreadTimeBar.Price;
         }
     }
 }

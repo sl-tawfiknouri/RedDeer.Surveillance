@@ -130,12 +130,25 @@ namespace Surveillance.Tests.Rules.High_Volume
             var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
-                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        underlyingTrade.Instrument,
+                        new SpreadTimeBar(
+                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000m,
+                            new IntradayPrices(
+                                underlyingTrade.OrderAveragePrice.Value, 
+                                underlyingTrade.OrderAveragePrice.Value,
+                                underlyingTrade.OrderAveragePrice.Value,
+                                underlyingTrade.OrderAveragePrice.Value),
+                            10000,
+                            new Volume(10000),
+                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                        market)
                 });
 
             var marketEvent =
@@ -166,12 +179,23 @@ namespace Surveillance.Tests.Rules.High_Volume
             var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
-                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar
+                    (underlyingTrade.Instrument,
+                        new SpreadTimeBar(
+                            underlyingTrade.OrderAveragePrice.Value, 
+                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            100000,
+                            new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
+                                underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(1000),
+                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                        market)
                 });
 
             var marketEvent =
@@ -202,12 +226,25 @@ namespace Surveillance.Tests.Rules.High_Volume
             var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(underlyingTrade.Instrument,
-                        new Spread(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        underlyingTrade.Instrument,
+                        new SpreadTimeBar(
+                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(
+                                underlyingTrade.OrderAveragePrice.Value,
+                                underlyingTrade.OrderAveragePrice.Value,
+                                underlyingTrade.OrderAveragePrice.Value, 
+                                underlyingTrade.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                        market)
                 });
 
             var marketEvent =

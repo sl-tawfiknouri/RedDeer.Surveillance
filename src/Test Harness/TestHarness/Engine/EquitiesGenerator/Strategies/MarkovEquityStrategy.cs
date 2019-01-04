@@ -1,6 +1,5 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
@@ -18,8 +17,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         private readonly decimal _maxSpread = 0.001m;
 
         public MarkovEquityStrategy()
-        {
-        }
+        { }
 
         /// <summary>
         /// Constructor for overriding default rule values
@@ -48,30 +46,36 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newBuy = CalculateNewBuyValue(tick);
             var newSell = CalculateNewSellValue(tick, newBuy);
+            var newVolume = CalculateNewVolume(tick);
 
             var newSpread =
-                new Spread(
-                    new CurrencyAmount(newBuy, tick.Spread.Bid.Currency),
-                    new CurrencyAmount(newSell, tick.Spread.Ask.Currency),
-                    new CurrencyAmount(newBuy, tick.Spread.Bid.Currency));
-            var newVolume = CalculateNewVolume(tick);
-            var newMarketCap = (tick.ListedSecurities ?? tick.DailyVolume.Traded) * newBuy;
+                new SpreadTimeBar(
+                    new CurrencyAmount(newBuy, tick.SpreadTimeBar.Bid.Currency),
+                    new CurrencyAmount(newSell, tick.SpreadTimeBar.Ask.Currency),
+                    new CurrencyAmount(newBuy, tick.SpreadTimeBar.Bid.Currency),
+                    newVolume);
+
+            
+            var newMarketCap = (tick.DailySummaryTimeBar.ListedSecurities ?? tick.DailySummaryTimeBar.DailyVolume.Traded) * newBuy;
 
             var newIntraday =
                 walkIntraday
-                    ? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency.Value)
-                    : (tick.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.Spread.Bid.Currency.Value));
+                    ? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value)
+                    : (tick.DailySummaryTimeBar.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value));
+
+            var newDaily = new DailySummaryTimeBar(
+                newMarketCap,
+                newIntraday,
+                tick.DailySummaryTimeBar.ListedSecurities,
+                tick.DailySummaryTimeBar.DailyVolume,
+                advanceTick);
 
             return
                 new FinancialInstrumentTimeBar(
                     tick.Security,
                     newSpread,
-                    newVolume,
-                    tick.DailyVolume,
+                   newDaily,
                     advanceTick,
-                    newMarketCap,
-                    newIntraday,
-                    tick.ListedSecurities,
                     tick.Market);
         }
 
@@ -79,8 +83,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private IntradayPrices BuildIntraday(FinancialInstrumentTimeBar tick, decimal newBuy, string currency)
         {
-            if (tick.IntradayPrices?.High == null
-                || tick.IntradayPrices?.Low == null)
+            if (tick.DailySummaryTimeBar.IntradayPrices?.High == null
+                || tick.DailySummaryTimeBar.IntradayPrices?.Low == null)
             {
                 return
                     new IntradayPrices(
@@ -91,19 +95,19 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             }
 
             var adjustedHigh =
-                tick.IntradayPrices.High.Value.Value < newBuy
-                ? new CurrencyAmount(newBuy, tick.IntradayPrices.High.Value.Currency)
-                : tick.IntradayPrices.High.Value;
+                tick.DailySummaryTimeBar.IntradayPrices.High.Value.Value < newBuy
+                ? new CurrencyAmount(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
+                : tick.DailySummaryTimeBar.IntradayPrices.High.Value;
 
             var adjustedLow =
-                tick.IntradayPrices.Low.Value.Value < newBuy
-                ? new CurrencyAmount(newBuy, tick.IntradayPrices.High.Value.Currency)
-                : tick.IntradayPrices.Low.Value;
+                tick.DailySummaryTimeBar.IntradayPrices.Low.Value.Value < newBuy
+                ? new CurrencyAmount(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
+                : tick.DailySummaryTimeBar.IntradayPrices.Low.Value;
 
             var newIntraday =
                 new IntradayPrices(
-                    tick.IntradayPrices.Open,
-                    tick.IntradayPrices.Close,
+                    tick.DailySummaryTimeBar.IntradayPrices.Open,
+                    tick.DailySummaryTimeBar.IntradayPrices.Close,
                     adjustedHigh,
                     adjustedLow);
 
@@ -112,7 +116,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private decimal CalculateNewBuyValue(FinancialInstrumentTimeBar tick)
         {
-            var newBuy = (decimal)Normal.Sample((double)tick.Spread.Price.Value, _pricingStandardDeviation);
+            var newBuy = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Price.Value, _pricingStandardDeviation);
 
             if (newBuy < 0.001m)
             {
@@ -126,7 +130,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private decimal CalculateNewSellValue(FinancialInstrumentTimeBar tick, decimal newBuy)
         {
-            var newSellSample = (decimal)Normal.Sample((double)tick.Spread.Price.Value, _pricingStandardDeviation);
+            var newSellSample = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Price.Value, _pricingStandardDeviation);
 
             var newSellLimit = Math.Min(newBuy, newSellSample);
             var newSellFloor = (newBuy * (1 - _maxSpread)); // allow for a max of 5% spread
@@ -138,7 +142,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         private Volume CalculateNewVolume(FinancialInstrumentTimeBar tick)
         {
-            var newVolumeSample = (int)Normal.Sample(tick.Volume.Traded, _tradingStandardDeviation);
+            var newVolumeSample = (int)Normal.Sample(tick.SpreadTimeBar.Volume.Traded, _tradingStandardDeviation);
             var newVolumeSampleFloor = Math.Max(0, newVolumeSample);
             var newVolume = new Volume(newVolumeSampleFloor);
 

@@ -4,7 +4,6 @@ using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Currency.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 
@@ -53,7 +52,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 return null;
             }
 
-            return tick.IntradayPrices.Close ?? tick.Spread.Price;
+            return tick.DailySummaryTimeBar.IntradayPrices.Close ?? tick.SpreadTimeBar.Price;
         }
     }
 }

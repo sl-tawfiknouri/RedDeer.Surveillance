@@ -202,12 +202,23 @@ namespace Surveillance.Tests.Rules.Layering
             var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                    market)
                 });
             
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -254,12 +265,23 @@ namespace Surveillance.Tests.Rules.Layering
             var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                     market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -297,12 +319,23 @@ namespace Surveillance.Tests.Rules.Layering
             var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                    market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -341,12 +374,22 @@ namespace Surveillance.Tests.Rules.Layering
             var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                        market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -385,12 +428,22 @@ namespace Surveillance.Tests.Rules.Layering
             var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                     market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -654,14 +707,23 @@ namespace Surveillance.Tests.Rules.Layering
             return new MarketTimeBarCollection(market, timestamp,
                 new List<FinancialInstrumentTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(baseBuyFrame.Instrument,
-                        new Spread(baseBuyFrame.OrderAveragePrice.Value, baseSellFrame.OrderAveragePrice.Value,
-                            new CurrencyAmount(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
-                        timestamp, 100000,
-                        new IntradayPrices(baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value,
-                            baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        baseBuyFrame.Instrument,
+                        new SpreadTimeBar(
+                            baseBuyFrame.OrderAveragePrice.Value, 
+                            baseSellFrame.OrderAveragePrice.Value,
+                            new CurrencyAmount(price, baseSellFrame.OrderCurrency),
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value,
+                                baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            timestamp),
+                        timestamp,
+                        market)
                 });
         }
-
     }
 }

@@ -205,7 +205,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
              INSERT INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded);
 
-             INSERT INTO InstrumentEquityDailySummary (SecurityId, Epoch, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @DailyVolume);";
+             INSERT INTO InstrumentEquityDailySummary (SecurityId, Epoch, EpochDate, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @EpochDate, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @DailyVolume);";
 
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -641,6 +641,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     ?? entity.SpreadTimeBar.Bid.Currency.Value;
 
                 Epoch = entity.TimeStamp;
+                EpochDate = entity.TimeStamp.Date;
                 BidPrice = entity.SpreadTimeBar.Bid.Value;
                 AskPrice = entity.SpreadTimeBar.Ask.Value;
                 MarketPrice = entity.SpreadTimeBar.Price.Value;
@@ -713,6 +714,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
 
             public DateTime Epoch { get; set; }
+            public DateTime EpochDate { get; set; }
 
             public decimal? BidPrice { get; set; }
 
@@ -792,6 +794,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
                 DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+                EpochDate = entity.TimeStamp.Date;
 
                 UnderlyingCfi = entity?.Security?.UnderlyingCfi;
                 UnderlyingName = entity?.Security?.UnderlyingName;
@@ -885,6 +888,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string FinancialInstrumentId { get; set; }
 
             public DateTime Epoch { get; set; }
+            public DateTime EpochDate { get; set; }
 
             public decimal? BidPrice { get; set; }
 

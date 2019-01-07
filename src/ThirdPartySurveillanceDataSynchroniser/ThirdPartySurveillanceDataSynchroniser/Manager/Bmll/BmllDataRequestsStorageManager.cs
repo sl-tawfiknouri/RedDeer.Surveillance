@@ -28,7 +28,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             // ok so now just save the time bars into market data repository
-
+            
 
 
             _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");

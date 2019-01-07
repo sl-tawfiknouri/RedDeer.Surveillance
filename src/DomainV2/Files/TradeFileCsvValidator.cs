@@ -108,6 +108,13 @@ namespace DomainV2.Files
             RuleFor(x => x.OrderAveragePrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
             RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
             RuleFor(x => x.OrderOrderedVolume).SetValidator(new LongParseableValidator("OrderOrderedVolume"));
+            RuleFor(x => x.OrderPosition)
+                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Order position had an illegal value of 'none'");
+
+            RuleFor(x => x.OrderPosition)
+                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Order position had an illegal value of '0'");
         }
 
         private void RulesForTradeProperties()
@@ -128,6 +135,14 @@ namespace DomainV2.Files
             RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasTradeOrTransactionData);
             RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator("TradeOrderedVolume")).When(HasTradeOrTransactionData);
             RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasTradeOrTransactionData);
+
+            RuleFor(x => x.TradePosition)
+                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Trade position had an illegal value of 'none'");
+            
+            RuleFor(x => x.TradePosition)
+                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("TradePosition had an illegal value of '0'");
 
             RulesForTradeOptionsProperties();
         }
@@ -198,6 +213,14 @@ namespace DomainV2.Files
 
             RuleFor(x => x.TransactionFilledVolume).SetValidator(new LongParseableValidator("TransactionFilledVolume")).When(HasTransactionData);
             RuleFor(x => x.TransactionOrderedVolume).SetValidator(new LongParseableValidator("TransactionOrderedVolume2")).When(HasTransactionData);
+
+            RuleFor(x => x.TransactionPosition)
+                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Transaction Position had an illegal value of 'none'");
+
+            RuleFor(x => x.TransactionPosition)
+                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Transaction Position had an illegal value of '0'");
         }
 
         private bool HasTransactionData(TradeFileCsv csv)

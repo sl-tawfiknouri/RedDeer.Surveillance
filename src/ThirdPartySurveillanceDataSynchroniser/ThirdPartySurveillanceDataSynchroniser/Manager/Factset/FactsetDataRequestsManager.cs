@@ -34,11 +34,11 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset
             try
             {
                 _logger.LogInformation($"FactsetDataRequestsManager Send about to send {factsetRequests.Count} requests to the request sender");
-                await _requestSender.Send(factsetRequests);
+                var dailySummaries = await _requestSender.Send(factsetRequests);
                 _logger.LogInformation($"FactsetDataRequestsManager Send has sent {factsetRequests.Count} requests to the request sender");
 
                 _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {factsetRequests.Count} requests to the request sender");
-                await _responseStorage.Store();
+                await _responseStorage.Store(dailySummaries);
                 _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {factsetRequests.Count} requests to the request sender");
             }
             catch (Exception e)

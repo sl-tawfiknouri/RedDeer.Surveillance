@@ -35,27 +35,42 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 return;
             }
 
-            _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
-
-            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
-
-            if (!minuteBarRequests.Any())
+            try
             {
-                _logger.LogError($"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+                _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
 
-                return;
+                var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+
+                if (!minuteBarRequests.Any())
+                {
+                    _logger.LogError(
+                        $"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+
+                    return;
+                }
+
+                // REQUEST IT
+                var requests = await _senderManager.Send(bmllRequests);
+
+                // STORE IT
+                await _storageManager.Store(requests);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
             }
 
-            // REQUEST IT
-            var requests = await _senderManager.Send(bmllRequests);
+            try
+            {
+                // RESCHEDULE IT
+                await _rescheduleManager.RescheduleRuleRun(bmllRequests);
 
-            // STORE IT
-            await _storageManager.Store(requests);
-            
-            // RESCHEDULE IT
-            await _rescheduleManager.RescheduleRuleRun(bmllRequests);
-
-            _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
+                _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"BmllDataRequestsManager Send encountered an exception in the reschedule rule run!", e);
+            }
         }
 
         private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequestDataSource request)

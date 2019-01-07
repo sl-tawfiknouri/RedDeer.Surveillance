@@ -37,9 +37,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset
                 await _requestSender.Send(factsetRequests);
                 _logger.LogInformation($"FactsetDataRequestsManager Send has sent {factsetRequests.Count} requests to the request sender");
 
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to send {factsetRequests.Count} requests to the request sender");
+                _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {factsetRequests.Count} requests to the request sender");
                 await _responseStorage.Store();
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to send {factsetRequests.Count} requests to the request sender");
+                _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {factsetRequests.Count} requests to the request sender");
             }
             catch (Exception e)
             {

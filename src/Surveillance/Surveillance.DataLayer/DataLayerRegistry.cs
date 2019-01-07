@@ -47,6 +47,7 @@ namespace Surveillance.DataLayer
             For<IStubRuleRunDataRequestRepository>().Use<StubRuleRunDataRequestRepository>();
             For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
             For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
+            For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
         }
     }
 }

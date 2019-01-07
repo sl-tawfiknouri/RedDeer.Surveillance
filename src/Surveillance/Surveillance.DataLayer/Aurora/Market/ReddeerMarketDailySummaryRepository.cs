@@ -10,6 +10,9 @@ using Surveillance.DataLayer.Aurora.Market.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Market
 {
+    /// <summary>
+    /// Be aware that this table is also referenced in the market repository
+    /// </summary>
     public class ReddeerMarketDailySummaryRepository : IReddeerMarketDailySummaryRepository
     {
         private readonly IConnectionStringFactory _dbConnectionFactory;

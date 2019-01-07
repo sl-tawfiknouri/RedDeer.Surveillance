@@ -35,7 +35,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         {
             var config = new DataLayerConfiguration
             {
-                AuroraConnectionString = "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance; Allow User Variables=True"
+                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
             };
 
             var factory = new ConnectionStringFactory(config);
@@ -52,7 +52,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         {
             var config = new DataLayerConfiguration
             {
-                AuroraConnectionString = "server=dev-surveillance.cluster-cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=reddeer;pwd='=6CCkoJb2b+HtKg9';database=dev_surveillance; Allow User Variables=True"
+                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
             };
 
             var factory = new ConnectionStringFactory(config);

@@ -54,13 +54,13 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSEP.BidPrice as BidPrice,
              MSEP.AskPrice as AskPrice,
              MSEP.MarketPrice as MarketPrice,
+             MSEP.VolumeTraded as VolumeTraded,
              IEDS.OpenPrice as OpenPrice,
              IEDS.ClosePrice as ClosePrice,
              IEDS.HighIntradayPrice as HighIntradayPrice,
              IEDS.LowIntradayPrice as LowIntradayPrice,
              IEDS.ListedSecurities as ListedSecurities,
              IEDS.MarketCap as MarketCap,
-             IEDS.VolumeTradedInTick as VolumeTradedInTick,
              IEDS.DailyVolume as DailyVolume
              FROM InstrumentEquityTimeBars AS MSEP
              LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
@@ -203,9 +203,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey) LIMIT 1;
 
-             INSERT INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice);
+             INSERT INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded);
 
-             INSERT INTO InstrumentEquityDailySummary (SecurityId, Epoch, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
+             INSERT INTO InstrumentEquityDailySummary (SecurityId, Epoch, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @DailyVolume);";
 
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -552,7 +552,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                     new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new Volume(dto.VolumeTradedInTick.GetValueOrDefault(0)));
+                    new Volume(dto.VolumeTraded.GetValueOrDefault(0)));
 
             var intradayPrices =
                 new IntradayPrices(
@@ -650,7 +650,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
                 ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
                 MarketCap = entity.DailySummaryTimeBar.MarketCap;
-                VolumeTradedInTick = entity.SpreadTimeBar.Volume.Traded;
+                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
                 DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 MarketId = marketId.ToString();
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
@@ -732,7 +732,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? MarketCap { get; set; }
 
-            public long? VolumeTradedInTick { get; set; }
+            public long? VolumeTraded { get; set; }
 
             public long? DailyVolume { get; set; }
 
@@ -789,7 +789,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
                 ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
                 MarketCap = entity.DailySummaryTimeBar.MarketCap;
-                VolumeTradedInTick = entity.SpreadTimeBar.Volume.Traded;
+                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
                 DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
 
@@ -904,7 +904,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? MarketCap { get; set; }
 
-            public long? VolumeTradedInTick { get; set; }
+            public long? VolumeTraded { get; set; }
 
             public long? DailyVolume { get; set; }
         }

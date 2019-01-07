@@ -5,11 +5,9 @@ using FakeItEasy;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Configuration;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
 {
@@ -17,16 +15,15 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
     public class ReddeerMarketTimeBarRepositoryTests
     {
         private ILogger<ReddeerMarketTimeBarRepository> _logger;
-        private ISystemProcessOperationContext _opCtx;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerMarketTimeBarRepository>>();
-            _opCtx = A.Fake<ISystemProcessOperationContext>();
         }
 
         [Test]
+        [Explicit]
         public async Task Save()
         {
             var config = new DataLayerConfiguration

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -10,7 +8,6 @@ using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Configuration;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
 {
@@ -18,16 +15,15 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
     public class ReddeerMarketDailySummaryRepositoryTests
     {
         private ILogger<ReddeerMarketDailySummaryRepository> _logger;
-        private ISystemProcessOperationContext _opCtx;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ReddeerMarketDailySummaryRepository>>();
-            _opCtx = A.Fake<ISystemProcessOperationContext>();
         }
 
         [Test]
+        [Explicit]
         public async Task Save()
         {
             var config = new DataLayerConfiguration

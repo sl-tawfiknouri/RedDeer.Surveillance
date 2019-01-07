@@ -63,7 +63,7 @@ namespace Surveillance.DataLayer.Aurora.Market
              IEDS.VolumeTradedInTick as VolumeTradedInTick,
              IEDS.DailyVolume as DailyVolume
              FROM InstrumentEquityTimeBars AS MSEP
-             LEFT OUTER JOIN JOIN InstrumentEquityDailySummary AS IEDS
+             LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
              ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
              LEFT JOIN FinancialInstruments AS MSES
              ON MSEP.SecurityId = MSES.Id

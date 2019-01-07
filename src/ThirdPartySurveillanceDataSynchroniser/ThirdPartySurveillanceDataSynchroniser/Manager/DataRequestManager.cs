@@ -9,6 +9,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.DataSources;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager
@@ -16,19 +17,22 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
     public class DataRequestManager : IDataRequestManager
     {
         private readonly IDataSourceClassifier _dataSourceClassifier;
-        private readonly IBmllDataRequestRepository _dataRequestRepository;
+        private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly IBmllDataRequestManager _bmllDataRequestManager;
+        private readonly IFactsetDataRequestsManager _factsetDataRequestManager;
         private readonly ILogger<DataRequestManager> _logger;
 
         public DataRequestManager(
             IDataSourceClassifier dataSourceClassifier,
-            IBmllDataRequestRepository dataRequestRepository,
+            IRuleRunDataRequestRepository dataRequestRepository,
             IBmllDataRequestManager bmllDataRequestManager,
+            IFactsetDataRequestsManager factsetDataRequestManager,
             ILogger<DataRequestManager> logger)
         {
             _dataSourceClassifier = dataSourceClassifier ?? throw new ArgumentNullException(nameof(dataSourceClassifier));
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _bmllDataRequestManager = bmllDataRequestManager ?? throw new ArgumentNullException(nameof(bmllDataRequestManager));
+            _factsetDataRequestManager = factsetDataRequestManager ?? throw new ArgumentNullException(nameof(factsetDataRequestManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -50,9 +54,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             var markitRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Markit)?.ToList();
             var otherRequests = dataRequestWithSource.Where(i => i.Key != DataSource.Bmll && i.Key != DataSource.Markit).SelectMany(i => i).ToList();
 
-            SubmitToBmll(bmllRequests);
-            SubmitToMarkit(markitRequests);
-            SubmitOther(otherRequests);
+            await SubmitToBmllAndFactset(bmllRequests);
+            await SubmitToMarkit(markitRequests);
+            await SubmitOther(otherRequests);
 
             _logger.LogInformation($"DataRequestManager completed handling request with id {ruleRunId}");
         }
@@ -64,7 +68,10 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             return new MarketDataRequestDataSource(source, request);
         }
 
-        private void SubmitToBmll(List<MarketDataRequestDataSource> bmllRequests)
+        /// <summary>
+        /// BMLL does not provide the full set of daily summary data so we have to fetch this from fact set
+        /// </summary>
+        private async Task SubmitToBmllAndFactset(List<MarketDataRequestDataSource> bmllRequests)
         {
             if (bmllRequests == null)
             {
@@ -78,10 +85,12 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
 
             _logger.LogInformation($"DataRequestManager received {bmllRequests.Count} market data requests for BMLL (not deduplicated)");
 
-            _bmllDataRequestManager.Submit(bmllRequests);
+            await _factsetDataRequestManager.Submit(bmllRequests);
+            await _bmllDataRequestManager.Submit(bmllRequests);
         }
 
-        private void SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
+
+        private async Task SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
         {
             if (markitRequests == null)
             {
@@ -96,7 +105,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             _logger.LogError($"DataRequestManager received {markitRequests.Count} market data requests for MARKIT which we have not implemented yet");
         }
 
-        private void SubmitOther(List<MarketDataRequestDataSource> otherRequests)
+        private async Task SubmitOther(List<MarketDataRequestDataSource> otherRequests)
         {
             if (otherRequests == null)
             {

@@ -8,6 +8,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
 {
@@ -17,7 +18,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
         private IDataSourceClassifier _dataSourceClassifier;
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
         private IBmllDataRequestManager _dataRequestManager;
-        private IBmllDataRequestRepository _repository;
+        private IRuleRunDataRequestRepository _repository;
+        private IFactsetDataRequestsManager _factsetDataRequestManager;
         private ILogger<DataRequestManager> _logger;
 
         [SetUp]
@@ -26,7 +28,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
             _dataSourceClassifier = A.Fake<IDataSourceClassifier>();
             _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             _dataRequestManager = A.Fake<IBmllDataRequestManager>();
-            _repository = A.Fake<IBmllDataRequestRepository>();
+            _factsetDataRequestManager = A.Fake<IFactsetDataRequestsManager>();
+            _repository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger<DataRequestManager>>();
         }
 
@@ -34,14 +37,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
         public void Constructor_Null_Repository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, null, _dataRequestManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, null, _dataRequestManager, _factsetDataRequestManager, _logger));
         }
 
         [Test]
         public void Constructor_Null_Logger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, null));
         }
 
         [Test]
@@ -70,7 +73,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _logger);
+            return new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, _logger);
         }
     }
 }

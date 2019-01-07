@@ -37,8 +37,8 @@ namespace Surveillance.Tests.Rules.WashTrades
         private IUniverseMarketCacheFactory _factory;
         private ILogger _logger;
 
-        private IBmllDataRequestRepository _bmllRepository;
-        private IStubBmllDataRequestRepository _stubBmllRepository;
+        private IRuleRunDataRequestRepository _ruleRunRepository;
+        private IStubRuleRunDataRequestRepository _stubRuleRunRepository;
         private ILogger<UniverseMarketCacheFactory> _loggerCache;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
@@ -52,13 +52,13 @@ namespace Surveillance.Tests.Rules.WashTrades
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _parameters = A.Fake<IWashTradeRuleParameters>();
             _logger = A.Fake<ILogger>();
-            _bmllRepository = A.Fake<IBmllDataRequestRepository>();
-            _stubBmllRepository = A.Fake<IStubBmllDataRequestRepository>();
+            _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
+            _stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
             _loggerCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
-            _factory = new UniverseMarketCacheFactory(_stubBmllRepository, _bmllRepository, _loggerCache);
+            _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _loggerCache);
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
 
             A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);

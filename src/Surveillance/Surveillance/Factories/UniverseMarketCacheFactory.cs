@@ -10,13 +10,13 @@ namespace Surveillance.Factories
 {
     public class UniverseMarketCacheFactory : IUniverseMarketCacheFactory
     {
-        private readonly IStubBmllDataRequestRepository _stubDataRequestRepository;
-        private readonly IBmllDataRequestRepository _dataRequestRepository;
+        private readonly IStubRuleRunDataRequestRepository _stubDataRequestRepository;
+        private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger<UniverseMarketCacheFactory> _logger;
 
         public UniverseMarketCacheFactory(
-            IStubBmllDataRequestRepository stubDataRequestRepository,
-            IBmllDataRequestRepository dataRequestRepository,
+            IStubRuleRunDataRequestRepository stubDataRequestRepository,
+            IRuleRunDataRequestRepository dataRequestRepository,
             ILogger<UniverseMarketCacheFactory> logger)
         {
             _stubDataRequestRepository = stubDataRequestRepository ?? throw new ArgumentNullException(nameof(stubDataRequestRepository));

@@ -4,7 +4,7 @@ using DomainV2.Markets;
 
 namespace Surveillance.DataLayer.Aurora.BMLL.Interfaces
 {
-    public interface IBmllDataRequestRepository
+    public interface IRuleRunDataRequestRepository
     {
         Task CreateDataRequest(MarketDataRequest request);
         Task<bool> HasDataRequestForRuleRun(string ruleRunId);

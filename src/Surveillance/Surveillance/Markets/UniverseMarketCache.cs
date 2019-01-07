@@ -22,10 +22,10 @@ namespace Surveillance.Markets
         private readonly TimeSpan _windowSize;
         private readonly IDictionary<string, MarketTimeBarCollection> _latestExchangeFrameBook;
         private readonly ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
-        private readonly IBmllDataRequestRepository _dataRequestRepository;
+        private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger _logger;
 
-        public UniverseMarketCache(TimeSpan windowSize, IBmllDataRequestRepository dataRequestRepository, ILogger logger)
+        public UniverseMarketCache(TimeSpan windowSize, IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
         {
             _windowSize = windowSize;
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));

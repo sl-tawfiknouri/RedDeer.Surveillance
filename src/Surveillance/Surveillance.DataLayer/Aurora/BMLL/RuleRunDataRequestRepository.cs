@@ -11,10 +11,10 @@ using Surveillance.DataLayer.Aurora.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.BMLL
 {
-    public class BmllDataRequestRepository : IBmllDataRequestRepository
+    public class RuleRunDataRequestRepository : IRuleRunDataRequestRepository
     {
         private readonly IConnectionStringFactory _dbConnectionFactory;
-        private readonly ILogger<BmllDataRequestRepository> _logger;
+        private readonly ILogger<RuleRunDataRequestRepository> _logger;
 
         private const string CreateDataRequestSql = @"
             INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime, 0);";
@@ -51,9 +51,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
              LEFT OUTER JOIN FinancialInstruments as fi
              on rdr.FinancialInstrumentId = fi.Id;";
 
-        public BmllDataRequestRepository(
+        public RuleRunDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
-            ILogger<BmllDataRequestRepository> logger)
+            ILogger<RuleRunDataRequestRepository> logger)
         {
             _dbConnectionFactory = dbConnectionFactory ?? throw new ArgumentNullException(nameof(dbConnectionFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

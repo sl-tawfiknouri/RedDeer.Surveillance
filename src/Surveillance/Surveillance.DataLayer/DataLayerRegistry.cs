@@ -43,8 +43,8 @@ namespace Surveillance.DataLayer
             For<IRuleAnalyticsUniverseRepository>().Use<RuleAnalyticsUniverseRepository>();
             For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
             For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
-            For<IBmllDataRequestRepository>().Use<BmllDataRequestRepository>();
-            For<IStubBmllDataRequestRepository>().Use<StubBmllDataRequestRepository>();
+            For<IRuleRunDataRequestRepository>().Use<RuleRunDataRequestRepository>();
+            For<IStubRuleRunDataRequestRepository>().Use<StubRuleRunDataRequestRepository>();
             For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
         }
     }

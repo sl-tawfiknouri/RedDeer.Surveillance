@@ -11,6 +11,8 @@ using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Factset;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
@@ -34,11 +36,16 @@ namespace ThirdPartySurveillanceDataSynchroniser
 
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
+            For<IDataSourceClassifier>().Use<DataSourceClassifier>();
+
             For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
             For<IBmllDataRequestsSenderManager>().Use<BmllDataRequestsSenderManager>();
             For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
             For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
-            For<IDataSourceClassifier>().Use<DataSourceClassifier>();
+
+            For<IFactsetDataRequestsManager>().Use<FactsetDataRequestsManager>();
+            For<IFactsetDataRequestsSenderManager>().Use<FactsetDataRequestsSenderManager>();
+            For<IFactsetDataRequestsStorageManager>().Use<FactsetDataRequestsStorageManager>();
 
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

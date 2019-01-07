@@ -5,7 +5,7 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.BMLL
 {
-    public class StubBmllDataRequestRepository : IStubBmllDataRequestRepository
+    public class StubRuleRunDataRequestRepository : IStubRuleRunDataRequestRepository
     {
         public async Task CreateDataRequest(MarketDataRequest request)
         {

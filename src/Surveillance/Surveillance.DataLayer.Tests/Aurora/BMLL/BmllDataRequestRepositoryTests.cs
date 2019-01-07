@@ -14,12 +14,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
     [TestFixture]
     public class BmllDataRequestRepositoryTests
     {
-        private ILogger<BmllDataRequestRepository> _logger;
+        private ILogger<RuleRunDataRequestRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _logger = new NullLogger<BmllDataRequestRepository>();
+            _logger = new NullLogger<RuleRunDataRequestRepository>();
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                 AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
             };
 
-            var repo = new BmllDataRequestRepository(new ConnectionStringFactory(config), _logger);
+            var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(config), _logger);
 
             var marketDataRequest =
                 new MarketDataRequest(
@@ -54,7 +54,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                 AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
             };
 
-            var repo = new BmllDataRequestRepository(new ConnectionStringFactory(config), _logger);
+            var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(config), _logger);
 
             var results = await repo.DataRequestsForRuleRun("13");
 

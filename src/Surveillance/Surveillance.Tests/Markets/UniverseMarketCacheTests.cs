@@ -14,13 +14,13 @@ namespace Surveillance.Tests.Markets
     [TestFixture]
     public class UniverseMarketCacheTests
     {
-        private IBmllDataRequestRepository _requestRepository;
+        private IRuleRunDataRequestRepository _requestRepository;
         private ILogger _logger;
 
         [SetUp]
         public void Setup()
         {
-            _requestRepository = A.Fake<IBmllDataRequestRepository>();
+            _requestRepository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger>();
         }
 

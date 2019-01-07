@@ -7,6 +7,8 @@ using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.DataLayer.Api.FactsetMarketData;
+using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter;
@@ -48,6 +50,7 @@ namespace Surveillance.DataLayer
             For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
             For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
             For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
+            For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
         }
     }
 }

@@ -11,13 +11,13 @@ namespace Surveillance.MessageBusIO
 {
     public class CaseMessageSender : ICaseMessageSender
     {
-        private readonly ICaseMessageBusSerialiser _serialiser;
+        private readonly IMessageBusSerialiser _serialiser;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly ILogger<CaseMessageSender> _logger;
 
         public CaseMessageSender(
-            ICaseMessageBusSerialiser serialiser,
+            IMessageBusSerialiser serialiser,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             ILogger<CaseMessageSender> logger)

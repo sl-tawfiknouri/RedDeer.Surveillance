@@ -11,7 +11,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         public void Ctor_Throws_For_Null_Logger()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsStorageManager(null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsStorageManager(null, null));
         }
     }
 }

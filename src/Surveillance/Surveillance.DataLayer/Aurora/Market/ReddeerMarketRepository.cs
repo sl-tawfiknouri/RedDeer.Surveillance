@@ -54,15 +54,17 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSEP.BidPrice as BidPrice,
              MSEP.AskPrice as AskPrice,
              MSEP.MarketPrice as MarketPrice,
-             MSEP.OpenPrice as OpenPrice,
-             MSEP.ClosePrice as ClosePrice,
-             MSEP.HighIntradayPrice as HighIntradayPrice,
-             MSEP.LowIntradayPrice as LowIntradayPrice,
-             MSEP.ListedSecurities as ListedSecurities,
-             MSEP.MarketCap as MarketCap,
-             MSEP.VolumeTradedInTick as VolumeTradedInTick,
-             MSEP.DailyVolume as DailyVolume
-             FROM MarketStockExchangePrices AS MSEP
+             IEDS.OpenPrice as OpenPrice,
+             IEDS.ClosePrice as ClosePrice,
+             IEDS.HighIntradayPrice as HighIntradayPrice,
+             IEDS.LowIntradayPrice as LowIntradayPrice,
+             IEDS.ListedSecurities as ListedSecurities,
+             IEDS.MarketCap as MarketCap,
+             IEDS.VolumeTradedInTick as VolumeTradedInTick,
+             IEDS.DailyVolume as DailyVolume
+             FROM InstrumentEquityTimeBars AS MSEP
+             LEFT OUTER JOIN JOIN InstrumentEquityDailySummary AS IEDS
+             ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
              LEFT JOIN FinancialInstruments AS MSES
              ON MSEP.SecurityId = MSES.Id
              LEFT JOIN Market AS MSE

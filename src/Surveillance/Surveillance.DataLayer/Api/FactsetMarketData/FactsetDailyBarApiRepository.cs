@@ -21,7 +21,7 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
         public FactsetDailyBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<FactsetDailyBarApiRepository> logger)
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
@@ -19,7 +20,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             IBmllTimeBarApiRepository timeBarRepository,
             ILogger<BmllDataRequestsSenderManager> logger)
         {
-            _timeBarRepository = timeBarRepository;
+            _timeBarRepository = timeBarRepository ?? throw new ArgumentNullException(nameof(timeBarRepository)); 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -29,15 +30,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 || !bmllRequests.Any())
             {
                 _logger.LogInformation($"BmllDataRequestsSenderManager received a null or empty requests collection. Returning.");
-                return new IGetTimeBarPair[0];
-            }
-
-            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
-
-            if (!minuteBarRequests.Any())
-            {
-                _logger.LogError($"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
-
                 return new IGetTimeBarPair[0];
             }
 
@@ -55,6 +47,139 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 _logger.LogError($"BmllDataRequestsSenderManager could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
                 Thread.Sleep(1000 * 30);
                 checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
+            }
+
+            _logger.LogInformation($"BmllDataRequestSenderManager beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
+
+            // step 0.
+            // project to request keys
+            var keys = await ProjectToRequestKeys(bmllRequests);
+
+            if (keys == null
+                || !keys.Any())
+            {
+                _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
+
+                return new IGetTimeBarPair[0];
+            }
+
+            // step 1.
+            // create minute bar request
+            await CreateMinuteBarRequest(keys);
+
+            // step 2.
+            // loop on the status update polling
+            await BlockUntilBmllWorkIsDone(keys);
+            
+            // step 3.
+            // get minute bar request
+            var timeBarResponses = await GetTimeBars(bmllRequests);
+
+            _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
+
+            return timeBarResponses;
+        }
+
+        public async Task<IReadOnlyCollection<MinuteBarRequestKeyDto>> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
+        {
+            var keys = new List<MinuteBarRequestKeyDto>();
+
+            if (bmllRequests == null
+                || !bmllRequests.Any())
+            {
+                return keys;
+            }
+
+            foreach (var req in bmllRequests)
+            {
+                if (req.DataRequest == null
+                    || string.IsNullOrWhiteSpace(req.DataRequest.Identifiers.Figi)
+                    || req.DataRequest.UniverseEventTimeTo == null
+                    || req.DataRequest.UniverseEventTimeFrom == null)
+                {
+                    continue;
+                }
+
+                var toTarget = req.DataRequest.UniverseEventTimeTo.Value;
+                var fromTarget = req.DataRequest.UniverseEventTimeFrom.Value;
+
+                var timeSpan = toTarget.Subtract(fromTarget);
+                var totalDays = timeSpan.TotalDays + 1;
+                var iter = 0;
+
+                while (iter <= totalDays)
+                {
+                    var date = fromTarget.AddDays(iter);
+
+                    var barRequest = new MinuteBarRequestKeyDto(req.DataRequest.Identifiers.Figi, "1min", date);
+                    keys.Add(barRequest);
+
+                    iter += 1;
+                }
+            }
+
+            var deduplicatedKeys = new List<MinuteBarRequestKeyDto>();
+
+            var grps = keys.GroupBy(x => x.Figi);
+            foreach (var grp in grps)
+            {
+                var dedupe = grp.GroupBy(x => x.Date).Select(x => x.FirstOrDefault()).Where(x => x != null).ToList();
+
+                if (!dedupe.Any())
+                {
+                    continue;
+                }
+                
+                deduplicatedKeys.AddRange(dedupe);
+            }
+            
+            return deduplicatedKeys;
+        }
+
+        private async Task CreateMinuteBarRequest(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
+        {
+            _logger.LogInformation($"BmllDataRequestSenderManager CreateMinuteBarRequest active");
+            
+
+
+            _logger.LogInformation($"BmllDataRequestSenderManager CreateMinuteBarRequest complete");
+        }
+
+        private async Task BlockUntilBmllWorkIsDone(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
+        {
+            _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
+
+            var hasSuccess = false;
+
+            while (!hasSuccess)
+            {
+                _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone in loop");
+
+
+
+                hasSuccess = true;
+            }
+
+            _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
+        }
+
+        private async Task<IReadOnlyCollection<IGetTimeBarPair>> GetTimeBars(List<MarketDataRequestDataSource> bmllRequests)
+        {
+            if (bmllRequests == null
+                || !bmllRequests.Any())
+            {
+                _logger.LogError($"BmllDataRequestsManager received 0 data requests and did not have any to send on after projecting to GetMinuteBarsRequests");
+
+                return new IGetTimeBarPair[0];
+            }
+
+            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+
+            if (!minuteBarRequests.Any())
+            {
+                _logger.LogError($"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+
+                return new IGetTimeBarPair[0];
             }
 
             var timeBarResponses = new List<IGetTimeBarPair>();

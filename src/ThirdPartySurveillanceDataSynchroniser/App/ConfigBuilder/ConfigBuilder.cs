@@ -57,7 +57,8 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
                 AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
                 SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder)
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                BmllServiceUrl = GetSetting($"BmllServiceUrlAndPort", configurationBuilder)
             };
 
             return config;

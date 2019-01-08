@@ -14,13 +14,13 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
     public class BmllTimeBarApiRepository : BaseApiRepository, IBmllTimeBarApiRepository
     {
         private const string HeartbeatRoute = "api/bmll/heartbeat";
-        private const string Route = "api/bmll/timebars/v1";
+        private const string Route = "api/bmll/minutebars/v1";
         private readonly ILogger<BmllTimeBarApiRepository> _logger;
 
         public BmllTimeBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<BmllTimeBarApiRepository> logger)
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -35,7 +35,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
 
             _logger?.LogInformation($"BmllTimeBarApiRepository Get received a get minute bars request for {request?.Figi} at {request?.From} to {request?.To}");
 
-            var httpClient = BuildHttpClient();
+            var httpClient = BuildBmllHttpClient();
 
             try
             {
@@ -75,6 +75,8 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
         {
             try
             {
+                return true;
+
                 var httpClient = BuildHttpClient();
 
                 var response = await httpClient.GetAsync(HeartbeatRoute, token);

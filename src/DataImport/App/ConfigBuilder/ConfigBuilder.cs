@@ -118,7 +118,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
                 ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder)
             };
         }
 

@@ -13,9 +13,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Configuration
         public string AuroraConnectionString { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
 
-
-
+        
         public string SurveillanceUserApiAccessToken { get; set; }
         public string ClientServiceUrl { get; set; }
+        public string BmllServiceUrl { get; set; }
     }
 }

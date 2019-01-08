@@ -49,6 +49,7 @@ namespace RedDeer.Surveillance.App.Configuration
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
+                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder)
                 };
 
                 return networkConfiguration;

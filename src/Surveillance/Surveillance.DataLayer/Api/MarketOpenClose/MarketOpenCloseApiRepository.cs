@@ -19,7 +19,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
         public MarketOpenCloseApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<MarketOpenCloseApiRepository> logger) 
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

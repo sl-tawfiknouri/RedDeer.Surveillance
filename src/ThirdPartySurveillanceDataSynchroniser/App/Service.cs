@@ -29,7 +29,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             _webHost = WebHost.CreateDefaultBuilder(startupArguments)
                 .UseStartup<Startup>()
                 .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls("http://*:9086/")
+                .UseUrls("http://*:9089/")
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

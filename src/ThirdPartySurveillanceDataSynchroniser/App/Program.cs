@@ -49,8 +49,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
                 Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
                 Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
 
-                // Container.Inject(typeof(INetworkConfiguration), builtConfig);
-                // Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 Container.Configure(config =>
                 {
                     config.IncludeRegistry<DataLayerRegistry>();

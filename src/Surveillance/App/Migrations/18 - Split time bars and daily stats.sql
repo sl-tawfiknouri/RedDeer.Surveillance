@@ -15,5 +15,6 @@ START TRANSACTION;
 	DROP TABLE MarketStockExchangePrices;
 
 	ALTER TABLE InstrumentEquityDailySummary ADD UNIQUE INDEX (SecurityId, EpochDate);
+	ALTER TABLE InstrumentEquityTimeBars ADD UNIQUE INDEX (SecurityId, Epoch);
 
 COMMIT;

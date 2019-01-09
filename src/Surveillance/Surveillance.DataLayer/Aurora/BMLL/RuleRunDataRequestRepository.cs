@@ -49,7 +49,8 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                  fi.Cfi as InstrumentCfi
              FROM RuleDataRequest as rdr
              LEFT OUTER JOIN FinancialInstruments as fi
-             on rdr.FinancialInstrumentId = fi.Id;";
+             on rdr.FinancialInstrumentId = fi.Id
+             WHERE rdr.SystemProcessOperationRuleRunId = @ruleRunId;";
 
         public RuleRunDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,

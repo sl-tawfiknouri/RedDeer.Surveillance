@@ -33,7 +33,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             var selectMany = timeBarPairs.SelectMany(x => x.Response.MinuteBars).ToList();
+
             await _repository.Save(selectMany);
+
             _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");
         }
     }

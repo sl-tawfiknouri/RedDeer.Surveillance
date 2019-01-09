@@ -196,7 +196,10 @@ namespace Surveillance.Rules.CancelledOrders
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (CancelledOrderRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

@@ -361,9 +361,12 @@ namespace Surveillance.Rules.HighProfits
             }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (HighProfitStreamRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

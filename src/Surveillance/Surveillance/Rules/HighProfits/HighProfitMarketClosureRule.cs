@@ -91,5 +91,13 @@ namespace Surveillance.Rules.HighProfits
 
             return false;
         }
+
+        public override object Clone()
+        {
+            var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
+        }
     }
 }

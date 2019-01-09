@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Markets;
 
 namespace Surveillance.Markets.Interfaces
 {
-    public interface IUniverseMarketCache
+    public interface IUniverseMarketCache : ICloneable
     {
         void Add(MarketTimeBarCollection value);
         MarketDataResponse<FinancialInstrumentTimeBar> Get(MarketDataRequest request);

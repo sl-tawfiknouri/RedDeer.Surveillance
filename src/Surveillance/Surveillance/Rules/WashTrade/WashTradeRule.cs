@@ -465,7 +465,10 @@ namespace Surveillance.Rules.WashTrade
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (WashTradeRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

@@ -513,7 +513,10 @@ namespace Surveillance.Rules.Layering
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (LayeringRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

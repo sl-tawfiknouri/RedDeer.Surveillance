@@ -65,9 +65,9 @@ namespace Surveillance.DataLayer.Aurora.Market
              FROM InstrumentEquityTimeBars AS MSEP
              LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
              ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
-             LEFT JOIN FinancialInstruments AS MSES
+             LEFT OUTER JOIN FinancialInstruments AS MSES
              ON MSEP.SecurityId = MSES.Id
-             LEFT JOIN Market AS MSE
+             LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
              WHERE MSEP.Epoch >= @start
              AND MSEP.Epoch <= @end;";

@@ -373,7 +373,10 @@ namespace Surveillance.Rules.HighVolume
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (HighVolumeRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

@@ -24,9 +24,9 @@ namespace Surveillance.Rules
         private readonly string _name;
         protected readonly TimeSpan WindowSize;
 
-        protected readonly IUniverseMarketCache UniverseMarketCache;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+        protected IUniverseMarketCache UniverseMarketCache;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
@@ -312,5 +312,13 @@ namespace Surveillance.Rules
 
         public DomainV2.Scheduling.Rules Rule { get; }
         public string Version { get; }
+
+
+        public void BaseClone()
+        {
+            UniverseMarketCache = (IUniverseMarketCache)UniverseMarketCache.Clone();
+            TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
+            TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
+        }
     }
 }

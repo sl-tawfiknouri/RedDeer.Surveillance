@@ -224,7 +224,10 @@ namespace Surveillance.Rules.Spoofing
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (SpoofingRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

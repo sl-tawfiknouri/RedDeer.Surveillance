@@ -311,7 +311,10 @@ namespace Surveillance.Rules.MarkingTheClose
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (MarkingTheCloseRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

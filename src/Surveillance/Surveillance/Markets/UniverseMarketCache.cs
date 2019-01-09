@@ -19,9 +19,10 @@ namespace Surveillance.Markets
     /// </summary>
     public class UniverseMarketCache : IUniverseMarketCache
     {
+        private IDictionary<string, MarketTimeBarCollection> _latestExchangeFrameBook;
+        private ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
+
         private readonly TimeSpan _windowSize;
-        private readonly IDictionary<string, MarketTimeBarCollection> _latestExchangeFrameBook;
-        private readonly ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger _logger;
 
@@ -161,6 +162,20 @@ namespace Surveillance.Markets
 
             _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
             return new MarketDataResponse<List<FinancialInstrumentTimeBar>>(securityDataTicks, false);
+        }
+
+        public object Clone()
+        {
+            var clone = this.MemberwiseClone() as UniverseMarketCache;
+            clone.SetClone();
+
+            return clone;
+        }
+
+        public void SetClone()
+        {
+            _latestExchangeFrameBook = new Dictionary<string, MarketTimeBarCollection>(_latestExchangeFrameBook);
+            _marketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>(_marketHistory);
         }
     }
 }

@@ -55,8 +55,8 @@ namespace Surveillance.DataLayer.Aurora.BMLL
              on rdr.FinancialInstrumentId = fi.Id
              WHERE rdr.SystemProcessOperationRuleRunId = @ruleRunId;";
 
-        private const string UpdateDataRequestSqlToComplete = @"
-                UPDATE RuleDataRequest SET Completed = 1 WHERE Id = @Id;";
+        private const string UpdateDataRequestAndDuplicatesSqlToComplete = @"
+                UPDATE RuleDataRequest SET Completed = 1 WHERE (FinancialInstrumentId = @FinancialInstrumentId AND MarketIdentifierCode = @MarketIdentifierCode AND StartTime = @StartTime AND EndTime = @EndTime) OR Id = @Id;";
 
         public RuleRunDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -108,7 +108,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             return new MarketDataRequest[0];
         }
 
-        public async Task UpdateToComplete(IReadOnlyCollection<MarketDataRequest> requests)
+        public async Task UpdateToCompleteWithDuplicates(IReadOnlyCollection<MarketDataRequest> requests)
         {
             if (requests == null
                 || !requests.Any())
@@ -123,10 +123,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 dbConnection.Open();
 
-                var ids = requests.Select(req => req.Id).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
-
+                var requestDtos = requests.Where(i => !string.IsNullOrWhiteSpace(i.Id)).Select(req => new MarketDataRequestDto(req)).ToList();
                 _logger.LogInformation($"BmllDataRequestRepository updating market data requests to set them to complete");
-                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(UpdateDataRequestSqlToComplete, new { Id = ids }))
+                using (var conn = dbConnection.ExecuteAsync(UpdateDataRequestAndDuplicatesSqlToComplete, requestDtos))
                 {
                      await conn;
 

@@ -85,7 +85,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
                     "2",
                     true);
 
-            await repo.UpdateToComplete(new [] { marketDataRequest});
+            await repo.UpdateToCompleteWithDuplicates(new [] { marketDataRequest});
         }
     }
 }

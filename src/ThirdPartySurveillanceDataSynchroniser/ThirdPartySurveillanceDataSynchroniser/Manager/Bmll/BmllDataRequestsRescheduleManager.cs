@@ -68,7 +68,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             var req = bmllRequests?.Select(bm => bm.DataRequest).ToList();
-            await _dataRequestRepository.UpdateToComplete(req);
+            await _dataRequestRepository.UpdateToCompleteWithDuplicates(req);
 
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
         }

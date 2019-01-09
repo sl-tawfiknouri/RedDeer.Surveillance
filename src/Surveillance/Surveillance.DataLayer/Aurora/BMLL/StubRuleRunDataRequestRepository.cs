@@ -21,7 +21,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             return new MarketDataRequest[0];
         }
 
-        public async Task UpdateToComplete(IReadOnlyCollection<MarketDataRequest> requests)
+        public async Task UpdateToCompleteWithDuplicates(IReadOnlyCollection<MarketDataRequest> requests)
         {
         }
     }

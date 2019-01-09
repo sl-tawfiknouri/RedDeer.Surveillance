@@ -35,12 +35,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
 
             var marketDataRequest =
                 new MarketDataRequest(
+                    null,
                     "XLON",
                     "entsbp",
                     new InstrumentIdentifiers { Id = "1" },
                     DateTime.UtcNow,
                     DateTime.UtcNow.AddHours(1),
-                    "1");
+                    "2",
+                    true);
 
             await repo.CreateDataRequest(marketDataRequest);
         }
@@ -56,9 +58,34 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
 
             var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(config), _logger);
 
-            var results = await repo.DataRequestsForRuleRun("13");
+            var results = await repo.DataRequestsForRuleRun("2");
 
             Assert.IsNotNull(results);
+        }
+
+        [Test]
+        [Explicit]
+        public async Task GetDataRequests_UpdatesAsExpected()
+        {
+            var config = new DataLayerConfiguration
+            {
+                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
+            };
+
+            var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(config), _logger);
+
+            var marketDataRequest =
+                new MarketDataRequest(
+                    "1",
+                    "XLON",
+                    "entsbp",
+                    new InstrumentIdentifiers { Id = "1" },
+                    DateTime.UtcNow,
+                    DateTime.UtcNow.AddHours(1),
+                    "2",
+                    true);
+
+            await repo.UpdateToComplete(new [] { marketDataRequest});
         }
     }
 }

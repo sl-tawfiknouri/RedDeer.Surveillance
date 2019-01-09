@@ -45,19 +45,19 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         }
 
         [Test]
-        public async Task Submit_DoesNothing_When_BmllRequests_Null()
+        public async Task Submit_ReschedulesRun_When_BmllRequests_Null()
         {
             var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
 
-            await manager.Submit(null);
+            await manager.Submit("a", null);
 
             A
                 .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
                 .MustNotHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun(A<List<MarketDataRequestDataSource>>.Ignored))
-                .MustNotHaveHappened();
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequestDataSource>>.Ignored))
+                .MustHaveHappened();
         }
 
         [Test]
@@ -70,14 +70,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
                 new MarketDataRequestDataSource(DataSource.Bmll, BuildRequest())
             };
 
-            await manager.Submit(request);
+            await manager.Submit("a", request);
 
             A
                 .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
                 .MustHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun(A<List<MarketDataRequestDataSource>>.Ignored))
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequestDataSource>>.Ignored))
                 .MustHaveHappened();
         }
 

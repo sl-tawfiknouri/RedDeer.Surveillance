@@ -54,7 +54,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             var markitRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Markit)?.ToList();
             var otherRequests = dataRequestWithSource.Where(i => i.Key != DataSource.Bmll && i.Key != DataSource.Markit).SelectMany(i => i).ToList();
 
-            await SubmitToBmllAndFactset(bmllRequests);
+            await SubmitToBmllAndFactset(ruleRunId, bmllRequests);
             await SubmitToMarkit(markitRequests);
             await SubmitOther(otherRequests);
 
@@ -71,7 +71,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
         /// <summary>
         /// BMLL does not provide the full set of daily summary data so we have to fetch this from fact set
         /// </summary>
-        private async Task SubmitToBmllAndFactset(List<MarketDataRequestDataSource> bmllRequests)
+        private async Task SubmitToBmllAndFactset(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
         {
             if (bmllRequests == null)
             {
@@ -89,9 +89,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             await _factsetDataRequestManager.Submit(bmllRequests);
 
             // performs rescheduling as a side effect
-            await _bmllDataRequestManager.Submit(bmllRequests);
+            await _bmllDataRequestManager.Submit(ruleRunId, bmllRequests);
         }
-
 
         private async Task SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
         {

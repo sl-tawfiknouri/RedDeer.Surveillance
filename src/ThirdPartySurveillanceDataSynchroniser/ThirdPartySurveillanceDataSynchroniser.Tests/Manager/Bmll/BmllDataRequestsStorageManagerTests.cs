@@ -7,6 +7,7 @@ using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
 {

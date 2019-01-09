@@ -5,6 +5,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces
 {
     public interface IBmllDataRequestsRescheduleManager
     {
-        Task RescheduleRuleRun(List<MarketDataRequestDataSource> bmllRequests);
+        Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests);
     }
 }

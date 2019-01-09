@@ -5,6 +5,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces
 {
     public interface IBmllDataRequestManager
     {
-        Task Submit(List<MarketDataRequestDataSource> bmllRequests);
+        Task Submit(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests);
     }
 }

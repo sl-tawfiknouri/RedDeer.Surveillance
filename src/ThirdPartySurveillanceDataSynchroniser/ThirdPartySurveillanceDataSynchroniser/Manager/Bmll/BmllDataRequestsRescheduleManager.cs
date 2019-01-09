@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.System.DataLayer.Processes.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
@@ -18,32 +19,35 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
 
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
+        private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ISystemProcessOperationRuleRunRepository _ruleRunRepository;
+        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly ILogger<BmllDataRequestsRescheduleManager> _logger;
 
         public BmllDataRequestsRescheduleManager(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
+            IRuleRunDataRequestRepository dataRequestRepository,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ISystemProcessOperationRuleRunRepository ruleRunRepository,
             ILogger<BmllDataRequestsRescheduleManager> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
+
+            _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
             _ruleRunRepository = ruleRunRepository ?? throw new ArgumentNullException(nameof(ruleRunRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RescheduleRuleRun(List<MarketDataRequestDataSource> bmllRequests)
+        public async Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
         {
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager beginning process");
 
-            if (bmllRequests == null
-                || !bmllRequests.Any())
+            if (string.IsNullOrWhiteSpace(ruleRunId))
             {
-                _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process after null or no bmll requests passed to it");
+                _logger.LogError($"BmllDataRequestsRescheduleManager had a null or empty rule run id. Returning");
                 return;
             }
 
@@ -51,16 +55,20 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             if (!ruleRunIds.Any())
             {
-                _logger?.LogWarning($"BmllDataRequestsRescheduleManager completing process did not find any rule run ids");
+                _logger?.LogWarning(
+                    $"BmllDataRequestsRescheduleManager completing process did not find any rule run ids");
                 return;
             }
 
-            var rulesToReschedule = await _ruleRunRepository.Get(ruleRunIds);
+            var rulesToReschedule = await _ruleRunRepository.Get(new[] {ruleRunId});
 
             foreach (var rule in rulesToReschedule)
             {
                 await RescheduleRuleRun(rule);
             }
+
+            var req = bmllRequests?.Select(bm => bm.DataRequest).ToList();
+            await _dataRequestRepository.UpdateToComplete(req);
 
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
         }

@@ -17,17 +17,20 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         private readonly ILogger<RuleRunDataRequestRepository> _logger;
 
         private const string CreateDataRequestSql = @"
-            INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime, 0);";
+            INSERT INTO RuleDataRequest(MarketIdentifierCode, SystemProcessOperationRuleRunId, FinancialInstrumentId, StartTime, EndTime, Completed) VALUES(@MarketIdentifierCode, @SystemProcessOperationRuleRunId, @FinancialInstrumentId, @StartTime, @EndTime, @Completed);";
 
         private const string CheckDataRequestSql = @"
             SELECT EXISTS(SELECT * FROM RuleDataRequest WHERE SystemProcessOperationRuleRunId = @ruleRunId);";
 
         private const string GetDataRequestSql = @"
             SELECT DISTINCT
+                 rdr.Id as Id,
+                 rdr.MarketIdentifierCode,
                  rdr.SystemProcessOperationRuleRunId,
                  rdr.FinancialInstrumentId,
                  rdr.StartTime,
                  rdr.EndTime,
+                 rdr.Completed,
                  fi.Id as InstrumentId,
                  fi.ReddeerId as InstrumentReddeerId,
                  fi.ClientIdentifier as InstrumentClientIdentifier,
@@ -51,6 +54,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
              LEFT OUTER JOIN FinancialInstruments as fi
              on rdr.FinancialInstrumentId = fi.Id
              WHERE rdr.SystemProcessOperationRuleRunId = @ruleRunId;";
+
+        private const string UpdateDataRequestSqlToComplete = @"
+                UPDATE RuleDataRequest SET Completed = 1 WHERE Id = @Id;";
 
         public RuleRunDataRequestRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -100,6 +106,42 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             }
 
             return new MarketDataRequest[0];
+        }
+
+        public async Task UpdateToComplete(IReadOnlyCollection<MarketDataRequest> requests)
+        {
+            if (requests == null
+                || !requests.Any())
+            {
+                _logger.LogInformation($"BmllDataRequestRepository received null or empty market data requests");
+                return;
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                var ids = requests.Select(req => req.Id).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
+
+                _logger.LogInformation($"BmllDataRequestRepository updating market data requests to set them to complete");
+                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(UpdateDataRequestSqlToComplete, new { Id = ids }))
+                {
+                     await conn;
+
+                    _logger.LogInformation($"BmllDataRequestRepository updated market data requests to set them to complete");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Bmll data request repository error for DataRequestsForRuleRun {e.Message} - {e?.InnerException?.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
         }
 
         public async Task CreateDataRequest(MarketDataRequest request)
@@ -170,6 +212,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
         private MarketDataRequest Map(MarketDataRequestDto re)
         {
             return new MarketDataRequest(
+                re.Id,
                 re.MarketIdentifierCode,
                 re.InstrumentCfi,
                 new InstrumentIdentifiers(
@@ -194,7 +237,8 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                     re.InstrumentUnderlyingClientIdentifier),
                 re.StartTime,
                 re.EndTime,
-                re.SystemProcessOperationRuleRunId);
+                re.SystemProcessOperationRuleRunId,
+                re.Completed);
         }
 
         public class MarketDataRequestDto
@@ -206,13 +250,17 @@ namespace Surveillance.DataLayer.Aurora.BMLL
 
             public MarketDataRequestDto(MarketDataRequest dto)
             {
+                Id = dto.Id;
                 SystemProcessOperationRuleRunId = dto.SystemProcessOperationRuleRunId;
-                MarketIdentifierCode = dto.MarketIdentifierCode;
-                InstrumentCfi = dto.Cfi;
+                MarketIdentifierCode = dto.MarketIdentifierCode?.ToUpper();
+                InstrumentCfi = dto.Cfi?.ToUpper();
                 FinancialInstrumentId = dto.Identifiers.Id;
                 StartTime = dto.UniverseEventTimeFrom;
                 EndTime = dto.UniverseEventTimeTo;
+                Completed = dto.IsCompleted;
             }
+
+            public string Id { get; set; }
 
             public string SystemProcessOperationRuleRunId { get; set; }
             public string MarketIdentifierCode { get; set; }
@@ -220,6 +268,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             public DateTime? StartTime { get; set; }
             public DateTime? EndTime { get; set; }
             public string InstrumentCfi { get; set; }
+            public bool Completed { get; set; }
 
             public string InstrumentId { get; set; }
             public string InstrumentReddeerId { get; set; }

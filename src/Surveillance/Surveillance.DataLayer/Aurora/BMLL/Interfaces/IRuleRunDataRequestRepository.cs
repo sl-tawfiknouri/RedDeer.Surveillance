@@ -9,5 +9,6 @@ namespace Surveillance.DataLayer.Aurora.BMLL.Interfaces
         Task CreateDataRequest(MarketDataRequest request);
         Task<bool> HasDataRequestForRuleRun(string ruleRunId);
         Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForRuleRun(string ruleRunId);
+        Task UpdateToComplete(IReadOnlyCollection<MarketDataRequest> requests);
     }
 }

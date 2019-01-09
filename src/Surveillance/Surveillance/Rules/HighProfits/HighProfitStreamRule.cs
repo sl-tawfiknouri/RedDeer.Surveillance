@@ -189,11 +189,11 @@ namespace Surveillance.Rules.HighProfits
             var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderPosition == OrderPositions.BUY 
-                || lt.OrderPosition == OrderPositions.SHORT).ToList());
+                || lt.OrderPosition == OrderPositions.COVER).ToList());
 
             var sells = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderPosition == OrderPositions.SELL
-                || lt.OrderPosition == OrderPositions.COVER).ToList());
+                || lt.OrderPosition == OrderPositions.SHORT).ToList());
 
             var exchangeRateProfitsTask =
                 _exchangeRateProfitCalculator.ExchangeRateMovement(

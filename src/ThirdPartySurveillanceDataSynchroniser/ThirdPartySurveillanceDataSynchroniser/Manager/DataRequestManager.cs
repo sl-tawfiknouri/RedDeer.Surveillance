@@ -85,7 +85,10 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
 
             _logger.LogInformation($"DataRequestManager received {bmllRequests.Count} market data requests for BMLL (not deduplicated)");
 
+            // does not reschedule
             await _factsetDataRequestManager.Submit(bmllRequests);
+
+            // performs rescheduling as a side effect
             await _bmllDataRequestManager.Submit(bmllRequests);
         }
 

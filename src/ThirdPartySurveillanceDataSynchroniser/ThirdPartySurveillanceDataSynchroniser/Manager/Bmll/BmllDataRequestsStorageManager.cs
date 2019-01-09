@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
@@ -33,8 +34,17 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             var selectMany = timeBarPairs.SelectMany(x => x.Response.MinuteBars).ToList();
+            var figiGroups = selectMany.GroupBy(o => o.Figi);
 
-            await _repository.Save(selectMany);
+            // deduplicate in memory for performance boost
+            var deduplicatedBars = new List<MinuteBarDto>();
+            foreach (var grp in figiGroups)
+            {
+                var firstByDateTime = grp.GroupBy(o => o.DateTime).Select(oo => oo.FirstOrDefault()).ToList();
+                deduplicatedBars.AddRange(firstByDateTime);
+            }
+
+            await _repository.Save(deduplicatedBars);
 
             _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");
         }

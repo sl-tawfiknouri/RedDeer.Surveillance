@@ -12,6 +12,6 @@ START TRANSACTION;
 
  	ALTER TABLE RuleDataRequest ADD UNIQUE INDEX (SystemProcessOperationRuleRunId, FinancialInstrumentId, MarketIdentifierCode, StartTime, EndTime);
 
-	 DROP TABLE MarketData;
+    DROP TABLE MarketData;
 
 COMMIT;

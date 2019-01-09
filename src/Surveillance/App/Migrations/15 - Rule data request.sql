@@ -10,6 +10,8 @@ START TRANSACTION;
 
  CREATE TABLE RuleDataRequest(Id INT auto_increment PRIMARY KEY, SystemProcessOperationRuleRunId INT NOT NULL, FinancialInstrumentId INT NOT NULL, MarketIdentifierCode nvarchar(20), StartTime DATETIME NOT NULL, EndTime DATETIME NOT NULL, Completed BIT NOT NULL, FOREIGN KEY (SystemProcessOperationRuleRunId) REFERENCES SystemProcessOperationRuleRun(Id), FOREIGN KEY (FinancialInstrumentId) REFERENCES FinancialInstruments(Id));
 
- DROP TABLE MarketData;
+ 	ALTER TABLE RuleDataRequest ADD UNIQUE INDEX (SystemProcessOperationRuleRunId, FinancialInstrumentId, MarketIdentifierCode, StartTime, EndTime);
+
+	 DROP TABLE MarketData;
 
 COMMIT;

@@ -30,7 +30,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Shell
                 var response = await httpClient.GetAsync(HeartbeatRoute, token);
 
                 if (!response.IsSuccessStatusCode)
-                    _logger.LogError($"HEARTBEAT FOR FACTSET TIME BAR DATA API REPOSITORY NEGATIVE");
+                    _logger.LogError($"HEARTBEAT NEGATIVE FOR FACTSET TIME BAR API REPOSITORY");
                 else
                     _logger.LogInformation($"HEARTBEAT POSITIVE FOR FACTSET TIME BAR API REPOSITORY");
 
@@ -38,7 +38,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Shell
             }
             catch (Exception e)
             {
-                _logger.LogError($"HEARTBEAT FOR FACTSET TIME BAR API REPOSITORY NEGATIVE", e);
+                _logger.LogError($"HEARTBEAT NEGATIVE FOR FACTSET TIME BAR API REPOSITORY", e);
             }
 
             return false;

@@ -184,20 +184,21 @@ namespace Surveillance.Scheduler
             _universeCompletionLogger.InitiateEventLogger(universe);
             player.Subscribe(_universeCompletionLogger);
 
-            var subscriber = _analyticsSubscriber.Build(opCtx.Id);
-            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
+            var universeAlertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();
+            alertStream.Subscribe(universeAlertSubscriber);
 
-            alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
-            player.Subscribe(subscriber);
+
+            var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
+            player.Subscribe(universeAnalyticsSubscriber);
 
             _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
             player.Play(universe);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
-            await _ruleAnalyticsRepository.Create(subscriber.Analytics);
-            await _alertsRepository.Create(alertSubscriber.Analytics);
+            await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
+            await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();

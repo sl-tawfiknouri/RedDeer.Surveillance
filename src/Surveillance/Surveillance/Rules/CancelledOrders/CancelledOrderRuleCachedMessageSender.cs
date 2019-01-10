@@ -54,7 +54,7 @@ namespace Surveillance.Rules.CancelledOrders
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush(ISystemProcessOperationRunRuleContext opCtx)
+        public int Flush()
         {
             lock (_lock)
             {
@@ -63,7 +63,7 @@ namespace Surveillance.Rules.CancelledOrders
                 foreach (var msg in _messages)
                 {
                     _logger.LogInformation($"Cancelled Order Rule Cached Message Sender sending message {msg.Security?.Identifiers} to message bus");
-                    _messageSender.Send(msg, opCtx);
+                    _messageSender.Send(msg);
                 }
 
                 var count = _messages.Count;

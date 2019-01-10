@@ -23,7 +23,7 @@ namespace Surveillance.Rules.CancelledOrders
                 caseMessageSender)
         { }
 
-        public async Task Send(ICancelledOrderRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ICancelledOrderRuleBreach ruleBreach)
         {
             if (ruleBreach?.Trades == null
                 || !ruleBreach.Trades.Get().Any())
@@ -32,7 +32,7 @@ namespace Surveillance.Rules.CancelledOrders
             }
 
             var description = BuildDescription(ruleBreach.Parameters, ruleBreach, ruleBreach.Trades.Get().FirstOrDefault());
-            await Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description);
         }
 
         private string BuildDescription(

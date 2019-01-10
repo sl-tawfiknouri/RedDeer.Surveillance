@@ -5,7 +5,7 @@ namespace Surveillance.Rules.HighVolume.Interfaces
     public interface IHighVolumeRuleCachedMessageSender
     {
         void Send(IHighVolumeRuleBreach ruleBreach);
-        int Flush(ISystemProcessOperationRunRuleContext ruleCtx);
+        int Flush();
         void Delete();
     }
 }

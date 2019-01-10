@@ -13,6 +13,5 @@ namespace Surveillance.DataLayer.Configuration
         public string ClientServiceUrl { get; set; }
         public string BmllServiceUrl { get; set; }
         public string AuroraConnectionString { get; set; }
-        public string BmllServiceUrl { get; set; }
     }
 }

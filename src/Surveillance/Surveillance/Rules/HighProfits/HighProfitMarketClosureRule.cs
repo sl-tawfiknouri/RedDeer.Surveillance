@@ -35,7 +35,6 @@ namespace Surveillance.Rules.HighProfits
                 parameters, 
                 ruleCtx,
                 alertStream,
-                true,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,

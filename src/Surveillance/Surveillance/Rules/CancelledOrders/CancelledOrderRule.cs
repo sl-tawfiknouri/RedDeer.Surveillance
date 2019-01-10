@@ -188,9 +188,6 @@ namespace Surveillance.Rules.CancelledOrders
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
-
-            var alertMessage = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, null, _opCtx, true);
-            _alertStream.Add(alertMessage);
             _opCtx?.EndEvent();
         }
 

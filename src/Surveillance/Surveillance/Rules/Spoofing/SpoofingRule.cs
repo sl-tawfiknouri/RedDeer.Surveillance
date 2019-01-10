@@ -217,8 +217,6 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Spoofing Rule");
-            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
-            _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
         }
 

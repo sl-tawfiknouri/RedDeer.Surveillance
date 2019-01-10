@@ -364,9 +364,6 @@ namespace Surveillance.Rules.HighVolume
             }
             else
             {
-                // flush event
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
-                _alertStream.Add(alert);
                 _ruleCtx?.EndEvent();
             }
         }

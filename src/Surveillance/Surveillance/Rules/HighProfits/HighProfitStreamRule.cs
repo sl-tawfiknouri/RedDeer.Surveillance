@@ -28,7 +28,6 @@ namespace Surveillance.Rules.HighProfits
         private readonly IHighProfitsRuleParameters _parameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         protected readonly IUniverseAlertStream _alertStream;
-        private readonly bool _submitRuleBreaches;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -43,7 +42,6 @@ namespace Surveillance.Rules.HighProfits
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
-            bool submitRuleBreaches,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
@@ -66,7 +64,6 @@ namespace Surveillance.Rules.HighProfits
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
-            _submitRuleBreaches = submitRuleBreaches;
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
@@ -344,15 +341,6 @@ namespace Surveillance.Rules.HighProfits
                 requestTask.Wait();
                 var opCtx = _ruleCtx?.EndEvent();
                 opCtx?.EndEventWithMissingDataError();
-            }
-            else if (_submitRuleBreaches)
-            {
-                Logger.LogInformation($"High Profit Stream Rule submitting rule breach flush command to the alert stream");
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
-                _alertStream.Add(alert);
-
-                var opCtx = _ruleCtx?.EndEvent();
-                opCtx?.EndEvent();
             }
             else
             {

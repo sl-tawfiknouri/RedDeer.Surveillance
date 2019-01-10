@@ -457,9 +457,6 @@ namespace Surveillance.Rules.WashTrade
         protected override void EndOfUniverse()
         {
             _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
-
-            var alertStream = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, null, RuleCtx, true);
-            _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
         }
 

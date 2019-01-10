@@ -92,6 +92,7 @@ namespace Surveillance.Rules
                 Status = ComplianceCaseStatus.Unset,
                 Type = ComplianceCaseType.Unset,
                 ReportedOn = DateTime.Now,
+                StatusUpdatedOn = DateTime.Now,
                 Venue = venue,
                 StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.Now),
                 EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now),
@@ -116,6 +117,7 @@ namespace Surveillance.Rules
                         DataItemType = DataItemType.TradeOrder,
                         Type = ComplianceCaseLogType.Unset,
                         Notes = string.Empty,
+                        CreatedOn = DateTime.Now
                     })
                 .ToArray();
         }

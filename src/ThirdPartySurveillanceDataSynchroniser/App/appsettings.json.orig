@@ -6,5 +6,9 @@
   "CaseMessageQueueName": "dev-surveillance-reddeer-casemessage",
   "ClientServiceUrlAndPort": "http://localhost:8080",
   "SurveillanceUserApiAccessToken": "uwat",
+<<<<<<< HEAD
+  "BmllServiceUrlAndPort" :  "http://localhost:5000" 
+=======
   "BmllServiceUrlAndPort": "http://localhost:5000"
+>>>>>>> origin/master
 }

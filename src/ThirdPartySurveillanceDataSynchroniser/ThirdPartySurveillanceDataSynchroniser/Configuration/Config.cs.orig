@@ -1,18 +1,25 @@
 ﻿using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.DataLayer.Interfaces;
+using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.DataLayer.Configuration
+namespace ThirdPartySurveillanceDataSynchroniser.Configuration
 {
-    public class DataLayerConfiguration : IDataLayerConfiguration
+    public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration
     {
-        public bool IsEc2Instance { get; set; }
         public string DataSynchroniserRequestQueueName { get; set; }
         public string ScheduledRuleQueueName { get; set; }
         public string CaseMessageQueueName { get; set; }
         public string ScheduleRuleDistributedWorkQueueName { get; set; }
+        public string AuroraConnectionString { get; set; }
+        public string SurveillanceAuroraConnectionString { get; set; }
+
+<<<<<<< HEAD
+        
+=======
+
+>>>>>>> origin/master
         public string SurveillanceUserApiAccessToken { get; set; }
         public string ClientServiceUrl { get; set; }
-        public string BmllServiceUrl { get; set; }
-        public string AuroraConnectionString { get; set; }
         public string BmllServiceUrl { get; set; }
     }
 }

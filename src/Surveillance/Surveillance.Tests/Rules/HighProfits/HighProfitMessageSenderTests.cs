@@ -71,7 +71,7 @@ namespace Surveillance.Tests.Rules.HighProfits
                     false,
                     exchangeRateProfitBreakdown);
 
-            messageSender.Send(breach, _ruleCtx);
+            messageSender.Send(breach);
         }
     }
 }

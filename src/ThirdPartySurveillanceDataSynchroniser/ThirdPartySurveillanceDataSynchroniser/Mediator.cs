@@ -39,13 +39,27 @@ namespace ThirdPartySurveillanceDataSynchroniser
                     task1.Wait();
                     var task1Result = task1.Result;
                     _logger.LogInformation($"Mediator factset shell heartbeat has a result of {task1Result}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"Mediator factset shell encountered an exception! {e.Message} {e.InnerException?.Message}", e);
+                }
 
+                try
+                {
                     var cts2 = new CancellationTokenSource(1000 * 15);
                     var task2 = _shellBmll.HeartBeating(cts2.Token);
                     task2.Wait();
                     var task2Result = task2.Result;
                     _logger.LogInformation($"Mediator bmll shell heartbeat has a result of {task2Result}");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"Mediator bmll shell encountered an exception! {e.Message} {e.InnerException?.Message}", e);
+                }
 
+                try
+                {
                     var cts3 = new CancellationTokenSource(1000 * 15);
                     var task3 = _shellRepo.CanHitDb(cts3);
                     task3.Wait();
@@ -54,12 +68,10 @@ namespace ThirdPartySurveillanceDataSynchroniser
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError($"Mediator encountered an exception! {e.Message} {e.InnerException?.Message}", e);
+                    _logger.LogError($"Mediator repository shell encountered an exception! {e.Message} {e.InnerException?.Message}", e);
                 }
-                finally
-                {
-                    Thread.Sleep(15 * 1000);
-                }
+
+                Thread.Sleep(15 * 1000);
             }
         }
     }

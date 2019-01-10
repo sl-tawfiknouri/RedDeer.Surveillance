@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
     <ProjectReference Include="..\ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.csproj" />
   </ItemGroup>
 

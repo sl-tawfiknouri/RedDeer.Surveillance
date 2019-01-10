@@ -8,8 +8,12 @@ using DasMulli.Win32.ServiceUtils;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.DataLayer.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;
+using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
@@ -37,6 +41,10 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
                 Container = new Container();
                 var builtConfig = BuildConfiguration();
+                Container.Inject(typeof(IAwsConfiguration), builtConfig);
+                Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+                Container.Inject(typeof(IDataLayerConfiguration), builtConfig);
+                
                 // Container.Inject(typeof(INetworkConfiguration), builtConfig);
                 // Container.Inject(typeof(IUploadConfiguration), builtConfig);
                 // Container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
@@ -47,6 +55,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 
                 Container.Configure(config =>
                 {
+                    config.IncludeRegistry<DataLayerRegistry>();
                     config.IncludeRegistry<DataSynchroniserRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });

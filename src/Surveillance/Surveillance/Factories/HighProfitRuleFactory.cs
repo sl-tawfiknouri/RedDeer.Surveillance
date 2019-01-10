@@ -74,7 +74,6 @@ namespace Surveillance.Factories
                 parameters,
                 ruleCtxStream,
                 alertStream,
-                false,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,

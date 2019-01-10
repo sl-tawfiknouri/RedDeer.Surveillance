@@ -6,5 +6,6 @@ namespace Surveillance.DataLayer.Configuration.Interfaces
     {
         string SurveillanceUserApiAccessToken { get; set; }
         string ClientServiceUrl { get; set; }
+        string BmllServiceUrl { get; set; }
     }
 }

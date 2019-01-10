@@ -43,75 +43,26 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
                 if (IsEC2Instance)
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
+                    var dynamoDBName = $"{environment}-data-synchroniser-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
-
-                    var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
-                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
-                    var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
-                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
-
-                    foreach (var kvp in marketAttributes)
-                        _dynamoConfig.Add(kvp);
-
-                    foreach (var kvp in tradeAttributes)
-                        _dynamoConfig.Add(kvp);
                 }
             }
 
-            bool.TryParse(GetSetting("DataImportServiceAutoSchedule", configurationBuilder), out var autoSchedule);
-
-            var networkConfiguration = new Config
+            var config = new Config
             {
-                // SurveillanceAuroraConnectionString = GetSetting("SurveillanceAuroraConnectionString", configurationBuilder),
-                // IsDeployedOnClientMachine = GetSetting("IsDeployedOnClientMachine", configurationBuilder),
+                DataSynchroniserRequestQueueName = GetSetting("DataSynchronizerQueueName", configurationBuilder), // american english for dev ops
+                ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
+                ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
+                CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceAuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
+                ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
+                BmllServiceUrl = GetSetting($"BmllServiceUrlAndPort", configurationBuilder)
             };
 
-            return networkConfiguration;
+            return config;
         }
-
-        //public IDataLayerConfiguration BuildData(IConfigurationRoot configurationBuilder)
-        //{
-        //    lock (_lock)
-        //    {
-        //        IsUnitTest = AppDomain
-        //            .CurrentDomain
-        //            .GetAssemblies()
-        //            .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
-
-        //        IsEC2Instance =
-        //            IsUnitTest == false &&
-        //            Amazon.Util.EC2InstanceMetadata.InstanceId != null;
-
-        //        if (IsEC2Instance)
-        //        {
-        //            var environment = GetTag("Environment");
-        //            var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
-        //            _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
-
-        //            var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
-        //            var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
-        //            var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
-        //            var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
-
-        //            foreach (var kvp in marketAttributes)
-        //                _dynamoConfig.Add(kvp);
-
-        //            foreach (var kvp in tradeAttributes)
-        //                _dynamoConfig.Add(kvp);
-        //        }
-        //    }
-
-        //    return new DataLayerConfiguration
-        //    {
-        //        ScheduledRuleQueueName = GetSetting("ScheduledRuleQueueName", configurationBuilder),
-        //        ScheduleRuleDistributedWorkQueueName = GetSetting("ScheduleRuleDistributedWorkQueueName", configurationBuilder),
-        //        CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
-        //        ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
-        //        SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-        //        AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
-        //    };
-        //}
 
         private string GetSetting(string name, IConfigurationRoot config)
         {

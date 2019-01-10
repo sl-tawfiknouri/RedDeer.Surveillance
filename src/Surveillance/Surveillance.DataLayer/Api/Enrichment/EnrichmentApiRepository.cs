@@ -20,7 +20,7 @@ namespace Surveillance.DataLayer.Api.Enrichment
         public EnrichmentApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<EnrichmentApiRepository> logger) 
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

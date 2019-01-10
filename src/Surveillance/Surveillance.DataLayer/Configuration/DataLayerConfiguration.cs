@@ -11,5 +11,6 @@ namespace Surveillance.DataLayer.Configuration
         public string SurveillanceUserApiAccessToken { get; set; }
         public string ClientServiceUrl { get; set; }
         public string AuroraConnectionString { get; set; }
+        public string BmllServiceUrl { get; set; }
     }
 }

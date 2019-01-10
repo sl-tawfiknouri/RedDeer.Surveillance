@@ -2,6 +2,8 @@
 using NLog.Extensions.Logging;
 using StructureMap;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
+using ThirdPartySurveillanceDataSynchroniser.Shell;
+using ThirdPartySurveillanceDataSynchroniser.Shell.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser
 {
@@ -14,6 +16,10 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IMediator>().Use<Mediator>();
+
+            For<IShellFactset>().Use<ShellFactset>();
+            For<IShellBmll>().Use<ShellBmll>();
+            For<IShellRepo>().Use<ShellRepo>();
         }
     }
 }

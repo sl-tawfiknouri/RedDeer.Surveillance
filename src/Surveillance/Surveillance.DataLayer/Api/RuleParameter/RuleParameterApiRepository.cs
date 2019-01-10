@@ -20,7 +20,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
         public RuleParameterApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<RuleParameterApiRepository> logger) 
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

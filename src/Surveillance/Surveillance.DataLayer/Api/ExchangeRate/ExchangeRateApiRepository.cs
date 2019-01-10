@@ -20,7 +20,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
         public ExchangeRateApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
             ILogger<ExchangeRateApiRepository> logger)
-            : base(dataLayerConfiguration)
+            : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

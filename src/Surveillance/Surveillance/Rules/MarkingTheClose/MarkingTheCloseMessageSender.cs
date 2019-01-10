@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.MarkingTheClose
 {
@@ -19,16 +18,16 @@ namespace Surveillance.Rules.MarkingTheClose
                 caseMessageSender)
         { }
 
-        public async Task Send(IMarkingTheCloseBreach breach, ISystemProcessOperationRunRuleContext ruleCtx)
+        public async Task Send(IMarkingTheCloseBreach breach)
         {
             if (breach == null)
             {
-                Logger.LogInformation($"MarkingTheCloseMessageSender received a null breach for rule ctx {ruleCtx.Id()}. Returning.");
+                Logger.LogInformation($"MarkingTheCloseMessageSender received a null breach for rule ctx. Returning.");
                 return;
             }
 
             var description = BuildDescription(breach);
-            await Send(breach, description, ruleCtx);
+            await Send(breach, description);
         }
 
         private string BuildDescription(IMarkingTheCloseBreach ruleBreach)

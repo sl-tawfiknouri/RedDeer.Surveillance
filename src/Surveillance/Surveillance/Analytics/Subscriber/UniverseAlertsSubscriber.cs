@@ -253,7 +253,7 @@ namespace Surveillance.Analytics.Subscriber
             SetIsBackTest(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber marking the close adding alert to marking the close message sender");
-            _markingTheCloseMessageSender.Send(ruleBreach, alert.Context);
+            _markingTheCloseMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber marking the close incrementing raw and adjusted alert count by 1");
             Analytics.MarkingTheCloseAlertsRaw += 1;
@@ -276,7 +276,7 @@ namespace Surveillance.Analytics.Subscriber
             SetIsBackTest(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber spoofing adding alert to spoofing message sender");
-            _spoofingMessageSender.Send(ruleBreach, alert.Context);
+            _spoofingMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber spoofing incrementing raw and adjusted alert count by 1");
             Analytics.SpoofingAlertsRaw += 1;

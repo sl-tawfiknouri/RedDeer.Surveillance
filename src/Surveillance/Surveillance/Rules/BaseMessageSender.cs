@@ -117,6 +117,7 @@ namespace Surveillance.Rules
                         DataItemType = DataItemType.TradeOrder,
                         Type = ComplianceCaseLogType.Unset,
                         Notes = string.Empty,
+                        CreatedOn = DateTime.Now
                     })
                 .ToArray();
         }

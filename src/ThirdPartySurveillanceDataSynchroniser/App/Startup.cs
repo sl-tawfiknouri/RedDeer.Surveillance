@@ -6,8 +6,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using StructureMap;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.DataLayer.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;
+using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
 {
@@ -23,8 +26,12 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             var container = new Container();
 
             var builtConfig = BuildConfiguration();
+            container.Inject(typeof(IAwsConfiguration), builtConfig);
+            container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+            container.Inject(typeof(IDataLayerConfiguration), builtConfig);
+
             //container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
-           // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
+            // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
             // var builtDataConfig = BuildDataConfiguration();
             // container.Inject(typeof(IAwsConfiguration), builtDataConfig);

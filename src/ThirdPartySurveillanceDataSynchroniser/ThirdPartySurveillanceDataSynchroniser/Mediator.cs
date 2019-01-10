@@ -50,7 +50,7 @@ namespace ThirdPartySurveillanceDataSynchroniser
                     var task3 = _shellRepo.CanHitDb(cts3);
                     task3.Wait();
                     var task3Result = task3.Result;
-                    _logger.LogInformation($"Mediator bmll shell heartbeat has a result of {task3Result}");
+                    _logger.LogInformation($"Mediator repository shell heartbeat has a result of {task3Result}");
                 }
                 catch (Exception e)
                 {

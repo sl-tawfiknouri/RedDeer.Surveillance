@@ -197,6 +197,7 @@ namespace Surveillance.Scheduler
             player.Play(universe);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
+            universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 

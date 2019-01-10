@@ -327,6 +327,8 @@ namespace Surveillance.Analytics.Subscriber
 
         public void Flush()
         {
+            _logger?.LogInformation($"UniverseAlertsSubscriber flush initiated.");
+
             WashTradeFlush();
             SpoofingFlush();
 
@@ -337,6 +339,8 @@ namespace Surveillance.Analytics.Subscriber
             HighProfitsFlush();
 
             CancelledOrdersFlush();
+
+            _logger?.LogInformation($"UniverseAlertsSubscriber flush completed.");
         }
 
         public AlertAnalytics Analytics { get; }

@@ -15,5 +15,6 @@ namespace Surveillance.System.DataLayer.Processes.Interfaces
         string RuleParameterId { get; set; }
         int RuleTypeId { get; set; }
         bool IsBackTest { get; set; }
+        bool IsForceRun { get; set; }
     }
 }

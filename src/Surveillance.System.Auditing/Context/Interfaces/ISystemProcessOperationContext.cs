@@ -28,7 +28,8 @@ namespace Surveillance.System.Auditing.Context.Interfaces
             bool isBackTest,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
-            string correlationId);
+            string correlationId,
+            bool ruleRunMode);
 
         ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
             string queueMessageId,

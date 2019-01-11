@@ -114,7 +114,8 @@ namespace Surveillance.Universe.Subscribers
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
-                    execution.CorrelationId);
+                    execution.CorrelationId,
+                    execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
             var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream, runMode);

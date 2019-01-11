@@ -110,7 +110,8 @@ namespace Surveillance.Universe.Subscribers
                         execution.IsBackTest,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
-                        execution.CorrelationId);
+                        execution.CorrelationId,
+                        execution.IsForceRerun);
 
             var ruleCtxMarketClosure = opCtx
                 .CreateAndStartRuleRunContext(
@@ -121,7 +122,8 @@ namespace Surveillance.Universe.Subscribers
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
-                    execution.CorrelationId);
+                    execution.CorrelationId,
+                    execution.IsForceRerun);
 
             var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, execution);
 

@@ -115,7 +115,8 @@ namespace Surveillance.System.Auditing.Context
             bool isBackTest,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
-            string correlationId)
+            string correlationId,
+            bool ruleRunMode)
         {
             var ctx = _runRuleContextFactory.Build(this);
             var startEvent = new SystemProcessOperationRuleRun
@@ -129,7 +130,8 @@ namespace Surveillance.System.Auditing.Context
                 ScheduleRuleEnd = ruleScheduleEnd,
                 CorrelationId = correlationId,
                 IsBackTest = isBackTest,
-                RuleTypeId = ruleTypeId
+                RuleTypeId = ruleTypeId,
+                IsForceRun = ruleRunMode
             };
 
             ctx.StartEvent(startEvent);

@@ -33,6 +33,11 @@ namespace Surveillance.System.DataLayer.Processes
         public bool IsBackTest { get; set; }
 
         /// <summary>
+        /// Rule run mode
+        /// </summary>
+        public bool IsForceRun { get; set; }
+
+        /// <summary>
         /// The rule being executed
         /// </summary>
         public string RuleDescription { get; set; }

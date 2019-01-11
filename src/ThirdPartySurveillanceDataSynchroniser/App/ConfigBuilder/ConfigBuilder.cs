@@ -43,7 +43,7 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
                 if (IsEC2Instance)
                 {
                     var environment = GetTag("Environment");
-                    var dynamoDBName = $"{environment}-data-synchroniser-{GetTag("Customer")}".ToLower();
+                    var dynamoDBName = $"{environment}-data-synchronizer-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
                 }
             }

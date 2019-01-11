@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using MathNet.Numerics.Distributions;
@@ -20,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
         private readonly IPulsatingHeartbeat _heartbeat;
         private readonly object _lock = new object();
         private volatile bool _initiated;
-        private ExchangeFrame _lastFrame;
+        private MarketTimeBarCollection _lastFrame;
 
         private decimal _cancellationOfPositionVolumeThresholdPercentage = 0.8m; // % of position cancelled aggregated over all trades in a given direction
         private decimal _cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
@@ -37,7 +37,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             lock (_lock)
             {
@@ -90,7 +90,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private Order[] SetCancellationOrder(SecurityTick cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, Order[] orders)
+        private Order[] SetCancellationOrder(FinancialInstrumentTimeBar cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, Order[] orders)
         {
             switch (cancellationOrderTactic)
             {
@@ -112,7 +112,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders;
         }
 
-        private Order[] CancellationOrdersByValue(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByValue(FinancialInstrumentTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -142,7 +142,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] CancellationOrdersByRatio(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByRatio(FinancialInstrumentTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -172,7 +172,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] CancellationOrdersByPercentOfVolume(SecurityTick security, int totalOrders)
+        private Order[] CancellationOrdersByPercentOfVolume(FinancialInstrumentTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -204,7 +204,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] SingularCancelledOrder(SecurityTick security, Market exchange)
+        private Order[] SingularCancelledOrder(FinancialInstrumentTimeBar security, Market exchange)
         {
             var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
@@ -212,9 +212,9 @@ namespace TestHarness.Engine.OrderGenerator
             return new[] { order };
         }
 
-        private Order OrderForValue(OrderStatus status, decimal value, SecurityTick security, Market exchange)
+        private Order OrderForValue(OrderStatus status, decimal value, FinancialInstrumentTimeBar security, Market exchange)
         {
-            var volume = (int)((value / security.Spread.Ask.Value) + 1);
+            var volume = (int)((value / security.SpreadTimeBar.Ask.Value) + 1);
             var orderPosition = (OrderPositions)DiscreteUniform.Sample(0, 3);
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?) DateTime.UtcNow : null;
@@ -234,9 +234,9 @@ namespace TestHarness.Engine.OrderGenerator
                     filledDate,
                     OrderTypes.MARKET,
                     orderPosition,
-                    security.Spread.Price.Currency,
-                    security.Spread.Price,
-                    security.Spread.Price,
+                    security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price,
+                    security.SpreadTimeBar.Price,
                     volume,
                     volume,
                     null,

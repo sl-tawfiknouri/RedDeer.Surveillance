@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.EquityFile.Interfaces;
-using DomainV2.Equity.Frames;
-using DomainV2.Equity.Frames.Interfaces;
+using DomainV2.Equity.TimeBars;
+using DomainV2.Equity.TimeBars.Interfaces;
 using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.EquityFile
 {
-    public class UploadEquityFileProcessor : BaseUploadFileProcessor<SecurityTickCsv, ExchangeFrame>, IUploadEquityFileProcessor
+    public class UploadEquityFileProcessor : BaseUploadFileProcessor<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection>, IUploadEquityFileProcessor
     {
         private readonly ISecurityCsvToDtoMapper _csvToDtoMapper;
 
@@ -22,7 +22,7 @@ namespace DataImport.Disk_IO.EquityFile
             _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
         }
         
-        protected override SecurityTickCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override FinancialInstrumentTimeBarCsv MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             Logger.LogInformation($"UploadEquityFileProcessor about to map a raw record with row id {rowId}");
             if (rawRecord == null)
@@ -32,7 +32,7 @@ namespace DataImport.Disk_IO.EquityFile
             }
 
             Logger.LogInformation($"UploadEquityFileProcessor mapping raw record from csv reader to dto");
-            var tickCsv = new SecurityTickCsv
+            var tickCsv = new FinancialInstrumentTimeBarCsv
             {
                 Timestamp = PreProcess(rawRecord["Timestamp"]),
                 MarketIdentifierCode = PreProcess(rawRecord["MarketIdentifierCode"]),
@@ -76,9 +76,9 @@ namespace DataImport.Disk_IO.EquityFile
         }
 
         protected override void MapRecord(
-            SecurityTickCsv record,
-            List<ExchangeFrame> marketUpdates,
-            List<SecurityTickCsv> failedMarketUpdateReads)
+            FinancialInstrumentTimeBarCsv record,
+            List<MarketTimeBarCollection> marketUpdates,
+            List<FinancialInstrumentTimeBarCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
 
@@ -91,15 +91,15 @@ namespace DataImport.Disk_IO.EquityFile
 
             var matchingExchange = marketUpdates
                 .Where(to => to.Exchange?.MarketIdentifierCode == mappedRecord.Market?.MarketIdentifierCode)
-                .Where(to => to.TimeStamp == mappedRecord.TimeStamp)
+                .Where(to => to.Epoch == mappedRecord.TimeStamp)
                 .ToList();
 
             if (matchingExchange.Any())
             {
                 foreach (var match in matchingExchange)
                 {
-                    var newSecurities = new List<SecurityTick>(match.Securities) {mappedRecord};
-                    var newExch = new ExchangeFrame(match.Exchange, match.TimeStamp, newSecurities);
+                    var newSecurities = new List<FinancialInstrumentTimeBar>(match.Securities) {mappedRecord};
+                    var newExch = new MarketTimeBarCollection(match.Exchange, match.Epoch, newSecurities);
                     marketUpdates.Remove(match);
                     marketUpdates.Add(newExch);
                 }
@@ -107,7 +107,7 @@ namespace DataImport.Disk_IO.EquityFile
             else
             {
                 var exchange = new Market(string.Empty, record.MarketIdentifierCode, record.MarketName, MarketTypes.STOCKEXCHANGE);
-                var exchangeFrame = new ExchangeFrame(exchange, mappedRecord.TimeStamp, new List<SecurityTick> { mappedRecord });
+                var exchangeFrame = new MarketTimeBarCollection(exchange, mappedRecord.TimeStamp, new List<FinancialInstrumentTimeBar> { mappedRecord });
                 marketUpdates.Add(exchangeFrame);
             }
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -32,7 +32,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -47,7 +47,7 @@ namespace TestHarness.Engine.OrderGenerator
             lock (_lock)
             {
                 if (!_initialCluster
-                && _plan.EquityInstructions.CommencementInUtc <= value.TimeStamp)
+                && _plan.EquityInstructions.CommencementInUtc <= value.Epoch)
                 {
                     WashTradeInSecurityWithClustering(_plan.Sedol, value, 20);
 
@@ -56,7 +56,7 @@ namespace TestHarness.Engine.OrderGenerator
                 }
 
                 if (!_secondaryCluster
-                    && _plan.EquityInstructions.TerminationInUtc <= value.TimeStamp)
+                    && _plan.EquityInstructions.TerminationInUtc <= value.Epoch)
                 {
                     WashTradeInSecurityWithClustering(_plan.Sedol, value, 30);
 
@@ -65,7 +65,7 @@ namespace TestHarness.Engine.OrderGenerator
                 }
 
                 if (!_thirdCluster
-                    && _thirdGroupActivation <= value.TimeStamp)
+                    && _thirdGroupActivation <= value.Epoch)
                 {
                     WashTradeInSecurityWithClustering(_plan.Sedol, value, 20);
 
@@ -80,7 +80,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         }
 
-        private void WashTradeInSecurityWithClustering(string sedol, ExchangeFrame value, int clusterSize)
+        private void WashTradeInSecurityWithClustering(string sedol, MarketTimeBarCollection value, int clusterSize)
         {
             if (value == null)
             {
@@ -113,19 +113,19 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
-                    value.TimeStamp,
-                    value.TimeStamp,
+                    value.Epoch,
+                    value.Epoch,
                     null,
                     null,
                     null,
-                    value.TimeStamp.AddSeconds(i),
+                    value.Epoch.AddSeconds(i),
                     OrderTypes.LIMIT,
                     i < splitSize ? OrderPositions.SELL : OrderPositions.BUY,
                     new Currency("GBP"),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    new CurrencyAmount(security.Spread.Price.Value * 1.05m, security.Spread.Price.Currency),
-                    (int) (security.DailyVolume.Traded * 0.001m),
-                    (int) (security.DailyVolume.Traded * 0.001m),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
+                    (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
                     null,
                     null,
                     null,

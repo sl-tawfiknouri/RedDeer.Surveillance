@@ -1,14 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Firefly.MessageBus.Core" Version="1.0.0" />
+    <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.3.0" />
     <PackageReference Include="StructureMap" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DomainV2\DomainV2.csproj" />
+    <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.System.Auditing.csproj" />
+    <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
+    <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

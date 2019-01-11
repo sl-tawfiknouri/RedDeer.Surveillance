@@ -2,7 +2,7 @@
 using TestHarness.Engine.Heartbeat.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -16,7 +16,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// </summary>
     public class TradingHeartbeatSpoofingProcess : BaseTradingProcess
     {
-        private ExchangeFrame _lastFrame;
+        private MarketTimeBarCollection _lastFrame;
         private readonly IPulsatingHeartbeat _heartbeat;
 
         private volatile bool _initiated;
@@ -31,7 +31,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             lock (_lock)
             {
@@ -88,7 +88,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private Order[] SpoofedOrder(SecurityTick security, int remainingSpoofedOrders, int totalSpoofedOrders)
+        private Order[] SpoofedOrder(FinancialInstrumentTimeBar security, int remainingSpoofedOrders, int totalSpoofedOrders)
         {
             if (security == null
                 || remainingSpoofedOrders <= 0)
@@ -97,12 +97,12 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
-            var limitPriceValue = security.Spread.Bid.Value * priceOffset;
-            var limitPrice = new CurrencyAmount(limitPriceValue, security.Spread.Bid.Currency);
+            var limitPriceValue = security.SpreadTimeBar.Bid.Value * priceOffset;
+            var limitPrice = new CurrencyAmount(limitPriceValue, security.SpreadTimeBar.Bid.Currency);
 
             var individualTradeVolumeLimit = (100 / totalSpoofedOrders);
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;
-            var volume = (int)(security.Volume.Traded * volumeTarget);
+            var volume = (int)(security.SpreadTimeBar.Volume.Traded * volumeTarget);
 
             var statusChangedOn = DateTime.UtcNow.AddMinutes(-10 + remainingSpoofedOrders);
             var tradePlacedOn = statusChangedOn;
@@ -121,7 +121,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     OrderTypes.LIMIT,
                     OrderPositions.BUY,
-                    security.Spread.Price.Currency,
+                    security.SpreadTimeBar.Price.Currency,
                     limitPrice,
                     limitPrice,
                     volume,
@@ -143,9 +143,9 @@ namespace TestHarness.Engine.OrderGenerator
                 .ToArray();
         }
 
-        private Order CounterTrade(SecurityTick security)
+        private Order CounterTrade(FinancialInstrumentTimeBar security)
         {
-            var volumeToTrade = (int)Math.Round(security.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
+            var volumeToTrade = (int)Math.Round(security.SpreadTimeBar.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
             var statusChangedOn = DateTime.UtcNow;
             var tradePlacedOn = statusChangedOn;
 
@@ -163,9 +163,9 @@ namespace TestHarness.Engine.OrderGenerator
                     statusChangedOn,
                     OrderTypes.MARKET,
                     OrderPositions.SELL,
-                    security.Spread.Price.Currency,
-                    security.Spread.Price,
-                    security.Spread.Price,
+                    security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price,
+                    security.SpreadTimeBar.Price,
                     volumeToTrade,
                     volumeToTrade,
                     null,

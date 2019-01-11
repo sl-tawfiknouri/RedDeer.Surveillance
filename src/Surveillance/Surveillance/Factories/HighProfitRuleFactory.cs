@@ -3,6 +3,7 @@ using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighProfits;
@@ -27,6 +28,7 @@ namespace Surveillance.Factories
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IDataRequestMessageSender _messageSender;
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
         private readonly ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
@@ -39,6 +41,7 @@ namespace Surveillance.Factories
             IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
+            IDataRequestMessageSender messageSender,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger, 
             ILogger<MarketCloseMultiverseTransformer> transformerLogger)
@@ -51,6 +54,7 @@ namespace Surveillance.Factories
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _transformerLogger = transformerLogger ?? throw new ArgumentNullException(nameof(transformerLogger));
             _percentageCompleteFactory = percentageCompleteFactory ?? throw new ArgumentNullException(nameof(percentageCompleteFactory));
@@ -64,16 +68,19 @@ namespace Surveillance.Factories
             IUniverseAlertStream alertStream,
             DomainV2.Scheduling.ScheduledExecution scheduledExecution)
         {
+            var runMode = scheduledExecution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+
             var stream = new HighProfitStreamRule(
                 parameters,
                 ruleCtxStream,
                 alertStream,
-                false,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _messageSender,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
 
@@ -86,6 +93,8 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _messageSender,
+                runMode,
                 _logger,
                 _tradingHistoryLogger);
 

@@ -36,9 +36,19 @@ namespace Surveillance.Factories
         public IMarkingTheCloseRule Build(
             IMarkingTheCloseParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
-            return new MarkingTheCloseRule(parameters, alertStream, ruleCtx, _orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
+            return new MarkingTheCloseRule(
+                parameters,
+                alertStream,
+                ruleCtx,
+                _orderFilter, 
+                _factory,
+                _tradingHoursManager,
+                runMode,
+                _logger,
+                _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(1, 0);

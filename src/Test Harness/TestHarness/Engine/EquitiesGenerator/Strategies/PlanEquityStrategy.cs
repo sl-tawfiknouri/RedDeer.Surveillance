@@ -1,6 +1,5 @@
 ﻿using System;
-using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
@@ -20,8 +19,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             _baseStrategy = baseStrategy ?? throw new ArgumentNullException(nameof(baseStrategy));
         }
 
-        public SecurityTick AdvanceFrame(
-            SecurityTick tick,
+        public FinancialInstrumentTimeBar AdvanceFrame(
+            FinancialInstrumentTimeBar tick,
             DateTime advanceTick,
             bool walkIntraday)
         {
@@ -35,55 +34,63 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return AdjustToPlan(initialAdvancedFrame, tick);
         }
 
-        private SecurityTick AdjustToPlan(SecurityTick tick, SecurityTick precedingTick)
+        private FinancialInstrumentTimeBar AdjustToPlan(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
         {
             var adjustedSpread = AdjustedSpread(tick, precedingTick);
 
-            return new SecurityTick(
+            return new FinancialInstrumentTimeBar(
                 tick.Security,
                 adjustedSpread,
-                tick.Volume,
-                tick.DailyVolume,
+                AdjustedDailies(tick),
                 tick.TimeStamp,
-                tick.MarketCap,
-                tick.IntradayPrices,
-                tick.ListedSecurities,
                 tick.Market);
         }
 
-        private Spread AdjustedSpread(SecurityTick tick, SecurityTick precedingTick)
+        private DailySummaryTimeBar AdjustedDailies(FinancialInstrumentTimeBar tick)
+        {
+            return new DailySummaryTimeBar(
+                tick.DailySummaryTimeBar.MarketCap,
+                tick.DailySummaryTimeBar.IntradayPrices,
+                tick.DailySummaryTimeBar.ListedSecurities,
+                tick.DailySummaryTimeBar.DailyVolume,
+                tick.TimeStamp);
+        }
+
+        private SpreadTimeBar AdjustedSpread(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
         {
             switch (_plan.EquityInstructions.PriceManipulation)
             {
                 case PriceManipulation.Consistent:
-                    return precedingTick.Spread;
+                    return precedingTick.SpreadTimeBar;
                 case PriceManipulation.Random:
-                    return tick.Spread;
+                    return tick.SpreadTimeBar;
                 case PriceManipulation.Increase:
                     return
                         AdjustSpreadCalculation(
                             _plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0) + 1,
-                            precedingTick);
+                            precedingTick,
+                            tick);
                 case PriceManipulation.Decrease:
                     return
                         AdjustSpreadCalculation(
                             1 - _plan.EquityInstructions.PriceTickDelta.GetValueOrDefault(0),
-                            precedingTick);
+                            precedingTick,
+                            tick);
             }
 
-            return tick.Spread;
+            return tick.SpreadTimeBar;
         }
 
-        private Spread AdjustSpreadCalculation(decimal adjustmentFactor, SecurityTick precedingTick)
+        private SpreadTimeBar AdjustSpreadCalculation(decimal adjustmentFactor, FinancialInstrumentTimeBar precedingTick, FinancialInstrumentTimeBar tick)
         {
             var adjustedBid =
-                new CurrencyAmount(precedingTick.Spread.Bid.Value * adjustmentFactor, precedingTick.Spread.Bid.Currency);
+                new CurrencyAmount(precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Bid.Currency);
             var adjustedAsk =
-                new CurrencyAmount(precedingTick.Spread.Ask.Value * adjustmentFactor, precedingTick.Spread.Ask.Currency);
+                new CurrencyAmount(precedingTick.SpreadTimeBar.Ask.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Ask.Currency);
             var adjustedPrice =
-                new CurrencyAmount(precedingTick.Spread.Price.Value * adjustmentFactor, precedingTick.Spread.Price.Currency);
+                new CurrencyAmount(precedingTick.SpreadTimeBar.Price.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Price.Currency);
 
-            return new Spread(adjustedBid, adjustedAsk, adjustedPrice);
+            return new SpreadTimeBar(adjustedBid, adjustedAsk, adjustedPrice, tick.SpreadTimeBar.Volume);
         }
 
         public EquityGenerationStrategies Strategy { get; } = EquityGenerationStrategies.Plan;

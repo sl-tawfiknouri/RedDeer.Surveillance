@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits
 {
@@ -19,10 +18,10 @@ namespace Surveillance.Rules.HighProfits
                 caseMessageSender)
         { }
 
-        public async Task Send(IHighProfitRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(IHighProfitRuleBreach ruleBreach)
         {
             var description = BuildDescription(ruleBreach);
-            await Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description);
         }
 
         private string BuildDescription(IHighProfitRuleBreach ruleBreach)

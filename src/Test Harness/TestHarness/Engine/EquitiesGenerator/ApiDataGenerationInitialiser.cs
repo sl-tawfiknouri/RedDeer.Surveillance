@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
@@ -27,7 +27,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             _securityPrices = securityPrices ?? throw new ArgumentNullException(nameof(securityPrices));
         }
 
-        public IReadOnlyCollection<ExchangeFrame> OrderedDailyFrames()
+        public IReadOnlyCollection<MarketTimeBarCollection> OrderedDailyFrames()
         {
             var close = _market.MarketCloseTime;
             var open = _market.MarketOpenTime;
@@ -48,7 +48,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _securityPrices
                     .SelectMany(sm =>
                         sm.Prices.Select(smp =>
-                            new SecurityTick(
+                            new FinancialInstrumentTimeBar(
                                 new FinancialInstrument(
                                     InstrumentTypes.Equity,
                                     new InstrumentIdentifiers(
@@ -67,7 +67,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     SetCfi(sm.Cfi),
                                     sm.SecurityCurrency,
                                     sm.IssuerIdentifier), 
-                                new Spread(
+                                new SpreadTimeBar(
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
                                         SetCurrency(sm.SecurityCurrency)),
@@ -76,25 +76,28 @@ namespace TestHarness.Engine.EquitiesGenerator
                                         SetCurrency(sm.SecurityCurrency)),
                                     new CurrencyAmount(
                                         smp.Value.OpenPrice,
-                                        SetCurrency(sm.SecurityCurrency))),
-                                new Volume(volume((double)CalculateADailyVolume(smp.Value))),
-                                new Volume(CalculateADailyVolume(smp.Value)),
+                                        SetCurrency(sm.SecurityCurrency)),
+                                    new Volume(volume((double)CalculateADailyVolume(smp.Value)))
+                                    ),
+                                new DailySummaryTimeBar(
+                                    smp.Value.MarketCapUsd,
+                                    new IntradayPrices(
+                                        new CurrencyAmount(
+                                            smp.Value.OpenPrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.ClosePrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.HighIntradayPrice,
+                                            SetCurrency(sm.SecurityCurrency)),
+                                        new CurrencyAmount(
+                                            smp.Value.LowIntradayPrice,
+                                            SetCurrency(sm.SecurityCurrency))),
+                                    null,
+                                    new Volume(CalculateADailyVolume(smp.Value)),
+                                    smp.Value.Epoch.Date.Add(_market.MarketOpenTime)),
                                 smp.Value.Epoch.Date.Add(_market.MarketOpenTime),
-                                smp.Value.MarketCapUsd,
-                                new IntradayPrices(
-                                    new CurrencyAmount(
-                                        smp.Value.OpenPrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.ClosePrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.HighIntradayPrice,
-                                        SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
-                                        smp.Value.LowIntradayPrice,
-                                        SetCurrency(sm.SecurityCurrency))),
-                                null,
                                 new Market(
                                     null,
                                     _market.Code,
@@ -107,7 +110,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             var frames = 
                 initialTicks
                     .Select(it =>
-                        new ExchangeFrame(
+                        new MarketTimeBarCollection(
                             new Market(
                                 null,
                                 _market.Code,

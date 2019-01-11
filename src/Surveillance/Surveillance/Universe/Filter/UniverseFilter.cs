@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.RuleParameters.Filter;
@@ -228,7 +228,7 @@ namespace Surveillance.Universe.Filter
 
             if (value.StateChange == UniverseStateEvent.StockTickReddeer)
             {
-                var exchFrame = (ExchangeFrame)value.UnderlyingEvent;
+                var exchFrame = (MarketTimeBarCollection)value.UnderlyingEvent;
                 if (exchFrame == null)
                 {
                     return false;
@@ -245,7 +245,7 @@ namespace Surveillance.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.TimeStamp}");
+                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
                     }
 
                     return filter;
@@ -262,7 +262,7 @@ namespace Surveillance.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.TimeStamp}");
+                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
                     }
 
                     return filter;

@@ -8,6 +8,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -100,11 +101,16 @@ namespace Surveillance.Universe.Subscribers
                 .CreateAndStartRuleRunContext(
                     DomainV2.Scheduling.Rules.CancelledOrders.GetDescription(),
                     CancelledOrderRuleFactory.Version,
+                    param.Id,
+                    (int)DomainV2.Scheduling.Rules.CancelledOrders,
+                    execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
-                    execution.CorrelationId);
+                    execution.CorrelationId,
+                    execution.IsForceRerun);
 
-            var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx, alertStream);
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+            var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {

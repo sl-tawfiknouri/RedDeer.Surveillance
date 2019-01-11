@@ -105,17 +105,25 @@ namespace Surveillance.Universe.Subscribers
                     .CreateAndStartRuleRunContext(
                         DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                         HighProfitRuleFactory.Version,
+                        param.Id,
+                        (int)DomainV2.Scheduling.Rules.HighProfits,
+                        execution.IsBackTest,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
-                        execution.CorrelationId);
+                        execution.CorrelationId,
+                        execution.IsForceRerun);
 
             var ruleCtxMarketClosure = opCtx
                 .CreateAndStartRuleRunContext(
                     DomainV2.Scheduling.Rules.HighProfits.GetDescription(),
                     HighProfitRuleFactory.Version,
+                    param.Id,
+                    (int)DomainV2.Scheduling.Rules.HighProfits,
+                    execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
-                    execution.CorrelationId);
+                    execution.CorrelationId,
+                    execution.IsForceRerun);
 
             var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, execution);
 

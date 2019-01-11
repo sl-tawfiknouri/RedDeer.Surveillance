@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.Layering
 {
@@ -14,7 +13,7 @@ namespace Surveillance.Rules.Layering
             : base("Automated Layering Rule Breach Detected", "Layering Message Sender", logger, caseMessageSender)
         { }
 
-        public async Task Send(ILayeringRuleBreach breach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ILayeringRuleBreach breach)
         {
             if (breach == null)
             {
@@ -23,7 +22,7 @@ namespace Surveillance.Rules.Layering
             }
 
             var description = BuildDescription(breach);
-            await Send(breach, description, opCtx);
+            await Send(breach, description);
         }
 
         private string BuildDescription(ILayeringRuleBreach breach)

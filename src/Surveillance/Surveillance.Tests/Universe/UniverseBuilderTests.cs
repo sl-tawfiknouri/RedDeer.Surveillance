@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
@@ -188,15 +188,15 @@ namespace Surveillance.Tests.Universe
 
             var exchangeFrames = new[]
             {
-                new ExchangeFrame(
+                new MarketTimeBarCollection(
                     new Market("1", "xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesInitiation,
-                    new List<SecurityTick>()),
-                new ExchangeFrame(
+                    new List<FinancialInstrumentTimeBar>()),
+                new MarketTimeBarCollection(
                     new Market(
                         "1","xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesTermination,
-                    new List<SecurityTick>())
+                    new List<FinancialInstrumentTimeBar>())
             };
 
             A

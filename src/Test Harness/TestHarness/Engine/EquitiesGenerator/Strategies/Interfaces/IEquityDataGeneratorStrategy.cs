@@ -1,11 +1,11 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
 {
     public interface IEquityDataGeneratorStrategy
     {
-        SecurityTick AdvanceFrame(SecurityTick tick, DateTime advanceTick, bool walkIntraday);
+        FinancialInstrumentTimeBar AdvanceFrame(FinancialInstrumentTimeBar tick, DateTime advanceTick, bool walkIntraday);
         EquityGenerationStrategies Strategy { get; }
     }
 }

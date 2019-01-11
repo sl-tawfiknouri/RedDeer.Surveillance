@@ -1,4 +1,4 @@
-﻿using DomainV2.Equity.Frames;
+﻿using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -17,7 +17,7 @@ namespace TestHarness.Engine.OrderGenerator
         {
         }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {

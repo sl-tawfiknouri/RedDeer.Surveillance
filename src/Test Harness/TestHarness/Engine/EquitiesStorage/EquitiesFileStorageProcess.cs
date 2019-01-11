@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using DomainV2.Equity.Frames;
-using DomainV2.Equity.Frames.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
+using DomainV2.Equity.TimeBars.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 
@@ -68,27 +68,27 @@ namespace TestHarness.Engine.EquitiesStorage
             _logger.LogError(error.Message);
         }
 
-        public void OnNext(ExchangeFrame value)
+        public void OnNext(MarketTimeBarCollection value)
         {
             var csvRecords = value?
                 .Securities?
                 .Select(_securityMapper.Map)
                 .Where(w => w != null)
-                .ToList() ?? new List<SecurityTickCsv>();
+                .ToList() ?? new List<FinancialInstrumentTimeBarCsv>();
 
             if (!csvRecords.Any())
             {
                 return;
             }
 
-            var fileName = $"{value.Exchange.Id}-{value.TimeStamp.ToString("yyyyMMddHHmmssffff")}.csv";
+            var fileName = $"{value.Exchange.Id}-{value.Epoch.ToString("yyyyMMddHHmmssffff")}.csv";
             var filePath = Path.Combine(_path, fileName);
 
             using (var writer = File.CreateText(filePath))
             {
                 var csv = new CsvWriter(writer);
                 csv.Configuration.HasHeaderRecord = true;
-                csv.WriteRecords<SecurityTickCsv>(csvRecords);
+                csv.WriteRecords<FinancialInstrumentTimeBarCsv>(csvRecords);
             }
         }
 

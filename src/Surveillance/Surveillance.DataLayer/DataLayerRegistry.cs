@@ -1,10 +1,14 @@
 ﻿using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using StructureMap;
+using Surveillance.DataLayer.Api.BmllMarketData;
+using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.DataLayer.Api.FactsetMarketData;
+using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter;
@@ -41,7 +45,12 @@ namespace Surveillance.DataLayer
             For<IRuleAnalyticsUniverseRepository>().Use<RuleAnalyticsUniverseRepository>();
             For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
             For<ICfiInstrumentTypeMapper>().Use<CfiInstrumentTypeMapper>();
-            For<IBmllDataRequestRepository>().Use<BmllDataRequestRepository>();
+            For<IRuleRunDataRequestRepository>().Use<RuleRunDataRequestRepository>();
+            For<IStubRuleRunDataRequestRepository>().Use<StubRuleRunDataRequestRepository>();
+            For<IBmllTimeBarApiRepository>().Use<BmllTimeBarApiRepository>();
+            For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
+            For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
+            For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
         }
     }
 }

@@ -3,7 +3,6 @@ using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.Spoofing
@@ -21,16 +20,16 @@ namespace Surveillance.Rules.Spoofing
                 caseMessageSender)
         { }
 
-        public async Task Send(ISpoofingRuleBreach ruleBreach, ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(ISpoofingRuleBreach ruleBreach)
         {
             if (ruleBreach == null)
             {
-                Logger?.LogInformation($"SpoofingRuleMessageSender Send received a null rule breach for op ctx {opCtx?.Id()}. Returning.");
+                Logger?.LogInformation($"SpoofingRuleMessageSender Send received a null rule breach for op ctx. Returning.");
                 return;
             }
 
             var description = BuildDescription(ruleBreach);
-            await Send(ruleBreach, description, opCtx);
+            await Send(ruleBreach, description);
         }
 
         private string BuildDescription(ISpoofingRuleBreach ruleBreach)

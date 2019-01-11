@@ -34,9 +34,10 @@ namespace Surveillance.Factories
         public ICancelledOrderRule Build(
             ICancelledOrderRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseAlertStream alertStream)
+            IUniverseAlertStream alertStream,
+            RuleRunMode runMode)
         {
-            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _orderFilter, _factory, _logger, _tradingHistoryLogger);
+            return new CancelledOrderRule(parameters, ruleCtx, alertStream, _orderFilter, _factory, runMode, _logger, _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(2, 0);

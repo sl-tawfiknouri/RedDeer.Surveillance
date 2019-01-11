@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
@@ -15,6 +15,7 @@ using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Layering;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
@@ -37,7 +38,8 @@ namespace Surveillance.Tests.Rules.Layering
         private IUniverseOrderFilter _orderFilter;
 
         private IMarketTradingHoursManager _tradingHoursManager;
-        private IBmllDataRequestRepository _bmllRepository;
+        private IRuleRunDataRequestRepository _ruleRunRepository;
+        private IStubRuleRunDataRequestRepository _stubRuleRunRepository;
         private ILogger<UniverseMarketCacheFactory> _factoryLogger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
@@ -49,14 +51,15 @@ namespace Surveillance.Tests.Rules.Layering
              _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _operationCtx = A.Fake<ISystemProcessOperationContext>();
-            _parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), 0.2m, null, null, null, false);
+            _parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), 0.2m, null, null, null, false);
 
             _orderFilter = A.Fake<IUniverseOrderFilter>();
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
 
-            _bmllRepository = A.Fake<IBmllDataRequestRepository>();
+            _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
+            _stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
             _factoryLogger = A.Fake<ILogger<UniverseMarketCacheFactory>>();
-            _factory = new UniverseMarketCacheFactory(_bmllRepository, _factoryLogger);
+            _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _factoryLogger);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
 
             A.CallTo(() => _ruleCtx.EndEvent()).Returns(_operationCtx);
@@ -66,27 +69,27 @@ namespace Surveillance.Tests.Rules.Layering
         public void Constructor_NullParametersConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullLoggerConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullRuleContextConsidered_ToBeExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void EndOfUniverse_RecordUpdateAlertAndEndEvent()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             rule.OnNext(eschaton);
@@ -97,8 +100,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, null, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -123,7 +126,7 @@ namespace Surveillance.Tests.Rules.Layering
         public void RunRule_NoRaisedAlertInEschaton_WhenBidirectionalTradeAndExceedsDailyThreshold_ButNoMarketData()
         {
             
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -148,7 +151,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -173,7 +176,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
@@ -196,15 +199,26 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 1019;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
             
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                    market)
                 });
             
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -227,7 +241,7 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -248,15 +262,26 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                     market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -278,8 +303,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -291,15 +316,26 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 5;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
+                            ),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                    market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -322,8 +358,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -335,15 +371,25 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                        market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -366,8 +412,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -379,15 +425,25 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new ExchangeFrame(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<SecurityTick>
+            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(tradeBuy.Instrument,
-                        new Spread(tradeBuy.OrderAveragePrice.Value, tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value), new Volume(2000), new Volume(2000),
-                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55), 100000,
-                        new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                            tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        tradeBuy.Instrument,
+                        new SpreadTimeBar(
+                            tradeBuy.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            tradeSell.OrderAveragePrice.Value,
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
+                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
+                        tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                     market)
                 });
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -410,8 +466,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotCausePriceMovement_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -439,18 +495,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp,  marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch,  marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -473,8 +529,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -502,18 +558,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -536,8 +592,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -565,18 +621,18 @@ namespace Surveillance.Tests.Rules.Layering
 
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
-            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.TimeStamp, marketData1);
-            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.TimeStamp, marketData2);
+            var marketDataEvent1 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData1.Epoch, marketData1);
+            var marketDataEvent2 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData2.Epoch, marketData2);
 
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
 
-            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.TimeStamp, marketData3);
-            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.TimeStamp, marketData4);
+            var marketDataEvent3 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData3.Epoch, marketData3);
+            var marketDataEvent4 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData4.Epoch, marketData4);
 
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -599,8 +655,8 @@ namespace Surveillance.Tests.Rules.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
-            var parameters = new LayeringRuleParameters(TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, _tradingLogger);
+            var parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPosition = OrderPositions.BUY;
@@ -624,8 +680,8 @@ namespace Surveillance.Tests.Rules.Layering
             var buyEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeBuy.OrderPlacedDate.Value, tradeBuy);
             var sellEvent = new UniverseEvent(UniverseStateEvent.TradeReddeerSubmitted, tradeSell.OrderPlacedDate.Value, tradeSell);
 
-            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.TimeStamp, marketData5);
-            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.TimeStamp, marketData6);
+            var marketDataEvent5 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData5.Epoch, marketData5);
+            var marketDataEvent6 = new UniverseEvent(UniverseStateEvent.StockTickReddeer, marketData6.Epoch, marketData6);
 
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, tradeSell.OrderPlacedDate.Value.AddMinutes(1), new object());
 
@@ -641,24 +697,33 @@ namespace Surveillance.Tests.Rules.Layering
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
-        private ExchangeFrame SetExchangeFrameToPrice(
+        private MarketTimeBarCollection SetExchangeFrameToPrice(
             Market market,
             Order baseBuyFrame,
             Order baseSellFrame,
             decimal price,
             DateTime timestamp)
         {
-            return new ExchangeFrame(market, timestamp,
-                new List<SecurityTick>
+            return new MarketTimeBarCollection(market, timestamp,
+                new List<FinancialInstrumentTimeBar>
                 {
-                    new SecurityTick(baseBuyFrame.Instrument,
-                        new Spread(baseBuyFrame.OrderAveragePrice.Value, baseSellFrame.OrderAveragePrice.Value,
-                            new CurrencyAmount(price, baseSellFrame.OrderCurrency)), new Volume(2000), new Volume(2000),
-                        timestamp, 100000,
-                        new IntradayPrices(baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value,
-                            baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value), 5000, market)
+                    new FinancialInstrumentTimeBar(
+                        baseBuyFrame.Instrument,
+                        new SpreadTimeBar(
+                            baseBuyFrame.OrderAveragePrice.Value, 
+                            baseSellFrame.OrderAveragePrice.Value,
+                            new CurrencyAmount(price, baseSellFrame.OrderCurrency),
+                            new Volume(2000)),
+                        new DailySummaryTimeBar(
+                            1000,
+                            new IntradayPrices(baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value,
+                                baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value),
+                            1000,
+                            new Volume(2000),
+                            timestamp),
+                        timestamp,
+                        market)
                 });
         }
-
     }
 }

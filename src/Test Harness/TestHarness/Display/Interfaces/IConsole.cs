@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 // ReSharper disable UnusedMember.Global
 
@@ -7,7 +7,7 @@ namespace TestHarness.Display.Interfaces
 {
     public interface IConsole
     {
-        void OutputMarketFrame(ExchangeFrame frame);
+        void OutputMarketFrame(MarketTimeBarCollection frame);
 
         void OutputTradeFrame(Order frame);
 

@@ -4,7 +4,7 @@ namespace Surveillance.Rules.WashTrade.Interfaces
 {
     public interface IWashTradeCachedMessageSender
     {
-        int Flush(ISystemProcessOperationRunRuleContext ruleCtx);
+        int Flush();
         void Send(IWashTradeRuleBreach ruleBreach);
     }
 }

@@ -12,5 +12,9 @@ namespace Surveillance.System.DataLayer.Processes.Interfaces
         DateTime? ScheduleRuleStart { get; set; }
         DateTime? ScheduleRuleEnd { get; set; }
         string RuleVersion { get; set; }
+        string RuleParameterId { get; set; }
+        int RuleTypeId { get; set; }
+        bool IsBackTest { get; set; }
+        bool IsForceRun { get; set; }
     }
 }

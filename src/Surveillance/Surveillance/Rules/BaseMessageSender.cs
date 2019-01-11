@@ -9,7 +9,6 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules
 {
@@ -33,7 +32,7 @@ namespace Surveillance.Rules
             _caseTitle = caseTitle ?? "unknown rule breach detected";
         }
 
-        protected async Task Send(IRuleBreach ruleBreach, string description, ISystemProcessOperationRunRuleContext opCtx)
+        protected async Task Send(IRuleBreach ruleBreach, string description)
         {
             if (ruleBreach?.Trades?.Get() == null)
             {
@@ -61,7 +60,6 @@ namespace Surveillance.Rules
             catch (Exception e)
             {
                 Logger.LogError($"{_messageSenderName} encountered an error sending the case message to the bus {e}");
-                opCtx.EventException(e);
             }
         }
 

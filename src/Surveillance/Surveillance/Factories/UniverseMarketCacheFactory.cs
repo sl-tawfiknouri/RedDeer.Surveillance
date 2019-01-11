@@ -4,25 +4,33 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
+using Surveillance.Rules;
 
 namespace Surveillance.Factories
 {
     public class UniverseMarketCacheFactory : IUniverseMarketCacheFactory
     {
-        private readonly IBmllDataRequestRepository _dataRequestRepository;
+        private readonly IStubRuleRunDataRequestRepository _stubDataRequestRepository;
+        private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger<UniverseMarketCacheFactory> _logger;
 
         public UniverseMarketCacheFactory(
-            IBmllDataRequestRepository dataRequestRepository,
+            IStubRuleRunDataRequestRepository stubDataRequestRepository,
+            IRuleRunDataRequestRepository dataRequestRepository,
             ILogger<UniverseMarketCacheFactory> logger)
         {
+            _stubDataRequestRepository = stubDataRequestRepository ?? throw new ArgumentNullException(nameof(stubDataRequestRepository));
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseMarketCache Build(TimeSpan window)
+        public IUniverseMarketCache Build(TimeSpan window, RuleRunMode runMode)
         {
-            return new UniverseMarketCache(window, _dataRequestRepository, _logger);
+            var repo = runMode == RuleRunMode.ValidationRun
+                ? _dataRequestRepository
+                : _stubDataRequestRepository;
+
+            return new UniverseMarketCache(window, repo, _logger);
         }
     }
 }

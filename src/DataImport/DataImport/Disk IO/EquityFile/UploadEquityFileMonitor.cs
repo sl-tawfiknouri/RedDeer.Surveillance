@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
@@ -90,10 +90,10 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void SuccessfulReads(
             string path,
-            UploadFileProcessorResult<SecurityTickCsv, ExchangeFrame> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
-            var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.TimeStamp).ToList();
+            var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.Epoch).ToList();
             if (orderedSuccessfulReads.Any())
             {
                 _logger.LogInformation($"Upload equity file monitor had successful reads, beginning to add to stream ({orderedSuccessfulReads.Count})");
@@ -114,7 +114,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void FailedReads(
             string path,
-            UploadFileProcessorResult<SecurityTickCsv, ExchangeFrame> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);

@@ -17,7 +17,8 @@ namespace TestHarness.Repository
             DELETE FROM Transactions WHERE ID > -1;
             DELETE FROM Trades WHERE ID > -1;
             DELETE FROM Orders WHERE ID > -1;
-            DELETE FROM MarketStockExchangePrices WHERE ID > -1;
+            DELETE FROM InstrumentEquityDailySummary WHERE ID > -1;
+            DELETE FROM InstrumentEquityTimeBars WHERE ID > -1;
             DELETE FROM FinancialInstruments WHERE ID > -1;
             DELETE FROM Market WHERE ID > -1;";
 
@@ -33,7 +34,16 @@ namespace TestHarness.Repository
             AND PlacedDate < @ToDate;";
 
         private const string DeleteSecurityPriceSql = @"
-            DELETE msep FROM MarketStockExchangePrices msep
+            DELETE msep FROM InstrumentEquityDailySummary msep
+            LEFT OUTER JOIN FinancialInstruments mses
+            ON msep.SecurityId = mses.Id
+            LEFT OUTER JOIN Market mse
+            ON mse.Id = mses.MarketId
+            WHERE mse.MarketId = @MarketId
+            AND Epoch >= @FromDate
+            AND Epoch < @ToDate;
+
+            DELETE msep FROM InstrumentEquityTimeBars msep
             LEFT OUTER JOIN FinancialInstruments mses
             ON msep.SecurityId = mses.Id
             LEFT OUTER JOIN Market mse

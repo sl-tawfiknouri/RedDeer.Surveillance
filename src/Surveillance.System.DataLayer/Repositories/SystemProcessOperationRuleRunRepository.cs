@@ -16,8 +16,10 @@ namespace Surveillance.System.DataLayer.Repositories
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<ISystemProcessOperationRuleRunRepository> _logger;
 
-        private const string CreateSql = "INSERT INTO SystemProcessOperationRuleRun(SystemProcessOperationId, RuleDescription, RuleVersion, ScheduleRuleStart, ScheduleRuleEnd, CorrelationId) VALUES(@SystemProcessOperationId, @RuleDescription, @RuleVersion, @ScheduleRuleStart, @ScheduleRuleEnd, @CorrelationId); SELECT LAST_INSERT_ID();";
-        private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd";
+        private const string CreateSql = "INSERT INTO SystemProcessOperationRuleRun(SystemProcessOperationId, RuleDescription, RuleVersion, ScheduleRuleStart, ScheduleRuleEnd, CorrelationId, RuleParameterId, RuleTypeId, IsBackTest, IsForceRun) VALUES(@SystemProcessOperationId, @RuleDescription, @RuleVersion, @ScheduleRuleStart, @ScheduleRuleEnd, @CorrelationId, @RuleParameterId, @RuleTypeId, @IsBackTest, @IsForceRun); SELECT LAST_INSERT_ID();";
+        private const string UpdateSql = "UPDATE SystemProcessOperationRuleRun SET RuleDescription = @RuleDescription, RuleVersion = @RuleVersion, ScheduleRuleStart = @ScheduleRuleStart, ScheduleRuleEnd = @ScheduleRuleEnd, RuleParameterId = @RuleParameterId, RuleTypeId = @RuleTypeId, IsBackTest = @IsBackTest, IsForceRun = @IsForceRun;";
+
+        private const string GetSql = "SELECT * FROM SystemProcessOperationRuleRun WHERE Id = @Id;";
         private const string GetDashboardSql = "SELECT * FROM SystemProcessOperationRuleRun ORDER BY Id DESC LIMIT 100;";
 
         public SystemProcessOperationRuleRunRepository(
@@ -107,6 +109,39 @@ namespace Surveillance.System.DataLayer.Repositories
             catch (Exception e)
             {
                 _logger.LogError($"System Process Operation Rule Run Repository Get Dashboard method {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new ISystemProcessOperationRuleRun[0];
+        }
+
+        public async Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> Get(IReadOnlyCollection<string> ruleRunIds)
+        {
+            if (ruleRunIds == null
+                || !ruleRunIds.Any())
+            {
+                return new ISystemProcessOperationRuleRun[0];
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                using (var conn = dbConnection.QueryAsync<SystemProcessOperationRuleRun>(GetSql, new {Id = ruleRunIds}))
+                {
+                    var result = await conn;
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"System Process Operation Rule Run Repository Get method {e.Message}");
             }
             finally
             {

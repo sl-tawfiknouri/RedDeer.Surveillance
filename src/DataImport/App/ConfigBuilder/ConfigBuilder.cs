@@ -48,17 +48,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                     var environment = GetTag("Environment");
                     var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
-
-                    var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
-                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
-                    var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
-                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
-
-                    foreach (var kvp in marketAttributes)
-                        _dynamoConfig.Add(kvp);
-
-                    foreach (var kvp in tradeAttributes)
-                        _dynamoConfig.Add(kvp);
                 }
             }
 
@@ -97,17 +86,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                     var environment = GetTag("Environment");
                     var dynamoDBName = $"{environment}-data-import-{GetTag("Customer")}".ToLower();
                     _dynamoConfig = GetDynamoDBAttributes(dynamoDBName);
-
-                    var marketTableName = $"{environment}-surveillance-import-market-{GetTag("Customer")}".ToLower();
-                    var marketAttributes = GetDynamoDbAttributesTable(marketTableName);
-                    var tradeTableName = $"{environment}-surveillance-import-trade-{GetTag("Customer")}".ToLower();
-                    var tradeAttributes = GetDynamoDbAttributesTable(tradeTableName);
-
-                    foreach (var kvp in marketAttributes)
-                        _dynamoConfig.Add(kvp);
-
-                    foreach (var kvp in tradeAttributes)
-                        _dynamoConfig.Add(kvp);
                 }
             }
 
@@ -118,7 +96,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 CaseMessageQueueName = GetSetting("CaseMessageQueueName", configurationBuilder),
                 ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
-                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder)
+                AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
+                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder)
             };
         }
 

@@ -75,7 +75,7 @@ namespace Surveillance.Rules.HighProfits
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush(ISystemProcessOperationRunRuleContext ruleCtx)
+        public int Flush()
         {
             lock (_lock)
             {
@@ -84,13 +84,22 @@ namespace Surveillance.Rules.HighProfits
                 foreach (var msg in _messages)
                 {
                     _logger.LogInformation($"High Profit Rule Cached Message Sender dispatching {msg?.Security?.Identifiers} rule breaches to message bus");
-                    _messageSender.Send(msg, ruleCtx);
+                    _messageSender.Send(msg);
                 }
 
                 var count = _messages.Count;
                 _messages.RemoveAll(m => true);
 
                 return count;
+            }
+        }
+
+        public void Delete()
+        {
+            lock (_lock)
+            {
+                _logger.LogInformation($"High Profit Rule Cached Message Sender deleting alert messages");
+                _messages = new List<IHighProfitRuleBreach>();
             }
         }
     }

@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -87,7 +87,7 @@ namespace Surveillance.Universe.Multiverse
                 return;
             }
 
-             var frame = (ExchangeFrame)universeEvent.UnderlyingEvent;
+             var frame = (MarketTimeBarCollection)universeEvent.UnderlyingEvent;
 
             if (_exchangeFrame.ContainsKey(frame.Exchange.MarketIdentifierCode))
             {
@@ -95,7 +95,7 @@ namespace Surveillance.Universe.Multiverse
 
                 var tfEntry =
                     timeFrame
-                        ?.Where(tf => tf.OpenDate > frame.TimeStamp)
+                        ?.Where(tf => tf.OpenDate > frame.Epoch)
                         .OrderBy(tf => tf.OpenDate)
                         .FirstOrDefault();
 
@@ -173,7 +173,7 @@ namespace Surveillance.Universe.Multiverse
                 return universeEvent;
             }
 
-            var frame = (ExchangeFrame) universeEvent.UnderlyingEvent;
+            var frame = (MarketTimeBarCollection) universeEvent.UnderlyingEvent;
             _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var frames);
 
             if (frames == null)
@@ -183,7 +183,7 @@ namespace Surveillance.Universe.Multiverse
 
             var updateFrame =
                 frames
-                    .Where(fra => fra.OpenDate > frame.TimeStamp)
+                    .Where(fra => fra.OpenDate > frame.Epoch)
                     .OrderBy(fra => fra.OpenDate)
                     .FirstOrDefault(fra => fra.Frame != null) 
                     ?.Frame;
@@ -250,7 +250,7 @@ namespace Surveillance.Universe.Multiverse
             /// </summary>
             public DateTime OpenDate { get; set; }
             
-            public ExchangeFrame Frame { get; set; }
+            public MarketTimeBarCollection Frame { get; set; }
         }
         
         public object Clone()

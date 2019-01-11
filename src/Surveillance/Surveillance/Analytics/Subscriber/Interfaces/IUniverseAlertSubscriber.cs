@@ -7,5 +7,6 @@ namespace Surveillance.Analytics.Subscriber.Interfaces
     public interface IUniverseAlertSubscriber : IObserver<IUniverseAlertEvent>
     {
         AlertAnalytics Analytics { get; }
+        void Flush();
     }
 }

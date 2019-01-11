@@ -4,7 +4,7 @@ using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
-    public interface ISpoofingRuleParameters : IFilterableRule
+    public interface ISpoofingRuleParameters : IFilterableRule, IRuleParameter
     {
         decimal CancellationThreshold { get; }
         decimal RelativeSizeMultipleForSpoofExceedingReal { get; }

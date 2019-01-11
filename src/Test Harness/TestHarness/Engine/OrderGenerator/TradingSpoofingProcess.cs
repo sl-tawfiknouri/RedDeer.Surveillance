@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -38,18 +38,18 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
-                _executeOn = value.TimeStamp.Add(_executePoint);
+                _executeOn = value.Epoch.Add(_executePoint);
                 return;
             }
 
@@ -65,12 +65,12 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (value.TimeStamp < _executeOn.Value)
+                if (value.Epoch < _executeOn.Value)
                 {
                     return;
                 }
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
@@ -105,8 +105,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
-            ExchangeFrame latestFrame,
+            Stack<MarketTimeBarCollection> frames,
+            MarketTimeBarCollection latestFrame,
             int cancelledTrades)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -139,14 +139,14 @@ namespace TestHarness.Engine.OrderGenerator
             }
 
             // _executeOn
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
 
             // select a suitably low % of the traded volume
             tradedVolume = (int)((decimal)tradedVolume * 0.03m);
 
             for (var i = 0; i < cancelledTrades; i++)
             {
-                var tradeTime = latestFrame.TimeStamp;
+                var tradeTime = latestFrame.Epoch;
 
                 var volumeOrder = new Order(
                     headSecurity.Security,
@@ -161,9 +161,9 @@ namespace TestHarness.Engine.OrderGenerator
                     i == 0 ? (DateTime?) tradeTime.AddSeconds(i) : null,
                     i == 0 ? OrderTypes.MARKET : OrderTypes.LIMIT,
                     i == 0 ? OrderPositions.BUY : OrderPositions.SELL,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) tradedVolume,
                     i == 0 ? (int) tradedVolume : 0,
                     null,

@@ -8,6 +8,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
+using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -105,11 +106,16 @@ namespace Surveillance.Universe.Subscribers
             var ctx = opCtx.CreateAndStartRuleRunContext(
                 DomainV2.Scheduling.Rules.WashTrade.GetDescription(),
                 WashTradeRuleFactory.Version,
+                param.Id,
+                (int)DomainV2.Scheduling.Rules.WashTrade,
+                execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
                 execution.TimeSeriesTermination.DateTime,
-                execution.CorrelationId);
+                execution.CorrelationId,
+                execution.IsForceRerun);
 
-            var washTrade = _washTradeRuleFactory.Build(param, ctx, alertStream);
+            var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
+            var washTrade = _washTradeRuleFactory.Build(param, ctx, alertStream, runMode);
 
             if (param.HasFilters())
             {

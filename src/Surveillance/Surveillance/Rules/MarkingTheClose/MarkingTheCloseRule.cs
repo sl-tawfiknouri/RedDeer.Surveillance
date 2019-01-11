@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using DomainV2.Trading;
@@ -41,6 +41,7 @@ namespace Surveillance.Rules.MarkingTheClose
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
+            RuleRunMode runMode,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -50,6 +51,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 "Marking The Close",
                 ruleCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
@@ -87,6 +89,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
+                securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
@@ -144,9 +147,9 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities,
-            SecurityTick tradedSecurity)
+            FinancialInstrumentTimeBar tradedSecurity)
         {
-            var thresholdVolumeTraded = tradedSecurity.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
+            var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
             if (thresholdVolumeTraded == null)
             {
@@ -159,18 +162,19 @@ namespace Surveillance.Rules.MarkingTheClose
                     securities,
                     tradedSecurity,
                     thresholdVolumeTraded.GetValueOrDefault(0),
-                    tradedSecurity.DailyVolume.Traded);
+                    tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded);
 
             return result;
         }
 
         private VolumeBreach CheckWindowVolumeTraded(
             Stack<Order> securities,
-            SecurityTick tradedSecurity)
+            FinancialInstrumentTimeBar tradedSecurity)
         {
             var marketDataRequest =
                 new MarketDataRequest(
                     tradedSecurity.Market.MarketIdentifierCode,
+                    tradedSecurity.Security.Cfi,
                     tradedSecurity.Security.Identifiers,
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,
@@ -184,7 +188,7 @@ namespace Surveillance.Rules.MarkingTheClose
             }
 
             var securityUpdates = marketResult.Response;
-            var securityVolume = securityUpdates.Sum(su => su.Volume.Traded);
+            var securityVolume = securityUpdates.Sum(su => su.SpreadTimeBar.Volume.Traded);
             var thresholdVolumeTraded = securityVolume * _parameters.PercentageThresholdWindowVolume;
 
             if (thresholdVolumeTraded == null)
@@ -205,7 +209,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
-            SecurityTick tradedSecurity,
+            FinancialInstrumentTimeBar tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
         {
@@ -307,7 +311,10 @@ namespace Surveillance.Rules.MarkingTheClose
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (MarkingTheCloseRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

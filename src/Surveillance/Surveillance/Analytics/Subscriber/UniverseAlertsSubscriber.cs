@@ -33,6 +33,7 @@ namespace Surveillance.Analytics.Subscriber
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
+        private bool _hasHighProfitDeleteRequest;
 
         public UniverseAlertsSubscriber(
             int opCtxId,
@@ -127,8 +128,6 @@ namespace Surveillance.Analytics.Subscriber
         {
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber cancelled orders flushing alerts");
-                Analytics.CancelledOrderAlertsAdjusted += _cancelledOrderMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -142,12 +141,24 @@ namespace Surveillance.Analytics.Subscriber
             Analytics.CancelledOrderAlertsRaw += 1;
         }
 
+        private void CancelledOrdersFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber cancelled orders flushing alerts");
+            Analytics.CancelledOrderAlertsAdjusted += _cancelledOrderMessageSender.Flush();
+        }
+
         private void HighProfits(IUniverseAlertEvent alert)
         {
+            _hasHighProfitDeleteRequest = alert.IsDeleteEvent || _hasHighProfitDeleteRequest;
+
+            if (_hasHighProfitDeleteRequest)
+            {
+                _highProfitMessageSender.Delete();
+                return;
+            }
+
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber high profits flushing alerts");
-                Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -168,12 +179,27 @@ namespace Surveillance.Analytics.Subscriber
             Analytics.HighProfitAlertsRaw += 1;
         }
 
+        private void HighProfitsFlush()
+        {
+            if (_hasHighProfitDeleteRequest)
+            {
+                return;
+            }
+
+            _logger.LogInformation($"UniverseAlertSubscriber high profits flushing alerts");
+            Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush();
+        }
+
         private void HighVolume(IUniverseAlertEvent alert)
         {
+            if (alert.IsDeleteEvent)
+            {
+                _highVolumeMessageSender.Delete();
+                return;
+            }
+
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber high volume flushing alerts");
-                Analytics.HighVolumeAlertsAdjusted += _highVolumeMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -187,12 +213,16 @@ namespace Surveillance.Analytics.Subscriber
             Analytics.HighVolumeAlertsRaw += 1;
         }
 
+        private void HighVolumeFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber high volume flushing alerts");
+            Analytics.HighVolumeAlertsAdjusted += _highVolumeMessageSender.Flush();
+        }
+
         private void Layering(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber layering flushing alerts");
-                Analytics.LayeringAlertsAdjusted += _layeringCachedMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -206,11 +236,16 @@ namespace Surveillance.Analytics.Subscriber
             Analytics.LayeringAlertsRaw += 1;
         }
 
+        private void LayeringFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber layering flushing alerts");
+            Analytics.LayeringAlertsAdjusted += _layeringCachedMessageSender.Flush();
+        }
+        
         private void MarkingTheClose(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber marking the close flush event (does nothing) as it sends immediately");
                 return;
             }
 
@@ -218,18 +253,22 @@ namespace Surveillance.Analytics.Subscriber
             SetIsBackTest(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber marking the close adding alert to marking the close message sender");
-            _markingTheCloseMessageSender.Send(ruleBreach, alert.Context);
+            _markingTheCloseMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber marking the close incrementing raw and adjusted alert count by 1");
             Analytics.MarkingTheCloseAlertsRaw += 1;
             Analytics.MarkingTheCloseAlertsAdjusted += 1;
         }
 
+        private void MarkingTheCloseFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber marking the close flush event (does nothing) as it sends immediately");
+        }
+
         private void Spoofing(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber spoofing flush event (does nothing) as it sends immediately");
                 return;
             }
 
@@ -237,19 +276,22 @@ namespace Surveillance.Analytics.Subscriber
             SetIsBackTest(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber spoofing adding alert to spoofing message sender");
-            _spoofingMessageSender.Send(ruleBreach, alert.Context);
+            _spoofingMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber spoofing incrementing raw and adjusted alert count by 1");
             Analytics.SpoofingAlertsRaw += 1;
             Analytics.SpoofingAlertsAdjusted += 1;
         }
 
+        private void SpoofingFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber spoofing flush event (does nothing) as it sends immediately");
+        }
+
         private void WashTrade(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber wash trade flushing alerts");
-                Analytics.WashTradeAlertsAdjusted += _washTradeMessageSender.Flush(alert.Context);
                 return;
             }
 
@@ -263,6 +305,13 @@ namespace Surveillance.Analytics.Subscriber
             Analytics.WashTradeAlertsRaw += 1;
         }
 
+        private void WashTradeFlush()
+        {
+            _logger.LogInformation($"UniverseAlertSubscriber wash trade flushing alerts");
+            Analytics.WashTradeAlertsAdjusted += _washTradeMessageSender.Flush();
+        }
+
+
         private void SetIsBackTest(IRuleBreach ruleBreach)
         {
             if (ruleBreach == null)
@@ -274,6 +323,24 @@ namespace Surveillance.Analytics.Subscriber
 
             if (_isBackTest)
                 _logger.LogInformation($"UniverseAlertSubscriber noting that alert is part of a back test and setting property");
+        }
+
+        public void Flush()
+        {
+            _logger?.LogInformation($"UniverseAlertsSubscriber flush initiated.");
+
+            WashTradeFlush();
+            SpoofingFlush();
+
+            MarkingTheCloseFlush();
+            LayeringFlush();
+
+            HighVolumeFlush();
+            HighProfitsFlush();
+
+            CancelledOrdersFlush();
+
+            _logger?.LogInformation($"UniverseAlertsSubscriber flush completed.");
         }
 
         public AlertAnalytics Analytics { get; }

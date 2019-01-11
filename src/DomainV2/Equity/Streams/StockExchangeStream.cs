@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 
 namespace DomainV2.Equity.Streams
 {
     /// <summary>
-    /// An observable stream of stock exchange ticks
+    /// An observable stream of stock exchange time bars
     /// </summary>
     public class StockExchangeStream : IStockExchangeStream
     {
-        private readonly ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>> _observers;
-        private readonly IUnsubscriberFactory<ExchangeFrame> _factory;
+        private readonly ConcurrentDictionary<IObserver<MarketTimeBarCollection>, IObserver<MarketTimeBarCollection>> _observers;
+        private readonly IUnsubscriberFactory<MarketTimeBarCollection> _factory;
 
-        public StockExchangeStream(IUnsubscriberFactory<ExchangeFrame> unsubscriberFactory)
+        public StockExchangeStream(IUnsubscriberFactory<MarketTimeBarCollection> unsubscriberFactory)
         {
-            _observers = new ConcurrentDictionary<IObserver<ExchangeFrame>, IObserver<ExchangeFrame>>();
+            _observers = new ConcurrentDictionary<IObserver<MarketTimeBarCollection>, IObserver<MarketTimeBarCollection>>();
             _factory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
         }
 
-        public IDisposable Subscribe(IObserver<ExchangeFrame> observer)
+        public IDisposable Subscribe(IObserver<MarketTimeBarCollection> observer)
         {
             if (observer == null)
             {
@@ -34,7 +34,7 @@ namespace DomainV2.Equity.Streams
             return _factory.Create(_observers, observer);
         }
 
-        public void Add(ExchangeFrame frame)
+        public void Add(MarketTimeBarCollection frame)
         {
             if (frame == null)
             {

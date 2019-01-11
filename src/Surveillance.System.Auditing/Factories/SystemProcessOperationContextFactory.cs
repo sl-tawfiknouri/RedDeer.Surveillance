@@ -13,6 +13,7 @@ namespace Surveillance.System.Auditing.Factories
         private readonly ISystemProcessOperationRunRuleContextFactory _ruleRunFactory;
         private readonly ISystemProcessOperationDistributeRuleContextFactory _distributeRuleFactory;
         private readonly ISystemProcessOperationFileUploadContextFactory _fileUploadFactory;
+        private readonly ISystemProcessOperationDataRequestContextFactory _dataRequestFactory;
         private readonly IOperationLogging _operationLogging;
 
         public SystemProcessOperationContextFactory(
@@ -20,13 +21,15 @@ namespace Surveillance.System.Auditing.Factories
             ISystemProcessOperationRunRuleContextFactory ruleRunRepository,
             ISystemProcessOperationDistributeRuleContextFactory distributeRuleFactory,
             IOperationLogging operationLogging,
-            ISystemProcessOperationFileUploadContextFactory fileUploadFactory)
+            ISystemProcessOperationFileUploadContextFactory fileUploadFactory,
+            ISystemProcessOperationDataRequestContextFactory dataRequestFactory)
         {
             _operationRepository = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
             _ruleRunFactory = ruleRunRepository ?? throw new ArgumentNullException(nameof(ruleRunRepository));
             _distributeRuleFactory = distributeRuleFactory ?? throw new ArgumentNullException(nameof(distributeRuleFactory));
             _operationLogging = operationLogging ?? throw new ArgumentNullException(nameof(operationLogging));
             _fileUploadFactory = fileUploadFactory ?? throw new ArgumentNullException(nameof(fileUploadFactory));
+            _dataRequestFactory = dataRequestFactory ?? throw new ArgumentNullException(nameof(dataRequestFactory));
         }
 
         public ISystemProcessOperationContext Build(ISystemProcessContext context)
@@ -37,6 +40,7 @@ namespace Surveillance.System.Auditing.Factories
                 _ruleRunFactory,
                 _distributeRuleFactory,
                 _fileUploadFactory,
+                _dataRequestFactory,
                 _operationLogging);
         }
     }

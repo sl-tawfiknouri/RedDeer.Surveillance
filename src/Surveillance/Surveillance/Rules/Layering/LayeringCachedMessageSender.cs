@@ -48,7 +48,7 @@ namespace Surveillance.Rules.Layering
         /// <summary>
         /// Empty all the active cached messages across the network onto the message bus
         /// </summary>
-        public int Flush(ISystemProcessOperationRunRuleContext ruleCtx)
+        public int Flush()
         {
             lock (_lock)
             {
@@ -57,7 +57,7 @@ namespace Surveillance.Rules.Layering
                 foreach (var msg in _messages)
                 {
                     _logger.LogInformation($"Layering Rule Cached Message Sender dispatching {msg.Security.Identifiers} rule breach to message bus");
-                    _messageSender.Send(msg, ruleCtx);
+                    _messageSender.Send(msg);
                 }
 
                 var count = _messages.Count;

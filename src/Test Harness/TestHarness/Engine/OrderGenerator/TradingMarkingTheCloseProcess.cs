@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -40,18 +40,18 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
-                _executeOn = value.TimeStamp.Date.Add(_marketDto.MarketCloseTime).Add(-TimeSpan.FromMinutes(15));
+                _executeOn = value.Epoch.Date.Add(_marketDto.MarketCloseTime).Add(-TimeSpan.FromMinutes(15));
             }
 
             if (_hasProcessedMarkingTheCloseRuleBreaches)
@@ -66,12 +66,12 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (value.TimeStamp < _executeOn.Value)
+                if (value.Epoch < _executeOn.Value)
                 {
                     return;
                 }
                 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
@@ -106,7 +106,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
+            Stack<MarketTimeBarCollection> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -129,7 +129,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
             // _executeOn
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
             var headSecurity = securities.FirstOrDefault();
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.18m;
 
@@ -151,9 +151,9 @@ namespace TestHarness.Engine.OrderGenerator
                     tradeTime,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
                     null,
@@ -173,7 +173,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForDailyBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
+            Stack<MarketTimeBarCollection> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -183,7 +183,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var securities =
                 frames
-                    .OrderByDescending(i => i.TimeStamp)
+                    .OrderByDescending(i => i.Epoch)
                     .FirstOrDefault()
                     .Securities.FirstOrDefault(sec =>
                         string.Equals(
@@ -196,14 +196,14 @@ namespace TestHarness.Engine.OrderGenerator
                      string.Equals(
                          sec?.Security.Identifiers.Sedol,
                          sedol,
-                         StringComparison.InvariantCultureIgnoreCase))?.Volume.Traded ?? 0);
+                         StringComparison.InvariantCultureIgnoreCase))?.SpreadTimeBar.Volume.Traded ?? 0);
 
             if (securities == null)
             {
                 return;
             }
 
-            var tradedVolume = securities.DailyVolume.Traded;
+            var tradedVolume = securities.DailySummaryTimeBar.DailyVolume.Traded;
             var volumeForBreachesToTrade = (((decimal) tradedVolume * percentageOfTraded) + 1);
 
             var adjustedVolumeForBreachesToTrade =
@@ -231,9 +231,9 @@ namespace TestHarness.Engine.OrderGenerator
                     tradeTime,
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    securities.Spread.Price.Currency,
-                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
-                    new CurrencyAmount(securities.Spread.Price.Value, securities.Spread.Price.Currency),
+                    securities.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
                     (int)finalVolumeForBreachestoTrade,
                     (int)finalVolumeForBreachestoTrade,
                     null,

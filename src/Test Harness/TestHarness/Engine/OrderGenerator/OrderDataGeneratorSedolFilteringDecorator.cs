@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using TestHarness.Engine.OrderGenerator.Interfaces;
@@ -32,7 +32,7 @@ namespace TestHarness.Engine.OrderGenerator
             _baseGenerator.OnError(error);
         }
 
-        public void OnNext(ExchangeFrame value)
+        public void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -46,9 +46,9 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.Where(sec =>
                         !_sedols.Contains(sec?.Security.Identifiers.Sedol, StringComparer.CurrentCultureIgnoreCase))
                     .ToList()
-                ?? new List<SecurityTick>();
+                ?? new List<FinancialInstrumentTimeBar>();
 
-            var filteredFrame = new ExchangeFrame(value.Exchange, value.TimeStamp, filteredSecurities);
+            var filteredFrame = new MarketTimeBarCollection(value.Exchange, value.Epoch, filteredSecurities);
 
             _baseGenerator.OnNext(filteredFrame);
         }

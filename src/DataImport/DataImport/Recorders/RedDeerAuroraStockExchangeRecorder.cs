@@ -1,6 +1,6 @@
 ﻿using System;
 using DataImport.Recorders.Interfaces;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 
@@ -29,7 +29,7 @@ namespace DataImport.Recorders
             _logger.LogError($"RedDeerAuroraStockExchangeRecorder {error.Message}");
         }
 
-        public void OnNext(ExchangeFrame value)
+        public void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -41,9 +41,9 @@ namespace DataImport.Recorders
             {
                 lock (_lock)
                 {
-                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
+                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.Epoch} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
                     _repository.Create(value).Wait();
-                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.TimeStamp} {value.Exchange?.MarketIdentifierCode} Completed passing market data to repository");
+                    _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.Epoch} {value.Exchange?.MarketIdentifierCode} Completed passing market data to repository");
                 }
             }
             catch (Exception e)

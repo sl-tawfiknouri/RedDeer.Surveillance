@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Universe.Subscribers.Interfaces;
@@ -130,8 +132,8 @@ namespace Surveillance.Scheduler
 
                     if (servicesDownMinutes == 15)
                     {
-                        _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
-                        opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for over half an hour but the api services on the client service have been down");
+                        _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                        opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
                     }
                 }
 
@@ -182,20 +184,22 @@ namespace Surveillance.Scheduler
             _universeCompletionLogger.InitiateEventLogger(universe);
             player.Subscribe(_universeCompletionLogger);
 
-            var subscriber = _analyticsSubscriber.Build(opCtx.Id);
-            var alertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
+            var universeAlertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();
+            alertStream.Subscribe(universeAlertSubscriber);
 
-            alertStream.Subscribe(alertSubscriber);
             await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
-            player.Subscribe(subscriber);
+
+            var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
+            player.Subscribe(universeAnalyticsSubscriber);
 
             _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
             player.Play(universe);
             _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
-            await _ruleAnalyticsRepository.Create(subscriber.Analytics);
-            await _alertsRepository.Create(alertSubscriber.Analytics);
+            universeAlertSubscriber.Flush();
+            await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
+            await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();

@@ -18,6 +18,10 @@ using Surveillance.Universe.MarketEvents;
 
 namespace Surveillance.Rules.CancelledOrders
 {
+    /// <summary>
+    /// Cancelled Orders Rule
+    /// Ignores rule run mode as it doesn't use market data
+    /// </summary>
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
         private readonly ICancelledOrderRuleParameters _parameters;
@@ -33,6 +37,7 @@ namespace Surveillance.Rules.CancelledOrders
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -42,6 +47,7 @@ namespace Surveillance.Rules.CancelledOrders
                 "Cancelled Order Rule",
                 opCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
@@ -182,15 +188,15 @@ namespace Surveillance.Rules.CancelledOrders
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
-
-            var alertMessage = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, null, _opCtx, true);
-            _alertStream.Add(alertMessage);
             _opCtx?.EndEvent();
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (CancelledOrderRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

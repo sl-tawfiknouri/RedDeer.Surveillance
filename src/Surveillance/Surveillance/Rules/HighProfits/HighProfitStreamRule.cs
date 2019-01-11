@@ -8,6 +8,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -27,25 +28,27 @@ namespace Surveillance.Rules.HighProfits
         private readonly IHighProfitsRuleParameters _parameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         protected readonly IUniverseAlertStream _alertStream;
-        private readonly bool _submitRuleBreaches;
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IDataRequestMessageSender _dataRequestMessageSender;
 
+        private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
 
         public HighProfitStreamRule(
             IHighProfitsRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
-            bool submitRuleBreaches,
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IDataRequestMessageSender messageSender,
+            RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -55,12 +58,12 @@ namespace Surveillance.Rules.HighProfits
                 "High Profit Rule",
                 ruleCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
-            _submitRuleBreaches = submitRuleBreaches;
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
@@ -68,6 +71,7 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _dataRequestMessageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -116,7 +120,15 @@ namespace Surveillance.Rules.HighProfits
             var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, UniverseMarketCache);
 
             var cost = costTask.Result;
-            var revenue = revenueTask.Result;
+            var revenueResponse = revenueTask.Result;
+
+            if (revenueResponse.HadMissingMarketData)
+            {
+                _hasMissingData = true;
+                return;
+            }
+
+            var revenue = revenueResponse.CurrencyAmount;
 
             if (revenue == null)
             {
@@ -318,20 +330,31 @@ namespace Surveillance.Rules.HighProfits
             {
                 RunRuleForAllTradingHistories();
             }
-
-            if (_submitRuleBreaches)
+            
+            if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
-                Logger.LogInformation($"High Profit Stream Rule submitting rule breach flush command to the alert stream");
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, true);
+                Logger.LogInformation($"High Profit Stream Rule deleting alerts off the message sender");
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
-            }
 
-            _ruleCtx?.EndEvent();
+                var requestTask = _dataRequestMessageSender.Send(_ruleCtx.Id());
+                requestTask.Wait();
+                var opCtx = _ruleCtx?.EndEvent();
+                opCtx?.EndEventWithMissingDataError();
+            }
+            else
+            {
+                var opCtx = _ruleCtx?.EndEvent();
+                opCtx?.EndEvent();
+            }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (HighProfitStreamRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

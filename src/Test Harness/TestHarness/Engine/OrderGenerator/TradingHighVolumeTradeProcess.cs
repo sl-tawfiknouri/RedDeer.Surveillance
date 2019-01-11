@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -40,18 +40,18 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
-                _executeOn = value.TimeStamp.Add(_executePoint);
+                _executeOn = value.Epoch.Add(_executePoint);
                 return;
             }
 
@@ -67,12 +67,12 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                if (value.TimeStamp < _executeOn.Value)
+                if (value.Epoch < _executeOn.Value)
                 {
                     return;
                 }
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
@@ -107,7 +107,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
+            Stack<MarketTimeBarCollection> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -130,7 +130,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
             var headSecurity = securities.FirstOrDefault();
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) +1) * 0.2m;
 
@@ -149,9 +149,9 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.TimeStamp.AddSeconds(30 * i),
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    headSecurity.Spread.Price.Currency,
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
-                    new CurrencyAmount(headSecurity.Spread.Price.Value * 1.05m, headSecurity.Spread.Price.Currency),
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
                     (int)volumeForBreachesToTrade,
                     (int)volumeForBreachesToTrade,
                     null,
@@ -171,7 +171,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForDailyBreachInSedol(
             string sedol,
-            ExchangeFrame frame,
+            MarketTimeBarCollection frame,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -192,7 +192,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var tradedVolume = securities.DailyVolume.Traded;
+            var tradedVolume = securities.DailySummaryTimeBar.DailyVolume.Traded;
             var volumeForBreachesToTrade = (((decimal)tradedVolume * percentageOfTraded) + 1) * 0.2m;
 
             for (var i = 0; i < 5; i++)
@@ -210,9 +210,9 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.TimeStamp.AddSeconds(30 * i),
                     OrderTypes.MARKET,
                     OrderPositions.BUY,
-                    securities.Spread.Price.Currency,
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
-                    new CurrencyAmount(securities.Spread.Price.Value * 1.05m, securities.Spread.Price.Currency),
+                    securities.SpreadTimeBar.Price.Currency,
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
+                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
                     null,

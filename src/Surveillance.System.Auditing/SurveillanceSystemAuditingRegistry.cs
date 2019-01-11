@@ -5,6 +5,8 @@ using Surveillance.System.Auditing.Factories;
 using Surveillance.System.Auditing.Factories.Interfaces;
 using Surveillance.System.Auditing.Logging;
 using Surveillance.System.Auditing.Logging.Interfaces;
+using Surveillance.System.Auditing.Utilities;
+using Surveillance.System.Auditing.Utilities.Interfaces;
 using Surveillance.System.DataLayer.Repositories.Exceptions;
 using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
 
@@ -19,8 +21,11 @@ namespace Surveillance.System.Auditing
             For<ISystemProcessOperationDistributeRuleContextFactory>().Use<SystemProcessOperationDistributeRuleContextFactory>();
             For<ISystemProcessOperationRunRuleContextFactory>().Use<SystemProcessOperationRunRuleContextFactory>();
             For<ISystemProcessOperationFileUploadContextFactory>().Use<SystemProcessOperationFileUploadContextFactory>();
+            For<ISystemProcessOperationDataRequestContextFactory>()
+                .Use<SystemProcessOperationDataRequestContextFactory>();
             For<IExceptionRepository>().Use<ExceptionRepository>();
             For<IOperationLogging>().Use<OperationLogging>();
+            For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
         }
     }
 }

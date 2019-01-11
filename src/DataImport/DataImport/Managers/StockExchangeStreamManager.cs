@@ -2,8 +2,8 @@
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Managers.Interfaces;
 using DataImport.Recorders.Interfaces;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Streams;
 
 namespace DataImport.Managers
@@ -25,7 +25,7 @@ namespace DataImport.Managers
 
         public IUploadEquityFileMonitor Initialise()
         {
-            var unsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
+            var unsubscriberFactory = new UnsubscriberFactory<MarketTimeBarCollection>();
             var stockExchangeStream = new StockExchangeStream(unsubscriberFactory); // from stock processor TO data import
 
             // hook up the data recorder

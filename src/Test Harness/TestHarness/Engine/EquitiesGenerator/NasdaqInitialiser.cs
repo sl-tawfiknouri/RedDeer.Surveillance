@@ -1,11 +1,11 @@
-﻿using DomainV2.Equity.Frames;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using DomainV2.Equity;
+using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -13,24 +13,24 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private string _nasdaqCurrency = "USD";
 
-        public ExchangeFrame InitialFrame()
+        public MarketTimeBarCollection InitialFrame()
         {
             var exchange = new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
-            var tick = new ExchangeFrame(exchange, DateTime.UtcNow, securities);
+            var tick = new MarketTimeBarCollection(exchange, DateTime.UtcNow, securities);
 
             return tick;
         }
 
-        private List<SecurityTick> ProjectToSecurities(NasdaqData[] nasdaqRaw)
+        private List<FinancialInstrumentTimeBar> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
             var volume = rnd.Next(5000, 1000000);
 
             return nasdaqRaw.Select(raw =>
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(
@@ -49,20 +49,23 @@ namespace TestHarness.Engine.EquitiesGenerator
                         "CFI",
                         "USD",
                         raw.Symbol), 
-                     new Spread(
+                     new SpreadTimeBar(
                         new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
                         new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency)),
-                    new Volume(volume),
-                    new Volume(volume),
+                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                         new Volume(volume)),
+
+                     new DailySummaryTimeBar(
+                         decimal.Parse(raw.Buy) * volume,
+                         new IntradayPrices(
+                             new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
+                             new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
+                         volume * 3,
+                         new Volume(volume),
+                         DateTime.UtcNow),
                     DateTime.UtcNow,
-                    decimal.Parse(raw.Buy) * volume,
-                    new IntradayPrices(
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
-                    volume * 3,
                     new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE)))
                 .ToList();
         }

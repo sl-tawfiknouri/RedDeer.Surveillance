@@ -26,6 +26,8 @@ namespace Surveillance.Rules.WashTrade
     /// These are attempts to manipulate the market at large through publicly observable information
     /// By making a large amount of trades in an otherwise unremarkable stock the objective is to increase
     /// interest in trading the stock which will open up opportunities to profit by the wash traders
+    ///
+    /// Does not use market data so doesn't leverage the run mode setting
     /// </summary>
     public class WashTradeRule : BaseUniverseRule, IWashTradeRule
     {
@@ -46,6 +48,7 @@ namespace Surveillance.Rules.WashTrade
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -55,6 +58,7 @@ namespace Surveillance.Rules.WashTrade
                 "Wash Trade Rule",
                 ruleCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
@@ -453,15 +457,15 @@ namespace Surveillance.Rules.WashTrade
         protected override void EndOfUniverse()
         {
             _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
-
-            var alertStream = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, null, RuleCtx, true);
-            _alertStream.Add(alertStream);
             RuleCtx?.EndEvent();
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (WashTradeRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Surveillance.Rules.Spoofing
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -42,6 +43,7 @@ namespace Surveillance.Rules.Spoofing
                   "Spoofing Rule",
                   ruleCtx,
                   factory,
+                  runMode,
                   logger,
                   tradingHistoryLogger)
         {
@@ -215,14 +217,15 @@ namespace Surveillance.Rules.Spoofing
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Spoofing Rule");
-            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, null, _ruleCtx, true);
-            _alertStream.Add(alert);
             _ruleCtx?.EndEvent();
         }
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (SpoofingRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System;
 using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 
@@ -38,18 +38,19 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
+            var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(20000));
 
             var tick =
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     security,
                     spread,
-                    new Volume(200000),
-                    new Volume(200000),
+                    new DailySummaryTimeBar(
+                        1000,
+                        null,
+                        1000,
+                        new Volume(20000),
+                        DateTime.UtcNow),
                     DateTime.UtcNow,
-                    3000,
-                    null,
-                    100,
                     new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var result = strategy.AdvanceFrame(tick, DateTime.UtcNow, true);
@@ -70,18 +71,19 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, string.Empty, "MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new Spread(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"));
+            var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(200000));
 
             var tick =
-                new SecurityTick(
+                new FinancialInstrumentTimeBar(
                     security,
                     spread,
-                    new Volume(200000),
-                    new Volume(200000),
+                    new DailySummaryTimeBar(
+                        1000,
+                        null,
+                        1000,
+                        new Volume(200000),
+                        DateTime.UtcNow),
                     DateTime.UtcNow,
-                    3000,
-                    null,
-                    100,
                     new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE));
 
             var printableInitialSecurity = JsonConvert.SerializeObject(security);
@@ -94,7 +96,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
                 var printableGeneratedSecurity = JsonConvert.SerializeObject(security);
                 Console.WriteLine(printableGeneratedSecurity);
 
-                Assert.IsTrue(tick.Spread.Bid.Value >= tick.Spread.Ask.Value);
+                Assert.IsTrue(tick.SpreadTimeBar.Bid.Value >= tick.SpreadTimeBar.Ask.Value);
             }
         }
     }

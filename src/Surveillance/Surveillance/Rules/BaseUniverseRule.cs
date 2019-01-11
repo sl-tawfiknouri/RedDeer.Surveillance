@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
@@ -24,14 +24,15 @@ namespace Surveillance.Rules
         private readonly string _name;
         protected readonly TimeSpan WindowSize;
 
-        protected readonly IUniverseMarketCache UniverseMarketCache;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
-        protected readonly ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
+        protected IUniverseMarketCache UniverseMarketCache;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
 
         protected ScheduledExecution Schedule;
         protected DateTime UniverseDateTime;
         protected bool HasReachedEndOfUniverse;
         protected readonly ISystemProcessOperationRunRuleContext RuleCtx;
+        protected readonly RuleRunMode RunMode;
 
         private readonly ILogger _logger;
         private readonly ILogger<TradingHistoryStack> _tradingStackLogger;
@@ -44,17 +45,19 @@ namespace Surveillance.Rules
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
+            RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
         {
             WindowSize = windowSize;
             Rule = rules;
             Version = version ?? string.Empty;
-            UniverseMarketCache = marketCacheFactory?.Build(windowSize) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            UniverseMarketCache = marketCacheFactory?.Build(windowSize, runMode) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
+            RunMode = runMode;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingStackLogger = tradingStackLogger ?? throw new ArgumentNullException(nameof(tradingStackLogger));
         }
@@ -136,12 +139,12 @@ namespace Surveillance.Rules
 
         private void StockTick(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is ExchangeFrame value))
+            if (!(universeEvent.UnderlyingEvent is MarketTimeBarCollection value))
             {
                 return;
             }
 
-            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.TimeStamp} | security count {value.Securities?.Count ?? 0}");
+            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
             UniverseDateTime = universeEvent.EventTime;
             UniverseMarketCache.Add(value);
@@ -309,5 +312,13 @@ namespace Surveillance.Rules
 
         public DomainV2.Scheduling.Rules Rule { get; }
         public string Version { get; }
+
+
+        public void BaseClone()
+        {
+            UniverseMarketCache = (IUniverseMarketCache)UniverseMarketCache.Clone();
+            TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
+            TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
@@ -39,7 +39,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 _limitStandardDeviation = limitStandardDeviation.Value;
         }
 
-        public void ExecuteTradeStrategy(ExchangeFrame frame, IOrderStream<Order> tradeOrders)
+        public void ExecuteTradeStrategy(MarketTimeBarCollection frame, IOrderStream<Order> tradeOrders)
         {
             if (tradeOrders == null)
             {
@@ -73,7 +73,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
         }
 
         private void GenerateAndSubmitTrades(
-            ExchangeFrame frame,
+            MarketTimeBarCollection frame,
             IOrderStream<Order> tradeOrders,
             int numberOfTradeOrders)
         {
@@ -89,7 +89,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _logger.LogInformation($"Submitted {trades.Count} trade orders in frame");
         }
 
-        private IReadOnlyCollection<int> SecuritiesToTrade(ExchangeFrame frame, int securitiesToTrade)
+        private IReadOnlyCollection<int> SecuritiesToTrade(MarketTimeBarCollection frame, int securitiesToTrade)
         {
             var upperLimit = frame.Securities.Count - 1;
             var securitiesToTradeIds = new List<int>();
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return securitiesToTradeIds;
         }
 
-        private Order GenerateTrade(SecurityTick tick, ExchangeFrame exchFrame)
+        private Order GenerateTrade(FinancialInstrumentTimeBar tick, MarketTimeBarCollection exchFrame)
         {
             if (tick == null)
             {
@@ -111,7 +111,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var position = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
             var limit = CalculateLimit(tick, position, orderType);
-            var executedPrice = tick.Spread.Price;
+            var executedPrice = tick.SpreadTimeBar.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
@@ -122,7 +122,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var counterPartyBrokerId = GenerateClientFactorString();
             var tradeRationale = string.Empty;
             var tradeStrategy = string.Empty;
-            var orderCurrency = tick?.Spread.Price.Currency.Value ?? string.Empty;
+            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Value ?? string.Empty;
 
             var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
             var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;
@@ -187,7 +187,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(SecurityTick tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
+        private CurrencyAmount? CalculateLimit(FinancialInstrumentTimeBar tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
@@ -196,25 +196,25 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 
             if (buyOrSell == OrderPositions.BUY)
             {
-                var price = (decimal)Normal.Sample((double)tick.Spread.Bid.Value, _limitStandardDeviation);
+                var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.Spread.Bid.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
             }
             else if (buyOrSell == OrderPositions.SELL)
             {
-                var price = (decimal)Normal.Sample((double)tick.Spread.Ask.Value, _limitStandardDeviation);
+                var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.Spread.Ask.Currency);
+                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
             }
 
             return null;
         }
 
-        private int CalculateVolume(SecurityTick tick)
+        private int CalculateVolume(FinancialInstrumentTimeBar tick)
         {
-            var upperLimit = Math.Max(tick.Volume.Traded, 1);
+            var upperLimit = Math.Max(tick.SpreadTimeBar.Volume.Traded, 1);
             var tradingVolume = (int)Math.Sqrt(upperLimit);
             var volume = DiscreteUniform.Sample(0, tradingVolume);
 

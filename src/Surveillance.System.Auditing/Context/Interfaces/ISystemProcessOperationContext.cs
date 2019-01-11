@@ -23,9 +23,17 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         ISystemProcessOperationRunRuleContext CreateAndStartRuleRunContext(
             string ruleDescription,
             string ruleVersion,
+            string ruleParameterId,
+            int ruleTypeId,
+            bool isBackTest,
             DateTime ruleScheduleBegin,
             DateTime ruleScheduleEnd,
-            string correlationId);
+            string correlationId,
+            bool ruleRunMode);
+
+        ISystemProcessOperationThirdPartyDataRequestContext CreateAndStartDataRequestContext(
+            string queueMessageId,
+            string ruleId);
 
         ISystemProcessContext EndEvent();
         ISystemProcessContext EndEventWithError(string message);

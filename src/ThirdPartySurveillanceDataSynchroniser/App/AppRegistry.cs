@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Configuration;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
 
@@ -12,7 +13,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            // For<ISystemDataLayerConfig>().Use<Configuration>();
             For<IStartUpTaskRunner>().Use<DataSynchroniserRunner>();
         }
     }

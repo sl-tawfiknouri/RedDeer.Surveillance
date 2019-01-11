@@ -10,6 +10,7 @@ using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -28,6 +29,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IDataRequestMessageSender _dataRequestSender;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -39,6 +41,8 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
+            IDataRequestMessageSender dataRequestSender,
+            RuleRunMode runMode,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
@@ -48,6 +52,7 @@ namespace Surveillance.Rules.HighVolume
                 "High Volume Rule",
                 opCtx,
                 factory,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
@@ -56,6 +61,7 @@ namespace Surveillance.Rules.HighVolume
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _dataRequestSender = dataRequestSender ?? throw new ArgumentNullException(nameof(dataRequestSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -170,6 +176,7 @@ namespace Surveillance.Rules.HighVolume
 
             var marketDataRequest = new MarketDataRequest(
                 mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
@@ -185,7 +192,8 @@ namespace Surveillance.Rules.HighVolume
             }
 
             var security = securityResult.Response;
-            var threshold = (long)Math.Ceiling(_parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailyVolume.Traded);
+            var threshold = (long)Math.Ceiling(
+                _parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailySummaryTimeBar.DailyVolume.Traded);
 
             if (threshold <= 0)
             {
@@ -195,8 +203,8 @@ namespace Surveillance.Rules.HighVolume
             }
 
             var breachPercentage =
-                security.DailyVolume.Traded != 0 && tradedVolume != 0
-                    ? (decimal)tradedVolume / (decimal)security.DailyVolume.Traded
+                security.DailySummaryTimeBar.DailyVolume.Traded != 0 && tradedVolume != 0
+                    ? (decimal)tradedVolume / (decimal)security.DailySummaryTimeBar.DailyVolume.Traded
                     : 0;
 
             if (tradedVolume >= threshold)
@@ -218,6 +226,7 @@ namespace Surveillance.Rules.HighVolume
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market?.MarketIdentifierCode,
+                    mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
                     tradingHours.OpeningInUtcForDay(UniverseDateTime),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
@@ -234,7 +243,7 @@ namespace Surveillance.Rules.HighVolume
             }
 
             var securityDataTicks = marketResult.Response;           
-            var windowVolume = securityDataTicks.Sum(sdt => sdt.Volume.Traded);
+            var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
             var threshold = (long)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
 
             var breachPercentage =
@@ -273,6 +282,7 @@ namespace Surveillance.Rules.HighVolume
 
             var marketDataRequest = new MarketDataRequest(
                 mostRecentTrade.Market?.MarketIdentifierCode,
+                mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
                 tradingHours.OpeningInUtcForDay(UniverseDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
@@ -283,14 +293,14 @@ namespace Surveillance.Rules.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogWarning($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogInformation($"High Volume Rule. Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
             var security = securityResult.Response;
             double thresholdValue =
                 (double)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
-                * security.MarketCap.GetValueOrDefault(0));
+                * security.DailySummaryTimeBar.MarketCap.GetValueOrDefault(0));
 
             if (thresholdValue <= 0)
             {
@@ -305,14 +315,14 @@ namespace Surveillance.Rules.HighVolume
                     .Sum();
 
             var breachPercentage =
-                security.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0
-                    ? (decimal)tradedValue / (decimal)security.MarketCap.GetValueOrDefault(0)
+                security.DailySummaryTimeBar.MarketCap.GetValueOrDefault(0) != 0 && tradedValue != 0
+                    ? (decimal)tradedValue / (decimal)security.DailySummaryTimeBar.MarketCap.GetValueOrDefault(0)
                     : 0;
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.Spread.Price.Currency);
-                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.Spread.Price.Currency);
+                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.SpreadTimeBar.Price.Currency);
+                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.SpreadTimeBar.Price.Currency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }
@@ -342,11 +352,14 @@ namespace Surveillance.Rules.HighVolume
         {
             _logger.LogInformation("Eschaton occured in the High Volume Rule");
 
-            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, true);
-            _alertStream.Add(alert);
-
-            if (_hadMissingData)
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
+                // delete event
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
+
+                var requestTask = _dataRequestSender.Send(_ruleCtx.Id());
+                requestTask.Wait();
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else
@@ -357,7 +370,10 @@ namespace Surveillance.Rules.HighVolume
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            var clone = (HighVolumeRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

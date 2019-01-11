@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -26,18 +27,21 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IDataRequestMessageSender messageSender,
+            RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters, 
                 ruleCtx,
                 alertStream,
-                true,
                 costCalculatorFactory,
                 revenueCalculatorFactory,
                 exchangeRateProfitCalculator,
                 orderFilter,
                 factory,
+                messageSender,
+                runMode,
                 logger,
                 tradingHistoryLogger)
         {
@@ -85,6 +89,14 @@ namespace Surveillance.Rules.HighProfits
             Logger.LogInformation($"HighProfitMarketClosureRule RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
             return false;
+        }
+
+        public override object Clone()
+        {
+            var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
+            clone.BaseClone();
+
+            return clone;
         }
     }
 }

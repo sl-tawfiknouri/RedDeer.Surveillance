@@ -4,7 +4,7 @@ using Surveillance.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.RuleParameters.Interfaces
 {
-    public interface ICancelledOrderRuleParameters : IFilterableRule
+    public interface ICancelledOrderRuleParameters : IFilterableRule, IRuleParameter
     {
         TimeSpan WindowSize { get; }
         decimal? CancelledOrderPercentagePositionThreshold { get; }

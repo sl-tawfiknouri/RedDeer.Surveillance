@@ -1,6 +1,6 @@
-﻿using DomainV2.Equity.Frames;
-using DomainV2.Equity.Streams;
+﻿using DomainV2.Equity.Streams;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Streams;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
@@ -12,7 +12,7 @@ namespace TestHarness.Factory.EquitiesFactory
     {
         public IStockExchangeStream Create()
         {
-            var exchangeUnsubscriberFactory = new UnsubscriberFactory<ExchangeFrame>();
+            var exchangeUnsubscriberFactory = new UnsubscriberFactory<MarketTimeBarCollection>();
             var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
 
             return exchangeStream;

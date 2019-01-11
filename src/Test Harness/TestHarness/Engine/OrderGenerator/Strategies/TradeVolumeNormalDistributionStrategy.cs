@@ -1,7 +1,7 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies
@@ -15,7 +15,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _sd = sd;
         }
 
-        public int CalculateSecuritiesToTrade(IReadOnlyCollection<SecurityTick> frames)
+        public int CalculateSecuritiesToTrade(IReadOnlyCollection<FinancialInstrumentTimeBar> frames)
         {
             var tradingMean = TradingMean(frames);
             var totalSecuritiesToTrade = (int)Normal.Sample(tradingMean, _sd);
@@ -24,7 +24,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return adjustedSecuritiesToTrade;
         }
 
-        private int TradingMean(IReadOnlyCollection<SecurityTick> frames)
+        private int TradingMean(IReadOnlyCollection<FinancialInstrumentTimeBar> frames)
         {
             var rawCount = frames.Count;
 

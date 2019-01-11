@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Streams;
@@ -107,7 +107,7 @@ namespace Surveillance.Tests.Universe.Multiverse
                 {
                     if (((IUniverseEvent)a.Arguments[0]).StateChange == UniverseStateEvent.StockTickReddeer)
                     {
-                        Console.WriteLine(((ExchangeFrame) ((IUniverseEvent) a.Arguments[0]).UnderlyingEvent).Exchange
+                        Console.WriteLine(((MarketTimeBarCollection) ((IUniverseEvent) a.Arguments[0]).UnderlyingEvent).Exchange
                             .Name);
                     }
                 });
@@ -181,7 +181,7 @@ namespace Surveillance.Tests.Universe.Multiverse
             A.CallTo(() => _observer.OnNext(
                 A<UniverseEvent>.That.Matches(m =>
                     m.StateChange == UniverseStateEvent.StockTickReddeer
-                    && ((ExchangeFrame)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 2-4")))
+                    && ((MarketTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 2-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);
             A.CallTo(() => _observer.OnNext(day2Close)).MustHaveHappenedOnceExactly();
 
@@ -189,7 +189,7 @@ namespace Surveillance.Tests.Universe.Multiverse
             A.CallTo(() => _observer.OnNext(
                     A<UniverseEvent>.That.Matches(m =>
                         m.StateChange == UniverseStateEvent.StockTickReddeer
-                        && ((ExchangeFrame)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 3-4")))
+                        && ((MarketTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 3-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);
             A.CallTo(() => _observer.OnNext(day3Close)).MustHaveHappenedOnceExactly();
 
@@ -197,7 +197,7 @@ namespace Surveillance.Tests.Universe.Multiverse
             A.CallTo(() => _observer.OnNext(
                     A<UniverseEvent>.That.Matches(m =>
                         m.StateChange == UniverseStateEvent.StockTickReddeer
-                        && ((ExchangeFrame)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 4-4")))
+                        && ((MarketTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 4-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);
             A.CallTo(() => _observer.OnNext(day4Close)).MustHaveHappenedOnceExactly();
 
@@ -206,10 +206,10 @@ namespace Surveillance.Tests.Universe.Multiverse
 
         private IUniverseEvent Tick(DateTime genesis, int day, int hour, string id)
         {
-            var tick = new ExchangeFrame(
+            var tick = new MarketTimeBarCollection(
                 new Market("1", "NASDAQ", $"NASDAQ {id}", MarketTypes.STOCKEXCHANGE),
                 genesis.AddDays(day).AddHours(hour),
-                new List<SecurityTick>());
+                new List<FinancialInstrumentTimeBar>());
 
             return new UniverseEvent(UniverseStateEvent.StockTickReddeer, genesis.AddDays(day).AddHours(hour), (object)tick);
         }

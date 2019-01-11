@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using Surveillance.Universe.Interfaces;
 
@@ -10,11 +10,11 @@ namespace Surveillance.Universe
     {
         public Universe(
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<ExchangeFrame> marketEquityData,
+            IReadOnlyCollection<MarketTimeBarCollection> marketEquityData,
             IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
             Trades = trades ?? new List<Order>();
-            MarketEquityData = marketEquityData ?? new List<ExchangeFrame>();
+            MarketEquityData = marketEquityData ?? new List<MarketTimeBarCollection>();
             UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
 
             Setup();
@@ -33,7 +33,7 @@ namespace Surveillance.Universe
 
         public IReadOnlyCollection<Order> Trades { get; private set; }
 
-        public IReadOnlyCollection<ExchangeFrame> MarketEquityData { get; private set; }
+        public IReadOnlyCollection<MarketTimeBarCollection> MarketEquityData { get; private set; }
 
         public IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; private set; }
     }

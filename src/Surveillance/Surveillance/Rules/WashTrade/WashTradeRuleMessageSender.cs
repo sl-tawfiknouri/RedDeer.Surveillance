@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.WashTrade
 {
@@ -21,12 +20,10 @@ namespace Surveillance.Rules.WashTrade
                 caseMessageSender)
         { }
 
-        public async Task Send(
-            IWashTradeRuleBreach breach,
-            ISystemProcessOperationRunRuleContext opCtx)
+        public async Task Send(IWashTradeRuleBreach breach)
         {
             var description = BuildDescription(breach);
-            await Send(breach, description, opCtx);
+            await Send(breach, description);
         }
 
         private string BuildDescription(IWashTradeRuleBreach breach)

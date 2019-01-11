@@ -39,7 +39,8 @@ namespace DomainV2.Scheduling
                 IsBackTest = dto.IsBackTest,
                 TimeSeriesInitiation = dto.TimeSeriesInitiation,
                 TimeSeriesTermination = dto.TimeSeriesTermination,
-                Rules = rules
+                Rules = rules,
+                IsForceRerun = dto.IsForceRerun
             };
 
             return response;
@@ -69,7 +70,8 @@ namespace DomainV2.Scheduling
                 IsBackTest = dto.IsBackTest,
                 TimeSeriesInitiation = dto.TimeSeriesInitiation,
                 TimeSeriesTermination = dto.TimeSeriesTermination,
-                Rules = rules
+                Rules = rules,
+                IsForceRerun = dto.IsForceRerun
             };
 
             return scheduleExecution;

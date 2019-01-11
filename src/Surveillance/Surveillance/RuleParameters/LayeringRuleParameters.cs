@@ -9,6 +9,7 @@ namespace Surveillance.RuleParameters
     public class LayeringRuleParameters : ILayeringRuleParameters
     {
         public LayeringRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? percentageOfMarketDailyVolume,
             decimal? percentOfMarketWindowVolume,
@@ -16,6 +17,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
             PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
@@ -30,6 +33,7 @@ namespace Surveillance.RuleParameters
         }
 
         public LayeringRuleParameters(
+            string id,
             TimeSpan windowSize,
             decimal? percentageOfMarketDailyVolume,
             decimal? percentOfMarketWindowVolume,
@@ -40,6 +44,8 @@ namespace Surveillance.RuleParameters
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
+            Id = id ?? string.Empty;
+
             WindowSize = windowSize;
             PercentageOfMarketDailyVolume = percentageOfMarketDailyVolume;
             PercentageOfMarketWindowVolume = percentOfMarketWindowVolume;
@@ -53,6 +59,7 @@ namespace Surveillance.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
+        public string Id { get; }
         public TimeSpan WindowSize { get; }
         public decimal? PercentageOfMarketDailyVolume { get; }
         public decimal? PercentageOfMarketWindowVolume { get; }

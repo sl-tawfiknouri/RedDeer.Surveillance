@@ -1,5 +1,7 @@
 ﻿using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
+using DomainV2.DTO;
+using DomainV2.DTO.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
@@ -48,8 +50,6 @@ using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Scheduler.Interfaces;
-using Surveillance.Services;
-using Surveillance.Services.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.Filter;
 using Surveillance.Universe.Filter.Interfaces;
@@ -118,8 +118,11 @@ namespace Surveillance
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
             For<IExchangeRateProfitCalculator>().Use<ExchangeRateProfitCalculator>();
 
-            For<ICaseMessageBusSerialiser>().Use<CaseMessageBusSerialiser>();
+            For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
             For<ICaseMessageSender>().Use<CaseMessageSender>();
+
+            For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
+            For<IDataRequestMessageSender>().Use<DataRequestMessageSender>();
 
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
@@ -168,7 +171,6 @@ namespace Surveillance
             For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
-            For<IApplicationHeartbeatService>().Use<ApplicationHeartbeatService>();
             For<IRuleProjector>().Use<RuleProjector>();
 
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();

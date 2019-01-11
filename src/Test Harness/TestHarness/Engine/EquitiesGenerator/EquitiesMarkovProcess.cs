@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using DomainV2.Equity.Frames;
 using DomainV2.Equity.Streams.Interfaces;
+using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
@@ -21,7 +21,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IExchangeSeriesInitialiser _exchangeTickInitialiser;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
-        private ExchangeFrame _activeFrame;
+        private MarketTimeBarCollection _activeFrame;
         private readonly IHeartbeat _heartBeat;
 
         private readonly ILogger _logger;
@@ -99,7 +99,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                     .Select(TickSecurity)
                     .ToArray();
 
-                var tickTock = new ExchangeFrame(_activeFrame.Exchange, DateTime.UtcNow, tockedSecurities);
+                var tickTock = new MarketTimeBarCollection(_activeFrame.Exchange, DateTime.UtcNow, tockedSecurities);
                 _activeFrame = tickTock;
 
                 _stream.Add(tickTock);
@@ -108,7 +108,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private SecurityTick TickSecurity(SecurityTick tick)
+        private FinancialInstrumentTimeBar TickSecurity(FinancialInstrumentTimeBar tick)
         {
             return _dataStrategy.AdvanceFrame(tick, DateTime.UtcNow, true);
         }

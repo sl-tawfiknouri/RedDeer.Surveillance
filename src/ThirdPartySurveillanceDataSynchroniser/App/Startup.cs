@@ -8,6 +8,13 @@ using NLog;
 using StructureMap;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.DataLayer;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.System.Auditing;
+using Surveillance.System.Auditing.Context;
+using Surveillance.System.DataLayer;
+using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.System.DataLayer.Processes;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;
 using Utilities.Aws_IO.Interfaces;
@@ -30,21 +37,24 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             container.Inject(typeof(IDataLayerConfiguration), builtConfig);
 
-            //container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
             // SystemProcessContext.ProcessType = SystemProcessType.DataImportService;
 
-            // var builtDataConfig = BuildDataConfiguration();
-            // container.Inject(typeof(IAwsConfiguration), builtDataConfig);
-            // container.Inject(typeof(IDataLayerConfiguration), builtDataConfig);
+            container.Inject(typeof(IAwsConfiguration), builtConfig);
+            container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+            container.Inject(typeof(IDataLayerConfiguration), builtConfig);
 
             container.Configure(config =>
             {
+                config.IncludeRegistry<DataLayerRegistry>();
                 config.IncludeRegistry<DataSynchroniserRegistry>();
+                config.IncludeRegistry<SystemSystemDataLayerRegistry>();
+                config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });
 
-            // container.Inject(typeof(ISystemDataLayerConfig), builtConfig);
+            SystemProcessContext.ProcessType = SystemProcessType.ThirdPartySurveillanceDataSynchroniser;
+
             Logger.Log(LogLevel.Info, $"Startup configure services completed registering dependency injection");
 
             return container.GetInstance<IServiceProvider>();
@@ -73,15 +83,5 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
             var builder = new ConfigBuilder.ConfigBuilder();
             return builder.Build(configurationBuilder);
         }
-
-        //private static IDataLayerConfiguration BuildDataConfiguration()
-        //{
-        //    var configurationBuilder = new ConfigurationBuilder()
-        //        .AddJsonFile("appsettings.json", true, true)
-        //        .Build();
-
-        //    var builder = new ConfigBuilder.ConfigBuilder();
-        //    return builder.BuildData(configurationBuilder);
-        //}
     }
 }

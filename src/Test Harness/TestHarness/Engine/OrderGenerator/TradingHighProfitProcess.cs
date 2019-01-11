@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using DomainV2.Trading;
@@ -31,7 +31,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             if (value == null)
             {
@@ -43,7 +43,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.TimeStamp);
+            _marketHistoryStack.Add(value, value.Epoch);
 
             var plan = PlanInDateRange(value);
             if (plan == null)
@@ -54,10 +54,10 @@ namespace TestHarness.Engine.OrderGenerator
             lock (_lock)
             {
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.TimeStamp);
+                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
                 var activeItems = _marketHistoryStack.ActiveMarketHistory();
 
-                if (plan.EquityInstructions.TerminationInUtc == value.TimeStamp)
+                if (plan.EquityInstructions.TerminationInUtc == value.Epoch)
                 {
                     CreateHighProfitTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, false);
                     CreateHighProfitTradesForWindowBreachInSedol(plan.Sedol, activeItems, value, true);
@@ -69,7 +69,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private DataGenerationPlan PlanInDateRange(ExchangeFrame value)
+        private DataGenerationPlan PlanInDateRange(MarketTimeBarCollection value)
         {
             if (!_plan?.Any() ?? true)
             {
@@ -83,8 +83,8 @@ namespace TestHarness.Engine.OrderGenerator
 
             foreach (var plan in _plan)
             {
-                if (plan.EquityInstructions.CommencementInUtc <= value.TimeStamp
-                    && plan.EquityInstructions.TerminationInUtc >= value.TimeStamp)
+                if (plan.EquityInstructions.CommencementInUtc <= value.Epoch
+                    && plan.EquityInstructions.TerminationInUtc >= value.Epoch)
                 {
                     return plan;
                 }
@@ -95,8 +95,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighProfitTradesForWindowBreachInSedol(
             string sedol,
-            Stack<ExchangeFrame> frames,
-            ExchangeFrame latestFrame,
+            Stack<MarketTimeBarCollection> frames,
+            MarketTimeBarCollection latestFrame,
             bool sellTrade)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -128,11 +128,11 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var tradedVolume = securities.Sum(sec => sec.Volume.Traded);
+            var tradedVolume = securities.Sum(sec => sec.SpreadTimeBar.Volume.Traded);
 
             // select a suitably low % of the traded volume so we don't fire a huge amount of other rules =)
             tradedVolume = (int)((decimal)tradedVolume * 0.05m);
-            var tradeTime = latestFrame.TimeStamp;
+            var tradeTime = latestFrame.Epoch;
 
             var volume = new Order(
                 headSecurity.Security,
@@ -147,9 +147,9 @@ namespace TestHarness.Engine.OrderGenerator
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 OrderTypes.MARKET,
                 sellTrade ? OrderPositions.SELL : OrderPositions.BUY,
-                headSecurity.Spread.Price.Currency,
-                headSecurity.Spread.Price,
-                headSecurity.Spread.Price,
+                headSecurity.SpreadTimeBar.Price.Currency,
+                headSecurity.SpreadTimeBar.Price,
+                headSecurity.SpreadTimeBar.Price,
                 (int) tradedVolume,
                 (int) tradedVolume,
                 null,

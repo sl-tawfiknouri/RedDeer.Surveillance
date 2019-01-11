@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.Heartbeat.Interfaces;
@@ -12,7 +12,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// </summary>
     public class TradingHeartBeatDrivenProcess : BaseTradingProcess
     {
-        private ExchangeFrame _lastFrame;
+        private MarketTimeBarCollection _lastFrame;
         private readonly IHeartbeat _heartbeat;
 
         private volatile bool _initiated;
@@ -27,7 +27,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(ExchangeFrame value)
+        public override void OnNext(MarketTimeBarCollection value)
         {
             lock (_lock)
             {

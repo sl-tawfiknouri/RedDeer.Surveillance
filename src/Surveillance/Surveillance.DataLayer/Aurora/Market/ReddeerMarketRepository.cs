@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using DomainV2.Equity;
-using DomainV2.Equity.Frames;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -55,18 +54,20 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSEP.BidPrice as BidPrice,
              MSEP.AskPrice as AskPrice,
              MSEP.MarketPrice as MarketPrice,
-             MSEP.OpenPrice as OpenPrice,
-             MSEP.ClosePrice as ClosePrice,
-             MSEP.HighIntradayPrice as HighIntradayPrice,
-             MSEP.LowIntradayPrice as LowIntradayPrice,
-             MSEP.ListedSecurities as ListedSecurities,
-             MSEP.MarketCap as MarketCap,
-             MSEP.VolumeTradedInTick as VolumeTradedInTick,
-             MSEP.DailyVolume as DailyVolume
-             FROM MarketStockExchangePrices AS MSEP
-             LEFT JOIN FinancialInstruments AS MSES
+             MSEP.VolumeTraded as VolumeTraded,
+             IEDS.OpenPrice as OpenPrice,
+             IEDS.ClosePrice as ClosePrice,
+             IEDS.HighIntradayPrice as HighIntradayPrice,
+             IEDS.LowIntradayPrice as LowIntradayPrice,
+             IEDS.ListedSecurities as ListedSecurities,
+             IEDS.MarketCap as MarketCap,
+             IEDS.DailyVolume as DailyVolume
+             FROM InstrumentEquityTimeBars AS MSEP
+             LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
+             ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
+             LEFT OUTER JOIN FinancialInstruments AS MSES
              ON MSEP.SecurityId = MSES.Id
-             LEFT JOIN Market AS MSE
+             LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
              WHERE MSEP.Epoch >= @start
              AND MSEP.Epoch <= @end;";
@@ -202,7 +203,9 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             SELECT @FinancialInstrumentId2 := Id FROM FinancialInstruments WHERE Sedol = @sedol or (Isin = @Isin and MarketId = @MarketIdPrimaryKey) LIMIT 1;
 
-             INSERT INTO MarketStockExchangePrices (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, VolumeTradedInTick, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @VolumeTradedInTick, @DailyVolume);";
+             INSERT IGNORE INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded) VALUES (@FinancialInstrumentId2, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded);
+
+             INSERT IGNORE INTO InstrumentEquityDailySummary (SecurityId, Epoch, EpochDate, OpenPrice, ClosePrice, HighIntradayPrice, LowIntradayPrice, ListedSecurities, MarketCap, DailyVolume) VALUES (@FinancialInstrumentId2, @Epoch, @EpochDate, @OpenPrice, @ClosePrice, @HighIntradayPrice, @LowIntradayPrice, @ListedSecurities, @MarketCap, @DailyVolume);";
 
         public ReddeerMarketRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -294,7 +297,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task Create(ExchangeFrame entity)
+        public async Task Create(MarketTimeBarCollection entity)
         {
             if (entity == null)
             {
@@ -312,7 +315,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
                 if (!entity.Securities?.Any() ?? true)
                 {
-                    _logger.LogInformation($"ReddeerMarketRepository did not detect any securities for {entity.TimeStamp} - {entity.Exchange?.MarketIdentifierCode}");
+                    _logger.LogInformation($"ReddeerMarketRepository did not detect any securities for {entity.Epoch} - {entity.Exchange?.MarketIdentifierCode}");
                     return;
                 }
 
@@ -345,7 +348,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task<IReadOnlyCollection<ExchangeFrame>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<MarketTimeBarCollection>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date;
@@ -353,7 +356,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             if (start > end)
             {
                 _logger.LogWarning($"ReddeerMarketRepository Get request had a start date larger than end date {start} {end}");
-                return new ExchangeFrame[0];
+                return new MarketTimeBarCollection[0];
             }
 
             if (start == end)
@@ -392,7 +395,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                             {
                                 var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
-                                    new ExchangeFrame(
+                                    new MarketTimeBarCollection(
                                         market,
                                         i.Key3,
                                         i.Result.Select(o => ProjectToSecurity(o, market)).ToList());
@@ -416,7 +419,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 dbConnection.Dispose();
             }
 
-            return new ExchangeFrame[0];
+            return new MarketTimeBarCollection[0];
         }
 
         /// <summary>
@@ -517,7 +520,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private SecurityTick ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
+        private FinancialInstrumentTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
         {
             if (dto == null)
             {
@@ -545,10 +548,11 @@ namespace Surveillance.DataLayer.Aurora.Market
                     dto.IssuerIdentifier);
 
             var spread =
-                new Spread(
+                new SpreadTimeBar(
                     new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Volume(dto.VolumeTraded.GetValueOrDefault(0)));
 
             var intradayPrices =
                 new IntradayPrices(
@@ -557,16 +561,20 @@ namespace Surveillance.DataLayer.Aurora.Market
                     new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
-            var tick =
-                new SecurityTick(
-                    security,
-                    spread,
-                    new Volume(dto.VolumeTradedInTick.GetValueOrDefault(0)),
-                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
-                    dto.Epoch,
+            var dailySummary =
+                new DailySummaryTimeBar(
                     dto.MarketCap,
                     intradayPrices,
                     dto.ListedSecurities,
+                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
+                    dto.Epoch);
+
+            var tick =
+                new FinancialInstrumentTimeBar(
+                    security,
+                    spread,
+                    dailySummary,
+                    dto.Epoch,
                     market);
 
             return tick;
@@ -584,7 +592,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeDto()
             { }
 
-            public MarketStockExchangeDto(ExchangeFrame entity)
+            public MarketStockExchangeDto(MarketTimeBarCollection entity)
             {
                 if (entity == null)
                 {
@@ -607,7 +615,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(SecurityTick entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
+            public MarketStockExchangeSecuritiesDto(FinancialInstrumentTimeBar entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -628,22 +636,23 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency.Value
-                    ?? entity.Spread.Ask.Currency.Value
-                    ?? entity.Spread.Bid.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Value
+                    ?? entity.SpreadTimeBar.Ask.Currency.Value
+                    ?? entity.SpreadTimeBar.Bid.Currency.Value;
 
                 Epoch = entity.TimeStamp;
-                BidPrice = entity.Spread.Bid.Value;
-                AskPrice = entity.Spread.Ask.Value;
-                MarketPrice = entity.Spread.Price.Value;
-                OpenPrice = entity.IntradayPrices.Open?.Value;
-                ClosePrice = entity.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.ListedSecurities;
-                MarketCap = entity.MarketCap;
-                VolumeTradedInTick = entity.Volume.Traded;
-                DailyVolume = entity.DailyVolume.Traded;
+                EpochDate = entity.TimeStamp.Date;
+                BidPrice = entity.SpreadTimeBar.Bid.Value;
+                AskPrice = entity.SpreadTimeBar.Ask.Value;
+                MarketPrice = entity.SpreadTimeBar.Price.Value;
+                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
+                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 MarketId = marketId.ToString();
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
 
@@ -705,6 +714,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
 
             public DateTime Epoch { get; set; }
+            public DateTime EpochDate { get; set; }
 
             public decimal? BidPrice { get; set; }
 
@@ -724,7 +734,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? MarketCap { get; set; }
 
-            public long? VolumeTradedInTick { get; set; }
+            public long? VolumeTraded { get; set; }
 
             public long? DailyVolume { get; set; }
 
@@ -736,14 +746,14 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string MarketName { get; set; }
         }
 
-        private InsertSecurityDto Project(SecurityTick tick)
+        private InsertSecurityDto Project(FinancialInstrumentTimeBar tick)
         {
             return new InsertSecurityDto(tick, null, _cfiMapper);
         }
 
         private class InsertSecurityDto
         {
-            public InsertSecurityDto(SecurityTick entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
+            public InsertSecurityDto(FinancialInstrumentTimeBar entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -767,23 +777,24 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.Spread.Price.Currency.Value
-                    ?? entity.Spread.Ask.Currency.Value
-                    ?? entity.Spread.Bid.Currency.Value
-                    ?? entity.Spread.Price.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Value
+                    ?? entity.SpreadTimeBar.Ask.Currency.Value
+                    ?? entity.SpreadTimeBar.Bid.Currency.Value
+                    ?? entity.SpreadTimeBar.Price.Currency.Value;
                 Epoch = entity.TimeStamp;
-                BidPrice = entity.Spread.Bid.Value;
-                AskPrice = entity.Spread.Ask.Value;
-                MarketPrice = entity.Spread.Price.Value;
-                OpenPrice = entity.IntradayPrices.Open?.Value;
-                ClosePrice = entity.IntradayPrices.Close?.Value;
-                HighIntradayPrice = entity.IntradayPrices.High?.Value;
-                LowIntradayPrice = entity.IntradayPrices.Low?.Value;
-                ListedSecurities = entity.ListedSecurities;
-                MarketCap = entity.MarketCap;
-                VolumeTradedInTick = entity.Volume.Traded;
-                DailyVolume = entity.DailyVolume.Traded;
+                BidPrice = entity.SpreadTimeBar.Bid.Value;
+                AskPrice = entity.SpreadTimeBar.Ask.Value;
+                MarketPrice = entity.SpreadTimeBar.Price.Value;
+                OpenPrice = entity.DailySummaryTimeBar.IntradayPrices.Open?.Value;
+                ClosePrice = entity.DailySummaryTimeBar.IntradayPrices.Close?.Value;
+                HighIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.High?.Value;
+                LowIntradayPrice = entity.DailySummaryTimeBar.IntradayPrices.Low?.Value;
+                ListedSecurities = entity.DailySummaryTimeBar.ListedSecurities;
+                MarketCap = entity.DailySummaryTimeBar.MarketCap;
+                VolumeTraded = entity.SpreadTimeBar.Volume.Traded;
+                DailyVolume = entity.DailySummaryTimeBar.DailyVolume.Traded;
                 InstrumentType = (int)cfiMapper.MapCfi(entity.Security?.Cfi);
+                EpochDate = entity.TimeStamp.Date;
 
                 UnderlyingCfi = entity?.Security?.UnderlyingCfi;
                 UnderlyingName = entity?.Security?.UnderlyingName;
@@ -877,6 +888,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string FinancialInstrumentId { get; set; }
 
             public DateTime Epoch { get; set; }
+            public DateTime EpochDate { get; set; }
 
             public decimal? BidPrice { get; set; }
 
@@ -896,7 +908,7 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             public decimal? MarketCap { get; set; }
 
-            public long? VolumeTradedInTick { get; set; }
+            public long? VolumeTraded { get; set; }
 
             public long? DailyVolume { get; set; }
         }

@@ -134,5 +134,26 @@ namespace Surveillance.System.Auditing.Logging
 
             _exceptionRepository.Save(dto);
         }
+
+        public void Log(Exception e, ISystemProcessOperationThirdPartyDataRequest request)
+        {
+            if (request == null)
+            {
+                Log(e);
+                return;
+            }
+
+            var dto = new ExceptionDto
+            {
+                ExceptionMessage = e.Message,
+                InnerExceptionMessage = e.InnerException?.Message,
+                StackTrace = e.StackTrace,
+                SystemProcessId = request.SystemProcessId,
+                SystemProcessOperationId = request.SystemProcessOperationId,
+                SystemProcessOperationThirdPartyDataRequestId = request.Id
+            };
+
+            _exceptionRepository.Save(dto);
+        }
     }
 }

@@ -239,7 +239,7 @@ namespace TestHarness.Engine.OrderGenerator
                     orderPosition,
                     security.SpreadTimeBar.Price.Currency,
                     security.SpreadTimeBar.Price.Currency,
-                    OrderCleanDirty.None,
+                    OrderCleanDirty.NONE,
                     null,
                     security.SpreadTimeBar.Price,
                     security.SpreadTimeBar.Price,
@@ -250,7 +250,7 @@ namespace TestHarness.Engine.OrderGenerator
                     "dealing-instructions",
                     null,
                     null,
-                    OptionEuropeanAmerican.None,
+                    OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
             
             return order;

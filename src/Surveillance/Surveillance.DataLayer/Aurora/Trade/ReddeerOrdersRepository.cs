@@ -143,7 +143,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @RejectedDate,
                 @CancelledDate,
                 @FilledDate,
-                @OrderStatusChangedDate,
+                @StatusChangedDate,
 
                 @DealerId,
                 @Notes,
@@ -468,14 +468,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
             Enum.TryParse(dto.MarketType?.ToString() ?? string.Empty, out MarketTypes result);
             var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
-            var orderDirectionResult = (OrderDirections)dto.OrderPosition.GetValueOrDefault(0);
+            var orderDirectionResult = (OrderDirections)dto.OrderDirection.GetValueOrDefault(0);
             var orderCurrency = new Currency(dto.OrderCurrency);
             var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
-            var averagePrice = new CurrencyAmount(dto.OrderAveragePrice, dto.OrderCurrency);
+            var averagePrice = new CurrencyAmount(dto.OrderAverageFillPrice, dto.OrderCurrency);
 
             var settlementCurrency = 
-                !string.IsNullOrWhiteSpace(dto.SettlementCurrency)
-                    ? (Currency?) new Currency(dto.SettlementCurrency)
+                !string.IsNullOrWhiteSpace(dto.OrderSettlementCurrency)
+                    ? (Currency?) new Currency(dto.OrderSettlementCurrency)
                     : null;
 
             var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
@@ -547,8 +547,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     ? (CurrencyAmount?)new CurrencyAmount(dto.LimitPrice, dto.Currency)
                     : null;
             var orderAveragePrice =
-                dto.AveragePrice != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dto.AveragePrice, dto.Currency)
+                dto.AverageFillPrice != null
+                    ? (CurrencyAmount?)new CurrencyAmount(dto.AverageFillPrice, dto.Currency)
                     : null;
 
             var dealerOrder = new DealerOrder(
@@ -655,11 +655,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderStatusChangedDate = order.MostRecentDateEvent();
 
                 OrderType = (int?)order.OrderType;
-                OrderPosition = (int?)order.OrderDirection;
+                OrderDirection = (int?)order.OrderDirection;
                 OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
-                SettlementCurrency = order.OrderSettlementCurrency?.Value ?? string.Empty;
+                OrderSettlementCurrency = order.OrderSettlementCurrency?.Value ?? string.Empty;
                 OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
-                OrderAveragePrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
+                OrderAverageFillPrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
                 OrderOrderedVolume = order.OrderOrderedVolume;
                 OrderFilledVolume = order.OrderFilledVolume;
                 CleanDirty = (int?)order.OrderCleanDirty;
@@ -745,12 +745,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public string OrderGroupId { get; set; }
 
             public int? OrderType { get; set; }
-            public int? OrderPosition { get; set; }
+            public int? OrderDirection { get; set; }
             public string OrderCurrency { get; set; }
-            public string SettlementCurrency { get; set; }
+            public string OrderSettlementCurrency { get; set; }
             public decimal? OrderLimitPrice { get; set; }
             public int? CleanDirty { get; set; }
-            public decimal? OrderAveragePrice { get; set; }
+            public decimal? OrderAverageFillPrice { get; set; }
             public long? OrderOrderedVolume { get; set; }
             public long? OrderFilledVolume { get; set; }
             public string OrderTraderId { get; set; }
@@ -807,7 +807,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 AccumulatedInterest = dealerOrder.AccumulatedInterest;
 
                 LimitPrice = dealerOrder.LimitPrice?.Value;
-                AveragePrice = dealerOrder.AverageFillPrice?.Value;
+                AverageFillPrice = dealerOrder.AverageFillPrice?.Value;
                 OrderedVolume = dealerOrder.OrderedVolume;
                 FilledVolume = dealerOrder.FilledVolume;
 
@@ -849,7 +849,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public decimal? AccumulatedInterest { get; set; }
 
             public decimal? LimitPrice { get; set; }
-            public decimal? AveragePrice { get; set; }
+            public decimal? AverageFillPrice { get; set; }
             public long? OrderedVolume { get; set; }
             public long? FilledVolume { get; set; }
 

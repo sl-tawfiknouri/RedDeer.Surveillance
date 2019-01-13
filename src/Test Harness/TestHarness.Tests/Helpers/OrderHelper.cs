@@ -49,7 +49,7 @@ namespace TestHarness.Tests.Helpers
                 OrderDirections.BUY,
                 new Currency("GBP"),
                 new Currency("GBP"),
-                OrderCleanDirty.None,
+                OrderCleanDirty.NONE,
                 null,
                 new CurrencyAmount(20.2m, "GBP"),
                 new CurrencyAmount(20.2m, "GBP"),
@@ -60,7 +60,7 @@ namespace TestHarness.Tests.Helpers
                 "deal asap",
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
 
             return order;

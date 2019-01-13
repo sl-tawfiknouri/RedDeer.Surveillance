@@ -120,7 +120,7 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderFilledDate = PreProcess(rawRecord["OrderFilledDate"]),
                 
                 OrderType = PreProcess(rawRecord["OrderType"]),
-                OrderDirection = PreProcess(rawRecord["OrderPosition"]),
+                OrderDirection = PreProcess(rawRecord["OrderDirection"]),
                 OrderCurrency = PreProcess(rawRecord["OrderCurrency"]),
                 OrderSettlementCurrency = PreProcess(rawRecord["OrderSettlementCurrency"]),
                 OrderCleanDirty = PreProcess(rawRecord["OrderCleanDirty"]),

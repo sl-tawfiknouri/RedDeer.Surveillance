@@ -2,8 +2,8 @@
 {
     public enum OptionEuropeanAmerican
     {
-        None = 0,
-        European = 1,
-        American = 2
+        NONE = 0,
+        EUROPEAN = 1,
+        AMERICAN = 2
     }
 }

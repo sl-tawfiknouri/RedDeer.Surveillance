@@ -39,7 +39,7 @@ namespace Surveillance.Tests.Helpers
                 OrderDirections.BUY,
                 new DomainV2.Financial.Currency("GBP"),
                 new DomainV2.Financial.Currency("GBP"),
-                OrderCleanDirty.None,
+                OrderCleanDirty.NONE,
                 null,
                 new CurrencyAmount(price.GetValueOrDefault(20), "GBP"),
                 new CurrencyAmount(price.GetValueOrDefault(20), "GBP"),
@@ -50,7 +50,7 @@ namespace Surveillance.Tests.Helpers
                 "dealer-instructions",
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
         }
     }

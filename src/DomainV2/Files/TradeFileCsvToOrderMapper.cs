@@ -277,6 +277,8 @@ namespace DomainV2.Files
 
         private T MapToEnum<T>(string propertyValue) where T : struct, IConvertible
         {
+            propertyValue = propertyValue?.ToUpper() ?? string.Empty;
+
             Enum.TryParse(propertyValue, out T result);
 
             return result;

@@ -151,7 +151,7 @@ namespace TestHarness.Engine.OrderGenerator
                 realisedTrade ? OrderDirections.SELL : OrderDirections.BUY,
                 headSecurity.SpreadTimeBar.Price.Currency,
                 headSecurity.SpreadTimeBar.Price.Currency,
-                OrderCleanDirty.None,
+                OrderCleanDirty.NONE,
                 null,
                 headSecurity.SpreadTimeBar.Price,
                 headSecurity.SpreadTimeBar.Price,
@@ -162,7 +162,7 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
 
             TradeStream.Add(volume);

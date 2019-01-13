@@ -2,8 +2,8 @@
 {
     public enum OrderCleanDirty
     {
-        None = 0,
-        Clean,
-        Dirty
+        NONE = 0,
+        CLEAN = 1,
+        DIRTY = 2
     }
 }

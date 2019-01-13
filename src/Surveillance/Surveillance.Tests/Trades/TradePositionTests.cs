@@ -168,7 +168,7 @@ namespace Surveillance.Tests.Trades
                 OrderDirections.BUY,
                 new DomainV2.Financial.Currency("GBP"), 
                 new DomainV2.Financial.Currency("GBP"),
-                OrderCleanDirty.None,
+                OrderCleanDirty.NONE,
                 null,
                 new CurrencyAmount(1000, "GBP"),
                 new CurrencyAmount(1000, "GBP"),
@@ -179,7 +179,7 @@ namespace Surveillance.Tests.Trades
                 "deal-asap",
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
         }
     }

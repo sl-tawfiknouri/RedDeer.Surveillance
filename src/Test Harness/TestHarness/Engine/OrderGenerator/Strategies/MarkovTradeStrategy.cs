@@ -141,7 +141,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 direction,
                 new Currency(orderCurrency),
                 new Currency(orderCurrency),
-                OrderCleanDirty.Clean,
+                OrderCleanDirty.CLEAN,
                 null,
                 limit,
                 executedPrice,
@@ -152,7 +152,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 dealerInstructions,
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
         }
 

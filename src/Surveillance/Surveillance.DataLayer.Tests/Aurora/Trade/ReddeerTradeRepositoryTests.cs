@@ -116,7 +116,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 OrderDirections.BUY,
                 new Currency("GBP"),
                 new Currency(null),
-                OrderCleanDirty.Clean,
+                OrderCleanDirty.CLEAN,
                 12,
                 "v1",
                 "link-12345",
@@ -127,7 +127,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 1000, 
                 null,
                 null,
-                OptionEuropeanAmerican.None);
+                OptionEuropeanAmerican.NONE);
 
             var trade2 = new DealerOrder(
                 security,
@@ -146,7 +146,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 OrderDirections.BUY,
                 new Currency("GBP"),
                 new Currency("GBP"),
-                OrderCleanDirty.Clean,
+                OrderCleanDirty.CLEAN,
                 15,
                 "v1",
                 "link-12345",
@@ -157,7 +157,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 1000,
                 null,
                 null,
-                OptionEuropeanAmerican.None);
+                OptionEuropeanAmerican.NONE);
 
             var order2 = new Order(
                 security,
@@ -177,7 +177,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 OrderDirections.BUY,
                 new Currency("GBP"),
                 new Currency("USD"),
-                OrderCleanDirty.Clean,
+                OrderCleanDirty.CLEAN,
                 null,
                 new CurrencyAmount(100, "GBP"), 
                 new CurrencyAmount(100, "GBP"),
@@ -188,7 +188,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "deal asap",
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new [] { trade1, trade2 });
 
             return order2;

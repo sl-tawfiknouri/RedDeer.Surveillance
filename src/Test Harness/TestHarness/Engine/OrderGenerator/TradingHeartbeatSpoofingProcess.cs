@@ -126,7 +126,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderDirections.BUY,
                     security.SpreadTimeBar.Price.Currency,
                     security.SpreadTimeBar.Price.Currency,
-                    OrderCleanDirty.None,
+                    OrderCleanDirty.NONE,
                     null,
                     limitPrice,
                     limitPrice,
@@ -137,7 +137,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    OptionEuropeanAmerican.None,
+                    OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
             return 
@@ -171,7 +171,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderDirections.SELL,
                     security.SpreadTimeBar.Price.Currency,
                     security.SpreadTimeBar.Price.Currency,
-                    OrderCleanDirty.None,
+                    OrderCleanDirty.NONE,
                     null,
                     security.SpreadTimeBar.Price,
                     security.SpreadTimeBar.Price,
@@ -182,7 +182,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    OptionEuropeanAmerican.None,
+                    OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
             return spoofedTrade;

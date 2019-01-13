@@ -138,7 +138,7 @@ namespace TestHarness.Engine.OrderGenerator
                 OrderDirections.BUY,
                 new Currency("GBP"),
                 new Currency("USD"),
-                OrderCleanDirty.Clean,
+                OrderCleanDirty.CLEAN,
                 null,
                 new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                 new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
@@ -149,7 +149,7 @@ namespace TestHarness.Engine.OrderGenerator
                 "dealing-instructions",
                 null,
                 null,
-                OptionEuropeanAmerican.None,
+                OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
 
             frames.Add(cancelledFrame);
@@ -174,7 +174,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderDirections.BUY,
                     new Currency("GBP"),
                     new Currency("USD"),
-                    OrderCleanDirty.Clean,
+                    OrderCleanDirty.CLEAN,
                     null,
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
@@ -185,7 +185,7 @@ namespace TestHarness.Engine.OrderGenerator
                     "dealing-instructions",
                     null,
                     null,
-                    OptionEuropeanAmerican.None,
+                    OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
                 
                 frames.Add(frame);
@@ -242,7 +242,7 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderDirections.BUY,
                     new Currency("GBP"),
                     new Currency("GBP"),
-                    OrderCleanDirty.None,
+                    OrderCleanDirty.NONE,
                     null,
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
@@ -253,7 +253,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    OptionEuropeanAmerican.None,
+                    OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
                 frames.Add(frame);

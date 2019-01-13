@@ -9,6 +9,8 @@ using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Trade
@@ -16,6 +18,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
     [TestFixture]
     public class ReddeerTradeRepositoryTests
     {
+        private IDataLayerConfiguration _configuration;
         private ILogger<ReddeerOrdersRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
         private IReddeerMarketRepository _marketRepository;
@@ -23,6 +26,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         [SetUp]
         public void Setup()
         {
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<ReddeerOrdersRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _marketRepository = A.Fake<IReddeerMarketRepository>();
@@ -32,12 +36,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         [Explicit("Performs side effect to the d-b")]
         public async Task Create()
         {
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
             var frame = Frame();
 
@@ -50,13 +49,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         [Explicit("Performs side effect to the d-b")]
         public async Task Get()
         {
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString =
-                    "server=127.0.0.1; port=3306;uid=root;pwd='drunkrabbit101';database=dev_surveillance; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
 {
@@ -20,9 +21,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         [SetUp]
         public void Setup()
         {
-            _configuration = A.Fake<IDataLayerConfiguration>();
-            _configuration.ClientServiceUrl = "http://localhost:8080";
-            _configuration.SurveillanceUserApiAccessToken = "uwat";
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<FactsetDailyBarApiRepository>>();
         }
 

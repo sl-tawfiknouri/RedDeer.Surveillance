@@ -10,6 +10,8 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
@@ -17,6 +19,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
     [TestFixture]
     public class ReddeerMarketRepositoryTests
     {
+        private IDataLayerConfiguration _configuration;
         private ILogger<ReddeerMarketRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
         private ICfiInstrumentTypeMapper _cfiInstrumentMapper;
@@ -24,6 +27,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         [SetUp]
         public void Setup()
         {
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<ReddeerMarketRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _cfiInstrumentMapper = new CfiInstrumentTypeMapper();
@@ -33,12 +37,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         [Explicit("Performs side effect to the d-b")]
         public async Task Create()
         {
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
             await repo.Create(Frame());
@@ -50,12 +49,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
         [Explicit("Performs side effect to the d-b")]
         public async Task Get()
         {
-            var config = new DataLayerConfiguration
-            {
-                AuroraConnectionString = "server=dev-temporary.cgedh3fdlw42.eu-west-1.rds.amazonaws.com; port=3306;uid=hackinguser;pwd='WillDelete3101';database=hackingdb1; Allow User Variables=True"
-            };
-
-            var factory = new ConnectionStringFactory(config);
+            var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
             await repo.Create(Frame());

@@ -25,11 +25,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 MarketId,
                 SecurityId,
                 ClientOrderId,
-
                 OrderVersion,
                 OrderVersionLinkId,
                 OrderGroupId,
-
                 PlacedDate,
                 BookedDate,
                 AmendedDate,
@@ -37,23 +35,19 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate,
                 FilledDate,
                 StatusChangedDate,
-
                 OrderType,
                 Direction,
                 Currency,
                 SettlementCurrency,
                 CleanDirty,
                 AccumulatedInterest,
-
                 LimitPrice,
                 AverageFillPrice,
                 OrderedVolume,
                 FilledVolume,
-
                 TraderId,
                 ClearingAgent,
                 DealingInstructions,
-
                 OptionStrikePrice,
                 OptionExpirationDate,
                 OptionEuropeanAmerican)
@@ -61,11 +55,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @MarketId,
                 @SecurityReddeerId,
                 @OrderId,
-
                 @OrderVersion,
                 @OrderVersionLinkId,
                 @OrderGroupId,
-
                 @OrderPlacedDate,
                 @OrderBookedDate,
                 @OrderAmendedDate,
@@ -73,14 +65,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderCancelledDate,
                 @OrderFilledDate,
                 @OrderStatusChangedDate,
-
                 @OrderType,
                 @OrderDirection,
                 @OrderCurrency,
                 @OrderSettlementCurrency,
                 @CleanDirty,
                 @AccumulatedInterest,
-
                 @OrderLimitPrice,
                 @OrderAverageFillPrice,
                 @OrderOrderedVolume,
@@ -88,7 +78,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderTraderId,
                 @OrderClearingAgent,
                 @OrderDealingInstructions,
-
                 @OptionStrikePrice,
                 @OptionExpirationDate,
                 @OptionEuropeanAmerican);
@@ -98,11 +87,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
             INSERT INTO DealerOrders(
                 OrderId,
                 ClientDealerOrderId,
-
                 DealerOrderVersion,
                 DealerOrderVersionLinkId,
-                DealerOrderGroupId,
-                
+                DealerOrderGroupId,              
                 PlacedDate,
                 BookedDate,
                 AmendedDate,
@@ -110,7 +97,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate,
                 FilledDate,
                 StatusChangedDate,
-
                 DealerId,
                 Notes,
                 CounterParty,
@@ -118,10 +104,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 Direction,
                 Currency,
                 SettlementCurrency,
-                
                 CleanDirty,
                 AccumulatedInterest,
-                
                 LimitPrice,
                 AverageFillPrice,
                 OrderedVolume,
@@ -132,11 +116,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
             VALUES(
                 @OrderId,
                 @ClientDealerOrderId,
-
                 @DealerOrderVersion,
                 @DealerOrderVersionLinkId,
                 @DealerOrderGroupId,
-
                 @PlacedDate,
                 @BookedDate,
                 @AmendedDate,
@@ -144,7 +126,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @CancelledDate,
                 @FilledDate,
                 @StatusChangedDate,
-
                 @DealerId,
                 @Notes,
                 @CounterParty,
@@ -152,10 +133,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @Direction,
                 @Currency,
                 @SettlementCurrency,
-
                 @CleanDirty,
                 @AccumulatedInterest,
-
                 @LimitPrice,
                 @AverageFillPrice,
                 @OrderedVolume,

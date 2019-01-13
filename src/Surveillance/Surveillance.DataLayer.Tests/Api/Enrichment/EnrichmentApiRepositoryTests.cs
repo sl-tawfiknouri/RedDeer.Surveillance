@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Api.Enrichment
 {
@@ -17,9 +18,7 @@ namespace Surveillance.DataLayer.Tests.Api.Enrichment
         [SetUp]
         public void Setup()
         {
-            _configuration = A.Fake<IDataLayerConfiguration>();
-            _configuration.ClientServiceUrl = "http://localhost:8080";
-            _configuration.SurveillanceUserApiAccessToken = "uwat";
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<EnrichmentApiRepository>>();
         }
 

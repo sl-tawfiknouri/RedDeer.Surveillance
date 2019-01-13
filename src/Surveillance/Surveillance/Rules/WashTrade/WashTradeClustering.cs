@@ -20,7 +20,7 @@ namespace Surveillance.Rules.WashTrade
                 return new PositionClusterCentroid[0];
             }
 
-            var filteredFrames = frames.Where(fra => fra.OrderAveragePrice != null && fra.OrderFilledVolume > 0).ToList();
+            var filteredFrames = frames.Where(fra => fra.OrderAverageFillPrice != null && fra.OrderFilledVolume > 0).ToList();
 
             if (!filteredFrames.Any())
             {
@@ -32,7 +32,7 @@ namespace Surveillance.Rules.WashTrade
 
             var prices =
                 filteredFrames
-                    .Select(ff => new double[] { (double)ff.OrderAveragePrice.GetValueOrDefault().Value, ff.MostRecentDateEvent().Ticks})
+                    .Select(ff => new double[] { (double)ff.OrderAverageFillPrice.GetValueOrDefault().Value, ff.MostRecentDateEvent().Ticks})
                     .ToArray();
 
             var clusters = kMeans.Learn(prices);           
@@ -48,8 +48,8 @@ namespace Surveillance.Rules.WashTrade
             {
                 var centroid = clusters.Centroids[labels[grp.First().Key]];
                 var grpFrames = grp.Select(i => i.Value).ToList();
-                var buys = new TradePosition(grpFrames.Where(i => i.OrderPosition == OrderPositions.BUY).ToList());
-                var sells = new TradePosition(grpFrames.Where(i => i.OrderPosition == OrderPositions.SELL).ToList());
+                var buys = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.BUY).ToList());
+                var sells = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.SELL).ToList());
 
                 if (buys.Get().Any() && sells.Get().Any())
                 {

@@ -139,6 +139,9 @@ namespace TestHarness.Engine.OrderGenerator
                 headSecurity.Market,
                 null,
                 Guid.NewGuid().ToString(),
+                "order-v1",
+                "order-v1",
+                "order-v1",
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 null,
@@ -146,8 +149,11 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 sellTrade ? tradeTime.AddMinutes(1) : tradeTime,
                 OrderTypes.MARKET,
-                sellTrade ? OrderPositions.SELL : OrderPositions.BUY,
+                sellTrade ? OrderDirections.SELL : OrderDirections.BUY,
                 headSecurity.SpreadTimeBar.Price.Currency,
+                headSecurity.SpreadTimeBar.Price.Currency,
+                OrderCleanDirty.None,
+                null,
                 headSecurity.SpreadTimeBar.Price,
                 headSecurity.SpreadTimeBar.Price,
                 (int) tradedVolume,
@@ -157,11 +163,8 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                new Trade[0]);
+                OptionEuropeanAmerican.None,
+                new DealerOrder[0]);
 
             TradeStream.Add(volume);
         }

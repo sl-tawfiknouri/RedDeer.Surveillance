@@ -113,6 +113,9 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    "order-v1",
+                    "order-v1",
+                    "order-group-1",
                     tradePlacedOn,
                     tradePlacedOn,
                     null,
@@ -120,8 +123,11 @@ namespace TestHarness.Engine.OrderGenerator
                     statusChangedOn,
                     null,
                     OrderTypes.LIMIT,
-                    OrderPositions.BUY,
+                    OrderDirections.BUY,
                     security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.None,
+                    null,
                     limitPrice,
                     limitPrice,
                     volume,
@@ -131,11 +137,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.None,
+                    new DealerOrder[0]);
 
             return 
                 new[] { spoofedTrade }
@@ -155,6 +158,9 @@ namespace TestHarness.Engine.OrderGenerator
                     _lastFrame.Exchange,
                     null,
                     Guid.NewGuid().ToString(),
+                    "order-v1",
+                    "order-v1",
+                    "order-group-1",
                     tradePlacedOn,
                     tradePlacedOn,
                     null,
@@ -162,8 +168,11 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     statusChangedOn,
                     OrderTypes.MARKET,
-                    OrderPositions.SELL,
+                    OrderDirections.SELL,
                     security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.None,
+                    null,
                     security.SpreadTimeBar.Price,
                     security.SpreadTimeBar.Price,
                     volumeToTrade,
@@ -173,11 +182,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.None,
+                    new DealerOrder[0]);
 
             return spoofedTrade;
         }

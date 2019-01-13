@@ -133,17 +133,17 @@ namespace Surveillance.Tests.Rules.High_Volume
                     new FinancialInstrumentTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
-                            underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000m,
                             new IntradayPrices(
-                                underlyingTrade.OrderAveragePrice.Value, 
-                                underlyingTrade.OrderAveragePrice.Value,
-                                underlyingTrade.OrderAveragePrice.Value,
-                                underlyingTrade.OrderAveragePrice.Value),
+                                underlyingTrade.OrderAverageFillPrice.Value, 
+                                underlyingTrade.OrderAverageFillPrice.Value,
+                                underlyingTrade.OrderAverageFillPrice.Value,
+                                underlyingTrade.OrderAverageFillPrice.Value),
                             10000,
                             new Volume(10000),
                             underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
@@ -182,14 +182,14 @@ namespace Surveillance.Tests.Rules.High_Volume
                     new FinancialInstrumentTimeBar
                     (underlyingTrade.Instrument,
                         new SpreadTimeBar(
-                            underlyingTrade.OrderAveragePrice.Value, 
-                            underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value, 
+                            underlyingTrade.OrderAverageFillPrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             100000,
-                            new IntradayPrices(underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value,
-                                underlyingTrade.OrderAveragePrice.Value, underlyingTrade.OrderAveragePrice.Value),
+                            new IntradayPrices(underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value,
+                                underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(1000),
                             underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)
@@ -229,17 +229,17 @@ namespace Surveillance.Tests.Rules.High_Volume
                     new FinancialInstrumentTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
-                            underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value,
-                            underlyingTrade.OrderAveragePrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
+                            underlyingTrade.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
                             new IntradayPrices(
-                                underlyingTrade.OrderAveragePrice.Value,
-                                underlyingTrade.OrderAveragePrice.Value,
-                                underlyingTrade.OrderAveragePrice.Value, 
-                                underlyingTrade.OrderAveragePrice.Value),
+                                underlyingTrade.OrderAverageFillPrice.Value,
+                                underlyingTrade.OrderAverageFillPrice.Value,
+                                underlyingTrade.OrderAverageFillPrice.Value, 
+                                underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),

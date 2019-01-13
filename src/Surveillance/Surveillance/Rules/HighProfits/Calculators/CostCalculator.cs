@@ -39,11 +39,11 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             var purchaseOrders =
                 activeFulfilledTradeOrders
-                    .Where(afto => afto.OrderPosition == OrderPositions.BUY
-                                   || afto.OrderPosition == OrderPositions.COVER)
+                    .Where(afto => afto.OrderDirection == OrderDirections.BUY
+                                   || afto.OrderDirection == OrderDirections.COVER)
                     .Select(afto => 
                         new CurrencyAmount(
-                            afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAveragePrice.GetValueOrDefault().Value,
+                            afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                             afto.OrderCurrency))
                     .ToList();
 

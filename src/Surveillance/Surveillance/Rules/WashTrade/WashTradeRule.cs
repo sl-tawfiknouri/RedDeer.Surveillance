@@ -144,7 +144,7 @@ namespace Surveillance.Rules.WashTrade
             var liveTrades =
                 frames
                     .Where(at => at.OrderStatus() == OrderStatus.Filled)
-                    .Where(at => at.OrderAveragePrice != null)
+                    .Where(at => at.OrderAverageFillPrice != null)
                     .ToList();
 
             if (!string.IsNullOrWhiteSpace(mostRecentFrame?.OrderClientAccountAttributionId))
@@ -182,11 +182,11 @@ namespace Surveillance.Rules.WashTrade
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault(0) * (bp.OrderAveragePrice.GetValueOrDefault().Value));
-            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault(0) * (sp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault(0) * (bp.OrderAverageFillPrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault(0) * (sp.OrderAverageFillPrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -341,11 +341,11 @@ namespace Surveillance.Rules.WashTrade
                 return true;
             }
 
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.BUY).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderPosition == OrderPositions.SELL).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL).ToList());
 
-            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAveragePrice.GetValueOrDefault().Value));
-            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAveragePrice.GetValueOrDefault().Value));
+            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAverageFillPrice.GetValueOrDefault().Value));
+            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAverageFillPrice.GetValueOrDefault().Value));
 
             if (valueOfBuy == 0)
             {
@@ -410,8 +410,8 @@ namespace Surveillance.Rules.WashTrade
                     continue;
                 }
 
-                var buyValue = cluster.Buys.Get().Sum(b => b.OrderAveragePrice.GetValueOrDefault().Value * b.OrderFilledVolume.GetValueOrDefault(0));
-                var sellValue = cluster.Sells.Get().Sum(s => s.OrderAveragePrice.GetValueOrDefault().Value * s.OrderFilledVolume.GetValueOrDefault(0));
+                var buyValue = cluster.Buys.Get().Sum(b => b.OrderAverageFillPrice.GetValueOrDefault().Value * b.OrderFilledVolume.GetValueOrDefault(0));
+                var sellValue = cluster.Sells.Get().Sum(s => s.OrderAverageFillPrice.GetValueOrDefault().Value * s.OrderFilledVolume.GetValueOrDefault(0));
                 
                 var largerValue = Math.Max(buyValue, sellValue);
                 var smallerValue = Math.Min(buyValue, sellValue);

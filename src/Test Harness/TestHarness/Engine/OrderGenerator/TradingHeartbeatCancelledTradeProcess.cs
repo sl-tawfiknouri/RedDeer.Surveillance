@@ -215,7 +215,7 @@ namespace TestHarness.Engine.OrderGenerator
         private Order OrderForValue(OrderStatus status, decimal value, FinancialInstrumentTimeBar security, Market exchange)
         {
             var volume = (int)((value / security.SpreadTimeBar.Ask.Value) + 1);
-            var orderPosition = (OrderPositions)DiscreteUniform.Sample(0, 3);
+            var orderPosition = (OrderDirections)DiscreteUniform.Sample(0, 3);
 
             var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?) DateTime.UtcNow : null;
             var filledDate = status == OrderStatus.Filled ? (DateTime?)DateTime.UtcNow : null;
@@ -226,6 +226,9 @@ namespace TestHarness.Engine.OrderGenerator
                     exchange,
                     null,
                     Guid.NewGuid().ToString(),
+                    "order-v1",
+                    "order-v1",
+                    "order-group-v1",
                     DateTime.UtcNow,
                     DateTime.UtcNow,
                     null,
@@ -235,20 +238,20 @@ namespace TestHarness.Engine.OrderGenerator
                     OrderTypes.MARKET,
                     orderPosition,
                     security.SpreadTimeBar.Price.Currency,
+                    security.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.None,
+                    null,
                     security.SpreadTimeBar.Price,
                     security.SpreadTimeBar.Price,
                     volume,
                     volume,
+                    "trader-1",
+                    "clearing-agent",
+                    "dealing-instructions",
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.None,
+                    new DealerOrder[0]);
             
             return order;
         }

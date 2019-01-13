@@ -223,15 +223,15 @@ namespace Surveillance.Rules.MarkingTheClose
             var volumeTradedBuy =
                 securities
                     .Where(sec => 
-                        sec.OrderPosition == OrderPositions.BUY
-                        || sec.OrderPosition == OrderPositions.SHORT)
+                        sec.OrderDirection == OrderDirections.BUY
+                        || sec.OrderDirection == OrderDirections.SHORT)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var volumeTradedSell =
                 securities
                     .Where(sec => 
-                        sec.OrderPosition == OrderPositions.SELL
-                        || sec.OrderPosition == OrderPositions.COVER)
+                        sec.OrderDirection == OrderDirections.SELL
+                        || sec.OrderDirection == OrderDirections.COVER)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;

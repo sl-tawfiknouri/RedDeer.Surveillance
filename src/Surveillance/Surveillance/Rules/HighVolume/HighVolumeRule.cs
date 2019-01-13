@@ -311,7 +311,7 @@ namespace Surveillance.Rules.HighVolume
 
             var tradedValue =
                 (double)trades
-                    .Select(tr => tr.OrderFilledVolume.GetValueOrDefault(0) * (tr.OrderAveragePrice.GetValueOrDefault().Value))
+                    .Select(tr => tr.OrderFilledVolume.GetValueOrDefault(0) * (tr.OrderAverageFillPrice.GetValueOrDefault().Value))
                     .Sum();
 
             var breachPercentage =

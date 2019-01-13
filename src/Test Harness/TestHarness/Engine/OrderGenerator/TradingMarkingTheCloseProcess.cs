@@ -143,6 +143,9 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    "version-1",
+                    "version-1",
+                    "version-1",
                     tradeTime,
                     tradeTime,
                     null,
@@ -150,8 +153,11 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     tradeTime,
                     OrderTypes.MARKET,
-                    OrderPositions.BUY,
+                    OrderDirections.BUY,
                     headSecurity.SpreadTimeBar.Price.Currency,
+                    headSecurity.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.None,
+                    null,
                     new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
@@ -161,11 +167,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.None,
+                    new DealerOrder[0]);
 
                 TradeStream.Add(volume);
             }
@@ -223,6 +226,9 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    "version-1",
+                    "version-1",
+                    "version-1",
                     tradeTime,
                     tradeTime,
                     null,
@@ -230,8 +236,11 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     tradeTime,
                     OrderTypes.MARKET,
-                    OrderPositions.BUY,
+                    OrderDirections.BUY,
                     securities.SpreadTimeBar.Price.Currency,
+                    securities.SpreadTimeBar.Price.Currency,
+                    OrderCleanDirty.None,
+                    null,
                     new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
                     new CurrencyAmount(securities.SpreadTimeBar.Price.Value, securities.SpreadTimeBar.Price.Currency),
                     (int)finalVolumeForBreachestoTrade,
@@ -241,11 +250,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.None,
+                    new DealerOrder[0]);
 
                 TradeStream.Add(volume);
             }

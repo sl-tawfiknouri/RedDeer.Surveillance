@@ -34,19 +34,19 @@ namespace Surveillance.Rules.WashTrade
 
             foreach (var trade in trades)
             {
-                if (trade?.OrderAveragePrice == null)
+                if (trade?.OrderAverageFillPrice == null)
                 {
                     continue;
                 }
 
                 if (benchmarkPrice == 0)
                 {
-                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;                   
+                    benchmarkPrice = trade.OrderAverageFillPrice.GetValueOrDefault().Value;                   
                 }
 
-                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAveragePrice.GetValueOrDefault().Value, parameters))
+                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAverageFillPrice.GetValueOrDefault().Value, parameters))
                 {
-                    benchmarkPrice = trade.OrderAveragePrice.GetValueOrDefault().Value;
+                    benchmarkPrice = trade.OrderAverageFillPrice.GetValueOrDefault().Value;
 
                     if (currentBuyPosition.Get().Any()
                         && currentSellPosition.Get().Any())
@@ -58,12 +58,12 @@ namespace Surveillance.Rules.WashTrade
                     currentSellPosition = new TradePosition(new List<Order>());
                 }
 
-                if (trade.OrderPosition == OrderPositions.BUY)
+                if (trade.OrderDirection == OrderDirections.BUY)
                 {
                     currentBuyPosition.Add(trade);
                 }
 
-                if (trade.OrderPosition == OrderPositions.SELL)
+                if (trade.OrderDirection == OrderDirections.SELL)
                 {
                     currentSellPosition.Add(trade);
                 }

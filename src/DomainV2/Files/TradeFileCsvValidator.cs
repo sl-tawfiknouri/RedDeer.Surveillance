@@ -25,10 +25,7 @@ namespace DomainV2.Files
             RulesForOrderProperties();
 
             // Trade
-            RulesForTradeProperties();
-
-            // Transaction
-            RuleForTransactionProperties();
+            RulesForDealerOrderProperties();
         }
 
         private void RulesForSufficientInstrumentIdentificationCodes()
@@ -99,48 +96,46 @@ namespace DomainV2.Files
             RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1);
             RuleFor(x => x.OrderCurrency).NotEmpty().MaximumLength(3).MinimumLength(3);
             RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"));
-            RuleFor(x => x.OrderPosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>("OrderPosition"));
+            RuleFor(x => x.OrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition"));
             RuleFor(x => x.OrderLimitPrice)
                 .NotEmpty()
                 .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
 
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
-            RuleFor(x => x.OrderAveragePrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
+            RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
             RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
             RuleFor(x => x.OrderOrderedVolume).SetValidator(new LongParseableValidator("OrderOrderedVolume"));
-            RuleFor(x => x.OrderPosition)
+            RuleFor(x => x.OrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Order position had an illegal value of 'none'");
 
-            RuleFor(x => x.OrderPosition)
+            RuleFor(x => x.OrderDirection)
                 .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Order position had an illegal value of '0'");
         }
 
-        private void RulesForTradeProperties()
+        private void RulesForDealerOrderProperties()
         {
-            RuleFor(x => x.TradeId).NotEmpty().When(HasTradeOrTransactionData);
-            RuleFor(x => x.TraderId).NotEmpty().When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeCurrency).NotEmpty().When(HasTradeOrTransactionData).Length(3).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradePosition).NotEmpty().SetValidator(new EnumParseableValidator<OrderPositions>("TradePosition")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasTradeOrTransactionData).Length(3).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasTradeOrTransactionData);
 
-            RuleFor(x => x.TradeLimitPrice)
+            RuleFor(x => x.DealerOrderLimitPrice)
                 .NotEmpty()
-                .When(x => 
-                    string.Equals(x.TradeType, "LIMIT", StringComparison.InvariantCultureIgnoreCase)
-                    && HasTransactionData(x));
+                .When(x => string.Equals(x.DealerOrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
 
-            RuleFor(x => x.TradeLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeAveragePrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeOrderedVolume).SetValidator(new LongParseableValidator("TradeOrderedVolume")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.TradeFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new LongParseableValidator("TradeOrderedVolume")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasTradeOrTransactionData);
 
-            RuleFor(x => x.TradePosition)
+            RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Trade position had an illegal value of 'none'");
             
-            RuleFor(x => x.TradePosition)
+            RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("TradePosition had an illegal value of '0'");
 
@@ -149,38 +144,33 @@ namespace DomainV2.Files
 
         private bool HasTradeOrTransactionData(TradeFileCsv csv)
         {
-            if (HasTransactionData(csv))
-            {
-                return true;
-            }
-
             if (HasOptionFieldSet(csv))
             {
                 return true;
             }
 
-            return !string.IsNullOrWhiteSpace(csv.TraderId)
-                   || !string.IsNullOrWhiteSpace(csv.TradePlacedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeBookedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeAmendedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeRejectedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeCancelledDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeFilledDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeCounterParty)
-                   || !string.IsNullOrWhiteSpace(csv.TradeType)
-                   || !string.IsNullOrWhiteSpace(csv.TradePosition)
-                   || !string.IsNullOrWhiteSpace(csv.TradeCurrency)
-                   || !string.IsNullOrWhiteSpace(csv.TradeLimitPrice)
-                   || !string.IsNullOrWhiteSpace(csv.TradeAveragePrice)
-                   || !string.IsNullOrWhiteSpace(csv.TradeOrderedVolume)
-                   || !string.IsNullOrWhiteSpace(csv.TradeFilledVolume);
+            return !string.IsNullOrWhiteSpace(csv.DealerOrderDealerId)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderPlacedDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderBookedDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderAmendedDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderRejectedDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCancelledDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderFilledDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCounterParty)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderType)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderDirection)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCurrency)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderLimitPrice)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderAverageFillPrice)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOrderedVolume)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderFilledVolume);
         }
 
         private void RulesForTradeOptionsProperties()
         {
-            RuleFor(x => x.TradeOptionExpirationDate).NotEmpty().When(HasOptionFieldSet);
-            RuleFor(x => x.TradeOptionEuropeanAmerican).NotEmpty().When(HasOptionFieldSet);
-            RuleFor(x => x.TradeOptionStrikePrice).NotEmpty().When(HasOptionFieldSet);
+            RuleFor(x => x.DealerOrderOptionExpirationDate).NotEmpty().When(HasOptionFieldSet);
+            RuleFor(x => x.DealerOrderOptionEuropeanAmerican).NotEmpty().When(HasOptionFieldSet);
+            RuleFor(x => x.DealerOrderOptionStrikePrice).NotEmpty().When(HasOptionFieldSet);
         }
 
         private bool HasOptionFieldSet(TradeFileCsv csv)
@@ -190,62 +180,9 @@ namespace DomainV2.Files
                 return false;
             }
 
-            return !string.IsNullOrWhiteSpace(csv.TradeOptionExpirationDate)
-                   || !string.IsNullOrWhiteSpace(csv.TradeOptionEuropeanAmerican)
-                   || !string.IsNullOrWhiteSpace(csv.TradeOptionStrikePrice);
-        }
-
-        private void RuleForTransactionProperties()
-        {
-            RuleFor(x => x.TransactionId).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionPlacedDate).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionTraderId).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionCurrency).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionCurrency).Length(3).When(HasTransactionData);
-
-            RuleFor(x => x.TransactionType).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionType).SetValidator(new EnumParseableValidator<OrderTypes>("TransactionType")).When(HasTransactionData);
-            RuleFor(x => x.TransactionPosition).NotEmpty().When(HasTransactionData);
-            RuleFor(x => x.TransactionPosition).SetValidator(new EnumParseableValidator<OrderPositions>("TransactionPosition")).When(HasTransactionData);
-
-            RuleFor(x => x.TransactionLimitPrice).SetValidator(new DecimalParseableValidator("TransactionLimitPrice")).When(HasTransactionData);
-            RuleFor(x => x.TransactionAveragePrice).SetValidator(new DecimalParseableValidator("TransactionAveragePrice")).When(HasTransactionData);
-
-            RuleFor(x => x.TransactionFilledVolume).SetValidator(new LongParseableValidator("TransactionFilledVolume")).When(HasTransactionData);
-            RuleFor(x => x.TransactionOrderedVolume).SetValidator(new LongParseableValidator("TransactionOrderedVolume2")).When(HasTransactionData);
-
-            RuleFor(x => x.TransactionPosition)
-                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
-                .WithMessage("Transaction Position had an illegal value of 'none'");
-
-            RuleFor(x => x.TransactionPosition)
-                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
-                .WithMessage("Transaction Position had an illegal value of '0'");
-        }
-
-        private bool HasTransactionData(TradeFileCsv csv)
-        {
-            if (csv == null)
-            {
-                return false;
-            }
-
-            return !string.IsNullOrWhiteSpace(csv.TransactionId)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionPlacedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionBookedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionAmendedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionRejectedDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionCancelledDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionFilledDate)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionTraderId)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionCounterParty)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionType)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionPosition)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionCurrency)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionLimitPrice)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionAveragePrice)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionOrderedVolume)
-                   || !string.IsNullOrWhiteSpace(csv.TransactionFilledVolume);
+            return !string.IsNullOrWhiteSpace(csv.DealerOrderOptionExpirationDate)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOptionEuropeanAmerican)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOptionStrikePrice);
         }
     }
 

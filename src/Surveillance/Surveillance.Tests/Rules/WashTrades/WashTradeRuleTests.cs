@@ -157,10 +157,10 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr1 = new Order().Random(19);
             var tr2 = new Order().Random(21);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
 
-            tr1.OrderAveragePrice = tr2.OrderAveragePrice;
+            tr1.OrderAverageFillPrice = tr2.OrderAverageFillPrice;
             tr1.OrderFilledVolume = 2000;
             tr2.OrderFilledVolume = 1000;
 
@@ -191,10 +191,10 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr1 = new Order().Random(19);
             var tr2 = new Order().Random(21);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
 
-            tr1.OrderAveragePrice = tr2.OrderAveragePrice;
+            tr1.OrderAverageFillPrice = tr2.OrderAverageFillPrice;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
 
@@ -229,15 +229,15 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr3 = new Order().Random(10);
             var tr4 = new Order().Random(9);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
             tr1.OrderFilledDate = DateTime.UtcNow;
             tr2.OrderFilledDate = DateTime.UtcNow;
 
-            tr3.OrderPosition = OrderPositions.BUY;
-            tr4.OrderPosition = OrderPositions.SELL;
+            tr3.OrderDirection = OrderDirections.BUY;
+            tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 950;
             tr3.OrderFilledVolume = 1500;
             tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
@@ -274,13 +274,13 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr3 = new Order().Random(100);
             var tr4 = new Order().Random(101);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
 
-            tr3.OrderPosition = OrderPositions.BUY;
-            tr4.OrderPosition = OrderPositions.SELL;
+            tr3.OrderDirection = OrderDirections.BUY;
+            tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
 
@@ -318,22 +318,22 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr5 = new Order().Random(50);
             var tr6 = new Order().Random(70);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
             tr1.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
             tr2.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
 
-            tr3.OrderPosition = OrderPositions.BUY;
-            tr4.OrderPosition = OrderPositions.SELL;
+            tr3.OrderDirection = OrderDirections.BUY;
+            tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
             tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
             tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
 
-            tr5.OrderPosition = OrderPositions.BUY;
-            tr6.OrderPosition = OrderPositions.SELL;
+            tr5.OrderDirection = OrderDirections.BUY;
+            tr6.OrderDirection = OrderDirections.SELL;
             tr6.OrderFilledVolume = 1500;
             tr5.OrderFilledVolume = 1500;
             tr5.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
@@ -378,29 +378,29 @@ namespace Surveillance.Tests.Rules.WashTrades
             var tr5 = new Order().Random(50);
             var tr6 = new Order().Random(70);
 
-            tr1.OrderPosition = OrderPositions.BUY;
-            tr2.OrderPosition = OrderPositions.SELL;
+            tr1.OrderDirection = OrderDirections.BUY;
+            tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
             tr1.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
             tr2.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
 
-            tr11.OrderPosition = OrderPositions.BUY;
-            tr22.OrderPosition = OrderPositions.SELL;
+            tr11.OrderDirection = OrderDirections.BUY;
+            tr22.OrderDirection = OrderDirections.SELL;
             tr11.OrderFilledVolume = 950;
             tr22.OrderFilledVolume = 1000;
             tr11.OrderFilledDate = DateTime.UtcNow.AddMinutes(6);
             tr22.OrderFilledDate = DateTime.UtcNow.AddMinutes(6);
 
-            tr3.OrderPosition = OrderPositions.BUY;
-            tr4.OrderPosition = OrderPositions.SELL;
+            tr3.OrderDirection = OrderDirections.BUY;
+            tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
             tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
             tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
 
-            tr5.OrderPosition = OrderPositions.BUY;
-            tr6.OrderPosition = OrderPositions.SELL;
+            tr5.OrderDirection = OrderDirections.BUY;
+            tr6.OrderDirection = OrderDirections.SELL;
             tr6.OrderFilledVolume = 1500;
             tr5.OrderFilledVolume = 1500;
             tr5.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);

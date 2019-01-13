@@ -19,8 +19,8 @@ namespace DomainV2.Files
             var csv = new TradeFileCsv();
             csv = MapOrderFields(order, csv);
             
-            if (order.Trades == null
-                || !order.Trades.Any())
+            if (order.DealerOrders == null
+                || !order.DealerOrders.Any())
             {
                 return new TradeFileCsv[] { csv };
             }
@@ -35,75 +35,38 @@ namespace DomainV2.Files
             // ReSharper disable once IdentifierTypo
             var csvs = new List<TradeFileCsv>();
 
-            foreach (var trad in order.Trades)
+            foreach (var trad in order.DealerOrders)
             {
-                if (trad.Transactions == null
-                    || !trad.Transactions.Any())
-                {
-                    var csv = new TradeFileCsv();
-                    csv = MapTradeFields2(trad, csv);
-                    csv = MapOrderFields(order, csv);
-                    csvs.Add(csv);
-                }
-                else
-                {
-                    foreach (var tran in trad.Transactions)
-                    {
-                        var csv = new TradeFileCsv();
-                        csv = MapTransactionFields(tran, csv);
-                        csv = MapTradeFields2(trad, csv);
-                        csv = MapOrderFields(order, csv);
-                        csvs.Add(csv);
-                    }
-                }
+                var csv = new TradeFileCsv();
+                csv = MapTradeFields2(trad, csv);
+                csv = MapOrderFields(order, csv);
+                csvs.Add(csv);
             }
 
             return csvs.ToArray();
         }
 
-        private TradeFileCsv MapTransactionFields(Transaction transaction, TradeFileCsv csv)
+        private TradeFileCsv MapTradeFields2(DealerOrder trad, TradeFileCsv csv)
         {
-            csv.TransactionId = transaction.TransactionId;
-            csv.TransactionPlacedDate = transaction.TransactionPlacedDate?.ToString();
-            csv.TransactionBookedDate = transaction.TransactionBookedDate?.ToString();
-            csv.TransactionAmendedDate = transaction.TransactionAmendedDate?.ToString();
-            csv.TransactionRejectedDate = transaction.TransactionRejectedDate?.ToString();
-            csv.TransactionCancelledDate = transaction.TransactionCancelledDate?.ToString();
-            csv.TransactionFilledDate = transaction.TransactionFilledDate?.ToString();
-            csv.TransactionTraderId = transaction.TransactionTraderId;
-            csv.TransactionCounterParty = transaction.TransactionCounterParty;
-            csv.TransactionType = ((int?)transaction.TransactionType)?.ToString();
-            csv.TransactionPosition = ((int?) transaction.TransactionPosition)?.ToString();
-            csv.TransactionCurrency = transaction?.TransactionCurrency.Value;
-            csv.TransactionLimitPrice = transaction?.TransactionLimitPrice?.Value.ToString();
-            csv.TransactionAveragePrice = transaction?.TransactionAveragePrice.Value.ToString();
-            csv.TransactionOrderedVolume = transaction?.TransactionOrderedVolume?.ToString();
-            csv.TransactionFilledVolume = transaction?.TransactionFilledVolume?.ToString();
-
-            return csv;
-        }
-
-        private TradeFileCsv MapTradeFields2(Trade trad, TradeFileCsv csv)
-        {
-            csv.TradeId = trad.TradeId;
-            csv.TradePlacedDate = trad.TradePlacedDate?.ToString();
-            csv.TradeBookedDate = trad.TradeBookedDate?.ToString();
-            csv.TradeAmendedDate = trad.TradeAmendedDate?.ToString();
-            csv.TradeRejectedDate = trad.TradeRejectedDate?.ToString();
-            csv.TradeCancelledDate = trad.TradeCancelledDate?.ToString();
-            csv.TradeFilledDate = trad.TradeFilledDate?.ToString();
-            csv.TraderId = trad.TraderId;
-            csv.TradeCounterParty = trad.TradeCounterParty;
-            csv.TradeType = ((int?)trad.TradeType).ToString();
-            csv.TradePosition = ((int?)trad.TradePosition).ToString();
-            csv.TradeCurrency = trad.TradeCurrency.Value;
-            csv.TradeLimitPrice = trad.TradeLimitPrice?.Value.ToString();
-            csv.TradeAveragePrice = trad.TradeAveragePrice?.Value.ToString();
-            csv.TradeOrderedVolume = trad.TradeOrderedVolume?.ToString();
-            csv.TradeFilledVolume = trad.TradeFilledVolume?.ToString();
-            csv.TradeOptionStrikePrice = trad.TradeOptionStrikePrice?.ToString();
-            csv.TradeOptionExpirationDate = trad.TradeOptionStrikePrice?.ToString();
-            csv.TradeOptionEuropeanAmerican = trad.TradeOptionEuropeanAmerican;
+            csv.DealerOrderId = trad.DealerOrderId;
+            csv.DealerOrderPlacedDate = trad.PlacedDate?.ToString();
+            csv.DealerOrderBookedDate = trad.BookedDate?.ToString();
+            csv.DealerOrderAmendedDate = trad.AmendedDate?.ToString();
+            csv.DealerOrderRejectedDate = trad.RejectedDate?.ToString();
+            csv.DealerOrderCancelledDate = trad.CancelledDate?.ToString();
+            csv.DealerOrderFilledDate = trad.FilledDate?.ToString();
+            csv.DealerOrderDealerId = trad.DealerId;
+            csv.DealerOrderCounterParty = trad.DealerCounterParty;
+            csv.DealerOrderType = ((int?)trad.OrderType).ToString();
+            csv.DealerOrderDirection = ((int?)trad.OrderDirection).ToString();
+            csv.DealerOrderCurrency = trad.Currency.Value;
+            csv.DealerOrderLimitPrice = trad.LimitPrice?.Value.ToString();
+            csv.DealerOrderAverageFillPrice = trad.AverageFillPrice?.Value.ToString();
+            csv.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
+            csv.DealerOrderFilledVolume = trad.FilledVolume?.ToString();
+            csv.DealerOrderOptionStrikePrice = trad.OptionStrikePrice?.ToString();
+            csv.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString();
+            csv.DealerOrderOptionEuropeanAmerican = ((int?)trad.OptionEuropeanAmerican).ToString();
 
             return csv;
         }
@@ -145,21 +108,15 @@ namespace DomainV2.Files
             csv.OrderCancelledDate = order.OrderCancelledDate.ToString();
             csv.OrderFilledDate = order.OrderFilledDate.ToString();
             csv.OrderType = ((int?) order.OrderType).ToString();
-            csv.OrderPosition = ((int?) order.OrderPosition).ToString();
+            csv.OrderDirection = ((int?) order.OrderDirection).ToString();
             csv.OrderCurrency = order.OrderCurrency.Value;
             csv.OrderLimitPrice = order.OrderLimitPrice?.Value.ToString();
-            csv.OrderAveragePrice = order.OrderAveragePrice?.Value.ToString();
+            csv.OrderAverageFillPrice = order.OrderAverageFillPrice?.Value.ToString();
             csv.OrderOrderedVolume = order.OrderOrderedVolume?.ToString();
             csv.OrderFilledVolume = order.OrderFilledVolume?.ToString();
-            csv.OrderPortfolioManager = order.OrderPortfolioManager;
             csv.OrderTraderId = order.OrderTraderId;
-            csv.OrderExecutingBroker = order.OrderExecutingBroker;
             csv.OrderClearingAgent = order.OrderClearingAgent;
             csv.OrderDealingInstructions = order.OrderDealingInstructions;
-            csv.OrderStrategy = order.OrderStrategy;
-            csv.OrderRationale = order.OrderRationale;
-            csv.OrderFund = order.OrderFund;
-            csv.OrderClientAccountAttributionId = order.OrderClientAccountAttributionId;
 
             return csv;
         }
@@ -175,9 +132,7 @@ namespace DomainV2.Files
                 return null;
             }
             
-            var transaction = MapTransaction(csv);
-            var transactions = transaction != null ? new[] {transaction} : null;
-            var trade = MapTrade(csv, transactions);
+            var trade = MapTrade(csv);
             var trades = trade != null ? new[] {trade} : null;
             var order = MapOrder(csv, trades);
 
@@ -186,11 +141,11 @@ namespace DomainV2.Files
 
         public int FailedParseTotal { get; set; }
 
-        private Order MapOrder(TradeFileCsv csv, IReadOnlyCollection<Trade> trades)
+        private Order MapOrder(TradeFileCsv csv, IReadOnlyCollection<DealerOrder> dealerOrder)
         {
-            if (trades == null)
+            if (dealerOrder == null)
             {
-                trades = new Trade[0];
+                dealerOrder = new DealerOrder[0];
             }
 
             var instrument = MapInstrument(csv);
@@ -204,19 +159,35 @@ namespace DomainV2.Files
             var filledDate = MapDate(csv.OrderFilledDate);
 
             var orderType = MapToEnum<OrderTypes>(csv.OrderType);
-            var orderPosition = MapToEnum<OrderPositions>(csv.OrderPosition);
+            var orderDirection = MapToEnum<OrderDirections>(csv.OrderDirection);
             var orderCurrency = new Currency(csv.OrderCurrency);
+            var orderSettlementCurrency =
+                !string.IsNullOrWhiteSpace(csv.OrderCurrency) 
+                    ? (Currency?)new Currency(csv.OrderCurrency) 
+                    : null;
+
+            var orderCleanDirty = MapToEnum<OrderCleanDirty>(csv.OrderCleanDirty);
+
             var limitPrice = new CurrencyAmount(MapDecimal(csv.OrderLimitPrice), csv.OrderCurrency);
-            var averagePrice = new CurrencyAmount(MapDecimal(csv.OrderAveragePrice), csv.OrderCurrency);
+            var averagePrice = new CurrencyAmount(MapDecimal(csv.OrderAverageFillPrice), csv.OrderCurrency);
+
+            var orderOptionStrikePrice = new CurrencyAmount(MapDecimal(csv.OrderOptionStrikePrice), csv.OrderCurrency);
+            var orderOptionExpirationDate = MapDate(csv.OrderOptionExpirationDate);
+            var orderOptionEuropeanAmerican = MapToEnum<OptionEuropeanAmerican>(csv.OrderOptionEuropeanAmerican);
 
             var orderedVolume = MapLong(csv.OrderOrderedVolume);
             var filledVolume = MapLong(csv.OrderFilledVolume);
+
+            var accInterest = MapDecimal(csv.OrderAccumulatedInterest);
             
             return new Order(
                 instrument,
                 market,
                 null,
                 csv.OrderId,
+                csv.OrderVersion,
+                csv.OrderVersionLinkId,
+                csv.OrderGroupId,
                 placedDate,
                 bookedDate,
                 amendedDate,
@@ -224,122 +195,84 @@ namespace DomainV2.Files
                 cancelledDate,
                 filledDate,
                 orderType,
-                orderPosition,
+                orderDirection,
                 orderCurrency,
+                orderSettlementCurrency,
+                orderCleanDirty,
+                accInterest,
                 limitPrice,
                 averagePrice,
                 orderedVolume,
                 filledVolume,
-                csv.OrderPortfolioManager,
                 csv.OrderTraderId,
-                csv.OrderExecutingBroker,
                 csv.OrderClearingAgent,
                 csv.OrderDealingInstructions,
-                csv.OrderStrategy,
-                csv.OrderRationale,
-                csv.OrderFund,
-                csv.OrderClientAccountAttributionId,
-                trades);
+                orderOptionStrikePrice,
+                orderOptionExpirationDate,
+                orderOptionEuropeanAmerican,
+                dealerOrder);
         }
 
-        private Trade MapTrade(TradeFileCsv csv, IReadOnlyCollection<Transaction> transactions)
+        private DealerOrder MapTrade(TradeFileCsv csv)
         {
-            if (string.IsNullOrWhiteSpace(csv.TradeId))
+            if (string.IsNullOrWhiteSpace(csv.DealerOrderId))
                 return null;
-
-            if (transactions == null)
-            {
-                transactions = new Transaction[0];
-            }
 
             var instrument = MapInstrument(csv);
 
-            var placedDate = MapDate(csv.TradePlacedDate);
-            var bookedDate = MapDate(csv.TradeBookedDate);
-            var amendedDate = MapDate(csv.TradeAmendedDate);
-            var rejectedDate = MapDate(csv.TradeRejectedDate);
-            var cancelledDate = MapDate(csv.TradeCancelledDate);
-            var filledDate = MapDate(csv.TradeFilledDate);
+            var placedDate = MapDate(csv.DealerOrderPlacedDate);
+            var bookedDate = MapDate(csv.DealerOrderBookedDate);
+            var amendedDate = MapDate(csv.DealerOrderAmendedDate);
+            var rejectedDate = MapDate(csv.DealerOrderRejectedDate);
+            var cancelledDate = MapDate(csv.DealerOrderCancelledDate);
+            var filledDate = MapDate(csv.DealerOrderFilledDate);
 
-            var tradeType = MapToEnum<OrderTypes>(csv.TradeType);
-            var tradePosition = MapToEnum<OrderPositions>(csv.TradePosition);
-            var tradeCurrency = new Currency(csv.TradeCurrency);
-            var limitPrice = new CurrencyAmount(MapDecimal(csv.TradeLimitPrice), csv.TradeCurrency);
-            var averagePrice = new CurrencyAmount(MapDecimal(csv.TradeAveragePrice), csv.TradeCurrency);
+            var dealerOrderType = MapToEnum<OrderTypes>(csv.DealerOrderType);
+            var dealerOrderDirection = MapToEnum<OrderDirections>(csv.DealerOrderDirection);
+            var dealerOrderCurrency = new Currency(csv.DealerOrderCurrency);
+            var dealerOrderSettlementCurrency = new Currency(csv.DealerOrderSettlementCurrency);
 
-            var orderedVolume = MapLong(csv.TradeOrderedVolume);
-            var filledVolume = MapLong(csv.TradeFilledVolume);
+            var limitPrice = new CurrencyAmount(MapDecimal(csv.DealerOrderLimitPrice), csv.DealerOrderCurrency);
+            var averagePrice = new CurrencyAmount(MapDecimal(csv.DealerOrderAverageFillPrice), csv.DealerOrderCurrency);
+            var cleanDirty = MapToEnum<OrderCleanDirty>(csv.DealerOrderCleanDirty);
+            var euroAmerican = MapToEnum<OptionEuropeanAmerican>(csv.DealerOrderOptionEuropeanAmerican);
 
-            var optionStrikePrice = MapDecimal(csv.TradeOptionStrikePrice);
-            var expirationDate = MapDate(csv.TradeOptionExpirationDate);
+            var orderedVolume = MapLong(csv.DealerOrderOrderedVolume);
+            var filledVolume = MapLong(csv.DealerOrderFilledVolume);
 
-            return new Trade(
+            var accumulatedInterest = MapDecimal(csv.DealerOrderAccumulatedInterest);
+            var optionStrikePrice = MapDecimal(csv.DealerOrderOptionStrikePrice);
+            var optionExpirationDate = MapDate(csv.DealerOrderOptionExpirationDate);
+
+            return new DealerOrder(
                 instrument,
                 string.Empty,
-                csv.TradeId,
+                csv.DealerOrderId,
                 placedDate,
                 bookedDate,
                 amendedDate,
                 rejectedDate,
                 cancelledDate,
                 filledDate,
-                csv.TraderId,
-                csv.TradeCounterParty,
-                tradeType,
-                tradePosition,
-                tradeCurrency,
+                csv.DealerOrderDealerId,
+                csv.DealerOrderNotes,
+                csv.DealerOrderCounterParty,
+                dealerOrderType,
+                dealerOrderDirection,
+                dealerOrderCurrency,
+                dealerOrderSettlementCurrency,
+                cleanDirty,
+                accumulatedInterest,
+                csv.DealerOrderVersion,
+                csv.DealerOrderVersionLinkId,
+                csv.DealerOrderGroupId,
                 limitPrice,
                 averagePrice,
                 orderedVolume,
                 filledVolume,
                 optionStrikePrice,
-                expirationDate,
-                csv.TradeOptionEuropeanAmerican,
-                transactions);
-        }
-
-        private Transaction MapTransaction(TradeFileCsv csv)
-        {
-            if (string.IsNullOrWhiteSpace(csv.TransactionId))
-                return null;
-
-            var instrument = MapInstrument(csv);
-
-            var placedDate = MapDate(csv.TransactionPlacedDate);
-            var bookedDate = MapDate(csv.TransactionBookedDate);
-            var amendedDate = MapDate(csv.TransactionAmendedDate);
-            var rejectedDate = MapDate(csv.TransactionRejectedDate);
-            var cancelledDate = MapDate(csv.TransactionCancelledDate);
-            var filledDate = MapDate(csv.TransactionFilledDate);
-
-            var tradeType = MapToEnum<OrderTypes>(csv.TransactionType);
-            var tradePosition = MapToEnum<OrderPositions>(csv.TransactionPosition);
-            var tradeCurrency = new Currency(csv.TransactionCurrency);
-            var limitPrice = new CurrencyAmount(MapDecimal(csv.TransactionLimitPrice), csv.TransactionCurrency);
-            var averagePrice = new CurrencyAmount(MapDecimal(csv.TransactionAveragePrice), csv.TransactionCurrency);
-
-            var orderedVolume = MapLong(csv.TransactionOrderedVolume);
-            var filledVolume = MapLong(csv.TransactionFilledVolume);
-
-            return new Transaction(
-                instrument,
-                string.Empty,
-                csv.TransactionId,
-                placedDate,
-                bookedDate,
-                amendedDate,
-                rejectedDate,
-                cancelledDate,
-                filledDate,
-                csv.TransactionTraderId,
-                csv.TransactionCounterParty,
-                tradeType,
-                tradePosition,
-                tradeCurrency,
-                limitPrice,
-                averagePrice,
-                orderedVolume,
-                filledVolume);
+                optionExpirationDate,
+                euroAmerican);
         }
 
         private T MapToEnum<T>(string propertyValue) where T : struct, IConvertible
@@ -423,7 +356,7 @@ namespace DomainV2.Files
                 identifiers,
                 csv.InstrumentName ?? string.Empty,
                 csv.InstrumentCfi ?? string.Empty,
-                csv.OrderCurrency ?? csv.TradeCurrency ?? string.Empty,
+                csv.OrderCurrency ?? csv.DealerOrderCurrency ?? string.Empty,
                 csv.InstrumentIssuerIdentifier ?? string.Empty,
                 csv.InstrumentUnderlyingName ?? string.Empty,
                 csv.InstrumentUnderlyingCfi ?? string.Empty,

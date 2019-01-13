@@ -108,20 +108,16 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 return null;
             }
 
-            var position = CalculateTradeDirection();
+            var direction = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
-            var limit = CalculateLimit(tick, position, orderType);
+            var limit = CalculateLimit(tick, direction, orderType);
             var executedPrice = tick.SpreadTimeBar.Price;
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
             var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateClientFactorString();
-            var traderClientId = GenerateClientFactorString();
             var dealerInstructions = "Process Asap";
-            var counterPartyBrokerId = GenerateClientFactorString();
-            var tradeRationale = string.Empty;
-            var tradeStrategy = string.Empty;
             var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Value ?? string.Empty;
 
             var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
@@ -131,6 +127,9 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tick.Security,
                 tick.Market,
                 null,
+                "order-v1",
+                "order-v1",
+                "order-group-v1",
                 Guid.NewGuid().ToString(),
                 orderSubmittedOn,
                 orderSubmittedOn,
@@ -139,22 +138,22 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 filledDate,
                 orderStatusLastChanged,
                 OrderTypes.MARKET,
-                position,
+                direction,
                 new Currency(orderCurrency),
+                new Currency(orderCurrency),
+                OrderCleanDirty.Clean,
+                null,
                 limit,
                 executedPrice,
                 volume,
                 volume,
-                "Mr. Portfolio Manager",
                 traderId,
-                counterPartyBrokerId,
                 "Clearing-Bank",
                 dealerInstructions,
-                "long/short",
-                tradeRationale,
-                tradeStrategy,
-                traderClientId,
-                new Trade[0]);
+                null,
+                null,
+                OptionEuropeanAmerican.None,
+                new DealerOrder[0]);
         }
 
         private string GenerateClientFactorString()
@@ -170,10 +169,10 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return orderStatus;
         }
 
-        private OrderPositions CalculateTradeDirection()
+        private OrderDirections CalculateTradeDirection()
         {
             var buyOrSellSample = DiscreteUniform.Sample(1, 2);
-            var buyOrSell = (OrderPositions)buyOrSellSample;
+            var buyOrSell = (OrderDirections)buyOrSellSample;
 
             return buyOrSell;
         }
@@ -187,21 +186,21 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(FinancialInstrumentTimeBar tick, OrderPositions buyOrSell, OrderTypes tradeOrderType)
+        private CurrencyAmount? CalculateLimit(FinancialInstrumentTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
                 return null;
             }
 
-            if (buyOrSell == OrderPositions.BUY)
+            if (buyOrSell == OrderDirections.BUY)
             {
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
                 return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
             }
-            else if (buyOrSell == OrderPositions.SELL)
+            else if (buyOrSell == OrderDirections.SELL)
             {
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));

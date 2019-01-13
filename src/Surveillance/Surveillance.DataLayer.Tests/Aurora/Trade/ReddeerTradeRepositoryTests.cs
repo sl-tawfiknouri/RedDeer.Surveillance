@@ -66,14 +66,14 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         private Order Frame()
         {
-            var exch = new DomainV2.Financial.Market("3","id", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new DomainV2.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.Now;
             var tradeDates = DateTime.Now;
 
             var securityIdentifiers =
                 new InstrumentIdentifiers(
                     "1",
-                    "7",
+                    "1",
                     null,
                     "stan",
                     "st12345",

@@ -2,7 +2,7 @@
 
 namespace DomainV2.Financial
 {
-    public enum OrderPositions
+    public enum OrderDirections
     {
         [Description("None")]
         NONE,

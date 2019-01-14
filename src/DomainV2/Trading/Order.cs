@@ -6,6 +6,11 @@ using DomainV2.Financial;
 
 namespace DomainV2.Trading
 {
+    /// <summary>
+    /// This is the Order from within the firm originating the order
+    /// It has associations with dealer orders which are orders
+    /// as processed by the firm dealing the trades
+    /// </summary>
     public class Order
     {
         public Order()
@@ -18,57 +23,82 @@ namespace DomainV2.Trading
             Market market,
             int? reddeerOrderId,
             string orderId,
+
+            string orderVersion,
+            string orderVersionLinkId,
+            string orderGroupId,
+
             DateTime? orderPlacedDate,
             DateTime? orderBookedDate,
             DateTime? orderAmendedDate,
             DateTime? orderRejectedDate,
             DateTime? orderCancelledDate,
             DateTime? orderFilledDate,
+
             OrderTypes orderType,
-            OrderPositions orderPosition,
+            OrderDirections orderDirection,
             Currency orderCurrency,
+            Currency? orderSettlementCurrency,
+            OrderCleanDirty orderCleanDirty,
+            decimal? orderAccumulatedInterest,
+
             CurrencyAmount? orderLimitPrice,
-            CurrencyAmount? orderAveragePrice,
+            CurrencyAmount? orderAverageFillPrice,
             long? orderOrderedVolume,
             long? orderFilledVolume,
-            string orderPortfolioManager,
             string orderTraderId,
-            string orderExecutingBroker,
             string orderClearingAgent,
             string orderDealingInstructions,
-            string orderStrategy,
-            string orderRationale,
-            string orderFund,
-            string orderClientAccountAttributionId,
-            IReadOnlyCollection<Trade> trades)
+
+            CurrencyAmount? orderOptionStrikePrice,
+            DateTime? orderOptionExpirationDate,
+            OptionEuropeanAmerican orderOptionEuropeanAmerican,
+
+            IReadOnlyCollection<DealerOrder> trades)
         {
+            // keys
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             Market = market ?? throw new ArgumentNullException(nameof(market));
             ReddeerOrderId = reddeerOrderId;
             OrderId = orderId ?? string.Empty;
+
+            // versioning
+            OrderVersion = orderVersion ?? string.Empty;
+            OrderVersionLinkId = orderVersionLinkId ?? string.Empty;
+            OrderGroupId = orderGroupId ?? string.Empty;
+
+            // dates
             OrderPlacedDate = orderPlacedDate;
             OrderBookedDate = orderBookedDate;
             OrderAmendedDate = orderAmendedDate;
             OrderRejectedDate = orderRejectedDate;
             OrderCancelledDate = orderCancelledDate;
             OrderFilledDate = orderFilledDate;
+
+            // order fundamentals
             OrderType = orderType;
-            OrderPosition = orderPosition;
+            OrderDirection = orderDirection;
             OrderCurrency = orderCurrency;
+            OrderSettlementCurrency = orderSettlementCurrency;
+            OrderCleanDirty = orderCleanDirty;
+            OrderAccumulatedInterest = orderAccumulatedInterest;
             OrderLimitPrice = orderLimitPrice;
-            OrderAveragePrice = orderAveragePrice;
+            OrderAverageFillPrice = orderAverageFillPrice;
             OrderOrderedVolume = orderOrderedVolume;
             OrderFilledVolume = orderFilledVolume;
-            OrderPortfolioManager = orderPortfolioManager ?? string.Empty;
+
+            // order trader and post trade
             OrderTraderId = orderTraderId ?? string.Empty;
-            OrderExecutingBroker = orderExecutingBroker ?? string.Empty;
             OrderClearingAgent = orderClearingAgent ?? string.Empty;
             OrderDealingInstructions = orderDealingInstructions ?? string.Empty;
-            OrderStrategy = orderStrategy ?? string.Empty;
-            OrderRationale = orderRationale ?? string.Empty;
-            OrderFund = orderFund ?? string.Empty;
-            OrderClientAccountAttributionId = orderClientAccountAttributionId ?? string.Empty;
-            Trades = trades ?? new Trade[0];
+
+            // options
+            OrderOptionStrikePrice = orderOptionStrikePrice;
+            OrderOptionExpirationDate = orderOptionExpirationDate;
+            OrderOptionEuropeanAmerican = orderOptionEuropeanAmerican;
+
+            // associated dealer orders
+            DealerOrders = trades ?? new DealerOrder[0];
         }
 
         public FinancialInstrument Instrument { get; set; }
@@ -76,29 +106,50 @@ namespace DomainV2.Trading
 
         public int? ReddeerOrderId { get; set; } // primary key for the order
         public string OrderId { get; set; } // the client id for the order
+
+        public string OrderVersion { get; set; }
+        public string OrderVersionLinkId { get; set; }
+        public string OrderGroupId { get; set; }
+
+        // Options
+        public CurrencyAmount? OrderOptionStrikePrice { get; set; }
+        public DateTime? OrderOptionExpirationDate { get; set; }
+        public OptionEuropeanAmerican OrderOptionEuropeanAmerican { get; set; }
+
+        // Dates
         public DateTime? OrderPlacedDate { get; set; }
         public DateTime? OrderBookedDate { get; set; }
         public DateTime? OrderAmendedDate { get; set; }
         public DateTime? OrderRejectedDate { get; set; }
         public DateTime? OrderCancelledDate { get; set; }
         public DateTime? OrderFilledDate { get; set; }
+
         public OrderTypes OrderType { get; set; }
-        public OrderPositions OrderPosition { get; set; }
+        public OrderDirections OrderDirection { get; set; }
         public Currency OrderCurrency { get; set; }
+        public Currency? OrderSettlementCurrency { get; set; }
+        public OrderCleanDirty? OrderCleanDirty { get; set; }
+        public decimal? OrderAccumulatedInterest { get; set; }
+
         public CurrencyAmount? OrderLimitPrice { get; set; }
-        public CurrencyAmount? OrderAveragePrice { get; set; }
+        public CurrencyAmount? OrderAverageFillPrice { get; set; }
         public long? OrderOrderedVolume { get; set; }
         public long? OrderFilledVolume { get; set; }
-        public string OrderPortfolioManager { get; set; }
         public string OrderTraderId { get; set; }
-        public string OrderExecutingBroker { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
-        public string OrderStrategy { get; set; }
-        public string OrderRationale { get; set; }
-        public string OrderFund { get; set; }
-        public string OrderClientAccountAttributionId { get; set; }
-        public IReadOnlyCollection<Trade> Trades { get; set; }
+
+        public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
+
+
+
+
+        // Accounting attribution Properties
+        public string OrderFund { get; set; } = string.Empty;
+        public string OrderStrategy { get; set; } = string.Empty;
+        public string OrderClientAccountAttributionId { get; set; } = string.Empty;
+
+
 
         // Batch properties
         public bool IsInputBatch { get; set; }
@@ -164,7 +215,7 @@ namespace DomainV2.Trading
 
         public override string ToString()
         {
-            return $"{Instrument.Name} |{Market.Name} | {OrderStatus().GetDescription()} | ordered-{OrderOrderedVolume} | filled-{OrderFilledVolume} | {OrderAveragePrice?.ToString()}";
+            return $"{Instrument.Name} |{Market.Name} | {OrderStatus().GetDescription()} | ordered-{OrderOrderedVolume} | filled-{OrderFilledVolume} | {OrderAverageFillPrice?.ToString()}";
         }
     }
 }

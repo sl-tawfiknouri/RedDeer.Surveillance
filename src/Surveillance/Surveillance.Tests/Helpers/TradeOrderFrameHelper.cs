@@ -8,19 +8,27 @@ namespace Surveillance.Tests.Helpers
     {
         public static Order Random(this Order frame, int? price = 20)
         {
+            var fi = new FinancialInstrument(
+                InstrumentTypes.Equity,
+                new InstrumentIdentifiers(string.Empty, "reddeer-id", null, "client-identifier", "sedol", "isin",
+                    "figi",
+                    "cusip", "xlon", "lei",
+                    "bloomberg"),
+                "random-security",
+                "ENTSPB",
+                "USD",
+                "Random Inc");
+
+            var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+
             return new Order(
-                new FinancialInstrument(
-                    InstrumentTypes.Equity,
-                    new InstrumentIdentifiers(string.Empty, "reddeer-id", null, "client-identifier", "sedol", "isin", "figi",
-                        "cusip", "xlon", "lei",
-                        "bloomberg"),
-                    "random-security",
-                    "ENTSPB",
-                    "USD",
-                    "Random Inc"),
-                new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
+                fi,
+                market,
                 null,
                 "order-1",
+                "version-1",
+                "version-1",
+                "version-1",
                 DateTime.Now,
                 DateTime.Now,
                 null,
@@ -28,22 +36,22 @@ namespace Surveillance.Tests.Helpers
                 null,
                 null,
                 OrderTypes.MARKET,
-                OrderPositions.BUY,
+                OrderDirections.BUY,
                 new DomainV2.Financial.Currency("GBP"),
+                new DomainV2.Financial.Currency("GBP"),
+                OrderCleanDirty.NONE,
+                null,
                 new CurrencyAmount(price.GetValueOrDefault(20), "GBP"),
                 new CurrencyAmount(price.GetValueOrDefault(20), "GBP"),
                 1000,
                 1000,
-                "mr portfolio manager",
                 "trader id",
-                "executing broker",
                 "clearing agent",
                 "dealer-instructions",
-                "asap strategy",
-                "rationale",
-                "mega fund",
-                "client-id",
-                new Trade[0]);
+                null,
+                null,
+                OptionEuropeanAmerican.NONE,
+                new DealerOrder[0]);
         }
     }
 }

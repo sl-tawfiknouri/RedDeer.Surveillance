@@ -113,6 +113,9 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    "version-1",
+                    "version-1",
+                    "version-1",
                     value.Epoch,
                     value.Epoch,
                     null,
@@ -120,8 +123,11 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     value.Epoch.AddSeconds(i),
                     OrderTypes.LIMIT,
-                    i < splitSize ? OrderPositions.SELL : OrderPositions.BUY,
+                    i < splitSize ? OrderDirections.SELL : OrderDirections.BUY,
                     new Currency("GBP"),
+                    new Currency("GBP"),
+                    OrderCleanDirty.NONE,
+                    null,
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
@@ -131,11 +137,8 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new Trade[0]);
+                    OptionEuropeanAmerican.NONE,
+                    new DealerOrder[0]);
 
                 frames.Add(frame2);
             }

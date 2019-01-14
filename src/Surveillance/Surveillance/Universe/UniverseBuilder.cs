@@ -20,20 +20,20 @@ namespace Surveillance.Universe
     /// </summary>
     public class UniverseBuilder : IUniverseBuilder
     {
-        private readonly IReddeerTradeRepository _auroraTradeRepository;
+        private readonly IReddeerOrdersRepository _auroraOrdersRepository;
         private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
         private readonly IUniverseSortComparer _universeSorter;
         private readonly ILogger<UniverseBuilder> _logger;
 
         public UniverseBuilder(
-            IReddeerTradeRepository auroraTradeRepository,
+            IReddeerOrdersRepository auroraOrdersRepository,
             IReddeerMarketRepository auroraMarketRepository,
             IMarketOpenCloseEventManager marketManager,
             IUniverseSortComparer universeSorter,
             ILogger<UniverseBuilder> logger)
         {
-            _auroraTradeRepository = auroraTradeRepository ?? throw new ArgumentNullException(nameof(auroraTradeRepository));
+            _auroraOrdersRepository = auroraOrdersRepository ?? throw new ArgumentNullException(nameof(auroraOrdersRepository));
             _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
             _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
             _universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
@@ -72,7 +72,7 @@ namespace Surveillance.Universe
             ISystemProcessOperationContext opCtx)
         {
             var trades =
-                await _auroraTradeRepository.Get(
+                await _auroraOrdersRepository.Get(
                     execution.TimeSeriesInitiation.Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);

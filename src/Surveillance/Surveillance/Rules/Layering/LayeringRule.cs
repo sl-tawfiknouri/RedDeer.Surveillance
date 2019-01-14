@@ -76,7 +76,7 @@ namespace Surveillance.Rules.Layering
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.OrderPosition == tradeWindow.First().OrderPosition))
+            if (tradeWindow.All(trades => trades.OrderDirection == tradeWindow.First().OrderDirection))
             {
                 return;
             }
@@ -94,12 +94,12 @@ namespace Surveillance.Rules.Layering
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                (mostRecentTrade.OrderPosition == OrderPositions.BUY)
+                (mostRecentTrade.OrderDirection == OrderDirections.BUY)
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderPosition == OrderPositions.SELL
+                mostRecentTrade.OrderDirection == OrderDirections.SELL
                     ? buyPosition
                     : sellPosition;
 
@@ -122,12 +122,12 @@ namespace Surveillance.Rules.Layering
 
         private void AddToPositions(ITradePosition buyPosition, ITradePosition sellPosition, Order nextTrade)
         {
-            switch (nextTrade.OrderPosition)
+            switch (nextTrade.OrderDirection)
             {
-                case OrderPositions.BUY:
+                case OrderDirections.BUY:
                     buyPosition.Add(nextTrade);
                     break;
-                case OrderPositions.SELL:
+                case OrderDirections.SELL:
                     sellPosition.Add(nextTrade);
                     break;
                 default:
@@ -400,18 +400,18 @@ namespace Surveillance.Rules.Layering
             FinancialInstrumentTimeBar startTick,
             FinancialInstrumentTimeBar endTick)
         {
-            switch (mostRecentTrade.OrderPosition)
+            switch (mostRecentTrade.OrderDirection)
             {
-                case OrderPositions.BUY:
+                case OrderDirections.BUY:
                     return priceMovement < 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." }
                         : RuleBreachDescription.False();
-                case OrderPositions.SELL:
+                case OrderDirections.SELL:
                     return priceMovement > 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:
-                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderPosition} (Arg Out of Range)");
-                    _ruleCtx.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderPosition} (Arg Out of Range)");
+                    _logger.LogError($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
+                    _ruleCtx.EventException($"Layering rule is not taking into account a new order position value (handles buy/sell) {mostRecentTrade.OrderDirection} (Arg Out of Range)");
                     return RuleBreachDescription.False();
             }
         }

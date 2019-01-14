@@ -142,19 +142,19 @@ namespace Surveillance.Analytics.Subscriber
 
             var tradeFrame = (Order)value.UnderlyingEvent;
 
-            if (tradeFrame.Trades == null
-                || !tradeFrame.Trades.Any())
+            if (tradeFrame.DealerOrders == null
+                || !tradeFrame.DealerOrders.Any())
             {
                 return;
             }
 
             lock (_traderIdLock)
             {
-                foreach (var trade in tradeFrame.Trades.Where(tf => tf != null).ToList())
+                foreach (var trade in tradeFrame.DealerOrders.Where(tf => tf != null).ToList())
 
-                if (!_traderIds.ContainsKey(trade.TraderId.ToLower()))
+                if (!_traderIds.ContainsKey(trade.DealerId.ToLower()))
                 {
-                    _traderIds.Add(new KeyValuePair<string, string>(trade.TraderId.ToLower(), trade.TraderId.ToLower()));
+                    _traderIds.Add(new KeyValuePair<string, string>(trade.DealerId.ToLower(), trade.DealerId.ToLower()));
                 }
             }
         }

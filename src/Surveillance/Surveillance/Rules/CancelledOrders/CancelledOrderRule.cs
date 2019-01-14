@@ -120,7 +120,7 @@ namespace Surveillance.Rules.CancelledOrders
                 }
 
                 var nextTrade = tradeWindow.Pop();
-                if (nextTrade.OrderPosition != mostRecentTrade.OrderPosition)
+                if (nextTrade.OrderDirection != mostRecentTrade.OrderDirection)
                 {
                     continue;
                 }

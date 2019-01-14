@@ -15,7 +15,7 @@ namespace DataImport.Recorders
     public class RedDeerAuroraTradeRecorderAutoSchedule : IRedDeerAuroraTradeRecorderAutoSchedule
     {
         private readonly IEnrichmentService _enrichmentService;
-        private readonly IReddeerTradeRepository _tradeRepository;
+        private readonly IReddeerOrdersRepository _ordersRepository;
         private readonly IScheduleRuleMessageSender _sender;
         private readonly IUploadConfiguration _configuration;
         private readonly ILogger _logger;
@@ -25,13 +25,13 @@ namespace DataImport.Recorders
 
         public RedDeerAuroraTradeRecorderAutoSchedule(
             IEnrichmentService enrichmentService,
-            IReddeerTradeRepository tradeRepository,
+            IReddeerOrdersRepository ordersRepository,
             IScheduleRuleMessageSender sender,
             IUploadConfiguration configuration,
             ILogger<RedDeerAuroraTradeRecorderAutoSchedule> logger)
         {
             _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
-            _tradeRepository = tradeRepository ?? throw new ArgumentNullException(nameof(tradeRepository));
+            _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -55,7 +55,7 @@ namespace DataImport.Recorders
             }
 
             _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule passing value {value.OrderId} to trade repository");
-            await _tradeRepository.Create(value);
+            await _ordersRepository.Create(value);
             _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule completed passing value {value.OrderId} to trade repository");
 
             if (_configuration.AutoSchedule)

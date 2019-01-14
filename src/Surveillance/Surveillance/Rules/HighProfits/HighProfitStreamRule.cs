@@ -185,12 +185,12 @@ namespace Surveillance.Rules.HighProfits
         {
             var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
-                lt.OrderPosition == OrderPositions.BUY 
-                || lt.OrderPosition == OrderPositions.COVER).ToList());
+                lt.OrderDirection == OrderDirections.BUY 
+                || lt.OrderDirection == OrderDirections.COVER).ToList());
 
             var sells = new TradePosition(liveTrades.Where(lt =>
-                lt.OrderPosition == OrderPositions.SELL
-                || lt.OrderPosition == OrderPositions.SHORT).ToList());
+                lt.OrderDirection == OrderDirections.SELL
+                || lt.OrderDirection == OrderDirections.SHORT).ToList());
 
             var exchangeRateProfitsTask =
                 _exchangeRateProfitCalculator.ExchangeRateMovement(

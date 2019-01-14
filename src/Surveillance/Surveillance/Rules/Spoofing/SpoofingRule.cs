@@ -64,7 +64,7 @@ namespace Surveillance.Rules.Spoofing
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.OrderPosition == tradeWindow.First().OrderPosition))
+            if (tradeWindow.All(trades => trades.OrderDirection == tradeWindow.First().OrderDirection))
             {
                 return;
             }
@@ -94,12 +94,12 @@ namespace Surveillance.Rules.Spoofing
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.OrderPosition == OrderPositions.BUY
+                mostRecentTrade.OrderDirection == OrderDirections.BUY
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderPosition == OrderPositions.SELL
+                mostRecentTrade.OrderDirection == OrderDirections.SELL
                     ? buyPosition
                     : sellPosition;
 
@@ -155,12 +155,12 @@ namespace Surveillance.Rules.Spoofing
 
         private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, Order nextTrade)
         {
-            switch (nextTrade.OrderPosition)
+            switch (nextTrade.OrderDirection)
             {
-                case OrderPositions.BUY:
+                case OrderDirections.BUY:
                     buyPosition.Add(nextTrade);
                     break;
-                case OrderPositions.SELL:
+                case OrderDirections.SELL:
                     sellPosition.Add(nextTrade);
                     break;
                 default:

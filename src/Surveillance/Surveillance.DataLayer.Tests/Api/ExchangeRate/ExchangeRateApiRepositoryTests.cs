@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.DataLayer.Tests.Helpers;
 
 namespace Surveillance.DataLayer.Tests.Api.ExchangeRate
 {
@@ -17,9 +18,7 @@ namespace Surveillance.DataLayer.Tests.Api.ExchangeRate
         [SetUp]
         public void Setup()
         {
-            _configuration = A.Fake<IDataLayerConfiguration>();
-            _configuration.ClientServiceUrl = "http://localhost:8080";
-            _configuration.SurveillanceUserApiAccessToken = "uwat";
+            _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<ExchangeRateApiRepository>>();
         }
 

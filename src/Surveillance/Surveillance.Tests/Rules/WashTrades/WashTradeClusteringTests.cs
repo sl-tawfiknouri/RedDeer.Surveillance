@@ -35,11 +35,11 @@ namespace Surveillance.Tests.Rules.WashTrades
             var frame8 = (new Order()).Random(21);
             var frame9 = (new Order()).Random(22);
 
-            frame1.OrderPosition = OrderPositions.SELL;
-            frame3.OrderPosition = OrderPositions.SELL;
-            frame5.OrderPosition = OrderPositions.SELL;
-            frame7.OrderPosition = OrderPositions.SELL;
-            frame9.OrderPosition = OrderPositions.SELL;
+            frame1.OrderDirection = OrderDirections.SELL;
+            frame3.OrderDirection = OrderDirections.SELL;
+            frame5.OrderDirection = OrderDirections.SELL;
+            frame7.OrderDirection = OrderDirections.SELL;
+            frame9.OrderDirection = OrderDirections.SELL;
 
             var frames = new[] {frame1, frame2, frame3, frame4, frame5, frame6, frame7, frame8, frame9 };
 

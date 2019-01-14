@@ -104,9 +104,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -129,9 +129,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -154,9 +154,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             var genesis = new UniverseEvent(UniverseStateEvent.Genesis, tradeBuy.OrderPlacedDate.Value.AddMinutes(-1), new object());
@@ -180,10 +180,10 @@ namespace Surveillance.Tests.Rules.Layering
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
             tradeSell.OrderPlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
@@ -205,14 +205,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
-                            tradeBuy.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
+                            tradeBuy.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
+                                tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
@@ -244,9 +244,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
@@ -268,14 +268,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
-                            tradeBuy.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
+                            tradeBuy.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
+                                tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
@@ -307,9 +307,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 300;
@@ -322,14 +322,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
-                            tradeBuy.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
+                            tradeBuy.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
+                                tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)
@@ -362,9 +362,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 100;
@@ -377,14 +377,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
-                            tradeBuy.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
+                            tradeBuy.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
+                                tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
@@ -416,9 +416,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 100;
@@ -431,14 +431,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
-                            tradeBuy.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
-                            tradeSell.OrderAveragePrice.Value,
+                            tradeBuy.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
+                            tradeSell.OrderAverageFillPrice.Value,
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value,
-                                tradeBuy.OrderAveragePrice.Value, tradeBuy.OrderAveragePrice.Value),
+                            new IntradayPrices(tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value,
+                                tradeBuy.OrderAverageFillPrice.Value, tradeBuy.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             tradeBuy.OrderPlacedDate.Value.AddSeconds(-55)),
@@ -470,9 +470,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 300;
@@ -483,7 +483,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var initialPrice = tradeBuy.OrderAveragePrice.Value.Value;
+            var initialPrice = tradeBuy.OrderAverageFillPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55));
             var marketData2 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.95m, tradeBuy.OrderPlacedDate.Value.AddSeconds(-50));
 
@@ -533,9 +533,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 300;
@@ -546,7 +546,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var initialPrice = tradeBuy.OrderAveragePrice.Value.Value;
+            var initialPrice = tradeBuy.OrderAverageFillPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55));
             var marketData2 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 1.05m, tradeBuy.OrderPlacedDate.Value.AddSeconds(-50));
 
@@ -596,9 +596,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 300;
@@ -609,7 +609,7 @@ namespace Surveillance.Tests.Rules.Layering
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var initialPrice = tradeBuy.OrderAveragePrice.Value.Value;
+            var initialPrice = tradeBuy.OrderAverageFillPrice.Value.Value;
             var marketData1 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55));
             var marketData2 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 0.95m, tradeBuy.OrderPlacedDate.Value.AddSeconds(-50));
 
@@ -659,9 +659,9 @@ namespace Surveillance.Tests.Rules.Layering
             var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
-            tradeBuy.OrderPosition = OrderPositions.BUY;
+            tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.OrderFilledDate = tradeBuy.OrderPlacedDate.Value.AddMinutes(1);
-            tradeSell.OrderPosition = OrderPositions.SELL;
+            tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.OrderFilledDate = tradeSell.OrderPlacedDate.Value.AddMinutes(1);
 
             tradeBuy.OrderFilledVolume = 300;
@@ -671,7 +671,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderPlacedDate = tradeBuy.OrderPlacedDate.Value.AddSeconds(30);
 
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var initialPrice = tradeBuy.OrderAveragePrice.Value.Value;
+            var initialPrice = tradeBuy.OrderAverageFillPrice.Value.Value;
             var marketData5 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 1.2m, tradeSell.OrderPlacedDate.Value.AddSeconds(5));
             var marketData6 = SetExchangeFrameToPrice(market, tradeBuy, tradeSell, initialPrice * 1.25m, tradeSell.OrderPlacedDate.Value.AddSeconds(10));
 
@@ -710,14 +710,14 @@ namespace Surveillance.Tests.Rules.Layering
                     new FinancialInstrumentTimeBar(
                         baseBuyFrame.Instrument,
                         new SpreadTimeBar(
-                            baseBuyFrame.OrderAveragePrice.Value, 
-                            baseSellFrame.OrderAveragePrice.Value,
+                            baseBuyFrame.OrderAverageFillPrice.Value, 
+                            baseSellFrame.OrderAverageFillPrice.Value,
                             new CurrencyAmount(price, baseSellFrame.OrderCurrency),
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,
-                            new IntradayPrices(baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value,
-                                baseBuyFrame.OrderAveragePrice.Value, baseBuyFrame.OrderAveragePrice.Value),
+                            new IntradayPrices(baseBuyFrame.OrderAverageFillPrice.Value, baseBuyFrame.OrderAverageFillPrice.Value,
+                                baseBuyFrame.OrderAverageFillPrice.Value, baseBuyFrame.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
                             timestamp),

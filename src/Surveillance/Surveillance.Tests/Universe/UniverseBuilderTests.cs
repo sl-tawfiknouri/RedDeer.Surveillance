@@ -23,7 +23,7 @@ namespace Surveillance.Tests.Universe
     [TestFixture]
     public class UniverseBuilderTests
     {
-        private IReddeerTradeRepository _auroraTradeRepository;
+        private IReddeerOrdersRepository _auroraOrdersRepository;
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
         private ISystemProcessOperationContext _opCtx;
@@ -33,7 +33,7 @@ namespace Surveillance.Tests.Universe
         [SetUp]
         public void Setup()
         {
-            _auroraTradeRepository = A.Fake<IReddeerTradeRepository>();
+            _auroraOrdersRepository = A.Fake<IReddeerOrdersRepository>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
@@ -46,7 +46,7 @@ namespace Surveillance.Tests.Universe
         {
             var builder =
                 new UniverseBuilder(
-                    _auroraTradeRepository,
+                    _auroraOrdersRepository,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -64,7 +64,7 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _auroraTradeRepository,
+                    _auroraOrdersRepository,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -91,7 +91,7 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _auroraTradeRepository,
+                    _auroraOrdersRepository,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -106,7 +106,7 @@ namespace Surveillance.Tests.Universe
             var frame = ((Order)null).Random();
 
             A
-                .CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
+                .CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
                 .Returns(new[] {frame});
 
             var result = await builder.Summon(schedule, _opCtx);
@@ -118,7 +118,7 @@ namespace Surveillance.Tests.Universe
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
 
-            A.CallTo(() => _auroraTradeRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _auroraTradeRepository,
+                    _auroraOrdersRepository,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -173,7 +173,7 @@ namespace Surveillance.Tests.Universe
             var timeSeriesTermination = new DateTime(2018, 01, 02);
             var builder =
                 new UniverseBuilder(
-                    _auroraTradeRepository,
+                    _auroraOrdersRepository,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,

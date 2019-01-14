@@ -242,7 +242,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             FROM DealerOrders
             WHERE OrderId IN @OrderIds";
 
- public OrdersRepository(
+         public OrdersRepository(
             IConnectionStringFactory connectionStringFactory,
             IReddeerMarketRepository marketRepository,
             ILogger<OrdersRepository> logger)

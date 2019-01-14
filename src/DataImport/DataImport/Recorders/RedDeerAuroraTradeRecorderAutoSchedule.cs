@@ -15,7 +15,7 @@ namespace DataImport.Recorders
     public class RedDeerAuroraTradeRecorderAutoSchedule : IRedDeerAuroraTradeRecorderAutoSchedule
     {
         private readonly IEnrichmentService _enrichmentService;
-        private readonly IReddeerOrdersRepository _ordersRepository;
+        private readonly IOrdersRepository _ordersRepository;
         private readonly IScheduleRuleMessageSender _sender;
         private readonly IUploadConfiguration _configuration;
         private readonly ILogger _logger;
@@ -25,7 +25,7 @@ namespace DataImport.Recorders
 
         public RedDeerAuroraTradeRecorderAutoSchedule(
             IEnrichmentService enrichmentService,
-            IReddeerOrdersRepository ordersRepository,
+            IOrdersRepository ordersRepository,
             IScheduleRuleMessageSender sender,
             IUploadConfiguration configuration,
             ILogger<RedDeerAuroraTradeRecorderAutoSchedule> logger)

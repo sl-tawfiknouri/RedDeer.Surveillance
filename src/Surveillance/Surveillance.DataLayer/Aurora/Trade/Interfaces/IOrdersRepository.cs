@@ -6,7 +6,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade.Interfaces
 {
-    public interface IReddeerOrdersRepository
+    public interface IOrdersRepository
     {
         Task Create(Order entity);
         Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);

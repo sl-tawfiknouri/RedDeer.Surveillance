@@ -14,7 +14,7 @@ using Surveillance.System.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade
 {
-    public class ReddeerOrdersRepository : IReddeerOrdersRepository
+    public class OrdersRepository : IOrdersRepository
     {
         private readonly IReddeerMarketRepository _marketRepository;
         private readonly IConnectionStringFactory _dbConnectionFactory;
@@ -242,10 +242,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
             FROM DealerOrders
             WHERE OrderId IN @OrderIds";
 
- public ReddeerOrdersRepository(
+ public OrdersRepository(
             IConnectionStringFactory connectionStringFactory,
             IReddeerMarketRepository marketRepository,
-            ILogger<ReddeerOrdersRepository> logger)
+            ILogger<OrdersRepository> logger)
         {
             _dbConnectionFactory =
                 connectionStringFactory

@@ -20,14 +20,14 @@ namespace Surveillance.Universe
     /// </summary>
     public class UniverseBuilder : IUniverseBuilder
     {
-        private readonly IReddeerOrdersRepository _auroraOrdersRepository;
+        private readonly IOrdersRepository _auroraOrdersRepository;
         private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
         private readonly IUniverseSortComparer _universeSorter;
         private readonly ILogger<UniverseBuilder> _logger;
 
         public UniverseBuilder(
-            IReddeerOrdersRepository auroraOrdersRepository,
+            IOrdersRepository auroraOrdersRepository,
             IReddeerMarketRepository auroraMarketRepository,
             IMarketOpenCloseEventManager marketManager,
             IUniverseSortComparer universeSorter,

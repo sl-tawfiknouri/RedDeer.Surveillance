@@ -127,7 +127,7 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderAccumulatedInterest = PreProcess(rawRecord["OrderAccumulatedInterest"]),
 
                 OrderLimitPrice = PreProcess(rawRecord["OrderLimitPrice"]),
-                OrderAverageFillPrice = PreProcess(rawRecord["OrderAveragePrice"]),
+                OrderAverageFillPrice = PreProcess(rawRecord["OrderAverageFillPrice"]),
                 OrderOrderedVolume = PreProcess(rawRecord["OrderOrderedVolume"]),
                 OrderFilledVolume = PreProcess(rawRecord["OrderFilledVolume"]),
 

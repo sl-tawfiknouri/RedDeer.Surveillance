@@ -5,14 +5,14 @@ using Surveillance.DataLayer.Aurora.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade
 {
-    public class OrderAttributionRepository
+    public class OrderAllocationRepository
     {
         private readonly IConnectionStringFactory _connectionFactory;
-        private readonly ILogger<OrderAttributionRepository> _logger;
+        private readonly ILogger<OrderAllocationRepository> _logger;
 
         private const string InsertAttributionSql = @"
             INSERT INTO 
-                OrdersAttribution (OrderId, Fund, Strategy, OrderFilledVolume)
+                OrdersAllocation (OrderId, Fund, Strategy, OrderFilledVolume)
                 VALUES(@OrderId, @Fund, @Strategy, @OrderFilledVolume);";
 
         private const string GetAttributionSql = @"
@@ -22,12 +22,12 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 Fund as Fund,
                 Strategy as Strategy,
                 OrderFilledVolume as OrderFilledVolume
-            FROM OrdersAttribution
+            FROM OrdersAllocation
             WHERE OrderId in (@OrderIds);";
 
-        public OrderAttributionRepository(
+        public OrderAllocationRepository(
             IConnectionStringFactory connectionFactory,
-            ILogger<OrderAttributionRepository> logger)
+            ILogger<OrderAllocationRepository> logger)
         {
             _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -35,16 +35,16 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         public async Task Create(object entity)
         {
-            _logger.LogInformation($"OrderAttributionRepository Create method called");
+            _logger.LogInformation($"OrderAllocationRepository Create method called");
 
-            _logger.LogInformation($"OrderAttributionRepository Create method completed");
+            _logger.LogInformation($"OrderAllocationRepository Create method completed");
         }
 
         public async Task<object> Get(object entity)
         {
-            _logger.LogInformation($"OrderAttributionRepository Get method called");
+            _logger.LogInformation($"OrderAllocationRepository Get method called");
 
-            _logger.LogInformation($"OrderAttributionRepository Get method completed");
+            _logger.LogInformation($"OrderAllocationRepository Get method completed");
 
             return new object();
         }

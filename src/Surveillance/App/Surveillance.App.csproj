@@ -69,7 +69,7 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Migrations\21 - Add account attribution tbl.sql">
+    <None Update="Migrations\21 - Add account allocation tbl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Migrations\20 - Update Order DealerOrder tbls.sql">

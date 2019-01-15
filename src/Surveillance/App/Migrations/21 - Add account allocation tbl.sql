@@ -6,9 +6,9 @@
 
 START TRANSACTION;
 
-    INSERT INTO Migrations VALUES(21, "add account attribution tbl.sql", now());
+    INSERT INTO Migrations VALUES(21, "add account allocation tbl.sql", now());
 	   
-	CREATE TABLE OrdersAttribution(Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, OrderId INT NOT NULL, Fund nvarchar(255), Strategy nvarchar(255), OrderFilledVolume BIGINT, INDEX i_OrderId(OrderId));
+	CREATE TABLE OrdersAllocation(Id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, OrderId INT NOT NULL, Fund nvarchar(255), Strategy nvarchar(255), OrderFilledVolume BIGINT, INDEX i_OrderId(OrderId));
 
 	CREATE INDEX i_StatusChanged ON Orders (StatusChangedDate);
     CREATE INDEX i_StatusChanged ON DealerOrders (StatusChangedDate);

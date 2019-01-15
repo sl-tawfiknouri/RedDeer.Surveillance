@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 
@@ -33,9 +34,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(object entity)
+        public async Task Create(OrderAllocation entity)
         {
             _logger.LogInformation($"OrderAllocationRepository Create method called");
+
+
 
             _logger.LogInformation($"OrderAllocationRepository Create method completed");
         }
@@ -44,17 +47,20 @@ namespace Surveillance.DataLayer.Aurora.Trade
         {
             _logger.LogInformation($"OrderAllocationRepository Get method called");
 
+
+
             _logger.LogInformation($"OrderAllocationRepository Get method completed");
 
             return new object();
         }
 
-        public class OrderAttributionDto
+        public class OrderAllocationDto
         {
             public string Id { get; set; }
             public string OrderId { get; set; }
             public string Fund { get; set; }
             public string Strategy { get; set; }
+            public string ClientAccountId { get; set; }
             public long OrderFilledVolume { get; set; }
         }
     }

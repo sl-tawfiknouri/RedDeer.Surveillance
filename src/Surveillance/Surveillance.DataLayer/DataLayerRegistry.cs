@@ -51,6 +51,7 @@ namespace Surveillance.DataLayer
             For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
             For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
             For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
+            For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
         }
     }
 }

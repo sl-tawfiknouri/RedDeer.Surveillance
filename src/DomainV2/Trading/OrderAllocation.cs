@@ -24,5 +24,10 @@
         public string Strategy { get; }
         public string ClientAccountId { get; }
         public long OrderFilledVolume { get; }
+
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(OrderId);
+        }
     }
 }

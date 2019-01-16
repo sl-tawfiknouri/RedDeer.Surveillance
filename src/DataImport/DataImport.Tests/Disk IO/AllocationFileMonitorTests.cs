@@ -40,13 +40,23 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void ProcessFile_ReturnsTrue_ForEmptyOrNullPath()
+        public void ProcessFile_ReturnsFalse_ForEmptyOrNullPath()
         {
             var monitor = new AllocationFileMonitor(_systemProcessContext, _uploadConfiguration, _reddeerDirectory, _logger);
 
             var result = monitor.ProcessFile(null);
 
             Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void ProcessFile_ReturnsTrue_ForEmptyOrNullPath()
+        {
+            var monitor = new AllocationFileMonitor(_systemProcessContext, _uploadConfiguration, _reddeerDirectory, _logger);
+
+            var result = monitor.ProcessFile("a-path");
+
+            Assert.IsTrue(result);
         }
 
 

@@ -7,7 +7,7 @@ using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile
 {
-    public class AllocationFileMonitor : BaseUploadFileMonitor
+    public class AllocationFileMonitor : BaseUploadFileMonitor, IAllocationFileMonitor
     {
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly ISystemProcessContext _systemProcessContext;

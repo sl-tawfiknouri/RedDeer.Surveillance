@@ -1,4 +1,5 @@
-﻿using DataImport.Disk_IO.EquityFile;
+﻿using DataImport.Disk_IO.AllocationFile;
+using DataImport.Disk_IO.EquityFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
@@ -77,6 +78,9 @@ namespace DataImport
             For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
+
+            For<IAllocationFileMonitor>().Use<AllocationFileMonitor>();
+            For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
         }
     }
 }

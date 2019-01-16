@@ -16,4 +16,6 @@ START TRANSACTION;
 	-- add a unique constraint
 	ALTER TABLE OrdersAllocation ADD CONSTRAINT unique_orders_allocation UNIQUE(OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume);
 
+	INSERT INTO SystemProcessOperationUploadFileType (Id, FileType) VALUES (2, "Allocation Data File");
+
 COMMIT;

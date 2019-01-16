@@ -104,8 +104,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
                     null,
                     null,
                     null),
-                DateTime.Now, 
-                DateTime.Now.AddMinutes(1),
+                DateTime.UtcNow, 
+                DateTime.UtcNow.AddMinutes(1),
                 "test-process");
         }
     }

@@ -43,7 +43,6 @@ namespace RedDeer.DataImport.DataImport.App
             try
             {
                 SetSysLogSettingIfService(args);
-
                 Container = new Container();
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);

@@ -64,20 +64,20 @@ namespace Surveillance.Tests.Markets
                     new IntradayPrices(null, null, null, null),
                     1000,
                     new Volume(2000),
-                    DateTime.Now.AddDays(1)
+                    DateTime.UtcNow.AddDays(1)
                     ), 
-                DateTime.Now.AddDays(1),
+                DateTime.UtcNow.AddDays(1),
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                DateTime.Now.AddDays(1),
+                DateTime.UtcNow.AddDays(1),
                 new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
 
             cache.Add(frame);
 
@@ -127,19 +127,19 @@ namespace Surveillance.Tests.Markets
                     new IntradayPrices(null, null, null, null),
                     1000,
                     new Volume(1000),
-                    DateTime.Now), 
-                DateTime.Now,
+                    DateTime.UtcNow), 
+                DateTime.UtcNow,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                DateTime.Now,
+                DateTime.UtcNow,
                 new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
 
             cache.Add(frame);
 
@@ -189,19 +189,19 @@ namespace Surveillance.Tests.Markets
                     new IntradayPrices(null, null, null, null),
                     10000,
                     new Volume(2000),
-                    DateTime.Now.AddDays(1)), 
-                DateTime.Now.AddDays(1),
+                    DateTime.UtcNow.AddDays(1)), 
+                DateTime.UtcNow.AddDays(1),
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                DateTime.Now.AddDays(1),
+                DateTime.UtcNow.AddDays(1),
                 new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
             cache.Add(frame);
 
             var result = cache.GetMarkets(marketData).Response;
@@ -250,20 +250,20 @@ namespace Surveillance.Tests.Markets
                     new IntradayPrices(null, null, null, null),
                     1000,
                     new Volume(2000),
-                    DateTime.Now
+                    DateTime.UtcNow
                     ),
-                DateTime.Now,
+                DateTime.UtcNow,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
             var frame = new MarketTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
-                DateTime.Now,
+                DateTime.UtcNow,
                 new FinancialInstrumentTimeBar[]
                 {
                     securityTick
                 });
 
-            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.Now.Subtract(TimeSpan.FromDays(1)), DateTime.Now, "0");
+            var marketData = new MarketDataRequest("XLON", "e", securityIdentifiers, DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), DateTime.UtcNow, "0");
 
             cache.Add(frame);
 

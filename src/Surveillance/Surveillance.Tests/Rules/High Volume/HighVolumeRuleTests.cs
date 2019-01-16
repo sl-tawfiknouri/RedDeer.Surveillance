@@ -220,7 +220,7 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
-            underlyingTrade.OrderFilledDate = DateTime.Now;
+            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 300;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
             var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),

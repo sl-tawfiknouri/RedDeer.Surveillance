@@ -66,10 +66,10 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             randomWalk.InitiateWalk(stream);
 
-            var timeOut = DateTime.Now.AddSeconds(5);
+            var timeOut = DateTime.UtcNow.AddSeconds(5);
 
             while (observer.Buffer.Count < 2 
-                && DateTime.Now < timeOut)
+                && DateTime.UtcNow < timeOut)
             {
                 // don't sleep the thread
             }
@@ -90,10 +90,10 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             randomWalk.InitiateWalk(stream);
 
-            var timeOut = DateTime.Now.AddSeconds(5);
+            var timeOut = DateTime.UtcNow.AddSeconds(5);
 
             while (observer.Buffer.Count < 2
-                && DateTime.Now < timeOut)
+                && DateTime.UtcNow < timeOut)
             {
                 // don't sleep the thread
             }
@@ -102,9 +102,9 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             Assert.AreEqual(observer.Buffer.Count, 2);
 
-            var timerForStragglers = DateTime.Now.AddSeconds(2);
+            var timerForStragglers = DateTime.UtcNow.AddSeconds(2);
 
-            while (DateTime.Now < timerForStragglers)
+            while (DateTime.UtcNow < timerForStragglers)
             {
                 // don't sleep the thread
             }

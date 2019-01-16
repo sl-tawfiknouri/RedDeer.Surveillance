@@ -89,11 +89,11 @@ namespace Surveillance.Rules
                 Source = ComplianceCaseSource.SurveillanceRule,
                 Status = ComplianceCaseStatus.Unset,
                 Type = ComplianceCaseType.Unset,
-                ReportedOn = DateTime.Now,
-                StatusUpdatedOn = DateTime.Now,
+                ReportedOn = DateTime.UtcNow,
+                StatusUpdatedOn = DateTime.UtcNow,
                 Venue = venue,
-                StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.Now),
-                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.Now),
+                StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.UtcNow),
+                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.UtcNow),
                 AssetType = ruleBreach.Security.Cfi,
                 EntityReferences = entityReferences
             };
@@ -115,7 +115,7 @@ namespace Surveillance.Rules
                         DataItemType = DataItemType.TradeOrder,
                         Type = ComplianceCaseLogType.Unset,
                         Notes = string.Empty,
-                        CreatedOn = DateTime.Now
+                        CreatedOn = DateTime.UtcNow
                     })
                 .ToArray();
         }

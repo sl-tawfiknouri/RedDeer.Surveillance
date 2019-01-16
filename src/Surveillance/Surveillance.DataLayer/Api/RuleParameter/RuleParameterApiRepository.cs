@@ -12,7 +12,6 @@ namespace Surveillance.DataLayer.Api.RuleParameter
     public class RuleParameterApiRepository : BaseApiRepository, IRuleParameterApiRepository
     {
         private const string HeartbeatRoute = "api/surveillanceruleparameter/heartbeat";
-        private const string Route = "api/surveillanceruleparameter/get/v1";
         private const string RouteV2 = "api/surveillanceruleparameter/get/v2";
 
         private readonly ILogger _logger;
@@ -69,7 +68,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
             try
             {
-                var response = await httpClient.GetAsync(Route);
+                var response = await httpClient.GetAsync(RouteV2);
 
                 if (response == null
                     || !response.IsSuccessStatusCode)

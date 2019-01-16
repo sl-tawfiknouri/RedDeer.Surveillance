@@ -2,6 +2,6 @@
 {
     public interface IAllocationFileMonitorFactory
     {
-        IAllocationFileMonitor Build();
+        IUploadAllocationFileMonitor Build();
     }
 }

@@ -1,8 +1,9 @@
-﻿using DataImport.Disk_IO.Interfaces;
+﻿using System;
 
 namespace DataImport.Disk_IO.AllocationFile
 {
-    public interface IAllocationFileMonitor : IBaseUploadFileMonitor
+    public interface IUploadAllocationFileMonitor : IDisposable
     {
+        bool ProcessFile(string path);
     }
 }

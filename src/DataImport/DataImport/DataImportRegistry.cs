@@ -81,7 +81,7 @@ namespace DataImport
 
             For<IEnrichmentService>().Use<EnrichmentService>();
 
-            For<IAllocationFileMonitor>().Use<AllocationFileMonitor>();
+            For<IUploadAllocationFileMonitor>().Use<AllocationFileMonitor>();
             For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
             For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();

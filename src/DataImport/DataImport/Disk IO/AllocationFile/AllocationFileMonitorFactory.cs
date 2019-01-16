@@ -25,7 +25,7 @@ namespace DataImport.Disk_IO.AllocationFile
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IAllocationFileMonitor Build()
+        public IUploadAllocationFileMonitor Build()
         {
             _logger.LogInformation($"AllocationFileMonitorFactory Build method called");
             return new AllocationFileMonitor(

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
@@ -20,6 +21,7 @@ namespace DataImport.S3_IO
 
         private readonly object _lock = new object();
 
+        private IUploadAllocationFileMonitor _uploadAllocationFileMonitor;
         private IUploadEquityFileMonitor _uploadEquityFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
@@ -43,6 +45,7 @@ namespace DataImport.S3_IO
         }
 
         public void Initialise(
+            IUploadAllocationFileMonitor uploadAllocationFileMonitor,
             IUploadTradeFileMonitor uploadTradeFileMonitor,
             IUploadEquityFileMonitor uploadEquityFileMonitor)
         {
@@ -50,6 +53,7 @@ namespace DataImport.S3_IO
             {
                  _logger.LogInformation("Initialising file upload monitoring process");
 
+                _uploadAllocationFileMonitor = uploadAllocationFileMonitor;
                 _uploadTradeFileMonitor = uploadTradeFileMonitor;
                 _uploadEquityFileMonitor = uploadEquityFileMonitor;
                 _cts = new CancellationTokenSource();
@@ -181,7 +185,7 @@ namespace DataImport.S3_IO
                 try
                 {
                     _logger.LogInformation($"S3 processing trade file {file}");
-                    var result = _uploadTradeFileMonitor.ProcessFile(file);
+                    var result = _uploadAllocationFileMonitor.ProcessFile(file);
 
                     if (result == false)
                     {

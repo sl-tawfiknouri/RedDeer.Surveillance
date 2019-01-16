@@ -11,8 +11,6 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
-using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Universe.Subscribers.Interfaces;

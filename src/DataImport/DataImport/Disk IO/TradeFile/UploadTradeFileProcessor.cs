@@ -15,7 +15,6 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
         private readonly ITradeFileCsvValidator _tradeFileCsvValidator;
 
-
         public UploadTradeFileProcessor(
             ITradeFileCsvToOrderMapper csvToDtoMapper,
             ITradeFileCsvValidator tradeFileCsvValidator,

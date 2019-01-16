@@ -23,7 +23,7 @@ namespace Surveillance.Tests.Universe
     [TestFixture]
     public class UniverseBuilderTests
     {
-        private IReddeerOrdersRepository _auroraOrdersRepository;
+        private IOrdersRepository _auroraOrdersRepository;
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
         private ISystemProcessOperationContext _opCtx;
@@ -33,7 +33,7 @@ namespace Surveillance.Tests.Universe
         [SetUp]
         public void Setup()
         {
-            _auroraOrdersRepository = A.Fake<IReddeerOrdersRepository>();
+            _auroraOrdersRepository = A.Fake<IOrdersRepository>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();

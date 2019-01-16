@@ -2,7 +2,7 @@
 -- AUTHOR : RYAN TRENCHARD
 -- DATE : 12/01/2019
 -- LAST MODIFIED: 12/01/2019 BY RYAN TRENCHARD
--- PURPOSE : 
+-- PURPOSE : Update our tables for the new file format
 
 START TRANSACTION;
 

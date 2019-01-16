@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
@@ -20,6 +21,7 @@ namespace DataImport.S3_IO
 
         private readonly object _lock = new object();
 
+        private IUploadAllocationFileMonitor _uploadAllocationFileMonitor;
         private IUploadEquityFileMonitor _uploadEquityFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
@@ -43,6 +45,7 @@ namespace DataImport.S3_IO
         }
 
         public void Initialise(
+            IUploadAllocationFileMonitor uploadAllocationFileMonitor,
             IUploadTradeFileMonitor uploadTradeFileMonitor,
             IUploadEquityFileMonitor uploadEquityFileMonitor)
         {
@@ -50,6 +53,7 @@ namespace DataImport.S3_IO
             {
                  _logger.LogInformation("Initialising file upload monitoring process");
 
+                _uploadAllocationFileMonitor = uploadAllocationFileMonitor;
                 _uploadTradeFileMonitor = uploadTradeFileMonitor;
                 _uploadEquityFileMonitor = uploadEquityFileMonitor;
                 _cts = new CancellationTokenSource();
@@ -108,6 +112,13 @@ namespace DataImport.S3_IO
                                 _configuration.DataImportEquityFileUploadDirectoryPath);
                             pef.Wait();
                             break;
+                        case "surveillance-allocation":
+                            var paf = ProcessAllocationFile(
+                                dto,
+                                _configuration.DataImportAllocationFileFtpDirectoryPath,
+                                _configuration.DataImportAllocationFileUploadDirectoryPath);
+                            paf.Wait();
+                            break;
                         default:
                             _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                             return;
@@ -159,6 +170,47 @@ namespace DataImport.S3_IO
             }
 
             _logger.LogInformation($"Moved all {fileCount}.");
+        }
+
+        private async Task ProcessAllocationFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
+        {
+            await ProcessFile(dto, 3, ftpDirectoryPath);
+
+            var files = Directory.EnumerateFiles(ftpDirectoryPath).ToList();
+            var fileCount = files.Count;
+            _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    _logger.LogInformation($"S3 processing trade file {file}");
+                    var result = _uploadAllocationFileMonitor.ProcessFile(file);
+
+                    if (result == false)
+                    {
+                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
+                        _token.Cancel = true;
+                    }
+
+                    if (File.Exists(file))
+                    {
+                        _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
+                        File.Delete(file);
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"S3 Processor could not find file {file}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"S3 File Upload Monitoring Process moving process allocation file {file} to {uploadDirectoryPath} {e.Message}");
+                    continue;
+                }
+            }
+
+            _logger.LogInformation($"S3 File Upload Moved all {fileCount} files.");
         }
 
         private async Task ProcessEquityFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)

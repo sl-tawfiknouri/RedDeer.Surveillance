@@ -19,7 +19,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
     public class ReddeerTradeRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
-        private ILogger<ReddeerOrdersRepository> _logger;
+        private ILogger<OrdersRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
         private IReddeerMarketRepository _marketRepository;
 
@@ -27,7 +27,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public void Setup()
         {
             _configuration = TestHelpers.Config();
-            _logger = A.Fake<ILogger<ReddeerOrdersRepository>>();
+            _logger = A.Fake<ILogger<OrdersRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _marketRepository = A.Fake<IReddeerMarketRepository>();
         }
@@ -37,7 +37,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Create()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
             var frame = Frame();
 
             await repo.Create(frame);
@@ -50,7 +50,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();
             var start = row1.MostRecentDateEvent().Date;

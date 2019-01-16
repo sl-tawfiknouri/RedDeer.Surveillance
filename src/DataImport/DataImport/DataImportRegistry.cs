@@ -20,6 +20,8 @@ using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Equity.TimeBars.Interfaces;
 using DomainV2.Files;
+using DomainV2.Files.AllocationFile;
+using DomainV2.Files.AllocationFile.Interfaces;
 using DomainV2.Files.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
@@ -81,6 +83,8 @@ namespace DataImport
 
             For<IAllocationFileMonitor>().Use<AllocationFileMonitor>();
             For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
+            For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
+            For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
         }
     }
 }

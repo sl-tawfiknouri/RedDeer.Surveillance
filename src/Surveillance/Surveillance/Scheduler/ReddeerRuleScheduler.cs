@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Scheduler.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using Surveillance.Universe.Subscribers.Interfaces;
@@ -35,6 +37,7 @@ namespace Surveillance.Scheduler
         private readonly IUniverseAlertStreamFactory _alertStreamFactory;
         private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
+        private readonly IRuleRunUpdateMessageSender _ruleRunUpdateMessageSender;
         private readonly IUniversePercentageCompletionLogger _universeCompletionLogger;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
@@ -55,6 +58,7 @@ namespace Surveillance.Scheduler
             IUniverseAlertStreamFactory alertStreamFactory,
             IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
             IRuleAnalyticsAlertsRepository alertsRepository,
+            IRuleRunUpdateMessageSender ruleRunUpdateMessageSender,
             IUniversePercentageCompletionLogger universeCompletionLogger,
             ILogger<ReddeerRuleScheduler> logger)
         {
@@ -75,6 +79,7 @@ namespace Surveillance.Scheduler
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
+            _ruleRunUpdateMessageSender = ruleRunUpdateMessageSender ?? throw new ArgumentNullException(nameof(ruleRunUpdateMessageSender));
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -175,6 +180,7 @@ namespace Surveillance.Scheduler
             }
 
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
 
@@ -186,7 +192,8 @@ namespace Surveillance.Scheduler
             var alertStream = _alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
+            var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
+            await RuleRunUpdateMessageSend(execution, ids);
 
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
@@ -198,9 +205,33 @@ namespace Surveillance.Scheduler
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
+            await RuleRunUpdateMessageSend(execution, ids);
 
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();
+        }
+
+        private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)
+        {
+            if (ids == null)
+            {
+                return;
+            }
+
+            if (execution == null)
+            {
+                return;
+            }
+
+            if (!execution.IsBackTest)
+            {
+               return;
+            }
+
+            foreach (var id in ids)
+            {
+                await _ruleRunUpdateMessageSender.Send(id);
+            }
         }
     }
 }

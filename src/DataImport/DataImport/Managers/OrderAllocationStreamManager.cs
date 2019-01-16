@@ -1,5 +1,7 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
 using DataImport.Managers.Interfaces;
+using DataImport.Recorders.Interfaces;
+using DomainV2.Streams;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using System;
@@ -8,23 +10,26 @@ namespace DataImport.Managers
 {
     public class OrderAllocationStreamManager : IOrderAllocationStreamManager
     {
-        private readonly IOrderAllocationStream<OrderAllocation> _tradeOrderStream;
+        private readonly OrderAllocationStream<OrderAllocation> _orderAllocationsStream;
         private readonly IAllocationFileMonitorFactory _fileMonitorFactory;
+        private readonly IRedDeerAuroraOrderAllocationRecorder _recorder;
 
         public OrderAllocationStreamManager(
-            IOrderAllocationStream<OrderAllocation> tradeOrderStream,
-            IAllocationFileMonitorFactory fileMonitorFactory)
+            OrderAllocationStream<OrderAllocation> tradeOrderStream,
+            IAllocationFileMonitorFactory fileMonitorFactory,
+            IRedDeerAuroraOrderAllocationRecorder recorder)
         {
-            _tradeOrderStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
+            _orderAllocationsStream = tradeOrderStream ?? throw new ArgumentNullException(nameof(tradeOrderStream));
             _fileMonitorFactory = fileMonitorFactory ?? throw new ArgumentNullException(nameof(fileMonitorFactory));
+            _recorder = recorder ?? throw new ArgumentNullException(nameof(recorder));
         }
 
         public IUploadAllocationFileMonitor Initialise()
         {
             // hook up the data recorder
-            //_tradeOrderStream.Subscribe(_tradeRecorder);
+            _orderAllocationsStream.Subscribe(_recorder);
 
-            var fileMonitor = _fileMonitorFactory.Create(_tradeOrderStream);
+            var fileMonitor = _fileMonitorFactory.Create(_orderAllocationsStream);
             fileMonitor.Initiate();
 
             return fileMonitor;

@@ -48,6 +48,7 @@ namespace DataImport
 
             For<IMediator>().Use<Mediator>();
 
+            For(typeof(IOrderAllocationStream<>)).Use(typeof(OrderAllocationStream<>));
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<StockExchangeStream>();
 
@@ -88,6 +89,7 @@ namespace DataImport
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IOrderAllocationStreamManager>().Use<OrderAllocationStreamManager>();
+            For<IRedDeerAuroraOrderAllocationRecorder>().Use<RedDeerAuroraOrderAllocationRecorder>();
         }
     }
 }

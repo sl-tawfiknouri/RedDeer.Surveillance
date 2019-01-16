@@ -42,7 +42,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     Currency = "usd",
                     OpenPriceUsd = 1m,
                     DailyVolume = 2,
-                    Epoch = DateTime.Now.AddDays(1),
+                    Epoch = DateTime.UtcNow.AddDays(1),
                     HighIntradayPrice = 3,
                     LowIntradayPrice = 4,
                     MarketCapitalisationUsd = 5,

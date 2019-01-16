@@ -147,8 +147,8 @@ namespace Surveillance.Tests.Trades
                     "USD",
                     "Issuer Identifier");
 
-            var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.Now : null;
-            var filledDate = status == OrderStatus.Filled ? (DateTime?) DateTime.Now : null;
+            var cancelledDate = status == OrderStatus.Cancelled ? (DateTime?)DateTime.UtcNow : null;
+            var filledDate = status == OrderStatus.Filled ? (DateTime?) DateTime.UtcNow : null;
 
             return new Order(
                 security,
@@ -158,7 +158,7 @@ namespace Surveillance.Tests.Trades
                 "version-1",
                 "version-1",
                 "version-1",
-                DateTime.Now,
+                DateTime.UtcNow,
                 null,
                 null,
                 null,

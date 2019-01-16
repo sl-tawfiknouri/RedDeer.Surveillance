@@ -123,11 +123,11 @@ namespace DomainV2.Trading
             var filteredDates = dates.Where(dat => dat != null).ToList();
             if (!filteredDates.Any())
             {
-                return DateTime.Now;
+                return DateTime.UtcNow;
             }
 
             // placed should never be null i.e. this shouldn't call datetime.now
-            return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.Now;
+            return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.UtcNow;
         }
     }
 }

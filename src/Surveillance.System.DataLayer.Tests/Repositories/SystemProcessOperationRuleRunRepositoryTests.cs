@@ -46,8 +46,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -57,7 +57,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             var systemProcessOperation = new SystemProcessOperation
             {
                 SystemProcessId = systemProcess.Id,
-                OperationStart = DateTime.Now,
+                OperationStart = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 
@@ -68,8 +68,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 SystemProcessOperationId = systemProcessOperation.Id,
                 RuleDescription = "High Profits",
                 RuleVersion = "1.0",
-                ScheduleRuleStart = DateTime.Now,
-                ScheduleRuleEnd = DateTime.Now.AddMinutes(1)
+                ScheduleRuleStart = DateTime.UtcNow,
+                ScheduleRuleEnd = DateTime.UtcNow.AddMinutes(1)
             };
 
             await ruleRunRepository.Create(systemProcessOperationRuleRun);
@@ -90,8 +90,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -101,7 +101,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             var systemProcessOperation = new SystemProcessOperation
             {
                 SystemProcessId = systemProcess.Id,
-                OperationStart = DateTime.Now,
+                OperationStart = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 
@@ -112,8 +112,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 SystemProcessOperationId = systemProcessOperation.Id,
                 RuleDescription = "High Profits",
                 RuleVersion = "1.0",
-                ScheduleRuleStart = DateTime.Now,
-                ScheduleRuleEnd = DateTime.Now.AddMinutes(1)
+                ScheduleRuleStart = DateTime.UtcNow,
+                ScheduleRuleEnd = DateTime.UtcNow.AddMinutes(1)
             };
 
             await ruleRunRepository.Create(systemProcessOperationRuleRun);
@@ -135,8 +135,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -146,7 +146,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             var systemProcessOperation = new SystemProcessOperation
             {
                 SystemProcessId = systemProcess.Id,
-                OperationStart = DateTime.Now,
+                OperationStart = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 
@@ -157,8 +157,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
                 SystemProcessOperationId = systemProcessOperation.Id,
                 RuleDescription = "High Profits",
                 RuleVersion = "1.0",
-                ScheduleRuleStart = DateTime.Now,
-                ScheduleRuleEnd = DateTime.Now.AddMinutes(1),
+                ScheduleRuleStart = DateTime.UtcNow,
+                ScheduleRuleEnd = DateTime.UtcNow.AddMinutes(1),
                 RuleParameterId = "1",
                 IsBackTest = true,
                 RuleTypeId = (int)Rules.HighVolume

@@ -76,7 +76,7 @@ namespace Surveillance.Tests.Currency
             };
             var targetCurrency = new DomainV2.Financial.Currency("CNY");
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.Now, _ruleCtx);
+            var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.UtcNow, _ruleCtx);
 
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Value, "CNY");

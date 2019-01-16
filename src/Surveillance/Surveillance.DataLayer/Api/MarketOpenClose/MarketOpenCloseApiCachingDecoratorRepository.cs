@@ -22,7 +22,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
             IMarketOpenCloseApiRepository decoratedRepository,
             ILogger<MarketOpenCloseApiCachingDecoratorRepository> logger)
         {
-            _cacheExpiry = DateTime.Now.AddMilliseconds(-1);
+            _cacheExpiry = DateTime.UtcNow.AddMilliseconds(-1);
             _cacheLength = TimeSpan.FromMinutes(30);
 
             _decoratedRepository = decoratedRepository ?? throw new ArgumentNullException(nameof(decoratedRepository));
@@ -31,14 +31,14 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
 
         public async Task<IReadOnlyCollection<ExchangeDto>> Get()
         {
-            if (DateTime.Now < _cacheExpiry)
+            if (DateTime.UtcNow < _cacheExpiry)
             {
                 return _cachedMarketData;
             }
 
             _logger.LogInformation("Fetching market open/close data in the cached repository");
             _cachedMarketData = await _decoratedRepository.Get();
-            _cacheExpiry = DateTime.Now.Add(_cacheLength);
+            _cacheExpiry = DateTime.UtcNow.Add(_cacheLength);
 
             return _cachedMarketData;
         }

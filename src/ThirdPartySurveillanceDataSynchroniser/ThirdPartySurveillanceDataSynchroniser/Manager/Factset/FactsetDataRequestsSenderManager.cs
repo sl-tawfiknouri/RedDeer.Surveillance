@@ -85,8 +85,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset
             return new FactsetSecurityRequestItem
             {
                 Figi = req.DataRequest?.Identifiers.Figi,
-                From = req.DataRequest?.UniverseEventTimeFrom?.AddDays(-1) ?? DateTime.Now,
-                To = req.DataRequest?.UniverseEventTimeTo?.AddDays(1) ?? DateTime.Now,
+                From = req.DataRequest?.UniverseEventTimeFrom?.AddDays(-1) ?? DateTime.UtcNow,
+                To = req.DataRequest?.UniverseEventTimeTo?.AddDays(1) ?? DateTime.UtcNow,
             };
         }
     }

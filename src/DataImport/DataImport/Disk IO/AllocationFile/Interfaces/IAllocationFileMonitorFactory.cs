@@ -1,7 +1,10 @@
-﻿namespace DataImport.Disk_IO.AllocationFile
+﻿using DomainV2.Streams.Interfaces;
+using DomainV2.Trading;
+
+namespace DataImport.Disk_IO.AllocationFile
 {
     public interface IAllocationFileMonitorFactory
     {
-        IUploadAllocationFileMonitor Build();
+        IUploadAllocationFileMonitor Create(IOrderAllocationStream<OrderAllocation> stream);
     }
 }

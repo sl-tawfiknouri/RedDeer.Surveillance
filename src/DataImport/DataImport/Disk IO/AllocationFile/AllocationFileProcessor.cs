@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DomainV2.Files;
 using DomainV2.Files.AllocationFile.Interfaces;
 using DomainV2.Trading;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.AllocationFile
 {
-    public class AllocationFileProcessor : BaseUploadFileProcessor<AllocationFileCsv, OrderAllocation>
+    public class AllocationFileProcessor : BaseUploadFileProcessor<AllocationFileCsv, OrderAllocation>, IAllocationFileProcessor
     {
         private readonly IAllocationFileCsvToOrderAllocationMapper _allocationMapper;
         private readonly IAllocationFileCsvValidator _allocationFileValidator;

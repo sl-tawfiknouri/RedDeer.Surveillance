@@ -1,4 +1,5 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.EquityFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
@@ -85,6 +86,8 @@ namespace DataImport
             For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
             For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
+            For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
+            For<IOrderAllocationStreamManager>().Use<OrderAllocationStreamManager>();
         }
     }
 }

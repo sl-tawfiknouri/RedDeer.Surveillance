@@ -348,7 +348,10 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task<IReadOnlyCollection<MarketTimeBarCollection>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<MarketTimeBarCollection>> GetEquityIntraday(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date;

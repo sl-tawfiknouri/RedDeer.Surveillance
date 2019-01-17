@@ -55,7 +55,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             await repo.Create(Frame());
             await repo.Create(Frame());
 
-            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
+            var results = await repo.GetEquityIntraday(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
 
             Assert.IsTrue(true);
         }

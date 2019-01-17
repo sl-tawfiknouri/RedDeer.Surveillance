@@ -85,7 +85,7 @@ namespace Surveillance.Universe
             ISystemProcessOperationContext opCtx)
         {
             var equities =
-                await _auroraMarketRepository.Get(
+                await _auroraMarketRepository.GetEquityIntraday(
                     execution.TimeSeriesInitiation.Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);
@@ -96,7 +96,7 @@ namespace Surveillance.Universe
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<MarketTimeBarCollection> exchangeFrames)
+            IReadOnlyCollection<MarketTimeBarCollection> equityIntradayUpdates)
         {
             var tradeSubmittedEvents =
                 trades
@@ -112,7 +112,7 @@ namespace Surveillance.Universe
                     .ToArray();
 
             var exchangeEvents =
-                exchangeFrames
+                equityIntradayUpdates
                     .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch))
                     .ToArray();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using DomainV2.Files.Interfaces;
 using DomainV2.Financial;
 using FluentValidation;
@@ -104,7 +105,66 @@ namespace DomainV2.Files
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
             RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
             RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
-            RuleFor(x => x.OrderOrderedVolume).SetValidator(new LongParseableValidator("OrderOrderedVolume"));
+            RuleFor(x => x.OrderFilledVolume)
+                .Must(x => !string.IsNullOrWhiteSpace(x))
+                .When(y => !string.IsNullOrWhiteSpace(y.OrderFilledDate))
+                .WithMessage("Must have an order filled volume when there is an order filled date");
+
+            RuleFor(x => x).Custom((i, o) =>
+            {
+                if (string.IsNullOrWhiteSpace(i.OrderFilledDate))
+                {
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(i.OrderFilledVolume))
+                {
+                    o.AddFailure("OrderFilledVolume", "Order Filled Volume must have a value when there is an order filled date.");
+                    return;
+                }
+
+                var parsedVol = long.TryParse(i.OrderFilledVolume, out var ofv);
+
+                if (!parsedVol)
+                {
+                    o.AddFailure("OrderFilledVolume", "Order Filled Volume could not be parsed to a long.");
+                    return;
+                }
+
+                if (ofv < 1)
+                {
+                    o.AddFailure("OrderFilledVolume", "Order Filled Volume was below 1 which is invalid when we have an order fill date.");
+                }
+            });
+
+            RuleFor(x => x).Custom((i, o) =>
+            {
+                if (string.IsNullOrWhiteSpace(i.OrderFilledDate))
+                {
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(i.OrderAverageFillPrice))
+                {
+                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price must have a value when there is an order filled date.");
+                    return;
+                }
+
+                var parsedPrice = decimal.TryParse(i.OrderAverageFillPrice, out var ofv);
+                if (!parsedPrice)
+                {
+                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price could not be parsed to a decimal.");
+                    return;
+                }
+
+                if (ofv == 0)
+                {
+                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price was 0 which is invalid when we have an order fill date.");
+                }
+            });
+
+            RuleFor(x => x.OrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("OrderOrderedVolume"));
+
             RuleFor(x => x.OrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Order position had an illegal value of 'none'");
@@ -116,20 +176,73 @@ namespace DomainV2.Files
 
         private void RulesForDealerOrderProperties()
         {
-            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasTradeOrTransactionData).Length(3).When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasDealerOrderData).Length(3).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasDealerOrderData);
 
             RuleFor(x => x.DealerOrderLimitPrice)
                 .NotEmpty()
                 .When(x => string.Equals(x.DealerOrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
 
-            RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new LongParseableValidator("TradeOrderedVolume")).When(HasTradeOrTransactionData);
-            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasTradeOrTransactionData);
+            RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
+
+            RuleFor(x => x).Custom((i, o) =>
+            {
+                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledDate))
+                {
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledVolume))
+                {
+                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume must have a value when there is an order filled date.");
+                    return;
+                }
+
+                var parsedVol = long.TryParse(i.DealerOrderFilledVolume, out var ofv);
+
+                if (!parsedVol)
+                {
+                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume could not be parsed to a long.");
+                    return;
+                }
+
+                if (ofv < 1)
+                {
+                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume was below 1 which is invalid when we have an dealer order fill date.");
+                }
+            });
+
+            RuleFor(x => x).Custom((i, o) =>
+            {
+                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledDate))
+                {
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(i.DealerOrderAverageFillPrice))
+                {
+                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price must have a value when there is an order filled date.");
+                    return;
+                }
+
+                var parsedPrice = decimal.TryParse(i.DealerOrderAverageFillPrice, out var ofv);
+                if (!parsedPrice)
+                {
+                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price could not be parsed to a decimal.");
+                    return;
+                }
+
+                if (ofv == 0)
+                {
+                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price was 0 which is invalid when we have an order fill date.");
+                }
+            });
 
             RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
@@ -142,7 +255,7 @@ namespace DomainV2.Files
             RulesForTradeOptionsProperties();
         }
 
-        private bool HasTradeOrTransactionData(TradeFileCsv csv)
+        private bool HasDealerOrderData(TradeFileCsv csv)
         {
             if (HasOptionFieldSet(csv))
             {
@@ -201,6 +314,31 @@ namespace DomainV2.Files
             }
 
             return long.TryParse(prop, out var result);
+        }
+    }
+
+    public class NonZeroLongParseableValidator : PropertyValidator
+    {
+        public NonZeroLongParseableValidator(string longPropertyName) : base($"Property had a value but could not be parsed to long {longPropertyName}")
+        { }
+
+        protected override bool IsValid(PropertyValidatorContext context)
+        {
+            var prop = context.PropertyValue as string;
+
+            if (string.IsNullOrWhiteSpace(prop))
+            {
+                return true;
+            }
+
+            var parseResult = long.TryParse(prop, out var result);
+
+            if (!parseResult)
+            {
+                return false;
+            }
+
+            return result != 0;
         }
     }
 

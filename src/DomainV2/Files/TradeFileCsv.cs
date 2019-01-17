@@ -1,4 +1,6 @@
-﻿namespace DomainV2.Files
+﻿using System;
+
+namespace DomainV2.Files
 {
     /// <summary>
     /// Version 0.3 of the Trade File
@@ -101,7 +103,7 @@
         public string DealerOrderCleanDirty { get; set; }
         public string DealerOrderAccumulatedInterest { get; set; }
 
-        
+
         public string DealerOrderLimitPrice { get; set; }
         public string DealerOrderAverageFillPrice { get; set; }
         public string DealerOrderOrderedVolume { get; set; }

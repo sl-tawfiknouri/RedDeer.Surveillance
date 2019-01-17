@@ -13,6 +13,7 @@ using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -42,6 +43,7 @@ namespace Surveillance.Tests.Scheduler
         private IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
         private IUniverseAlertStreamFactory _alertStreamFactory;
         private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
+        private IRuleRunUpdateMessageSender _ruleRunUpdateMessageSender;
         private IRuleAnalyticsAlertsRepository _alertsRepository;
         private IUniversePercentageCompletionLogger _percentageCompletionLogger;
 
@@ -68,6 +70,8 @@ namespace Surveillance.Tests.Scheduler
             _alertStreamSubscriberFactory = A.Fake<IUniverseAlertStreamSubscriberFactory>();
             _alertsRepository = A.Fake<IRuleAnalyticsAlertsRepository>();
             _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLogger>();
+            _ruleRunUpdateMessageSender = A.Fake<IRuleRunUpdateMessageSender>();
+
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
 
@@ -90,6 +94,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
+                    _ruleRunUpdateMessageSender,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -113,6 +118,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamFactory,
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
+                    _ruleRunUpdateMessageSender,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -134,6 +140,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _ruleRunUpdateMessageSender,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -171,6 +178,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _ruleRunUpdateMessageSender,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -211,6 +219,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamFactory,
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
+                _ruleRunUpdateMessageSender,
                 _percentageCompletionLogger,
                 _logger);
 

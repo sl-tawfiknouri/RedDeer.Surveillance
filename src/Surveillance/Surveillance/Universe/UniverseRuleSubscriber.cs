@@ -9,6 +9,7 @@ using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Universe
@@ -24,6 +25,7 @@ namespace Surveillance.Universe
         private readonly IWashTradeSubscriber _washTradeSubscriber;
 
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly IRuleParameterDtoIdExtractor _idExtractor;
         private readonly ILogger<UniverseRuleSubscriber> _logger;
 
         public UniverseRuleSubscriber(
@@ -35,6 +37,7 @@ namespace Surveillance.Universe
             ILayeringSubscriber layeringSubscriber,
             IWashTradeSubscriber washTradeSubscriber,
             IRuleParameterApiRepository ruleParameterApiRepository,
+            IRuleParameterDtoIdExtractor idExtractor,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _spoofingSubscriber = spoofingSubscriber ?? throw new ArgumentNullException(nameof(spoofingSubscriber));
@@ -47,10 +50,11 @@ namespace Surveillance.Universe
 
             _ruleParameterApiRepository = ruleParameterApiRepository
                 ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
+            _idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task SubscribeRules(
+        public async Task<IReadOnlyCollection<string>> SubscribeRules(
              ScheduledExecution execution,
              IUniversePlayer player,
              IUniverseAlertStream alertStream,
@@ -60,7 +64,7 @@ namespace Surveillance.Universe
                 || player == null)
             {
                 _logger.LogInformation($"UniverseRuleSubscriber received null execution or player. Returning");
-                return;
+                return new string[0];
             }
 
             _logger.LogInformation($"UniverseRuleSubscriber fetching rule parameters");
@@ -88,6 +92,10 @@ namespace Surveillance.Universe
                 _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high profit rule");
                 player.Subscribe(sub);
             }
+
+            var ids = _idExtractor.ExtractIds(ruleParameters);
+
+            return ids;
 
             // _RegisterNotSupportedSubscriptions(ruleParameters, execution, player, alertStream, opCtx);
         }

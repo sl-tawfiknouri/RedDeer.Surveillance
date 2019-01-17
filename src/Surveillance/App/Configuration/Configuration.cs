@@ -47,6 +47,7 @@ namespace RedDeer.Surveillance.App.Configuration
                     CaseMessageQueueName = GetValue("CaseMessageQueueName", configurationBuilder),
                     DataSynchroniserRequestQueueName = GetValue("DataSynchronizerQueueName", configurationBuilder),
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
+                    TestRuleRunUpdateQueueName = GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
                     BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder)

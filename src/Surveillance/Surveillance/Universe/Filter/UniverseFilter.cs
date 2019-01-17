@@ -119,8 +119,8 @@ namespace Surveillance.Universe.Filter
                 return false;
             }
 
-            if (value.StateChange != UniverseStateEvent.TradeReddeer
-                && value.StateChange != UniverseStateEvent.TradeReddeerSubmitted)
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
                 return false;
             }
@@ -169,8 +169,8 @@ namespace Surveillance.Universe.Filter
                 return false;
             }
 
-            if (value.StateChange != UniverseStateEvent.TradeReddeer
-                && value.StateChange != UniverseStateEvent.TradeReddeerSubmitted)
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
                 return false;
             }
@@ -219,14 +219,14 @@ namespace Surveillance.Universe.Filter
                 return false;
             }
 
-            if (value.StateChange != UniverseStateEvent.TradeReddeer
-                && value.StateChange != UniverseStateEvent.TradeReddeerSubmitted
-                && value.StateChange != UniverseStateEvent.StockTickReddeer)
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced
+                && value.StateChange != UniverseStateEvent.EquityIntradayTick)
             {
                 return false;
             }
 
-            if (value.StateChange == UniverseStateEvent.StockTickReddeer)
+            if (value.StateChange == UniverseStateEvent.EquityIntradayTick)
             {
                 var exchFrame = (MarketTimeBarCollection)value.UnderlyingEvent;
                 if (exchFrame == null)
@@ -271,8 +271,8 @@ namespace Surveillance.Universe.Filter
                 return false;
             }
 
-            if (value.StateChange == UniverseStateEvent.TradeReddeer
-                || value.StateChange == UniverseStateEvent.TradeReddeerSubmitted)
+            if (value.StateChange == UniverseStateEvent.Order
+                || value.StateChange == UniverseStateEvent.OrderPlaced)
             {
                 var tradeFrame = (Order)value.UnderlyingEvent;
                 if (tradeFrame == null)

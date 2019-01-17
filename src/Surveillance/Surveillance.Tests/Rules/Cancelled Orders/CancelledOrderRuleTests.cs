@@ -119,7 +119,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
 
             foreach (var order in universeEvents)
@@ -166,7 +166,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -205,7 +205,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -245,7 +245,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -281,7 +281,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {

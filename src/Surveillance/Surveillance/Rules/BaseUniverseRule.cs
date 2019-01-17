@@ -97,19 +97,19 @@ namespace Surveillance.Rules
                     case UniverseStateEvent.Genesis:
                         Genesis(value);
                         break;
-                    case UniverseStateEvent.StockTickReddeer:
+                    case UniverseStateEvent.EquityIntradayTick:
                         StockTick(value);
                         break;
-                    case UniverseStateEvent.TradeReddeerSubmitted:
+                    case UniverseStateEvent.OrderPlaced:
                         TradeSubmitted(value);
                         break;
-                    case UniverseStateEvent.TradeReddeer:
+                    case UniverseStateEvent.Order:
                         Trade(value);
                         break;
-                    case UniverseStateEvent.StockMarketOpen:
+                    case UniverseStateEvent.ExchangeOpen:
                         MarketOpened(value);
                         break;
-                    case UniverseStateEvent.StockMarketClose:
+                    case UniverseStateEvent.ExchangeClose:
                         MarketClosed(value);
                         break;
                     case UniverseStateEvent.Eschaton:

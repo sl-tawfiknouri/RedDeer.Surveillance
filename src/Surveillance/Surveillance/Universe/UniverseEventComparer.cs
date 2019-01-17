@@ -10,11 +10,11 @@ namespace Surveillance.Universe
             {
                 { UniverseStateEvent.Unknown, 0 },
                 { UniverseStateEvent.Genesis, 1 },
-                { UniverseStateEvent.StockMarketOpen, 2 },
-                { UniverseStateEvent.StockTickReddeer, 3 },
-                { UniverseStateEvent.TradeReddeerSubmitted, 4 },
-                { UniverseStateEvent.TradeReddeer, 5 },
-                { UniverseStateEvent.StockMarketClose, 6 },
+                { UniverseStateEvent.ExchangeOpen, 2 },
+                { UniverseStateEvent.EquityIntradayTick, 3 },
+                { UniverseStateEvent.OrderPlaced, 4 },
+                { UniverseStateEvent.Order, 5 },
+                { UniverseStateEvent.ExchangeClose, 6 },
                 { UniverseStateEvent.Eschaton, 7 },
             };
 

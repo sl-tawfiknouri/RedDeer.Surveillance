@@ -144,11 +144,11 @@ namespace Surveillance.Tests.Universe
             var marketOpenClose = new[]
             {
                 new UniverseEvent(
-                    UniverseStateEvent.StockMarketOpen,
+                    UniverseStateEvent.ExchangeOpen,
                     timeSeriesInitiation,
                     new MarketOpenClose("xlon", timeSeriesInitiation, timeSeriesInitiation)),
                 new UniverseEvent(
-                    UniverseStateEvent.StockMarketClose,
+                    UniverseStateEvent.ExchangeClose,
                     timeSeriesTermination,
                     new MarketOpenClose("xlon", timeSeriesTermination, timeSeriesTermination))
             };
@@ -161,8 +161,8 @@ namespace Surveillance.Tests.Universe
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.StockMarketOpen);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.ExchangeOpen);
+            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.ExchangeClose);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
 
@@ -207,8 +207,8 @@ namespace Surveillance.Tests.Universe
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.StockTickReddeer);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.StockTickReddeer);
+            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
+            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.EquityIntradayTick);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
         }
     }

@@ -78,13 +78,13 @@ namespace Surveillance.Universe.MarketEvents
                 if (startInLocal >= localStart
                     && startInLocal <= localEnd)
                 {
-                    events.Add(new UniverseEvent(UniverseStateEvent.StockMarketOpen, startInLocal.ToUniversalTime(), marketOpenClose));
+                    events.Add(new UniverseEvent(UniverseStateEvent.ExchangeOpen, startInLocal.ToUniversalTime(), marketOpenClose));
                 }
 
                 if (closeInLocal >= localStart
                     && closeInLocal <= localEnd)
                 {
-                    events.Add(new UniverseEvent(UniverseStateEvent.StockMarketClose, closeInLocal.ToUniversalTime(), marketOpenClose));
+                    events.Add(new UniverseEvent(UniverseStateEvent.ExchangeClose, closeInLocal.ToUniversalTime(), marketOpenClose));
                 }
             }
 

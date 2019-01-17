@@ -10,20 +10,22 @@ namespace Surveillance.Universe
     public enum UniverseStateEvent
     {
         [Description("Unknown")]
-        Unknown, // A tree fell in a forest with no observers
+        Unknown = 0, // A tree fell in a forest with no observers
         [Description("Genesis")]
         Genesis, // The, or at least a - beginning of the universe
         [Description("Eschaton")]
         Eschaton, // The end of the universe
-        [Description("Trade")]
-        TradeReddeer, // A trade happened (in reddeer format)
-        [Description("Trade Placed")]
-        TradeReddeerSubmitted, // A trade was initially submitted (in reddeer format)
-        [Description("Stock Tick")]
-        StockTickReddeer, // A stock tick happened (in reddeer format)
-        [Description("Stock Market Open")]
-        StockMarketOpen, // A stock market has opened
-        [Description("Stock Market Close")]
-        StockMarketClose, // a stock market has closed
+        [Description("Order")]
+        Order, // A order 
+        [Description("Order Placed")]
+        OrderPlaced, // An order submitted
+        [Description("Security Data Intra Day Tick (equity)")]
+        EquityIntradayTick, // An equity tick
+        [Description("Security Data Inter Daily Tick (equity)")]
+        EquityInterDayTick, // An equity tick
+        [Description("Exchange Open")]
+        ExchangeOpen, // A stock market has opened
+        [Description("Exchange Close")]
+        ExchangeClose, // a stock market has closed
     }
 }

@@ -153,7 +153,7 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -200,7 +200,7 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -249,7 +249,7 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -278,7 +278,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IUniverseEvent Trade()
         {
             var trade = ((Order)null).Random();
-            return new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, trade);
+            return new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, trade);
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Local

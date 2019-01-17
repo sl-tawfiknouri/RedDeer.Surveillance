@@ -8,8 +8,8 @@ namespace DomainV2.Financial
 {
     public class MarketHistoryStack : IMarketHistoryStack
     {
-        private readonly Stack<MarketTimeBarCollection> _activeStack;
-        private readonly Queue<MarketTimeBarCollection> _history;
+        private readonly Stack<EquityIntraDayTimeBarCollection> _activeStack;
+        private readonly Queue<EquityIntraDayTimeBarCollection> _history;
         private Market _market;
 
         private readonly object _lock = new object();
@@ -17,12 +17,12 @@ namespace DomainV2.Financial
 
         public MarketHistoryStack(TimeSpan activeTradeDuration)
         {
-            _activeStack = new Stack<MarketTimeBarCollection>();
-            _history = new Queue<MarketTimeBarCollection>();
+            _activeStack = new Stack<EquityIntraDayTimeBarCollection>();
+            _history = new Queue<EquityIntraDayTimeBarCollection>();
             _activeTradeDuration = activeTradeDuration;
         }
 
-        public void Add(MarketTimeBarCollection frame, DateTime currentTime)
+        public void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime)
         {
             if (frame == null)
             {
@@ -47,7 +47,7 @@ namespace DomainV2.Financial
             lock (_lock)
             {
                 var initialActiveStackCount = _activeStack.Count;
-                var counterPartyStack = new Stack<MarketTimeBarCollection>();
+                var counterPartyStack = new Stack<EquityIntraDayTimeBarCollection>();
 
                 while (initialActiveStackCount > 0)
                 {
@@ -80,12 +80,12 @@ namespace DomainV2.Financial
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<MarketTimeBarCollection> ActiveMarketHistory()
+        public Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory()
         {
             lock (_lock)
             {
-                var tradeStackCopy = new Stack<MarketTimeBarCollection>(_activeStack);
-                var reverseCopyOfTradeStack = new Stack<MarketTimeBarCollection>(tradeStackCopy);
+                var tradeStackCopy = new Stack<EquityIntraDayTimeBarCollection>(_activeStack);
+                var reverseCopyOfTradeStack = new Stack<EquityIntraDayTimeBarCollection>(tradeStackCopy);
 
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;

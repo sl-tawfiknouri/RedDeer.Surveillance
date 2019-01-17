@@ -80,7 +80,7 @@ namespace Surveillance.Universe
             return trades ?? new List<Order>();
         }
 
-        private async Task<IReadOnlyCollection<MarketTimeBarCollection>> MarketEquityDataFetchAurora(
+        private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> MarketEquityDataFetchAurora(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx)
         {
@@ -90,13 +90,13 @@ namespace Surveillance.Universe
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
-            return equities ?? new List<MarketTimeBarCollection>();
+            return equities ?? new List<EquityIntraDayTimeBarCollection>();
         }
 
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<MarketTimeBarCollection> equityIntradayUpdates)
+            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates)
         {
             var tradeSubmittedEvents =
                 trades

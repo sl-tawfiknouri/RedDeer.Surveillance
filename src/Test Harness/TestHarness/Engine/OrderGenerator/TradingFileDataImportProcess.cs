@@ -77,7 +77,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
         }
 

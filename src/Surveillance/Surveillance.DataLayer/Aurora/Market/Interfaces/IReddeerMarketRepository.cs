@@ -11,8 +11,8 @@ namespace Surveillance.DataLayer.Aurora.Market.Interfaces
     {
         Task<IReadOnlyCollection<SecurityEnrichmentDto>> GetUnEnrichedSecurities();
         Task UpdateUnEnrichedSecurities(IReadOnlyCollection<SecurityEnrichmentDto> dtos);
-        Task Create(MarketTimeBarCollection entity);
-        Task<IReadOnlyCollection<MarketTimeBarCollection>> GetEquityIntraday(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
+        Task Create(EquityIntraDayTimeBarCollection entity);
+        Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> GetEquityIntraday(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
         Task<ReddeerMarketRepository.MarketSecurityIds> CreateAndOrGetSecurityId(MarketDataPair pair);
     }
 }

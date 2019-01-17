@@ -127,10 +127,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledVolume = 10;
             underlyingTrade.OrderFilledDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value,
@@ -176,10 +176,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledVolume = 300;
             underlyingTrade.OrderPlacedDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar
+                    new EquityInstrumentIntraDayTimeBar
                     (underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value, 
@@ -223,10 +223,10 @@ namespace Surveillance.Tests.Rules.High_Volume
             underlyingTrade.OrderFilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 300;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value,

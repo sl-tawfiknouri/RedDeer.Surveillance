@@ -40,7 +40,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -107,7 +107,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
+            Stack<EquityIntraDayTimeBarCollection> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -174,7 +174,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForDailyBreachInSedol(
             string sedol,
-            MarketTimeBarCollection frame,
+            EquityIntraDayTimeBarCollection frame,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))

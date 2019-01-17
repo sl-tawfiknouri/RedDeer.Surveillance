@@ -50,7 +50,7 @@ namespace DataImport
 
             For(typeof(IOrderAllocationStream<>)).Use(typeof(OrderAllocationStream<>));
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
-            For<IStockExchangeStream>().Use<StockExchangeStream>();
+            For<IStockExchangeStream>().Use<ExchangeStream>();
 
             For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
             For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();

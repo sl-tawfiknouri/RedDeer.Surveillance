@@ -29,7 +29,7 @@ namespace DataImport.Recorders
             _logger.LogError($"RedDeerAuroraStockExchangeRecorder {error.Message}");
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {

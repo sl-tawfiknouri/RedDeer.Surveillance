@@ -30,7 +30,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -68,7 +68,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private DataGenerationPlan PlanInDateRange(MarketTimeBarCollection value)
+        private DataGenerationPlan PlanInDateRange(EquityIntraDayTimeBarCollection value)
         {
             if (!_plan?.Any() ?? true)
             {
@@ -94,8 +94,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateLayeringTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
-            MarketTimeBarCollection latestFrame,
+            Stack<EquityIntraDayTimeBarCollection> frames,
+            EquityIntraDayTimeBarCollection latestFrame,
             bool realisedTrade)
         {
             if (string.IsNullOrWhiteSpace(sedol))

@@ -20,7 +20,7 @@ namespace DomainV2.Equity.TimeBars
 
         public int FailedParseTotal { get; set; }
 
-        public FinancialInstrumentTimeBar Map(FinancialInstrumentTimeBarCsv csv)
+        public EquityInstrumentIntraDayTimeBar Map(FinancialInstrumentTimeBarCsv csv)
         {
             if (csv == null)
             {
@@ -132,7 +132,7 @@ namespace DomainV2.Equity.TimeBars
             var dailySummary = new DailySummaryTimeBar(marketCap, intradayPrices, listedSecurities, new Volume(dailyVolume), timeStamp);
             var market = new Market(string.Empty, csv.MarketIdentifierCode, csv.MarketName, MarketTypes.STOCKEXCHANGE);
 
-            return new FinancialInstrumentTimeBar(
+            return new EquityInstrumentIntraDayTimeBar(
                 security,
                 spread,
                 dailySummary,

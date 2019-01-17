@@ -6,8 +6,8 @@ namespace DomainV2.Financial.Interfaces
 {
     public interface IMarketHistoryStack
     {
-        Stack<MarketTimeBarCollection> ActiveMarketHistory();
-        void Add(MarketTimeBarCollection frame, DateTime currentTime);
+        Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory();
+        void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime);
         void ArchiveExpiredActiveItems(DateTime currentTime);
         Market Exchange();
     }

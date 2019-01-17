@@ -109,7 +109,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             Analytics.StockTickReddeerCount += 1;
 
-            var exchangeFrame = (MarketTimeBarCollection) value.UnderlyingEvent;
+            var exchangeFrame = (EquityIntraDayTimeBarCollection) value.UnderlyingEvent;
 
             if (exchangeFrame?.Securities == null)
             {

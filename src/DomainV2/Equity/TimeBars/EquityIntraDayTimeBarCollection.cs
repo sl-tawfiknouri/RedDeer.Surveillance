@@ -10,16 +10,16 @@ namespace DomainV2.Equity.TimeBars
     /// If you have security data spanning multiple points in time they need
     /// to be split into multiple collections
     /// </summary>
-    public class MarketTimeBarCollection
+    public class EquityIntraDayTimeBarCollection
     {
-        public MarketTimeBarCollection(
+        public EquityIntraDayTimeBarCollection(
             Financial.Market exchange,
             DateTime epoch,
-            IReadOnlyCollection<FinancialInstrumentTimeBar> securities)
+            IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> securities)
         {
             Exchange = exchange;
             Epoch = epoch;
-            Securities = securities ?? new List<FinancialInstrumentTimeBar>();
+            Securities = securities ?? new List<EquityInstrumentIntraDayTimeBar>();
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace DomainV2.Equity.TimeBars
         /// <summary>
         /// The securities with updated data
         /// </summary>
-        public IReadOnlyCollection<FinancialInstrumentTimeBar> Securities { get; }
+        public IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> Securities { get; }
 
         public DateTime Epoch { get; }
 

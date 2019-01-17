@@ -139,7 +139,7 @@ namespace Surveillance.Rules
 
         private void StockTick(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is MarketTimeBarCollection value))
+            if (!(universeEvent.UnderlyingEvent is EquityIntraDayTimeBarCollection value))
             {
                 return;
             }

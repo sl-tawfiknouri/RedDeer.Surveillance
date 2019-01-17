@@ -68,7 +68,7 @@ namespace TestHarness.Engine.EquitiesStorage
             _logger.LogError(error.Message);
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             var csvRecords = value?
                 .Securities?

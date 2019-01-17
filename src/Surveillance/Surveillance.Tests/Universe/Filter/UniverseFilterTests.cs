@@ -234,10 +234,10 @@ namespace Surveillance.Tests.Universe.Filter
             accTwo.Market = new Market("1", "def", "def", MarketTypes.STOCKEXCHANGE);
             var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new MarketTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
+            var exchangeOne = new EquityIntraDayTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
             var eventThree = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new MarketTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
+            var exchangeTwo = new EquityIntraDayTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
             var eventFour = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);
@@ -272,10 +272,10 @@ namespace Surveillance.Tests.Universe.Filter
             accTwo.Market = new Market("1", "def", "def", MarketTypes.STOCKEXCHANGE);
             var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new MarketTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
+            var exchangeOne = new EquityIntraDayTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
             var eventThree = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new MarketTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
+            var exchangeTwo = new EquityIntraDayTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
             var eventFour = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);

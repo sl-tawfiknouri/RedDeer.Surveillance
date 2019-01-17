@@ -7,8 +7,8 @@ namespace Surveillance.Markets.Interfaces
 {
     public interface IUniverseMarketCache : ICloneable
     {
-        void Add(MarketTimeBarCollection value);
-        MarketDataResponse<FinancialInstrumentTimeBar> Get(MarketDataRequest request);
-        MarketDataResponse<List<FinancialInstrumentTimeBar>> GetMarkets(MarketDataRequest request);
+        void Add(EquityIntraDayTimeBarCollection value);
+        MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request);
+        MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> GetMarkets(MarketDataRequest request);
     }
 }

@@ -199,10 +199,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 1019;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
             
-            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
                             tradeBuy.OrderAverageFillPrice.Value,
@@ -262,10 +262,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
                             tradeBuy.OrderAverageFillPrice.Value,
@@ -316,10 +316,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 5;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
                             tradeBuy.OrderAverageFillPrice.Value,
@@ -371,10 +371,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
                             tradeBuy.OrderAverageFillPrice.Value,
@@ -425,10 +425,10 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderFilledVolume = 100;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
-            var marketData = new MarketTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, tradeBuy.OrderPlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         tradeBuy.Instrument,
                         new SpreadTimeBar(
                             tradeBuy.OrderAverageFillPrice.Value,
@@ -697,17 +697,17 @@ namespace Surveillance.Tests.Rules.Layering
             A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
-        private MarketTimeBarCollection SetExchangeFrameToPrice(
+        private EquityIntraDayTimeBarCollection SetExchangeFrameToPrice(
             Market market,
             Order baseBuyFrame,
             Order baseSellFrame,
             decimal price,
             DateTime timestamp)
         {
-            return new MarketTimeBarCollection(market, timestamp,
-                new List<FinancialInstrumentTimeBar>
+            return new EquityIntraDayTimeBarCollection(market, timestamp,
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         baseBuyFrame.Instrument,
                         new SpreadTimeBar(
                             baseBuyFrame.OrderAverageFillPrice.Value, 

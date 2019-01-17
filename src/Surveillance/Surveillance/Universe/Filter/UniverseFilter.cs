@@ -228,7 +228,7 @@ namespace Surveillance.Universe.Filter
 
             if (value.StateChange == UniverseStateEvent.EquityIntradayTick)
             {
-                var exchFrame = (MarketTimeBarCollection)value.UnderlyingEvent;
+                var exchFrame = (EquityIntraDayTimeBarCollection)value.UnderlyingEvent;
                 if (exchFrame == null)
                 {
                     return false;

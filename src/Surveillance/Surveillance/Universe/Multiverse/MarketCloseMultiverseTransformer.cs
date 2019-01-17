@@ -87,7 +87,7 @@ namespace Surveillance.Universe.Multiverse
                 return;
             }
 
-             var frame = (MarketTimeBarCollection)universeEvent.UnderlyingEvent;
+             var frame = (EquityIntraDayTimeBarCollection)universeEvent.UnderlyingEvent;
 
             if (_exchangeFrame.ContainsKey(frame.Exchange.MarketIdentifierCode))
             {
@@ -173,7 +173,7 @@ namespace Surveillance.Universe.Multiverse
                 return universeEvent;
             }
 
-            var frame = (MarketTimeBarCollection) universeEvent.UnderlyingEvent;
+            var frame = (EquityIntraDayTimeBarCollection) universeEvent.UnderlyingEvent;
             _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var frames);
 
             if (frames == null)
@@ -250,7 +250,7 @@ namespace Surveillance.Universe.Multiverse
             /// </summary>
             public DateTime OpenDate { get; set; }
             
-            public MarketTimeBarCollection Frame { get; set; }
+            public EquityIntraDayTimeBarCollection Frame { get; set; }
         }
         
         public object Clone()

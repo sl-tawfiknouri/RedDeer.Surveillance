@@ -19,7 +19,7 @@ namespace Surveillance.Markets
     /// </summary>
     public class UniverseMarketCache : IUniverseMarketCache
     {
-        private IDictionary<string, MarketTimeBarCollection> _latestExchangeFrameBook;
+        private IDictionary<string, EquityIntraDayTimeBarCollection> _latestExchangeFrameBook;
         private ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
 
         private readonly TimeSpan _windowSize;
@@ -31,11 +31,11 @@ namespace Surveillance.Markets
             _windowSize = windowSize;
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _latestExchangeFrameBook = new ConcurrentDictionary<string, MarketTimeBarCollection>();
+            _latestExchangeFrameBook = new ConcurrentDictionary<string, EquityIntraDayTimeBarCollection>();
             _marketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>();
         }
 
-        public void Add(MarketTimeBarCollection value)
+        public void Add(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -70,13 +70,13 @@ namespace Surveillance.Markets
             }
         }
 
-        public MarketDataResponse<FinancialInstrumentTimeBar> Get(MarketDataRequest request)
+        public MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request)
         {
             if (request == null
                 || !request.IsValid())
             {
                 _logger.LogError($"UniverseMarketCache received either a null or invalid request");
-                return MarketDataResponse<FinancialInstrumentTimeBar>.MissingData();
+                return MarketDataResponse<EquityInstrumentIntraDayTimeBar>.MissingData();
             }
 
             _logger.LogInformation($"UniverseMarketCache fetching for market {request?.MarketIdentifierCode} from {request?.UniverseEventTimeFrom} to {request?.UniverseEventTimeTo} as part of rule run {request?.SystemProcessOperationRuleRunId}");
@@ -85,7 +85,7 @@ namespace Surveillance.Markets
             {
                 _dataRequestRepository.CreateDataRequest(request);
                 _logger.LogInformation($"UniverseMarketCache was not able to find the MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
-                return MarketDataResponse<FinancialInstrumentTimeBar>.MissingData();
+                return MarketDataResponse<EquityInstrumentIntraDayTimeBar>.MissingData();
             }
 
             _latestExchangeFrameBook.TryGetValue(request.MarketIdentifierCode, out var exchangeFrame);
@@ -94,7 +94,7 @@ namespace Surveillance.Markets
             {
                 _dataRequestRepository.CreateDataRequest(request);
                 _logger.LogInformation($"UniverseMarketCache was not able to find the MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
-                return MarketDataResponse<FinancialInstrumentTimeBar>.MissingData();
+                return MarketDataResponse<EquityInstrumentIntraDayTimeBar>.MissingData();
             }
 
             var security = exchangeFrame
@@ -105,7 +105,7 @@ namespace Surveillance.Markets
             {
                 _dataRequestRepository.CreateDataRequest(request);
                 _logger.LogInformation($"UniverseMarketCache was not able to find the security {request.Identifiers} for MIC {request.MarketIdentifierCode} in the latest exchange frame book. Recording missing data.");
-                return MarketDataResponse<FinancialInstrumentTimeBar>.MissingData();
+                return MarketDataResponse<EquityInstrumentIntraDayTimeBar>.MissingData();
             }
 
             if (exchangeFrame.Epoch > request.UniverseEventTimeTo
@@ -115,30 +115,30 @@ namespace Surveillance.Markets
 
                 _logger.LogInformation($"UniverseMarketCache was not able to find the security {request.Identifiers} for MIC {request.MarketIdentifierCode} in the latest exchange frame book within a suitable data range to {request.UniverseEventTimeTo} from {request.UniverseEventTimeFrom}. Recording missing data.");
 
-                return MarketDataResponse<FinancialInstrumentTimeBar>.MissingData();
+                return MarketDataResponse<EquityInstrumentIntraDayTimeBar>.MissingData();
             }
 
             _logger.LogInformation($"UniverseMarketCache was able to find a match for {request.Identifiers} returning data.");
-            return new MarketDataResponse<FinancialInstrumentTimeBar>(security, false);
+            return new MarketDataResponse<EquityInstrumentIntraDayTimeBar>(security, false);
         }
 
         /// <summary>
         /// Assumes that any data implies that the whole data set/range is covered
         /// </summary>
-        public MarketDataResponse<List<FinancialInstrumentTimeBar>> GetMarkets(MarketDataRequest request)
+        public MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> GetMarkets(MarketDataRequest request)
         {
             if (request == null
                 || !request.IsValid())
             {
                 _logger.LogError($"UniverseMarketCache received either a null or invalid request");
-                return MarketDataResponse<List<FinancialInstrumentTimeBar>>.MissingData();
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
             }
 
             if (!_marketHistory.TryGetValue(request.MarketIdentifierCode, out var marketStack))
             {
                 _logger.LogInformation($"UniverseMarketCache GetMarkets was not able to find a market history entry for {request.MarketIdentifierCode}");
                 _dataRequestRepository.CreateDataRequest(request);
-                return MarketDataResponse<List<FinancialInstrumentTimeBar>>.MissingData();
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
             }
 
             var securityDataTicks = marketStack
@@ -157,11 +157,11 @@ namespace Surveillance.Markets
                 _logger.LogInformation($"UniverseMarketCache GetMarkets was not able to find market data for the security on {request.MarketIdentifierCode} with ids {request.Identifiers}");
 
                 _dataRequestRepository.CreateDataRequest(request);
-                return MarketDataResponse<List<FinancialInstrumentTimeBar>>.MissingData();
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
             }
 
             _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
-            return new MarketDataResponse<List<FinancialInstrumentTimeBar>>(securityDataTicks, false);
+            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false);
         }
 
         public object Clone()
@@ -174,7 +174,7 @@ namespace Surveillance.Markets
 
         public void SetClone()
         {
-            _latestExchangeFrameBook = new Dictionary<string, MarketTimeBarCollection>(_latestExchangeFrameBook);
+            _latestExchangeFrameBook = new Dictionary<string, EquityIntraDayTimeBarCollection>(_latestExchangeFrameBook);
             _marketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>(_marketHistory);
         }
     }

@@ -188,15 +188,15 @@ namespace Surveillance.Tests.Universe
 
             var exchangeFrames = new[]
             {
-                new MarketTimeBarCollection(
+                new EquityIntraDayTimeBarCollection(
                     new Market("1", "xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesInitiation,
-                    new List<FinancialInstrumentTimeBar>()),
-                new MarketTimeBarCollection(
+                    new List<EquityInstrumentIntraDayTimeBar>()),
+                new EquityIntraDayTimeBarCollection(
                     new Market(
                         "1","xlon", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                     timeSeriesTermination,
-                    new List<FinancialInstrumentTimeBar>())
+                    new List<EquityInstrumentIntraDayTimeBar>())
             };
 
             A

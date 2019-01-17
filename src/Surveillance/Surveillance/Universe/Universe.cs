@@ -10,11 +10,11 @@ namespace Surveillance.Universe
     {
         public Universe(
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<MarketTimeBarCollection> marketEquityData,
+            IReadOnlyCollection<EquityIntraDayTimeBarCollection> marketEquityData,
             IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
             Trades = trades ?? new List<Order>();
-            MarketEquityData = marketEquityData ?? new List<MarketTimeBarCollection>();
+            MarketEquityData = marketEquityData ?? new List<EquityIntraDayTimeBarCollection>();
             UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
 
             Setup();
@@ -33,7 +33,7 @@ namespace Surveillance.Universe
 
         public IReadOnlyCollection<Order> Trades { get; private set; }
 
-        public IReadOnlyCollection<MarketTimeBarCollection> MarketEquityData { get; private set; }
+        public IReadOnlyCollection<EquityIntraDayTimeBarCollection> MarketEquityData { get; private set; }
 
         public IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; private set; }
     }

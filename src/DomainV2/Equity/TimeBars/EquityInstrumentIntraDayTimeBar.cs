@@ -6,9 +6,9 @@ namespace DomainV2.Equity.TimeBars
     /// <summary>
     /// Market update for financial instrument trading data
     /// </summary>
-    public class FinancialInstrumentTimeBar
+    public class EquityInstrumentIntraDayTimeBar
     {
-        public FinancialInstrumentTimeBar(
+        public EquityInstrumentIntraDayTimeBar(
             FinancialInstrument security,
             SpreadTimeBar spreadTimeBar,
             DailySummaryTimeBar dailySummaryTimeBar,

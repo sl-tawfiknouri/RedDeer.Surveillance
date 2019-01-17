@@ -38,7 +38,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -105,8 +105,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
-            MarketTimeBarCollection latestFrame,
+            Stack<EquityIntraDayTimeBarCollection> frames,
+            EquityIntraDayTimeBarCollection latestFrame,
             int cancelledTrades)
         {
             if (string.IsNullOrWhiteSpace(sedol))

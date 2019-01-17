@@ -52,7 +52,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new FinancialInstrumentTimeBar(
+            var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
@@ -69,10 +69,10 @@ namespace Surveillance.Tests.Markets
                 DateTime.UtcNow.AddDays(1),
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new MarketTimeBarCollection(
+            var frame = new EquityIntraDayTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow.AddDays(1),
-                new FinancialInstrumentTimeBar[]
+                new EquityInstrumentIntraDayTimeBar[]
                 {
                     securityTick
                 });
@@ -115,7 +115,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new FinancialInstrumentTimeBar(
+            var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
@@ -131,10 +131,10 @@ namespace Surveillance.Tests.Markets
                 DateTime.UtcNow,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new MarketTimeBarCollection(
+            var frame = new EquityIntraDayTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
-                new FinancialInstrumentTimeBar[]
+                new EquityInstrumentIntraDayTimeBar[]
                 {
                     securityTick
                 });
@@ -177,7 +177,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new FinancialInstrumentTimeBar(
+            var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
@@ -193,10 +193,10 @@ namespace Surveillance.Tests.Markets
                 DateTime.UtcNow.AddDays(1),
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new MarketTimeBarCollection(
+            var frame = new EquityIntraDayTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow.AddDays(1),
-                new FinancialInstrumentTimeBar[]
+                new EquityInstrumentIntraDayTimeBar[]
                 {
                     securityTick
                 });
@@ -238,7 +238,7 @@ namespace Surveillance.Tests.Markets
                     "USD",
                     "Issuer Identifier");
 
-            var securityTick = new FinancialInstrumentTimeBar(
+            var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
                     new CurrencyAmount(0, "gbp"),
@@ -255,10 +255,10 @@ namespace Surveillance.Tests.Markets
                 DateTime.UtcNow,
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE));
 
-            var frame = new MarketTimeBarCollection(
+            var frame = new EquityIntraDayTimeBarCollection(
                 new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE),
                 DateTime.UtcNow,
-                new FinancialInstrumentTimeBar[]
+                new EquityInstrumentIntraDayTimeBar[]
                 {
                     securityTick
                 });

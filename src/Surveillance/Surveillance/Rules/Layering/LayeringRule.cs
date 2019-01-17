@@ -397,8 +397,8 @@ namespace Surveillance.Rules.Layering
         private RuleBreachDescription BuildDescription(
             Order mostRecentTrade,
             decimal priceMovement,
-            FinancialInstrumentTimeBar startTick,
-            FinancialInstrumentTimeBar endTick)
+            EquityInstrumentIntraDayTimeBar startTick,
+            EquityInstrumentIntraDayTimeBar endTick)
         {
             switch (mostRecentTrade.OrderDirection)
             {
@@ -416,7 +416,7 @@ namespace Surveillance.Rules.Layering
             }
         }
 
-        private FinancialInstrumentTimeBar StartTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime startDate)
+        private EquityInstrumentIntraDayTimeBar StartTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime startDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -424,7 +424,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar startTick;
+            EquityInstrumentIntraDayTimeBar startTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp < startDate))
             {
                 startTick =
@@ -444,7 +444,7 @@ namespace Surveillance.Rules.Layering
             return startTick;
         }
 
-        private FinancialInstrumentTimeBar EndTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime endDate)
+        private EquityInstrumentIntraDayTimeBar EndTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime endDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -452,7 +452,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar endTick;
+            EquityInstrumentIntraDayTimeBar endTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp > endDate))
             {
                 endTick =

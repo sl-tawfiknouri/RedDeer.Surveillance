@@ -180,7 +180,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 ctx?.Id());
         }
 
-        protected virtual CurrencyAmount? SecurityTickToPrice(FinancialInstrumentTimeBar tick)
+        protected virtual CurrencyAmount? SecurityTickToPrice(EquityInstrumentIntraDayTimeBar tick)
         {
             if (tick == null)
             {

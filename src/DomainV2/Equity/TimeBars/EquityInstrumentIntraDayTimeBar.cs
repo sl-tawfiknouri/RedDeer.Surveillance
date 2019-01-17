@@ -4,7 +4,7 @@ using DomainV2.Financial;
 namespace DomainV2.Equity.TimeBars
 {
     /// <summary>
-    /// Market update for financial instrument trading data
+    /// Intraday update for financial instrument trading data
     /// </summary>
     public class EquityInstrumentIntraDayTimeBar
     {
@@ -33,7 +33,9 @@ namespace DomainV2.Equity.TimeBars
         public SpreadTimeBar SpreadTimeBar { get; }
 
         /// <summary>
-        /// Daily summary of data about the financial instrument
+        /// Daily summary of data about the financial instrument;
+        /// this is provided in addition to the spread time bar.
+        /// Its cannon representation 
         /// </summary>
         public DailySummaryTimeBar DailySummaryTimeBar { get; }
 

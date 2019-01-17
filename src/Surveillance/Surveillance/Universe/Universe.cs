@@ -11,10 +11,12 @@ namespace Surveillance.Universe
         public Universe(
             IReadOnlyCollection<Order> trades,
             IReadOnlyCollection<EquityIntraDayTimeBarCollection> marketEquityData,
+            IReadOnlyCollection<EquityInterDayTimeBarCollection> interDayEquityData,
             IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
             Trades = trades ?? new List<Order>();
-            MarketEquityData = marketEquityData ?? new List<EquityIntraDayTimeBarCollection>();
+            IntradayEquityData = marketEquityData ?? new List<EquityIntraDayTimeBarCollection>();
+            InterDayEquityData = interDayEquityData ?? new List<EquityInterDayTimeBarCollection>();
             UniverseEvents = universeEvents ?? new List<IUniverseEvent>();
 
             Setup();
@@ -27,14 +29,15 @@ namespace Surveillance.Universe
         private void Setup()
         {
             Trades = Trades.OrderBy(tra => tra.MostRecentDateEvent()).ToList();
-            MarketEquityData = MarketEquityData.OrderBy(med => med.Securities.FirstOrDefault()?.TimeStamp).ToList();
+            IntradayEquityData = IntradayEquityData.OrderBy(med => med.Securities.FirstOrDefault()?.TimeStamp).ToList();
+            InterDayEquityData = InterDayEquityData.OrderBy(med => med.Securities.FirstOrDefault()?.TimeStamp).ToList();
             UniverseEvents = UniverseEvents.OrderBy(ue => ue.EventTime).ToList();
         }
 
         public IReadOnlyCollection<Order> Trades { get; private set; }
 
-        public IReadOnlyCollection<EquityIntraDayTimeBarCollection> MarketEquityData { get; private set; }
-
+        public IReadOnlyCollection<EquityIntraDayTimeBarCollection> IntradayEquityData { get; private set; }
+        public IReadOnlyCollection<EquityInterDayTimeBarCollection> InterDayEquityData { get; private set; }
         public IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; private set; }
     }
 }

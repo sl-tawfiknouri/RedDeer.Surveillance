@@ -51,7 +51,7 @@ namespace Surveillance.Tests.Universe.Subscriber
                 event10,
             };
 
-            var loggerUniverse = new Surveillance.Universe.Universe(new Order[0], new EquityIntraDayTimeBarCollection[0], universeEvents);
+            var loggerUniverse = new Surveillance.Universe.Universe(new Order[0], new EquityIntraDayTimeBarCollection[0], new EquityInterDayTimeBarCollection[0],  universeEvents);
 
             var logger = new UniversePercentageOfEventCompletionLogger(_logger);
             logger.InitiateEventLogger(loggerUniverse);

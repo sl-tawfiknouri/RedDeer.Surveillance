@@ -12,10 +12,11 @@ namespace Surveillance.Universe
                 { UniverseStateEvent.Genesis, 1 },
                 { UniverseStateEvent.ExchangeOpen, 2 },
                 { UniverseStateEvent.EquityIntradayTick, 3 },
-                { UniverseStateEvent.OrderPlaced, 4 },
-                { UniverseStateEvent.Order, 5 },
-                { UniverseStateEvent.ExchangeClose, 6 },
-                { UniverseStateEvent.Eschaton, 7 },
+                { UniverseStateEvent.EquityInterDayTick, 4 },
+                { UniverseStateEvent.OrderPlaced, 5 },
+                { UniverseStateEvent.Order, 6 },
+                { UniverseStateEvent.ExchangeClose, 7 },
+                { UniverseStateEvent.Eschaton, 8 },
             };
 
         /*

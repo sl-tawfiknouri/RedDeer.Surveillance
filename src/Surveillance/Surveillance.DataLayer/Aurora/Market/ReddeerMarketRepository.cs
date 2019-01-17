@@ -102,11 +102,7 @@ namespace Surveillance.DataLayer.Aurora.Market
              MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
              MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
              MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
-             MSEP.Epoch as Epoch,
-             MSEP.BidPrice as BidPrice,
-             MSEP.AskPrice as AskPrice,
-             MSEP.MarketPrice as MarketPrice,
-             MSEP.VolumeTraded as VolumeTraded,
+             IEDS.Epoch as Epoch,
              IEDS.OpenPrice as OpenPrice,
              IEDS.ClosePrice as ClosePrice,
              IEDS.HighIntradayPrice as HighIntradayPrice,
@@ -114,11 +110,9 @@ namespace Surveillance.DataLayer.Aurora.Market
              IEDS.ListedSecurities as ListedSecurities,
              IEDS.MarketCap as MarketCap,
              IEDS.DailyVolume as DailyVolume
-             FROM InstrumentEquityTimeBars AS MSEP
-             LEFT OUTER JOIN InstrumentEquityDailySummary AS IEDS
-             ON MSEP.SecurityId = IEDS.SecurityId AND date(MSEP.Epoch) = date(IEDS.Epoch) AND IEDS.Epoch >= MSEP.Epoch
+             FROM InstrumentEquityDailySummary AS IEDS
              LEFT OUTER JOIN FinancialInstruments AS MSES
-             ON MSEP.SecurityId = MSES.Id
+             ON IEDS.SecurityId = MSES.Id
              LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
              WHERE MSEP.Epoch >= @start
@@ -477,6 +471,83 @@ namespace Surveillance.DataLayer.Aurora.Market
             return new EquityIntraDayTimeBarCollection[0];
         }
 
+        public async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> GetEquityInterDay(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx)
+        {
+            start = start.Date;
+            end = end.Date;
+
+            if (start > end)
+            {
+                _logger.LogWarning($"ReddeerMarketRepository GetEquityInterDay request had a start date larger than end date {start} {end}");
+                return new EquityInterDayTimeBarCollection[0];
+            }
+
+            if (start == end)
+            {
+                end = end.AddDays(1).AddMilliseconds(-1);
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+            var query = new GetQuery { Start = start, End = end };
+
+            try
+            {
+                dbConnection.Open();
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay opened connection to db");
+
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay about to query for {start} and {end}");
+                using (var conn = dbConnection.QueryAsync<MarketStockExchangeSecuritiesDto>(GetEquityInterDaySql, query))
+                {
+                    var response = (await conn)?.ToList() ?? new List<MarketStockExchangeSecuritiesDto>();
+
+                    _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay query for {start} and {end} received {response?.Count() ?? 0} results");
+
+                    var groupedByExchange =
+                        response
+                            .GroupBy(rep =>
+                                new { rep.MarketId, Mic = rep.MarketIdentifierCode, rep.MarketName, rep.Epoch },
+                                (key, group) => new
+                                {
+                                    Key1 = key.MarketId,
+                                    Key2 = key.MarketName,
+                                    Key3 = key.Epoch,
+                                    Key4 = key.Mic,
+                                    Result = group.ToList()
+                                })
+                            .Select(i =>
+                            {
+                                var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var frame =
+                                    new EquityInterDayTimeBarCollection(
+                                        market,
+                                        i.Key3,
+                                        i.Result.Select(o => ProjectToInterDaySecurity(o, market)).ToList());
+
+                                return frame;
+                            });
+
+                    return groupedByExchange.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
+                opCtx.EventError(e);
+            }
+            finally
+            {
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay closed connection to db");
+
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new EquityInterDayTimeBarCollection[0];
+        }
+
         /// <summary>
         /// Trades consist of market data plus trade data
         /// Try to get the security id if we already know it
@@ -628,6 +699,58 @@ namespace Surveillance.DataLayer.Aurora.Market
                 new EquityInstrumentIntraDayTimeBar(
                     security,
                     spread,
+                    dailySummary,
+                    dto.Epoch,
+                    market);
+
+            return tick;
+        }
+
+        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            var security =
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers(
+                        dto.Id,
+                        dto.ReddeerId,
+                        dto.ReddeerEnrichmentId,
+                        dto.ClientIdentifier,
+                        dto.Sedol,
+                        dto.Isin,
+                        dto.Figi,
+                        dto.Cusip,
+                        dto.ExchangeSymbol,
+                        dto.Lei,
+                        dto.BloombergTicker),
+                    dto.SecurityName,
+                    dto.Cfi,
+                    dto.SecurityCurrency,
+                    dto.IssuerIdentifier);
+
+            var intradayPrices =
+                new IntradayPrices(
+                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+
+            var dailySummary =
+                new DailySummaryTimeBar(
+                    dto.MarketCap,
+                    intradayPrices,
+                    dto.ListedSecurities,
+                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
+                    dto.Epoch);
+
+            var tick =
+                new EquityInstrumentInterDayTimeBar(
+                    security,
                     dailySummary,
                     dto.Epoch,
                     market);

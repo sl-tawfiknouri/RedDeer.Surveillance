@@ -48,23 +48,27 @@ namespace Surveillance.Universe
             if (execution == null)
             {
                 _logger.LogError($"UniverseBuilder had a null execution and therefore null data sets for {opCtx.Id} operation context");
-                return new Universe(null, null, null);
+                return new Universe(null, null, null, null);
             }
 
             _logger.LogInformation($"UniverseBuilder fetching aurora trade data");
             var projectedTrades = await TradeDataFetchAurora(execution, opCtx);
             _logger.LogInformation($"UniverseBuilder completed fetching aurora trade data");
 
-            _logger.LogInformation($"UniverseBuilder completed fetching market data for equities");
-            var exchangeFrames = await MarketEquityDataFetchAurora(execution, opCtx);
-            _logger.LogInformation($"UniverseBuilder completed fetching market data for equities");
+            _logger.LogInformation($"UniverseBuilder fetching intraday for equities");
+            var intradayEquityBars = await MarketEquityIntraDayDataFetchAurora(execution, opCtx);
+            _logger.LogInformation($"UniverseBuilder completed fetching intraday for equities");
+
+            _logger.LogInformation($"UniverseBuilder fetching inter day for equities");
+            var interDayEquityBars = await MarketEquityInterDayDataFetchAurora(execution, opCtx);
+            _logger.LogInformation($"UniverseBuilder completed fetching inter day for equities");
 
             _logger.LogInformation($"UniverseBuilder fetching universe event data");
-            var universe = await UniverseEvents(execution, projectedTrades, exchangeFrames);
+            var universe = await UniverseEvents(execution, projectedTrades, intradayEquityBars, interDayEquityBars);
             _logger.LogInformation($"UniverseBuilder completed fetching universe event data");
 
             _logger.LogInformation($"UniverseBuilder returning a new universe");
-            return new Universe(projectedTrades, exchangeFrames, universe);
+            return new Universe(projectedTrades, intradayEquityBars, interDayEquityBars, universe);
         }
 
         private async Task<IReadOnlyCollection<Order>> TradeDataFetchAurora(
@@ -80,7 +84,7 @@ namespace Surveillance.Universe
             return trades ?? new List<Order>();
         }
 
-        private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> MarketEquityDataFetchAurora(
+        private async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> MarketEquityIntraDayDataFetchAurora(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx)
         {
@@ -93,10 +97,24 @@ namespace Surveillance.Universe
             return equities ?? new List<EquityIntraDayTimeBarCollection>();
         }
 
+        private async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> MarketEquityInterDayDataFetchAurora(
+            ScheduledExecution execution,
+            ISystemProcessOperationContext opCtx)
+        {
+            var equities =
+                await _auroraMarketRepository.GetEquityInterDay(
+                    execution.TimeSeriesInitiation.Date,
+                    execution.TimeSeriesTermination.Date,
+                    opCtx);
+
+            return equities ?? new List<EquityInterDayTimeBarCollection>();
+        }
+
         private async Task<IReadOnlyCollection<IUniverseEvent>> UniverseEvents(
             ScheduledExecution execution,
             IReadOnlyCollection<Order> trades,
-            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates)
+            IReadOnlyCollection<EquityIntraDayTimeBarCollection> equityIntradayUpdates,
+            IReadOnlyCollection<EquityInterDayTimeBarCollection> equityInterDayUpdates)
         {
             var tradeSubmittedEvents =
                 trades
@@ -111,9 +129,14 @@ namespace Surveillance.Universe
                     .Select(tr => new UniverseEvent(UniverseStateEvent.Order, tr.MostRecentDateEvent(), tr))
                     .ToArray();
 
-            var exchangeEvents =
+            var intradayEquityEvents =
                 equityIntradayUpdates
                     .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch))
+                    .ToArray();
+
+            var interDayEquityEvents =
+                equityInterDayUpdates
+                    .Select(exch => new UniverseEvent(UniverseStateEvent.EquityInterDayTick, exch.Epoch, exch))
                     .ToArray();
 
             var marketEvents =
@@ -127,7 +150,8 @@ namespace Surveillance.Universe
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
             intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
-            intraUniversalHistoryEvents.AddRange(exchangeEvents);
+            intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
+            intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);
             var orderedIntraUniversalHistory = intraUniversalHistoryEvents.OrderBy(ihe => ihe, _universeSorter).ToList();
 

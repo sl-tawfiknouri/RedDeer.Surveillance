@@ -33,13 +33,13 @@ namespace Surveillance.Factories
             return new UniverseEquityIntradayCache(window, repo, _logger);
         }
 
-        public IUniverseEquityInterDayCache BuildInterday(TimeSpan window, RuleRunMode runMode)
+        public IUniverseEquityInterDayCache BuildInterday(RuleRunMode runMode)
         {
             var repo = runMode == RuleRunMode.ValidationRun
                 ? _dataRequestRepository
                 : _stubDataRequestRepository;
 
-            return new UniverseEquityInterDayCache(window, repo, _logger);
+            return new UniverseEquityInterDayCache(repo, _logger);
         }
     }
 }

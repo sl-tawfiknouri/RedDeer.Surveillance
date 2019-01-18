@@ -59,7 +59,7 @@ namespace Surveillance.Rules
                 ?? throw new ArgumentNullException(nameof(marketCacheFactory));
 
             UniverseEquityInterdayCache =
-                marketCacheFactory?.BuildInterday(windowSize, runMode)
+                marketCacheFactory?.BuildInterday(runMode)
                 ?? throw new ArgumentNullException(nameof(marketCacheFactory));
 
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();

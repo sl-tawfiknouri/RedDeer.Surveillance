@@ -13,13 +13,11 @@ namespace DomainV2.Financial
         private Market _market;
 
         private readonly object _lock = new object();
-        private readonly TimeSpan _activeTradeDuration;
 
-        public InterDayHistoryStack(TimeSpan activeTradeDuration)
+        public InterDayHistoryStack()
         {
             _activeStack = new Stack<EquityInterDayTimeBarCollection>();
             _history = new Queue<EquityInterDayTimeBarCollection>();
-            _activeTradeDuration = activeTradeDuration;
         }
 
         public void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime)
@@ -31,7 +29,7 @@ namespace DomainV2.Financial
 
             lock (_lock)
             {
-                if (currentTime.Subtract(frame.Epoch) <= _activeTradeDuration)
+                if (currentTime.Date == (frame.Epoch.Date))
                 {
                     _activeStack.Push(frame);
                 }
@@ -52,7 +50,7 @@ namespace DomainV2.Financial
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Subtract(poppedItem.Epoch) > _activeTradeDuration)
+                    if (currentTime.Date != poppedItem.Epoch.Date)
                     {
                         _history.Enqueue(poppedItem);
                     }

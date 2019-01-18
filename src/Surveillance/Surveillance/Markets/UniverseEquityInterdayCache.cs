@@ -22,13 +22,11 @@ namespace Surveillance.Markets
         private IDictionary<string, EquityInterDayTimeBarCollection> _latestExchangeFrameBook;
         private ConcurrentDictionary<string, IInterDayHistoryStack> _marketHistory;
 
-        private readonly TimeSpan _windowSize;
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger _logger;
 
-        public UniverseEquityInterDayCache(TimeSpan windowSize, IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
+        public UniverseEquityInterDayCache(IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
         {
-            _windowSize = windowSize;
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _latestExchangeFrameBook = new ConcurrentDictionary<string, EquityInterDayTimeBarCollection>();
@@ -57,7 +55,7 @@ namespace Surveillance.Markets
 
             if (!_marketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
-                var history = new InterDayHistoryStack(_windowSize);
+                var history = new InterDayHistoryStack();
                 history.Add(value, value.Epoch);
                 _marketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
             }

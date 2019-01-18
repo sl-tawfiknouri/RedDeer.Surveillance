@@ -115,8 +115,8 @@ namespace Surveillance.DataLayer.Aurora.Market
              ON IEDS.SecurityId = MSES.Id
              LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
-             WHERE MSEP.Epoch >= @start
-             AND MSEP.Epoch <= @end;";
+             WHERE IEDS.Epoch >= @start
+             AND IEDS.Epoch <= @end;";
 
         private const string GetUnEnrichedSecuritiesSql =
             @"SELECT 

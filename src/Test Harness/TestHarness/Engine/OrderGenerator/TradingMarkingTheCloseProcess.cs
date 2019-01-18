@@ -15,7 +15,7 @@ namespace TestHarness.Engine.OrderGenerator
     {
         private readonly object _lock = new object();
         private readonly IReadOnlyCollection<string> _markingTheCloseTargetSedols;
-        private readonly IMarketHistoryStack _marketHistoryStack;
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly ExchangeDto _marketDto;
 
         private bool _hasProcessedMarkingTheCloseRuleBreaches;
@@ -33,7 +33,7 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();
-            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromMinutes(29));
+            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromMinutes(29));
             _marketDto = marketDto ?? throw new ArgumentNullException(nameof(marketDto));
         }
 
@@ -47,7 +47,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.Epoch);
+            _intraDayHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
@@ -71,8 +71,8 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
                 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _marketHistoryStack.ActiveMarketHistory();
+                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
                 foreach (var sedol in _markingTheCloseTargetSedols)

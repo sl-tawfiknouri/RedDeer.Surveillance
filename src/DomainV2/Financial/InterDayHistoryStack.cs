@@ -6,23 +6,23 @@ using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Financial
 {
-    public class MarketHistoryStack : IMarketHistoryStack
+    public class InterDayHistoryStack : IInterDayHistoryStack
     {
-        private readonly Stack<EquityIntraDayTimeBarCollection> _activeStack;
-        private readonly Queue<EquityIntraDayTimeBarCollection> _history;
+        private readonly Stack<EquityInterDayTimeBarCollection> _activeStack;
+        private readonly Queue<EquityInterDayTimeBarCollection> _history;
         private Market _market;
 
         private readonly object _lock = new object();
         private readonly TimeSpan _activeTradeDuration;
 
-        public MarketHistoryStack(TimeSpan activeTradeDuration)
+        public InterDayHistoryStack(TimeSpan activeTradeDuration)
         {
-            _activeStack = new Stack<EquityIntraDayTimeBarCollection>();
-            _history = new Queue<EquityIntraDayTimeBarCollection>();
+            _activeStack = new Stack<EquityInterDayTimeBarCollection>();
+            _history = new Queue<EquityInterDayTimeBarCollection>();
             _activeTradeDuration = activeTradeDuration;
         }
 
-        public void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime)
+        public void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime)
         {
             if (frame == null)
             {
@@ -47,7 +47,7 @@ namespace DomainV2.Financial
             lock (_lock)
             {
                 var initialActiveStackCount = _activeStack.Count;
-                var counterPartyStack = new Stack<EquityIntraDayTimeBarCollection>();
+                var counterPartyStack = new Stack<EquityInterDayTimeBarCollection>();
 
                 while (initialActiveStackCount > 0)
                 {
@@ -80,12 +80,12 @@ namespace DomainV2.Financial
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory()
+        public Stack<EquityInterDayTimeBarCollection> ActiveMarketHistory()
         {
             lock (_lock)
             {
-                var tradeStackCopy = new Stack<EquityIntraDayTimeBarCollection>(_activeStack);
-                var reverseCopyOfTradeStack = new Stack<EquityIntraDayTimeBarCollection>(tradeStackCopy);
+                var tradeStackCopy = new Stack<EquityInterDayTimeBarCollection>(_activeStack);
+                var reverseCopyOfTradeStack = new Stack<EquityInterDayTimeBarCollection>(tradeStackCopy);
 
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;

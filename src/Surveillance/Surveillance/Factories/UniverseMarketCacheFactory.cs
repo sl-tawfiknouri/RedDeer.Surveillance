@@ -32,5 +32,14 @@ namespace Surveillance.Factories
 
             return new UniverseEquityIntradayCache(window, repo, _logger);
         }
+
+        public IUniverseEquityInterDayCache BuildInterday(TimeSpan window, RuleRunMode runMode)
+        {
+            var repo = runMode == RuleRunMode.ValidationRun
+                ? _dataRequestRepository
+                : _stubDataRequestRepository;
+
+            return new UniverseEquityInterDayCache(window, repo, _logger);
+        }
     }
 }

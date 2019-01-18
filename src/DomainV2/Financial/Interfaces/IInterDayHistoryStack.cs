@@ -4,10 +4,10 @@ using DomainV2.Equity.TimeBars;
 
 namespace DomainV2.Financial.Interfaces
 {
-    public interface IMarketHistoryStack
+    public interface IInterDayHistoryStack
     {
-        Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory();
-        void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime);
+        Stack<EquityInterDayTimeBarCollection> ActiveMarketHistory();
+        void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime);
         void ArchiveExpiredActiveItems(DateTime currentTime);
         Market Exchange();
     }

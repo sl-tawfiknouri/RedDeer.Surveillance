@@ -20,7 +20,7 @@ namespace Surveillance.Markets
     public class UniverseEquityIntradayCache : IUniverseEquityIntradayCache
     {
         private IDictionary<string, EquityIntraDayTimeBarCollection> _latestExchangeFrameBook;
-        private ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
+        private ConcurrentDictionary<string, IIntraDayHistoryStack> _marketHistory;
 
         private readonly TimeSpan _windowSize;
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
@@ -32,7 +32,7 @@ namespace Surveillance.Markets
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _latestExchangeFrameBook = new ConcurrentDictionary<string, EquityIntraDayTimeBarCollection>();
-            _marketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>();
+            _marketHistory = new ConcurrentDictionary<string, IIntraDayHistoryStack>();
         }
 
         public void Add(EquityIntraDayTimeBarCollection value)
@@ -57,7 +57,7 @@ namespace Surveillance.Markets
 
             if (!_marketHistory.ContainsKey(value.Exchange.MarketIdentifierCode))
             {
-                var history = new MarketHistoryStack(_windowSize);
+                var history = new IntraDayHistoryStack(_windowSize);
                 history.Add(value, value.Epoch);
                 _marketHistory.TryAdd(value.Exchange.MarketIdentifierCode, history);
             }
@@ -176,7 +176,7 @@ namespace Surveillance.Markets
         public void SetClone()
         {
             _latestExchangeFrameBook = new Dictionary<string, EquityIntraDayTimeBarCollection>(_latestExchangeFrameBook);
-            _marketHistory = new ConcurrentDictionary<string, IMarketHistoryStack>(_marketHistory);
+            _marketHistory = new ConcurrentDictionary<string, IIntraDayHistoryStack>(_marketHistory);
         }
     }
 }

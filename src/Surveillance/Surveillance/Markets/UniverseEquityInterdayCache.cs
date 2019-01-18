@@ -106,8 +106,8 @@ namespace Surveillance.Markets
                 return MarketDataResponse<EquityInstrumentInterDayTimeBar>.MissingData();
             }
 
-            if (exchangeFrame.Epoch > request.UniverseEventTimeTo
-                || exchangeFrame.Epoch < request.UniverseEventTimeFrom)
+            if (exchangeFrame.Epoch.Date >= request.UniverseEventTimeTo.GetValueOrDefault()
+                && exchangeFrame.Epoch.Date <= request.UniverseEventTimeFrom.GetValueOrDefault())
             {
                 _dataRequestRepository.CreateDataRequest(request);
 

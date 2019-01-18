@@ -182,7 +182,7 @@ namespace Surveillance.Rules.HighVolume
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id()); 
 
-            var securityResult = UniverseEquityIntradayCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
@@ -288,7 +288,7 @@ namespace Surveillance.Rules.HighVolume
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var securityResult = UniverseEquityIntradayCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
@@ -321,8 +321,8 @@ namespace Surveillance.Rules.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.SpreadTimeBar.Price.Currency);
-                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.SpreadTimeBar.Price.Currency);
+                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
+                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }

@@ -54,7 +54,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Open();
 
                 var dto = new OrderAllocationDto(entity);
-                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to write record");
+                _logger.LogInformation(
+                    $"OrderAllocationRepository Create method opened db connection and about to write record");
                 using (var conn = dbConnection.ExecuteAsync(InsertAttributionSql, dto))
                 {
                     await conn;
@@ -64,6 +65,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
             catch (Exception e)
             {
                 _logger.LogError($"OrderAllocationRepository Create method had an exception. ", e);
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
             }
 
             _logger.LogInformation($"OrderAllocationRepository Create method completed");

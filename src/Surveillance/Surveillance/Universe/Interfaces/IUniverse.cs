@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
 
 namespace Surveillance.Universe.Interfaces
@@ -7,5 +8,6 @@ namespace Surveillance.Universe.Interfaces
     {
         IReadOnlyCollection<Order> Trades { get; }
         IReadOnlyCollection<IUniverseEvent> UniverseEvents { get; }
+        IReadOnlyCollection<EquityInterDayTimeBarCollection> InterDayEquityData { get; }
     }
 }

@@ -66,10 +66,10 @@ namespace Surveillance.Universe.Multiverse
             {
                 switch (value.StateChange)
                 {
-                    case UniverseStateEvent.StockTickReddeer:
+                    case UniverseStateEvent.EquityIntradayTick:
                         StockTick(value);
                         break;
-                    case UniverseStateEvent.StockMarketOpen:
+                    case UniverseStateEvent.ExchangeOpen:
                         StockMarketOpen(value);
                         break;
                 }
@@ -82,12 +82,12 @@ namespace Surveillance.Universe.Multiverse
         private void StockTick(IUniverseEvent universeEvent)
         {
             if (universeEvent == null
-                || universeEvent.StateChange != UniverseStateEvent.StockTickReddeer)
+                || universeEvent.StateChange != UniverseStateEvent.EquityIntradayTick)
             {
                 return;
             }
 
-             var frame = (MarketTimeBarCollection)universeEvent.UnderlyingEvent;
+             var frame = (EquityIntraDayTimeBarCollection)universeEvent.UnderlyingEvent;
 
             if (_exchangeFrame.ContainsKey(frame.Exchange.MarketIdentifierCode))
             {
@@ -168,12 +168,12 @@ namespace Surveillance.Universe.Multiverse
 
         private IUniverseEvent SwapIfFrame(IUniverseEvent universeEvent)
         {
-            if (universeEvent.StateChange != UniverseStateEvent.StockTickReddeer)
+            if (universeEvent.StateChange != UniverseStateEvent.EquityIntradayTick)
             {
                 return universeEvent;
             }
 
-            var frame = (MarketTimeBarCollection) universeEvent.UnderlyingEvent;
+            var frame = (EquityIntraDayTimeBarCollection) universeEvent.UnderlyingEvent;
             _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var frames);
 
             if (frames == null)
@@ -250,7 +250,7 @@ namespace Surveillance.Universe.Multiverse
             /// </summary>
             public DateTime OpenDate { get; set; }
             
-            public MarketTimeBarCollection Frame { get; set; }
+            public EquityIntraDayTimeBarCollection Frame { get; set; }
         }
         
         public object Clone()

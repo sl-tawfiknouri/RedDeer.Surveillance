@@ -82,8 +82,8 @@ namespace Surveillance.Universe.OrganisationalFactors
                 return;
             }
 
-            if (value.StateChange != UniverseStateEvent.TradeReddeer
-                && value.StateChange != UniverseStateEvent.TradeReddeerSubmitted)
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
                 _logger.LogInformation($"OrganisationalFactorBroker received an event that was not an order. No brokering to perform. {value.EventTime} of type {value.StateChange}");
 

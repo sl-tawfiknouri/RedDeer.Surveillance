@@ -12,8 +12,8 @@ namespace TestHarness.Factory.EquitiesFactory
     {
         public IStockExchangeStream Create()
         {
-            var exchangeUnsubscriberFactory = new UnsubscriberFactory<MarketTimeBarCollection>();
-            var exchangeStream = new StockExchangeStream(exchangeUnsubscriberFactory);
+            var exchangeUnsubscriberFactory = new UnsubscriberFactory<EquityIntraDayTimeBarCollection>();
+            var exchangeStream = new ExchangeStream(exchangeUnsubscriberFactory);
 
             return exchangeStream;
         }

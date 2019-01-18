@@ -76,7 +76,7 @@ namespace TestHarness.Engine.OrderGenerator
             Logger.LogError(error?.Message);
         }
 
-        public abstract void OnNext(MarketTimeBarCollection value);
+        public abstract void OnNext(EquityIntraDayTimeBarCollection value);
 
         /// <summary>
         /// Avoid calling this from inside another state transition

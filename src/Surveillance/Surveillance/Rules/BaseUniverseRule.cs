@@ -24,7 +24,8 @@ namespace Surveillance.Rules
         private readonly string _name;
         protected readonly TimeSpan WindowSize;
 
-        protected IUniverseMarketCache UniverseMarketCache;
+        protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
+        protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
 
@@ -52,7 +53,15 @@ namespace Surveillance.Rules
             WindowSize = windowSize;
             Rule = rules;
             Version = version ?? string.Empty;
-            UniverseMarketCache = marketCacheFactory?.Build(windowSize, runMode) ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+
+            UniverseEquityIntradayCache =
+                marketCacheFactory?.Build(windowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+
+            UniverseEquityInterdayCache =
+                marketCacheFactory?.BuildInterday(runMode)
+                ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
@@ -97,19 +106,22 @@ namespace Surveillance.Rules
                     case UniverseStateEvent.Genesis:
                         Genesis(value);
                         break;
-                    case UniverseStateEvent.StockTickReddeer:
-                        StockTick(value);
+                    case UniverseStateEvent.EquityIntradayTick:
+                        EquityIntraDay(value);
                         break;
-                    case UniverseStateEvent.TradeReddeerSubmitted:
+                    case UniverseStateEvent.EquityInterDayTick:
+                        EquityInterDay(value);
+                        break;
+                    case UniverseStateEvent.OrderPlaced:
                         TradeSubmitted(value);
                         break;
-                    case UniverseStateEvent.TradeReddeer:
+                    case UniverseStateEvent.Order:
                         Trade(value);
                         break;
-                    case UniverseStateEvent.StockMarketOpen:
+                    case UniverseStateEvent.ExchangeOpen:
                         MarketOpened(value);
                         break;
-                    case UniverseStateEvent.StockMarketClose:
+                    case UniverseStateEvent.ExchangeClose:
                         MarketClosed(value);
                         break;
                     case UniverseStateEvent.Eschaton:
@@ -137,17 +149,30 @@ namespace Surveillance.Rules
             Genesis();
         }
 
-        private void StockTick(IUniverseEvent universeEvent)
+        private void EquityIntraDay(IUniverseEvent universeEvent)
         {
-            if (!(universeEvent.UnderlyingEvent is MarketTimeBarCollection value))
+            if (!(universeEvent.UnderlyingEvent is EquityIntraDayTimeBarCollection value))
             {
                 return;
             }
 
-            _logger?.LogInformation($"Stock tick event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+            _logger?.LogInformation($"Equity intra day event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
 
             UniverseDateTime = universeEvent.EventTime;
-            UniverseMarketCache.Add(value);
+            UniverseEquityIntradayCache.Add(value);
+        }
+
+        private void EquityInterDay(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is EquityInterDayTimeBarCollection value))
+            {
+                return;
+            }
+
+            _logger?.LogInformation($"Equity inter day event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.Exchange?.MarketIdentifierCode} | timestamp  {value.Epoch} | security count {value.Securities?.Count ?? 0}");
+
+            UniverseDateTime = universeEvent.EventTime;
+            UniverseEquityInterdayCache.Add(value);
         }
 
         private void TradeSubmitted(IUniverseEvent universeEvent)
@@ -316,7 +341,7 @@ namespace Surveillance.Rules
 
         public void BaseClone()
         {
-            UniverseMarketCache = (IUniverseMarketCache)UniverseMarketCache.Clone();
+            UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)UniverseEquityIntradayCache.Clone();
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
         }

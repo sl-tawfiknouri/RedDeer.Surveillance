@@ -13,6 +13,6 @@ namespace Surveillance.Rules.HighProfits.Calculators.Interfaces
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IUniverseMarketCache universeMarketCache);
+            IUniverseEquityIntradayCache universeEquityIntradayCache);
     }
 }

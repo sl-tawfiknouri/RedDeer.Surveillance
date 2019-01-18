@@ -19,8 +19,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             _baseStrategy = baseStrategy ?? throw new ArgumentNullException(nameof(baseStrategy));
         }
 
-        public FinancialInstrumentTimeBar AdvanceFrame(
-            FinancialInstrumentTimeBar tick,
+        public EquityInstrumentIntraDayTimeBar AdvanceFrame(
+            EquityInstrumentIntraDayTimeBar tick,
             DateTime advanceTick,
             bool walkIntraday)
         {
@@ -34,11 +34,11 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return AdjustToPlan(initialAdvancedFrame, tick);
         }
 
-        private FinancialInstrumentTimeBar AdjustToPlan(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
+        private EquityInstrumentIntraDayTimeBar AdjustToPlan(EquityInstrumentIntraDayTimeBar tick, EquityInstrumentIntraDayTimeBar precedingTick)
         {
             var adjustedSpread = AdjustedSpread(tick, precedingTick);
 
-            return new FinancialInstrumentTimeBar(
+            return new EquityInstrumentIntraDayTimeBar(
                 tick.Security,
                 adjustedSpread,
                 AdjustedDailies(tick),
@@ -46,7 +46,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 tick.Market);
         }
 
-        private DailySummaryTimeBar AdjustedDailies(FinancialInstrumentTimeBar tick)
+        private DailySummaryTimeBar AdjustedDailies(EquityInstrumentIntraDayTimeBar tick)
         {
             return new DailySummaryTimeBar(
                 tick.DailySummaryTimeBar.MarketCap,
@@ -56,7 +56,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 tick.TimeStamp);
         }
 
-        private SpreadTimeBar AdjustedSpread(FinancialInstrumentTimeBar tick, FinancialInstrumentTimeBar precedingTick)
+        private SpreadTimeBar AdjustedSpread(EquityInstrumentIntraDayTimeBar tick, EquityInstrumentIntraDayTimeBar precedingTick)
         {
             switch (_plan.EquityInstructions.PriceManipulation)
             {
@@ -81,7 +81,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return tick.SpreadTimeBar;
         }
 
-        private SpreadTimeBar AdjustSpreadCalculation(decimal adjustmentFactor, FinancialInstrumentTimeBar precedingTick, FinancialInstrumentTimeBar tick)
+        private SpreadTimeBar AdjustSpreadCalculation(decimal adjustmentFactor, EquityInstrumentIntraDayTimeBar precedingTick, EquityInstrumentIntraDayTimeBar tick)
         {
             var adjustedBid =
                 new CurrencyAmount(precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Bid.Currency);

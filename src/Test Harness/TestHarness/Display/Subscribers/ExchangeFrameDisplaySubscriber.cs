@@ -4,7 +4,7 @@ using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers
 {
-    public class ExchangeFrameDisplaySubscriber : IObserver<MarketTimeBarCollection>
+    public class ExchangeFrameDisplaySubscriber : IObserver<EquityIntraDayTimeBarCollection>
     {
         private readonly IConsole _console;
 
@@ -22,7 +22,7 @@ namespace TestHarness.Display.Subscribers
             _console.OutputException(error);
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             _console.OutputMarketFrame(value);
         }

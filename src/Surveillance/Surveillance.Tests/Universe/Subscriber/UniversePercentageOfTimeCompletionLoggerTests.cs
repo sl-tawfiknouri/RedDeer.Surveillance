@@ -35,7 +35,7 @@ namespace Surveillance.Tests.Universe.Subscriber
             {
                 var events =
                     new UniverseEvent(
-                        UniverseStateEvent.TradeReddeer,
+                        UniverseStateEvent.Order,
                         scheduledExecution.TimeSeriesInitiation.AddMinutes(i).DateTime,
                         new object());
 

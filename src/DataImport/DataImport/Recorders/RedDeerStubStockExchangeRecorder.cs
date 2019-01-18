@@ -15,7 +15,7 @@ namespace DataImport.Recorders
         {
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
         }
     }

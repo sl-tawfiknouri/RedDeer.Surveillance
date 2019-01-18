@@ -7,7 +7,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
 {
     public class StubTradeStrategy : ITradeStrategy<Order>
     {
-        public void ExecuteTradeStrategy(MarketTimeBarCollection tick, IOrderStream<Order> tradeOrders)
+        public void ExecuteTradeStrategy(EquityIntraDayTimeBarCollection tick, IOrderStream<Order> tradeOrders)
         {
         }
     }

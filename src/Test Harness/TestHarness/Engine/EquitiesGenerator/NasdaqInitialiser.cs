@@ -13,24 +13,24 @@ namespace TestHarness.Engine.EquitiesGenerator
     {
         private string _nasdaqCurrency = "USD";
 
-        public MarketTimeBarCollection InitialFrame()
+        public EquityIntraDayTimeBarCollection InitialFrame()
         {
             var exchange = new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE);
             var nasdaqRaw = JsonConvert.DeserializeObject<NasdaqData[]>(InitialNasdaqDataJson);
             var securities = ProjectToSecurities(nasdaqRaw);
 
-            var tick = new MarketTimeBarCollection(exchange, DateTime.UtcNow, securities);
+            var tick = new EquityIntraDayTimeBarCollection(exchange, DateTime.UtcNow, securities);
 
             return tick;
         }
 
-        private List<FinancialInstrumentTimeBar> ProjectToSecurities(NasdaqData[] nasdaqRaw)
+        private List<EquityInstrumentIntraDayTimeBar> ProjectToSecurities(NasdaqData[] nasdaqRaw)
         {
             var rnd = new Random();
             var volume = rnd.Next(5000, 1000000);
 
             return nasdaqRaw.Select(raw =>
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     new FinancialInstrument(
                         InstrumentTypes.Equity,
                         new InstrumentIdentifiers(

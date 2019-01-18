@@ -33,7 +33,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -91,7 +91,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByPosition(string sedol, MarketTimeBarCollection value, decimal positionPercentageToCancel)
+        private void CancelForSedolByPosition(string sedol, EquityIntraDayTimeBarCollection value, decimal positionPercentageToCancel)
         {
             if (value == null)
             {
@@ -197,7 +197,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByCount(string sedol, MarketTimeBarCollection value, int amountToCancel)
+        private void CancelForSedolByCount(string sedol, EquityIntraDayTimeBarCollection value, int amountToCancel)
         {
             if (value == null)
             {

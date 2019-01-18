@@ -20,7 +20,7 @@ namespace TestHarness.Engine.OrderGenerator
         private readonly IPulsatingHeartbeat _heartbeat;
         private readonly object _lock = new object();
         private volatile bool _initiated;
-        private MarketTimeBarCollection _lastFrame;
+        private EquityIntraDayTimeBarCollection _lastFrame;
 
         private decimal _cancellationOfPositionVolumeThresholdPercentage = 0.8m; // % of position cancelled aggregated over all trades in a given direction
         private decimal _cancellationOfOrdersSubmittedThresholdPercentage = 0.8m; // of total orders
@@ -37,7 +37,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             lock (_lock)
             {
@@ -90,7 +90,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private Order[] SetCancellationOrder(FinancialInstrumentTimeBar cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, Order[] orders)
+        private Order[] SetCancellationOrder(EquityInstrumentIntraDayTimeBar cancellationSecurity, int cancellationOrderTotal, int cancellationOrderTactic, Order[] orders)
         {
             switch (cancellationOrderTactic)
             {
@@ -112,7 +112,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders;
         }
 
-        private Order[] CancellationOrdersByValue(FinancialInstrumentTimeBar security, int totalOrders)
+        private Order[] CancellationOrdersByValue(EquityInstrumentIntraDayTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -142,7 +142,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] CancellationOrdersByRatio(FinancialInstrumentTimeBar security, int totalOrders)
+        private Order[] CancellationOrdersByRatio(EquityInstrumentIntraDayTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -172,7 +172,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] CancellationOrdersByPercentOfVolume(FinancialInstrumentTimeBar security, int totalOrders)
+        private Order[] CancellationOrdersByPercentOfVolume(EquityInstrumentIntraDayTimeBar security, int totalOrders)
         {
             if (totalOrders == 0
                 || security == null)
@@ -204,7 +204,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] SingularCancelledOrder(FinancialInstrumentTimeBar security, Market exchange)
+        private Order[] SingularCancelledOrder(EquityInstrumentIntraDayTimeBar security, Market exchange)
         {
             var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
@@ -212,7 +212,7 @@ namespace TestHarness.Engine.OrderGenerator
             return new[] { order };
         }
 
-        private Order OrderForValue(OrderStatus status, decimal value, FinancialInstrumentTimeBar security, Market exchange)
+        private Order OrderForValue(OrderStatus status, decimal value, EquityInstrumentIntraDayTimeBar security, Market exchange)
         {
             var volume = (int)((value / security.SpreadTimeBar.Ask.Value) + 1);
             var orderPosition = (OrderDirections)DiscreteUniform.Sample(0, 3);

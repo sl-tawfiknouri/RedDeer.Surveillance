@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataImport.Integration.Tests.ObjectGraphs;
+using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
 using NUnit.Framework;
@@ -40,7 +41,29 @@ namespace DataImport.Integration.Tests.Validation
                             && a.Instrument.Identifiers.Lei == "8156007259ABDEA3F444"
                             && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                             && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
-                            && a.Instrument.Identifiers.ClientIdentifier == "1",
+                            && a.Instrument.Identifiers.ClientIdentifier == "1"
+                            && a.OrderPlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderBookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderAmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderRejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderCancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderFilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.OrderType == OrderTypes.LIMIT
+                            && a.OrderDirection == OrderDirections.SELL
+                            && a.OrderCurrency.Value == "GBP"
+                            && a.OrderSettlementCurrency.Value.Value == "USD"
+                            && a.OrderCleanDirty == OrderCleanDirty.CLEAN
+                            && a.OrderAccumulatedInterest == 1
+                            && a.OrderLimitPrice.Value.Value == 54.768m
+                            && a.OrderAverageFillPrice.Value.Value == 56m
+                            && a.OrderOrderedVolume.Value == 278
+                            && a.OrderFilledVolume.Value == 278
+                            && a.OrderTraderId == "RYAN"
+                            && a.OrderClearingAgent == "GOLDMAN"
+                            && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                            && a.OrderOptionStrikePrice.Value.Value == 100
+                            && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                            && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.EUROPEAN,
 
                         a => a.OrderId == "9e03994a-c681-4851-b0fa-0da721c0a880"
                              && (int)a.Market.Type == 1
@@ -56,7 +79,30 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.Lei == "8156007259ABDEA3F444"
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
-                             && a.Instrument.Identifiers.ClientIdentifier == "2",
+                             && a.Instrument.Identifiers.ClientIdentifier == "2"
+                             && a.OrderPlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderBookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderAmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderRejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderCancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderFilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.OrderType == OrderTypes.LIMIT
+                             && a.OrderDirection == OrderDirections.SELL
+                             && a.OrderCurrency.Value == "GBP"
+                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCleanDirty == OrderCleanDirty.CLEAN
+                             && a.OrderAccumulatedInterest == 2
+                             && a.OrderLimitPrice.Value.Value == 54.768m
+                             && a.OrderAverageFillPrice.Value.Value == 56m
+                             && a.OrderOrderedVolume.Value == 278
+                             && a.OrderFilledVolume.Value == 278
+                             && a.OrderTraderId == "RYAN"
+                             && a.OrderClearingAgent == "GOLDMAN"
+                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                             && a.OrderOptionStrikePrice.Value.Value == 200
+                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                             && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.EUROPEAN,
+
 
                         a => a.OrderId == "e21fd385-c940-46fa-83c8-570b1f0207f3"
                              && (int)a.Market.Type == 1
@@ -72,7 +118,29 @@ namespace DataImport.Integration.Tests.Validation
                             && a.Instrument.Identifiers.Lei == "8156007259ABDEA3F444"
                             && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                             && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
-                            && a.Instrument.Identifiers.ClientIdentifier == "3",
+                            && a.Instrument.Identifiers.ClientIdentifier == "3"
+                             && a.OrderPlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderBookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderAmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderRejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderCancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderFilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderType == OrderTypes.LIMIT
+                             && a.OrderDirection == OrderDirections.SELL
+                             && a.OrderCurrency.Value == "GBP"
+                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCleanDirty == OrderCleanDirty.CLEAN
+                             && a.OrderAccumulatedInterest == 3
+                             && a.OrderLimitPrice.Value.Value == 54.768m
+                             && a.OrderAverageFillPrice.Value.Value == 56m
+                             && a.OrderOrderedVolume.Value == 278
+                             && a.OrderFilledVolume.Value == 278
+                             && a.OrderTraderId == "RYAN"
+                             && a.OrderClearingAgent == "GOLDMAN"
+                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                             && a.OrderOptionStrikePrice.Value.Value == 300
+                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                             && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.EUROPEAN,
 
 
                         a => a.OrderId == "11ced167-82ac-46de-bc78-11dadf689033"
@@ -89,7 +157,29 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.Lei == "8156007259ABDEA3F444"
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
-                             && a.Instrument.Identifiers.ClientIdentifier == "4",
+                             && a.Instrument.Identifiers.ClientIdentifier == "4"
+                             && a.OrderPlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderBookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderAmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderRejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderCancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderFilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.OrderType == OrderTypes.LIMIT
+                             && a.OrderDirection == OrderDirections.SELL
+                             && a.OrderCurrency.Value == "GBP"
+                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCleanDirty == OrderCleanDirty.DIRTY
+                             && a.OrderAccumulatedInterest == 4
+                             && a.OrderLimitPrice.Value.Value == 54.768m
+                             && a.OrderAverageFillPrice.Value.Value == 56m
+                             && a.OrderOrderedVolume.Value == 278
+                             && a.OrderFilledVolume.Value == 278
+                             && a.OrderTraderId == "RYAN"
+                             && a.OrderClearingAgent == "GOLDMAN"
+                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                             && a.OrderOptionStrikePrice.Value.Value == 400
+                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                             && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.AMERICAN,
 
                         a => a.OrderId == "f1aadd18-d923-4a9f-9d1e-3c5e60dad40a"
                              && (int)a.Market.Type == 1
@@ -105,7 +195,29 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.Lei == "8156007259ABDEA3F444"
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
-                             && a.Instrument.Identifiers.ClientIdentifier == "5",
+                             && a.Instrument.Identifiers.ClientIdentifier == "5"
+                             && a.OrderPlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderBookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderAmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderRejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderCancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderFilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderType == OrderTypes.LIMIT
+                             && a.OrderDirection == OrderDirections.SELL
+                             && a.OrderCurrency.Value == "GBP"
+                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCleanDirty == OrderCleanDirty.DIRTY
+                             && a.OrderAccumulatedInterest == 5
+                             && a.OrderLimitPrice.Value.Value == 54.768m
+                             && a.OrderAverageFillPrice.Value.Value == 56m
+                             && a.OrderOrderedVolume.Value == 278
+                             && a.OrderFilledVolume.Value == 278
+                             && a.OrderTraderId == "RYAN"
+                             && a.OrderClearingAgent == "GOLDMAN"
+                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                             && a.OrderOptionStrikePrice.Value.Value == 500
+                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                             && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.AMERICAN,
 
                         a => a.OrderId == "6afdc02d-c1fd-4782-ab8a-9fd97ac4b698"
                              && (int)a.Market.Type == 1
@@ -122,6 +234,28 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                              && a.Instrument.Identifiers.ClientIdentifier == "6"
+                             && a.OrderPlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderBookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderAmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderRejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderCancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderFilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.OrderType == OrderTypes.LIMIT
+                             && a.OrderDirection == OrderDirections.SELL
+                             && a.OrderCurrency.Value == "GBP"
+                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCleanDirty == OrderCleanDirty.DIRTY
+                             && a.OrderAccumulatedInterest == 6
+                             && a.OrderLimitPrice.Value.Value == 54.768m
+                             && a.OrderAverageFillPrice.Value.Value == 56m
+                             && a.OrderOrderedVolume.Value == 278
+                             && a.OrderFilledVolume.Value == 278
+                             && a.OrderTraderId == "RYAN"
+                             && a.OrderClearingAgent == "GOLDMAN"
+                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
+                             && a.OrderOptionStrikePrice.Value.Value == 600
+                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
+                             && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.AMERICAN
                     })
             };
         }

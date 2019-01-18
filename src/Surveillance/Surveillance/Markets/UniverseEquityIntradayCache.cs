@@ -17,7 +17,7 @@ namespace Surveillance.Markets
     /// Consider that it is a cache of recent market events
     /// Before attempting to query for out of range data
     /// </summary>
-    public class UniverseMarketCache : IUniverseMarketCache
+    public class UniverseEquityIntradayCache : IUniverseEquityIntradayCache
     {
         private IDictionary<string, EquityIntraDayTimeBarCollection> _latestExchangeFrameBook;
         private ConcurrentDictionary<string, IMarketHistoryStack> _marketHistory;
@@ -26,7 +26,7 @@ namespace Surveillance.Markets
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ILogger _logger;
 
-        public UniverseMarketCache(TimeSpan windowSize, IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
+        public UniverseEquityIntradayCache(TimeSpan windowSize, IRuleRunDataRequestRepository dataRequestRepository, ILogger logger)
         {
             _windowSize = windowSize;
             _dataRequestRepository = dataRequestRepository ?? throw new ArgumentNullException(nameof(dataRequestRepository));
@@ -161,12 +161,13 @@ namespace Surveillance.Markets
             }
 
             _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
+
             return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false);
         }
 
         public object Clone()
         {
-            var clone = this.MemberwiseClone() as UniverseMarketCache;
+            var clone = this.MemberwiseClone() as UniverseEquityIntradayCache;
             clone.SetClone();
 
             return clone;

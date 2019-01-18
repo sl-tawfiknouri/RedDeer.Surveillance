@@ -6,6 +6,6 @@ namespace Surveillance.Factories.Interfaces
 {
     public interface IUniverseMarketCacheFactory
     {
-        IUniverseMarketCache Build(TimeSpan window, RuleRunMode runMode);
+        IUniverseEquityIntradayCache Build(TimeSpan window, RuleRunMode runMode);
     }
 }

@@ -24,13 +24,13 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseMarketCache Build(TimeSpan window, RuleRunMode runMode)
+        public IUniverseEquityIntradayCache Build(TimeSpan window, RuleRunMode runMode)
         {
             var repo = runMode == RuleRunMode.ValidationRun
                 ? _dataRequestRepository
                 : _stubDataRequestRepository;
 
-            return new UniverseMarketCache(window, repo, _logger);
+            return new UniverseEquityIntradayCache(window, repo, _logger);
         }
     }
 }

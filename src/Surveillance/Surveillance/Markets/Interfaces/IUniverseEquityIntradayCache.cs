@@ -5,7 +5,7 @@ using DomainV2.Markets;
 
 namespace Surveillance.Markets.Interfaces
 {
-    public interface IUniverseMarketCache : ICloneable
+    public interface IUniverseEquityIntradayCache : ICloneable
     {
         void Add(EquityIntraDayTimeBarCollection value);
         MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request);

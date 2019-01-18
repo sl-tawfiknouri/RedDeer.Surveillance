@@ -95,7 +95,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseMarketCache.Get(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.Get(marketDataRequest);
 
             if (dataResponse.HadMissingData)
             {
@@ -180,7 +180,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
             {
                 _hadMissingData = true;

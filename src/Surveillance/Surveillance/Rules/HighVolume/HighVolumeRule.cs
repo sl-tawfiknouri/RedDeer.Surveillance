@@ -182,7 +182,7 @@ namespace Surveillance.Rules.HighVolume
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id()); 
 
-            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityIntradayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
@@ -232,7 +232,7 @@ namespace Surveillance.Rules.HighVolume
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketRequest);
 
             if (marketResult.HadMissingData)
             {
@@ -288,7 +288,7 @@ namespace Surveillance.Rules.HighVolume
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityIntradayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {

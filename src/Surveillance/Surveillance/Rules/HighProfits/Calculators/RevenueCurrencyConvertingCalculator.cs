@@ -40,7 +40,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IUniverseMarketCache universeMarketCache)
+            IUniverseEquityIntradayCache universeEquityIntradayCache)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -84,7 +84,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             }
 
-            var marketResponse = universeMarketCache.Get(marketDataRequest);
+            var marketResponse = universeEquityIntradayCache.Get(marketDataRequest);
 
             if (marketResponse.HadMissingData)
             {

@@ -34,7 +34,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IUniverseMarketCache universeMarketCache)
+            IUniverseEquityIntradayCache universeEquityIntradayCache)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -79,7 +79,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             }
 
-            var marketDataResult = universeMarketCache.Get(marketDataRequest);
+            var marketDataResult = universeEquityIntradayCache.Get(marketDataRequest);
             if (marketDataResult.HadMissingData)
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");

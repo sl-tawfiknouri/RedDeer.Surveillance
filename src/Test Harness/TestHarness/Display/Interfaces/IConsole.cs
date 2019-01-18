@@ -7,7 +7,7 @@ namespace TestHarness.Display.Interfaces
 {
     public interface IConsole
     {
-        void OutputMarketFrame(MarketTimeBarCollection frame);
+        void OutputMarketFrame(EquityIntraDayTimeBarCollection frame);
 
         void OutputTradeFrame(Order frame);
 

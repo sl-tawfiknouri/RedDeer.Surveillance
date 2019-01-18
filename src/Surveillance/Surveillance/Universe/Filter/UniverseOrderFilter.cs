@@ -23,8 +23,8 @@ namespace Surveillance.Universe.Filter
         {
             switch (universeEvent.StateChange)
             {
-                case UniverseStateEvent.TradeReddeer:
-                case UniverseStateEvent.TradeReddeerSubmitted:
+                case UniverseStateEvent.Order:
+                case UniverseStateEvent.OrderPlaced:
                     break;
                 default:
                     return universeEvent;

@@ -42,7 +42,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 return;
             }
 
-            var securities = new List<FinancialInstrumentTimeBar>();
+            var securities = new List<EquityInstrumentIntraDayTimeBar>();
 
 
             using (var reader = File.OpenText(_filePath))
@@ -80,12 +80,12 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private IList<MarketTimeBarCollection> ExtractDateBasedExchangeFramesOverMarkets(IReadOnlyCollection<FinancialInstrumentTimeBar> securities)
+        private IList<EquityIntraDayTimeBarCollection> ExtractDateBasedExchangeFramesOverMarkets(IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> securities)
         {
             if (securities == null
                 || !securities.Any())
             {
-                return new List<MarketTimeBarCollection>();
+                return new List<EquityIntraDayTimeBarCollection>();
             }
 
             return securities
@@ -93,7 +93,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 .Select(groupedExchange => groupedExchange.GroupBy(gb => gb.TimeStamp))
                 .SelectMany(io =>
                     io.Select(iio =>
-                        new MarketTimeBarCollection(
+                        new EquityIntraDayTimeBarCollection(
                             new Market(
                                 null,
                                 iio.FirstOrDefault()?.Market.Id,

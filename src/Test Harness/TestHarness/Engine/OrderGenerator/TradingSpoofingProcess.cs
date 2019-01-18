@@ -14,7 +14,7 @@ namespace TestHarness.Engine.OrderGenerator
     {
         private readonly object _lock = new object();
         private readonly IReadOnlyCollection<string> _spoofingTargetSedols;
-        private readonly IMarketHistoryStack _marketHistoryStack;
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
 
         private bool _hasProcessedSpoofingBreaches;
@@ -32,20 +32,20 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.ToList()
                 ?? new List<string>();
 
-            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(1));
+            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
         }
 
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.Epoch);
+            _intraDayHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
@@ -70,8 +70,8 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _marketHistoryStack.ActiveMarketHistory();
+                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
                 foreach (var sedol in _spoofingTargetSedols)
@@ -105,8 +105,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateMarkingTheCloseTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
-            MarketTimeBarCollection latestFrame,
+            Stack<EquityIntraDayTimeBarCollection> frames,
+            EquityIntraDayTimeBarCollection latestFrame,
             int cancelledTrades)
         {
             if (string.IsNullOrWhiteSpace(sedol))

@@ -4,7 +4,7 @@ using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesStorage.Interfaces
 {
-    public interface IEquityDataStorage : IObserver<MarketTimeBarCollection>
+    public interface IEquityDataStorage : IObserver<EquityIntraDayTimeBarCollection>
     {
         void Initiate(IStockExchangeStream stream);
 

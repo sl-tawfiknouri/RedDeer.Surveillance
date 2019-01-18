@@ -55,12 +55,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             await repo.Create(Frame());
             await repo.Create(Frame());
 
-            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
+            var results = await repo.GetEquityIntraday(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
 
             Assert.IsTrue(true);
         }
 
-        private MarketTimeBarCollection Frame()
+        private EquityIntraDayTimeBarCollection Frame()
         {
             var stockExchange = new DomainV2.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
@@ -74,9 +74,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                 "USD",
                 "Standard Chartered Bank");
 
-            var securities = new List<FinancialInstrumentTimeBar>
+            var securities = new List<EquityInstrumentIntraDayTimeBar>
             {
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     security,
                     new SpreadTimeBar(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP"), new Volume(1000)),
                     new DailySummaryTimeBar(
@@ -89,7 +89,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     stockExchange)
             };
 
-            return new MarketTimeBarCollection(stockExchange, DateTime.UtcNow, securities);
+            return new EquityIntraDayTimeBarCollection(stockExchange, DateTime.UtcNow, securities);
         }
     }
 }

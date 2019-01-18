@@ -250,7 +250,7 @@ namespace Surveillance.Rules.Layering
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.Get(marketRequest);
+            var marketResult = UniverseEquityIntradayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
@@ -295,7 +295,7 @@ namespace Surveillance.Rules.Layering
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            var securityResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (securityResult.HadMissingData)
             {
                 _logger.LogWarning($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
@@ -355,7 +355,7 @@ namespace Surveillance.Rules.Layering
                     endDate,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketRequest);
 
             if (marketResult.HadMissingData)
             {
@@ -397,8 +397,8 @@ namespace Surveillance.Rules.Layering
         private RuleBreachDescription BuildDescription(
             Order mostRecentTrade,
             decimal priceMovement,
-            FinancialInstrumentTimeBar startTick,
-            FinancialInstrumentTimeBar endTick)
+            EquityInstrumentIntraDayTimeBar startTick,
+            EquityInstrumentIntraDayTimeBar endTick)
         {
             switch (mostRecentTrade.OrderDirection)
             {
@@ -416,7 +416,7 @@ namespace Surveillance.Rules.Layering
             }
         }
 
-        private FinancialInstrumentTimeBar StartTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime startDate)
+        private EquityInstrumentIntraDayTimeBar StartTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime startDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -424,7 +424,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar startTick;
+            EquityInstrumentIntraDayTimeBar startTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp < startDate))
             {
                 startTick =
@@ -444,7 +444,7 @@ namespace Surveillance.Rules.Layering
             return startTick;
         }
 
-        private FinancialInstrumentTimeBar EndTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime endDate)
+        private EquityInstrumentIntraDayTimeBar EndTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime endDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -452,7 +452,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar endTick;
+            EquityInstrumentIntraDayTimeBar endTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp > endDate))
             {
                 endTick =

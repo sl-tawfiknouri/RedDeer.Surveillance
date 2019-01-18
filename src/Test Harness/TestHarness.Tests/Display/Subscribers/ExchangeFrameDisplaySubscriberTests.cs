@@ -42,7 +42,7 @@ namespace TestHarness.Tests.Display.Subscribers
         public void OnNext_PassesFrame_ToConsole()
         {
             var subscriber = new ExchangeFrameDisplaySubscriber(_console);
-            var frame = new MarketTimeBarCollection(null, DateTime.UtcNow, null);
+            var frame = new EquityIntraDayTimeBarCollection(null, DateTime.UtcNow, null);
 
             subscriber.OnNext(frame);
 

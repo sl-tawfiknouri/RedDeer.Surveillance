@@ -95,7 +95,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseMarketCache.Get(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.Get(marketDataRequest);
 
             if (dataResponse.HadMissingData)
             {
@@ -147,7 +147,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity)
+            EquityInstrumentIntraDayTimeBar tradedSecurity)
         {
             var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
@@ -169,7 +169,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckWindowVolumeTraded(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity)
+            EquityInstrumentIntraDayTimeBar tradedSecurity)
         {
             var marketDataRequest =
                 new MarketDataRequest(
@@ -180,7 +180,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
             {
                 _hadMissingData = true;
@@ -209,7 +209,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity,
+            EquityInstrumentIntraDayTimeBar tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
         {

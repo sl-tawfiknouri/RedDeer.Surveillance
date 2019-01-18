@@ -45,7 +45,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 ctx?.Id());
         }
 
-        protected override CurrencyAmount? SecurityTickToPrice(FinancialInstrumentTimeBar tick)
+        protected override CurrencyAmount? SecurityTickToPrice(EquityInstrumentIntraDayTimeBar tick)
         {
             if (tick == null)
             {

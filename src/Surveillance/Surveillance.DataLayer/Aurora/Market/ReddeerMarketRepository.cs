@@ -20,7 +20,7 @@ namespace Surveillance.DataLayer.Aurora.Market
         private readonly ICfiInstrumentTypeMapper _cfiMapper;
         private readonly ILogger<ReddeerMarketRepository> _logger;
 
-        private const string GetMarketSql =
+        private const string GetEquityIntraDaySql =
             @"
             SELECT
              MSE.Id as MarketId,
@@ -71,6 +71,52 @@ namespace Surveillance.DataLayer.Aurora.Market
              ON MSES.MarketId = MSE.Id
              WHERE MSEP.Epoch >= @start
              AND MSEP.Epoch <= @end;";
+
+        private const string GetEquityInterDaySql =
+            @"
+            SELECT
+             MSE.Id as MarketId,
+             MSE.MarketId as MarketIdentifierCode,
+             MSE.MarketName as MarketName,
+             MSES.ReddeerId as ReddeerId,
+             MSES.ClientIdentifier as ClientIdentifier,
+             MSES.Sedol as Sedol,
+             MSES.Isin as Isin,
+             MSES.Figi as Figi,
+             MSES.Cusip as Cusip,
+             MSES.Lei as Lei,
+             MSES.ExchangeSymbol as ExchangeSymbol,
+             MSES.BloombergTicker as BloombergTicker,
+             MSES.SecurityName as SecurityName,
+             MSES.Cfi as Cfi,
+             MSES.IssuerIdentifier as IssuerIdentifier,
+             MSES.SecurityCurrency as SecurityCurrency,
+             MSES.InstrumentType as InstrumentType,
+             MSES.UnderlyingCfi as UnderlyingCfi,
+             MSES.UnderlyingName as UnderlyingName,
+             MSES.UnderlyingSedol as UnderlyingSedol,
+             MSES.UnderlyingIsin as UnderlyingIsin,
+             MSES.UnderlyingFigi as UnderlyingFigi,
+             MSES.UnderlyingCusip as UnderlyingCusip,
+             MSES.UnderlyingLei as UnderlyingLei,
+             MSES.UnderlyingExchangeSymbol as UnderlyingExchangeSymbol,
+             MSES.UnderlyingBloombergTicker as UnderlyingBloombergTicker,
+             MSES.UnderlyingClientIdentifier as UnderlyingClientIdentifier,
+             IEDS.Epoch as Epoch,
+             IEDS.OpenPrice as OpenPrice,
+             IEDS.ClosePrice as ClosePrice,
+             IEDS.HighIntradayPrice as HighIntradayPrice,
+             IEDS.LowIntradayPrice as LowIntradayPrice,
+             IEDS.ListedSecurities as ListedSecurities,
+             IEDS.MarketCap as MarketCap,
+             IEDS.DailyVolume as DailyVolume
+             FROM InstrumentEquityDailySummary AS IEDS
+             LEFT OUTER JOIN FinancialInstruments AS MSES
+             ON IEDS.SecurityId = MSES.Id
+             LEFT OUTER JOIN Market AS MSE
+             ON MSES.MarketId = MSE.Id
+             WHERE IEDS.Epoch >= @start
+             AND IEDS.Epoch <= @end;";
 
         private const string GetUnEnrichedSecuritiesSql =
             @"SELECT 
@@ -297,7 +343,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task Create(MarketTimeBarCollection entity)
+        public async Task Create(EquityIntraDayTimeBarCollection entity)
         {
             if (entity == null)
             {
@@ -348,7 +394,10 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task<IReadOnlyCollection<MarketTimeBarCollection>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx)
+        public async Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> GetEquityIntraday(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx)
         {
             start = start.Date;
             end = end.Date;
@@ -356,7 +405,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             if (start > end)
             {
                 _logger.LogWarning($"ReddeerMarketRepository Get request had a start date larger than end date {start} {end}");
-                return new MarketTimeBarCollection[0];
+                return new EquityIntraDayTimeBarCollection[0];
             }
 
             if (start == end)
@@ -373,7 +422,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 _logger.LogInformation($"ReddeerMarketRepository get opened connection to db");
 
                 _logger.LogInformation($"ReddeerMarketRepository get about to query for {start} and {end}");
-                using (var conn = dbConnection.QueryAsync<MarketStockExchangeSecuritiesDto>(GetMarketSql, query))
+                using (var conn = dbConnection.QueryAsync<MarketStockExchangeSecuritiesDto>(GetEquityIntraDaySql, query))
                 {
                     var response = (await conn)?.ToList() ?? new List<MarketStockExchangeSecuritiesDto>();
 
@@ -395,7 +444,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                             {
                                 var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
-                                    new MarketTimeBarCollection(
+                                    new EquityIntraDayTimeBarCollection(
                                         market,
                                         i.Key3,
                                         i.Result.Select(o => ProjectToSecurity(o, market)).ToList());
@@ -419,7 +468,84 @@ namespace Surveillance.DataLayer.Aurora.Market
                 dbConnection.Dispose();
             }
 
-            return new MarketTimeBarCollection[0];
+            return new EquityIntraDayTimeBarCollection[0];
+        }
+
+        public async Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> GetEquityInterDay(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx)
+        {
+            start = start.Date;
+            end = end.Date;
+
+            if (start > end)
+            {
+                _logger.LogWarning($"ReddeerMarketRepository GetEquityInterDay request had a start date larger than end date {start} {end}");
+                return new EquityInterDayTimeBarCollection[0];
+            }
+
+            if (start == end)
+            {
+                end = end.AddDays(1).AddMilliseconds(-1);
+            }
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+            var query = new GetQuery { Start = start, End = end };
+
+            try
+            {
+                dbConnection.Open();
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay opened connection to db");
+
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay about to query for {start} and {end}");
+                using (var conn = dbConnection.QueryAsync<MarketStockExchangeSecuritiesDto>(GetEquityInterDaySql, query))
+                {
+                    var response = (await conn)?.ToList() ?? new List<MarketStockExchangeSecuritiesDto>();
+
+                    _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay query for {start} and {end} received {response?.Count() ?? 0} results");
+
+                    var groupedByExchange =
+                        response
+                            .GroupBy(rep =>
+                                new { rep.MarketId, Mic = rep.MarketIdentifierCode, rep.MarketName, rep.Epoch },
+                                (key, group) => new
+                                {
+                                    Key1 = key.MarketId,
+                                    Key2 = key.MarketName,
+                                    Key3 = key.Epoch,
+                                    Key4 = key.Mic,
+                                    Result = group.ToList()
+                                })
+                            .Select(i =>
+                            {
+                                var market = new DomainV2.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var frame =
+                                    new EquityInterDayTimeBarCollection(
+                                        market,
+                                        i.Key3,
+                                        i.Result.Select(o => ProjectToInterDaySecurity(o, market)).ToList());
+
+                                return frame;
+                            });
+
+                    return groupedByExchange.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"ReddeerMarketRepository GetEquityInterDay Method For {start} {end} {e.Message}");
+                opCtx.EventError(e);
+            }
+            finally
+            {
+                _logger.LogInformation($"ReddeerMarketRepository GetEquityInterDay closed connection to db");
+
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new EquityInterDayTimeBarCollection[0];
         }
 
         /// <summary>
@@ -520,7 +646,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private FinancialInstrumentTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
+        private EquityInstrumentIntraDayTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
         {
             if (dto == null)
             {
@@ -570,9 +696,61 @@ namespace Surveillance.DataLayer.Aurora.Market
                     dto.Epoch);
 
             var tick =
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     security,
                     spread,
+                    dailySummary,
+                    dto.Epoch,
+                    market);
+
+            return tick;
+        }
+
+        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, DomainV2.Financial.Market market)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            var security =
+                new FinancialInstrument(
+                    InstrumentTypes.Equity,
+                    new InstrumentIdentifiers(
+                        dto.Id,
+                        dto.ReddeerId,
+                        dto.ReddeerEnrichmentId,
+                        dto.ClientIdentifier,
+                        dto.Sedol,
+                        dto.Isin,
+                        dto.Figi,
+                        dto.Cusip,
+                        dto.ExchangeSymbol,
+                        dto.Lei,
+                        dto.BloombergTicker),
+                    dto.SecurityName,
+                    dto.Cfi,
+                    dto.SecurityCurrency,
+                    dto.IssuerIdentifier);
+
+            var intradayPrices =
+                new IntradayPrices(
+                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+
+            var dailySummary =
+                new DailySummaryTimeBar(
+                    dto.MarketCap,
+                    intradayPrices,
+                    dto.ListedSecurities,
+                    new Volume(dto.DailyVolume.GetValueOrDefault(0)),
+                    dto.Epoch);
+
+            var tick =
+                new EquityInstrumentInterDayTimeBar(
+                    security,
                     dailySummary,
                     dto.Epoch,
                     market);
@@ -592,7 +770,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeDto()
             { }
 
-            public MarketStockExchangeDto(MarketTimeBarCollection entity)
+            public MarketStockExchangeDto(EquityIntraDayTimeBarCollection entity)
             {
                 if (entity == null)
                 {
@@ -615,7 +793,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketStockExchangeSecuritiesDto()
             { }
 
-            public MarketStockExchangeSecuritiesDto(FinancialInstrumentTimeBar entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
+            public MarketStockExchangeSecuritiesDto(EquityInstrumentIntraDayTimeBar entity, int marketId, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {
@@ -746,14 +924,14 @@ namespace Surveillance.DataLayer.Aurora.Market
             public string MarketName { get; set; }
         }
 
-        private InsertSecurityDto Project(FinancialInstrumentTimeBar tick)
+        private InsertSecurityDto Project(EquityInstrumentIntraDayTimeBar tick)
         {
             return new InsertSecurityDto(tick, null, _cfiMapper);
         }
 
         private class InsertSecurityDto
         {
-            public InsertSecurityDto(FinancialInstrumentTimeBar entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
+            public InsertSecurityDto(EquityInstrumentIntraDayTimeBar entity, string marketIdForeignKey, ICfiInstrumentTypeMapper cfiMapper)
             {
                 if (entity == null)
                 {

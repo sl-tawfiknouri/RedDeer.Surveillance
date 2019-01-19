@@ -69,8 +69,8 @@ namespace Surveillance.DataLayer.Aurora.Market
              ON MSEP.SecurityId = MSES.Id
              LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
-             WHERE MSEP.Epoch >= @start
-             AND MSEP.Epoch <= @end;";
+             WHERE date(MSEP.Epoch) >= date(@start)
+             AND date(MSEP.Epoch) <= date(@end);";
 
         private const string GetEquityInterDaySql =
             @"
@@ -115,8 +115,8 @@ namespace Surveillance.DataLayer.Aurora.Market
              ON IEDS.SecurityId = MSES.Id
              LEFT OUTER JOIN Market AS MSE
              ON MSES.MarketId = MSE.Id
-             WHERE IEDS.Epoch >= @start
-             AND IEDS.Epoch <= @end;";
+             WHERE date(IEDS.Epoch) >= date(@start)
+             AND date(IEDS.Epoch) <= date(@end);";
 
         private const string GetUnEnrichedSecuritiesSql =
             @"SELECT 

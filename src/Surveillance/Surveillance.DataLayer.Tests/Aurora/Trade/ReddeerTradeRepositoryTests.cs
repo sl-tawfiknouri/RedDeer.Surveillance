@@ -177,6 +177,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 1000, 
                 1000,
                 "trader-1",
+                "trader one",
                 "clearing-agent",
                 "deal asap",
                 null,

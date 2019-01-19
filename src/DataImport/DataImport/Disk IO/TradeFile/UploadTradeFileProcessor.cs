@@ -131,6 +131,7 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderFilledVolume = PreProcess(rawRecord["OrderFilledVolume"]),
 
                 OrderTraderId = PreProcess(rawRecord["OrderTraderId"]),
+                OrderTraderName = PreProcess(rawRecord["OrderTraderName"]),
                 OrderClearingAgent = PreProcess(rawRecord["OrderClearingAgent"]),
                 OrderDealingInstructions = PreProcess(rawRecord["OrderDealingInstructions"]),
                 

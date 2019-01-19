@@ -165,6 +165,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
+                    null,
                     OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
@@ -224,6 +225,7 @@ namespace TestHarness.Engine.OrderGenerator
                     new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
+                    null,
                     null,
                     null,
                     null,

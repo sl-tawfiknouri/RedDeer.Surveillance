@@ -102,6 +102,8 @@ namespace DomainV2.Files
                 .NotEmpty()
                 .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
 
+            RuleFor(x => x.OrderTraderName).MaximumLength(255).WithMessage("Order Trader Name should not exceed 255 characters");
+
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
             RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
             RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));

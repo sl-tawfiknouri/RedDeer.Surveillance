@@ -47,6 +47,7 @@ namespace DomainV2.Trading
             long? orderOrderedVolume,
             long? orderFilledVolume,
             string orderTraderId,
+            string orderTraderName,
             string orderClearingAgent,
             string orderDealingInstructions,
 
@@ -89,6 +90,7 @@ namespace DomainV2.Trading
 
             // order trader and post trade
             OrderTraderId = orderTraderId ?? string.Empty;
+            OrderTraderName = orderTraderName ?? string.Empty;
             OrderClearingAgent = orderClearingAgent ?? string.Empty;
             OrderDealingInstructions = orderDealingInstructions ?? string.Empty;
 
@@ -136,6 +138,7 @@ namespace DomainV2.Trading
         public long? OrderOrderedVolume { get; set; }
         public long? OrderFilledVolume { get; set; }
         public string OrderTraderId { get; set; }
+        public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
 

@@ -59,6 +59,7 @@ namespace DataImport.Integration.Tests.Validation
                             && a.OrderOrderedVolume.Value == 278
                             && a.OrderFilledVolume.Value == 278
                             && a.OrderTraderId == "RYAN"
+                            && a.OrderTraderName == "Ryan Trenchard"
                             && a.OrderClearingAgent == "GOLDMAN"
                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                             && a.OrderOptionStrikePrice.Value.Value == 100
@@ -97,6 +98,7 @@ namespace DataImport.Integration.Tests.Validation
                              && a.OrderOrderedVolume.Value == 278
                              && a.OrderFilledVolume.Value == 278
                              && a.OrderTraderId == "RYAN"
+                             && a.OrderTraderName == "Ryan Trenchard"
                              && a.OrderClearingAgent == "GOLDMAN"
                              && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                              && a.OrderOptionStrikePrice.Value.Value == 200
@@ -136,6 +138,7 @@ namespace DataImport.Integration.Tests.Validation
                              && a.OrderOrderedVolume.Value == 278
                              && a.OrderFilledVolume.Value == 278
                              && a.OrderTraderId == "RYAN"
+                             && a.OrderTraderName == "Ryan Trenchard"
                              && a.OrderClearingAgent == "GOLDMAN"
                              && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                              && a.OrderOptionStrikePrice.Value.Value == 300
@@ -175,6 +178,7 @@ namespace DataImport.Integration.Tests.Validation
                              && a.OrderOrderedVolume.Value == 278
                              && a.OrderFilledVolume.Value == 278
                              && a.OrderTraderId == "RYAN"
+                             && a.OrderTraderName == "Ryan Trenchard"
                              && a.OrderClearingAgent == "GOLDMAN"
                              && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                              && a.OrderOptionStrikePrice.Value.Value == 400
@@ -213,6 +217,7 @@ namespace DataImport.Integration.Tests.Validation
                              && a.OrderOrderedVolume.Value == 278
                              && a.OrderFilledVolume.Value == 278
                              && a.OrderTraderId == "RYAN"
+                             && a.OrderTraderName == "Ryan Trenchard"
                              && a.OrderClearingAgent == "GOLDMAN"
                              && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                              && a.OrderOptionStrikePrice.Value.Value == 500
@@ -251,6 +256,7 @@ namespace DataImport.Integration.Tests.Validation
                              && a.OrderOrderedVolume.Value == 278
                              && a.OrderFilledVolume.Value == 278
                              && a.OrderTraderId == "RYAN"
+                             && a.OrderTraderName == "Ryan Trenchard"
                              && a.OrderClearingAgent == "GOLDMAN"
                              && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                              && a.OrderOptionStrikePrice.Value.Value == 600

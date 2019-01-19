@@ -175,6 +175,7 @@ namespace Surveillance.Tests.Trades
                 1000,
                 1000,
                 "Trader - 1",
+                "trader one",
                 "Rybank Long",
                 "deal-asap",
                 null,

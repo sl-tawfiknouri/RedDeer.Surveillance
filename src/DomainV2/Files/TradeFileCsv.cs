@@ -65,6 +65,7 @@ namespace DomainV2.Files
         public string OrderOrderedVolume { get; set; }
         public string OrderFilledVolume { get; set; }
         public string OrderTraderId { get; set; }
+        public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
 

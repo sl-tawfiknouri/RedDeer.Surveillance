@@ -15,4 +15,9 @@ START TRANSACTION;
 
 	SET FOREIGN_KEY_CHECKS=1;     
 
+	ALTER TABLE OrdersAllocation DROP INDEX unique_orders_allocation;
+
+		-- add a unique constraint
+	ALTER TABLE OrdersAllocation ADD CONSTRAINT unique_orders_allocation UNIQUE(OrderId, Fund, Strategy, ClientAccountId);
+
 COMMIT;

@@ -83,7 +83,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // step 3.
                 // get minute bar request
-                var timeBarResponses = await GetTimeBars(bmllRequests);
+                var timeBarResponses = await GetTimeBars(keys);
 
                 _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
@@ -190,21 +190,21 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
         }
 
-        private async Task<IReadOnlyCollection<IGetTimeBarPair>> GetTimeBars(List<MarketDataRequestDataSource> bmllRequests)
+        private async Task<IReadOnlyCollection<IGetTimeBarPair>> GetTimeBars(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
         {
-            if (bmllRequests == null
-                || !bmllRequests.Any())
+            if (keys == null
+                || !keys.Any())
             {
                 _logger.LogError($"BmllDataRequestsManager received 0 data requests and did not have any to send on after projecting to GetMinuteBarsRequests");
 
                 return new IGetTimeBarPair[0];
             }
 
-            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+            var minuteBarRequests = keys.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
 
             if (!minuteBarRequests.Any())
             {
-                _logger.LogError($"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+                _logger.LogError($"BmllDataRequestsManager received {keys.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
                 return new IGetTimeBarPair[0];
             }
@@ -221,17 +221,17 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             return timeBarResponses;
         }
 
-        private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequestDataSource request)
+        private GetMinuteBarsRequest GetMinuteBarsRequest(MinuteBarRequestKeyDto request)
         {
             if (request == null
-                || (!request.DataRequest?.IsValid() ?? true))
+                || string.IsNullOrWhiteSpace(request.Figi))
             {
-                _logger.LogError($"BmllDataRequestsSenderManager had a null request or a request that did not pass data request validation for {request?.DataRequest?.Identifiers}");
+                _logger.LogError($"BmllDataRequestsSenderManager had a null request or a request that did not pass data request validation for {request?.Figi}");
 
                 return null;
             }
 
-            if (string.IsNullOrWhiteSpace(request.DataRequest.Identifiers.Figi))
+            if (string.IsNullOrWhiteSpace(request.Figi))
             {
                 _logger.LogError($"BmllDataRequestsSenderManager asked to process a security without a figi");
 
@@ -240,9 +240,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             return new GetMinuteBarsRequest
             {
-                Figi = request.DataRequest.Identifiers.Figi,
-                From = request.DataRequest.UniverseEventTimeFrom.Value.Date,
-                To = request.DataRequest.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
+                Figi = request.Figi,
+                From = request.Date,
+                To = request.Date.Date.AddDays(1).AddMilliseconds(-1),
                 Interval = "1min",
             };
         }

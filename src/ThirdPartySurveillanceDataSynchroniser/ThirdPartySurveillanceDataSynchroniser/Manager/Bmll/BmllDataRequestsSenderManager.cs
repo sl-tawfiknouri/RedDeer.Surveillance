@@ -7,6 +7,7 @@ using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
@@ -25,13 +26,15 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<IGetTimeBarPair>> Send(List<MarketDataRequestDataSource> bmllRequests)
+        public async Task<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>> Send(
+            List<MarketDataRequestDataSource> bmllRequests,
+            bool completeWithFailures)
         {
             if (bmllRequests == null
                 || !bmllRequests.Any())
             {
                 _logger.LogInformation($"BmllDataRequestsSenderManager received a null or empty requests collection. Returning.");
-                return new IGetTimeBarPair[0];
+                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
             try
@@ -44,7 +47,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                     if (cts.IsCancellationRequested)
                     {
                         _logger.LogError($"BmllDataRequestsSenderManager ran out of time to connect to the API. Returning an empty response.");
-                        return new IGetTimeBarPair[0];
+                        return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
                     }
 
                     _logger.LogError($"BmllDataRequestsSenderManager could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
@@ -70,7 +73,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 {
                     _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
 
-                    return new IGetTimeBarPair[0];
+                    return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
                 }
 
                 // step 1.
@@ -79,7 +82,13 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // step 2.
                 // loop on the status update polling
-                await BlockUntilBmllWorkIsDone(keys);
+                var bmllWorkResult = await BlockUntilBmllWorkIsDone(keys);
+
+                if (bmllWorkResult == BmllStatusMinuteBarResult.CompletedWithFailures
+                    && !completeWithFailures)
+                {
+                    return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(false, new IGetTimeBarPair[0]);
+                }
 
                 // step 3.
                 // get minute bar request
@@ -87,14 +96,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
-                return timeBarResponses;
+                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, timeBarResponses);
             }
             catch (Exception e)
             {
                 _logger?.LogError($"BmllDataRequestSenderManager encountered an unexpected error during processing. {e.Message} {e.InnerException?.Message}");
             }
 
-            return new IGetTimeBarPair[0];
+            return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
         }
 
         public async Task<IReadOnlyCollection<MinuteBarRequestKeyDto>> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
@@ -164,19 +173,25 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger.LogInformation($"BmllDataRequestSenderManager CreateMinuteBarRequest complete");
         }
 
-        private async Task BlockUntilBmllWorkIsDone(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
+        private async Task<BmllStatusMinuteBarResult> BlockUntilBmllWorkIsDone(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
         {
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
 
             var hasSuccess = false;
             var cts = new CancellationTokenSource(1000 * 60 * 60);
+            var minuteBarResult = BmllStatusMinuteBarResult.InProgress;
 
             while (!hasSuccess && !cts.Token.IsCancellationRequested)
             {
                 _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone in loop");
 
                 var request = new GetMinuteBarRequestStatusesRequest { Keys = keys?.ToList() };
-                hasSuccess = await _timeBarRepository.StatusMinuteBars(request);
+
+                minuteBarResult = await _timeBarRepository.StatusMinuteBars(request);
+
+                hasSuccess =
+                    minuteBarResult == BmllStatusMinuteBarResult.Completed 
+                    || minuteBarResult == BmllStatusMinuteBarResult.CompletedWithFailures;
 
                 if (!hasSuccess)
                     Thread.Sleep(1000 * 15);
@@ -188,6 +203,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
+
+            return minuteBarResult;
         }
 
         private async Task<IReadOnlyCollection<IGetTimeBarPair>> GetTimeBars(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)

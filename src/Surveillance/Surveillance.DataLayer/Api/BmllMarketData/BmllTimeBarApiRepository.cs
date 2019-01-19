@@ -78,14 +78,14 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             _logger.LogInformation($"BmllTimeBarApiRepository RequestMinuteBars completed request for {createCommand.Keys.Count} keys to query BMLL for");
         }
 
-        public async Task<bool> StatusMinuteBars(GetMinuteBarRequestStatusesRequest statusCommand)
+        public async Task<BmllStatusMinuteBarResult> StatusMinuteBars(GetMinuteBarRequestStatusesRequest statusCommand)
         {
             if (statusCommand == null
                 || statusCommand.Keys == null
                 || !statusCommand.Keys.Any())
             {
                 _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars was passed 0 keys to request. Returning early with success.");
-                return true;
+                return BmllStatusMinuteBarResult.Completed;
             }
 
             _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars received {statusCommand.Keys.Count} keys to query BMLL for");
@@ -100,7 +100,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                     || !response.IsSuccessStatusCode)
                 {
                     _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
-                    return false;
+                    return BmllStatusMinuteBarResult.InProgress;
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -109,7 +109,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                 if (deserialisedResponse == null)
                 {
                     _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars was unable to deserialise the response");
-                    return false;
+                    return BmllStatusMinuteBarResult.InProgress;
                 }
 
                 _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars returning deserialised GET response");
@@ -121,7 +121,22 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                     MinuteBarRequestStatus.NotFound
                 };
 
-                return deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));
+                var completed = deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));
+
+                if (!completed)
+                {
+                    return BmllStatusMinuteBarResult.InProgress;
+                }
+
+                if (deserialisedResponse.Statuses.Any(i => i.Status == MinuteBarRequestStatus.Failed))
+                {
+                    return BmllStatusMinuteBarResult.CompletedWithFailures;
+                }
+                else
+                {
+                    return BmllStatusMinuteBarResult.Completed;
+                }
+
             }
             catch (Exception e)
             {
@@ -130,7 +145,7 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
 
             _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars completed request for {statusCommand.Keys.Count} keys to query BMLL for");
 
-            return false;
+            return BmllStatusMinuteBarResult.InProgress;
         }
 
         public async Task<GetMinuteBarsResponse> GetMinuteBars(GetMinuteBarsRequest request)

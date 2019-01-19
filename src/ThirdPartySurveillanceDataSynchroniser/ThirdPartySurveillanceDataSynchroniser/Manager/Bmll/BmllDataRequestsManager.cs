@@ -54,10 +54,21 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 }
 
                 // REQUEST IT
-                var requests = await _senderManager.Send(bmllRequests);
+                var requests = await _senderManager.Send(bmllRequests, false);
+                var retries = 5;
+
+                while (!(requests.Success && retries > 0))
+                {
+                    retries -= 1;
+
+                    _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
+
+                    var forceCompletion = retries == 1;
+                    requests = await _senderManager.Send(bmllRequests, forceCompletion);
+                }
 
                 // STORE IT
-                await _storageManager.Store(requests);
+                await _storageManager.Store(requests.Value);
             }
             catch (Exception e)
             {

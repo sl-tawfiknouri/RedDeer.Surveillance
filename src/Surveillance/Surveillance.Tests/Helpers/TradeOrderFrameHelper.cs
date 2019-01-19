@@ -26,6 +26,7 @@ namespace Surveillance.Tests.Helpers
                 market,
                 null,
                 "order-1",
+                DateTime.UtcNow,
                 "version-1",
                 "version-1",
                 "version-1",

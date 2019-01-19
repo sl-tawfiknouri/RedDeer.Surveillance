@@ -101,12 +101,12 @@ namespace DomainV2.Files
             csv.InstrumentUnderlyingBloombergTicker = order.Instrument.Identifiers.UnderlyingBloombergTicker;
 
             csv.OrderId = order.OrderId;
-            csv.OrderPlacedDate = order.OrderPlacedDate.ToString();
-            csv.OrderBookedDate = order.OrderBookedDate.ToString();
-            csv.OrderAmendedDate = order.OrderAmendedDate.ToString();
-            csv.OrderRejectedDate = order.OrderRejectedDate.ToString();
-            csv.OrderCancelledDate = order.OrderCancelledDate.ToString();
-            csv.OrderFilledDate = order.OrderFilledDate.ToString();
+            csv.OrderPlacedDate = order.PlacedDate.ToString();
+            csv.OrderBookedDate = order.BookedDate.ToString();
+            csv.OrderAmendedDate = order.AmendedDate.ToString();
+            csv.OrderRejectedDate = order.RejectedDate.ToString();
+            csv.OrderCancelledDate = order.CancelledDate.ToString();
+            csv.OrderFilledDate = order.FilledDate.ToString();
             csv.OrderType = ((int?) order.OrderType).ToString();
             csv.OrderDirection = ((int?) order.OrderDirection).ToString();
             csv.OrderCurrency = order.OrderCurrency.Value;
@@ -185,6 +185,7 @@ namespace DomainV2.Files
                 market,
                 null,
                 csv.OrderId,
+                DateTime.UtcNow,
                 csv.OrderVersion,
                 csv.OrderVersionLinkId,
                 csv.OrderGroupId,
@@ -254,6 +255,7 @@ namespace DomainV2.Files
                 rejectedDate,
                 cancelledDate,
                 filledDate,
+                DateTime.UtcNow,
                 csv.DealerOrderDealerId,
                 csv.DealerOrderNotes,
                 csv.DealerOrderCounterParty,

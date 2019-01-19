@@ -113,6 +113,7 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "version-1",
                     "version-1",
                     "version-1",

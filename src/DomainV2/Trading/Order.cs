@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Enums;
 using DomainV2.Financial;
+using DomainV2.Trading.Interfaces;
 
 namespace DomainV2.Trading
 {
@@ -11,9 +12,9 @@ namespace DomainV2.Trading
     /// It has associations with dealer orders which are orders
     /// as processed by the firm dealing the trades
     /// </summary>
-    public class Order
+    public class Order : BaseOrder
     {
-        public Order()
+        public Order() : base(null, null, null, null, null, null)
         {
             // used for extension method only
         }
@@ -23,17 +24,18 @@ namespace DomainV2.Trading
             Market market,
             int? reddeerOrderId,
             string orderId,
-
+            DateTime? createdOn,
+            
             string orderVersion,
             string orderVersionLinkId,
             string orderGroupId,
 
-            DateTime? orderPlacedDate,
-            DateTime? orderBookedDate,
-            DateTime? orderAmendedDate,
-            DateTime? orderRejectedDate,
-            DateTime? orderCancelledDate,
-            DateTime? orderFilledDate,
+            DateTime? placedDate,
+            DateTime? bookedDate,
+            DateTime? amendedDate,
+            DateTime? rejectedDate,
+            DateTime? cancelledDate,
+            DateTime? filledDate,
 
             OrderTypes orderType,
             OrderDirections orderDirection,
@@ -53,8 +55,15 @@ namespace DomainV2.Trading
             CurrencyAmount? orderOptionStrikePrice,
             DateTime? orderOptionExpirationDate,
             OptionEuropeanAmerican orderOptionEuropeanAmerican,
-
+            
             IReadOnlyCollection<DealerOrder> trades)
+            : base(
+                placedDate,
+                bookedDate,
+                amendedDate,
+                rejectedDate,
+                cancelledDate,
+                filledDate)
         {
             // keys
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
@@ -68,12 +77,7 @@ namespace DomainV2.Trading
             OrderGroupId = orderGroupId ?? string.Empty;
 
             // dates
-            OrderPlacedDate = orderPlacedDate;
-            OrderBookedDate = orderBookedDate;
-            OrderAmendedDate = orderAmendedDate;
-            OrderRejectedDate = orderRejectedDate;
-            OrderCancelledDate = orderCancelledDate;
-            OrderFilledDate = orderFilledDate;
+            CreatedOnDate = createdOn;
 
             // order fundamentals
             OrderType = orderType;
@@ -116,13 +120,9 @@ namespace DomainV2.Trading
         public DateTime? OrderOptionExpirationDate { get; set; }
         public OptionEuropeanAmerican OrderOptionEuropeanAmerican { get; set; }
 
-        // Dates
-        public DateTime? OrderPlacedDate { get; set; }
-        public DateTime? OrderBookedDate { get; set; }
-        public DateTime? OrderAmendedDate { get; set; }
-        public DateTime? OrderRejectedDate { get; set; }
-        public DateTime? OrderCancelledDate { get; set; }
-        public DateTime? OrderFilledDate { get; set; }
+
+        public DateTime? CreatedOnDate { get; set; }
+
 
         public OrderTypes OrderType { get; set; }
         public OrderDirections OrderDirection { get; set; }
@@ -139,10 +139,9 @@ namespace DomainV2.Trading
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
 
+
         public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
-
-
-
+        
 
         // Accounting attribution Properties
         public string OrderFund { get; set; } = string.Empty;
@@ -160,12 +159,12 @@ namespace DomainV2.Trading
         {
             var dates = new[]
             {
-                OrderPlacedDate,
-                OrderBookedDate,
-                OrderAmendedDate,
-                OrderRejectedDate,
-                OrderCancelledDate,
-                OrderFilledDate
+                PlacedDate,
+                BookedDate,
+                AmendedDate,
+                RejectedDate,
+                CancelledDate,
+                FilledDate
             };
 
             var filteredDates = dates.Where(dat => dat != null).ToList();
@@ -176,41 +175,6 @@ namespace DomainV2.Trading
 
             // placed should never be null i.e. this shouldn't call datetime.now
             return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.UtcNow; 
-        }
-
-        public OrderStatus OrderStatus()
-        {
-            if (OrderFilledDate != null)
-            {
-                return Financial.OrderStatus.Filled;
-            }
-
-            if (OrderCancelledDate != null)
-            {
-                return Financial.OrderStatus.Cancelled;
-            }
-
-            if (OrderRejectedDate != null)
-            {
-                return Financial.OrderStatus.Rejected;
-            }
-
-            if (OrderAmendedDate != null)
-            {
-                return Financial.OrderStatus.Amended;
-            }
-
-            if (OrderBookedDate != null)
-            {
-                return Financial.OrderStatus.Booked;
-            }
-
-            if (OrderPlacedDate != null)
-            {
-                return Financial.OrderStatus.Placed;
-            }
-
-            return Financial.OrderStatus.Unknown;
         }
 
         public override string ToString()

@@ -233,15 +233,15 @@ namespace Surveillance.Tests.Rules.WashTrades
             tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
-            tr1.OrderFilledDate = DateTime.UtcNow;
-            tr2.OrderFilledDate = DateTime.UtcNow;
+            tr1.FilledDate = DateTime.UtcNow;
+            tr2.FilledDate = DateTime.UtcNow;
 
             tr3.OrderDirection = OrderDirections.BUY;
             tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 950;
             tr3.OrderFilledVolume = 1500;
-            tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
-            tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr3.FilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr4.FilledDate = DateTime.UtcNow.AddMinutes(5);
 
             var trades = new List<Order> { tr1, tr2, tr3, tr4 };
             var result = rule.ClusteringTrades(trades);
@@ -322,22 +322,22 @@ namespace Surveillance.Tests.Rules.WashTrades
             tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
-            tr1.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
-            tr2.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr1.FilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr2.FilledDate = DateTime.UtcNow.AddMinutes(5);
 
             tr3.OrderDirection = OrderDirections.BUY;
             tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
-            tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
-            tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
+            tr3.FilledDate = DateTime.UtcNow.AddMinutes(10);
+            tr4.FilledDate = DateTime.UtcNow.AddMinutes(10);
 
             tr5.OrderDirection = OrderDirections.BUY;
             tr6.OrderDirection = OrderDirections.SELL;
             tr6.OrderFilledVolume = 1500;
             tr5.OrderFilledVolume = 1500;
-            tr5.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
-            tr6.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
+            tr5.FilledDate = DateTime.UtcNow.AddMinutes(15);
+            tr6.FilledDate = DateTime.UtcNow.AddMinutes(15);
 
             var trades = new List<Order> { tr1, tr2, tr3, tr4, tr5, tr6 };
             var result = rule.ClusteringTrades(trades);
@@ -382,29 +382,29 @@ namespace Surveillance.Tests.Rules.WashTrades
             tr2.OrderDirection = OrderDirections.SELL;
             tr1.OrderFilledVolume = 950;
             tr2.OrderFilledVolume = 1000;
-            tr1.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
-            tr2.OrderFilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr1.FilledDate = DateTime.UtcNow.AddMinutes(5);
+            tr2.FilledDate = DateTime.UtcNow.AddMinutes(5);
 
             tr11.OrderDirection = OrderDirections.BUY;
             tr22.OrderDirection = OrderDirections.SELL;
             tr11.OrderFilledVolume = 950;
             tr22.OrderFilledVolume = 1000;
-            tr11.OrderFilledDate = DateTime.UtcNow.AddMinutes(6);
-            tr22.OrderFilledDate = DateTime.UtcNow.AddMinutes(6);
+            tr11.FilledDate = DateTime.UtcNow.AddMinutes(6);
+            tr22.FilledDate = DateTime.UtcNow.AddMinutes(6);
 
             tr3.OrderDirection = OrderDirections.BUY;
             tr4.OrderDirection = OrderDirections.SELL;
             tr4.OrderFilledVolume = 1500;
             tr3.OrderFilledVolume = 1500;
-            tr3.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
-            tr4.OrderFilledDate = DateTime.UtcNow.AddMinutes(10);
+            tr3.FilledDate = DateTime.UtcNow.AddMinutes(10);
+            tr4.FilledDate = DateTime.UtcNow.AddMinutes(10);
 
             tr5.OrderDirection = OrderDirections.BUY;
             tr6.OrderDirection = OrderDirections.SELL;
             tr6.OrderFilledVolume = 1500;
             tr5.OrderFilledVolume = 1500;
-            tr5.OrderFilledDate = DateTime.UtcNow.AddMinutes(15);
-            tr6.OrderFilledDate = DateTime.UtcNow.AddMinutes(20);
+            tr5.FilledDate = DateTime.UtcNow.AddMinutes(15);
+            tr6.FilledDate = DateTime.UtcNow.AddMinutes(20);
 
             var trades = new List<Order> { tr1, tr2, tr3, tr4, tr5, tr6, tr11, tr22 };
             var result = rule.ClusteringTrades(trades);

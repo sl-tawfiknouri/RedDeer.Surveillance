@@ -56,6 +56,7 @@ namespace TestHarness.Tests.Display
                 stock,
                 null,
                 Guid.NewGuid().ToString(),
+                DateTime.UtcNow,
                 "version-1",
                 "version-1",
                 "version-1",

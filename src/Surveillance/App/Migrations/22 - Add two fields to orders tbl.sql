@@ -9,6 +9,9 @@ START TRANSACTION;
     INSERT INTO Migrations VALUES(22, "Add two fields to orders tbl.sql", now());
 	   
 	ALTER TABLE Orders ADD CreatedDate DateTime NOT NULL DEFAULT now();
-	ALTER TABLE ORDERS ADD LifeCycleStatus INT NOT NULL DEFAULT 0;
+	ALTER TABLE Orders ADD LifeCycleStatus INT NOT NULL DEFAULT 0;
+
+	ALTER TABLE DealerOrders ADD CreatedDate DateTime NOT NULL DEFAULT now();
+	ALTER TABLE DealerOrders ADD LifeCycleStatus INT NOT NULL DEFAULT 0;
 
 COMMIT;

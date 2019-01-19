@@ -226,6 +226,7 @@ namespace TestHarness.Engine.OrderGenerator
                     exchange,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "order-v1",
                     "order-v1",
                     "order-group-v1",

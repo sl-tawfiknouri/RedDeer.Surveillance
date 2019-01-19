@@ -116,7 +116,7 @@ namespace Surveillance.Tests.Universe
             Assert.AreEqual(result.Trades.FirstOrDefault(), frame);
             Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
-            Assert.AreEqual(result.UniverseEvents.Skip(2).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
+            Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
 
             A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();
         }

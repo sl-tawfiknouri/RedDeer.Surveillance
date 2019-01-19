@@ -59,12 +59,12 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 while (!(requests.Success && retries > 0))
                 {
-                    retries -= 1;
-
                     _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
 
                     var forceCompletion = retries == 1;
                     requests = await _senderManager.Send(bmllRequests, forceCompletion);
+
+                    retries -= 1;
                 }
 
                 // STORE IT

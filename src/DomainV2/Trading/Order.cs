@@ -24,7 +24,7 @@ namespace DomainV2.Trading
             Market market,
             int? reddeerOrderId,
             string orderId,
-            DateTime? createdOn,
+            DateTime? created,
             
             string orderVersion,
             string orderVersionLinkId,
@@ -77,7 +77,7 @@ namespace DomainV2.Trading
             OrderGroupId = orderGroupId ?? string.Empty;
 
             // dates
-            CreatedOnDate = createdOn;
+            CreatedDate = created;
 
             // order fundamentals
             OrderType = orderType;
@@ -121,7 +121,7 @@ namespace DomainV2.Trading
         public OptionEuropeanAmerican OrderOptionEuropeanAmerican { get; set; }
 
 
-        public DateTime? CreatedOnDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
 
         public OrderTypes OrderType { get; set; }

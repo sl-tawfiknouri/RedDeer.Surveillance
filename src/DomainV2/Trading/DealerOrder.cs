@@ -17,7 +17,7 @@ namespace DomainV2.Trading
             DateTime? rejectedDate,
             DateTime? cancelledDate,
             DateTime? filledDate,
-            DateTime? createdOn,
+            DateTime? createdDate,
             string traderId,
             string notes,
             string tradeCounterParty,
@@ -49,7 +49,7 @@ namespace DomainV2.Trading
             ReddeerDealerOrderId = reddeerTradeId ?? string.Empty;
             DealerOrderId = tradeId ?? string.Empty;
 
-            CreatedOn = createdOn;
+            CreatedDate = createdDate;
 
             DealerId = traderId ?? string.Empty;
             Notes = notes ?? string.Empty;
@@ -78,7 +78,7 @@ namespace DomainV2.Trading
         public string ReddeerDealerOrderId { get; } // primary key
         public string DealerOrderId { get; } // the client id for the trade
 
-        public DateTime? CreatedOn { get; }
+        public DateTime? CreatedDate { get; }
 
         public string DealerId { get; }
         public string Notes { get; }

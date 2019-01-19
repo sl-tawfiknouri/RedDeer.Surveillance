@@ -162,8 +162,8 @@ namespace DomainV2.Files
             var orderDirection = MapToEnum<OrderDirections>(csv.OrderDirection);
             var orderCurrency = new Currency(csv.OrderCurrency);
             var orderSettlementCurrency =
-                !string.IsNullOrWhiteSpace(csv.OrderCurrency) 
-                    ? (Currency?)new Currency(csv.OrderCurrency) 
+                !string.IsNullOrWhiteSpace(csv.OrderSettlementCurrency) 
+                    ? (Currency?)new Currency(csv.OrderSettlementCurrency) 
                     : null;
 
             var orderCleanDirty = MapToEnum<OrderCleanDirty>(csv.OrderCleanDirty);

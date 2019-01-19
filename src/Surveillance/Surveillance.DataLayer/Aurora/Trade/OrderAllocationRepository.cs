@@ -13,9 +13,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
         private readonly ILogger<OrderAllocationRepository> _logger;
 
         private const string InsertAttributionSql = @"
-            INSERT IGNORE INTO 
+            INSERT INTO 
                 OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume)
-                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume);";
+                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume)
+            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume;";
 
         private const string GetAttributionSql = @"
             SELECT

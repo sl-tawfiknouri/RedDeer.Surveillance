@@ -80,7 +80,37 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderDealingInstructions,
                 @OptionStrikePrice,
                 @OptionExpirationDate,
-                @OptionEuropeanAmerican);
+                @OptionEuropeanAmerican)
+            ON DUPLICATE KEY UPDATE
+                MarketId = @MarketId,
+                SecurityId = @SecurityReddeerId,
+                ClientOrderId =@OrderId,
+                OrderVersion=@OrderVersion,
+                OrderVersionLinkId=@OrderVersionLinkId,
+                OrderGroupId=@OrderGroupId,
+                PlacedDate=@OrderPlacedDate,
+                BookedDate=@OrderBookedDate,
+                AmendedDate=@OrderAmendedDate,
+                RejectedDate=@OrderRejectedDate,
+                CancelledDate=@OrderCancelledDate,
+                FilledDate=@OrderFilledDate,
+                StatusChangedDate=@OrderStatusChangedDate,
+                OrderType=@OrderType,
+                Direction=@OrderDirection,
+                Currency=@OrderCurrency,
+                SettlementCurrency=@OrderSettlementCurrency,
+                CleanDirty=@CleanDirty,
+                AccumulatedInterest=@AccumulatedInterest,
+                LimitPrice=@OrderLimitPrice,
+                AverageFillPrice=@OrderAverageFillPrice,
+                OrderedVolume=@OrderOrderedVolume,
+                FilledVolume=@OrderFilledVolume,
+                TraderId=@OrderTraderId,
+                ClearingAgent=@OrderClearingAgent,
+                DealingInstructions=@OrderDealingInstructions,
+                OptionStrikePrice=@OptionStrikePrice,
+                OptionExpirationDate=@OptionExpirationDate,
+                OptionEuropeanAmerican=@OptionEuropeanAmerican;
                 SELECT LAST_INSERT_ID();";
 
         private const string InsertTradeSql = @"
@@ -141,7 +171,36 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @FilledVolume,
                 @OptionStrikePrice,
                 @OptionExpirationDate,
-                @OptionEuropeanAmerican);
+                @OptionEuropeanAmerican)
+            ON DUPLICATE KEY UPDATE
+                OrderId = @OrderId,
+                ClientDealerOrderId = @ClientDealerOrderId,
+                DealerOrderVersion = @DealerOrderVersion,
+                DealerOrderVersionLinkId = @DealerOrderVersionLinkId,
+                DealerOrderGroupId = @DealerOrderGroupId,
+                PlacedDate = @PlacedDate,
+                BookedDate = @BookedDate,
+                AmendedDate = @AmendedDate,
+                RejectedDate = @RejectedDate,
+                CancelledDate = @CancelledDate,
+                FilledDate = @FilledDate,
+                StatusChangedDate = @StatusChangedDate,
+                DealerId = @DealerId,
+                Notes = @Notes,
+                CounterParty = @CounterParty,
+                OrderType = @OrderType,
+                Direction = @Direction,
+                Currency = @Currency,
+                SettlementCurrency = @SettlementCurrency,
+                CleanDirty = @CleanDirty,
+                AccumulatedInterest = @AccumulatedInterest,
+                LimitPrice = @LimitPrice,
+                AverageFillPrice = @AverageFillPrice,
+                OrderedVolume = @OrderedVolume,
+                FilledVolume = @FilledVolume,
+                OptionStrikePrice = @OptionStrikePrice,
+                OptionExpirationDate = @OptionExpirationDate,
+                OptionEuropeanAmerican = @OptionEuropeanAmerican;
                 SELECT LAST_INSERT_ID();";
 
         private const string GetSql = @"

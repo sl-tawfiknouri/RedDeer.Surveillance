@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator
             _logger = A.Fake<ILogger>();
 
             A
-                .CallTo(() => _stockStream.Subscribe(A<IObserver<MarketTimeBarCollection>>.Ignored))
+                .CallTo(() => _stockStream.Subscribe(A<IObserver<EquityIntraDayTimeBarCollection>>.Ignored))
                 .Returns(_unsubscriber);
         }
 

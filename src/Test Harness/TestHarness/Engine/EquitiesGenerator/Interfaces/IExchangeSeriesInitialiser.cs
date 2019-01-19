@@ -4,6 +4,6 @@ namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {
     public interface IExchangeSeriesInitialiser
     {
-        MarketTimeBarCollection InitialFrame();
+        EquityIntraDayTimeBarCollection InitialFrame();
     }
 }

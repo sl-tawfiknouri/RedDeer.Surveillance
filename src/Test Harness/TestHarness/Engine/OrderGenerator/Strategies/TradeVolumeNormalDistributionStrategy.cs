@@ -15,7 +15,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _sd = sd;
         }
 
-        public int CalculateSecuritiesToTrade(IReadOnlyCollection<FinancialInstrumentTimeBar> frames)
+        public int CalculateSecuritiesToTrade(IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> frames)
         {
             var tradingMean = TradingMean(frames);
             var totalSecuritiesToTrade = (int)Normal.Sample(tradingMean, _sd);
@@ -24,7 +24,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return adjustedSecuritiesToTrade;
         }
 
-        private int TradingMean(IReadOnlyCollection<FinancialInstrumentTimeBar> frames)
+        private int TradingMean(IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> frames)
         {
             var rawCount = frames.Count;
 

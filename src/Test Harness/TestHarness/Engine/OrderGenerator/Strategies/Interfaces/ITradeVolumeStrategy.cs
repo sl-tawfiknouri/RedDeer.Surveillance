@@ -5,6 +5,6 @@ namespace TestHarness.Engine.OrderGenerator.Strategies.Interfaces
 {
     public interface ITradeVolumeStrategy
     {
-        int CalculateSecuritiesToTrade(IReadOnlyCollection<FinancialInstrumentTimeBar> frames);
+        int CalculateSecuritiesToTrade(IReadOnlyCollection<EquityInstrumentIntraDayTimeBar> frames);
     }
 }

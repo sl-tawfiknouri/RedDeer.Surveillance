@@ -47,7 +47,7 @@ namespace TestHarness.Display
             }
         }
 
-        public void OutputMarketFrame(MarketTimeBarCollection frame)
+        public void OutputMarketFrame(EquityIntraDayTimeBarCollection frame)
         {
             lock (_lock)
             {

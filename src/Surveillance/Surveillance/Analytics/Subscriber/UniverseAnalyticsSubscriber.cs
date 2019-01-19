@@ -65,19 +65,19 @@ namespace Surveillance.Analytics.Subscriber
                 case UniverseStateEvent.Eschaton:
                     Eschaton();
                     break;
-                case UniverseStateEvent.StockMarketClose:
+                case UniverseStateEvent.ExchangeClose:
                     Analytics.StockMarketCloseCount += 1;
                     break;
-                case UniverseStateEvent.StockMarketOpen:
+                case UniverseStateEvent.ExchangeOpen:
                     MarketOpen(value);
                     break;
-                case UniverseStateEvent.StockTickReddeer:
+                case UniverseStateEvent.EquityIntradayTick:
                     StockTick(value);
                     break;
-                case UniverseStateEvent.TradeReddeer:
+                case UniverseStateEvent.Order:
                     TradeUpdate(value);
                     break;
-                case UniverseStateEvent.TradeReddeerSubmitted:
+                case UniverseStateEvent.OrderPlaced:
                     Analytics.TradeReddeerSubmittedCount += 1;
                     break;
                 case UniverseStateEvent.Unknown:
@@ -109,7 +109,7 @@ namespace Surveillance.Analytics.Subscriber
         {
             Analytics.StockTickReddeerCount += 1;
 
-            var exchangeFrame = (MarketTimeBarCollection) value.UnderlyingEvent;
+            var exchangeFrame = (EquityIntraDayTimeBarCollection) value.UnderlyingEvent;
 
             if (exchangeFrame?.Securities == null)
             {

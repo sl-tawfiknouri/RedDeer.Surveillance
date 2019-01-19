@@ -24,7 +24,7 @@ namespace TestHarness.Engine.EquitiesGenerator
         private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
-        private MarketTimeBarCollection _activeFrame;
+        private EquityIntraDayTimeBarCollection _activeFrame;
         private readonly ILogger _logger;
 
         private readonly object _stateTransitionLock = new object();
@@ -86,7 +86,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             }
         }
 
-        private void AdvanceFrames(ExchangeDto market, MarketTimeBarCollection frame)
+        private void AdvanceFrames(ExchangeDto market, EquityIntraDayTimeBarCollection frame)
         {
             if (frame.Epoch.TimeOfDay > market.MarketCloseTime)
             {
@@ -170,7 +170,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                     .Select(sec => strategy.AdvanceFrame(sec, advanceTick, false))
                     .ToArray();
 
-                var tickTock = new MarketTimeBarCollection(_activeFrame.Exchange, advanceTick, tockedSecurities);
+                var tickTock = new EquityIntraDayTimeBarCollection(_activeFrame.Exchange, advanceTick, tockedSecurities);
                 _activeFrame = tickTock;
 
                 _stream.Add(tickTock);

@@ -3,6 +3,6 @@
     public interface ISecurityCsvToDtoMapper
     {
         int FailedParseTotal { get; set; }
-        FinancialInstrumentTimeBar Map(FinancialInstrumentTimeBarCsv csv);
+        EquityInstrumentIntraDayTimeBar Map(FinancialInstrumentTimeBarCsv csv);
     }
 }

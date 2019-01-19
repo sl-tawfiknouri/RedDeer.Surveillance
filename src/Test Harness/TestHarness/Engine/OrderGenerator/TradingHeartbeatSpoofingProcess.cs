@@ -16,7 +16,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// </summary>
     public class TradingHeartbeatSpoofingProcess : BaseTradingProcess
     {
-        private MarketTimeBarCollection _lastFrame;
+        private EquityIntraDayTimeBarCollection _lastFrame;
         private readonly IPulsatingHeartbeat _heartbeat;
 
         private volatile bool _initiated;
@@ -31,7 +31,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             lock (_lock)
             {
@@ -88,7 +88,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private Order[] SpoofedOrder(FinancialInstrumentTimeBar security, int remainingSpoofedOrders, int totalSpoofedOrders)
+        private Order[] SpoofedOrder(EquityInstrumentIntraDayTimeBar security, int remainingSpoofedOrders, int totalSpoofedOrders)
         {
             if (security == null
                 || remainingSpoofedOrders <= 0)
@@ -146,7 +146,7 @@ namespace TestHarness.Engine.OrderGenerator
                 .ToArray();
         }
 
-        private Order CounterTrade(FinancialInstrumentTimeBar security)
+        private Order CounterTrade(EquityInstrumentIntraDayTimeBar security)
         {
             var volumeToTrade = (int)Math.Round(security.SpreadTimeBar.Volume.Traded * 0.01m, MidpointRounding.AwayFromZero);
             var statusChangedOn = DateTime.UtcNow;

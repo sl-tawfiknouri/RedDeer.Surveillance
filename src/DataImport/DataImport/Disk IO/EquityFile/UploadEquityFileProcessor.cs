@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.EquityFile
 {
-    public class UploadEquityFileProcessor : BaseUploadFileProcessor<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection>, IUploadEquityFileProcessor
+    public class UploadEquityFileProcessor : BaseUploadFileProcessor<FinancialInstrumentTimeBarCsv, EquityIntraDayTimeBarCollection>, IUploadEquityFileProcessor
     {
         private readonly ISecurityCsvToDtoMapper _csvToDtoMapper;
 
@@ -77,7 +77,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         protected override void MapRecord(
             FinancialInstrumentTimeBarCsv record,
-            List<MarketTimeBarCollection> marketUpdates,
+            List<EquityIntraDayTimeBarCollection> marketUpdates,
             List<FinancialInstrumentTimeBarCsv> failedMarketUpdateReads)
         {
             var mappedRecord = _csvToDtoMapper.Map(record);
@@ -98,8 +98,8 @@ namespace DataImport.Disk_IO.EquityFile
             {
                 foreach (var match in matchingExchange)
                 {
-                    var newSecurities = new List<FinancialInstrumentTimeBar>(match.Securities) {mappedRecord};
-                    var newExch = new MarketTimeBarCollection(match.Exchange, match.Epoch, newSecurities);
+                    var newSecurities = new List<EquityInstrumentIntraDayTimeBar>(match.Securities) {mappedRecord};
+                    var newExch = new EquityIntraDayTimeBarCollection(match.Exchange, match.Epoch, newSecurities);
                     marketUpdates.Remove(match);
                     marketUpdates.Add(newExch);
                 }
@@ -107,7 +107,7 @@ namespace DataImport.Disk_IO.EquityFile
             else
             {
                 var exchange = new Market(string.Empty, record.MarketIdentifierCode, record.MarketName, MarketTypes.STOCKEXCHANGE);
-                var exchangeFrame = new MarketTimeBarCollection(exchange, mappedRecord.TimeStamp, new List<FinancialInstrumentTimeBar> { mappedRecord });
+                var exchangeFrame = new EquityIntraDayTimeBarCollection(exchange, mappedRecord.TimeStamp, new List<EquityInstrumentIntraDayTimeBar> { mappedRecord });
                 marketUpdates.Add(exchangeFrame);
             }
         }

@@ -32,7 +32,7 @@ namespace TestHarness.Engine.OrderGenerator
             _baseGenerator.OnError(error);
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -46,9 +46,9 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.Where(sec =>
                         !_sedols.Contains(sec?.Security.Identifiers.Sedol, StringComparer.CurrentCultureIgnoreCase))
                     .ToList()
-                ?? new List<FinancialInstrumentTimeBar>();
+                ?? new List<EquityInstrumentIntraDayTimeBar>();
 
-            var filteredFrame = new MarketTimeBarCollection(value.Exchange, value.Epoch, filteredSecurities);
+            var filteredFrame = new EquityIntraDayTimeBarCollection(value.Exchange, value.Epoch, filteredSecurities);
 
             _baseGenerator.OnNext(filteredFrame);
         }

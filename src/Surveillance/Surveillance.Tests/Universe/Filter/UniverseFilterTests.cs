@@ -88,11 +88,11 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order) null).Random();
             accOne.OrderClientAccountAttributionId = "abc";
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.OrderClientAccountAttributionId = "def";
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -116,11 +116,11 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.OrderClientAccountAttributionId = "abc";
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.OrderClientAccountAttributionId = "def";
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -144,11 +144,11 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.OrderClientAccountAttributionId = "abc";
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.OrderClientAccountAttributionId = "def";
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -172,11 +172,11 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.OrderTraderId = "abc";
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.OrderTraderId = "def";
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -200,11 +200,11 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.OrderTraderId = "abc";
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.OrderTraderId = "def";
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -228,17 +228,17 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.Market = new Market("1", "abc", "abc", MarketTypes.STOCKEXCHANGE);
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.Market = new Market("1", "def", "def", MarketTypes.STOCKEXCHANGE);
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new MarketTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
-            var eventThree = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeOne);
+            var exchangeOne = new EquityIntraDayTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
+            var eventThree = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new MarketTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
-            var eventFour = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeTwo);
+            var exchangeTwo = new EquityIntraDayTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
+            var eventFour = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);
@@ -266,17 +266,17 @@ namespace Surveillance.Tests.Universe.Filter
 
             var accOne = ((Order)null).Random();
             accOne.Market = new Market("1", "abc", "abc", MarketTypes.STOCKEXCHANGE);
-            var eventOne = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accOne);
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accOne);
 
             var accTwo = ((Order)null).Random();
             accTwo.Market = new Market("1", "def", "def", MarketTypes.STOCKEXCHANGE);
-            var eventTwo = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, accTwo);
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, accTwo);
 
-            var exchangeOne = new MarketTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
-            var eventThree = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeOne);
+            var exchangeOne = new EquityIntraDayTimeBarCollection(new Market("1", "ghi", "ghi", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
+            var eventThree = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeOne);
 
-            var exchangeTwo = new MarketTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new FinancialInstrumentTimeBar[0]);
-            var eventFour = new UniverseEvent(UniverseStateEvent.StockTickReddeer, DateTime.UtcNow, exchangeTwo);
+            var exchangeTwo = new EquityIntraDayTimeBarCollection(new Market("1", "jkl", "jkl", MarketTypes.STOCKEXCHANGE), DateTime.UtcNow, new EquityInstrumentIntraDayTimeBar[0]);
+            var eventFour = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, DateTime.UtcNow, exchangeTwo);
 
             filter.OnNext(eventOne);
             filter.OnNext(eventTwo);

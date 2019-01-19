@@ -32,7 +32,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -80,7 +80,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         }
 
-        private void WashTradeInSecurityWithClustering(string sedol, MarketTimeBarCollection value, int clusterSize)
+        private void WashTradeInSecurityWithClustering(string sedol, EquityIntraDayTimeBarCollection value, int clusterSize)
         {
             if (value == null)
             {

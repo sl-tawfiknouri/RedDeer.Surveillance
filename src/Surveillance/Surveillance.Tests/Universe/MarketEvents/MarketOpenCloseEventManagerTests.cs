@@ -92,7 +92,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
             Assert.AreEqual(results.Count, 4);
             Assert.IsNotNull(firstResult);
             Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
-            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
+            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.ExchangeOpen);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace Surveillance.Tests.Universe.MarketEvents
             Assert.AreEqual(results.Count, 5);
             Assert.IsNotNull(closeResult);
             Assert.AreEqual(closeResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
-            Assert.AreEqual(closeResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(closeResult.StateChange, UniverseStateEvent.ExchangeClose);
         }
 
         [Test]
@@ -126,11 +126,11 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             Assert.IsNotNull(firstResult);
             Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
-            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
+            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.ExchangeOpen);
 
             Assert.IsNotNull(secondResult);
             Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
-            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.ExchangeClose);
         }
 
         [Test]
@@ -149,15 +149,15 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             Assert.IsNotNull(firstResult);
             Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 8, 0, 0));
-            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketOpen);
+            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.ExchangeOpen);
 
             Assert.IsNotNull(secondResult);
             Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
-            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.ExchangeClose);
 
             Assert.IsNotNull(thirdResult);
             Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 8, 0, 0));
-            Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketOpen);
+            Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.ExchangeOpen);
         }
 
         [Test]
@@ -176,15 +176,15 @@ namespace Surveillance.Tests.Universe.MarketEvents
 
             Assert.IsNotNull(firstResult);
             Assert.AreEqual(firstResult.EventTime, new DateTime(2000, 1, 1, 16, 30, 0));
-            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(firstResult.StateChange, UniverseStateEvent.ExchangeClose);
 
             Assert.IsNotNull(secondResult);
             Assert.AreEqual(secondResult.EventTime, new DateTime(2000, 1, 2, 8, 0, 0));
-            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.StockMarketOpen);
+            Assert.AreEqual(secondResult.StateChange, UniverseStateEvent.ExchangeOpen);
 
             Assert.IsNotNull(thirdResult);
             Assert.AreEqual(thirdResult.EventTime, new DateTime(2000, 1, 2, 16, 30, 0));
-            Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.StockMarketClose);
+            Assert.AreEqual(thirdResult.StateChange, UniverseStateEvent.ExchangeClose);
         }
 
         [Test]

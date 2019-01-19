@@ -88,25 +88,8 @@ namespace Surveillance.DataLayer.Aurora.Market
                 ClosePrice = item.ClosePrice;
                 HighIntradayPrice = item.HighIntradayPrice;
                 LowIntradayPrice = item.LowIntradayPrice;
-                MarketCap = CalculateMarketCap(item);
+                MarketCap = item.MarketCapitalisation;
                 DailyVolume = item.DailyVolume;
-            }
-
-            private decimal? CalculateMarketCap(FactsetSecurityDailyResponseItem item)
-            {
-                if (item == null
-                    || item.MarketCapitalisationUsd == null
-                    || item.MarketCapitalisationUsd == 0
-                    || item.OpenPriceUsd == null
-                    || item.OpenPriceUsd == 0
-                    || item.OpenPrice == null
-                    || item.OpenPrice == 0)
-                {
-                    return null;
-                }
-
-                var vol = item.MarketCapitalisationUsd.Value / item.OpenPriceUsd.Value;
-                return vol * item.OpenPrice;
             }
 
             public DateTime Epoch { get; set; }

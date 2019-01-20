@@ -8,6 +8,7 @@ namespace DomainV2.Trading
         private readonly decimal _weighting;
 
         private readonly long? _baseOrderFilledVolume;
+        private readonly long? _baseOrderOrderedVolume;
 
         public OrderAllocationDecorator(
             Order order, 
@@ -46,6 +47,7 @@ namespace DomainV2.Trading
         {
             _orderAllocation = orderAllocation ?? throw new ArgumentNullException(nameof(orderAllocation));
             _baseOrderFilledVolume = order.OrderFilledVolume;
+            _baseOrderOrderedVolume = order.OrderOrderedVolume;
             _weighting = OrderAllocationWeighting();
         }
 
@@ -75,7 +77,7 @@ namespace DomainV2.Trading
 
         public override long? OrderOrderedVolume
         {
-            get => (long?)(_orderAllocation.OrderFilledVolume * _weighting);
+            get => (long?)(_baseOrderOrderedVolume * _weighting);
             set { }
         }
 

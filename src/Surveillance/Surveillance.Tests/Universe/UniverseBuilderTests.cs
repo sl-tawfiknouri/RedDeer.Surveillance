@@ -10,9 +10,11 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
+using Surveillance.Trades.Interfaces;
 using Surveillance.Universe;
 using Surveillance.Universe.MarketEvents.Interfaces;
 using Surveillance.Universe.Interfaces;
@@ -24,6 +26,7 @@ namespace Surveillance.Tests.Universe
     public class UniverseBuilderTests
     {
         private IOrdersRepository _auroraOrdersRepository;
+        private IOrdersToAllocatedOrdersProjector _orderAllocationProjector;
         private IReddeerMarketRepository _auroraMarketRepository;
         private IMarketOpenCloseEventManager _marketManager;
         private ISystemProcessOperationContext _opCtx;
@@ -34,6 +37,7 @@ namespace Surveillance.Tests.Universe
         public void Setup()
         {
             _auroraOrdersRepository = A.Fake<IOrdersRepository>();
+            _orderAllocationProjector = A.Fake<IOrdersToAllocatedOrdersProjector>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
             _marketManager = A.Fake<IMarketOpenCloseEventManager>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
@@ -47,6 +51,7 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _auroraOrdersRepository,
+                    _orderAllocationProjector,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -65,6 +70,7 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _auroraOrdersRepository,
+                    _orderAllocationProjector,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -92,6 +98,7 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _auroraOrdersRepository,
+                    _orderAllocationProjector,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -129,6 +136,7 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _auroraOrdersRepository,
+                    _orderAllocationProjector,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,
@@ -174,6 +182,7 @@ namespace Surveillance.Tests.Universe
             var builder =
                 new UniverseBuilder(
                     _auroraOrdersRepository,
+                    _orderAllocationProjector,
                     _auroraMarketRepository,
                     _marketManager,
                     _sortComparer,

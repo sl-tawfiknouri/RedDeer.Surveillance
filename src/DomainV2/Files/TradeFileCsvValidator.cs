@@ -82,52 +82,62 @@ namespace DomainV2.Files
         {
             RuleFor(x => x.InstrumentUnderlyingSedol)
                 .Length(7)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingSedol));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingSedol))
+                .WithMessage("Instrument Underlying Sedol must have a length of 7 characters when it is provided");
 
             RuleFor(x => x.InstrumentUnderlyingIsin)
                 .Length(12)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingIsin));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingIsin))
+                .WithMessage("Instrument Underlying ISIN must have a length of 12 characters when it is provided");
 
             RuleFor(x => x.InstrumentUnderlyingCusip)
                 .MinimumLength(6)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingCusip));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingCusip))
+                .WithMessage("Instrument Underlying CUSIP must have a minimum length of 6 characters when it is provided");
 
             RuleFor(x => x.InstrumentUnderlyingCusip)
                 .MaximumLength(9)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingCusip));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingCusip))
+                .WithMessage("Instrument Underlying CUSIP must have a maximum length of 9 characters when it is provided");
 
             RuleFor(x => x.InstrumentUnderlyingLei)
                 .Length(20)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingLei));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingLei))
+                .WithMessage("Instrument Underlying LEI must have a length of 20 characters when it is provided");
 
             RuleFor(x => x.InstrumentUnderlyingFigi)
                 .Length(12)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingFigi));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingFigi))
+                .WithMessage("Instrument Underlying FIGI must have a length of 12 characters when it is provided");
         }
 
         private void RulesForOrderProperties()
         {
-            RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1).MaximumLength(255);
-            RuleFor(x => x.OrderTraderId).MaximumLength(255);
-            RuleFor(x => x.OrderVersion).MaximumLength(255);
-            RuleFor(x => x.OrderVersionLinkId).MaximumLength(255);
-            RuleFor(x => x.OrderGroupId).MaximumLength(255);
+            RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1).MaximumLength(255).WithMessage("OrderId must have a length between 1 and 255 characters");
+            RuleFor(x => x.OrderTraderId).MaximumLength(255).WithMessage("OrderTraderId must have a maximum length of 255 characters");
+            RuleFor(x => x.OrderVersion).MaximumLength(255).WithMessage("OrderVersion must have a maximum length of 255 characters");
+            RuleFor(x => x.OrderVersionLinkId).MaximumLength(255).WithMessage("OrderVersionLinkId must have a maximum length of 255 characters");
+            RuleFor(x => x.OrderGroupId).MaximumLength(255).WithMessage("OrderGroupId must have a maximum length of 255 characters");
 
-            RuleFor(x => x.OrderCurrency).NotEmpty().MaximumLength(3).MinimumLength(3);
-            RuleFor(x => x.OrderSettlementCurrency).MaximumLength(3).MinimumLength(3)
-                .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency));
+            RuleFor(x => x.OrderCurrency).NotEmpty().Length(3).WithMessage("OrderCurrency must have a length of 3 characters"); ;
+            RuleFor(x => x.OrderSettlementCurrency).Length(3)
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency))
+                .WithMessage("OrderSettlementCurrency must have a length of 3 characters when it is provided"); ;
 
             RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"));
             RuleFor(x => x.OrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition"));
+
             RuleFor(x => x.OrderLimitPrice)
                 .NotEmpty()
-                .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
+                .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("OrderLimitPrice must have a value when the order is of type LIMIT");
+
             RuleFor(x => x.OrderCleanDirty).SetValidator(new EnumParseableValidator<OrderCleanDirty>("OrderCleanDirty"))
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty));
 
-            RuleFor(x => x.OrderTraderName).MaximumLength(255).WithMessage("Order Trader Name should not exceed 255 characters");
-            RuleFor(x => x.OrderClearingAgent).MaximumLength(255);
-            RuleFor(x => x.OrderDealingInstructions).MaximumLength(4095);
+            RuleFor(x => x.OrderTraderName).MaximumLength(255).WithMessage("Order Trader Name should not exceed 255 characters in length");
+            RuleFor(x => x.OrderClearingAgent).MaximumLength(255).WithMessage("OrderClearingAgent must have a maximum length of 255 characters"); ;
+            RuleFor(x => x.OrderDealingInstructions).MaximumLength(4095).WithMessage("OrderDealingInstructions must have a maximum length of 4095 characters"); ;
 
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
             RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
@@ -210,16 +220,17 @@ namespace DomainV2.Files
 
         private void RulesForDealerOrderProperties()
         {
-            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderVersion).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderVersionLinkId).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderGroupId).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderNotes).MaximumLength(4095).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderCounterParty).MaximumLength(255).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasDealerOrderData).Length(3).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderSettlementCurrency).MinimumLength(3).MaximumLength(3).When(x => !string.IsNullOrWhiteSpace(x.DealerOrderSettlementCurrency));
-            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData)
+                .WithMessage("DealerOrderId must have a maximum length of 255 characters");
+            RuleFor(x => x.DealerOrderVersion).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderVersion must have a maximum length of 255 characters");
+            RuleFor(x => x.DealerOrderVersionLinkId).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderVersionLinkId must have a maximum length of 255 characters");
+            RuleFor(x => x.DealerOrderGroupId).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderGroupId must have a maximum length of 255 characters"); ;
+            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderDealerId must have a maximum length of 255 characters"); ;
+            RuleFor(x => x.DealerOrderNotes).MaximumLength(4095).When(HasDealerOrderData).WithMessage("DealerOrderNotes must have a maximum length of 4095  characters"); ;
+            RuleFor(x => x.DealerOrderCounterParty).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderCounterParty must have a maximum length of 255 characters");
+            RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasDealerOrderData).Length(3).When(HasDealerOrderData).WithMessage("DealerOrderCurrency must have a length of 3 characters");
+            RuleFor(x => x.DealerOrderSettlementCurrency).Length(3).When(x => !string.IsNullOrWhiteSpace(x.DealerOrderSettlementCurrency)).WithMessage("DealerOrderSettlementCurrency must have a length of 3 characters when it is provided"); ;
+            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderDealerName must have a maximum length of 255 characters");
 
             RuleFor(x => x.DealerOrderCleanDirty)
                 .SetValidator(new EnumParseableValidator<OrderCleanDirty>("DealerOrderCleanDirty"))
@@ -230,7 +241,8 @@ namespace DomainV2.Files
 
             RuleFor(x => x.DealerOrderLimitPrice)
                 .NotEmpty()
-                .When(x => string.Equals(x.DealerOrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
+                .When(x => string.Equals(x.DealerOrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("DealerOrderLimitPrice must be provided when there is a dealer order type of LIMIT"); ;
 
             RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
@@ -240,7 +252,7 @@ namespace DomainV2.Files
                 .SetValidator(new DecimalParseableValidator("AccumulatedInterest"))
                 .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderAccumulatedInterest));
 
-            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderDealerName must have a maximum length of 255 characters");
             RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Trade position had an illegal value of 'none'");

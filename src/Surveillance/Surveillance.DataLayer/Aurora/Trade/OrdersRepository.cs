@@ -131,6 +131,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate,
                 StatusChangedDate,
                 DealerId,
+                TraderName,
                 Notes,
                 CounterParty,
                 OrderType,
@@ -160,6 +161,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @FilledDate,
                 @StatusChangedDate,
                 @DealerId,
+                @TraderName,
                 @Notes,
                 @CounterParty,
                 @OrderType,
@@ -189,6 +191,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate = @FilledDate,
                 StatusChangedDate = @StatusChangedDate,
                 DealerId = @DealerId,
+                TraderName = @TraderName,
                 Notes = @Notes,
                 CounterParty = @CounterParty,
                 OrderType = @OrderType,
@@ -287,6 +290,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate as FilledDate,
                 StatusChangedDate as StatusChangedDate,
                 DealerId as DealerId,
+                TraderName as TraderName,
                 Notes as Notes,
                 CounterParty as CounterParty,
                 OrderType as OrderType,
@@ -608,6 +612,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.CancelledDate,
                 dto.FilledDate,
                 dto.DealerId,
+                dto.TraderName,
                 dto.Notes,
                 dto.CounterParty,
                 orderType,
@@ -843,6 +848,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 StatusChangedDate = dealerOrder.MostRecentDateEvent();
 
                 DealerId = dealerOrder.DealerId;
+                TraderName = dealerOrder.DealerName;
                 Notes = dealerOrder.Notes;
 
                 CounterParty = dealerOrder.DealerCounterParty;
@@ -883,6 +889,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
 
             public string DealerId { get; set; }
+            public string TraderName { get; set; }
             public string Notes { get; set; }
 
             public string CounterParty { get; set; }

@@ -64,7 +64,32 @@ namespace DataImport.Integration.Tests.Validation
                             && a.OrderDealingInstructions == "DEAL 1% OF VWAP"
                             && a.OrderOptionStrikePrice.Value.Value == 100
                             && a.OrderOptionExpirationDate.Value == new DateTime(2018, 01, 18, 09, 0, 0)
-                            && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.EUROPEAN,
+                            && a.OrderOptionEuropeanAmerican == OptionEuropeanAmerican.EUROPEAN
+                            && a.DealerOrders.Count == 1
+                            && a.DealerOrders.First().DealerOrderId == "100b"
+                            && a.DealerOrders.First().PlacedDate == new DateTime(2018, 01, 18, 9, 0, 0)
+                             && a.DealerOrders.First().BookedDate == new DateTime(2018, 01, 18, 9, 0, 0)
+                             && a.DealerOrders.First().AmendedDate == new DateTime(2018, 01, 18, 9, 0, 0)
+                             && a.DealerOrders.First().RejectedDate == null
+                             && a.DealerOrders.First().CancelledDate == null
+                             && a.DealerOrders.First().FilledDate == new DateTime(2018, 01, 18, 9, 0, 0)
+                             && a.DealerOrders.First().DealerId == "RYAN"
+                            && a.DealerOrders.First().DealerName == "Ryan Trenchard"
+                            && a.DealerOrders.First().Notes == "Trade within 1% of vwap"
+                            && a.DealerOrders.First().DealerCounterParty == "Barclays Capital"
+                            && a.DealerOrders.First().OrderType == OrderTypes.MARKET
+                            && a.DealerOrders.First().OrderDirection == OrderDirections.BUY
+                            && a.DealerOrders.First().Currency.Value == "GBP"
+                            && a.DealerOrders.First().SettlementCurrency.Value == "CNY"
+                            && a.DealerOrders.First().CleanDirty == OrderCleanDirty.CLEAN
+                            && a.DealerOrders.First().AccumulatedInterest == 1
+                            && a.DealerOrders.First().LimitPrice.Value.Value == 10m
+                            && a.DealerOrders.First().AverageFillPrice.Value.Value == 100m
+                            && a.DealerOrders.First().OrderedVolume == 50
+                            && a.DealerOrders.First().FilledVolume == 200
+                            && a.DealerOrders.First().OptionStrikePrice == 30
+                            && a.DealerOrders.First().OptionExpirationDate == new DateTime(2018, 01, 18, 9, 0, 0)
+                            && a.DealerOrders.First().OptionEuropeanAmerican == OptionEuropeanAmerican.AMERICAN,
 
                         a => a.OrderId == "9e03994a-c681-4851-b0fa-0da721c0a880"
                              && (int)a.Market.Type == 1

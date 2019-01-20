@@ -257,6 +257,7 @@ namespace DomainV2.Files
                 cancelledDate,
                 filledDate,
                 csv.DealerOrderDealerId,
+                csv.DealerOrderDealerName,
                 csv.DealerOrderNotes,
                 csv.DealerOrderCounterParty,
                 dealerOrderType,

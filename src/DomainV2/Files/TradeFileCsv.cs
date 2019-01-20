@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DomainV2.Files
+﻿namespace DomainV2.Files
 {
     /// <summary>
     /// Version 0.3 of the Trade File
@@ -94,6 +92,7 @@ namespace DomainV2.Files
 
         // dealer order
         public string DealerOrderDealerId { get; set; }
+        public string DealerOrderDealerName { get; set; }
         public string DealerOrderNotes { get; set; }
         public string DealerOrderCounterParty { get; set; }
         public string DealerOrderType { get; set; }

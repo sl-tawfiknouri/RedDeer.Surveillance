@@ -138,8 +138,6 @@ namespace DataImport.Disk_IO.TradeFile
                 OrderOptionStrikePrice = PreProcess(rawRecord["OrderOptionStrikePrice"]),
                 OrderOptionExpirationDate = PreProcess(rawRecord["OrderOptionExpirationDate"]),
                 OrderOptionEuropeanAmerican = PreProcess(rawRecord["OrderOptionEuropeanAmerican"]),
-
-          
                 
 
                 DealerOrderId = PreProcess(rawRecord["DealerOrderId"]),
@@ -155,10 +153,11 @@ namespace DataImport.Disk_IO.TradeFile
                 DealerOrderFilledDate = PreProcess(rawRecord["DealerOrderFilledDate"]),
 
                 DealerOrderDealerId = PreProcess(rawRecord["DealerOrderDealerId"]),
+                DealerOrderDealerName = PreProcess(rawRecord["DealerOrderDealerName"]),
                 DealerOrderNotes = PreProcess(rawRecord["DealerOrderNotes"]),
 
                 DealerOrderCounterParty = PreProcess(rawRecord["DealerOrderCounterParty"]),
-                DealerOrderType = PreProcess(rawRecord["DealerOrderTradeType"]),
+                DealerOrderType = PreProcess(rawRecord["DealerOrderType"]),
                 DealerOrderDirection = PreProcess(rawRecord["DealerOrderDirection"]),
                 DealerOrderCurrency = PreProcess(rawRecord["DealerOrderCurrency"]),
                 DealerOrderSettlementCurrency = PreProcess(rawRecord["DealerOrderSettlementCurrency"]),

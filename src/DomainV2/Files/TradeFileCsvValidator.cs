@@ -192,6 +192,7 @@ namespace DomainV2.Files
             RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData);
 
             RuleFor(x => x).Custom((i, o) =>
             {

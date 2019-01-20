@@ -12,15 +12,22 @@ namespace DomainV2.Files
         public TradeFileCsvValidator()
         {
             // Market
-            RuleFor(x => x.MarketIdentifierCode).NotEmpty();
-            RuleFor(x => x.MarketType).NotEmpty().SetValidator(new EnumParseableValidator<MarketTypes>("MarketType"));
+            RuleFor(x => x.MarketIdentifierCode)
+                .NotEmpty()
+                .WithMessage("Market Identifier Code must not be empty");
+
+            RuleFor(x => x.MarketType)
+                .NotEmpty()
+                .SetValidator(new EnumParseableValidator<MarketTypes>("MarketType"))
+                .WithMessage("Market Type must be valid");
 
             // Instrument
             RulesForSufficientInstrumentIdentificationCodes();
             RulesForIdentificationCodes();
             RulesForDerivativeIdentificationCodes();
-            RuleFor(x => x.InstrumentCfi).NotEmpty().MinimumLength(1).MaximumLength(6);
-            RuleFor(x => x.InstrumentCfi).Must(x => !string.IsNullOrWhiteSpace(x));
+
+            RuleFor(x => x.InstrumentCfi).NotEmpty().MinimumLength(1).MaximumLength(6).WithMessage("Instrument CFI must be between 1 and 6 characters");
+            RuleFor(x => x.InstrumentCfi).Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Instrument CFI must not be empty");
 
             // Order
             RulesForOrderProperties();
@@ -42,27 +49,33 @@ namespace DomainV2.Files
         {
             RuleFor(x => x.InstrumentSedol)
                 .Length(7)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentSedol));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentSedol))
+                .WithMessage("Instrument Sedol must have a length of 7 characters when it is provided");
 
             RuleFor(x => x.InstrumentIsin)
                 .Length(12)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentIsin));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentIsin))
+                .WithMessage("Instrument ISIN must have a length of 12 characters when it is provided");
 
             RuleFor(x => x.InstrumentCusip)
                 .MinimumLength(6)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentCusip));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentCusip))
+                .WithMessage("Instrument CUSIP must have a minimum length of 6 when it is provided");
 
             RuleFor(x => x.InstrumentCusip)
                 .MaximumLength(9)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentCusip));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentCusip))
+                .WithMessage("Instrument CUSIP must have a maximum length of 9 characters when it is provided");
 
             RuleFor(x => x.InstrumentLei)
                 .Length(20)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentLei));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentLei))
+                .WithMessage("Instrument LEI must have a length of 20 characters if it is provided");
 
             RuleFor(x => x.InstrumentFigi)
                 .Length(12)
-                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentFigi));
+                .When(x => !string.IsNullOrWhiteSpace(x.InstrumentFigi))
+                .WithMessage("Instrument FIGI must have a length of 12 characters if it is provided");
         }
 
         private void RulesForDerivativeIdentificationCodes()
@@ -94,15 +107,27 @@ namespace DomainV2.Files
 
         private void RulesForOrderProperties()
         {
-            RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1);
+            RuleFor(x => x.OrderId).NotEmpty().MinimumLength(1).MaximumLength(255);
+            RuleFor(x => x.OrderTraderId).MaximumLength(255);
+            RuleFor(x => x.OrderVersion).MaximumLength(255);
+            RuleFor(x => x.OrderVersionLinkId).MaximumLength(255);
+            RuleFor(x => x.OrderGroupId).MaximumLength(255);
+
             RuleFor(x => x.OrderCurrency).NotEmpty().MaximumLength(3).MinimumLength(3);
+            RuleFor(x => x.OrderSettlementCurrency).MaximumLength(3).MinimumLength(3)
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency));
+
             RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"));
             RuleFor(x => x.OrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition"));
             RuleFor(x => x.OrderLimitPrice)
                 .NotEmpty()
                 .When(x => string.Equals(x.OrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase));
+            RuleFor(x => x.OrderCleanDirty).SetValidator(new EnumParseableValidator<OrderCleanDirty>("OrderCleanDirty"))
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty));
 
             RuleFor(x => x.OrderTraderName).MaximumLength(255).WithMessage("Order Trader Name should not exceed 255 characters");
+            RuleFor(x => x.OrderClearingAgent).MaximumLength(255);
+            RuleFor(x => x.OrderDealingInstructions).MaximumLength(4095);
 
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
             RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
@@ -111,6 +136,13 @@ namespace DomainV2.Files
                 .Must(x => !string.IsNullOrWhiteSpace(x))
                 .When(y => !string.IsNullOrWhiteSpace(y.OrderFilledDate))
                 .WithMessage("Must have an order filled volume when there is an order filled date");
+            RuleFor(x => x.OrderOrderedVolume)
+                .Must(x => !string.IsNullOrWhiteSpace(x))
+                .SetValidator(new LongParseableValidator("OrderOrderedVolume"));
+
+            RuleFor(x => x.OrderAccumulatedInterest)
+                .SetValidator(new DecimalParseableValidator("OrderAccumulatedInterest"))
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderAccumulatedInterest));
 
             RuleFor(x => x).Custom((i, o) =>
             {
@@ -178,9 +210,21 @@ namespace DomainV2.Files
 
         private void RulesForDealerOrderProperties()
         {
-            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderVersion).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderVersionLinkId).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderGroupId).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDealerId).NotEmpty().When(HasDealerOrderData).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderNotes).MaximumLength(4095).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderCounterParty).MaximumLength(255).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderCurrency).NotEmpty().When(HasDealerOrderData).Length(3).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderSettlementCurrency).MinimumLength(3).MaximumLength(3).When(x => !string.IsNullOrWhiteSpace(x.DealerOrderSettlementCurrency));
+            RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData);
+
+            RuleFor(x => x.DealerOrderCleanDirty)
+                .SetValidator(new EnumParseableValidator<OrderCleanDirty>("DealerOrderCleanDirty"))
+                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderCleanDirty));
+
             RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasDealerOrderData);
 
@@ -192,7 +236,18 @@ namespace DomainV2.Files
             RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderAccumulatedInterest)
+                .SetValidator(new DecimalParseableValidator("AccumulatedInterest"))
+                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderAccumulatedInterest));
+
             RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderDirection)
+                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("Trade position had an illegal value of 'none'");
+
+            RuleFor(x => x.DealerOrderDirection)
+                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
+                .WithMessage("TradePosition had an illegal value of '0'");
 
             RuleFor(x => x).Custom((i, o) =>
             {
@@ -247,14 +302,6 @@ namespace DomainV2.Files
                 }
             });
 
-            RuleFor(x => x.DealerOrderDirection)
-                .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
-                .WithMessage("Trade position had an illegal value of 'none'");
-            
-            RuleFor(x => x.DealerOrderDirection)
-                .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
-                .WithMessage("TradePosition had an illegal value of '0'");
-
             RulesForTradeOptionsProperties();
         }
 
@@ -266,6 +313,7 @@ namespace DomainV2.Files
             }
 
             return !string.IsNullOrWhiteSpace(csv.DealerOrderDealerId)
+                   || !string.IsNullOrWhiteSpace(csv.DealerOrderDealerName)
                    || !string.IsNullOrWhiteSpace(csv.DealerOrderPlacedDate)
                    || !string.IsNullOrWhiteSpace(csv.DealerOrderBookedDate)
                    || !string.IsNullOrWhiteSpace(csv.DealerOrderAmendedDate)

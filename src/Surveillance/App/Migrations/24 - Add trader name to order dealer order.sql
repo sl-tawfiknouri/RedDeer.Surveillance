@@ -10,5 +10,7 @@ START TRANSACTION;
 
 	ALTER TABLE Orders ADD TraderName nvarchar(255);
 	ALTER TABLE DealerOrders ADD TraderName nvarchar(255);
+	ALTER TABLE DealerOrders MODIFY Notes NVARCHAR(4095);
+	ALTER TABLE Orders MODIFY DealingInstructions NVARCHAR(4095);
 
 COMMIT;

@@ -61,7 +61,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             await repo.Create(orderAllocation);
 
-            var orderId = new List<string> { "order-1"};
+            var orderId = new List<string> { "order-1", "order-2"};
             var result = await repo.Get(orderId);
 
             Assert.AreEqual(result.Count, 1);

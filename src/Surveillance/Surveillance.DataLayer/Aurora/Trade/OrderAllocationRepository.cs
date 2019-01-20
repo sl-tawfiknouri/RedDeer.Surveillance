@@ -29,7 +29,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ClientAccountId as ClientAccountId,
                 OrderFilledVolume as OrderFilledVolume
             FROM OrdersAllocation
-            WHERE OrderId in (@OrderIds);";
+            WHERE OrderId IN @OrderIds;";
 
         public OrderAllocationRepository(
             IConnectionStringFactory connectionFactory,
@@ -78,14 +78,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger.LogInformation($"OrderAllocationRepository Create method completed");
         }
 
-        public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orderIds)
+        public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orders)
         {
             _logger.LogInformation($"OrderAllocationRepository Get method called");
 
-            orderIds = orderIds?.Where(o => !string.IsNullOrWhiteSpace(o))?.ToList();
+            orders = orders?.Where(o => !string.IsNullOrWhiteSpace(o))?.ToList();
 
-            if (orderIds == null
-                || !orderIds.Any())
+            if (orders == null
+                || !orders.Any())
             {
                 return new OrderAllocation[0];
             }
@@ -97,9 +97,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dbConnection.Open();
 
                 _logger.LogInformation(
-                    $"OrderAllocationRepository Create method opened db connection and about to query for {orderIds?.Count} order ids");
+                    $"OrderAllocationRepository Create method opened db connection and about to query for {orders?.Count} order ids");
 
-                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orderIds }))
+                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orders }))
                 {
                     var result = await conn;
 

@@ -116,13 +116,17 @@ namespace Surveillance.Tests.Universe
                 .CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
                 .Returns(new[] {frame});
 
+            A
+                .CallTo(() => _orderAllocationProjector.DecorateOrders(A<IReadOnlyCollection<Order>>.Ignored))
+                .Returns(new[] {frame});
+
             var result = await builder.Summon(schedule, _opCtx);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Trades.Count, 1);
             Assert.AreEqual(result.Trades.FirstOrDefault(), frame);
-            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
             Assert.AreEqual(result.UniverseEvents.FirstOrDefault().StateChange, UniverseStateEvent.Genesis);
+            Assert.AreEqual(result.UniverseEvents.Skip(1).FirstOrDefault().UnderlyingEvent, frame);
             Assert.AreEqual(result.UniverseEvents.Skip(3).FirstOrDefault().StateChange, UniverseStateEvent.Eschaton);
 
             A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx)).MustHaveHappenedOnceExactly();

@@ -13,6 +13,7 @@ namespace DomainV2.Tests.Trading
         {
             var order = BuildOrder();
             order.OrderFilledVolume = 0;
+            order.OrderOrderedVolume = 100;
 
             var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
@@ -38,6 +39,7 @@ namespace DomainV2.Tests.Trading
         public void Decorator_Handles_Zero_CorrectFill()
         {
             var order = BuildOrder();
+            order.OrderOrderedVolume = 1000;
             order.OrderFilledVolume = 1000;
 
             var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);

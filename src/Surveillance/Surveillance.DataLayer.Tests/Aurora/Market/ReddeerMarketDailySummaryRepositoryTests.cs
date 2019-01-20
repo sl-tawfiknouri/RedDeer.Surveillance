@@ -40,13 +40,13 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     Figi = "BBG000C6K6G9",
                     ClosePrice = 0m,
                     Currency = "usd",
-                    OpenPriceUsd = 1m,
                     DailyVolume = 2,
                     Epoch = DateTime.UtcNow.AddDays(1),
                     HighIntradayPrice = 3,
                     LowIntradayPrice = 4,
                     MarketCapitalisationUsd = 5,
-                    OpenPrice = 6
+                    OpenPrice = 6,
+                    MarketCapitalisation = 7,
                 }
             };
 

@@ -57,7 +57,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 var requests = await _senderManager.Send(bmllRequests, false);
                 var retries = 5;
 
-                while (!(requests.Success && retries > 0))
+                while ((!requests.Success) && retries > 0)
                 {
                     _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
 

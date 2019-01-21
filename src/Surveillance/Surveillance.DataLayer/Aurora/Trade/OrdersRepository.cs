@@ -35,6 +35,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate,
                 FilledDate,
                 StatusChangedDate,
+                CreatedDate,
+                LifeCycleStatus,
                 OrderType,
                 Direction,
                 Currency,
@@ -46,6 +48,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderedVolume,
                 FilledVolume,
                 TraderId,
+                TraderName,
                 ClearingAgent,
                 DealingInstructions,
                 OptionStrikePrice,
@@ -65,6 +68,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderCancelledDate,
                 @OrderFilledDate,
                 @OrderStatusChangedDate,
+                @CreatedDate,
+                @LifeCycleStatus,
                 @OrderType,
                 @OrderDirection,
                 @OrderCurrency,
@@ -76,6 +81,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderOrderedVolume,
                 @OrderFilledVolume,
                 @OrderTraderId,
+                @OrderTraderName,
                 @OrderClearingAgent,
                 @OrderDealingInstructions,
                 @OptionStrikePrice,
@@ -106,6 +112,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderedVolume=@OrderOrderedVolume,
                 FilledVolume=@OrderFilledVolume,
                 TraderId=@OrderTraderId,
+                TraderName = @OrderTraderName,
                 ClearingAgent=@OrderClearingAgent,
                 DealingInstructions=@OrderDealingInstructions,
                 OptionStrikePrice=@OptionStrikePrice,
@@ -113,7 +120,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OptionEuropeanAmerican=@OptionEuropeanAmerican;
                 SELECT LAST_INSERT_ID();";
 
-        private const string InsertTradeSql = @"
+        private const string InsertDealerOrderSql = @"
             INSERT INTO DealerOrders(
                 OrderId,
                 ClientDealerOrderId,
@@ -127,7 +134,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate,
                 FilledDate,
                 StatusChangedDate,
+                CreatedDate,
+                LifeCycleStatus,
                 DealerId,
+                TraderName,
                 Notes,
                 CounterParty,
                 OrderType,
@@ -156,7 +166,10 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @CancelledDate,
                 @FilledDate,
                 @StatusChangedDate,
+                @CreatedDate,
+                @LifeCycleStatus,
                 @DealerId,
+                @TraderName,
                 @Notes,
                 @CounterParty,
                 @OrderType,
@@ -186,6 +199,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate = @FilledDate,
                 StatusChangedDate = @StatusChangedDate,
                 DealerId = @DealerId,
+                TraderName = @TraderName,
                 Notes = @Notes,
                 CounterParty = @CounterParty,
                 OrderType = @OrderType,
@@ -203,7 +217,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OptionEuropeanAmerican = @OptionEuropeanAmerican;
                 SELECT LAST_INSERT_ID();";
 
-        private const string GetSql = @"
+        private const string GetOrderSql = @"
             SELECT
 	            ord.Id as ReddeerOrderId,
                 ord.ClientOrderId as OrderId,
@@ -217,6 +231,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ord.RejectedDate as OrderRejectedDate,
                 ord.CancelledDate as OrderCancelledDate,
                 ord.FilledDate as OrderFilledDate,
+                ord.CreatedDate as CreatedDate,
                 ord.OrderType as OrderType,
                 ord.Direction as OrderDirection,
                 ord.Currency as OrderCurrency,
@@ -228,6 +243,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ord.OrderedVolume as OrderOrderedVolume,
                 ord.FilledVolume as OrderFilledVolume,
                 ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
                 ord.ClearingAgent as OrderClearingAgent,
                 ord.DealingInstructions as OrderDealingInstructions,
                 ord.OptionStrikePrice as OptionStrikePrice,
@@ -282,7 +298,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate as CancelledDate,
                 FilledDate as FilledDate,
                 StatusChangedDate as StatusChangedDate,
+                CreatedDate as CreatedDate,
                 DealerId as DealerId,
+                TraderName as TraderName,
                 Notes as Notes,
                 CounterParty as CounterParty,
                 OrderType as OrderType,
@@ -370,7 +388,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                     _logger.LogInformation($"ReddeerTradeRepository Create about to insert a new trade entry for order {entity.ReddeerOrderId}");
                     var tradeDto = new DealerOrdersDto(trade, entity.ReddeerOrderId);
-                    using (var conn = dbConnection.ExecuteScalarAsync<string>(InsertTradeSql, tradeDto))
+                    using (var conn = dbConnection.ExecuteScalarAsync<string>(InsertDealerOrderSql, tradeDto))
                     {
                         var tradeId = await conn;
                         tradeDto.ReddeerDealerOrderId = tradeId;
@@ -416,7 +434,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 var query = new GetQuery { Start = start, End = end };
 
                 _logger.LogInformation($"ReddeerTradeRepository asked to get orders from {start} to {end} for system process operation {opCtx?.Id}");
-                using (var conn = dbConnection.QueryAsync<OrderDto>(GetSql, query))
+                using (var conn = dbConnection.QueryAsync<OrderDto>(GetOrderSql, query))
                 {
                     var rawResult = await conn;
 
@@ -535,6 +553,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 market,
                 dto.ReddeerOrderId,
                 dto.OrderId,
+                dto.CreatedDate,
 
                 dto.OrderVersion,
                 dto.OrderVersionLinkId,
@@ -559,6 +578,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.OrderOrderedVolume,
                 dto.OrderFilledVolume,
                 dto.OrderTraderId,
+                dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
 
@@ -602,7 +622,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.RejectedDate,
                 dto.CancelledDate,
                 dto.FilledDate,
+                dto.CreatedDate,
                 dto.DealerId,
+                dto.TraderName,
                 dto.Notes,
                 dto.CounterParty,
                 orderType,
@@ -687,14 +709,16 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
                 ReddeerOrderId = order.ReddeerOrderId;
                 OrderId = order.OrderId;
-                OrderPlacedDate = order.OrderPlacedDate;
-                OrderBookedDate = order.OrderBookedDate;
-                OrderAmendedDate = order.OrderAmendedDate;
-                OrderRejectedDate = order.OrderRejectedDate;
-                OrderCancelledDate = order.OrderCancelledDate;
-                OrderFilledDate = order.OrderFilledDate;
+                OrderPlacedDate = order.PlacedDate;
+                OrderBookedDate = order.BookedDate;
+                OrderAmendedDate = order.AmendedDate;
+                OrderRejectedDate = order.RejectedDate;
+                OrderCancelledDate = order.CancelledDate;
+                OrderFilledDate = order.FilledDate;
                 OrderStatusChangedDate = order.MostRecentDateEvent();
+                CreatedDate = order.CreatedDate;
 
+                LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
                 OrderDirection = (int?)order.OrderDirection;
                 OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
@@ -706,6 +730,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CleanDirty = (int?)order.OrderCleanDirty;
 
                 OrderTraderId = order.OrderTraderId;
+                OrderTraderName = order.OrderTraderName;
                 OrderClearingAgent = order.OrderClearingAgent;
                 OrderDealingInstructions = order.OrderDealingInstructions;
                 AccumulatedInterest = order.OrderAccumulatedInterest;
@@ -779,12 +804,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime? OrderCancelledDate { get; set; }
             public DateTime? OrderFilledDate { get; set; }
             public DateTime? OrderStatusChangedDate { get; set; }
+            public DateTime? CreatedDate { get; set; }
 
 
             public string OrderVersion { get; set; }
             public string OrderVersionLinkId { get; set; }
             public string OrderGroupId { get; set; }
 
+            public int? LifeCycleStatus { get; set; }
             public int? OrderType { get; set; }
             public int? OrderDirection { get; set; }
             public string OrderCurrency { get; set; }
@@ -795,6 +822,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public long? OrderOrderedVolume { get; set; }
             public long? OrderFilledVolume { get; set; }
             public string OrderTraderId { get; set; }
+            public string OrderTraderName { get; set; }
             public string OrderClearingAgent { get; set; }
             public string OrderDealingInstructions { get; set; }
             public decimal? AccumulatedInterest { get; set; }
@@ -834,11 +862,14 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CancelledDate = dealerOrder.CancelledDate;
                 FilledDate = dealerOrder.FilledDate;
                 StatusChangedDate = dealerOrder.MostRecentDateEvent();
+                CreatedDate = dealerOrder.CreatedDate;
 
                 DealerId = dealerOrder.DealerId;
+                TraderName = dealerOrder.DealerName;
                 Notes = dealerOrder.Notes;
 
                 CounterParty = dealerOrder.DealerCounterParty;
+                LifeCycleStatus = (int?)dealerOrder.OrderStatus();
                 OrderType = (int?)dealerOrder.OrderType;
                 Direction = (int?)dealerOrder.OrderDirection;
 
@@ -873,12 +904,15 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public DateTime? CancelledDate { get; set; }
             public DateTime? FilledDate { get; set; }
             public DateTime? StatusChangedDate { get; set; }
+            public DateTime? CreatedDate { get; set; }
 
 
             public string DealerId { get; set; }
+            public string TraderName { get; set; }
             public string Notes { get; set; }
 
             public string CounterParty { get; set; }
+            public int? LifeCycleStatus { get; set; }
             public int? OrderType { get; set; }
             public int? Direction { get; set; }
 

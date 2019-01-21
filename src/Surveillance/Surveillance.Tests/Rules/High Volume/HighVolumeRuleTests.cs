@@ -123,11 +123,11 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
-            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 10;
-            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                 new List<EquityInstrumentIntraDayTimeBar>
                 {
                     new EquityInstrumentIntraDayTimeBar(
@@ -146,8 +146,8 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value),
                             10000,
                             new Volume(10000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 
@@ -174,9 +174,9 @@ namespace Surveillance.Tests.Rules.High_Volume
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
             underlyingTrade.OrderFilledVolume = 300;
-            underlyingTrade.OrderPlacedDate = DateTime.UtcNow;
+            underlyingTrade.PlacedDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                 new List<EquityInstrumentIntraDayTimeBar>
                 {
                     new EquityInstrumentIntraDayTimeBar
@@ -192,9 +192,9 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(1000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)
                             ),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 
@@ -220,10 +220,10 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
-            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 300;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                 new List<EquityInstrumentIntraDayTimeBar>
                 {
                     new EquityInstrumentIntraDayTimeBar(
@@ -242,8 +242,8 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 

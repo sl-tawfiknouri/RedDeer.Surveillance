@@ -91,7 +91,7 @@ namespace DataImport.Recorders
                     var schedule = new ScheduledExecution
                     {
                         Rules = GetAllRules(),
-                        TimeSeriesInitiation = value.OrderPlacedDate.GetValueOrDefault(),
+                        TimeSeriesInitiation = value.PlacedDate.GetValueOrDefault(),
                         TimeSeriesTermination = value.MostRecentDateEvent()
                     };
 
@@ -106,11 +106,11 @@ namespace DataImport.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.OrderPlacedDate.HasValue && value.OrderPlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.PlacedDate.HasValue && value.PlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an older placed date than the current time series initiation. Moving date backward to {value.OrderPlacedDate.Value}.");
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an older placed date than the current time series initiation. Moving date backward to {value.PlacedDate.Value}.");
 
-                    schedulePair.Schedule.TimeSeriesInitiation = value.OrderPlacedDate.Value;
+                    schedulePair.Schedule.TimeSeriesInitiation = value.PlacedDate.Value;
                 }
 
                 if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)

@@ -300,10 +300,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             switch (status)
             {
                 case DomainV2.Financial.OrderStatus.Cancelled:
-                    order.OrderCancelledDate = DateTime.UtcNow;
+                    order.CancelledDate = DateTime.UtcNow;
                     return order;
                 case DomainV2.Financial.OrderStatus.Filled:
-                    order.OrderFilledDate = DateTime.UtcNow;
+                    order.FilledDate = DateTime.UtcNow;
                     return order;
             }
 

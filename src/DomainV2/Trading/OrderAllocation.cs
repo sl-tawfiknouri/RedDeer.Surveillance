@@ -18,6 +18,24 @@
             OrderFilledVolume = orderFilledVolume;
         }
 
+        /// <summary>
+        /// 100% allocation
+        /// </summary>
+        public OrderAllocation(Order order)
+        {
+            if (order == null)
+            {
+                return;
+            }
+
+            Id = string.Empty;
+            OrderId = order.OrderId;
+            Fund = order.OrderFund;
+            Strategy = order.OrderStrategy;
+            ClientAccountId = order.OrderClientAccountAttributionId;
+            OrderFilledVolume = order.OrderFilledVolume.GetValueOrDefault(0);
+        }
+
         public string Id { get; }
         public string OrderId { get; }
         public string Fund { get; }

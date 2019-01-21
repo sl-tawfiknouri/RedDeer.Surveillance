@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents.Interfaces;
 
@@ -21,6 +22,7 @@ namespace Surveillance.Universe
     public class UniverseBuilder : IUniverseBuilder
     {
         private readonly IOrdersRepository _auroraOrdersRepository;
+        private readonly IOrdersToAllocatedOrdersProjector _allocateOrdersProjector;
         private readonly IReddeerMarketRepository _auroraMarketRepository;
         private readonly IMarketOpenCloseEventManager _marketManager;
         private readonly IUniverseSortComparer _universeSorter;
@@ -28,12 +30,14 @@ namespace Surveillance.Universe
 
         public UniverseBuilder(
             IOrdersRepository auroraOrdersRepository,
+            IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
             IReddeerMarketRepository auroraMarketRepository,
             IMarketOpenCloseEventManager marketManager,
             IUniverseSortComparer universeSorter,
             ILogger<UniverseBuilder> logger)
         {
             _auroraOrdersRepository = auroraOrdersRepository ?? throw new ArgumentNullException(nameof(auroraOrdersRepository));
+            _allocateOrdersProjector = allocateOrdersProjector ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
             _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
             _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
             _universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
@@ -55,6 +59,10 @@ namespace Surveillance.Universe
             var projectedTrades = await TradeDataFetchAurora(execution, opCtx);
             _logger.LogInformation($"UniverseBuilder completed fetching aurora trade data");
 
+            _logger.LogInformation($"UniverseBuilder fetching aurora trade allocation data");
+            var projectedTradesAllocations = await _allocateOrdersProjector.DecorateOrders(projectedTrades);
+            _logger.LogInformation($"UniverseBuilder completed fetching aurora trade allocation data");
+
             _logger.LogInformation($"UniverseBuilder fetching intraday for equities");
             var intradayEquityBars = await MarketEquityIntraDayDataFetchAurora(execution, opCtx);
             _logger.LogInformation($"UniverseBuilder completed fetching intraday for equities");
@@ -64,11 +72,11 @@ namespace Surveillance.Universe
             _logger.LogInformation($"UniverseBuilder completed fetching inter day for equities");
 
             _logger.LogInformation($"UniverseBuilder fetching universe event data");
-            var universe = await UniverseEvents(execution, projectedTrades, intradayEquityBars, interDayEquityBars);
+            var universe = await UniverseEvents(execution, projectedTradesAllocations, intradayEquityBars, interDayEquityBars);
             _logger.LogInformation($"UniverseBuilder completed fetching universe event data");
 
             _logger.LogInformation($"UniverseBuilder returning a new universe");
-            return new Universe(projectedTrades, intradayEquityBars, interDayEquityBars, universe);
+            return new Universe(projectedTradesAllocations, intradayEquityBars, interDayEquityBars, universe);
         }
 
         private async Task<IReadOnlyCollection<Order>> TradeDataFetchAurora(
@@ -119,13 +127,13 @@ namespace Surveillance.Universe
             var tradeSubmittedEvents =
                 trades
                     .Where(tr => tr != null)
-                    .Select(tr => new UniverseEvent(UniverseStateEvent.OrderPlaced, tr.OrderPlacedDate.GetValueOrDefault(), tr))
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.OrderPlaced, tr.PlacedDate.GetValueOrDefault(), tr))
                     .ToArray();
 
             var tradeStatusChangedOnEvents =
                 trades
                     .Where(tr => tr != null)
-                    .Where(tr => ! (tr.OrderStatus() == OrderStatus.Booked && tr.OrderPlacedDate == tr.MostRecentDateEvent()))
+                    .Where(tr => ! (tr.OrderStatus() == OrderStatus.Booked && tr.PlacedDate == tr.MostRecentDateEvent()))
                     .Select(tr => new UniverseEvent(UniverseStateEvent.Order, tr.MostRecentDateEvent(), tr))
                     .ToArray();
 

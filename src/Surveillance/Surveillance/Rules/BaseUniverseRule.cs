@@ -182,22 +182,22 @@ namespace Surveillance.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.OrderPlacedDate}");
+            _logger?.LogInformation($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
 
             UniverseDateTime = universeEvent.EventTime;
 
             if (!TradingInitialHistory.ContainsKey(value.Instrument.Identifiers))
             {
-                var history = new TradingHistoryStack(WindowSize, i => i.OrderPlacedDate.GetValueOrDefault(), _tradingStackLogger);
-                history.Add(value, value.OrderPlacedDate.GetValueOrDefault());
+                var history = new TradingHistoryStack(WindowSize, i => i.PlacedDate.GetValueOrDefault(), _tradingStackLogger);
+                history.Add(value, value.PlacedDate.GetValueOrDefault());
                 TradingInitialHistory.TryAdd(value.Instrument.Identifiers, history);
             }
             else
             {
                 TradingInitialHistory.TryGetValue(value.Instrument.Identifiers, out var history);
 
-                history?.Add(value, value.OrderPlacedDate.GetValueOrDefault());
-                history?.ArchiveExpiredActiveItems(value.OrderPlacedDate.GetValueOrDefault());
+                history?.Add(value, value.PlacedDate.GetValueOrDefault());
+                history?.ArchiveExpiredActiveItems(value.PlacedDate.GetValueOrDefault());
             }
 
             TradingInitialHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);

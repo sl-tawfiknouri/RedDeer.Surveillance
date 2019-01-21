@@ -38,6 +38,7 @@ namespace DomainV2.Trading
                 order.OrderOrderedVolume,
                 order.OrderFilledVolume,
                 order.OrderTraderId,
+                order.OrderTraderName,
                 order.OrderClearingAgent,
                 order.OrderDealingInstructions,
                 order.OrderOptionStrikePrice,

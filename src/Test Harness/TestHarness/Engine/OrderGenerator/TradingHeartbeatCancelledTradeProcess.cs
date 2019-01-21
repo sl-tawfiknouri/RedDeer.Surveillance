@@ -246,6 +246,7 @@ namespace TestHarness.Engine.OrderGenerator
                     volume,
                     volume,
                     "trader-1",
+                    "trader one",
                     "clearing-agent",
                     "dealing-instructions",
                     null,

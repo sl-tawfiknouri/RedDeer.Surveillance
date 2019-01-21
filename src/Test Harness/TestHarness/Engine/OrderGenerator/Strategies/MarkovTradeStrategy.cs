@@ -148,6 +148,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 volume,
                 volume,
                 traderId,
+                traderId,
                 "Clearing-Bank",
                 dealerInstructions,
                 null,

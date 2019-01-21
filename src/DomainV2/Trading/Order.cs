@@ -47,6 +47,7 @@ namespace DomainV2.Trading
             long? orderOrderedVolume,
             long? orderFilledVolume,
             string orderTraderId,
+            string orderTraderName,
             string orderClearingAgent,
             string orderDealingInstructions,
 
@@ -89,6 +90,7 @@ namespace DomainV2.Trading
 
             // order trader and post trade
             OrderTraderId = orderTraderId ?? string.Empty;
+            OrderTraderName = orderTraderName ?? string.Empty;
             OrderClearingAgent = orderClearingAgent ?? string.Empty;
             OrderDealingInstructions = orderDealingInstructions ?? string.Empty;
 
@@ -133,22 +135,24 @@ namespace DomainV2.Trading
 
         public CurrencyAmount? OrderLimitPrice { get; set; }
         public CurrencyAmount? OrderAverageFillPrice { get; set; }
-        public long? OrderOrderedVolume { get; set; }
-        public long? OrderFilledVolume { get; set; }
+
+
         public string OrderTraderId { get; set; }
+        public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
 
         public IReadOnlyCollection<DealerOrder> DealerOrders { get; set; }
 
 
+        // can be overridden by accounting allocations
+        public virtual long? OrderOrderedVolume { get; set; }
+        public virtual long? OrderFilledVolume { get; set; }
 
-
-        // Accounting attribution Properties
-        public string OrderFund { get; set; } = string.Empty;
-        public string OrderStrategy { get; set; } = string.Empty;
-        public string OrderClientAccountAttributionId { get; set; } = string.Empty;
-
+        // Accounting allocation Properties
+        public virtual string OrderFund { get; set; } = string.Empty;
+        public virtual string OrderStrategy { get; set; } = string.Empty;
+        public virtual string OrderClientAccountAttributionId { get; set; } = string.Empty;
 
 
         // Batch properties

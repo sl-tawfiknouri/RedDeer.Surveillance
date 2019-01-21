@@ -46,6 +46,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderedVolume,
                 FilledVolume,
                 TraderId,
+                TraderName,
                 ClearingAgent,
                 DealingInstructions,
                 OptionStrikePrice,
@@ -76,6 +77,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OrderOrderedVolume,
                 @OrderFilledVolume,
                 @OrderTraderId,
+                @OrderTraderName,
                 @OrderClearingAgent,
                 @OrderDealingInstructions,
                 @OptionStrikePrice,
@@ -106,6 +108,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OrderedVolume=@OrderOrderedVolume,
                 FilledVolume=@OrderFilledVolume,
                 TraderId=@OrderTraderId,
+                TraderName = @OrderTraderName,
                 ClearingAgent=@OrderClearingAgent,
                 DealingInstructions=@OrderDealingInstructions,
                 OptionStrikePrice=@OptionStrikePrice,
@@ -128,6 +131,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate,
                 StatusChangedDate,
                 DealerId,
+                TraderName,
                 Notes,
                 CounterParty,
                 OrderType,
@@ -157,6 +161,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @FilledDate,
                 @StatusChangedDate,
                 @DealerId,
+                @TraderName,
                 @Notes,
                 @CounterParty,
                 @OrderType,
@@ -186,6 +191,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate = @FilledDate,
                 StatusChangedDate = @StatusChangedDate,
                 DealerId = @DealerId,
+                TraderName = @TraderName,
                 Notes = @Notes,
                 CounterParty = @CounterParty,
                 OrderType = @OrderType,
@@ -228,6 +234,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ord.OrderedVolume as OrderOrderedVolume,
                 ord.FilledVolume as OrderFilledVolume,
                 ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
                 ord.ClearingAgent as OrderClearingAgent,
                 ord.DealingInstructions as OrderDealingInstructions,
                 ord.OptionStrikePrice as OptionStrikePrice,
@@ -283,6 +290,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledDate as FilledDate,
                 StatusChangedDate as StatusChangedDate,
                 DealerId as DealerId,
+                TraderName as TraderName,
                 Notes as Notes,
                 CounterParty as CounterParty,
                 OrderType as OrderType,
@@ -559,6 +567,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.OrderOrderedVolume,
                 dto.OrderFilledVolume,
                 dto.OrderTraderId,
+                dto.OrderTraderName,
                 dto.OrderClearingAgent,
                 dto.OrderDealingInstructions,
 
@@ -603,6 +612,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 dto.CancelledDate,
                 dto.FilledDate,
                 dto.DealerId,
+                dto.TraderName,
                 dto.Notes,
                 dto.CounterParty,
                 orderType,
@@ -706,6 +716,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 CleanDirty = (int?)order.OrderCleanDirty;
 
                 OrderTraderId = order.OrderTraderId;
+                OrderTraderName = order.OrderTraderName;
                 OrderClearingAgent = order.OrderClearingAgent;
                 OrderDealingInstructions = order.OrderDealingInstructions;
                 AccumulatedInterest = order.OrderAccumulatedInterest;
@@ -795,6 +806,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             public long? OrderOrderedVolume { get; set; }
             public long? OrderFilledVolume { get; set; }
             public string OrderTraderId { get; set; }
+            public string OrderTraderName { get; set; }
             public string OrderClearingAgent { get; set; }
             public string OrderDealingInstructions { get; set; }
             public decimal? AccumulatedInterest { get; set; }
@@ -836,6 +848,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 StatusChangedDate = dealerOrder.MostRecentDateEvent();
 
                 DealerId = dealerOrder.DealerId;
+                TraderName = dealerOrder.DealerName;
                 Notes = dealerOrder.Notes;
 
                 CounterParty = dealerOrder.DealerCounterParty;
@@ -876,6 +889,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
 
             public string DealerId { get; set; }
+            public string TraderName { get; set; }
             public string Notes { get; set; }
 
             public string CounterParty { get; set; }

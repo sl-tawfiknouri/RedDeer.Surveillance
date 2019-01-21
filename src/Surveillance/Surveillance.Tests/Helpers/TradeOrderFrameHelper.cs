@@ -46,6 +46,7 @@ namespace Surveillance.Tests.Helpers
                 1000,
                 1000,
                 "trader id",
+                "trader one",
                 "clearing agent",
                 "dealer-instructions",
                 null,

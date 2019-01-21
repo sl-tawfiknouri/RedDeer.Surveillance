@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using DomainV2.Trading;
@@ -18,7 +20,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume)
             ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume;";
 
-        private const string GetAttributionSql = @"
+        private const string GetAllocationSql = @"
             SELECT
                 Id as Id,
                 OrderId as OrderId,
@@ -27,7 +29,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 ClientAccountId as ClientAccountId,
                 OrderFilledVolume as OrderFilledVolume
             FROM OrdersAllocation
-            WHERE OrderId in (@OrderIds);";
+            WHERE OrderId IN @OrderIds;";
 
         public OrderAllocationRepository(
             IConnectionStringFactory connectionFactory,
@@ -76,15 +78,65 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger.LogInformation($"OrderAllocationRepository Create method completed");
         }
 
-        public async Task<object> Get(object entity)
+        public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orders)
         {
             _logger.LogInformation($"OrderAllocationRepository Get method called");
 
+            orders = orders?.Where(o => !string.IsNullOrWhiteSpace(o))?.ToList();
 
+            if (orders == null
+                || !orders.Any())
+            {
+                return new OrderAllocation[0];
+            }
+
+            var dbConnection = _connectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+
+                _logger.LogInformation(
+                    $"OrderAllocationRepository Create method opened db connection and about to query for {orders?.Count} order ids");
+
+                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orders }))
+                {
+                    var result = await conn;
+
+                    var allocations = result.Select(Project).ToList();
+
+                    return allocations;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrderAllocationRepository Get encountered an error", e);
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
 
             _logger.LogInformation($"OrderAllocationRepository Get method completed");
 
-            return new object();
+            return new OrderAllocation[0];
+        }
+
+        public OrderAllocation Project(OrderAllocationDto dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            return new OrderAllocation(
+                dto.Id,
+                dto.OrderId,
+                dto.Fund,
+                dto.Strategy,
+                dto.ClientAccountId,
+                dto.OrderFilledVolume);
         }
 
         public class OrderAllocationDto

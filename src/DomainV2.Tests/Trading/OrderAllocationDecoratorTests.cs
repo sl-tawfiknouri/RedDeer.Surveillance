@@ -114,6 +114,7 @@ namespace DomainV2.Tests.Trading
                 0,
                 0,
                 "trader-one",
+                "trader-1",
                 "clearing-agent",
                 "deal asap",
                 null,

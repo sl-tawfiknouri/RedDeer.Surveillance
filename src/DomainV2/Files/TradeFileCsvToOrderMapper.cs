@@ -115,6 +115,7 @@ namespace DomainV2.Files
             csv.OrderOrderedVolume = order.OrderOrderedVolume?.ToString();
             csv.OrderFilledVolume = order.OrderFilledVolume?.ToString();
             csv.OrderTraderId = order.OrderTraderId;
+            csv.OrderTraderName = order.OrderTraderName;
             csv.OrderClearingAgent = order.OrderClearingAgent;
             csv.OrderDealingInstructions = order.OrderDealingInstructions;
 
@@ -205,6 +206,7 @@ namespace DomainV2.Files
                 orderedVolume,
                 filledVolume,
                 csv.OrderTraderId,
+                csv.OrderTraderName,
                 csv.OrderClearingAgent,
                 csv.OrderDealingInstructions,
                 orderOptionStrikePrice,
@@ -255,6 +257,7 @@ namespace DomainV2.Files
                 cancelledDate,
                 filledDate,
                 csv.DealerOrderDealerId,
+                csv.DealerOrderDealerName,
                 csv.DealerOrderNotes,
                 csv.DealerOrderCounterParty,
                 dealerOrderType,

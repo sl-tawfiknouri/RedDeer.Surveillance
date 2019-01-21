@@ -198,7 +198,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -254,7 +254,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -305,7 +305,7 @@ namespace Surveillance.Rules.HighVolume
             if (thresholdValue <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 

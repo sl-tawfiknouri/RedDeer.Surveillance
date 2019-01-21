@@ -164,6 +164,7 @@ namespace TestHarness.Engine.OrderGenerator
                 null,
                 null,
                 null,
+                null,
                 OptionEuropeanAmerican.NONE,
                 new DealerOrder[0]);
 

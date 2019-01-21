@@ -187,6 +187,8 @@ namespace Surveillance
             For<IRuleRunUpdateMessageSender>().Use<RuleRunUpdateMessageSender>();
             For<IRuleParameterDtoIdExtractor>().Use<RuleParameterDtoIdExtractor>();
             For<IUniverseEquityInterDayCache>().Use<UniverseEquityInterDayCache>();
+
+            For<IOrdersToAllocatedOrdersProjector>().Use<OrdersToAllocatedOrdersProjector>();
         }
     }
 }

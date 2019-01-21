@@ -77,6 +77,7 @@ namespace TestHarness.Tests.Display
                 100 * vol,
                 100 * vol,
                 "trader-1",
+                "trader one",
                 "clearing-bank",
                 "deal asap",
                 null,

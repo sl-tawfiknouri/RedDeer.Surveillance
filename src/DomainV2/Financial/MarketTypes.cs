@@ -2,7 +2,7 @@
 {
     public enum MarketTypes
     {
-        NONE,
+        NONE = 0,
         STOCKEXCHANGE,
         OTC
     }

@@ -19,6 +19,7 @@ namespace DomainV2.Trading
             DateTime? filledDate,
             DateTime? createdDate,
             string traderId,
+            string dealerName,
             string notes,
             string tradeCounterParty,
             OrderTypes orderType,
@@ -52,6 +53,7 @@ namespace DomainV2.Trading
             CreatedDate = createdDate;
 
             DealerId = traderId ?? string.Empty;
+            DealerName = dealerName ?? string.Empty;
             Notes = notes ?? string.Empty;
             DealerCounterParty = tradeCounterParty ?? string.Empty;
             OrderType = orderType;
@@ -81,6 +83,7 @@ namespace DomainV2.Trading
         public DateTime? CreatedDate { get; }
 
         public string DealerId { get; }
+        public string DealerName { get; }
         public string Notes { get; }
         public string DealerCounterParty { get; }
         public OrderTypes OrderType { get; }

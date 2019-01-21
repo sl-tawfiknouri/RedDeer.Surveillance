@@ -5,6 +5,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces
 {
     public interface IBmllDataRequestsSenderManager
     {
-        Task<IReadOnlyCollection<IGetTimeBarPair>> Send(List<MarketDataRequestDataSource> bmllRequests);
+        Task<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>> Send(List<MarketDataRequestDataSource> bmllRequests, bool completeWithFailures);
     }
 }

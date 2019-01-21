@@ -338,8 +338,8 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
-            var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
+            var startDate = opposingPosition.Get().Where(op => op.PlacedDate != null).Min(op => op.PlacedDate).GetValueOrDefault();
+            var endDate = opposingPosition.Get().Where(op => op.PlacedDate != null).Max(op => op.PlacedDate).GetValueOrDefault();
 
             if (endDate.Subtract(startDate) < TimeSpan.FromMinutes(1))
             {
@@ -365,9 +365,9 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
             
-            if (mostRecentTrade.OrderPlacedDate > endDate)
+            if (mostRecentTrade.PlacedDate > endDate)
             {
-                endDate = mostRecentTrade.OrderPlacedDate.GetValueOrDefault();
+                endDate = mostRecentTrade.PlacedDate.GetValueOrDefault();
             }
 
             var securityDataTicks = marketResult.Response;

@@ -42,12 +42,12 @@ namespace DataImport.Integration.Tests.Validation
                             && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                             && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                             && a.Instrument.Identifiers.ClientIdentifier == "1"
-                            && a.OrderPlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                            && a.OrderBookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                            && a.OrderAmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                            && a.OrderRejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                            && a.OrderCancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                            && a.OrderFilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.PlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.BookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.AmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.RejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.CancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                            && a.FilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
                             && a.OrderType == OrderTypes.LIMIT
                             && a.OrderDirection == OrderDirections.SELL
                             && a.OrderCurrency.Value == "GBP"
@@ -106,12 +106,12 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                              && a.Instrument.Identifiers.ClientIdentifier == "2"
-                             && a.OrderPlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                             && a.OrderBookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                             && a.OrderAmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                             && a.OrderRejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                             && a.OrderCancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
-                             && a.OrderFilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.PlacedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.BookedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.AmendedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.RejectedDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.CancelledDate == new DateTime(2018, 01, 12, 9, 0, 0)
+                             && a.FilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
                              && a.OrderCurrency.Value == "GBP"
@@ -146,12 +146,12 @@ namespace DataImport.Integration.Tests.Validation
                             && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                             && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                             && a.Instrument.Identifiers.ClientIdentifier == "3"
-                             && a.OrderPlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderBookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderAmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderRejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderCancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderFilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.PlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.BookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.AmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.RejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.CancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.FilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
                              && a.OrderCurrency.Value == "GBP"
@@ -186,12 +186,12 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                              && a.Instrument.Identifiers.ClientIdentifier == "4"
-                             && a.OrderPlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderBookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderAmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderRejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderCancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
-                             && a.OrderFilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.PlacedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.BookedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.AmendedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.RejectedDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.CancelledDate == new DateTime(2018, 01, 15, 9, 0, 0)
+                             && a.FilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
                              && a.OrderCurrency.Value == "GBP"
@@ -225,12 +225,12 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                              && a.Instrument.Identifiers.ClientIdentifier == "5"
-                             && a.OrderPlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderBookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderAmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderRejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderCancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderFilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.PlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.BookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.AmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.RejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.CancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.FilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
                              && a.OrderCurrency.Value == "GBP"
@@ -264,12 +264,12 @@ namespace DataImport.Integration.Tests.Validation
                              && a.Instrument.Identifiers.ExchangeSymbol == "ITRK"
                              && a.Instrument.Identifiers.BloombergTicker == "ITRK LN Equity"
                              && a.Instrument.Identifiers.ClientIdentifier == "6"
-                             && a.OrderPlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderBookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderAmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderRejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderCancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
-                             && a.OrderFilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.PlacedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.BookedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.AmendedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.RejectedDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.CancelledDate == new DateTime(2018, 01, 16, 9, 0, 0)
+                             && a.FilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
                              && a.OrderCurrency.Value == "GBP"

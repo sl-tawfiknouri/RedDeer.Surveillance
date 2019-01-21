@@ -69,7 +69,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            var sortedTradeOrders = tradeOrders.OrderBy(to => to.OrderPlacedDate).ToList();
+            var sortedTradeOrders = tradeOrders.OrderBy(to => to.PlacedDate).ToList();
 
             foreach (var item in sortedTradeOrders)
             {

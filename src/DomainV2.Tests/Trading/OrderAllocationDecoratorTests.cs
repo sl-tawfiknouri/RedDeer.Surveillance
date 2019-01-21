@@ -94,6 +94,7 @@ namespace DomainV2.Tests.Trading
                 market,
                 null,
                 "order-1",
+                DateTime.UtcNow,
                 "order-v1",
                 "order-v1-link",
                 "order-group-1",

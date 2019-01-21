@@ -155,6 +155,7 @@ namespace Surveillance.Tests.Trades
                 new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE),
                 null,
                 "id1",
+                DateTime.UtcNow,
                 "version-1",
                 "version-1",
                 "version-1",

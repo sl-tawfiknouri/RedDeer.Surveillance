@@ -128,6 +128,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tick.Market,
                 null,
                 "order-v1",
+                DateTime.UtcNow,
                 "order-v1",
                 "order-group-v1",
                 Guid.NewGuid().ToString(),

@@ -235,7 +235,8 @@ namespace Surveillance.Universe.OrganisationalFactors
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(data.OrderFund)
+            if ((string.IsNullOrWhiteSpace(data.OrderFund) 
+                 && string.IsNullOrWhiteSpace(data.OrderClientAccountAttributionId))
                 && !_aggregateNonFactorableIntoOwnCategory)
             {
                 return;
@@ -244,6 +245,12 @@ namespace Surveillance.Universe.OrganisationalFactors
             lock (_accountLock)
             {
                 var orderFund = data.OrderFund;
+
+                if (string.IsNullOrWhiteSpace(orderFund))
+                {
+                    // promote client account attribution ids to fund level
+                    orderFund = data.OrderClientAccountAttributionId ?? string.Empty;
+                }
 
                 if (string.IsNullOrWhiteSpace(orderFund))
                 {

@@ -342,6 +342,7 @@ namespace Surveillance.Rules
         public void BaseClone()
         {
             UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)UniverseEquityIntradayCache.Clone();
+            UniverseEquityInterdayCache = (IUniverseEquityInterDayCache) UniverseEquityInterdayCache.Clone();
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
         }

@@ -10,6 +10,7 @@ using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
@@ -44,6 +45,7 @@ namespace Surveillance.Tests.Scheduler
         private IUniverseAlertStreamFactory _alertStreamFactory;
         private IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private IRuleRunUpdateMessageSender _ruleRunUpdateMessageSender;
+        private IUniverseDataRequestsSubscriberFactory _dataRequestsSubscriber;
         private IRuleAnalyticsAlertsRepository _alertsRepository;
         private IUniversePercentageCompletionLogger _percentageCompletionLogger;
 
@@ -71,6 +73,7 @@ namespace Surveillance.Tests.Scheduler
             _alertsRepository = A.Fake<IRuleAnalyticsAlertsRepository>();
             _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLogger>();
             _ruleRunUpdateMessageSender = A.Fake<IRuleRunUpdateMessageSender>();
+            _dataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriberFactory>();
 
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
@@ -95,6 +98,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
                     _ruleRunUpdateMessageSender,
+                    _dataRequestsSubscriber,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -119,6 +123,7 @@ namespace Surveillance.Tests.Scheduler
                     _alertStreamSubscriberFactory,
                     _alertsRepository,
                     _ruleRunUpdateMessageSender,
+                    _dataRequestsSubscriber,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -141,6 +146,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
+                _dataRequestsSubscriber,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -157,7 +163,7 @@ namespace Surveillance.Tests.Scheduler
            await scheduler.Execute(schedule, _opCtx);
 
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<IUniverseDataRequestsSubscriber>.Ignored,  A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Play(A<IUniverse>.Ignored)).MustHaveHappened();
         }
 
@@ -179,6 +185,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
+                _dataRequestsSubscriber,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -220,6 +227,7 @@ namespace Surveillance.Tests.Scheduler
                 _alertStreamSubscriberFactory,
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
+                _dataRequestsSubscriber,
                 _percentageCompletionLogger,
                 _logger);
 

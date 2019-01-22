@@ -11,6 +11,7 @@ using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -38,6 +39,7 @@ namespace Surveillance.Scheduler
         private readonly IUniverseAlertStreamSubscriberFactory _alertStreamSubscriberFactory;
         private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
         private readonly IRuleRunUpdateMessageSender _ruleRunUpdateMessageSender;
+        private readonly IUniverseDataRequestsSubscriberFactory _dataRequestSubscriberFactory;
         private readonly IUniversePercentageCompletionLogger _universeCompletionLogger;
 
         private readonly ILogger<ReddeerRuleScheduler> _logger;
@@ -59,6 +61,7 @@ namespace Surveillance.Scheduler
             IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
             IRuleAnalyticsAlertsRepository alertsRepository,
             IRuleRunUpdateMessageSender ruleRunUpdateMessageSender,
+            IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory,
             IUniversePercentageCompletionLogger universeCompletionLogger,
             ILogger<ReddeerRuleScheduler> logger)
         {
@@ -80,6 +83,7 @@ namespace Surveillance.Scheduler
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
             _ruleRunUpdateMessageSender = ruleRunUpdateMessageSender ?? throw new ArgumentNullException(nameof(ruleRunUpdateMessageSender));
+            _dataRequestSubscriberFactory = dataRequestSubscriberFactory ?? throw new ArgumentNullException(nameof(dataRequestSubscriberFactory));
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -188,11 +192,13 @@ namespace Surveillance.Scheduler
             _universeCompletionLogger.InitiateEventLogger(universe);
             player.Subscribe(_universeCompletionLogger);
 
+            var dataRequestSubscriber = _dataRequestSubscriberFactory.Build(opCtx);
             var universeAlertSubscriber = _alertStreamSubscriberFactory.Build(opCtx.Id, execution.IsBackTest);
             var alertStream = _alertStreamFactory.Build();
             alertStream.Subscribe(universeAlertSubscriber);
 
-            var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, opCtx);
+            var ids = await _ruleSubscriber.SubscribeRules(execution, player, alertStream, dataRequestSubscriber, opCtx);
+            player.Subscribe(dataRequestSubscriber); // ensure this is registered after the rules so it will evaluate eschaton afterwards
             await RuleRunUpdateMessageSend(execution, ids);
 
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);

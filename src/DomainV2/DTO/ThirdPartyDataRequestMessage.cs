@@ -2,6 +2,6 @@
 {
     public class ThirdPartyDataRequestMessage
     {
-        public string SystemProcessOperationRuleRunId { get; set; }
+        public string SystemProcessOperationId { get; set; }
     }
 }

@@ -23,7 +23,7 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Scheduler
 {
-    public class ReddeerRuleScheduler : IReddeerRuleScheduler
+    public class ReddeerRuleScheduler : BaseScheduler, IReddeerRuleScheduler
     {
         private readonly IUniverseBuilder _universeBuilder;
         private readonly IUniversePlayerFactory _universePlayerFactory;
@@ -64,6 +64,7 @@ namespace Surveillance.Scheduler
             IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory,
             IUniversePercentageCompletionLogger universeCompletionLogger,
             ILogger<ReddeerRuleScheduler> logger)
+            : base(logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
@@ -181,6 +182,13 @@ namespace Surveillance.Scheduler
             {
                 _logger.LogError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
                 opCtx.EndEventWithError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
+                return;
+            }
+
+            var scheduleRule = ValidateScheduleRule(execution);
+            if (!scheduleRule)
+            {
+                opCtx.EndEventWithError("ReddeerRuleScheduler did not like the scheduled execution passed through. Check error logs.");
                 return;
             }
 

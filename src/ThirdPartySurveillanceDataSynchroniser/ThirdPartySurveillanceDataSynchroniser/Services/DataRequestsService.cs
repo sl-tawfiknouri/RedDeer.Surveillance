@@ -81,7 +81,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
 
                 if (!ValidateDataRequest(request.SystemProcessOperationId))
                 {
-                    _logger.LogError($"DataRequestsService received a null or empty rule run id. Exiting");
+                    _logger.LogError($"DataRequestsService received a null or empty system process operation id. Exiting");
                     return;
                 }
 

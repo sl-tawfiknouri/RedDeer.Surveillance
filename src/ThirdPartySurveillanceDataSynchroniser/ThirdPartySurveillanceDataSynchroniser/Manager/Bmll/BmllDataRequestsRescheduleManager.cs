@@ -41,28 +41,20 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager beginning process");
 
-            if (string.IsNullOrWhiteSpace(ruleRunId))
+            if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
                 _logger.LogError($"BmllDataRequestsRescheduleManager had a null or empty rule run id. Returning");
                 return;
             }
 
-            var ruleRunIds = RescheduleRuleRunIds(bmllRequests);
-
-            if (!ruleRunIds.Any())
-            {
-                _logger?.LogWarning(
-                    $"BmllDataRequestsRescheduleManager completing process did not find any rule run ids");
-                return;
-            }
-
-            var rulesToReschedule = await _ruleRunRepository.Get(new[] {ruleRunId});
-
-            foreach (var rule in rulesToReschedule)
+            var rulesToReschedule = await _ruleRunRepository.Get(new[] {systemProcessOperationId});
+            var filteredRescheduledRules = rulesToReschedule.GroupBy(i => i.RuleParameterId?.ToLower()).Select(x => x.FirstOrDefault()).ToList();
+            
+            foreach (var rule in filteredRescheduledRules)
             {
                 await RescheduleRuleRun(rule);
             }
@@ -71,24 +63,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             await _dataRequestRepository.UpdateToCompleteWithDuplicates(req);
 
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
-        }
-
-        private IReadOnlyCollection<string> RescheduleRuleRunIds(List<MarketDataRequestDataSource> marketData)
-        {
-            if (marketData == null
-                || !marketData.Any())
-            {
-                return new string[0];
-            }
-
-            var ids =
-                marketData
-                    .GroupBy(i => i.DataRequest?.SystemProcessOperationRuleRunId)
-                    .Select(x => x.Key)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .ToList();
-
-            return ids;
         }
 
         private async Task RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)

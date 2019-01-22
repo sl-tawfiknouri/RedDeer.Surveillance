@@ -175,6 +175,7 @@ namespace Surveillance.Scheduler
         /// </summary>
         public async Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx)
         {
+
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {

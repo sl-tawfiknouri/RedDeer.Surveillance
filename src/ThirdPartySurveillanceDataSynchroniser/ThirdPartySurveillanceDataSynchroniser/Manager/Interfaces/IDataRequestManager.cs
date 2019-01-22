@@ -5,6 +5,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces
 {
     public interface IDataRequestManager
     {
-        Task Handle(string ruleRunId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext);
+        Task Handle(string systemProcessOperationId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext);
     }
 }

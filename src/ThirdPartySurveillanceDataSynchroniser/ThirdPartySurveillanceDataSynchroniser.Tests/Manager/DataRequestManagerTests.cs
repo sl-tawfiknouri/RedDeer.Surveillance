@@ -67,7 +67,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager
             await manager.Handle("1", _dataRequestContext);
 
             A
-                .CallTo(() => _repository.DataRequestsForRuleRun("1"))
+                .CallTo(() => _repository.DataRequestsForSystemOperation("1"))
                 .MustHaveHappenedOnceExactly();
         }
 

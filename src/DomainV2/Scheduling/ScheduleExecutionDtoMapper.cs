@@ -97,6 +97,18 @@ namespace DomainV2.Scheduling
                     return DomainV2.Scheduling.Rules.UniverseFilter;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.WashTrade:
                     return DomainV2.Scheduling.Rules.WashTrade;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.FrontRunning:
+                    return DomainV2.Scheduling.Rules.FrontRunning;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.PaintingTheTape:
+                    return DomainV2.Scheduling.Rules.PaintingTheTape;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.ImproperMatchedOrders:
+                    return DomainV2.Scheduling.Rules.ImproperMatchedOrders;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.CrossAssetManipulation:
+                    return DomainV2.Scheduling.Rules.CrossAssetManipulation;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.PumpAndDump:
+                    return DomainV2.Scheduling.Rules.PumpAndDump;
+                case RedDeer.Contracts.SurveillanceService.Rules.Rules.TrashAndCash:
+                    return DomainV2.Scheduling.Rules.TrashAndCash;
             }
 
             _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from contracts library");
@@ -124,6 +136,18 @@ namespace DomainV2.Scheduling
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.UniverseFilter;
                 case DomainV2.Scheduling.Rules.WashTrade:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.WashTrade;
+                case DomainV2.Scheduling.Rules.FrontRunning:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.FrontRunning;
+                case DomainV2.Scheduling.Rules.PaintingTheTape:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.PaintingTheTape;
+                case DomainV2.Scheduling.Rules.ImproperMatchedOrders:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.ImproperMatchedOrders;
+                case DomainV2.Scheduling.Rules.CrossAssetManipulation:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.CrossAssetManipulation;
+                case DomainV2.Scheduling.Rules.PumpAndDump:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.PumpAndDump;
+                case DomainV2.Scheduling.Rules.TrashAndCash:
+                    return RedDeer.Contracts.SurveillanceService.Rules.Rules.TrashAndCash;
             }
 
             _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from domain library");

@@ -6,9 +6,9 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -33,7 +33,7 @@ namespace Surveillance.Rules.HighProfits
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IDataRequestMessageSender _dataRequestMessageSender;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
@@ -47,7 +47,7 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IDataRequestMessageSender messageSender,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -71,7 +71,8 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _dataRequestMessageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -337,8 +338,8 @@ namespace Surveillance.Rules.HighProfits
                 var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
-                var requestTask = _dataRequestMessageSender.Send(_ruleCtx.Id());
-                requestTask.Wait();
+                _dataRequestSubscriber.SubmitRequest();
+
                 var opCtx = _ruleCtx?.EndEvent();
                 opCtx?.EndEventWithMissingDataError();
             }

@@ -9,6 +9,6 @@ namespace Surveillance.System.DataLayer.Repositories.Interfaces
         Task Create(ISystemProcessOperationRuleRun entity);
         Task Update(ISystemProcessOperationRuleRun entity);
         Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> GetDashboard();
-        Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> Get(IReadOnlyCollection<string> ruleRunIds);
+        Task<IReadOnlyCollection<ISystemProcessOperationRuleRun>> Get(IReadOnlyCollection<string> systemProcessOperationIds);
     }
 }

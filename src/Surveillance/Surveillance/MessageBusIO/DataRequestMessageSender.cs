@@ -37,7 +37,7 @@ namespace Surveillance.MessageBusIO
             }
 
             var messageBusCts = new CancellationTokenSource();
-            var message = new ThirdPartyDataRequestMessage {SystemProcessOperationRuleRunId = ruleRunId};
+            var message = new ThirdPartyDataRequestMessage {SystemProcessOperationId = ruleRunId};
             var serialisedMessage = _serialiser.Serialise(message);
 
             try

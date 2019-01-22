@@ -1,4 +1,5 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighVolume.Interfaces;
@@ -12,6 +13,7 @@ namespace Surveillance.Factories.Interfaces
             IHighVolumeRuleParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode);
     }
 }

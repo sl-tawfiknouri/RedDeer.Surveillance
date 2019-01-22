@@ -9,6 +9,7 @@ using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 
@@ -58,6 +59,7 @@ namespace Surveillance.Universe
              ScheduledExecution execution,
              IUniversePlayer player,
              IUniverseAlertStream alertStream,
+             IUniverseDataRequestsSubscriber dataRequestSubscriber,
              ISystemProcessOperationContext opCtx)
         {
             if (execution == null
@@ -71,9 +73,14 @@ namespace Surveillance.Universe
             var ruleParameters = await RuleParameters(execution);
             _logger.LogInformation($"UniverseRuleSubscriber has fetched the rule parameters");
 
-            var highVolumeSubscriptions = _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var washTradeSubscriptions = _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var highProfitSubscriptions = _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var highVolumeSubscriptions =
+                _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var washTradeSubscriptions =
+                _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var highProfitSubscriptions =
+                _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             foreach (var sub in highVolumeSubscriptions)
             {
@@ -161,12 +168,20 @@ namespace Surveillance.Universe
             ScheduledExecution execution,
             IUniversePlayer player,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ISystemProcessOperationContext opCtx)
         {
-            var spoofingSubscriptions = _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var cancelledSubscriptions = _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var markingTheCloseSubscriptions = _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
-            var layeringSubscriptions = _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, alertStream);
+            var spoofingSubscriptions = 
+                _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var cancelledSubscriptions = 
+                _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber,  alertStream);
+
+            var markingTheCloseSubscriptions = 
+                _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var layeringSubscriptions =
+                _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             foreach (var sub in spoofingSubscriptions)
                 player.Subscribe(sub);

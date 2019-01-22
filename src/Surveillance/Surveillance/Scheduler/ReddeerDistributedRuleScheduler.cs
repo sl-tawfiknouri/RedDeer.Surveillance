@@ -99,6 +99,13 @@ namespace Surveillance.Scheduler
                     return;
                 }
 
+                var scheduleRule = ValidateScheduleRule(execution);
+                if (!scheduleRule)
+                {
+                    opCtx.EndEventWithError("ReddeerRuleScheduler did not like the scheduled execution passed through. Check error logs.");
+                    return;
+                }
+
                 var parameters = await _ruleParameterApiRepository.Get();
                 var ruleCtx = BuildRuleCtx(opCtx, execution);
                 await ScheduleRule(execution, parameters, ruleCtx);
@@ -113,6 +120,35 @@ namespace Surveillance.Scheduler
             {
                 _logger.LogError($"ReddeerDistributedRuleScheduler execute non distributed message encountered a top level exception.", e);
             }
+        }
+
+        private bool ValidateScheduleRule(ScheduledExecution execution)
+        {
+            if (execution == null)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a null scheduled execution. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesTermination.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series termination before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation that exceeded the time series termination.");
+                return false;
+            }
+
+            return true;
         }
 
         private async Task ScheduleRule(

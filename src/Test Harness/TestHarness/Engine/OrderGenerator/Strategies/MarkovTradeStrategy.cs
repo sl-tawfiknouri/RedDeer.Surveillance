@@ -111,7 +111,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var direction = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
             var limit = CalculateLimit(tick, direction, orderType);
-            var executedPrice = tick.SpreadTimeBar.Price;
+            var executedPrice = CalculateExecutedPrice(tick);
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
@@ -127,10 +127,10 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tick.Security,
                 tick.Market,
                 null,
-                "order-v1",
+                $"order-{Guid.NewGuid()}",
                 DateTime.UtcNow,
-                "order-v1",
-                "order-group-v1",
+                "",
+                "",
                 Guid.NewGuid().ToString(),
                 orderSubmittedOn,
                 orderSubmittedOn,
@@ -213,11 +213,22 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return null;
         }
 
+        private CurrencyAmount CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
+        {
+            if (tick.SpreadTimeBar.Price.Value >= 0.01m)
+            {
+                return tick.SpreadTimeBar.Price;
+            }
+
+            return new CurrencyAmount(0.01m, tick.SpreadTimeBar.Price.Currency);
+
+        }
+
         private int CalculateVolume(EquityInstrumentIntraDayTimeBar tick)
         {
             var upperLimit = Math.Max(tick.SpreadTimeBar.Volume.Traded, 1);
             var tradingVolume = (int)Math.Sqrt(upperLimit);
-            var volume = DiscreteUniform.Sample(0, tradingVolume);
+            var volume = DiscreteUniform.Sample(1, tradingVolume);
 
             return volume;
         }

@@ -118,9 +118,9 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         {
             var newBuy = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Price.Value, _pricingStandardDeviation);
 
-            if (newBuy < 0.001m)
+            if (newBuy < 0.01m)
             {
-                newBuy = 0.001m;
+                newBuy = 0.01m;
             }
 
             newBuy = Math.Round(newBuy, 2);

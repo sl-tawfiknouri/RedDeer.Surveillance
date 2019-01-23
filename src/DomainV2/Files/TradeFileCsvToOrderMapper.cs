@@ -49,12 +49,12 @@ namespace DomainV2.Files
         private TradeFileCsv MapTradeFields2(DealerOrder trad, TradeFileCsv csv)
         {
             csv.DealerOrderId = trad.DealerOrderId;
-            csv.DealerOrderPlacedDate = trad.PlacedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.DealerOrderBookedDate = trad.BookedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.DealerOrderAmendedDate = trad.AmendedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.DealerOrderRejectedDate = trad.RejectedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.DealerOrderCancelledDate = trad.CancelledDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.DealerOrderFilledDate = trad.FilledDate?.ToString("yyyy-MM-ddThh:mm:ss");
+            csv.DealerOrderPlacedDate = trad.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderBookedDate = trad.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderAmendedDate = trad.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderRejectedDate = trad.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderCancelledDate = trad.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderFilledDate = trad.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.DealerOrderDealerId = trad.DealerId;
             csv.DealerOrderCounterParty = trad.DealerCounterParty;
             csv.DealerOrderType = ((int?)trad.OrderType).ToString();
@@ -65,7 +65,7 @@ namespace DomainV2.Files
             csv.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
             csv.DealerOrderFilledVolume = trad.FilledVolume?.ToString();
             csv.DealerOrderOptionStrikePrice = trad.OptionStrikePrice?.ToString();
-            csv.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString("yyyy-MM-ddThh:mm:ss");
+            csv.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.DealerOrderOptionEuropeanAmerican = ((int?)trad.OptionEuropeanAmerican).ToString();
 
             return csv;
@@ -101,12 +101,12 @@ namespace DomainV2.Files
             csv.InstrumentUnderlyingBloombergTicker = order.Instrument.Identifiers.UnderlyingBloombergTicker;
 
             csv.OrderId = order.OrderId;
-            csv.OrderPlacedDate = order.PlacedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.OrderBookedDate = order.BookedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.OrderAmendedDate = order.AmendedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.OrderRejectedDate = order.RejectedDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.OrderCancelledDate = order.CancelledDate?.ToString("yyyy-MM-ddThh:mm:ss");
-            csv.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddThh:mm:ss");
+            csv.OrderPlacedDate = order.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderBookedDate = order.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderAmendedDate = order.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderRejectedDate = order.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderCancelledDate = order.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.OrderType = ((int?) order.OrderType).ToString();
             csv.OrderDirection = ((int?) order.OrderDirection).ToString();
             csv.OrderCurrency = order.OrderCurrency.Value;

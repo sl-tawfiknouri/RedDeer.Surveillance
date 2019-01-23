@@ -3,6 +3,7 @@ using System.Globalization;
 using DomainV2.Files.Interfaces;
 using DomainV2.Financial;
 using FluentValidation;
+using FluentValidation.Resources;
 using FluentValidation.Validators;
 
 namespace DomainV2.Files
@@ -154,6 +155,14 @@ namespace DomainV2.Files
                 .SetValidator(new DecimalParseableValidator("OrderAccumulatedInterest"))
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderAccumulatedInterest));
 
+            RuleFor(x => x.OrderPlacedDate).NotEmpty();
+            RuleFor(x => x.OrderPlacedDate).SetValidator(new DateParseableValidator("OrderPlacedDate"));
+            RuleFor(x => x.OrderBookedDate).SetValidator(new DateParseableValidator("OrderBookedDate"));
+            RuleFor(x => x.OrderAmendedDate).SetValidator(new DateParseableValidator("OrderAmendedDate"));
+            RuleFor(x => x.OrderRejectedDate).SetValidator(new DateParseableValidator("OrderRejectedDate"));
+            RuleFor(x => x.OrderCancelledDate).SetValidator(new DateParseableValidator("OrderCancelledDate"));
+            RuleFor(x => x.OrderFilledDate).SetValidator(new DateParseableValidator("OrderFilledDate"));
+
             RuleFor(x => x).Custom((i, o) =>
             {
                 if (string.IsNullOrWhiteSpace(i.OrderFilledDate))
@@ -260,6 +269,14 @@ namespace DomainV2.Files
             RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("TradePosition had an illegal value of '0'");
+
+            RuleFor(x => x.DealerOrderPlacedDate).NotEmpty().When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderPlacedDate).SetValidator(new DateParseableValidator("DealerOrderPlacedDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderBookedDate).SetValidator(new DateParseableValidator("DealerOrderBookedDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderAmendedDate).SetValidator(new DateParseableValidator("DealerOrderAmendedDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderCancelledDate).SetValidator(new DateParseableValidator("DealerOrderCancelledDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderRejectedDate).SetValidator(new DateParseableValidator("DealerOrderRejectedDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderFilledDate).SetValidator(new DateParseableValidator("DealerOrderFilledDate")).When(HasDealerOrderData);
 
             RuleFor(x => x).Custom((i, o) =>
             {
@@ -440,6 +457,52 @@ namespace DomainV2.Files
             }
 
             return true;
+        }
+    }
+
+    public class DateParseableValidator : PropertyValidator
+    {
+        public DateParseableValidator(string errorMessage) : base(errorMessage)
+        {
+        }
+
+        protected override bool IsValid(PropertyValidatorContext context)
+        {
+            var prop = context.PropertyValue as string;
+
+            if (string.IsNullOrWhiteSpace(prop))
+            {
+                return true;
+            }
+            
+            var hasDateOnlyFormat = DateTime.TryParseExact(prop, "yyyy/MM/dd", null, DateTimeStyles.None, out var dateOnlyResult);
+
+            if (hasDateOnlyFormat && dateOnlyResult.Year >= 2010)
+            {
+                return true;
+            }
+
+            if (hasDateOnlyFormat && dateOnlyResult.Year < 2010)
+            {
+                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+                return false;
+            }
+
+            var hasDateAndTimeFormat = DateTime.TryParseExact(prop, "yyyy/MM/dd HH:mm:ss", null, DateTimeStyles.None, out var dateAndTimeResult);
+
+            if (hasDateAndTimeFormat && dateAndTimeResult.Year >= 2010)
+            {
+                return true;
+            }
+
+            if (hasDateAndTimeFormat && dateAndTimeResult.Year < 2010)
+            {
+                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+                return false;
+            }
+
+            context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+            return false;
         }
     }
 }

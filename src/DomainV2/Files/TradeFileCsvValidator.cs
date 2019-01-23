@@ -475,7 +475,7 @@ namespace DomainV2.Files
                 return true;
             }
             
-            var hasDateOnlyFormat = DateTime.TryParseExact(prop, "yyyy/MM/dd", null, DateTimeStyles.None, out var dateOnlyResult);
+            var hasDateOnlyFormat = DateTime.TryParseExact(prop, "yyyy-MM-dd", null, DateTimeStyles.None, out var dateOnlyResult);
 
             if (hasDateOnlyFormat && dateOnlyResult.Year >= 2010)
             {
@@ -488,7 +488,7 @@ namespace DomainV2.Files
                 return false;
             }
 
-            var hasDateAndTimeFormat = DateTime.TryParseExact(prop, "yyyy/MM/dd HH:mm:ss", null, DateTimeStyles.None, out var dateAndTimeResult);
+            var hasDateAndTimeFormat = DateTime.TryParseExact(prop, "yyyy-MM-ddThh:mm:ss", null, DateTimeStyles.None, out var dateAndTimeResult);
 
             if (hasDateAndTimeFormat && dateAndTimeResult.Year >= 2010)
             {

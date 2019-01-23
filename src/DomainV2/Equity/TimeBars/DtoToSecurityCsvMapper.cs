@@ -31,7 +31,7 @@ namespace DomainV2.Equity.TimeBars
             {
                 Volume = equityInstrumentIntraDayTimeBar.SpreadTimeBar.Volume.Traded.ToString(),
                 DailyVolume = equityInstrumentIntraDayTimeBar.DailySummaryTimeBar.DailyVolume.Traded.ToString(),
-                Timestamp = equityInstrumentIntraDayTimeBar.TimeStamp.ToString("yyyy/MM/dd hh:mm:ss"),
+                Timestamp = equityInstrumentIntraDayTimeBar.TimeStamp.ToString("yyyy-MM-ddThh:mm:ss"),
                 MarketCap = equityInstrumentIntraDayTimeBar.DailySummaryTimeBar.MarketCap?.ToString(),
                 ListedSecurities = equityInstrumentIntraDayTimeBar.DailySummaryTimeBar.ListedSecurities?.ToString(),
 

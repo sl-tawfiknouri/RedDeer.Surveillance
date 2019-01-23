@@ -5,6 +5,7 @@ using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
@@ -45,6 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule).Contains(DomainV2.Scheduling.Rules.WashTrade) ?? true)

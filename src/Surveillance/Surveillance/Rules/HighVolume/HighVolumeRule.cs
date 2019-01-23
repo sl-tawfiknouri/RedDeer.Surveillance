@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -29,7 +29,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
-        private readonly IDataRequestMessageSender _dataRequestSender;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -41,7 +41,7 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            IDataRequestMessageSender dataRequestSender,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
@@ -61,7 +61,7 @@ namespace Surveillance.Rules.HighVolume
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
-            _dataRequestSender = dataRequestSender ?? throw new ArgumentNullException(nameof(dataRequestSender));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -198,7 +198,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -254,7 +254,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -305,7 +305,7 @@ namespace Surveillance.Rules.HighVolume
             if (thresholdValue <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -358,8 +358,7 @@ namespace Surveillance.Rules.HighVolume
                 var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
-                var requestTask = _dataRequestSender.Send(_ruleCtx.Id());
-                requestTask.Wait();
+                _dataRequestSubscriber.SubmitRequest();
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else

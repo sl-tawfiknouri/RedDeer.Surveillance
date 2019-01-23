@@ -36,29 +36,29 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Handle(string ruleRunId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext)
+        public async Task Handle(string systemProcessOperationId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext)
         {
-            if (string.IsNullOrWhiteSpace(ruleRunId))
+            if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"DataRequestManager asked to handle a rule run that had a null or empty id");
-                dataRequestContext.EventError($"DataRequestManager RuleRunId was null");
+                _logger.LogError($"DataRequestManager asked to handle a systemProcessOperationId that had a null or empty id");
+                dataRequestContext.EventError($"DataRequestManager systemProcessOperationId was null");
                 return;
             }
 
-            _logger.LogInformation($"DataRequestManager handling request with id {ruleRunId}");
+            _logger.LogInformation($"DataRequestManager handling request with id {systemProcessOperationId}");
 
-            var dataRequests = await _dataRequestRepository.DataRequestsForRuleRun(ruleRunId);
+            var dataRequests = await _dataRequestRepository.DataRequestsForSystemOperation(systemProcessOperationId);
             var dataRequestWithSource = dataRequests.Select(CalculateDataSource).GroupBy(i => i.DataSource).ToList();
 
             var bmllRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Bmll)?.ToList();
             var markitRequests = dataRequestWithSource.FirstOrDefault(i => i.Key == DataSource.Markit)?.ToList();
             var otherRequests = dataRequestWithSource.Where(i => i.Key != DataSource.Bmll && i.Key != DataSource.Markit).SelectMany(i => i).ToList();
 
-            await SubmitToBmllAndFactset(ruleRunId, bmllRequests);
+            await SubmitToBmllAndFactset(systemProcessOperationId, bmllRequests);
             await SubmitToMarkit(markitRequests);
             await SubmitOther(otherRequests);
 
-            _logger.LogInformation($"DataRequestManager completed handling request with id {ruleRunId}");
+            _logger.LogInformation($"DataRequestManager completed handling request with id {systemProcessOperationId}");
         }
 
         private MarketDataRequestDataSource CalculateDataSource(MarketDataRequest request)
@@ -71,7 +71,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
         /// <summary>
         /// BMLL does not provide the full set of daily summary data so we have to fetch this from fact set
         /// </summary>
-        private async Task SubmitToBmllAndFactset(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        private async Task SubmitToBmllAndFactset(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             if (bmllRequests == null)
             {
@@ -89,7 +89,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             await _factsetDataRequestManager.Submit(bmllRequests);
 
             // performs rescheduling as a side effect
-            await _bmllDataRequestManager.Submit(ruleRunId, bmllRequests);
+            await _bmllDataRequestManager.Submit(systemProcessOperationId, bmllRequests);
         }
 
         private async Task SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)

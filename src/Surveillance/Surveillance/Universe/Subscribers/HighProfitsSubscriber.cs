@@ -5,6 +5,7 @@ using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
@@ -44,6 +45,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(DomainV2.Scheduling.Rules.HighProfits) ?? true)
@@ -60,13 +62,14 @@ namespace Surveillance.Universe.Subscribers
 
             var highProfitParameters = _ruleParameterMapper.Map(dtos);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, highProfitParameters);
+            return SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighProfitsRuleParameters> highProfitParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -76,7 +79,7 @@ namespace Surveillance.Universe.Subscribers
             {
                 foreach (var param in highProfitParameters)
                 {
-                    var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, param);
+                    var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, dataRequestSubscriber, param);
                     var broker =
                         _brokerFactory.Build(
                             cloneableRule,
@@ -99,6 +102,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighProfitsRuleParameters param)
         {
             var ruleCtxStream = opCtx
@@ -125,7 +129,7 @@ namespace Surveillance.Universe.Subscribers
                     execution.CorrelationId,
                     execution.IsForceRerun);
 
-            var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, execution);
+            var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, dataRequestSubscriber, execution);
 
             if (param.HasFilters())
             {

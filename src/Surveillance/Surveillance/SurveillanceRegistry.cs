@@ -15,6 +15,7 @@ using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Data.Subscribers;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Interfaces;
@@ -65,6 +66,7 @@ using Surveillance.Universe.Subscribers.Factories;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 
 namespace Surveillance
 {
@@ -189,6 +191,8 @@ namespace Surveillance
             For<IUniverseEquityInterDayCache>().Use<UniverseEquityInterDayCache>();
 
             For<IOrdersToAllocatedOrdersProjector>().Use<OrdersToAllocatedOrdersProjector>();
+            For<IUniverseDataRequestsSubscriber>().Use<UniverseDataRequestsSubscriber>();
+            For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
         }
     }
 }

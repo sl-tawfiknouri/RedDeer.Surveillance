@@ -53,7 +53,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
         {
             var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(_configuration), _logger);
 
-            var results = await repo.DataRequestsForRuleRun("2");
+            var results = await repo.DataRequestsForSystemOperation("2");
 
             Assert.IsNotNull(results);
         }

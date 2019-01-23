@@ -77,15 +77,15 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
             try
             {
                 var request = _serialiser.Deserialise(messageBody);
-                dataCtx = opCtx.CreateAndStartDataRequestContext(messageId, request.SystemProcessOperationRuleRunId);
+                dataCtx = opCtx.CreateAndStartDataRequestContext(messageId, request.SystemProcessOperationId);
 
-                if (!ValidateDataRequest(request.SystemProcessOperationRuleRunId))
+                if (!ValidateDataRequest(request.SystemProcessOperationId))
                 {
-                    _logger.LogError($"DataRequestsService received a null or empty rule run id. Exiting");
+                    _logger.LogError($"DataRequestsService received a null or empty system process operation id. Exiting");
                     return;
                 }
 
-                await _dataRequestManager.Handle(request.SystemProcessOperationRuleRunId, dataCtx);
+                await _dataRequestManager.Handle(request.SystemProcessOperationId, dataCtx);
             }
             catch (Exception e)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using DataImport.Integration.Tests.ObjectGraphs;
@@ -310,15 +311,17 @@ namespace DataImport.Integration.Tests.Validation
                 var manager = graph.Build();
 
                 var ordersList = new List<Order>();
-                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored)).Invokes(i => ordersList.Add((Order)i.Arguments[0]));
+                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
+                    .Invokes(i => ordersList.Add((Order) i.Arguments[0]));
 
                 var fileMonitor = manager.Initialise();
 
                 var processFile = fileMonitor.ProcessFile(file.Path);
-                
+
                 Assert.AreEqual(processFile, file.Success);
 
-                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored)).MustHaveHappenedANumberOfTimesMatching(n => n == file.SuccessfulRows);
+                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
+                    .MustHaveHappenedANumberOfTimesMatching(n => n == file.SuccessfulRows);
 
                 // positive, any conditions
                 foreach (var cond in file.RowAssertions)

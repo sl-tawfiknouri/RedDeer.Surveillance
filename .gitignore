@@ -6,3 +6,6 @@ src/Relay/RedDeer.Relay.sln.DotSettings.user
 packages/
 src/Relay/App/Play Equity Files/
 src/Relay/App/Play Trade Files/
+
+.dotnet/*
+tools/*

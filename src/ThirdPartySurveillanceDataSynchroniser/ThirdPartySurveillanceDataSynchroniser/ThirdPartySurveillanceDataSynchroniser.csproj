@@ -6,7 +6,9 @@
     <OutputType>Library</OutputType>
     <StartupObject />
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Firefly.MessageBus.Core" Version="1.0.0" />
     <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.0" />

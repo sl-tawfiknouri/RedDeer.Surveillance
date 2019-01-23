@@ -88,8 +88,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OptionExpirationDate,
                 @OptionEuropeanAmerican)
             ON DUPLICATE KEY UPDATE
-                MarketId = @MarketId,
-                SecurityId = @SecurityReddeerId,
                 ClientOrderId =@OrderId,
                 OrderVersion=@OrderVersion,
                 OrderVersionLinkId=@OrderVersionLinkId,
@@ -186,7 +184,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 @OptionExpirationDate,
                 @OptionEuropeanAmerican)
             ON DUPLICATE KEY UPDATE
-                OrderId = @OrderId,
                 ClientDealerOrderId = @ClientDealerOrderId,
                 DealerOrderVersion = @DealerOrderVersion,
                 DealerOrderVersionLinkId = @DealerOrderVersionLinkId,

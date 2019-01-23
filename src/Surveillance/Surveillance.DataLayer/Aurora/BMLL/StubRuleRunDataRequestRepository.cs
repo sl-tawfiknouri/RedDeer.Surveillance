@@ -16,7 +16,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             return false;
         }
 
-        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForRuleRun(string ruleRunId)
+        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
         {
             return new MarketDataRequest[0];
         }

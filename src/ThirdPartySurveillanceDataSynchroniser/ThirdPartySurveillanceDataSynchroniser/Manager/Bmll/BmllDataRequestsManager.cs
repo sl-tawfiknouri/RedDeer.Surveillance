@@ -27,13 +27,13 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task Submit(string systemOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             if (bmllRequests == null
                 || !bmllRequests.Any()
                 || bmllRequests.All(a => a.DataRequest?.IsCompleted ?? false))
             {
-                await RescheduleRuleRun(ruleRunId, bmllRequests);
+                await RescheduleRuleRun(systemOperationId, bmllRequests);
                 return;
             }
 
@@ -75,15 +75,15 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
             }
 
-            await RescheduleRuleRun(ruleRunId, bmllRequests);
+            await RescheduleRuleRun(systemOperationId, bmllRequests);
         }
 
-        private async Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             try
             {
                 // RESCHEDULE IT
-                await _rescheduleManager.RescheduleRuleRun(ruleRunId, bmllRequests);
+                await _rescheduleManager.RescheduleRuleRun(systemProcessOperationId, bmllRequests);
 
                 _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
             }

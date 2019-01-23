@@ -13,9 +13,7 @@ namespace TestHarness.Repository
         private readonly IConsole _console;
 
         private const string DeleteSql = @"
-			DELETE FROM TradeReddeer WHERE ID > -1;
-            DELETE FROM Transactions WHERE ID > -1;
-            DELETE FROM Trades WHERE ID > -1;
+            DELETE FROM DealerOrders WHERE ID > -1;
             DELETE FROM Orders WHERE ID > -1;
             DELETE FROM InstrumentEquityDailySummary WHERE ID > -1;
             DELETE FROM InstrumentEquityTimeBars WHERE ID > -1;
@@ -23,12 +21,9 @@ namespace TestHarness.Repository
             DELETE FROM Market WHERE ID > -1;";
 
         private const string DeleteTradeSql = @"
-            DELETE FROM Transactions
+            DELETE FROM DealerOrders
             WHERE PlacedDate >= @FromDate
             AND PlacedDate <@ToDate;
-            DELETE FROM Trades
-            WHERE PlacedDate >= @FromDate
-            AND PlacedDate < @ToDate;
             DELETE FROM Orders
             WHERE PlacedDate >= @FromDate
             AND PlacedDate < @ToDate;";

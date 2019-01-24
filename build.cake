@@ -31,24 +31,22 @@ var solutions = new []
 
 var testProjects = new [] 
 {
-"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
-"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
-"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
-"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
-"src/Utilities.Tests/Utilities.Tests.csproj"  ,
-"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
-"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
-"src/DomainV2.Tests/DomainV2.Tests.csproj" 
-
-
+	"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
+	"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
+	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
+	"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
+	"src/Utilities.Tests/Utilities.Tests.csproj"  ,
+	"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
+	"src/DomainV2.Tests/DomainV2.Tests.csproj" 
 };
 
 var publishProjects = new List<Tuple<string,string, string>>
 {  
-new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App/ThirdPartySurveillanceDataSynchroniser.App.csproj", "DataSynchronizerService.zip","netcoreapp2.1" ),
+	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App/ThirdPartySurveillanceDataSynchroniser.App.csproj", "DataSynchronizerService.zip","netcoreapp2.1" ),
     new Tuple<string,string,string> ("src/DataImport/App", "DataImport.zip","netcoreapp2.0"),
 	new Tuple<string,string,string> ("src/Surveillance/App", "SurveillanceService.zip","netcoreapp2.0" ),
-    new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" ),
+    new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" )
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -113,10 +111,8 @@ Task("Test")
 Task("Publish")
 	.Does(() =>
     {
-	//	if (pullRequstId=="none")
-	//	{
-			
-
+		if (pullRequstId=="none")
+		{
 			foreach (var publishProject in publishProjects)
 			{	
 				Information($"******* publish {publishProject.Item1}");	
@@ -138,10 +134,25 @@ Task("Publish")
 				Information($"******* Zip {publishProject.Item1}");	
 
 				Zip($"{publishProject.Item1}/bin/Release/{publishProject.Item3}/ubuntu-x64", publishProject.Item2);
+
 				Information($"******* Finished Zip {publishProject.Item1}");	
 			}
-	 //   } 
+	    } 
 	});
+
+Task("NoPublish")
+	.IsDependentOn("SetVersion")
+	.IsDependentOn("Build")
+	.IsDependentOn("Test")
+
+Task("BuildOnly")
+	.IsDependentOn("SetVersion")
+	.IsDependentOn("Build")
+
+Task("PublishNoTests")
+	.IsDependentOn("SetVersion")
+	.IsDependentOn("Build")
+	.IsDependentOn("Publish")
 
 Task("Default")
 	.IsDependentOn("SetVersion")

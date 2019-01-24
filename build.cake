@@ -40,16 +40,16 @@ var testProjects = new []
 "src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
 "src/DomainV2.Tests/DomainV2.Tests.csproj" 
 
+
 };
 
 var publishProjects = new List<Tuple<string,string, string>>
 {  
-	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App", "DataSynchronizerService.zip","netcoreapp2.1" ),
+
     new Tuple<string,string,string> ("src/DataImport/App", "DataImport.zip","netcoreapp2.0"),
-    new Tuple<string,string,string> ("src/Surveillance/App", "SurveillanceService.zip","netcoreapp2.0" ),
+	new Tuple<string,string,string> ("src/Surveillance/App", "SurveillanceService.zip","netcoreapp2.0" ),
     new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" ),
-
-
+	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App", "DataSynchronizerService.zip","netcoreapp2.1" )
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -114,8 +114,8 @@ Task("Test")
 Task("Publish")
 	.Does(() =>
     {
-		if (pullRequstId=="none")
-		{
+	//	if (pullRequstId=="none")
+	//	{
 			
 
 			foreach (var publishProject in publishProjects)
@@ -126,7 +126,8 @@ Task("Publish")
 					Configuration = "Release",
 					Runtime = "ubuntu-x64",
 					NoBuild=true,
-					NoRestore=true
+					NoRestore=true,
+					Verbosity=DotNetCoreVerbosity.Detailed
 				};	
 
 				DotNetCorePublish(publishProject.Item1, settings);
@@ -140,7 +141,7 @@ Task("Publish")
 				Zip($"{publishProject.Item1}/bin/Release/{publishProject.Item3}/ubuntu-x64", publishProject.Item2);
 				Information($"******* Finished Zip {publishProject.Item1}");	
 			}
-	    } 
+	 //   } 
 	});
 
 Task("Default")

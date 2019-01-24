@@ -45,11 +45,10 @@ var testProjects = new []
 
 var publishProjects = new List<Tuple<string,string, string>>
 {  
-
+new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App/ThirdPartySurveillanceDataSynchroniser.App.csproj", "DataSynchronizerService.zip","netcoreapp2.1" ),
     new Tuple<string,string,string> ("src/DataImport/App", "DataImport.zip","netcoreapp2.0"),
 	new Tuple<string,string,string> ("src/Surveillance/App", "SurveillanceService.zip","netcoreapp2.0" ),
     new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" ),
-//	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App", "DataSynchronizerService.zip","netcoreapp2.1" )
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -127,7 +126,7 @@ Task("Publish")
 					Runtime = "ubuntu-x64",
 					NoBuild=true,
 					NoRestore=true,
-					Verbosity=DotNetCoreVerbosity.Detailed
+					Verbosity=DotNetCoreVerbosity.Normal
 				};	
 
 				DotNetCorePublish(publishProject.Item1, settings);

@@ -4,15 +4,16 @@ using Dapper;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Rules
 {
-    public class RuleBreachRepository
+    public class RuleBreachRepository : IRuleBreachRepository
     {
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<RuleBreachRepository> _logger;
 
-        private const string SaveRuleBreachSql = @"INSERT INTO RuleBreach (RuleId, CorrelationId, IsBackTest, CreatedOn, Title, Description, Venue, StartOfPeriodUnderInvestigation, EndOfPeriodUnderInvestigation, AssetCfi, ReddeerEnrichmentId, SystemOperationId) VALUES(@RuleId, @CorrelationId, @IsBackTest, @CreatedOn, @Title, @Description, @Venue, @StartOfPeriodUnderInvestigation, @EndOfPeriodUnderInvestigation, @AssetCfi, @ReddeerEnrichmentId, @SystemOperationId);";
+        private const string SaveRuleBreachSql = @"INSERT INTO RuleBreach (RuleId, CorrelationId, IsBackTest, CreatedOn, Title, Description, Venue, StartOfPeriodUnderInvestigation, EndOfPeriodUnderInvestigation, AssetCfi, ReddeerEnrichmentId, SystemOperationId) VALUES(@RuleId, @CorrelationId, @IsBackTest, @CreatedOn, @Title, @Description, @Venue, @StartOfPeriodUnderInvestigation, @EndOfPeriodUnderInvestigation, @AssetCfi, @ReddeerEnrichmentId, @SystemOperationId); SELECT LAST_INSERT_ID();";
 
         private const string GetRuleBreachSql = @"SELECT * FROM RuleBreach WHERE Id = @Id";
 
@@ -24,12 +25,12 @@ namespace Surveillance.DataLayer.Aurora.Rules
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(RuleBreach message)
+        public async Task<long?> Create(RuleBreach message)
         {
             if (message == null)
             {
                 _logger.LogWarning($"RuleBreachRepository saving rule was passed a null message. Returning.");
-                return;
+                return null;
             }
 
             var dbConnection = _dbConnectionFactory.BuildConn();
@@ -40,11 +41,13 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
                 _logger.LogInformation($"RuleBreachRepository saving rule breach to repository");
                 var dto = new RuleBreachDto(message);
-                using (var conn = dbConnection.ExecuteAsync(SaveRuleBreachSql, dto))
+                using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                 {
-                    await conn;
+                    var result = await conn;
 
                     _logger.LogInformation($"RuleBreachRepository completed saving rule breach to repository");
+
+                    return result;
                 }
             }
             catch (Exception e)
@@ -56,6 +59,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dbConnection.Close();
                 dbConnection.Dispose();
             }
+
+            return null;
         }
 
         public async Task<RuleBreach> Get(string id)
@@ -117,7 +122,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dto.EndOfPeriodUnderInvestigation, 
                 dto.AssetCfi, 
                 dto.ReddeerEnrichmentId,
-                dto.SystemOperationId);
+                dto.SystemOperationId,
+                new int[0]);
         }
 
         /// <summary>
@@ -151,7 +157,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 ReddeerEnrichmentId = message?.ReddeerEnrichmentId;
             }
 
-            public long Id { get; set; }
+            public int? Id { get; set; }
             public string RuleId { get; set; }
             public string CorrelationId { get; set; }
             public bool IsBackTest { get; set; }

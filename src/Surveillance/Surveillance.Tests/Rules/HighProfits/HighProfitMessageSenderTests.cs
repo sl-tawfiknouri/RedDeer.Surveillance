@@ -4,10 +4,12 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
 using Surveillance.Rules.HighProfits.Calculators;
+using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 
@@ -20,6 +22,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         private ICaseMessageSender _messageSender;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IHighProfitsRuleParameters _parameters;
+        private IRuleBreachRepository _ruleBreachRepository;
         private FinancialInstrument _security;
 
         [SetUp]
@@ -30,6 +33,7 @@ namespace Surveillance.Tests.Rules.HighProfits
             _parameters = A.Fake<IHighProfitsRuleParameters>();
             A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
 
+            _ruleBreachRepository = A.Fake<IRuleBreachRepository>();
             _logger = A.Fake<ILogger<HighProfitMessageSender>>();
             _security =
                 new FinancialInstrument(
@@ -47,7 +51,8 @@ namespace Surveillance.Tests.Rules.HighProfits
         {
             var messageSender = new HighProfitMessageSender(
                 _logger,
-                _messageSender);
+                _messageSender,
+                _ruleBreachRepository);
 
             var exchangeRateProfitBreakdown =
                 new ExchangeRateProfitBreakdown(

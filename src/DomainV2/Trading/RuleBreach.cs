@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DomainV2.Trading
 {
     public class RuleBreach
     {
         public RuleBreach(
-            long id,
+            int? id,
             string ruleId,
             string correlationId,
             bool isBackTest,
@@ -17,7 +18,8 @@ namespace DomainV2.Trading
             DateTime endOfPeriodUnderInvestigation,
             string assetCfi,
             string reddeerEnrichmentId,
-            string systemOperationId)
+            string systemOperationId,
+            IReadOnlyCollection<int> ruleBreachOrderIds)
         {
             Id = id;
             RuleId = ruleId;
@@ -32,9 +34,11 @@ namespace DomainV2.Trading
             AssetCfi = assetCfi;
             ReddeerEnrichmentId = reddeerEnrichmentId;
             SystemOperationId = systemOperationId;
+
+            RuleBreachOrderIds = ruleBreachOrderIds ?? new List<int>();
         }
 
-        public long Id { get; set; }
+        public int? Id { get; set; }
         public string RuleId { get; set; }
         public string CorrelationId { get; set; }
         public bool IsBackTest { get; set; }
@@ -47,5 +51,7 @@ namespace DomainV2.Trading
         public string AssetCfi { get; set; }
         public string ReddeerEnrichmentId { get; set; }
         public string SystemOperationId { get; set; }
+
+        public IReadOnlyCollection<int> RuleBreachOrderIds { get; set; }
     }
 }

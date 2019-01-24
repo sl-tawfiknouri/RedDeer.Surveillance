@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.ComplianceCase;
-using Contracts.SurveillanceService.ComplianceCaseLog;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Interfaces;
 
@@ -14,6 +12,7 @@ namespace Surveillance.Rules
 {
     public abstract class BaseMessageSender
     {
+        private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly ICaseMessageSender _caseMessageSender;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
@@ -23,10 +22,12 @@ namespace Surveillance.Rules
             string caseTitle,
             string messageSenderName,
             ILogger logger,
-            ICaseMessageSender caseMessageSender)
+            ICaseMessageSender caseMessageSender,
+            IRuleBreachRepository ruleBreachRepository)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
+            _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
 
             _messageSenderName = messageSenderName ?? "unknown message sender";
             _caseTitle = caseTitle ?? "unknown rule breach detected";
@@ -42,14 +43,9 @@ namespace Surveillance.Rules
 
             Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
-            description = description ?? string.Empty;
-
-            var caseMessage = new CaseMessage
-            {
-                Case = CaseDataItem(ruleBreach, description),
-                CaseLogs = CaseLogsInPosition(ruleBreach.Trades?.Get()),
-                IsBackTest = ruleBreach.IsBackTestRun
-            };
+            var ruleBreachObj = RuleBreachItem(ruleBreach, description);
+            var id = await _ruleBreachRepository.Create(ruleBreachObj);
+            var caseMessage = new CaseMessage { RuleBreachId = id.GetValueOrDefault(0) };
 
             try
             {
@@ -63,61 +59,54 @@ namespace Surveillance.Rules
             }
         }
 
-        private ComplianceCaseDataItemDto CaseDataItem(IRuleBreach ruleBreach, string description)
+        private RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description)
         {
             var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.MostRecentDateEvent());
             var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.MostRecentDateEvent());
             var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
 
-            var entityReferences =
-               string.IsNullOrWhiteSpace(ruleBreach.Security.Identifiers.ReddeerEnrichmentId)
-                ? new EntityReference[0]
-                : 
-                new[]
-                {
-                    new EntityReference
-                    {
-                        EntityId = ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
-                        EntityType = EntityReferenceType.SecurityId
-                    }
-                };
-
-            return new ComplianceCaseDataItemDto
+            if (oldestPosition == null)
             {
-                Title = _caseTitle,
-                Description = description,
-                Source = ComplianceCaseSource.SurveillanceRule,
-                Status = ComplianceCaseStatus.Unset,
-                Type = ComplianceCaseType.Unset,
-                ReportedOn = DateTime.UtcNow,
-                StatusUpdatedOn = DateTime.UtcNow,
-                Venue = venue,
-                StartOfPeriodUnderInvestigation = oldestPosition.GetValueOrDefault(DateTime.UtcNow),
-                EndOfPeriodUnderInvestigation = latestPosition.GetValueOrDefault(DateTime.UtcNow),
-                AssetType = ruleBreach.Security.Cfi,
-                EntityReferences = entityReferences
-            };
-        }
-
-        protected virtual ComplianceCaseLogDataItemDto[] CaseLogsInPosition(IList<Order> orders)
-        {
-            if (orders == null
-                || !orders.Any())
-            {
-                return new ComplianceCaseLogDataItemDto[0];
+                oldestPosition = latestPosition;
             }
 
-            return orders
-                .Select(tp =>
-                    new ComplianceCaseLogDataItemDto
-                    {
-                        DataItemId = tp.ReddeerOrderId.ToString(),
-                        DataItemType = DataItemType.TradeOrder,
-                        Type = ComplianceCaseLogType.Unset,
-                        Notes = string.Empty,
-                        CreatedOn = DateTime.UtcNow
-                    })
-                .ToArray();
+            if (latestPosition == null)
+            {
+                latestPosition = oldestPosition;
+            }
+
+            var oldestPositionValue = oldestPosition ?? DateTime.UtcNow;
+            var latestPositionValue = latestPosition ?? DateTime.UtcNow;
+
+            description = description ?? string.Empty;
+
+            var trades =
+                ruleBreach
+                    .Trades
+                    ?.Get()
+                    ?.Select(io => io.ReddeerOrderId)
+                    .Where(x => x.HasValue)
+                    .Select(y => y.Value)
+                    .ToList();
+
+            var ruleBreachObj =
+                new RuleBreach(
+                    null,
+                    "ruleid", 
+                    null,
+                    ruleBreach.IsBackTestRun,
+                    DateTime.UtcNow,
+                    _caseTitle,
+                    description, 
+                    venue,
+                    oldestPositionValue,
+                    latestPositionValue,
+                    ruleBreach.Security.Cfi,
+                    ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
+                    null,
+                    trades);
+
+            return ruleBreachObj;
         }
     }
 }

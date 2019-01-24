@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
 
@@ -10,12 +11,14 @@ namespace Surveillance.Rules.HighVolume
     {
         public HighVolumeMessageSender(
             ILogger<IHighVolumeMessageSender> logger,
-            ICaseMessageSender caseMessageSender)
+            ICaseMessageSender caseMessageSender,
+            IRuleBreachRepository repository)
             : base(
                 "Automated High Volume Rule Breach Detected",
                 "High Volume Message Sender",
                 logger,
-                caseMessageSender)
+                caseMessageSender,
+                repository)
         { }
 
         public async Task Send(IHighVolumeRuleBreach ruleBreach)

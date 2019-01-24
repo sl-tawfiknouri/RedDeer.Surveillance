@@ -33,7 +33,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
 
             var caseMessage =
                 new RuleBreach(
-                    100l,
+                    100,
                     "rule-1", 
                     "correlation-id",
                     true, 
@@ -45,7 +45,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     DateTime.UtcNow, 
                     "entspb", 
                     "RD00",
-                    "0");
+                    "0",
+                    new int[0]);
 
             await repo.Create(caseMessage);
         }

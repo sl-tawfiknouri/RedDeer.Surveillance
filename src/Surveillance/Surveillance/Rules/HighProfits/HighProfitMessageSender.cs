@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
 
@@ -10,12 +11,14 @@ namespace Surveillance.Rules.HighProfits
     {
         public HighProfitMessageSender(
             ILogger<HighProfitMessageSender> logger,
-            ICaseMessageSender caseMessageSender)
+            ICaseMessageSender caseMessageSender,
+            IRuleBreachRepository repository)
             : base(
                 "Automated High Profit Rule Breach Detected",
                 "High Profit Message Sender",
                 logger,
-                caseMessageSender)
+                caseMessageSender,
+                repository)
         { }
 
         public async Task Send(IHighProfitRuleBreach ruleBreach)

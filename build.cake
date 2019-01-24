@@ -143,16 +143,16 @@ Task("Publish")
 Task("NoPublish")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Test")
+	.IsDependentOn("Test");
 
 Task("BuildOnly")
 	.IsDependentOn("SetVersion")
-	.IsDependentOn("Build")
+	.IsDependentOn("Build");
 
 Task("PublishNoTests")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Publish")
+	.IsDependentOn("Publish");
 
 Task("Default")
 	.IsDependentOn("SetVersion")

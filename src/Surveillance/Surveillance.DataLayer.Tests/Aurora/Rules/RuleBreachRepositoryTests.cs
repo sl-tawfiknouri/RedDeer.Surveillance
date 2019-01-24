@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using Contracts.SurveillanceService;
+﻿using System;
+using System.Threading.Tasks;
+using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -30,7 +31,21 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
             var connectionStringFactory = new ConnectionStringFactory(_configuration);
             var repo = new RuleBreachRepository(connectionStringFactory, _logger);
 
-            var caseMessage = new CaseMessage();
+            var caseMessage =
+                new RuleBreach(
+                    100l,
+                    "rule-1", 
+                    "correlation-id",
+                    true, 
+                    DateTime.UtcNow, 
+                    "case-title", 
+                    "case-description", 
+                    "xlon",
+                    DateTime.UtcNow, 
+                    DateTime.UtcNow, 
+                    "entspb", 
+                    "RD00",
+                    "0");
 
             await repo.Create(caseMessage);
         }
@@ -42,7 +57,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
             var connectionStringFactory = new ConnectionStringFactory(_configuration);
             var repo = new RuleBreachRepository(connectionStringFactory, _logger);
 
-            var result = await repo.Get("1");
+            var result = await repo.Get("2");
         }
     }
 }

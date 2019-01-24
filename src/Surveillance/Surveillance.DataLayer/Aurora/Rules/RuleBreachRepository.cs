@@ -26,6 +26,12 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
         public async Task Create(RuleBreach message)
         {
+            if (message == null)
+            {
+                _logger.LogWarning($"RuleBreachRepository saving rule was passed a null message. Returning.");
+                return;
+            }
+
             var dbConnection = _dbConnectionFactory.BuildConn();
 
             try
@@ -54,6 +60,12 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
         public async Task<RuleBreach> Get(string id)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                _logger.LogWarning($"RuleBreachRepository get rule breach was passed a null message. Returning.");
+                return null;
+            }
+
             var dbConnection = _dbConnectionFactory.BuildConn();
 
             try

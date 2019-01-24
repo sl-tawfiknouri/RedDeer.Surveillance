@@ -49,7 +49,7 @@ var publishProjects = new List<Tuple<string,string, string>>
     new Tuple<string,string,string> ("src/DataImport/App", "DataImport.zip","netcoreapp2.0"),
 	new Tuple<string,string,string> ("src/Surveillance/App", "SurveillanceService.zip","netcoreapp2.0" ),
     new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" ),
-	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App", "DataSynchronizerService.zip","netcoreapp2.1" )
+//	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App", "DataSynchronizerService.zip","netcoreapp2.1" )
 };
 
 //////////////////////////////////////////////////////////////////////

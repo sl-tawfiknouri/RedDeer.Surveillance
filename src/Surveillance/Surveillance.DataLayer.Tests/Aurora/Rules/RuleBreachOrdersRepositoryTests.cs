@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -12,16 +15,16 @@ using Surveillance.DataLayer.Tests.Helpers;
 namespace Surveillance.DataLayer.Tests.Aurora.Rules
 {
     [TestFixture]
-    public class RuleBreachRepositoryTests
+    public class RuleBreachOrdersRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
-        private ILogger<RuleBreachRepository> _logger;
+        private ILogger<RuleBreachOrdersRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
             _configuration = TestHelpers.Config();
-            _logger = new NullLogger<RuleBreachRepository>();
+            _logger = new NullLogger<RuleBreachOrdersRepository>();
         }
 
         [Test]
@@ -29,26 +32,11 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
         public async Task Create_Creates_AsExpected()
         {
             var connectionStringFactory = new ConnectionStringFactory(_configuration);
-            var repo = new RuleBreachRepository(connectionStringFactory, _logger);
+            var repo = new RuleBreachOrdersRepository(connectionStringFactory, _logger);
 
-            var caseMessage =
-                new RuleBreach(
-                    100,
-                    "rule-1", 
-                    "correlation-id",
-                    true, 
-                    DateTime.UtcNow, 
-                    "case-title", 
-                    "case-description", 
-                    "xlon",
-                    DateTime.UtcNow, 
-                    DateTime.UtcNow, 
-                    "entspb", 
-                    "RD00",
-                    "0",
-                    new int[0]);
+            var breaches = Enumerable.Range(0, 15000).Select(i => new RuleBreachOrder("20", i.ToString())).ToList();
 
-           var result = await repo.Create(caseMessage);
+            await repo.Create(breaches);
         }
 
         [Test]
@@ -56,9 +44,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
         public async Task Get_Creates_AsExpected()
         {
             var connectionStringFactory = new ConnectionStringFactory(_configuration);
-            var repo = new RuleBreachRepository(connectionStringFactory, _logger);
+            var repo = new RuleBreachOrdersRepository(connectionStringFactory, _logger);
 
-            var result = await repo.Get("2");
+            var result = await repo.Get("20");
         }
     }
 }

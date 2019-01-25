@@ -15,7 +15,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<RuleBreachOrdersRepository> _logger;
 
-        private const string SaveRuleBreachSql = @"INSERT INTO RuleBreachOrders (RuleBreachId, OrderId) VALUES(@RuleBreachId, @OrderId);";
+        private const string SaveRuleBreachSql = @"INSERT IGNORE INTO RuleBreachOrders (RuleBreachId, OrderId) VALUES(@RuleBreachId, @OrderId);";
         private const string GetRuleBreachSql = @"SELECT * FROM RuleBreachOrders WHERE RuleBreachId = @RuleBreachId";
 
         public RuleBreachOrdersRepository(
@@ -52,7 +52,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 var iter = 0;
                 while (count > 0)
                 {
-                    count = -1000;
+                    count = count - 1000;
                     var skippedResults = dtos.Skip(iter * 1000).Take(1000).ToList();
                     ruleBreachList.Add(skippedResults);
                     iter++;
@@ -78,7 +78,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             }
         }
 
-        public async Task<RuleBreachOrder> Get(string ruleBreachId)
+        public async Task<IReadOnlyCollection<RuleBreachOrder>> Get(string ruleBreachId)
         {
             if (string.IsNullOrWhiteSpace(ruleBreachId))
             {
@@ -93,13 +93,13 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dbConnection.Open();
 
                 _logger.LogInformation($"RuleBreachOrdersRepository fetching rule breaches");
-                using (var conn = dbConnection.QuerySingleAsync<RuleBreachOrderDto>(GetRuleBreachSql, new { RuleBreachId = ruleBreachId }))
+                using (var conn = dbConnection.QueryAsync<RuleBreachOrderDto>(GetRuleBreachSql, new { RuleBreachId = ruleBreachId }))
                 {
                     var result = await conn;
 
                     _logger.LogInformation($"RuleBreachOrdersRepository completed fetching rule breach");
 
-                    var mappedResult = Project(result);
+                    var mappedResult = result.Select(Project).ToList();
 
                     return mappedResult;
                 }

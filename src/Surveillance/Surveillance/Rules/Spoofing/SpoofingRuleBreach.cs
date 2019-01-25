@@ -4,6 +4,7 @@ using DomainV2.Financial;
 using DomainV2.Trading;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 
@@ -12,6 +13,7 @@ namespace Surveillance.Rules.Spoofing
     public class SpoofingRuleBreach : ISpoofingRuleBreach
     {
         public SpoofingRuleBreach(
+            ISystemProcessOperationContext operationContext,
             TimeSpan window,
             ITradePosition fulfilledTradePosition,
             ITradePosition cancelledTradePosition,
@@ -30,6 +32,7 @@ namespace Surveillance.Rules.Spoofing
             CancelledTrades = cancelledTradePosition;
 
             RuleParameterId = spoofingParameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
         }
 
         public TimeSpan Window { get; }
@@ -45,5 +48,7 @@ namespace Surveillance.Rules.Spoofing
 
         public bool IsBackTestRun { get; set; }
         public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

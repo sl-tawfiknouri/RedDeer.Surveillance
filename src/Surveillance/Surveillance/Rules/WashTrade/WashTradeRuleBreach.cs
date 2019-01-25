@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.WashTrade
@@ -10,6 +11,7 @@ namespace Surveillance.Rules.WashTrade
     public class WashTradeRuleBreach : IWashTradeRuleBreach
     {
         public WashTradeRuleBreach(
+            ISystemProcessOperationContext operationContext,
             IWashTradeRuleParameters parameters,
             ITradePosition tradePosition,
             FinancialInstrument security,
@@ -28,6 +30,7 @@ namespace Surveillance.Rules.WashTrade
             ClusteringPositionBreach = clusteringPositionBreach ?? throw new ArgumentNullException(nameof(clusteringPositionBreach));
 
             RuleParameterId = parameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
         }
 
         public IWashTradeRuleParameters Parameters { get; }
@@ -42,6 +45,9 @@ namespace Surveillance.Rules.WashTrade
 
         public bool IsBackTestRun { get; set; }
         public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
+
 
         public class WashTradeAveragePositionBreach
         {

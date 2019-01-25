@@ -44,8 +44,15 @@ namespace Surveillance.Rules
             Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
             var ruleBreachObj = RuleBreachItem(ruleBreach, description);
-            var id = await _ruleBreachRepository.Create(ruleBreachObj);
-            var caseMessage = new CaseMessage { RuleBreachId = id.GetValueOrDefault(0) };
+            var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachObj);
+
+            if (ruleBreachId == null)
+            {
+                Logger.LogError($"{_messageSenderName} encountered an error saving the case message. Will not transmit to bus");
+                return;
+            }
+
+            var caseMessage = new CaseMessage { RuleBreachId = ruleBreachId.GetValueOrDefault(0) };
 
             try
             {

@@ -6,7 +6,6 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
@@ -151,10 +150,10 @@ namespace Surveillance.Rules.CancelledOrders
             }
 
             var cancelledPositionOrders = tradingPosition.Get().Count(tp => tp.OrderStatus() == OrderStatus.Cancelled);
-
             var totalPositionOrders = tradingPosition.Get().Count;
 
             return new CancelledOrderRuleBreach(
+                _opCtx.SystemProcessOperationContext(),
                 _parameters,
                 tradingPosition,
                 tradingPosition?.Get()?.FirstOrDefault()?.Instrument,

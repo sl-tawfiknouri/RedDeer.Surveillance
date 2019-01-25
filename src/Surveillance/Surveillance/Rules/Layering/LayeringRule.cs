@@ -204,6 +204,7 @@ namespace Surveillance.Rules.Layering
 
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
                     _parameters,
                     _parameters.WindowSize,
                     allTrades,

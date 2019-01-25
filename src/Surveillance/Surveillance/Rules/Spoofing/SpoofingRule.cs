@@ -179,6 +179,7 @@ namespace Surveillance.Rules.Spoofing
 
             var ruleBreach =
                 new SpoofingRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
                     _parameters.WindowSize,
                     tradingPosition,
                     opposingPosition,

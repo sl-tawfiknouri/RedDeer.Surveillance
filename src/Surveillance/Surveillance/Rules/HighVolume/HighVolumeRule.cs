@@ -104,6 +104,7 @@ namespace Surveillance.Rules.HighVolume
 
             var breach =
                 new HighVolumeRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
                     _parameters.WindowSize, 
                     tradePosition,
                     mostRecentTrade?.Instrument,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -12,6 +13,7 @@ namespace Surveillance.Rules.MarkingTheClose
     public class MarkingTheCloseBreach : IMarkingTheCloseBreach
     {
         public MarkingTheCloseBreach(
+            ISystemProcessOperationContext operationContext,
             TimeSpan window,
             FinancialInstrument security,
             MarketOpenClose marketClose,
@@ -31,6 +33,7 @@ namespace Surveillance.Rules.MarkingTheClose
             WindowBreach = windowBreach;
 
             RuleParameterId = parameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
         }
 
         public TimeSpan Window { get; }
@@ -46,5 +49,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         public bool IsBackTestRun { get; set; }
         public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

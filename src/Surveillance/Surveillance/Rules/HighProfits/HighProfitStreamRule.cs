@@ -267,6 +267,7 @@ namespace Surveillance.Rules.HighProfits
             var position = new TradePosition(activeTrades.ToList());
             var breach =
                 new HighProfitRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
                     _parameters,
                     absoluteProfit,
                     _parameters.HighProfitCurrencyConversionTargetCurrency,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
@@ -9,7 +10,6 @@ using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
 using Surveillance.Rules.HighProfits.Calculators;
-using Surveillance.Rules.Interfaces;
 using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 
@@ -21,6 +21,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         private ILogger<HighProfitMessageSender> _logger;
         private ICaseMessageSender _messageSender;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
+        private ISystemProcessOperationContext _opCtx;
         private IHighProfitsRuleParameters _parameters;
         private IRuleBreachRepository _ruleBreachRepository;
         private FinancialInstrument _security;
@@ -30,6 +31,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         {
             _messageSender = A.Fake<ICaseMessageSender>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
             _parameters = A.Fake<IHighProfitsRuleParameters>();
             A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
 
@@ -47,7 +49,7 @@ namespace Surveillance.Tests.Rules.HighProfits
 
         [Test]
         [Explicit]
-        public void DoesSendExchangeRateMessage_AsExpected()
+        public async Task DoesSendExchangeRateMessage_AsExpected()
         {
             var messageSender = new HighProfitMessageSender(
                 _logger,
@@ -65,6 +67,7 @@ namespace Surveillance.Tests.Rules.HighProfits
 
             var breach =
                 new HighProfitRuleBreach(
+                    _opCtx,
                     _parameters,
                     10m,
                     "GBP",
@@ -76,7 +79,7 @@ namespace Surveillance.Tests.Rules.HighProfits
                     false,
                     exchangeRateProfitBreakdown);
 
-            messageSender.Send(breach);
+            await messageSender.Send(breach);
         }
     }
 }

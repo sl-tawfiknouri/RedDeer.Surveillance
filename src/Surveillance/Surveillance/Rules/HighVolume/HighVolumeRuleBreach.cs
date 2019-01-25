@@ -2,6 +2,7 @@
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.HighVolume
@@ -9,6 +10,7 @@ namespace Surveillance.Rules.HighVolume
     public class HighVolumeRuleBreach : IHighVolumeRuleBreach
     {
         public HighVolumeRuleBreach(
+            ISystemProcessOperationContext operationContext,
             TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
@@ -29,6 +31,7 @@ namespace Surveillance.Rules.HighVolume
 
             TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
             RuleParameterId = parameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
         }
 
         public TimeSpan Window { get; }
@@ -45,6 +48,8 @@ namespace Surveillance.Rules.HighVolume
 
         public bool IsBackTestRun { get; set; }
         public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
 
         public class BreachDetails
         {

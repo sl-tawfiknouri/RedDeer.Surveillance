@@ -12,6 +12,7 @@ namespace Surveillance.Rules.WashTrade
     {
         public WashTradeRuleBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             IWashTradeRuleParameters parameters,
             ITradePosition tradePosition,
             FinancialInstrument security,
@@ -31,6 +32,7 @@ namespace Surveillance.Rules.WashTrade
 
             RuleParameterId = parameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public IWashTradeRuleParameters Parameters { get; }

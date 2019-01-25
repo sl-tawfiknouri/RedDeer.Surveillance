@@ -11,6 +11,7 @@ namespace Surveillance.Rules.Layering
     {
         public LayeringRuleBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             ILayeringRuleParameters parameters,
             TimeSpan window,
             ITradePosition trades,
@@ -30,6 +31,7 @@ namespace Surveillance.Rules.Layering
             PriceMovementBreach = priceMovementBreach;
             RuleParameterId = parameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public ILayeringRuleParameters Parameters { get; }

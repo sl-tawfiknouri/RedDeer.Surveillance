@@ -100,7 +100,7 @@ namespace Surveillance.Rules
                 new RuleBreach(
                     null,
                     ruleBreach.RuleParameterId,
-                    null,
+                    ruleBreach.CorrelationId,
                     ruleBreach.IsBackTestRun,
                     DateTime.UtcNow,
                     _caseTitle,

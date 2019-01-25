@@ -128,6 +128,7 @@ namespace Surveillance.Rules.MarkingTheClose
             var position = new TradePosition(securities.ToList());
             var breach = new MarkingTheCloseBreach(
                 _ruleCtx.SystemProcessOperationContext(),
+                _ruleCtx.CorrelationId(),
                 _parameters.Window,
                 tradedSecurity.Security,
                 _latestMarketClosure,

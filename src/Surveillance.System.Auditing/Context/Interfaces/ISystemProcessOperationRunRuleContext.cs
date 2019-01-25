@@ -10,6 +10,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         void EventException(string message);
         void EventException(Exception e);
         string Id();
+        string CorrelationId();
         ISystemProcessOperationContext SystemProcessOperationContext();
     }
 }

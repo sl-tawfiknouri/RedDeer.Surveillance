@@ -154,6 +154,7 @@ namespace Surveillance.Rules.CancelledOrders
 
             return new CancelledOrderRuleBreach(
                 _opCtx.SystemProcessOperationContext(),
+                RuleCtx.CorrelationId(),
                 _parameters,
                 tradingPosition,
                 tradingPosition?.Get()?.FirstOrDefault()?.Instrument,

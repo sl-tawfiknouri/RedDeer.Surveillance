@@ -11,6 +11,7 @@ namespace Surveillance.Rules.HighVolume
     {
         public HighVolumeRuleBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
@@ -32,6 +33,7 @@ namespace Surveillance.Rules.HighVolume
             TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
             RuleParameterId = parameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public TimeSpan Window { get; }

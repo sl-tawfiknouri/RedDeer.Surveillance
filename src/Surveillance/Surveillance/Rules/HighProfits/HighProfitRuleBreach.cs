@@ -15,6 +15,7 @@ namespace Surveillance.Rules.HighProfits
     {
         public HighProfitRuleBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             IHighProfitsRuleParameters parameters,
             decimal? absoluteProfits,
             string absoluteProfitCurrency,
@@ -39,6 +40,7 @@ namespace Surveillance.Rules.HighProfits
             ExchangeRateProfits = profitBreakdown;
             RuleParameterId = parameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }

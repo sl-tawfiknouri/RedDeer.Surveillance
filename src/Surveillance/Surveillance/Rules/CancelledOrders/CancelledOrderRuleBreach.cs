@@ -11,6 +11,7 @@ namespace Surveillance.Rules.CancelledOrders
     {
         public CancelledOrderRuleBreach(
             ISystemProcessOperationContext ctx,
+            string correlationId,
             ICancelledOrderRuleParameters parameters,
             ITradePosition trades,
             FinancialInstrument security,
@@ -33,6 +34,7 @@ namespace Surveillance.Rules.CancelledOrders
             Window = parameters.WindowSize;
             RuleParameterId = Parameters?.Id ?? string.Empty;
             SystemOperationId = ctx.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public bool HasBreachedRule()

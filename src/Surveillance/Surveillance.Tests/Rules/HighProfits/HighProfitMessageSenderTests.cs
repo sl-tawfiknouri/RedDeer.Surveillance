@@ -68,6 +68,7 @@ namespace Surveillance.Tests.Rules.HighProfits
             var breach =
                 new HighProfitRuleBreach(
                     _opCtx,
+                    "correlation-id",
                     _parameters,
                     10m,
                     "GBP",

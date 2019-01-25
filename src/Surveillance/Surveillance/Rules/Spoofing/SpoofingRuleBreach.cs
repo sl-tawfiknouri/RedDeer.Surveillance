@@ -14,6 +14,7 @@ namespace Surveillance.Rules.Spoofing
     {
         public SpoofingRuleBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             TimeSpan window,
             ITradePosition fulfilledTradePosition,
             ITradePosition cancelledTradePosition,
@@ -33,6 +34,7 @@ namespace Surveillance.Rules.Spoofing
 
             RuleParameterId = spoofingParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public TimeSpan Window { get; }

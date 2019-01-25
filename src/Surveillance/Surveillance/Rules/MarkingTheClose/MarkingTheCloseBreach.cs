@@ -14,6 +14,7 @@ namespace Surveillance.Rules.MarkingTheClose
     {
         public MarkingTheCloseBreach(
             ISystemProcessOperationContext operationContext,
+            string correlationId,
             TimeSpan window,
             FinancialInstrument security,
             MarketOpenClose marketClose,
@@ -34,6 +35,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
             RuleParameterId = parameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public TimeSpan Window { get; }

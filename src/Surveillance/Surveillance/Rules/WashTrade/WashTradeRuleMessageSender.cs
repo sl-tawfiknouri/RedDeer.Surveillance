@@ -14,13 +14,15 @@ namespace Surveillance.Rules.WashTrade
         public WashTradeRuleMessageSender(
             ILogger<WashTradeRuleMessageSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository)
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository)
             : base(
                 "Automated Wash Trade Rule Breach Detected",
                 "Wash Trade Rule Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(IWashTradeRuleBreach breach)

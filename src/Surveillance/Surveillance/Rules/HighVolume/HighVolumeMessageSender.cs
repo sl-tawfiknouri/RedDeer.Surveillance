@@ -12,13 +12,15 @@ namespace Surveillance.Rules.HighVolume
         public HighVolumeMessageSender(
             ILogger<IHighVolumeMessageSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository)
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository)
             : base(
                 "Automated High Volume Rule Breach Detected",
                 "High Volume Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(IHighVolumeRuleBreach ruleBreach)

@@ -16,13 +16,15 @@ namespace Surveillance.Rules.CancelledOrders
         public CancelledOrderMessageSender(
             ILogger<CancelledOrderMessageSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository)
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository)
             : base(
                 "Automated Cancellation Ratio Rule Breach Detected",
                 "Cancelled Order Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(ICancelledOrderRuleBreach ruleBreach)

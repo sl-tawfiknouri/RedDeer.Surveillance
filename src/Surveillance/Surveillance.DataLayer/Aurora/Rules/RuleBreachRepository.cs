@@ -62,7 +62,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
             return null;
         }
-
+        
         public async Task<RuleBreach> Get(string id)
         {
             if (string.IsNullOrWhiteSpace(id))

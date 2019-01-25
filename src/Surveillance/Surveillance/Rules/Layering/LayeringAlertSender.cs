@@ -11,13 +11,15 @@ namespace Surveillance.Rules.Layering
         public LayeringAlertSender(
             ILogger<LayeringAlertSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository) 
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository) 
             : base(
                 "Automated Layering Rule Breach Detected",
                 "Layering Message Sender",
                 logger, 
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(ILayeringRuleBreach breach)

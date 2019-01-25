@@ -55,6 +55,7 @@ namespace Surveillance.DataLayer
             For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
             For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
+            For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
         }
     }
 }

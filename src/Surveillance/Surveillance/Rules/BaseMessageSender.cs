@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService;
@@ -13,6 +14,7 @@ namespace Surveillance.Rules
     public abstract class BaseMessageSender
     {
         private readonly IRuleBreachRepository _ruleBreachRepository;
+        private readonly IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private readonly ICaseMessageSender _caseMessageSender;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
@@ -23,11 +25,13 @@ namespace Surveillance.Rules
             string messageSenderName,
             ILogger logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository ruleBreachRepository)
+            IRuleBreachRepository ruleBreachRepository,
+            IRuleBreachOrdersRepository ruleBreachOrdersRepository)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
+            _ruleBreachOrdersRepository = ruleBreachOrdersRepository ?? throw new ArgumentNullException(nameof(ruleBreachOrdersRepository));
 
             _messageSenderName = messageSenderName ?? "unknown message sender";
             _caseTitle = caseTitle ?? "unknown rule breach detected";
@@ -52,6 +56,9 @@ namespace Surveillance.Rules
                 return;
             }
 
+            var ruleBreachOrderItems = ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
+            await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
+
             var caseMessage = new CaseMessage { RuleBreachId = ruleBreachId.GetValueOrDefault(0) };
 
             try
@@ -64,6 +71,28 @@ namespace Surveillance.Rules
             {
                 Logger.LogError($"{_messageSenderName} encountered an error sending the case message to the bus {e}");
             }
+        }
+
+        private IReadOnlyCollection<RuleBreachOrder> ProjectToOrders(IRuleBreach ruleBreach, string ruleBreachId)
+        {
+            if (string.IsNullOrWhiteSpace(ruleBreachId))
+            {
+                return new RuleBreachOrder[0];
+            }
+
+            if (ruleBreach == null)
+            {
+                return new RuleBreachOrder[0];
+            }
+
+            var ruleBreachOrders = ruleBreach
+                .Trades
+                .Get()
+                .Where(i => i != null)
+                .Select(i => new RuleBreachOrder(ruleBreachId, i.ReddeerOrderId?.ToString()))
+                .ToList();
+
+            return ruleBreachOrders;
         }
 
         private RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description)

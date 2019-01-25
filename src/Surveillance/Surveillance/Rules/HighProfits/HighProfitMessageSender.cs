@@ -12,13 +12,15 @@ namespace Surveillance.Rules.HighProfits
         public HighProfitMessageSender(
             ILogger<HighProfitMessageSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository)
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository)
             : base(
                 "Automated High Profit Rule Breach Detected",
                 "High Profit Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(IHighProfitRuleBreach ruleBreach)

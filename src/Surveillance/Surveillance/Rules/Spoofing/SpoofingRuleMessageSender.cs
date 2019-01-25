@@ -14,13 +14,15 @@ namespace Surveillance.Rules.Spoofing
         public SpoofingRuleMessageSender(
             ILogger<SpoofingRuleMessageSender> logger,
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository) 
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository) 
             : base(
                 "Automated Spoofing Rule Breach Detected",
                 "Spoofing Rule Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(ISpoofingRuleBreach ruleBreach)

@@ -12,13 +12,15 @@ namespace Surveillance.Rules.MarkingTheClose
         public MarkingTheCloseMessageSender(
             ILogger<MarkingTheCloseMessageSender> logger, 
             ICaseMessageSender caseMessageSender,
-            IRuleBreachRepository repository)
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository)
             : base(
                 "Automated Marking The Close Rule Breach Detected",
                 "Marking The Close Message Sender",
                 logger,
                 caseMessageSender,
-                repository)
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(IMarkingTheCloseBreach breach)

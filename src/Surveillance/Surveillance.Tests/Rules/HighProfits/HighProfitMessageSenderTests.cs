@@ -24,6 +24,7 @@ namespace Surveillance.Tests.Rules.HighProfits
         private ISystemProcessOperationContext _opCtx;
         private IHighProfitsRuleParameters _parameters;
         private IRuleBreachRepository _ruleBreachRepository;
+        private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private FinancialInstrument _security;
 
         [SetUp]
@@ -36,6 +37,7 @@ namespace Surveillance.Tests.Rules.HighProfits
             A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
 
             _ruleBreachRepository = A.Fake<IRuleBreachRepository>();
+            _ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
             _logger = A.Fake<ILogger<HighProfitMessageSender>>();
             _security =
                 new FinancialInstrument(
@@ -54,7 +56,8 @@ namespace Surveillance.Tests.Rules.HighProfits
             var messageSender = new HighProfitMessageSender(
                 _logger,
                 _messageSender,
-                _ruleBreachRepository);
+                _ruleBreachRepository,
+                _ruleBreachOrdersRepository);
 
             var exchangeRateProfitBreakdown =
                 new ExchangeRateProfitBreakdown(

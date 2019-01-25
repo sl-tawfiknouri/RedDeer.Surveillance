@@ -111,7 +111,7 @@ Task("Test")
 Task("Publish")
 	.Does(() =>
     {
-	//	if (pullRequstId=="none")
+		if (pullRequstId=="none")
 		{
 			foreach (var publishProject in publishProjects)
 			{	

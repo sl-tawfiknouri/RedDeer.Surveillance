@@ -39,6 +39,18 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             bmllRequests = bmllRequests.Where(req => !req.DataRequest?.IsCompleted ?? false).ToList();
 
+            var splitLists = SplitList(bmllRequests, 300); // more reliable but slower with a smaller increment
+
+            foreach (var sublist in splitLists)
+            {
+                await ProcessBmllRequests(sublist);
+            }
+
+            await RescheduleRuleRun(systemOperationId, bmllRequests);
+        }
+
+        private async Task ProcessBmllRequests(List<MarketDataRequestDataSource> bmllRequests)
+        {
             try
             {
                 _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
@@ -74,8 +86,6 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             {
                 _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
             }
-
-            await RescheduleRuleRun(systemOperationId, bmllRequests);
         }
 
         private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
@@ -117,6 +127,27 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 To = request.DataRequest.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
                 Interval = "1min",
             };
+        }
+
+        public static List<List<T>> SplitList<T>(List<T> bmllRequests, int splitSize)
+        {
+            if (bmllRequests == null
+                || !bmllRequests.Any())
+            {
+                return new List<List<T>>();
+            }
+
+            var result = new List<List<T>>();
+
+            var ox = (bmllRequests.Count / splitSize) + 1;
+
+            for (var x = 1; x <= ox; x++)
+            {
+                var slice = bmllRequests.Skip((x - 1) * splitSize).Take(splitSize).ToList();
+                result.Add(slice);
+            }
+
+            return result;
         }
     }
 }

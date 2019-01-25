@@ -144,12 +144,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 }
             }
 
+            var filteredKeys = keys.Where(key => !string.IsNullOrWhiteSpace(key.Figi)).ToList();
+
             var deduplicatedKeys = new List<MinuteBarRequestKeyDto>();
 
-            var grps = keys.GroupBy(x => x.Figi);
+            var grps = filteredKeys.GroupBy(x => x.Figi);
             foreach (var grp in grps)
             {
-                var dedupe = grp.GroupBy(x => x.Date).Select(x => x.FirstOrDefault()).Where(x => x != null).ToList();
+                var dedupe = grp.GroupBy(x => x.Date.Date).Select(x => x.FirstOrDefault()).Where(x => x != null).ToList();
 
                 if (!dedupe.Any())
                 {
@@ -178,7 +180,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
 
             var hasSuccess = false;
-            var cts = new CancellationTokenSource(1000 * 60 * 60);
+            var cts = new CancellationTokenSource(1000 * 60 * 30);
             var minuteBarResult = BmllStatusMinuteBarResult.InProgress;
 
             while (!hasSuccess && !cts.Token.IsCancellationRequested)
@@ -218,8 +220,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             }
 
             var minuteBarRequests = keys.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+            var consolidatedMinuteBarRequests = ConsolidatedMinuteBars(minuteBarRequests);
 
-            if (!minuteBarRequests.Any())
+            if (!consolidatedMinuteBarRequests.Any())
             {
                 _logger.LogError($"BmllDataRequestsManager received {keys.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
@@ -228,7 +231,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             var timeBarResponses = new List<IGetTimeBarPair>();
 
-            foreach (var req in minuteBarRequests)
+            foreach (var req in consolidatedMinuteBarRequests)
             {
                 var response = await _timeBarRepository.GetMinuteBars(req);
                 var pair = new GetTimeBarPair(req, response);
@@ -258,10 +261,40 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             return new GetMinuteBarsRequest
             {
                 Figi = request.Figi,
-                From = request.Date,
+                From = request.Date.Date,
                 To = request.Date.Date.AddDays(1).AddMilliseconds(-1),
                 Interval = "1min",
             };
+        }
+
+        private List<GetMinuteBarsRequest> ConsolidatedMinuteBars(List<GetMinuteBarsRequest> requests)
+        {
+            if (requests == null
+                || !requests.Any())
+            {
+                return new List<GetMinuteBarsRequest>();
+            }
+
+            var result = new List<GetMinuteBarsRequest>();
+
+            var groupedByFigi = requests.GroupBy(req => req.Figi);
+
+            foreach (var grp in groupedByFigi)
+            {
+                var from = grp.Min(x => x.From);
+                var to = grp.Max(x => x.To);
+                var newRequest = new GetMinuteBarsRequest
+                {
+                    Figi = grp.FirstOrDefault()?.Figi,
+                    From = from,
+                    To = to,
+                    Interval = grp.FirstOrDefault()?.Interval
+                };
+
+                result.Add(newRequest);
+            }
+
+            return result;
         }
     }
 }

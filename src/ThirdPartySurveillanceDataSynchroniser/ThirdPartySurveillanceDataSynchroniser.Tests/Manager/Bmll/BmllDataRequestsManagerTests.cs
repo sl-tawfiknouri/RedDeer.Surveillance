@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Markets;
@@ -82,9 +83,13 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         }
 
         [Test]
-        public void Submit_DoesCall_Reschedule_When_BmllRequests_Submitted()
+        public void SplitList_SplitsAsExpected()
         {
+            var list = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
+            var result = BmllDataRequestsManager.SplitList(list.ToList(), 3);
+
+            Assert.AreEqual(result.Count, 6);
         }
 
         private MarketDataRequest BuildRequest()

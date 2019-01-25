@@ -10,8 +10,6 @@ using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
-using ThirdPartySurveillanceDataSynchroniser.Shell;
-using ThirdPartySurveillanceDataSynchroniser.Shell.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Factset;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
@@ -36,9 +34,6 @@ namespace ThirdPartySurveillanceDataSynchroniser
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
 
-            For<IShellFactset>().Use<ShellFactset>();
-            For<IShellBmll>().Use<ShellBmll>();
-            For<IShellRepo>().Use<ShellRepo>();
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
             For<IDataSourceClassifier>().Use<DataSourceClassifier>();

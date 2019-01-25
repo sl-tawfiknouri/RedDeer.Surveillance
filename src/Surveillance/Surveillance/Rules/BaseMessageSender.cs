@@ -43,8 +43,8 @@ namespace Surveillance.Rules
 
             Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
-            var ruleBreachObj = RuleBreachItem(ruleBreach, description);
-            var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachObj);
+            var ruleBreachItem = RuleBreachItem(ruleBreach, description);
+            var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
 
             if (ruleBreachId == null)
             {

@@ -92,7 +92,7 @@ namespace Surveillance.Rules
             var ruleBreachObj =
                 new RuleBreach(
                     null,
-                    "ruleid", 
+                    ruleBreach.RuleParameterId,
                     null,
                     ruleBreach.IsBackTestRun,
                     DateTime.UtcNow,

@@ -97,7 +97,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            _logger?.LogInformation($"{value} universe event passed to {_name} at universe time {value.EventTime}.");
+            _logger?.LogTrace($"{value} universe event passed to {_name} at universe time {value.EventTime}.");
 
             lock (_lock)
             {
@@ -182,7 +182,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
+            _logger?.LogTrace($"Trade placed event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key) {value.ReddeerOrderId} | placed on {value.PlacedDate}");
 
             UniverseDateTime = universeEvent.EventTime;
 
@@ -212,7 +212,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+            _logger?.LogTrace($"Trade event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
 
             UniverseDateTime = universeEvent.EventTime;
 
@@ -242,7 +242,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            _logger?.LogInformation($"Market opened event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
+            _logger?.LogTrace($"Market opened event in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | MIC {value.MarketId} | Open {value.MarketOpen} | Close {value.MarketClose}");
 
             UniverseDateTime = universeEvent.EventTime;
             MarketOpen(value);

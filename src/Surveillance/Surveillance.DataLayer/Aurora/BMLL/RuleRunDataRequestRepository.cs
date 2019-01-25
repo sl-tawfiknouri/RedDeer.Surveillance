@@ -162,12 +162,12 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest about to save bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                _logger.LogTrace($"BmllDataRequestRepository CreateDataRequest about to save bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 var dtoRequest = new MarketDataRequestDto(request);
                 using (var conn = dbConnection.ExecuteAsync(CreateDataRequestSql, dtoRequest))
                 {
                     await conn;
-                    _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest has saved bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                    _logger.LogTrace($"BmllDataRequestRepository CreateDataRequest has saved bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 }
             }
             catch (Exception e)
@@ -194,7 +194,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"BmllDataRequestRepository checked if there's any market data requests and it was {result} for {ruleRunId}");
+                    _logger.LogTrace($"BmllDataRequestRepository checked if there's any market data requests and it was {result} for {ruleRunId}");
                 }
             }
             catch (Exception e)

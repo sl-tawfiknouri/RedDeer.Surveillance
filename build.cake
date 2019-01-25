@@ -41,12 +41,12 @@ var testProjects = new []
 	"src/DomainV2.Tests/DomainV2.Tests.csproj" 
 };
 
-var publishProjects = new List<Tuple<string,string, string>>
+var publishProjects = new List<Tuple<string,string, string,string>>
 {  
-	new Tuple<string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App/ThirdPartySurveillanceDataSynchroniser.App.csproj", "DataSynchronizerService.zip","netcoreapp2.1" ),
-    new Tuple<string,string,string> ("src/DataImport/App/DataImport.App.csproj", "DataImport.zip","netcoreapp2.0"),
-	new Tuple<string,string,string> ("src/Surveillance/App/Surveillance.App.csproj", "SurveillanceService.zip","netcoreapp2.0" ),
-    new Tuple<string,string,string> ("src/Test Harness/App", "TestHarness.zip","netcoreapp2.0" )
+	new Tuple<string,string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App","ThirdPartySurveillanceDataSynchroniser.App.csproj" ,"DataSynchronizerService.zip","netcoreapp2.1" ),
+    new Tuple<string,string,string,string> ("src/DataImport/App","DataImport.App.csproj", "DataImport.zip","netcoreapp2.0"),
+	new Tuple<string,string,string,string> ("src/Surveillance/App", "Surveillance.App.csproj","SurveillanceService.zip","netcoreapp2.0" ),
+    new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" )
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -125,15 +125,15 @@ Task("Publish")
 					Verbosity=DotNetCoreVerbosity.Normal
 				};	
 
-				DotNetCorePublish(publishProject.Item1, settings);
-				if (FileExists(publishProject.Item2))
+				DotNetCorePublish(System.IO.Path.Combine(publishProject.Item1,publishProject.Item2), settings);
+				if (FileExists(publishProject.Item3))
 				{
-					DeleteFile(publishProject.Item2);
+					DeleteFile(publishProject.Item3);
 				}
 
 				Information($"******* Zip {publishProject.Item1}");	
 
-				Zip($"{publishProject.Item1}/bin/Release/{publishProject.Item3}/ubuntu-x64", publishProject.Item2);
+				Zip($"{publishProject.Item1}/bin/Release/{publishProject.Item4}/ubuntu-x64", publishProject.Item3);
 
 				Information($"******* Finished Zip {publishProject.Item1}");	
 			}

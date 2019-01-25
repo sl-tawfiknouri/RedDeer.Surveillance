@@ -110,7 +110,7 @@ namespace Surveillance.Rules
                     latestPositionValue,
                     ruleBreach.Security.Cfi,
                     ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
-                    null,
+                    ruleBreach.SystemOperationId,
                     trades);
 
             return ruleBreachObj;

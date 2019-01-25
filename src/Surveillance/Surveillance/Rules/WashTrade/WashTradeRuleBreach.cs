@@ -26,6 +26,8 @@ namespace Surveillance.Rules.WashTrade
             AveragePositionBreach = averagePositionBreach ?? throw new ArgumentNullException(nameof(averagePositionBreach));
             PairingPositionBreach = pairingPositionBreach ?? throw new ArgumentNullException(nameof(pairingPositionBreach));
             ClusteringPositionBreach = clusteringPositionBreach ?? throw new ArgumentNullException(nameof(clusteringPositionBreach));
+
+            RuleParameterId = parameters?.Id ?? string.Empty;
         }
 
         public IWashTradeRuleParameters Parameters { get; }
@@ -39,7 +41,8 @@ namespace Surveillance.Rules.WashTrade
         public WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }
 
         public bool IsBackTestRun { get; set; }
-        
+        public string RuleParameterId { get; set; }
+
         public class WashTradeAveragePositionBreach
         {
             public WashTradeAveragePositionBreach(

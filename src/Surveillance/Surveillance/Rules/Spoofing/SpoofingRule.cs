@@ -183,7 +183,8 @@ namespace Surveillance.Rules.Spoofing
                     tradingPosition,
                     opposingPosition,
                     mostRecentTrade.Instrument, 
-                    mostRecentTrade);
+                    mostRecentTrade,
+                    _parameters);
 
             var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);

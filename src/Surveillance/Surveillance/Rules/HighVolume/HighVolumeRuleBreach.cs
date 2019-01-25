@@ -28,6 +28,7 @@ namespace Surveillance.Rules.HighVolume
             MarketCapBreach = marketCapBreach;
 
             TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
+            RuleParameterId = parameters?.Id ?? string.Empty;
         }
 
         public TimeSpan Window { get; }
@@ -43,6 +44,7 @@ namespace Surveillance.Rules.HighVolume
         public long TotalOrdersTradedInWindow { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
 
         public class BreachDetails
         {

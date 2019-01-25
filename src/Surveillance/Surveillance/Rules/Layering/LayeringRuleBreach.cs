@@ -26,6 +26,7 @@ namespace Surveillance.Rules.Layering
             DailyVolumeTradeBreach = dailyVolumeTradeBreach;
             WindowVolumeTradeBreach = windowVolumeTradeBreach;
             PriceMovementBreach = priceMovementBreach;
+            RuleParameterId = parameters?.Id ?? string.Empty;
         }
 
         public ILayeringRuleParameters Parameters { get; }
@@ -39,5 +40,6 @@ namespace Surveillance.Rules.Layering
         public RuleBreachDescription PriceMovementBreach { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
     }
 }

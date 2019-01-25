@@ -29,6 +29,8 @@ namespace Surveillance.Rules.MarkingTheClose
 
             DailyBreach = dailyBreach;
             WindowBreach = windowBreach;
+
+            RuleParameterId = parameters?.Id ?? string.Empty;
         }
 
         public TimeSpan Window { get; }
@@ -43,5 +45,6 @@ namespace Surveillance.Rules.MarkingTheClose
         public VolumeBreach WindowBreach { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
     }
 }

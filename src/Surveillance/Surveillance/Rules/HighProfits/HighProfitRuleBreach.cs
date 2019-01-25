@@ -35,6 +35,7 @@ namespace Surveillance.Rules.HighProfits
             Trades = trades ?? new TradePosition(new List<Order>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
             ExchangeRateProfits = profitBreakdown;
+            RuleParameterId = parameters?.Id ?? string.Empty;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -50,5 +51,6 @@ namespace Surveillance.Rules.HighProfits
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
     }
 }

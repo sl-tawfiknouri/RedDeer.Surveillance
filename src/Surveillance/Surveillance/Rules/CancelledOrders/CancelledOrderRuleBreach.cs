@@ -29,6 +29,7 @@ namespace Surveillance.Rules.CancelledOrders
             ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
             PercentageTradeCountCancelled = percentageTradeCountCancelled;
             Window = parameters.WindowSize;
+            RuleParameterId = Parameters?.Id ?? string.Empty;
         }
 
         public bool HasBreachedRule()
@@ -49,5 +50,6 @@ namespace Surveillance.Rules.CancelledOrders
         public decimal? PercentageTradeCountCancelled { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
     }
 }

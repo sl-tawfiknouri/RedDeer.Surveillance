@@ -2,6 +2,7 @@
 using System.Linq;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
@@ -15,7 +16,8 @@ namespace Surveillance.Rules.Spoofing
             ITradePosition fulfilledTradePosition,
             ITradePosition cancelledTradePosition,
             FinancialInstrument security,
-            Order mostRecentTrade)
+            Order mostRecentTrade,
+            ISpoofingRuleParameters spoofingParameters)
         {
             Window = window;
             Security = security;
@@ -26,6 +28,8 @@ namespace Surveillance.Rules.Spoofing
             Trades = new TradePosition(totalTrades);
             TradesInFulfilledPosition = fulfilledTradePosition;
             CancelledTrades = cancelledTradePosition;
+
+            RuleParameterId = spoofingParameters?.Id ?? string.Empty;
         }
 
         public TimeSpan Window { get; }
@@ -40,5 +44,6 @@ namespace Surveillance.Rules.Spoofing
         public Order MostRecentTrade { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
     }
 }

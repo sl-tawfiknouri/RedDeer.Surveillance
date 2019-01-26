@@ -238,7 +238,7 @@ namespace Surveillance.Rules.HighVolume
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogTrace($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();

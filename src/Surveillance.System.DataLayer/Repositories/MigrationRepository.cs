@@ -43,11 +43,11 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
+                _logger.LogTrace($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
                 using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
                     var highestMigrationExecuted = await conn;
-                    _logger.LogInformation($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
+                    _logger.LogTrace($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
 
                     return highestMigrationExecuted;
                 }

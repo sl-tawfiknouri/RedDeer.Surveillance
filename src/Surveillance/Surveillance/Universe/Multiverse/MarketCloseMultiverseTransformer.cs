@@ -60,7 +60,7 @@ namespace Surveillance.Universe.Multiverse
 
         public void OnNext(IUniverseEvent value)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer received OnNext() event at {value.EventTime} of type {value.StateChange} forwarding to subscribers");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer received OnNext() event at {value.EventTime} of type {value.StateChange} forwarding to subscribers");
 
             lock (_lock)
             {
@@ -136,7 +136,7 @@ namespace Surveillance.Universe.Multiverse
 
         private void UnloadQueue(DateTime tailOfQueue, bool flushQueue)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer beginning to unload queue to subscribers");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer beginning to unload queue to subscribers");
 
             if (flushQueue)
             {
@@ -196,7 +196,7 @@ namespace Surveillance.Universe.Multiverse
 
         public IDisposable Subscribe(IUniverseCloneableRule rule)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer of cloneable rule type");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer subscribed a new observer of cloneable rule type");
             _subscribedRules?.Add(rule);
 
             return Subscribe(rule as IObserver<IUniverseEvent>);
@@ -211,7 +211,7 @@ namespace Surveillance.Universe.Multiverse
 
             if (!_universeObservers.ContainsKey(observer))
             {
-                _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer for universe events");
+                _logger.LogTrace($"MarketCloseMultiverseTransformer subscribed a new observer for universe events");
                 _universeObservers.TryAdd(observer, observer);
             }
 

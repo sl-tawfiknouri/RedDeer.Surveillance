@@ -1,5 +1,17 @@
-﻿using Surveillance.RuleParameters;
+﻿using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Currency.Interfaces;
+using Surveillance.Factories;
+using Surveillance.Factories.Interfaces;
+using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.OrganisationalFactors;
+using Surveillance.Rules.WashTrade;
+using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Trades;
+using Surveillance.Universe.Filter.Interfaces;
 using TechTalk.SpecFlow;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
@@ -10,9 +22,45 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private readonly ScenarioContext _scenarioContext;
         private WashTradeRuleParameters _washTradeRuleParameters;
 
+        // wash trade factory and arguments
+        private ICurrencyConverter _currencyConverter;
+        private IWashTradePositionPairer _positionPairer;
+        private IWashTradeClustering _washTradeClustering;
+        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private ILogger<WashTradeRule> _logger;
+        private ILogger<TradingHistoryStack> _tradingLogger;
+        private WashTradeRuleFactory _washTradeRuleFactory;
+
+        // wash trade run
+        private ISystemProcessOperationRunRuleContext _ruleCtx;
+        private IUniverseAlertStream _alertStream;
+
         public WashTradeSteps(ScenarioContext scenarioContext)
+            : base(scenarioContext)
         {
             _scenarioContext = scenarioContext;
+
+            _currencyConverter = A.Fake<ICurrencyConverter>();
+            _positionPairer = A.Fake<IWashTradePositionPairer>();
+            _washTradeClustering = A.Fake<IWashTradeClustering>();
+            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            _logger = new NullLogger<WashTradeRule>();
+            _tradingLogger = new NullLogger<TradingHistoryStack>();
+
+            _washTradeRuleFactory =
+                new WashTradeRuleFactory(
+                    _currencyConverter,
+                    _positionPairer,
+                    _washTradeClustering,
+                    _universeOrderFilter,
+                    _universeMarketCacheFactory,
+                    _logger,
+                    _tradingLogger);
+
+            _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            _alertStream = A.Fake<IUniverseAlertStream>();
         }
 
         [Given(@"I have the wash trade rule average netting parameter values:")]
@@ -79,13 +127,21 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         [When(@"I run the wash trade rule")]
         public void WhenIRunTheWashTradeRule()
         {
+            var washTradeRule = 
+                _washTradeRuleFactory.Build(
+                    _washTradeRuleParameters,
+                    _ruleCtx,
+                    _alertStream,
+                    Rules.RuleRunMode.ForceRun);
 
+            foreach (var universeEvent in _selectedUniverse.UniverseEvents)
+                washTradeRule.OnNext(universeEvent);
         }
 
         [Then(@"I will have (.*) wash trade alerts")]
-        public void ThenIWillHaveAlerts(int p0)
+        public void ThenIWillHaveAlerts(int alertCount)
         {
-            var r = p0;
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
         }
     }
 }

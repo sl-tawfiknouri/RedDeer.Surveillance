@@ -85,7 +85,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "2",
                         "0.01",
                         "10000",
-                        "GBX"});
+                        "GBP"});
 #line 7
  testRunner.Given("I have the wash trade rule average netting parameter values:", ((string)(null)), table1, "Given ");
 #line hidden
@@ -174,6 +174,30 @@ this.FeatureBackground();
 #line 32
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 33
+ testRunner.Then("I will have 2 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yields two al" +
+            "erts")]
+        [NUnit.Framework.CategoryAttribute("washtrade")]
+        public virtual void Buy1Sell1AtPrice1AndBuy2Sell2AndPrice2AndBuy3ButNoSellYieldsTwoAlerts()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yields two al" +
+                    "erts", null, new string[] {
+                        "washtrade"});
+#line 36
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 6
+this.FeatureBackground();
+#line 37
+ testRunner.Given("I have the buy sell at p1 buy sell at p2 buy at p3 universe", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 38
+ testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 39
  testRunner.Then("I will have 2 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

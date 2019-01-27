@@ -6,7 +6,7 @@
 Background:
 	Given I have the wash trade rule average netting parameter values:
 	| window hours | minimum number of trades | maximum position value change | maximum absolute value change | maximum absolute value change currency |
-	| 1            | 2                        | 0.01                         | 10000                         | GBX                                    |
+	| 1            | 2                        | 0.01                         | 10000                         | GBP                                     |
 
 @washtrade
 Scenario: Empty Universe yields no alerts
@@ -29,5 +29,11 @@ Scenario: Three Trades In Wash Trade Universe yields no alerts
 @washtrade
 Scenario: Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 yields two alerts
 	Given I have the buy sell at p1 buy sell at p2 universe
+	When I run the wash trade rule
+	Then I will have 2 wash trade alerts
+
+@washtrade
+Scenario: Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yields two alerts
+	Given I have the buy sell at p1 buy sell at p2 buy at p3 universe
 	When I run the wash trade rule
 	Then I will have 2 wash trade alerts

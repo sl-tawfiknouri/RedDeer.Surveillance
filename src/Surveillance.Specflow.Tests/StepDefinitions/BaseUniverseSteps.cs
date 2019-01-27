@@ -24,7 +24,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 { "empty",  EmptyUniverse() },
                 { "buy sell", BuySellAtSamePrice()},
                 { "buy buy sell", TwoBuyOneSellAtSamePrice()},
-                { "buy sell at p1 buy sell at p2", BuySellAtOnePriceBuySellAtAnotherPrice()}
+                { "buy sell at p1 buy sell at p2", BuySellAtOnePriceBuySellAtAnotherPrice()},
+                { "buy sell at p1 buy sell at p2 buy at p3", BuySellAtOnePriceBuySellAtAnotherPriceBuyAtAnotherPrice()}
             };
 
             _scenarioContext = scenarioContext;
@@ -125,6 +126,46 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderTwo),
                     new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderThree),
                     new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderFour),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Eschaton, DateTime.UtcNow, new object()),
+                };
+
+            return Build(universeEvents);
+        }
+
+        private IUniverse BuySellAtOnePriceBuySellAtAnotherPriceBuyAtAnotherPrice()
+        {
+            var orderOne = OrderHelper.Orders(DomainV2.Financial.OrderStatus.Filled);
+            var orderTwo = OrderHelper.Orders(DomainV2.Financial.OrderStatus.Filled);
+            orderTwo.OrderDirection = DomainV2.Financial.OrderDirections.SELL;
+
+            var orderThree = OrderHelper.Orders(DomainV2.Financial.OrderStatus.Filled);
+            orderThree.OrderAverageFillPrice =
+                new DomainV2.Financial.CurrencyAmount(
+                    orderThree.OrderAverageFillPrice.Value.Value * 1.2m,
+                    orderThree.OrderAverageFillPrice.Value.Currency);
+
+            var orderFour = OrderHelper.Orders(DomainV2.Financial.OrderStatus.Filled);
+            orderFour.OrderAverageFillPrice =
+                new DomainV2.Financial.CurrencyAmount(
+                    orderFour.OrderAverageFillPrice.Value.Value * 1.2m,
+                    orderFour.OrderAverageFillPrice.Value.Currency);
+            orderFour.OrderDirection = DomainV2.Financial.OrderDirections.SELL;
+
+            var orderFive = OrderHelper.Orders(DomainV2.Financial.OrderStatus.Filled);
+            orderFive.OrderAverageFillPrice =
+                new DomainV2.Financial.CurrencyAmount(
+                    orderFive.OrderAverageFillPrice.Value.Value * 1.4m,
+                    orderFive.OrderAverageFillPrice.Value.Currency);
+
+            var universeEvents =
+                new IUniverseEvent[]
+                {
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Genesis, DateTime.UtcNow, new object()),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderOne),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderTwo),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderThree),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderFour),
+                    new Universe.UniverseEvent(Universe.UniverseStateEvent.Order, DateTime.UtcNow, orderFive),
                     new Universe.UniverseEvent(Universe.UniverseStateEvent.Eschaton, DateTime.UtcNow, new object()),
                 };
 

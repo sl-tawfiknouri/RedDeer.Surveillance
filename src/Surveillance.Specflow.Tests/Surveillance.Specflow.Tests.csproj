@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="Pickles.MSBuild" Version="2.20.1" />
     <PackageReference Include="SpecFlow" Version="3.0.132-beta" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.0.132-beta" />
     <PackageReference Include="SpecFlow.NUnit.Runners" Version="3.0.132-beta" />
@@ -23,4 +24,10 @@
     <ProjectReference Include="..\Surveillance\Surveillance\Surveillance.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Pickles_Generate>True</Pickles_Generate>
+    <Pickles_DocumentationFormat>dhtml</Pickles_DocumentationFormat>
+    <Pickles_OutputDirectory>../PicklesDocumentation</Pickles_OutputDirectory>
+  </PropertyGroup>
+  
 </Project>

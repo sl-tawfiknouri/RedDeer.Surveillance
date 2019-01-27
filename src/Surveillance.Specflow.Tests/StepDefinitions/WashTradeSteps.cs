@@ -1,4 +1,6 @@
-﻿using TechTalk.SpecFlow;
+﻿using Surveillance.RuleParameters;
+using Surveillance.RuleParameters.OrganisationalFactors;
+using TechTalk.SpecFlow;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
@@ -6,14 +8,14 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public class WashTradeSteps : BaseUniverseSteps
     {
         private readonly ScenarioContext _scenarioContext;
-
+        private WashTradeRuleParameters _washTradeRuleParameters;
 
         public WashTradeSteps(ScenarioContext scenarioContext)
         {
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"I have the wash trade rule parameter values")]
+        [Given(@"I have the wash trade rule average netting parameter values")]
         public void GivenIHaveTheWashTradeRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
@@ -28,6 +30,50 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             ruleParameters.Rows[0].TryGetValue("maximum absolute value change", out string maxAbsoluteValueChange);
             ruleParameters.Rows[0].TryGetValue("maximum absolute value change currency", out string maxAbsoluteValueChangeCurrency);
 
+            if (!int.TryParse(windowHours, out var wh))
+            {
+                _scenarioContext.Pending();
+                return;
+            }
+
+            if (!int.TryParse(numberOfTrades, out var not))
+            {
+                _scenarioContext.Pending();
+                return;
+            }
+
+            if (!decimal.TryParse(maxPositionChangeValue, out var mpcv))
+            {
+                _scenarioContext.Pending();
+                return;
+            }
+
+            if (!int.TryParse(maxAbsoluteValueChange, out var mavc))
+            {
+                _scenarioContext.Pending();
+                return;
+            }
+
+            _washTradeRuleParameters =
+                new WashTradeRuleParameters(
+                    "0",
+                    new System.TimeSpan(wh, 0, 0),
+                    true,
+                    false,
+                    false,
+                    not,
+                    mpcv,
+                    mavc,
+                    maxAbsoluteValueChangeCurrency,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    new[] { ClientOrganisationalFactors.None },
+                    true);
         }
     }
 }

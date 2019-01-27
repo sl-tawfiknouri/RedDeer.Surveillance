@@ -17,7 +17,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             };
         }
 
-        [Given(@"I have the (*) universe")]
+        [Given(@"I have the (.*) universe")]
         public void GivenIHaveTheEmptyUniverse(string universe)
         {
             // oh nice, should we give them free form text names or numbers?
@@ -25,6 +25,20 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             // don't do anything for now! (- -)
 
+            var x = universe;
+
+        }
+
+        [When(@"I run the wash trade rule")]
+        public void WhenIRunTheWashTradeRule()
+        {
+
+        }
+
+        [Then(@"I will have (.*) alerts")]
+        public void ThenIWillHaveAlerts(int p0)
+        {
+            var r = p0;
         }
     }
 }

@@ -70,27 +70,6 @@ namespace Surveillance.Specflow.Tests.Features
             testRunner.CollectScenarioErrors();
         }
         
-        public virtual void FeatureBackground()
-        {
-#line 6
-#line hidden
-            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "window hours",
-                        "minimum number of trades",
-                        "maximum position value change",
-                        "maximum absolute value change",
-                        "maximum absolute value change currency"});
-            table1.AddRow(new string[] {
-                        "1",
-                        "2",
-                        "0.01m",
-                        "10000",
-                        "GBX"});
-#line 7
- testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table1, "Given ");
-#line hidden
-        }
-        
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
@@ -98,16 +77,14 @@ namespace Surveillance.Specflow.Tests.Features
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, new string[] {
                         "washtrade"});
-#line 12
+#line 8
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 6
-this.FeatureBackground();
-#line 13
+#line 9
  testRunner.Given("I have the empty universe", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 14
+#line 10
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 15
+#line 11
  testRunner.Then("I will have 0 alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

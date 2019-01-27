@@ -9,7 +9,7 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents.Interfaces;

@@ -1,5 +1,5 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Analytics.Streams
 {

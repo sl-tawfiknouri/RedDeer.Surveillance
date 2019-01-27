@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Surveillance.Currency;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Trades;
 

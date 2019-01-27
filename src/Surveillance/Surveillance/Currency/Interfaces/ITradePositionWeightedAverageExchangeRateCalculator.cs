@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Currency.Interfaces

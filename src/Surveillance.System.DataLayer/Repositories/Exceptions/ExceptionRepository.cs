@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Exceptions.Interfaces;
 
-namespace Surveillance.System.DataLayer.Repositories.Exceptions
+namespace Surveillance.Systems.DataLayer.Repositories.Exceptions
 {
     public class ExceptionRepository : IExceptionRepository
     {

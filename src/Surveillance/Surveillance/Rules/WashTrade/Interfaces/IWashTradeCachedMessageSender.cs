@@ -1,4 +1,4 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
+﻿using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.WashTrade.Interfaces
 {

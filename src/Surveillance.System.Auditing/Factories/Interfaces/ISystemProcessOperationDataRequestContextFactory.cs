@@ -1,6 +1,6 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
+﻿using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.System.Auditing.Factories.Interfaces
+namespace Surveillance.Systems.Auditing.Factories.Interfaces
 {
     public interface ISystemProcessOperationDataRequestContextFactory
     {

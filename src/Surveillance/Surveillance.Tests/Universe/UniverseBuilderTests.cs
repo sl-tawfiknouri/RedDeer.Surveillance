@@ -12,7 +12,7 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe;

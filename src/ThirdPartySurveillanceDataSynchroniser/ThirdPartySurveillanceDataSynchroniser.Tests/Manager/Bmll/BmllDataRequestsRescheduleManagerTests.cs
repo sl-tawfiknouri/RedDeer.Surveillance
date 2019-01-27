@@ -4,7 +4,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
 using Utilities.Aws_IO.Interfaces;
 

@@ -13,7 +13,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;

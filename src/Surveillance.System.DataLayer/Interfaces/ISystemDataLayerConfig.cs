@@ -1,4 +1,4 @@
-﻿namespace Surveillance.System.DataLayer.Interfaces
+﻿namespace Surveillance.Systems.DataLayer.Interfaces
 {
     public interface ISystemDataLayerConfig
     {

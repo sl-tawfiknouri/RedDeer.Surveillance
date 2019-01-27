@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Surveillance.System.DataLayer.Processes
+namespace Surveillance.Systems.DataLayer.Processes
 {
     public enum OperationState
     {

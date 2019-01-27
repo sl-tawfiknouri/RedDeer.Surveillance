@@ -28,17 +28,5 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var x = universe;
 
         }
-
-        [When(@"I run the wash trade rule")]
-        public void WhenIRunTheWashTradeRule()
-        {
-
-        }
-
-        [Then(@"I will have (.*) alerts")]
-        public void ThenIWillHaveAlerts(int p0)
-        {
-            var r = p0;
-        }
     }
 }

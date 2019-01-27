@@ -15,7 +15,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _scenarioContext = scenarioContext;
         }
 
-        [Given(@"I have the wash trade rule average netting parameter values")]
+        [Given(@"I have the wash trade rule average netting parameter values:")]
         public void GivenIHaveTheWashTradeRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
@@ -74,6 +74,18 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     null,
                     new[] { ClientOrganisationalFactors.None },
                     true);
+        }
+
+        [When(@"I run the wash trade rule")]
+        public void WhenIRunTheWashTradeRule()
+        {
+
+        }
+
+        [Then(@"I will have (.*) wash trade alerts")]
+        public void ThenIWillHaveAlerts(int p0)
+        {
+            var r = p0;
         }
     }
 }

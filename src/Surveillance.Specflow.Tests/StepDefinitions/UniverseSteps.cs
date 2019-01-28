@@ -1,7 +1,6 @@
 ﻿using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
-using Surveillance.Specflow.Tests.Helpers;
 using Surveillance.Specflow.Tests.StepDefinitions.Orders;
 using Surveillance.Universe;
 using Surveillance.Universe.Interfaces;
@@ -16,7 +15,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     [Binding]
     public sealed class UniverseSteps
     {
-        private IReadOnlyDictionary<string, IUniverse> _universeLookup;
         private UniverseSelectionState _universeSelectionState;
         private SecuritySelection _securitySelection;
         private ScenarioContext _scenarioContext;

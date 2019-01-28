@@ -64,8 +64,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "One Trade Universe yields no alerts",
-            "Slug": "one-trade-universe-yields-no-alerts",
+            "Name": "One Trade For Vodafone Universe yields no alerts",
+            "Slug": "one-trade-for-vodafone-universe-yields-no-alerts",
             "Description": "",
             "Steps": [
               {
@@ -93,6 +93,81 @@ jsonPWrapper ({
                   "DataRows": [
                     [
                       "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 0 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          },
+          {
+            "Name": "One Trade For Barclays Universe yields no alerts",
+            "Slug": "one-trade-for-barclays-universe-yields-no-alerts",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Barclays",
                       "0",
                       "01/01/2018 09:30:00",
                       "",
@@ -216,6 +291,98 @@ jsonPWrapper ({
                 "Keyword": "Then",
                 "NativeKeyword": "Then ",
                 "Name": "I will have 1 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          },
+          {
+            "Name": "Two Trades In Wash Trade Universe For Different Securities yields one alert",
+            "Slug": "two-trades-in-wash-trade-universe-for-different-securities-yields-one-alert",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Barclays",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 0 wash trade alerts",
                 "StepComments": [],
                 "AfterLastStepComments": []
               }
@@ -664,26 +831,26 @@ jsonPWrapper ({
     "Tags": [
       {
         "Tag": "@washtrade",
-        "Total": 6,
+        "Total": 8,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 6
+        "Inconclusive": 8
       },
       {
         "Tag": "@washtradesensitive",
-        "Total": 6,
+        "Total": 8,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 6
+        "Inconclusive": 8
       }
     ],
     "Folders": [
       {
         "Folder": "WashTrade.AverageNetting.Sensitive.feature",
-        "Total": 6,
+        "Total": 8,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 6
+        "Inconclusive": 8
       }
     ],
     "NotTestedFolders": [
@@ -696,10 +863,10 @@ jsonPWrapper ({
       }
     ],
     "Scenarios": {
-      "Total": 6,
+      "Total": 8,
       "Passing": 0,
       "Failing": 0,
-      "Inconclusive": 6
+      "Inconclusive": 8
     },
     "Features": {
       "Total": 1,
@@ -709,6 +876,6 @@ jsonPWrapper ({
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 13:25:26"
+    "GeneratedOn": "28 January 2019 13:32:25"
   }
 });

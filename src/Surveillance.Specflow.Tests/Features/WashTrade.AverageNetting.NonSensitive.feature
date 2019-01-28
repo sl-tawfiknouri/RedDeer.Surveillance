@@ -6,12 +6,12 @@
 	threshold parameters
 
 Background:
-	Given I have the wash trade rule average netting parameter values
-	| WindowHours | MinimumNumberOfTrades | MaximumPositionChangeValue | MaximumAbsoluteValueChange | MaximumAbsoluteValueChangeCurrency |
-	| 1           | 2                     | 0.10                       | 1000000                    | GBP                                |
+	Given I have the wash trade rule parameter values
+	| WindowHours | MinimumNumberOfTrades | MaximumPositionChangeValue | MaximumAbsoluteValueChange | MaximumAbsoluteValueChangeCurrency | UseAverageNetting |
+	| 1           | 2                     | 0.10                       | 1000000                    | GBP                                | true              |
 
 @washtrade
-@washtradesensitive
+@washtradenonsensitive
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -19,7 +19,7 @@ Scenario: Empty Universe yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
-@washtradesensitive
+@washtradenonsensitive
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

@@ -66,7 +66,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
 
-        [Given(@"I have the wash trade rule average netting parameter values")]
+        [Given(@"I have the wash trade rule parameter values")]
         public void GivenIHaveTheWashTradeRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
@@ -81,20 +81,20 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 new WashTradeRuleParameters(
                     "0",
                     new System.TimeSpan(parameters.WindowHours, 0, 0),
-                    true,
-                    false,
-                    false,
+                    parameters.UseAverageNetting.GetValueOrDefault(false),
+                    parameters.UsePairing.GetValueOrDefault(false),
+                    parameters.UseClustering.GetValueOrDefault(false),
                     parameters.MinimumNumberOfTrades,
                     parameters.MaximumPositionChangeValue,
                     parameters.MaximumAbsoluteValueChange,
                     parameters.MaximumAbsoluteValueChangeCurrency,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
+                    parameters.PairingPositionMinimumNumberOfPairedTrades,
+                    parameters.PairingPositionPercentagePriceChangeThresholdPerPair,
+                    parameters.PairingPositionPercentageVolumeDifferenceThreshold,
+                    parameters.PairingPositionMaximumAbsoluteCurrencyAmount,
+                    parameters.PairingPositionMaximumAbsoluteCurrency,
+                    parameters.ClusteringPositionMinimumNumberOfTrades,
+                    parameters.ClusteringPercentageValueDifferenceThreshold,
                     new[] { ClientOrganisationalFactors.None },
                     true);
         }

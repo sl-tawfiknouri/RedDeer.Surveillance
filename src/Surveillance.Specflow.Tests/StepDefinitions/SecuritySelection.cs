@@ -44,7 +44,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     "GBX", 
                     "Vodafone plc");
 
-            var market = new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var market = Xlon();
 
             return new SecurityMarketPair
             {
@@ -78,13 +78,18 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     "GBX",
                     "Barclays plc");
 
-            var market = new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var market = Xlon();
 
             return new SecurityMarketPair
             {
                 Instrument = financialInstrument,
                 Market = market
             };
+        }
+
+        private Market Xlon()
+        {
+            return new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
         }
 
         public class SecurityMarketPair

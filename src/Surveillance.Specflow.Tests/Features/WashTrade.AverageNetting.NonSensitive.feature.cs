@@ -80,27 +80,29 @@ namespace Surveillance.Specflow.Tests.Features
                         "MinimumNumberOfTrades",
                         "MaximumPositionChangeValue",
                         "MaximumAbsoluteValueChange",
-                        "MaximumAbsoluteValueChangeCurrency"});
+                        "MaximumAbsoluteValueChangeCurrency",
+                        "UseAverageNetting"});
             table1.AddRow(new string[] {
                         "1",
                         "2",
                         "0.10",
                         "1000000",
-                        "GBP"});
+                        "GBP",
+                        "true"});
 #line 9
- testRunner.Given("I have the wash trade rule average netting parameter values", ((string)(null)), table1, "Given ");
+ testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table1, "Given ");
 #line hidden
         }
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void EmptyUniverseYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, new string[] {
                         "washtrade",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 15
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -136,12 +138,12 @@ this.FeatureBackground();
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("One Trade For Vodafone yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void OneTradeForVodafoneYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Vodafone yields no alerts", null, new string[] {
                         "washtrade",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 23
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

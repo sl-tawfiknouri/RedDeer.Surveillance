@@ -80,15 +80,17 @@ namespace Surveillance.Specflow.Tests.Features
                         "MinimumNumberOfTrades",
                         "MaximumPositionChangeValue",
                         "MaximumAbsoluteValueChange",
-                        "MaximumAbsoluteValueChangeCurrency"});
+                        "MaximumAbsoluteValueChangeCurrency",
+                        "UseAverageNetting"});
             table4.AddRow(new string[] {
                         "1",
                         "2",
                         "0.01",
                         "10000",
-                        "GBP"});
+                        "GBP",
+                        "true"});
 #line 9
- testRunner.Given("I have the wash trade rule average netting parameter values", ((string)(null)), table4, "Given ");
+ testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table4, "Given ");
 #line hidden
         }
         

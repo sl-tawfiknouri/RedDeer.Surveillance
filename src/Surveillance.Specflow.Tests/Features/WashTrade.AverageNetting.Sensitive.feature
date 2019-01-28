@@ -6,9 +6,9 @@
 	threshold parameters
 
 Background:
-	Given I have the wash trade rule average netting parameter values
-	| WindowHours | MinimumNumberOfTrades | MaximumPositionChangeValue | MaximumAbsoluteValueChange | MaximumAbsoluteValueChangeCurrency |
-	| 1           | 2                     | 0.01                       | 10000                      | GBP                                |
+	Given I have the wash trade rule parameter values
+	| WindowHours | MinimumNumberOfTrades | MaximumPositionChangeValue | MaximumAbsoluteValueChange | MaximumAbsoluteValueChangeCurrency | UseAverageNetting |
+	| 1           | 2                     | 0.01                       | 10000                      | GBP                                | true              |
 
 @washtrade
 @washtradesensitive

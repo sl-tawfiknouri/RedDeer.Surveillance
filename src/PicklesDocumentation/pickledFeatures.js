@@ -2011,7 +2011,7 @@ jsonPWrapper ({
             "Tags": [
               "@washtrade",
               "@washtradepairing",
-              "@washtradesensitive"
+              "@washtradenonsensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -2087,7 +2087,7 @@ jsonPWrapper ({
             "Tags": [
               "@washtrade",
               "@washtradepairing",
-              "@washtradesensitive"
+              "@washtradenonsensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -2163,7 +2163,7 @@ jsonPWrapper ({
             "Tags": [
               "@washtrade",
               "@washtradepairing",
-              "@washtradesensitive"
+              "@washtradenonsensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -2172,8 +2172,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Two Trades In Wash Trade For Different Securities yields one alert",
-            "Slug": "two-trades-in-wash-trade-for-different-securities-yields-one-alert",
+            "Name": "Two Trades In Wash Trade For Different Securities yields no alert",
+            "Slug": "two-trades-in-wash-trade-for-different-securities-yields-no-alert",
             "Description": "",
             "Steps": [
               {
@@ -2256,7 +2256,7 @@ jsonPWrapper ({
             "Tags": [
               "@washtrade",
               "@washtradepairing",
-              "@washtradesensitive"
+              "@washtradenonsensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -2366,7 +2366,100 @@ jsonPWrapper ({
             "Tags": [
               "@washtrade",
               "@washtradepairing",
-              "@washtradesensitive"
+              "@washtradenonsensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          },
+          {
+            "Name": "Two Trades In Wash Trade yields one alert",
+            "Slug": "two-trades-in-wash-trade-yields-one-alert",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "100",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "100",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 1 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradepairing",
+              "@washtradenonsensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -2847,6 +2940,99 @@ jsonPWrapper ({
               "WasSuccessful": false,
               "WasProvided": false
             }
+          },
+          {
+            "Name": "Two Trades In Wash Trade yields one alert",
+            "Slug": "two-trades-in-wash-trade-yields-one-alert",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "100",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "100",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 1 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradepairing",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
           }
         ],
         "Background": {
@@ -2908,24 +3094,24 @@ jsonPWrapper ({
     "Tags": [
       {
         "Tag": "@washtrade",
-        "Total": 30,
+        "Total": 32,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 30
+        "Inconclusive": 32
       },
       {
         "Tag": "@washtradenonsensitive",
-        "Total": 7,
+        "Total": 13,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 7
+        "Inconclusive": 13
       },
       {
         "Tag": "@washtradesensitive",
-        "Total": 23,
+        "Total": 19,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 23
+        "Inconclusive": 19
       },
       {
         "Tag": "@washtradeclustering",
@@ -2936,10 +3122,10 @@ jsonPWrapper ({
       },
       {
         "Tag": "@washtradepairing",
-        "Total": 10,
+        "Total": 12,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 10
+        "Inconclusive": 12
       }
     ],
     "Folders": [
@@ -2973,17 +3159,17 @@ jsonPWrapper ({
       },
       {
         "Folder": "WashTrade.Pairing.NonSensitive.feature",
-        "Total": 5,
+        "Total": 6,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 5
+        "Inconclusive": 6
       },
       {
         "Folder": "WashTrade.Pairing.Sensitive.feature",
-        "Total": 5,
+        "Total": 6,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 5
+        "Inconclusive": 6
       }
     ],
     "NotTestedFolders": [
@@ -3031,10 +3217,10 @@ jsonPWrapper ({
       }
     ],
     "Scenarios": {
-      "Total": 30,
+      "Total": 32,
       "Passing": 0,
       "Failing": 0,
-      "Inconclusive": 30
+      "Inconclusive": 32
     },
     "Features": {
       "Total": 6,
@@ -3044,6 +3230,6 @@ jsonPWrapper ({
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 15:32:42"
+    "GeneratedOn": "28 January 2019 15:54:08"
   }
 });

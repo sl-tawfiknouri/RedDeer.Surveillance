@@ -100,13 +100,13 @@ namespace Surveillance.Specflow.Tests.Features
         [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void EmptyUniverseYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, new string[] {
                         "washtrade",
                         "washtradepairing",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 16
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -143,13 +143,13 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("One Trade For Vodafone yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void OneTradeForVodafoneYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Vodafone yields no alerts", null, new string[] {
                         "washtrade",
                         "washtradepairing",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 25
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -202,13 +202,13 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("One Trade For Barclays yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void OneTradeForBarclaysYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Barclays yields no alerts", null, new string[] {
                         "washtrade",
                         "washtradepairing",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 35
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -258,16 +258,16 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two Trades In Wash Trade For Different Securities yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("Two Trades In Wash Trade For Different Securities yields no alert")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
-        public virtual void TwoTradesInWashTradeForDifferentSecuritiesYieldsOneAlert()
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
+        public virtual void TwoTradesInWashTradeForDifferentSecuritiesYieldsNoAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two Trades In Wash Trade For Different Securities yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two Trades In Wash Trade For Different Securities yields no alert", null, new string[] {
                         "washtrade",
                         "washtradepairing",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 45
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -336,13 +336,13 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("Three Trades at same price point In Wash Trade yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
         public virtual void ThreeTradesAtSamePricePointInWashTradeYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three Trades at same price point In Wash Trade yields no alerts", null, new string[] {
                         "washtrade",
                         "washtradepairing",
-                        "washtradesensitive"});
+                        "washtradenonsensitive"});
 #line 56
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -419,6 +419,81 @@ this.FeatureBackground();
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 63
  testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Two Trades In Wash Trade yields one alert")]
+        [NUnit.Framework.CategoryAttribute("washtrade")]
+        [NUnit.Framework.CategoryAttribute("washtradepairing")]
+        [NUnit.Framework.CategoryAttribute("washtradenonsensitive")]
+        public virtual void TwoTradesInWashTradeYieldsOneAlert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two Trades In Wash Trade yields one alert", null, new string[] {
+                        "washtrade",
+                        "washtradepairing",
+                        "washtradenonsensitive"});
+#line 68
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "BookedDate",
+                        "AmendedDate",
+                        "RejectedDate",
+                        "CancelledDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table31.AddRow(new string[] {
+                        "Vodafone",
+                        "0",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+            table31.AddRow(new string[] {
+                        "Vodafone",
+                        "1",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "SELL",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+#line 69
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table31, "Given ");
+#line 73
+ testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 74
+ testRunner.Then("I will have 1 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

@@ -45,8 +45,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _universeSelectionState = universeSelectionState;
 
             _currencyConverter = A.Fake<ICurrencyConverter>();
-            _positionPairer = A.Fake<IWashTradePositionPairer>();
-            _washTradeClustering = A.Fake<IWashTradeClustering>();
+            _positionPairer = new WashTradePositionPairer();
+            _washTradeClustering = new WashTradeClustering();
             _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();

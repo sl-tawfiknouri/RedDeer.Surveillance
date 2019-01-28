@@ -17,10 +17,11 @@ using TechTalk.SpecFlow;
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
     [Binding]
-    public class WashTradeSteps : BaseUniverseSteps
+    public sealed class WashTradeSteps
     {
         private readonly ScenarioContext _scenarioContext;
         private WashTradeRuleParameters _washTradeRuleParameters;
+        private UniverseSelectionState _universeSelectionState;
 
         // wash trade factory and arguments
         private ICurrencyConverter _currencyConverter;
@@ -36,10 +37,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        public WashTradeSteps(ScenarioContext scenarioContext)
-            : base(scenarioContext)
+        public WashTradeSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {
             _scenarioContext = scenarioContext;
+            _universeSelectionState = universeSelectionState;
 
             _currencyConverter = A.Fake<ICurrencyConverter>();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
@@ -134,7 +135,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     _alertStream,
                     Rules.RuleRunMode.ForceRun);
 
-            foreach (var universeEvent in _selectedUniverse.UniverseEvents)
+            foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
                 washTradeRule.OnNext(universeEvent);
         }
 

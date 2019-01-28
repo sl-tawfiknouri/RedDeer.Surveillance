@@ -37,3 +37,4 @@ Scenario: Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yi
 	Given I have the buy sell at p1 buy sell at p2 buy at p3 universe
 	When I run the wash trade rule
 	Then I will have 2 wash trade alerts
+

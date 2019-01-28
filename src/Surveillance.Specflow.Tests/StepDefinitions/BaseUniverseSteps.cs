@@ -8,16 +8,17 @@ using TechTalk.SpecFlow;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
-    public class BaseUniverseSteps
+    [Binding]
+    public sealed class UniverseSteps
     {
         // For additional details on SpecFlow step definitions see http://go.specflow.org/doc-stepdef
 
         private IReadOnlyDictionary<string, IUniverse> _universeLookup;
-        protected IUniverse _selectedUniverse;
+        private UniverseSelectionState _universeSelectionState;
 
         private ScenarioContext _scenarioContext;
 
-        public BaseUniverseSteps(ScenarioContext scenarioContext)
+        public UniverseSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
         {
             _universeLookup = new Dictionary<string, IUniverse>()
             {
@@ -29,6 +30,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             };
 
             _scenarioContext = scenarioContext;
+            _universeSelectionState = universeSelectionState;
         }
 
         [Given(@"I have the (.*) universe")]
@@ -46,7 +48,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 return;
             }
 
-            _selectedUniverse = _universeLookup[universe];
+            _universeSelectionState.SelectedUniverse = _universeLookup[universe];
         }
 
         private IUniverse EmptyUniverse()

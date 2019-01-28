@@ -20,7 +20,7 @@ Scenario: Empty Universe yields no alerts
 
 @washtrade
 @washtradesensitive
-Scenario: One Trade For Vodafone Universe yields no alerts
+Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     
@@ -29,7 +29,7 @@ Scenario: One Trade For Vodafone Universe yields no alerts
 
 @washtrade
 @washtradesensitive
-Scenario: One Trade For Barclays Universe yields no alerts
+Scenario: One Trade For Barclays yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Barclays     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     
@@ -38,7 +38,7 @@ Scenario: One Trade For Barclays Universe yields no alerts
 
 @washtrade
 @washtradesensitive
-Scenario: Two Trades In Wash Trade Universe yields one alert
+Scenario: Two Trades In Wash Trade yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     
@@ -48,7 +48,7 @@ Scenario: Two Trades In Wash Trade Universe yields one alert
 
 @washtrade
 @washtradesensitive
-Scenario: Two Trades In Wash Trade Universe For Different Securities yields one alert
+Scenario: Two Trades In Wash Trade For Different Securities yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     
@@ -58,7 +58,7 @@ Scenario: Two Trades In Wash Trade Universe For Different Securities yields one 
 
 @washtrade
 @washtradesensitive
-Scenario: Three Trades In Wash Trade Universe yields no alerts
+Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     

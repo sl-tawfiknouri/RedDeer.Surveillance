@@ -64,8 +64,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "One Trade For Vodafone Universe yields no alerts",
-            "Slug": "one-trade-for-vodafone-universe-yields-no-alerts",
+            "Name": "One Trade For Vodafone yields no alerts",
+            "Slug": "one-trade-for-vodafone-yields-no-alerts",
             "Description": "",
             "Steps": [
               {
@@ -253,8 +253,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "One Trade For Vodafone Universe yields no alerts",
-            "Slug": "one-trade-for-vodafone-universe-yields-no-alerts",
+            "Name": "One Trade For Vodafone yields no alerts",
+            "Slug": "one-trade-for-vodafone-yields-no-alerts",
             "Description": "",
             "Steps": [
               {
@@ -328,8 +328,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "One Trade For Barclays Universe yields no alerts",
-            "Slug": "one-trade-for-barclays-universe-yields-no-alerts",
+            "Name": "One Trade For Barclays yields no alerts",
+            "Slug": "one-trade-for-barclays-yields-no-alerts",
             "Description": "",
             "Steps": [
               {
@@ -403,8 +403,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Two Trades In Wash Trade Universe yields one alert",
-            "Slug": "two-trades-in-wash-trade-universe-yields-one-alert",
+            "Name": "Two Trades In Wash Trade yields one alert",
+            "Slug": "two-trades-in-wash-trade-yields-one-alert",
             "Description": "",
             "Steps": [
               {
@@ -495,8 +495,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Two Trades In Wash Trade Universe For Different Securities yields one alert",
-            "Slug": "two-trades-in-wash-trade-universe-for-different-securities-yields-one-alert",
+            "Name": "Two Trades In Wash Trade For Different Securities yields one alert",
+            "Slug": "two-trades-in-wash-trade-for-different-securities-yields-one-alert",
             "Description": "",
             "Steps": [
               {
@@ -587,8 +587,8 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Three Trades In Wash Trade Universe yields no alerts",
-            "Slug": "three-trades-in-wash-trade-universe-yields-no-alerts",
+            "Name": "Three Trades at same price point In Wash Trade yields no alerts",
+            "Slug": "three-trades-at-same-price-point-in-wash-trade-yields-no-alerts",
             "Description": "",
             "Steps": [
               {
@@ -1079,6 +1079,6 @@ jsonPWrapper ({
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 13:36:19"
+    "GeneratedOn": "28 January 2019 13:39:14"
   }
 });

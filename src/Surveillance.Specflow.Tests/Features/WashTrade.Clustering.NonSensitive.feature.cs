@@ -179,7 +179,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 26
@@ -238,7 +238,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 36
@@ -297,7 +297,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table17.AddRow(new string[] {
@@ -313,7 +313,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 46
@@ -372,7 +372,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table18.AddRow(new string[] {
@@ -388,7 +388,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table18.AddRow(new string[] {
@@ -404,7 +404,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 57

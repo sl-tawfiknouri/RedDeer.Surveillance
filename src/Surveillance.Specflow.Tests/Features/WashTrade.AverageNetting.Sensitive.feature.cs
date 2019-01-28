@@ -87,7 +87,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "2",
                         "0.01",
                         "10000",
-                        "GBP",
+                        "GBX",
                         "true"});
 #line 9
  testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table4, "Given ");
@@ -179,7 +179,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 24
@@ -236,7 +236,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 33
@@ -293,7 +293,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table8.AddRow(new string[] {
@@ -309,7 +309,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 42
@@ -366,7 +366,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table9.AddRow(new string[] {
@@ -382,7 +382,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 52
@@ -439,7 +439,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table10.AddRow(new string[] {
@@ -455,7 +455,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table10.AddRow(new string[] {
@@ -471,7 +471,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 62
@@ -528,7 +528,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table11.AddRow(new string[] {
@@ -544,7 +544,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table11.AddRow(new string[] {
@@ -560,7 +560,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "20.01",
+                        "200",
                         "1000",
                         "1000"});
             table11.AddRow(new string[] {
@@ -576,7 +576,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "20.01",
+                        "200",
                         "1000",
                         "1000"});
 #line 73
@@ -635,7 +635,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table12.AddRow(new string[] {
@@ -651,7 +651,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
             table12.AddRow(new string[] {
@@ -667,7 +667,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "20.01",
+                        "200",
                         "1000",
                         "1000"});
             table12.AddRow(new string[] {
@@ -683,7 +683,7 @@ this.FeatureBackground();
                         "SELL",
                         "GBX",
                         "",
-                        "20.01",
+                        "200",
                         "1000",
                         "1000"});
             table12.AddRow(new string[] {
@@ -699,7 +699,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "30.01",
+                        "300",
                         "1000",
                         "1000"});
 #line 85

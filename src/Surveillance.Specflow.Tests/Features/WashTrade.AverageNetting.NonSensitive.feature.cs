@@ -87,7 +87,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "2",
                         "0.10",
                         "1000000",
-                        "GBP",
+                        "GBX",
                         "true"});
 #line 9
  testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table1, "Given ");
@@ -179,7 +179,7 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "10.01",
+                        "100",
                         "1000",
                         "1000"});
 #line 24

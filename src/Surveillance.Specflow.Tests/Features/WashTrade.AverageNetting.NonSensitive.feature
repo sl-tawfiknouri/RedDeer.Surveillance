@@ -8,7 +8,7 @@
 Background:
 	Given I have the wash trade rule parameter values
 	| WindowHours | MinimumNumberOfTrades | MaximumPositionChangeValue | MaximumAbsoluteValueChange | MaximumAbsoluteValueChangeCurrency | UseAverageNetting |
-	| 1           | 2                     | 0.10                       | 1000000                    | GBP                                | true              |
+	| 1           | 2                     | 0.10                       | 1000000                    | GBX                                | true              |
 
 @washtrade
 @washtradenonsensitive
@@ -23,6 +23,6 @@ Scenario: Empty Universe yields no alerts
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10.01            | 1000          | 1000         |     
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts

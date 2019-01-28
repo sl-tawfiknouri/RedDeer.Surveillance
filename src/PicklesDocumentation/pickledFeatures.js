@@ -1,6 +1,195 @@
 jsonPWrapper ({
   "Features": [
     {
+      "RelativeFolder": "WashTrade.AverageNetting.NonSensitive.feature",
+      "Feature": {
+        "Name": "WashTrade Average Netting Non-Sensitive Parameters",
+        "Description": "In order to meet MAR compliance requirements\r\nI need to be able to detect when traders are executing trades\r\nwith no meaningful change of ownership\r\nBy netting their trades for average value change being below\r\nthreshold parameters",
+        "FeatureElements": [
+          {
+            "Name": "Empty Universe yields no alerts",
+            "Slug": "empty-universe-yields-no-alerts",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": []
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 0 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          },
+          {
+            "Name": "One Trade For Vodafone Universe yields no alerts",
+            "Slug": "one-trade-for-vodafone-universe-yields-no-alerts",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 0 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          }
+        ],
+        "Background": {
+          "Name": "",
+          "Description": "",
+          "Steps": [
+            {
+              "Keyword": "Given",
+              "NativeKeyword": "Given ",
+              "Name": "I have the wash trade rule average netting parameter values",
+              "TableArgument": {
+                "HeaderRow": [
+                  "WindowHours",
+                  "MinimumNumberOfTrades",
+                  "MaximumPositionChangeValue",
+                  "MaximumAbsoluteValueChange",
+                  "MaximumAbsoluteValueChangeCurrency"
+                ],
+                "DataRows": [
+                  [
+                    "1",
+                    "2",
+                    "0.10",
+                    "1000000",
+                    "GBP"
+                  ]
+                ]
+              },
+              "StepComments": [],
+              "AfterLastStepComments": []
+            }
+          ],
+          "Tags": [],
+          "Result": {
+            "WasExecuted": false,
+            "WasSuccessful": false,
+            "WasProvided": false
+          }
+        },
+        "Result": {
+          "WasExecuted": false,
+          "WasSuccessful": false,
+          "WasProvided": false
+        },
+        "Tags": []
+      },
+      "Result": {
+        "WasExecuted": false,
+        "WasSuccessful": false,
+        "WasProvided": false
+      }
+    },
+    {
       "RelativeFolder": "WashTrade.AverageNetting.Sensitive.feature",
       "Feature": {
         "Name": "WashTrade Average Netting Sensitive Parameters",
@@ -831,20 +1020,27 @@ jsonPWrapper ({
     "Tags": [
       {
         "Tag": "@washtrade",
-        "Total": 8,
+        "Total": 10,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 8
+        "Inconclusive": 10
       },
       {
         "Tag": "@washtradesensitive",
-        "Total": 8,
+        "Total": 10,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 8
+        "Inconclusive": 10
       }
     ],
     "Folders": [
+      {
+        "Folder": "WashTrade.AverageNetting.NonSensitive.feature",
+        "Total": 2,
+        "Passing": 0,
+        "Failing": 0,
+        "Inconclusive": 2
+      },
       {
         "Folder": "WashTrade.AverageNetting.Sensitive.feature",
         "Total": 8,
@@ -855,6 +1051,13 @@ jsonPWrapper ({
     ],
     "NotTestedFolders": [
       {
+        "Folder": "WashTrade.AverageNetting.NonSensitive.feature",
+        "Total": 0,
+        "Passing": 0,
+        "Failing": 0,
+        "Inconclusive": 0
+      },
+      {
         "Folder": "WashTrade.AverageNetting.Sensitive.feature",
         "Total": 0,
         "Passing": 0,
@@ -863,19 +1066,19 @@ jsonPWrapper ({
       }
     ],
     "Scenarios": {
-      "Total": 8,
+      "Total": 10,
       "Passing": 0,
       "Failing": 0,
-      "Inconclusive": 8
+      "Inconclusive": 10
     },
     "Features": {
-      "Total": 1,
+      "Total": 2,
       "Passing": 0,
       "Failing": 0,
-      "Inconclusive": 1
+      "Inconclusive": 2
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 13:32:25"
+    "GeneratedOn": "28 January 2019 13:36:19"
   }
 });

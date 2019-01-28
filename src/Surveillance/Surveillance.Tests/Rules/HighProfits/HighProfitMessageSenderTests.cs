@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
@@ -19,7 +21,10 @@ namespace Surveillance.Tests.Rules.HighProfits
         private ILogger<HighProfitMessageSender> _logger;
         private ICaseMessageSender _messageSender;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
+        private ISystemProcessOperationContext _opCtx;
         private IHighProfitsRuleParameters _parameters;
+        private IRuleBreachRepository _ruleBreachRepository;
+        private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private FinancialInstrument _security;
 
         [SetUp]
@@ -27,9 +32,12 @@ namespace Surveillance.Tests.Rules.HighProfits
         {
             _messageSender = A.Fake<ICaseMessageSender>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
+            _opCtx = A.Fake<ISystemProcessOperationContext>();
             _parameters = A.Fake<IHighProfitsRuleParameters>();
             A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
 
+            _ruleBreachRepository = A.Fake<IRuleBreachRepository>();
+            _ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
             _logger = A.Fake<ILogger<HighProfitMessageSender>>();
             _security =
                 new FinancialInstrument(
@@ -43,11 +51,13 @@ namespace Surveillance.Tests.Rules.HighProfits
 
         [Test]
         [Explicit]
-        public void DoesSendExchangeRateMessage_AsExpected()
+        public async Task DoesSendExchangeRateMessage_AsExpected()
         {
             var messageSender = new HighProfitMessageSender(
                 _logger,
-                _messageSender);
+                _messageSender,
+                _ruleBreachRepository,
+                _ruleBreachOrdersRepository);
 
             var exchangeRateProfitBreakdown =
                 new ExchangeRateProfitBreakdown(
@@ -60,6 +70,8 @@ namespace Surveillance.Tests.Rules.HighProfits
 
             var breach =
                 new HighProfitRuleBreach(
+                    _opCtx,
+                    "correlation-id",
                     _parameters,
                     10m,
                     "GBP",
@@ -71,7 +83,7 @@ namespace Surveillance.Tests.Rules.HighProfits
                     false,
                     exchangeRateProfitBreakdown);
 
-            messageSender.Send(breach);
+            await messageSender.Send(breach);
         }
     }
 }

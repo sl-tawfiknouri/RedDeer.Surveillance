@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Utilities.Extensions;
@@ -12,12 +13,16 @@ namespace Surveillance.Rules.Spoofing
 
         public SpoofingRuleMessageSender(
             ILogger<SpoofingRuleMessageSender> logger,
-            ICaseMessageSender caseMessageSender) 
+            ICaseMessageSender caseMessageSender,
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository) 
             : base(
                 "Automated Spoofing Rule Breach Detected",
                 "Spoofing Rule Message Sender",
                 logger,
-                caseMessageSender)
+                caseMessageSender,
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(ISpoofingRuleBreach ruleBreach)

@@ -123,6 +123,8 @@ namespace Surveillance.Rules.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
+                    RuleCtx.SystemProcessOperationContext(),
+                    RuleCtx.CorrelationId(),
                     _parameters,
                     tradePosition,
                     security,

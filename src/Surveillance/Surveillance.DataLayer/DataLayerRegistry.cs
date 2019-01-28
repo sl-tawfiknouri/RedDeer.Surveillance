@@ -21,6 +21,8 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Rules;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Aws_IO;
@@ -52,6 +54,8 @@ namespace Surveillance.DataLayer
             For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
             For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
             For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
+            For<IRuleBreachRepository>().Use<RuleBreachRepository>();
+            For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
 
@@ -9,8 +10,16 @@ namespace Surveillance.Rules.Layering
     {
         public LayeringAlertSender(
             ILogger<LayeringAlertSender> logger,
-            ICaseMessageSender caseMessageSender) 
-            : base("Automated Layering Rule Breach Detected", "Layering Message Sender", logger, caseMessageSender)
+            ICaseMessageSender caseMessageSender,
+            IRuleBreachRepository repository,
+            IRuleBreachOrdersRepository ordersRepository) 
+            : base(
+                "Automated Layering Rule Breach Detected",
+                "Layering Message Sender",
+                logger, 
+                caseMessageSender,
+                repository,
+                ordersRepository)
         { }
 
         public async Task Send(ILayeringRuleBreach breach)

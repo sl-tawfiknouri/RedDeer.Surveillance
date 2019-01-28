@@ -9,30 +9,35 @@ Background:
 	| 1            | 2                        | 0.01                         | 10000                         | GBP                                     |
 
 @washtrade
+@washtradesensitive
 Scenario: Empty Universe yields no alerts
 	Given I have the empty universe
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradesensitive
 Scenario: Two Trades In Wash Trade Universe yields one alert
 	Given I have the buy sell universe
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
 @washtrade
+@washtradesensitive
 Scenario: Three Trades In Wash Trade Universe yields no alerts
 	Given I have the buy buy sell universe
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradesensitive
 Scenario: Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 yields two alerts
 	Given I have the buy sell at p1 buy sell at p2 universe
 	When I run the wash trade rule
 	Then I will have 2 wash trade alerts
 
 @washtrade
+@washtradesensitive
 Scenario: Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yields two alerts
 	Given I have the buy sell at p1 buy sell at p2 buy at p3 universe
 	When I run the wash trade rule

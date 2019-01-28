@@ -34,7 +34,8 @@ jsonPWrapper ({
               }
             ],
             "Tags": [
-              "@washtrade"
+              "@washtrade",
+              "@washtradesensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -70,7 +71,8 @@ jsonPWrapper ({
               }
             ],
             "Tags": [
-              "@washtrade"
+              "@washtrade",
+              "@washtradesensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -106,7 +108,8 @@ jsonPWrapper ({
               }
             ],
             "Tags": [
-              "@washtrade"
+              "@washtrade",
+              "@washtradesensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -142,7 +145,8 @@ jsonPWrapper ({
               }
             ],
             "Tags": [
-              "@washtrade"
+              "@washtrade",
+              "@washtradesensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -178,7 +182,8 @@ jsonPWrapper ({
               }
             ],
             "Tags": [
-              "@washtrade"
+              "@washtrade",
+              "@washtradesensitive"
             ],
             "Result": {
               "WasExecuted": false,
@@ -246,6 +251,13 @@ jsonPWrapper ({
         "Passing": 0,
         "Failing": 0,
         "Inconclusive": 5
+      },
+      {
+        "Tag": "@washtradesensitive",
+        "Total": 5,
+        "Passing": 0,
+        "Failing": 0,
+        "Inconclusive": 5
       }
     ],
     "Folders": [
@@ -280,6 +292,6 @@ jsonPWrapper ({
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 09:20:45"
+    "GeneratedOn": "28 January 2019 09:23:09"
   }
 });

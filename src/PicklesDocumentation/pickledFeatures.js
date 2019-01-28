@@ -4,7 +4,7 @@ jsonPWrapper ({
       "RelativeFolder": "WashTrade.AverageNetting.Sensitive.feature",
       "Feature": {
         "Name": "WashTrade Average Netting Sensitive Parameters",
-        "Description": "In order to meet MAR compliance requirements\r\nI need to be able to detect when traders are executing trades\r\nwith no meaningful change of ownership",
+        "Description": "In order to meet MAR compliance requirements\r\nI need to be able to detect when traders are executing trades\r\nwith no meaningful change of ownership\r\nBy netting their trades for average value change being below\r\nthreshold parameters",
         "FeatureElements": [
           {
             "Name": "Empty Universe yields no alerts",
@@ -14,7 +14,102 @@ jsonPWrapper ({
               {
                 "Keyword": "Given",
                 "NativeKeyword": "Given ",
-                "Name": "I have the empty universe",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": []
+                },
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "When",
+                "NativeKeyword": "When ",
+                "Name": "I run the wash trade rule",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              },
+              {
+                "Keyword": "Then",
+                "NativeKeyword": "Then ",
+                "Name": "I will have 0 wash trade alerts",
+                "StepComments": [],
+                "AfterLastStepComments": []
+              }
+            ],
+            "Tags": [
+              "@washtrade",
+              "@washtradesensitive"
+            ],
+            "Result": {
+              "WasExecuted": false,
+              "WasSuccessful": false,
+              "WasProvided": false
+            }
+          },
+          {
+            "Name": "One Trade Universe yields no alerts",
+            "Slug": "one-trade-universe-yields-no-alerts",
+            "Description": "",
+            "Steps": [
+              {
+                "Keyword": "Given",
+                "NativeKeyword": "Given ",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
                 "StepComments": [],
                 "AfterLastStepComments": []
               },
@@ -51,7 +146,62 @@ jsonPWrapper ({
               {
                 "Keyword": "Given",
                 "NativeKeyword": "Given ",
-                "Name": "I have the buy sell universe",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
                 "StepComments": [],
                 "AfterLastStepComments": []
               },
@@ -88,7 +238,79 @@ jsonPWrapper ({
               {
                 "Keyword": "Given",
                 "NativeKeyword": "Given ",
-                "Name": "I have the buy buy sell universe",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "2",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
                 "StepComments": [],
                 "AfterLastStepComments": []
               },
@@ -118,14 +340,103 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 yields two alerts",
-            "Slug": "buy1-sell1-at-price1-and-buy2-sell2-and-price2-yields-two-alerts",
+            "Name": "Four trades at two price points yields two alerts",
+            "Slug": "four-trades-at-two-price-points-yields-two-alerts",
             "Description": "",
             "Steps": [
               {
                 "Keyword": "Given",
                 "NativeKeyword": "Given ",
-                "Name": "I have the buy sell at p1 buy sell at p2 universe",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "2",
+                      "01/01/2018 09:35:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:35:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "20.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "3",
+                      "01/01/2018 09:35:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:35:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "20.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
                 "StepComments": [],
                 "AfterLastStepComments": []
               },
@@ -155,14 +466,120 @@ jsonPWrapper ({
             }
           },
           {
-            "Name": "Buy1 Sell1 at Price1 and Buy2 Sell2 and Price2 and Buy3 but no sell yields two alerts",
-            "Slug": "buy1-sell1-at-price1-and-buy2-sell2-and-price2-and-buy3-but-no-sell-yields-two-alerts",
+            "Name": "Five trades in two pairs with a single trade per three price points yields two alerts",
+            "Slug": "five-trades-in-two-pairs-with-a-single-trade-per-three-price-points-yields-two-alerts",
             "Description": "",
             "Steps": [
               {
                 "Keyword": "Given",
                 "NativeKeyword": "Given ",
-                "Name": "I have the buy sell at p1 buy sell at p2 buy at p3 universe",
+                "Name": "I have the orders for a universe from 01/01/2018 to 03/01/2018 :",
+                "TableArgument": {
+                  "HeaderRow": [
+                    "SecurityName",
+                    "OrderId",
+                    "PlacedDate",
+                    "BookedDate",
+                    "AmendedDate",
+                    "RejectedDate",
+                    "CancelledDate",
+                    "FilledDate",
+                    "Type",
+                    "Direction",
+                    "Currency",
+                    "LimitPrice",
+                    "AverageFillPrice",
+                    "OrderedVolume",
+                    "FilledVolume"
+                  ],
+                  "DataRows": [
+                    [
+                      "Vodafone",
+                      "0",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "1",
+                      "01/01/2018 09:30:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:30:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "10.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "2",
+                      "01/01/2018 09:35:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:35:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "20.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "3",
+                      "01/01/2018 09:35:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:35:00",
+                      "MARKET",
+                      "SELL",
+                      "GBX",
+                      "",
+                      "20.01",
+                      "1000",
+                      "1000"
+                    ],
+                    [
+                      "Vodafone",
+                      "4",
+                      "01/01/2018 09:40:00",
+                      "",
+                      "",
+                      "",
+                      "",
+                      "01/01/2018 09:40:00",
+                      "MARKET",
+                      "BUY",
+                      "GBX",
+                      "",
+                      "30.01",
+                      "1000",
+                      "1000"
+                    ]
+                  ]
+                },
                 "StepComments": [],
                 "AfterLastStepComments": []
               },
@@ -199,14 +616,14 @@ jsonPWrapper ({
             {
               "Keyword": "Given",
               "NativeKeyword": "Given ",
-              "Name": "I have the wash trade rule average netting parameter values:",
+              "Name": "I have the wash trade rule average netting parameter values",
               "TableArgument": {
                 "HeaderRow": [
-                  "window hours",
-                  "minimum number of trades",
-                  "maximum position value change",
-                  "maximum absolute value change",
-                  "maximum absolute value change currency"
+                  "WindowHours",
+                  "MinimumNumberOfTrades",
+                  "MaximumPositionChangeValue",
+                  "MaximumAbsoluteValueChange",
+                  "MaximumAbsoluteValueChangeCurrency"
                 ],
                 "DataRows": [
                   [
@@ -247,26 +664,26 @@ jsonPWrapper ({
     "Tags": [
       {
         "Tag": "@washtrade",
-        "Total": 5,
+        "Total": 6,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 5
+        "Inconclusive": 6
       },
       {
         "Tag": "@washtradesensitive",
-        "Total": 5,
+        "Total": 6,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 5
+        "Inconclusive": 6
       }
     ],
     "Folders": [
       {
         "Folder": "WashTrade.AverageNetting.Sensitive.feature",
-        "Total": 5,
+        "Total": 6,
         "Passing": 0,
         "Failing": 0,
-        "Inconclusive": 5
+        "Inconclusive": 6
       }
     ],
     "NotTestedFolders": [
@@ -279,10 +696,10 @@ jsonPWrapper ({
       }
     ],
     "Scenarios": {
-      "Total": 5,
+      "Total": 6,
       "Passing": 0,
       "Failing": 0,
-      "Inconclusive": 5
+      "Inconclusive": 6
     },
     "Features": {
       "Total": 1,
@@ -292,6 +709,6 @@ jsonPWrapper ({
     }
   },
   "Configuration": {
-    "GeneratedOn": "28 January 2019 09:23:09"
+    "GeneratedOn": "28 January 2019 13:25:26"
   }
 });

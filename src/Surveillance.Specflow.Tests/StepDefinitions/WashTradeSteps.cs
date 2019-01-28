@@ -9,10 +9,12 @@ using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.OrganisationalFactors;
 using Surveillance.Rules.WashTrade;
 using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.Specflow.Tests.StepDefinitions.WashTrades;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
@@ -64,7 +66,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
 
-        [Given(@"I have the wash trade rule average netting parameter values:")]
+        [Given(@"I have the wash trade rule average netting parameter values")]
         public void GivenIHaveTheWashTradeRuleParameterValues(Table ruleParameters)
         {
             if (ruleParameters.RowCount != 1)
@@ -73,47 +75,19 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 return;
             }
 
-            ruleParameters.Rows[0].TryGetValue("window hours", out string windowHours);
-            ruleParameters.Rows[0].TryGetValue("minimum number of trades", out string numberOfTrades);
-            ruleParameters.Rows[0].TryGetValue("maximum position value change", out string maxPositionChangeValue);
-            ruleParameters.Rows[0].TryGetValue("maximum absolute value change", out string maxAbsoluteValueChange);
-            ruleParameters.Rows[0].TryGetValue("maximum absolute value change currency", out string maxAbsoluteValueChangeCurrency);
-
-            if (!int.TryParse(windowHours, out var wh))
-            {
-                _scenarioContext.Pending();
-                return;
-            }
-
-            if (!int.TryParse(numberOfTrades, out var not))
-            {
-                _scenarioContext.Pending();
-                return;
-            }
-
-            if (!decimal.TryParse(maxPositionChangeValue, out var mpcv))
-            {
-                _scenarioContext.Pending();
-                return;
-            }
-
-            if (!int.TryParse(maxAbsoluteValueChange, out var mavc))
-            {
-                _scenarioContext.Pending();
-                return;
-            }
+            var parameters = ruleParameters.CreateInstance<WashTradeApiParameters>();
 
             _washTradeRuleParameters =
                 new WashTradeRuleParameters(
                     "0",
-                    new System.TimeSpan(wh, 0, 0),
+                    new System.TimeSpan(parameters.WindowHours, 0, 0),
                     true,
                     false,
                     false,
-                    not,
-                    mpcv,
-                    mavc,
-                    maxAbsoluteValueChangeCurrency,
+                    parameters.MinimumNumberOfTrades,
+                    parameters.MaximumPositionChangeValue,
+                    parameters.MaximumAbsoluteValueChange,
+                    parameters.MaximumAbsoluteValueChangeCurrency,
                     null,
                     null,
                     null,

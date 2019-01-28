@@ -5,6 +5,7 @@ using DomainV2.Trading;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
+using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 
@@ -13,6 +14,8 @@ namespace Surveillance.Rules.HighProfits
     public class HighProfitRuleBreach : IHighProfitRuleBreach
     {
         public HighProfitRuleBreach(
+            ISystemProcessOperationContext operationContext,
+            string correlationId,
             IHighProfitsRuleParameters parameters,
             decimal? absoluteProfits,
             string absoluteProfitCurrency,
@@ -35,6 +38,9 @@ namespace Surveillance.Rules.HighProfits
             Trades = trades ?? new TradePosition(new List<Order>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
             ExchangeRateProfits = profitBreakdown;
+            RuleParameterId = parameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public IHighProfitsRuleParameters Parameters { get; }
@@ -50,5 +56,8 @@ namespace Surveillance.Rules.HighProfits
         public IExchangeRateProfitBreakdown ExchangeRateProfits { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

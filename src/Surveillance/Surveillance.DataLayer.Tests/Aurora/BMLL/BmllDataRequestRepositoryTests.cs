@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 

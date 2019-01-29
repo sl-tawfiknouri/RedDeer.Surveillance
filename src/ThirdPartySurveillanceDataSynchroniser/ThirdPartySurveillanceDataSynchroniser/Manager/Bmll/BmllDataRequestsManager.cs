@@ -40,17 +40,12 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             bmllRequests = bmllRequests.Where(req => !req.DataRequest?.IsCompleted ?? false).ToList();
 
             var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
-            var taskList = splitLists.Select(ProcessBmllRequests).ToList();
-            var splitTasks = SplitList(taskList, 4);
+            var splitTasks = SplitList(splitLists, 4);
 
             foreach (var splitTask in splitTasks)
             {
-                foreach (var item in splitTask)
-                {
-                    item.Start();
-                }
-
-               Task.WhenAll(splitTask).Wait(TimeSpan.FromMinutes(30));
+                var split = splitTask.Select(ProcessBmllRequests).ToList();
+                Task.WhenAll(split).Wait();
             }
 
             await RescheduleRuleRun(systemOperationId, bmllRequests);

@@ -5,7 +5,7 @@ namespace DomainV2.Scheduling
     public enum Rules
     {
         [Description("Spoofing")]
-        Spoofing,
+        Spoofing = 0,
         [Description("Cancelled Orders")]
         CancelledOrders,
         [Description("High Profits")]

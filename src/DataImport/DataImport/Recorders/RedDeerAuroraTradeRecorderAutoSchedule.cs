@@ -151,7 +151,13 @@ namespace DataImport.Recorders
                     || rule == Rules.CancelledOrders
                     || rule == Rules.Layering
                     || rule == Rules.MarkingTheClose
-                    || rule == Rules.Spoofing)
+                    || rule == Rules.Spoofing
+                    || rule == Rules.FrontRunning
+                    || rule == Rules.PaintingTheTape
+                    || rule == Rules.ImproperMatchedOrders
+                    || rule == Rules.CrossAssetManipulation
+                    || rule == Rules.PumpAndDump
+                    || rule == Rules.TrashAndCash)
                     continue;
 
                 allRulesList.Add(rule);

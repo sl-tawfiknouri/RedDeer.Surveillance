@@ -55,8 +55,8 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             var otherRequests = dataRequestWithSource.Where(i => i.Key != DataSource.Bmll && i.Key != DataSource.Markit).SelectMany(i => i).ToList();
 
             await SubmitToBmllAndFactset(systemProcessOperationId, bmllRequests);
-            await SubmitToMarkit(markitRequests);
-            await SubmitOther(otherRequests);
+            SubmitToMarkit(markitRequests);
+            SubmitOther(otherRequests);
 
             _logger.LogInformation($"DataRequestManager completed handling request with id {systemProcessOperationId}");
         }
@@ -92,7 +92,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             await _bmllDataRequestManager.Submit(systemProcessOperationId, bmllRequests);
         }
 
-        private async Task SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
+        private void SubmitToMarkit(List<MarketDataRequestDataSource> markitRequests)
         {
             if (markitRequests == null)
             {
@@ -103,11 +103,11 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager
             {
                 return;
             }
-
+            
             _logger.LogError($"DataRequestManager received {markitRequests.Count} market data requests for MARKIT which we have not implemented yet");
         }
 
-        private async Task SubmitOther(List<MarketDataRequestDataSource> otherRequests)
+        private void SubmitOther(List<MarketDataRequestDataSource> otherRequests)
         {
             if (otherRequests == null)
             {

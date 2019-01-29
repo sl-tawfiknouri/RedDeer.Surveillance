@@ -29,6 +29,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _messageBusSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
 
+            _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
             _repository = A.Fake<ISystemProcessOperationRuleRunRepository>();
             _logger = A.Fake<ILogger<BmllDataRequestsRescheduleManager>>();
         }

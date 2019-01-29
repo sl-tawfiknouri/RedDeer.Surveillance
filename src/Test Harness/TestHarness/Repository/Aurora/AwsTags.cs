@@ -24,7 +24,7 @@ namespace TestHarness.Repository.Aurora
 
                 return string.Equals(env, "live", StringComparison.InvariantCultureIgnoreCase);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return true;
             }

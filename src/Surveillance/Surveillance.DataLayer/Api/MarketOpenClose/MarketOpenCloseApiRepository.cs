@@ -77,7 +77,7 @@ namespace Surveillance.DataLayer.Api.MarketOpenClose
                 return result.IsSuccessStatusCode;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _logger.LogError($"MarketOpenCloseApiRepository HEARTBEAT NEGATIVE");
             }

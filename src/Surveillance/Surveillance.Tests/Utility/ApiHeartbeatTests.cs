@@ -8,7 +8,6 @@ using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
 using Surveillance.Utility;
 
 namespace Surveillance.Tests.Utility

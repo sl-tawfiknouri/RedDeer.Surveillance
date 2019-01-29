@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 using Surveillance.System.Auditing.Context.Interfaces;
@@ -35,12 +34,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         [Test]
         [Explicit("Performs side effect to the d-b")]
-        public async Task Create()
+        public void Create()
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
-            await repo.Create(Frame());
+            repo.Create(Frame());
 
             Assert.IsTrue(true);
         }
@@ -52,8 +51,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
-            await repo.Create(Frame());
-            await repo.Create(Frame());
+            repo.Create(Frame());
+            repo.Create(Frame());
 
             var results = await repo.GetEquityIntraday(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
 

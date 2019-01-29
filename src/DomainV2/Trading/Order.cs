@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Enums;
 using DomainV2.Financial;
-using DomainV2.Trading.Interfaces;
 
 namespace DomainV2.Trading
 {

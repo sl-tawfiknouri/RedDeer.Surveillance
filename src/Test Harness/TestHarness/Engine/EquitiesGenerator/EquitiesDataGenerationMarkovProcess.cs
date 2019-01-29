@@ -19,8 +19,6 @@ namespace TestHarness.Engine.EquitiesGenerator
     /// </summary>
     public class EquitiesDataGenerationMarkovProcess : IEquitiesDataGenerationMarkovProcess
     {
-        private volatile bool _walkInitiated;
-
         private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
         private readonly IEquityDataGeneratorStrategy _dataStrategy;
         private IStockExchangeStream _stream;
@@ -71,7 +69,6 @@ namespace TestHarness.Engine.EquitiesGenerator
 
             lock (_stateTransitionLock)
             {
-                _walkInitiated = true;
                 _stream = stream;
 
                 var apiGeneration = new ApiDataGenerationInitialiser(market, _tickSeparation, prices.SecurityPrices);
@@ -181,7 +178,6 @@ namespace TestHarness.Engine.EquitiesGenerator
         {
             lock (_stateTransitionLock)
             {
-                _walkInitiated = false;
                 _logger.LogInformation("Random walk generator terminating walk");
             }
         }

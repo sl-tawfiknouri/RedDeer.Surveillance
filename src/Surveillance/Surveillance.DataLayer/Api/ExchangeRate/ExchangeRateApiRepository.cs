@@ -89,7 +89,7 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
 
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _logger.LogError($"ExchangeRateApiRepository HEARTBEAT NEGATIVE FOR API END POINT");
             }

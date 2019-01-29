@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TestHarness.Engine.Plans
+﻿namespace TestHarness.Engine.Plans
 {
     public enum PriceManipulation
     {

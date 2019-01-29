@@ -28,35 +28,30 @@ namespace Surveillance.DataLayer.Api.ExchangeRate
             DateTime commencement,
             DateTime termination)
         {
-            lock (_lock)
+            commencement = commencement.Date;
+            termination = termination.Date;
+
+            CleanCache();
+
+            var dateRange = new DateRange(commencement, termination);
+            if (_cache.ContainsKey(dateRange))
             {
-                commencement = commencement.Date;
-                termination = termination.Date;
+                _cache.TryGetValue(dateRange, out var cachedRates);
 
-                CleanCache();
-
-                var dateRange = new DateRange(commencement, termination);
-                if (_cache.ContainsKey(dateRange))
+                if (cachedRates == null)
                 {
-                    _cache.TryGetValue(dateRange, out var cachedRates);
-
-                    if (cachedRates == null)
-                    {
-                        return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
-                    }
-
-                    return cachedRates.Dtos;
+                    return new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>();
                 }
-                
-                var resultTask = _apiRepository.Get(commencement, termination);
-                resultTask.Wait();
-                var results = resultTask.Result;
 
-                var cacheRates = new CachedRates { Dtos = results, Expiry = DateTime.UtcNow.Add(Expiry) };
-                _cache.Add(dateRange, cacheRates);
-
-                return results;
+                return cachedRates.Dtos;
             }
+                
+            var results = await _apiRepository.Get(commencement, termination);
+
+            var cacheRates = new CachedRates { Dtos = results, Expiry = DateTime.UtcNow.Add(Expiry) };
+            _cache.Add(dateRange, cacheRates);
+
+            return results;
         }
 
         public void CleanCache()

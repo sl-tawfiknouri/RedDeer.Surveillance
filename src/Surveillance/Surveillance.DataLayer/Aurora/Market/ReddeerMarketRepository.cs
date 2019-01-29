@@ -343,7 +343,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
         }
 
-        public async Task Create(EquityIntraDayTimeBarCollection entity)
+        public void Create(EquityIntraDayTimeBarCollection entity)
         {
             if (entity == null)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
@@ -14,7 +13,6 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighVolume;

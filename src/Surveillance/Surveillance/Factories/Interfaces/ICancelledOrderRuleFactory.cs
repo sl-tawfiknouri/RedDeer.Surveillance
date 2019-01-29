@@ -1,5 +1,4 @@
 ﻿using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.CancelledOrders.Interfaces;

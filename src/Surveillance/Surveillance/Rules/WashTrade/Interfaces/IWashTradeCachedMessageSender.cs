@@ -1,6 +1,4 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
-
-namespace Surveillance.Rules.WashTrade.Interfaces
+﻿namespace Surveillance.Rules.WashTrade.Interfaces
 {
     public interface IWashTradeCachedMessageSender
     {

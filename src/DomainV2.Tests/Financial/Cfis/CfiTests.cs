@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using DomainV2.Financial.Cfis;
+﻿using DomainV2.Financial.Cfis;
 using NUnit.Framework;
 
 namespace DomainV2.Tests.Financial.Cfis

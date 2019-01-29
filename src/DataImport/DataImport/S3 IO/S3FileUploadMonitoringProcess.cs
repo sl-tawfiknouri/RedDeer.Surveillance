@@ -69,65 +69,61 @@ namespace DataImport.S3_IO
 
         private async Task ReadMessage(string messageId, string messageBody)
         {
-            lock (_lock)
+            try
             {
-                try
+                _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
+
+                var dto = _mapper.Map(messageBody);
+
+                if (dto == null)
                 {
-                    _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
+                    _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
 
-                    var dto = _mapper.Map(messageBody);
-
-                    if (dto == null)
-                    {
-                        _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
-
-                        return;
-                    }
-
-                    if (dto.FileSize == 0)
-                    {
-                        _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
-
-                        return;
-                    }
-
-                    var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
-                    var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
-
-                    _logger.LogInformation($"S3Processor received message for {directoryName}");
-
-                    switch (splitPath)
-                    {
-                        case "surveillance-trade":
-                            var ptf = ProcessTradeFile(
-                                dto,
-                                _configuration.DataImportTradeFileFtpDirectoryPath,
-                                _configuration.DataImportTradeFileUploadDirectoryPath);
-                            ptf.Wait();
-                            break;
-                        case "surveillance-market":
-                            var pef = ProcessEquityFile(
-                                dto,
-                                _configuration.DataImportEquityFileFtpDirectoryPath,
-                                _configuration.DataImportEquityFileUploadDirectoryPath);
-                            pef.Wait();
-                            break;
-                        case "surveillance-allocation":
-                            var paf = ProcessAllocationFile(
-                                dto,
-                                _configuration.DataImportAllocationFileFtpDirectoryPath,
-                                _configuration.DataImportAllocationFileUploadDirectoryPath);
-                            paf.Wait();
-                            break;
-                        default:
-                            _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
-                            return;
-                    }
+                    return;
                 }
-                catch (Exception e)
+
+                if (dto.FileSize == 0)
                 {
-                    _logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
+                    _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
+
+                    return;
                 }
+
+                var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
+                var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
+
+                _logger.LogInformation($"S3Processor received message for {directoryName}");
+
+                switch (splitPath)
+                {
+                    case "surveillance-trade":
+                        await ProcessTradeFile(
+                            dto,
+                            _configuration.DataImportTradeFileFtpDirectoryPath,
+                            _configuration.DataImportTradeFileUploadDirectoryPath);
+                        break;
+                    case "surveillance-market":
+                        var pef = ProcessEquityFile(
+                            dto,
+                            _configuration.DataImportEquityFileFtpDirectoryPath,
+                            _configuration.DataImportEquityFileUploadDirectoryPath);
+                        pef.Wait();
+                        break;
+                    case "surveillance-allocation":
+                        var paf = ProcessAllocationFile(
+                            dto,
+                            _configuration.DataImportAllocationFileFtpDirectoryPath,
+                            _configuration.DataImportAllocationFileUploadDirectoryPath);
+                        paf.Wait();
+                        break;
+                    default:
+                        _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
+                        return;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
             }
         }
 

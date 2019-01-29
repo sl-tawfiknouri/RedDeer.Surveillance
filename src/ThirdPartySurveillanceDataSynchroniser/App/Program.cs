@@ -14,7 +14,6 @@ using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.Auditing;
 using Surveillance.System.Auditing.Context;
 using Surveillance.System.DataLayer;
-using Surveillance.System.DataLayer.Interfaces;
 using Surveillance.System.DataLayer.Processes;
 using ThirdPartySurveillanceDataSynchroniser;
 using ThirdPartySurveillanceDataSynchroniser.Configuration;

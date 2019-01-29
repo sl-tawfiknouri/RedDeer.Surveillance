@@ -66,7 +66,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // step 0.
                 // project to request keys
-                var keys = await ProjectToRequestKeys(bmllRequests);
+                var keys = ProjectToRequestKeys(bmllRequests);
 
                 if (keys == null
                     || !keys.Any())
@@ -106,7 +106,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
         }
 
-        public async Task<IReadOnlyCollection<MinuteBarRequestKeyDto>> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
+        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
         {
             var keys = new List<MinuteBarRequestKeyDto>();
 

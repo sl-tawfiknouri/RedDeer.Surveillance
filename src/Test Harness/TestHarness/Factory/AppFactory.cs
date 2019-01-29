@@ -4,7 +4,6 @@ using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
-using TestHarness.Display;
 using TestHarness.Engine.Heartbeat;
 using TestHarness.Engine.Heartbeat.Interfaces;
 using TestHarness.Factory.EquitiesFactory;

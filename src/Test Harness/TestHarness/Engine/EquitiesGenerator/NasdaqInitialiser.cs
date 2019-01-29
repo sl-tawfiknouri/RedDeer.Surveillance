@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator

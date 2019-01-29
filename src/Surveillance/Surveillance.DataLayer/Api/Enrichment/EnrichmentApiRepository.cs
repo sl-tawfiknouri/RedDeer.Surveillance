@@ -79,7 +79,7 @@ namespace Surveillance.DataLayer.Api.Enrichment
 
                 return response.IsSuccessStatusCode;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _logger.LogError($"HEARTBEAT FOR ENRICHMENT API REPOSITORY NEGATIVE");
             }

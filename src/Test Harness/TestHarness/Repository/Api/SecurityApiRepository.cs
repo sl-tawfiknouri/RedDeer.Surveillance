@@ -26,7 +26,7 @@ namespace TestHarness.Repository.Api
 
                 return (response.IsSuccessStatusCode);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

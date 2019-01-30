@@ -42,7 +42,7 @@ Scenario: One Trade For Barclays yields no alerts
 @washtrade
 @washtradeclustering
 @washtradesensitive
-Scenario: Two Trades In Wash Trade For Different Securities yields one alert
+Scenario: Two Trades In Wash Trade For Different Securities yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
@@ -117,3 +117,40 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	| 1           | 4                                       | 0.03                                         | true          |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradesensitive
+@percentagevaluedifference
+Scenario: Two trades when inside percentage value difference threshold yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 101              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradesensitive
+@percentagevaluedifference
+Scenario: Two trades when exactly on percentage value difference threshold yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 103              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradesensitive
+@percentagevaluedifference
+Scenario: Two trades when outside percentage value difference threshold yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 104              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 0 wash trade alerts
+

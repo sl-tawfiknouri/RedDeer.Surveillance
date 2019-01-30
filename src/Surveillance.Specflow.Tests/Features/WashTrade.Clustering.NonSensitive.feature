@@ -98,3 +98,39 @@ Scenario: Two Trade For Barclays yields one alerts when exactly 1 hour apart
 	| Barclays     | 1       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradenonsensitive
+@percentagevaluedifference
+Scenario: Two trades when inside percentage value difference threshold yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 109              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradenonsensitive
+@percentagevaluedifference
+Scenario: Two trades when exactly on percentage value difference threshold yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 110              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradeclustering
+@washtradenonsensitive
+@percentagevaluedifference
+Scenario: Two trades when outside percentage value difference threshold yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL       | GBX      |            | 113              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 0 wash trade alerts

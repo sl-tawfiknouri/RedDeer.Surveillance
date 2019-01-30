@@ -324,8 +324,7 @@ namespace Surveillance.Rules.WashTrade
                 var smaller = Math.Min(buyVolume, sellVolume);
                 var offset = (decimal)larger * (_parameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
 
-                if ((smaller >= larger - offset)
-                    && smaller <= larger + offset)
+                if ((smaller >= larger - offset))
                 {
                     results.Add(pair);
                     continue;

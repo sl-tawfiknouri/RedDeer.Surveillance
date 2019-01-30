@@ -133,7 +133,7 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 @washtradepairing
 @washtradesensitive
 @percentofvaluechange
-Scenario: Two Trades In Wash Trade but outside of relative percentage change yields zero alerts
+Scenario: Two Trades In Wash Trade but outside of relative percentage value change yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| BAE     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
@@ -145,7 +145,7 @@ Scenario: Two Trades In Wash Trade but outside of relative percentage change yie
 @washtradepairing
 @washtradesensitive
 @percentofvaluechange
-Scenario: Two Trades In Wash Trade and on relative percentage change boundary yields one alerts
+Scenario: Two Trades In Wash Trade and on relative percentage value change boundary yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| BAE     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
@@ -157,10 +157,46 @@ Scenario: Two Trades In Wash Trade and on relative percentage change boundary yi
 @washtradepairing
 @washtradesensitive
 @percentofvaluechange
-Scenario: Two Trades In Wash Trade and inside of relative percentage change yields one alerts
+Scenario: Two Trades In Wash Trade and inside of relative percentage value change yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| BAE     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
 	| BAE     | 1       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL      | GBX      |            | 98              | 1000          | 1000         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@percentofvolumechange
+Scenario: Two Trades In Wash Trade but outside of relative percentage volume change yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate     | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| AMD     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| AMD     | 1       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL      | GBX      |            | 99               | 1031          | 1031         |     
+	When I run the wash trade rule
+	Then I will have 0 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@percentofvolumechange
+Scenario: Two Trades In Wash Trade and on relative percentage volume change boundary yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate     | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| AMD     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| AMD     | 1       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL      | GBX      |            | 99               | 1030          | 1030         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@percentofvolumechange
+Scenario: Two Trades In Wash Trade and inside of relative percentage volume change yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate     | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| AMD     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
+	| AMD     | 1       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL      | GBX      |            | 99               | 1029          | 1029         |     
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts

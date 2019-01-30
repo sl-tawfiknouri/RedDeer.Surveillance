@@ -181,3 +181,16 @@ Scenario: Four Trade For Nvidia yields zero alerts with losses due to clustering
 	| Nvidia     | 3		| 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00	| MARKET | SELL       | GBX      |            | 999              | 1000          | 1000         |     
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
+
+
+@washtrade
+@washtradeclustering
+@washtradenonsensitive
+@washtradepartialfill
+Scenario: Two Trade For Nvidia with partial fills yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/01/2018 10:00:00 |            |             |              |               | 01/01/2018 10:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts

@@ -11,6 +11,7 @@ Background:
 	| 1           | 2                     | 0.10                       | 1000000                    | GBX                                | true              |
 
 @washtrade
+@washtradeAverageNetting
 @washtradenonsensitive
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -19,6 +20,7 @@ Scenario: Empty Universe yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradenonsensitive
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

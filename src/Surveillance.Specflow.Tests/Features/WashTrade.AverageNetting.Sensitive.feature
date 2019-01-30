@@ -11,6 +11,7 @@ Background:
 	| 1           | 2                     | 0.01                       | 10000                      | GBX                                | true              |
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -19,6 +20,7 @@ Scenario: Empty Universe yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -28,6 +30,7 @@ Scenario: One Trade For Vodafone yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: One Trade For Barclays yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -37,6 +40,7 @@ Scenario: One Trade For Barclays yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Two Trades In Wash Trade yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -47,6 +51,7 @@ Scenario: Two Trades In Wash Trade yields one alert
 	Then I will have 1 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Two Trades In Wash Trade For Different Securities yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -57,6 +62,7 @@ Scenario: Two Trades In Wash Trade For Different Securities yields one alert
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -68,6 +74,7 @@ Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Then I will have 0 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Four trades at two price points yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -80,6 +87,7 @@ Scenario: Four trades at two price points yields two alerts
 	Then I will have 2 wash trade alerts
 
 @washtrade
+@washtradeAverageNetting
 @washtradesensitive
 Scenario: Five trades in two pairs with a single trade per three price points yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

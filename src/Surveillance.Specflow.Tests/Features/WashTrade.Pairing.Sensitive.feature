@@ -297,3 +297,27 @@ Scenario: Two Trade For Nvidia with partial fills yields one alerts
 	| Nvidia     | 1		| 01/01/2018 10:00:00 |            |             |              |               | 01/01/2018 10:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@washtradeearlyorder
+Scenario: Two Trade For Nvidia with pre market order times yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@washtradelateorder
+Scenario: Two Trade For Nvidia with post market order times yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 20:30:00 |            |             |              |               | 01/01/2018 20:30:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/01/2018 20:30:00 |            |             |              |               | 01/01/2018 20:30:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts

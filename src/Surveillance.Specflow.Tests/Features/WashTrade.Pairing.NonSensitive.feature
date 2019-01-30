@@ -78,7 +78,7 @@ Scenario: Two Trades In Wash Trade yields one alert
 @washtradepairing
 @washtradenonsensitive
 @timewindow
-Scenario: Two Trade For Nvidia yields one alerts when within 1 hour
+Scenario: Two Trade For Micron yields one alerts when within 1 hour
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Micron     | 0		| 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
@@ -90,7 +90,7 @@ Scenario: Two Trade For Nvidia yields one alerts when within 1 hour
 @washtradepairing
 @washtradenonsensitive
 @timewindow
-Scenario: Two Trade For Nvidia yields no alerts when 2 hours apart
+Scenario: Two Trade For Micron yields no alerts when 2 hours apart
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Micron     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
@@ -102,7 +102,7 @@ Scenario: Two Trade For Nvidia yields no alerts when 2 hours apart
 @washtradepairing
 @washtradenonsensitive
 @timewindow
-Scenario: Two Trade For Nvidia yields one alerts when exactly 1 hour apart
+Scenario: Two Trade For Micron yields one alerts when exactly 1 hour apart
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Micron     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     

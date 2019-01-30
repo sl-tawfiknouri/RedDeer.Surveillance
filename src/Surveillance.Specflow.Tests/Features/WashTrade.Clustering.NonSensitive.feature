@@ -91,7 +91,7 @@ Scenario: Two Trade For Nvidia yields no alerts when 2 hours apart
 @washtradeclustering
 @washtradenonsensitive
 @timewindow
-Scenario: Two Trade For Nvidia yields one alerts when exactly 1 hour apart
+Scenario: Two Trade For Barclays yields one alerts when exactly 1 hour apart
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     

@@ -1,8 +1,13 @@
-﻿using FakeItEasy;
+﻿using System;
+using System.Collections.Generic;
+using DomainV2.Financial;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
+using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters;
@@ -44,7 +49,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _scenarioContext = scenarioContext;
             _universeSelectionState = universeSelectionState;
 
-            _currencyConverter = A.Fake<ICurrencyConverter>();
+            var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
+            var currencyLogger = new NullLogger<CurrencyConverter>();
+            _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
+
             _positionPairer = new WashTradePositionPairer();
             _washTradeClustering = new WashTradeClustering();
             _universeOrderFilter = A.Fake<IUniverseOrderFilter>();

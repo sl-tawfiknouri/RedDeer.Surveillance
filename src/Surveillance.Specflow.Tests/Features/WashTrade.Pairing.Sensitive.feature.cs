@@ -75,7 +75,7 @@ namespace Surveillance.Specflow.Tests.Features
         {
 #line 8
 #line hidden
-            TechTalk.SpecFlow.Table table56 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table59 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "PairingPositionMinimumNumberOfPairedTrades",
                         "PairingPositionPercentagePriceChangeThresholdPerPair",
@@ -83,7 +83,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "PairingPositionMaximumAbsoluteCurrencyAmount",
                         "PairingPositionMaximumAbsoluteCurrency",
                         "UsePairing"});
-            table56.AddRow(new string[] {
+            table59.AddRow(new string[] {
                         "1",
                         "2",
                         "0.03",
@@ -92,7 +92,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "GBX",
                         "true"});
 #line 9
- testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table56, "Given ");
+ testRunner.Given("I have the wash trade rule parameter values", ((string)(null)), table59, "Given ");
 #line hidden
         }
         
@@ -108,167 +108,6 @@ namespace Surveillance.Specflow.Tests.Features
                         "washtradepairing",
                         "washtradesensitive"});
 #line 16
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 8
-this.FeatureBackground();
-#line hidden
-            TechTalk.SpecFlow.Table table57 = new TechTalk.SpecFlow.Table(new string[] {
-                        "SecurityName",
-                        "OrderId",
-                        "PlacedDate",
-                        "BookedDate",
-                        "AmendedDate",
-                        "RejectedDate",
-                        "CancelledDate",
-                        "FilledDate",
-                        "Type",
-                        "Direction",
-                        "Currency",
-                        "LimitPrice",
-                        "AverageFillPrice",
-                        "OrderedVolume",
-                        "FilledVolume"});
-#line 17
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table57, "Given ");
-#line 19
- testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 20
- testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One Trade For Vodafone yields no alerts")]
-        [NUnit.Framework.CategoryAttribute("washtrade")]
-        [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
-        public virtual void OneTradeForVodafoneYieldsNoAlerts()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Vodafone yields no alerts", null, new string[] {
-                        "washtrade",
-                        "washtradepairing",
-                        "washtradesensitive"});
-#line 25
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 8
-this.FeatureBackground();
-#line hidden
-            TechTalk.SpecFlow.Table table58 = new TechTalk.SpecFlow.Table(new string[] {
-                        "SecurityName",
-                        "OrderId",
-                        "PlacedDate",
-                        "BookedDate",
-                        "AmendedDate",
-                        "RejectedDate",
-                        "CancelledDate",
-                        "FilledDate",
-                        "Type",
-                        "Direction",
-                        "Currency",
-                        "LimitPrice",
-                        "AverageFillPrice",
-                        "OrderedVolume",
-                        "FilledVolume"});
-            table58.AddRow(new string[] {
-                        "Vodafone",
-                        "0",
-                        "01/01/2018 09:30:00",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "01/01/2018 09:30:00",
-                        "MARKET",
-                        "BUY",
-                        "GBX",
-                        "",
-                        "100",
-                        "1000",
-                        "1000"});
-#line 26
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table58, "Given ");
-#line 29
- testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 30
- testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One Trade For Barclays yields no alerts")]
-        [NUnit.Framework.CategoryAttribute("washtrade")]
-        [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
-        public virtual void OneTradeForBarclaysYieldsNoAlerts()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Barclays yields no alerts", null, new string[] {
-                        "washtrade",
-                        "washtradepairing",
-                        "washtradesensitive"});
-#line 35
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 8
-this.FeatureBackground();
-#line hidden
-            TechTalk.SpecFlow.Table table59 = new TechTalk.SpecFlow.Table(new string[] {
-                        "SecurityName",
-                        "OrderId",
-                        "PlacedDate",
-                        "BookedDate",
-                        "AmendedDate",
-                        "RejectedDate",
-                        "CancelledDate",
-                        "FilledDate",
-                        "Type",
-                        "Direction",
-                        "Currency",
-                        "LimitPrice",
-                        "AverageFillPrice",
-                        "OrderedVolume",
-                        "FilledVolume"});
-            table59.AddRow(new string[] {
-                        "Barclays",
-                        "0",
-                        "01/01/2018 09:30:00",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "01/01/2018 09:30:00",
-                        "MARKET",
-                        "BUY",
-                        "GBX",
-                        "",
-                        "100",
-                        "1000",
-                        "1000"});
-#line 36
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table59, "Given ");
-#line 39
- testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 40
- testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two Trades In Wash Trade For Different Securities yields one alert")]
-        [NUnit.Framework.CategoryAttribute("washtrade")]
-        [NUnit.Framework.CategoryAttribute("washtradepairing")]
-        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
-        public virtual void TwoTradesInWashTradeForDifferentSecuritiesYieldsOneAlert()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two Trades In Wash Trade For Different Securities yields one alert", null, new string[] {
-                        "washtrade",
-                        "washtradepairing",
-                        "washtradesensitive"});
-#line 45
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
@@ -290,60 +129,28 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table60.AddRow(new string[] {
-                        "Vodafone",
-                        "0",
-                        "01/01/2018 09:30:00",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "01/01/2018 09:30:00",
-                        "MARKET",
-                        "BUY",
-                        "GBX",
-                        "",
-                        "100",
-                        "1000",
-                        "1000"});
-            table60.AddRow(new string[] {
-                        "Barclays",
-                        "1",
-                        "01/01/2018 09:30:00",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "01/01/2018 09:30:00",
-                        "MARKET",
-                        "SELL",
-                        "GBX",
-                        "",
-                        "100",
-                        "1000",
-                        "1000"});
-#line 46
+#line 17
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table60, "Given ");
-#line 50
+#line 19
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 51
+#line 20
  testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Three Trades at same price point In Wash Trade yields no alerts")]
+        [NUnit.Framework.DescriptionAttribute("One Trade For Vodafone yields no alerts")]
         [NUnit.Framework.CategoryAttribute("washtrade")]
         [NUnit.Framework.CategoryAttribute("washtradepairing")]
         [NUnit.Framework.CategoryAttribute("washtradesensitive")]
-        public virtual void ThreeTradesAtSamePricePointInWashTradeYieldsNoAlerts()
+        public virtual void OneTradeForVodafoneYieldsNoAlerts()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three Trades at same price point In Wash Trade yields no alerts", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Vodafone yields no alerts", null, new string[] {
                         "washtrade",
                         "washtradepairing",
                         "washtradesensitive"});
-#line 56
+#line 25
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
@@ -381,7 +188,200 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table61.AddRow(new string[] {
+#line 26
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table61, "Given ");
+#line 29
+ testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 30
+ testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("One Trade For Barclays yields no alerts")]
+        [NUnit.Framework.CategoryAttribute("washtrade")]
+        [NUnit.Framework.CategoryAttribute("washtradepairing")]
+        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        public virtual void OneTradeForBarclaysYieldsNoAlerts()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One Trade For Barclays yields no alerts", null, new string[] {
+                        "washtrade",
+                        "washtradepairing",
+                        "washtradesensitive"});
+#line 35
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table62 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "BookedDate",
+                        "AmendedDate",
+                        "RejectedDate",
+                        "CancelledDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table62.AddRow(new string[] {
+                        "Barclays",
+                        "0",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+#line 36
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table62, "Given ");
+#line 39
+ testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 40
+ testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Two Trades In Wash Trade For Different Securities yields one alert")]
+        [NUnit.Framework.CategoryAttribute("washtrade")]
+        [NUnit.Framework.CategoryAttribute("washtradepairing")]
+        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        public virtual void TwoTradesInWashTradeForDifferentSecuritiesYieldsOneAlert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two Trades In Wash Trade For Different Securities yields one alert", null, new string[] {
+                        "washtrade",
+                        "washtradepairing",
+                        "washtradesensitive"});
+#line 45
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table63 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "BookedDate",
+                        "AmendedDate",
+                        "RejectedDate",
+                        "CancelledDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table63.AddRow(new string[] {
+                        "Vodafone",
+                        "0",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+            table63.AddRow(new string[] {
+                        "Barclays",
+                        "1",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "SELL",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+#line 46
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table63, "Given ");
+#line 50
+ testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 51
+ testRunner.Then("I will have 0 wash trade alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Three Trades at same price point In Wash Trade yields no alerts")]
+        [NUnit.Framework.CategoryAttribute("washtrade")]
+        [NUnit.Framework.CategoryAttribute("washtradepairing")]
+        [NUnit.Framework.CategoryAttribute("washtradesensitive")]
+        public virtual void ThreeTradesAtSamePricePointInWashTradeYieldsNoAlerts()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three Trades at same price point In Wash Trade yields no alerts", null, new string[] {
+                        "washtrade",
+                        "washtradepairing",
+                        "washtradesensitive"});
+#line 56
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table64 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "BookedDate",
+                        "AmendedDate",
+                        "RejectedDate",
+                        "CancelledDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table64.AddRow(new string[] {
+                        "Vodafone",
+                        "0",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "100",
+                        "1000",
+                        "1000"});
+            table64.AddRow(new string[] {
                         "Vodafone",
                         "1",
                         "01/01/2018 09:30:00",
@@ -397,7 +397,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table61.AddRow(new string[] {
+            table64.AddRow(new string[] {
                         "Vodafone",
                         "2",
                         "01/01/2018 09:30:00",
@@ -414,7 +414,7 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 57
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table61, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table64, "Given ");
 #line 62
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 63
@@ -440,7 +440,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table62 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table65 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -456,7 +456,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table62.AddRow(new string[] {
+            table65.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -472,7 +472,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table62.AddRow(new string[] {
+            table65.AddRow(new string[] {
                         "Vodafone",
                         "1",
                         "01/01/2018 09:30:00",
@@ -489,7 +489,7 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 69
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table62, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table65, "Given ");
 #line 73
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 74
@@ -517,7 +517,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table63 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table66 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -533,7 +533,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table63.AddRow(new string[] {
+            table66.AddRow(new string[] {
                         "Barclays",
                         "0",
                         "01/01/2018 09:33:00",
@@ -549,7 +549,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table63.AddRow(new string[] {
+            table66.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2018 10:33:00",
@@ -566,9 +566,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 81
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table63, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table66, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table64 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table67 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "PairingPositionMinimumNumberOfPairedTrades",
                         "PairingPositionPercentagePriceChangeThresholdPerPair",
@@ -576,7 +576,7 @@ this.FeatureBackground();
                         "PairingPositionMaximumAbsoluteCurrencyAmount",
                         "PairingPositionMaximumAbsoluteCurrency",
                         "UsePairing"});
-            table64.AddRow(new string[] {
+            table67.AddRow(new string[] {
                         "1",
                         "4",
                         "0.03",
@@ -585,7 +585,7 @@ this.FeatureBackground();
                         "GBX",
                         "true"});
 #line 85
- testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table64, "And ");
+ testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table67, "And ");
 #line 88
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 89
@@ -615,7 +615,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table65 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table68 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -631,7 +631,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table65.AddRow(new string[] {
+            table68.AddRow(new string[] {
                         "Barclays",
                         "0",
                         "01/01/2018 09:33:00",
@@ -647,7 +647,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table65.AddRow(new string[] {
+            table68.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2018 09:33:00",
@@ -663,7 +663,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table65.AddRow(new string[] {
+            table68.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2018 10:33:00",
@@ -679,7 +679,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table65.AddRow(new string[] {
+            table68.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2018 10:33:00",
@@ -696,9 +696,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 96
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table65, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table68, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table66 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table69 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "PairingPositionMinimumNumberOfPairedTrades",
                         "PairingPositionPercentagePriceChangeThresholdPerPair",
@@ -706,7 +706,7 @@ this.FeatureBackground();
                         "PairingPositionMaximumAbsoluteCurrencyAmount",
                         "PairingPositionMaximumAbsoluteCurrency",
                         "UsePairing"});
-            table66.AddRow(new string[] {
+            table69.AddRow(new string[] {
                         "1",
                         "2",
                         "0.03",
@@ -715,7 +715,7 @@ this.FeatureBackground();
                         "GBX",
                         "true"});
 #line 102
- testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table66, "And ");
+ testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table69, "And ");
 #line 105
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 106
@@ -745,7 +745,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table67 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table70 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -761,7 +761,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "0",
                         "01/01/2018 09:33:00",
@@ -777,7 +777,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2018 09:33:00",
@@ -793,7 +793,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2018 09:33:00",
@@ -809,7 +809,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2018 09:33:00",
@@ -825,7 +825,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2018 09:33:00",
@@ -841,7 +841,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2018 10:33:00",
@@ -857,7 +857,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2018 10:33:00",
@@ -873,7 +873,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2018 10:33:00",
@@ -889,7 +889,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2018 10:33:00",
@@ -905,7 +905,7 @@ this.FeatureBackground();
                         "100",
                         "1000",
                         "1000"});
-            table67.AddRow(new string[] {
+            table70.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2018 10:33:00",
@@ -922,9 +922,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 113
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table67, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table70, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table68 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table71 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "PairingPositionMinimumNumberOfPairedTrades",
                         "PairingPositionPercentagePriceChangeThresholdPerPair",
@@ -932,7 +932,7 @@ this.FeatureBackground();
                         "PairingPositionMaximumAbsoluteCurrencyAmount",
                         "PairingPositionMaximumAbsoluteCurrency",
                         "UsePairing"});
-            table68.AddRow(new string[] {
+            table71.AddRow(new string[] {
                         "1",
                         "2",
                         "0.03",
@@ -941,7 +941,7 @@ this.FeatureBackground();
                         "GBX",
                         "true"});
 #line 125
- testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table68, "And ");
+ testRunner.And("I have the wash trade rule parameter values", ((string)(null)), table71, "And ");
 #line 128
  testRunner.When("I run the wash trade rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 129

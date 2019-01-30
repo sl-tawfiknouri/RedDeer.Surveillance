@@ -121,3 +121,44 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	| 1           | 4                     | 0.10                       | 1000000                    | GBX                                | true              |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+
+
+
+
+@washtrade
+@washtradeAverageNetting
+@washtradenonsensitive
+@maximumabsolutevaluechange
+Scenario: Two Trade For Barclays yields one alerts when inside of absolute value change maximumum
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 1000000              | 1000000          | 1000000        |     
+	| Barclays     | 1       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL      | GBX      |            | 1000000              | 1000000          | 1000000        |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+
+@washtrade
+@washtradeAverageNetting
+@washtradenonsensitive
+@maximumabsolutevaluechange
+Scenario: Two Trade For Barclays yields one alerts when exactly at absolute value change maximumum
+Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 1000000              | 1000000         | 1000000       |     
+	| Barclays     | 1       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL      | GBX      |            | 1000000              | 999999          | 999999        |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+
+@washtrade
+@washtradeAverageNetting
+@washtradenonsensitive
+@maximumabsolutevaluechange
+Scenario: Two Trade For Barclays yields zero alerts when outside of absolute value change maximumum
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 1000000              | 1000000         | 1000000       |     
+	| Barclays     | 1       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | SELL      | GBX      |            | 1000000              | 999998          | 999998        |     
+	When I run the wash trade rule
+	Then I will have 0 wash trade alerts

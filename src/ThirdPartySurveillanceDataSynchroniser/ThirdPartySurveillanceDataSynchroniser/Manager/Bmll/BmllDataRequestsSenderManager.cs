@@ -66,7 +66,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // step 0.
                 // project to request keys
-                var keys = await ProjectToRequestKeys(bmllRequests);
+                var keys = ProjectToRequestKeys(bmllRequests);
 
                 if (keys == null
                     || !keys.Any())
@@ -92,7 +92,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // step 3.
                 // get minute bar request
-                var timeBarResponses = await GetTimeBars(keys);
+                var timeBarResponses = GetTimeBars(keys);
 
                 _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
@@ -106,7 +106,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
         }
 
-        public async Task<IReadOnlyCollection<MinuteBarRequestKeyDto>> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
+        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
         {
             var keys = new List<MinuteBarRequestKeyDto>();
 
@@ -209,7 +209,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             return minuteBarResult;
         }
 
-        private async Task<IReadOnlyCollection<IGetTimeBarPair>> GetTimeBars(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
+        private IReadOnlyCollection<IGetTimeBarPair> GetTimeBars(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
         {
             if (keys == null
                 || !keys.Any())
@@ -233,8 +233,9 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             foreach (var req in consolidatedMinuteBarRequests)
             {
-                var response = await _timeBarRepository.GetMinuteBars(req);
-                var pair = new GetTimeBarPair(req, response);
+                var responseTask = _timeBarRepository.GetMinuteBars(req);
+                responseTask.Wait();
+                var pair = new GetTimeBarPair(req, responseTask.Result);
                 timeBarResponses.Add(pair);
             }
 

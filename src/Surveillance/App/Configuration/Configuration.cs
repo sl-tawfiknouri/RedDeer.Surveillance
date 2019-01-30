@@ -183,7 +183,7 @@ namespace RedDeer.Surveillance.App.Configuration
 
                 return casedAttributes;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _hasFetchedEc2Data = true;
             }

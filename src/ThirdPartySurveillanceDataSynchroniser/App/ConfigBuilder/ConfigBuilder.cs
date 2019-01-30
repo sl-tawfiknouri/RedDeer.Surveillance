@@ -15,8 +15,6 @@ namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
     public class ConfigBuilder
     {
         private IDictionary<string, string> _dynamoConfig;
-        private bool _hasFetchedEc2Data;
-
         private readonly object _lock = new object();
 
         public static bool IsEC2Instance { get; private set; }

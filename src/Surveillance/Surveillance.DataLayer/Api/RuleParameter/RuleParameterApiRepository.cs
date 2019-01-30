@@ -112,7 +112,7 @@ namespace Surveillance.DataLayer.Api.RuleParameter
 
                 return result.IsSuccessStatusCode;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _logger.LogError($"RuleParameterApiRepository HEARTBEAT NEGATIVE");
             }

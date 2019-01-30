@@ -10,7 +10,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;

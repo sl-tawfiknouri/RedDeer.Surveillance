@@ -2,18 +2,21 @@
 using System.Threading.Tasks;
 using DomainV2.Markets;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using System.Linq;
+using System;
 
 namespace Surveillance.DataLayer.Aurora.BMLL
 {
     public class StubRuleRunDataRequestRepository : IStubRuleRunDataRequestRepository
     {
-        public async Task CreateDataRequest(MarketDataRequest request)
+        public Task CreateDataRequest(MarketDataRequest request)
         {
+            return Task.CompletedTask;
         }
 
-        public async Task<bool> HasDataRequestForRuleRun(string ruleRunId)
+        public Task<bool> HasDataRequestForRuleRun(string ruleRunId)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
@@ -21,8 +24,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             return new MarketDataRequest[0];
         }
 
-        public async Task UpdateToCompleteWithDuplicates(IReadOnlyCollection<MarketDataRequest> requests)
+        public Task UpdateToCompleteWithDuplicates(IReadOnlyCollection<MarketDataRequest> requests)
         {
+            return Task.CompletedTask;
         }
     }
 }

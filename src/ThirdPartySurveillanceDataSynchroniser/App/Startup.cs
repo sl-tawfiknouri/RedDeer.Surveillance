@@ -9,7 +9,6 @@ using StructureMap;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Systems.DataLayer.Interfaces;
 using Surveillance.DataLayer;
-using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Systems.Auditing;
 using Surveillance.Systems.Auditing.Context;
 using Surveillance.Systems.DataLayer;

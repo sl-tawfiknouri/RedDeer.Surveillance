@@ -4,7 +4,6 @@ using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency.Interfaces;

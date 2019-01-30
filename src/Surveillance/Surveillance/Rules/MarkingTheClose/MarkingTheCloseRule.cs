@@ -10,7 +10,6 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;

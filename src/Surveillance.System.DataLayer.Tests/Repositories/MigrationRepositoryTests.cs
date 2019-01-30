@@ -35,7 +35,7 @@ namespace Surveillance.Systems.DataLayer.Tests.Repositories
 
         [Test]
         [Explicit]
-        public async Task Get_LatestAvailable_MigrationValue()
+        public void Get_LatestAvailable_MigrationValue()
         {
             var config = new SystemDataLayerConfig
             {

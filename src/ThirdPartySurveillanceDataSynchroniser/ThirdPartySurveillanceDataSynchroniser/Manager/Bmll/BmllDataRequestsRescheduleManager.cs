@@ -56,7 +56,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             
             foreach (var rule in filteredRescheduledRules)
             {
-                await RescheduleRuleRun(rule);
+                RescheduleRuleRun(rule);
             }
 
             var req = bmllRequests?.Select(bm => bm.DataRequest).ToList();
@@ -65,7 +65,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
         }
 
-        private async Task RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
+        private void RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
         {
             if (ruleRun == null
                 // ReSharper disable once MergeSequentialChecks
@@ -100,7 +100,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             _logger?.LogWarning($"BmllDataRequestsRescheduleManager about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-            await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
+            var sendToQueue = _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
+
+            sendToQueue.Wait(TimeSpan.FromMinutes(30));
+
+            if (sendToQueue.IsCanceled)
+            {
+                _logger?.LogError($"BmllDataRequestsRescheduleManager timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            }
 
             _logger?.LogWarning($"BmllDataRequestsRescheduleManager completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
         }

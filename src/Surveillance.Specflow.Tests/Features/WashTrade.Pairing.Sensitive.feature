@@ -101,7 +101,7 @@ Scenario: Four Trade For Barclays when min number of trades threshold set to fou
 	| Barclays     | 3       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	And I have the wash trade rule parameter values
 	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
-	| 1           | 2                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
+	| 1           | 4                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
@@ -124,6 +124,7 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	| Barclays     | 9       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	And I have the wash trade rule parameter values
 	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
-	| 1           | 2                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
+	| 1           | 4                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+

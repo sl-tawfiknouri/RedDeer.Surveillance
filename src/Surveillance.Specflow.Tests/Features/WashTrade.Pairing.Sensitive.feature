@@ -321,3 +321,33 @@ Scenario: Two Trade For Nvidia with post market order times yields one alerts
 	| Nvidia     | 1		| 01/01/2018 20:30:00 |            |             |              |               | 01/01/2018 20:30:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@washtradenextdaysell
+Scenario: Two Trade For Nvidia with next day sell within window yields one alert
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
+	And I have the wash trade rule parameter values
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| 24           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts
+
+@washtrade
+@washtradepairing
+@washtradesensitive
+@washtradenextdaysell
+Scenario: Two Trade For Nvidia with next day sell outside window yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
+	And I have the wash trade rule parameter values
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| 22           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
+	When I run the wash trade rule
+	Then I will have 0 wash trade alerts

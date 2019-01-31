@@ -189,14 +189,12 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 var request = new GetMinuteBarRequestStatusesRequest { Keys = keys?.ToList() };
 
+                Thread.Sleep(1000 * 15);
                 minuteBarResult = await _timeBarRepository.StatusMinuteBars(request);
 
                 hasSuccess =
-                    minuteBarResult == BmllStatusMinuteBarResult.Completed 
+                    minuteBarResult == BmllStatusMinuteBarResult.Completed
                     || minuteBarResult == BmllStatusMinuteBarResult.CompletedWithFailures;
-
-                if (!hasSuccess)
-                    Thread.Sleep(1000 * 15);
             }
 
             if (cts.Token.IsCancellationRequested)

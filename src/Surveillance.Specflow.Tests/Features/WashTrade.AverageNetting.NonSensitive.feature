@@ -290,3 +290,17 @@ Scenario: Two Trade For Nvidia and two for vodafone yields two alerts
 	| Vodafone   | 1		| 01/01/2018 10:00:00 |            |             |              |               | 01/01/2018 10:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	When I run the wash trade rule
 	Then I will have 2 wash trade alerts
+
+
+
+@washtrade
+@washtradeAverageNetting
+@washtradenonsensitive
+@washtradecurrencies
+Scenario: Two Trade For Nvidia in USD converts to GBX for absolute currency breach
+	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate			| Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0		| 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00	| MARKET | BUY       | USD      |            | 10000000              | 1000          | 150         |     
+	| Nvidia     | 1		| 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00	| MARKET | SELL       | USD      |            | 10000000              | 1000          | 149         |     
+	When I run the wash trade rule
+	Then I will have 1 wash trade alerts

@@ -118,7 +118,6 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
                 {
                     MinuteBarRequestStatus.Completed,
                     MinuteBarRequestStatus.Failed,
-                    MinuteBarRequestStatus.NotFound
                 };
 
                 var completed = deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));

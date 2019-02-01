@@ -65,6 +65,7 @@ namespace Surveillance.Trades
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
+
                     if (currentTime.Subtract(_getFrameTime(poppedItem)) > _activeTradeDuration)
                     {
                         _logger.LogTrace($"TradingHistoryStack archiving for {currentTime} and duration of {_activeTradeDuration}. Order with reddeer-order-id of {poppedItem.ReddeerOrderId} archived.");

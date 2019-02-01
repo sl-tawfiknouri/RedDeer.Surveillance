@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.DataLayer.Repositories.Interfaces
+namespace Surveillance.Systems.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationUploadFileRepository
     {

@@ -1,11 +1,11 @@
 ﻿using System;
-using Surveillance.System.Auditing.Context;
-using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.System.Auditing.Factories.Interfaces;
-using Surveillance.System.Auditing.Logging.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.Auditing.Context;
+using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Factories.Interfaces;
+using Surveillance.Systems.Auditing.Logging.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.Auditing.Factories
+namespace Surveillance.Systems.Auditing.Factories
 {
     public class SystemProcessOperationFileUploadContextFactory : ISystemProcessOperationFileUploadContextFactory
     {

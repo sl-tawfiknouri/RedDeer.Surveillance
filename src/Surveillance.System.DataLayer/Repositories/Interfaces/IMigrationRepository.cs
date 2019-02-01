@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Surveillance.System.DataLayer.Repositories.Interfaces
+namespace Surveillance.Systems.DataLayer.Repositories.Interfaces
 {
     public interface IMigrationRepository
     {

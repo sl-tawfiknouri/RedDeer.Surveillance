@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces
+namespace Surveillance.Systems.DataLayer.Repositories.Exceptions.Interfaces
 {
     public interface IExceptionRepository
     {

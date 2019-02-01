@@ -7,6 +7,7 @@ using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Rules.CancelledOrders

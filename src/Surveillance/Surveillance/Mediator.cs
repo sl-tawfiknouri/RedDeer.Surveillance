@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Interfaces;
 using Surveillance.Scheduler.Interfaces;
-using Surveillance.System.Auditing.Utilities.Interfaces;
+using Surveillance.Systems.Auditing.Utilities.Interfaces;
 
 namespace Surveillance
 {

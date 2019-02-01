@@ -10,7 +10,7 @@ using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
 using Surveillance.Rules.HighProfits.Calculators;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 
 namespace Surveillance.Tests.Rules.HighProfits

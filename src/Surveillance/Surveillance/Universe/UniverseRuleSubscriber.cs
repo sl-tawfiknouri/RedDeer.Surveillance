@@ -6,7 +6,7 @@ using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;

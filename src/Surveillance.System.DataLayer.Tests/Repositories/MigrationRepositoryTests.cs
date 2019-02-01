@@ -2,10 +2,10 @@
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.System.DataLayer.Repositories;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer.Tests.Repositories
+namespace Surveillance.Systems.DataLayer.Tests.Repositories
 {
     [TestFixture]
     public class MigrationRepositoryTests

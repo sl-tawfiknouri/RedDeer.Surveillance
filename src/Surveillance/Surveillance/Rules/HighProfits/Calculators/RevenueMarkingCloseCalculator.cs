@@ -4,7 +4,7 @@ using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Markets.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators
 {

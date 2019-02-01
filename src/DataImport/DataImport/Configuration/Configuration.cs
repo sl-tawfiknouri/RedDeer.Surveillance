@@ -1,5 +1,5 @@
 ﻿using DataImport.Configuration.Interfaces;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
 
 namespace DataImport.Configuration
 {

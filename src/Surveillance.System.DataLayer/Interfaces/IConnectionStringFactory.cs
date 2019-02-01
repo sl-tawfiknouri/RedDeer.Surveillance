@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Surveillance.System.DataLayer.Interfaces
+namespace Surveillance.Systems.DataLayer.Interfaces
 {
     public interface IConnectionStringFactory
     {

@@ -1,10 +1,10 @@
 ﻿using System;
-using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.System.Auditing.Logging.Interfaces;
-using Surveillance.System.DataLayer.Processes.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Logging.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.Auditing.Context
+namespace Surveillance.Systems.Auditing.Context
 {
     public class SystemProcessOperationDistributeRuleContext : ISystemProcessOperationDistributeRuleContext
     {

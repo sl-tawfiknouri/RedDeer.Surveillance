@@ -1,4 +1,4 @@
-﻿namespace Surveillance.System.Auditing.Utilities.Interfaces
+﻿namespace Surveillance.Systems.Auditing.Utilities.Interfaces
 {
     public interface IApplicationHeartbeatService
     {

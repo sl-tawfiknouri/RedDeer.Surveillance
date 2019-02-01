@@ -10,10 +10,10 @@
     <PackageReference Include="NUnit" Version="3.11.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="Pickles.MSBuild" Version="2.20.1" />
-    <PackageReference Include="SpecFlow" Version="3.0.132-beta" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.0.132-beta" />
-    <PackageReference Include="SpecFlow.NUnit.Runners" Version="3.0.132-beta" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.132-beta" />
+    <PackageReference Include="SpecFlow" Version="3.0.161-beta" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.0.161-beta" />
+    <PackageReference Include="SpecFlow.NUnit.Runners" Version="3.0.161-beta" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.161-beta" />
   </ItemGroup>
 
   <ItemGroup>

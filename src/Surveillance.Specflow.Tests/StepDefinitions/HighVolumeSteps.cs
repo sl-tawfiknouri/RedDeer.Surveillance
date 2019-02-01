@@ -10,8 +10,10 @@ using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.OrganisationalFactors;
@@ -22,6 +24,7 @@ using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using NullLogger = Castle.Core.Logging.NullLogger;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
@@ -36,7 +39,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private ICurrencyConverter _currencyConverter;
 
         private IUniverseOrderFilter _universeOrderFilter;
-        private IUniverseMarketCacheFactory _universeMarketCacheFactory;
+        private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<HighVolumeRule> _logger;
@@ -66,19 +69,34 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                             { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto }}
                         });
 
+            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+
+            A
+                .CallTo(() => _tradingHoursManager.Get("XLON"))
+                .Returns(new TradingHours
+            {
+                CloseOffsetInUtc = TimeSpan.FromHours(16),
+                IsValid = true,
+                Mic = "XLON",
+                OpenOffsetInUtc = TimeSpan.FromHours(8)
+            });
+
+            _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
+                new StubRuleRunDataRequestRepository(),
+                new StubRuleRunDataRequestRepository(),
+                new NullLogger<UniverseMarketCacheFactory>());
+
             var currencyLogger = new NullLogger<CurrencyConverter>();
             _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
             _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
-            _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<HighVolumeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _highVolumeRuleFactory = new HighVolumeRuleFactory(
                 _universeOrderFilter,
-                _universeMarketCacheFactory,
+                _interdayUniverseMarketCacheFactory,
                 _tradingHoursManager,
                 _logger,
                 _tradingLogger);

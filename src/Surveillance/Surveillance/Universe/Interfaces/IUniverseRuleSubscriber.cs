@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DomainV2.Scheduling;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Universe.Interfaces
 {

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {

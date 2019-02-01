@@ -10,7 +10,7 @@ using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade
 {

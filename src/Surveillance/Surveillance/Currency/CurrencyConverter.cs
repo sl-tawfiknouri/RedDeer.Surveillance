@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Currency.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 // ReSharper disable MemberCanBeMadeStatic.Local
 namespace Surveillance.Currency

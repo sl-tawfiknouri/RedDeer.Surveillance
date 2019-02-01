@@ -8,8 +8,8 @@ using DomainV2.Files;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.System.DataLayer.Processes;
+using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Systems.DataLayer.Processes;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile

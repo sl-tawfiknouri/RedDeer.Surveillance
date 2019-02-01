@@ -10,7 +10,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Extensions;

@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.DataLayer.Processes.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Exceptions;
-using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Exceptions;
+using Surveillance.Systems.DataLayer.Repositories.Exceptions.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 using Surveillance.Utility.Interfaces;
 
 namespace RedDeer.Surveillance.App.Pages

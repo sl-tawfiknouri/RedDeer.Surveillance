@@ -10,7 +10,7 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Disk_IO;
 
 namespace DataImport.Integration.Tests.ObjectGraphs

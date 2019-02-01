@@ -6,7 +6,7 @@ using DomainV2.Financial;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators
 {

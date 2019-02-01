@@ -15,7 +15,7 @@ using Surveillance.Factories.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility.Interfaces;

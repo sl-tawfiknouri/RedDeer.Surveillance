@@ -6,7 +6,7 @@ using Surveillance.Markets.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.MarkingTheClose;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 

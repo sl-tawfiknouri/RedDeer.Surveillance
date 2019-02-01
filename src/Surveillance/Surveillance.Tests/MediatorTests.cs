@@ -3,7 +3,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Scheduler.Interfaces;
-using Surveillance.System.Auditing.Utilities.Interfaces;
+using Surveillance.Systems.Auditing.Utilities.Interfaces;
 
 namespace Surveillance.Tests
 {

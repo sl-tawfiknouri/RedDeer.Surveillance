@@ -8,7 +8,7 @@ using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Universe.Filter.Interfaces;
 

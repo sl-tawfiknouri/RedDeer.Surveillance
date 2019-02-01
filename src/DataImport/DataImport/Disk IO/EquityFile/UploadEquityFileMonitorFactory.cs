@@ -3,7 +3,7 @@ using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.EquityFile

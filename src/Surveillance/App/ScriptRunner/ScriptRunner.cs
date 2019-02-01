@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
 namespace RedDeer.Surveillance.App.ScriptRunner
 {

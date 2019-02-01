@@ -11,8 +11,8 @@ using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.DataLayer;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer;
+using Surveillance.Systems.DataLayer.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField
 
 namespace RedDeer.Surveillance.App.Configuration

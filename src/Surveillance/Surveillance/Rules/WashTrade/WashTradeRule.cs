@@ -12,7 +12,7 @@ using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -324,8 +324,7 @@ namespace Surveillance.Rules.WashTrade
                 var smaller = Math.Min(buyVolume, sellVolume);
                 var offset = (decimal)larger * (_parameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
 
-                if ((smaller >= larger - offset)
-                    && smaller <= larger + offset)
+                if ((smaller >= larger - offset))
                 {
                     results.Add(pair);
                     continue;

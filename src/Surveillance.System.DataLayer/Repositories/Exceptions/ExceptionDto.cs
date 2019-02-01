@@ -1,4 +1,4 @@
-﻿namespace Surveillance.System.DataLayer.Repositories.Exceptions
+﻿namespace Surveillance.Systems.DataLayer.Repositories.Exceptions
 {
     public class ExceptionDto
     {

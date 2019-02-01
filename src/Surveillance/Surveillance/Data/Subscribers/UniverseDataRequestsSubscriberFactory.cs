@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Data.Subscribers
 {

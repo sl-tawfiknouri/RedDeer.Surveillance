@@ -1,10 +1,10 @@
 ﻿using System;
-using Surveillance.System.Auditing.Logging.Interfaces;
-using Surveillance.System.DataLayer.Processes.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Exceptions;
-using Surveillance.System.DataLayer.Repositories.Exceptions.Interfaces;
+using Surveillance.Systems.Auditing.Logging.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Exceptions;
+using Surveillance.Systems.DataLayer.Repositories.Exceptions.Interfaces;
 
-namespace Surveillance.System.Auditing.Logging
+namespace Surveillance.Systems.Auditing.Logging
 {
     public class OperationLogging : IOperationLogging
     {

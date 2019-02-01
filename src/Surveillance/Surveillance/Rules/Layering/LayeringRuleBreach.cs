@@ -2,7 +2,7 @@
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.Layering

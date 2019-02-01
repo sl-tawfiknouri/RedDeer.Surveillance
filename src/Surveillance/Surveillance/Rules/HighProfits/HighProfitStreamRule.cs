@@ -174,7 +174,7 @@ namespace Surveillance.Rules.HighProfits
 
                 WriteAlertToMessageSender(
                     activeTrades,
-                    absoluteProfit.Value,
+                    absoluteProfit,
                     profitRatio,
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
@@ -254,7 +254,7 @@ namespace Surveillance.Rules.HighProfits
 
         private void WriteAlertToMessageSender(
             Stack<Order> activeTrades,
-            decimal absoluteProfit,
+            CurrencyAmount absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
@@ -270,8 +270,8 @@ namespace Surveillance.Rules.HighProfits
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters,
-                    absoluteProfit,
-                    _parameters.HighProfitCurrencyConversionTargetCurrency,
+                    absoluteProfit.Value,
+                    absoluteProfit.Currency.Value,
                     profitRatio,
                     security,
                     hasHighProfitAbsolute,

@@ -220,10 +220,11 @@ namespace Surveillance.Scheduler
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
-            await RuleRunUpdateMessageSend(execution, ids);
 
             _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();
+
+            await RuleRunUpdateMessageSend(execution, ids);
         }
 
         private async Task RuleRunUpdateMessageSend(ScheduledExecution execution, IReadOnlyCollection<string> ids)

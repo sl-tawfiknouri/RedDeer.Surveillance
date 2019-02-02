@@ -18,20 +18,20 @@ namespace Surveillance.Specflow.Tests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("HighVolume Market Capitalisation Sensitive Parameters")]
-    public partial class HighVolumeMarketCapitalisationSensitiveParametersFeature
+    [NUnit.Framework.DescriptionAttribute("HighVolume Market Capitalisation Non Sensitive Parameters")]
+    public partial class HighVolumeMarketCapitalisationNonSensitiveParametersFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "HighVolume.MarketCapitalisation.Sensitive.feature"
+#line 1 "HighVolume.MarketCapitalisation.NonSensitive.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "HighVolume Market Capitalisation Sensitive Parameters", @"	In order to meet MAR compliance requirements
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "HighVolume Market Capitalisation Non Sensitive Parameters", @"	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
 	At a volume where they are able to exert market manipulating pressure
 	on the prices the market is trading at
@@ -77,18 +77,18 @@ namespace Surveillance.Specflow.Tests.Features
         {
 #line 8
 #line hidden
-            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "HighVolumePercentageDaily",
                         "HighVolumePercentageWindow",
                         "HighVolumePercentageMarketCap"});
-            table9.AddRow(new string[] {
+            table1.AddRow(new string[] {
                         "1",
                         "",
                         "",
-                        "0.01"});
+                        "0.2"});
 #line 9
- testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table9, "Given ");
+ testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table1, "Given ");
 #line hidden
         }
         
@@ -96,20 +96,20 @@ namespace Surveillance.Specflow.Tests.Features
         [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumemarketcap")]
-        [NUnit.Framework.CategoryAttribute("highvolumemarketcapsensitive")]
+        [NUnit.Framework.CategoryAttribute("highvolumemarketcapnonsensitive")]
         public virtual void EmptyUniverseYieldsNoAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, new string[] {
                         "highvolume",
                         "highvolumemarketcap",
-                        "highvolumemarketcapsensitive"});
+                        "highvolumemarketcapnonsensitive"});
 #line 16
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -126,7 +126,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
 #line 17
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table10, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table2, "Given ");
 #line 19
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 20
@@ -139,20 +139,20 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("One order at market cap yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumemarketcap")]
-        [NUnit.Framework.CategoryAttribute("highvolumemarketcapsensitive")]
+        [NUnit.Framework.CategoryAttribute("highvolumemarketcapnonsensitive")]
         public virtual void OneOrderAtMarketCapYieldsOneAlert()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order at market cap yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumemarketcap",
-                        "highvolumemarketcapsensitive"});
+                        "highvolumemarketcapnonsensitive"});
 #line 25
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -168,7 +168,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table11.AddRow(new string[] {
+            table3.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -182,12 +182,12 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "1000",
-                        "1000"});
+                        "20000",
+                        "20000"});
 #line 26
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table11, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table3, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "OpenPrice",
@@ -198,7 +198,7 @@ this.FeatureBackground();
                         "MarketCap",
                         "DailyVolume",
                         "Currency"});
-            table12.AddRow(new string[] {
+            table4.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018",
                         "10",
@@ -210,7 +210,7 @@ this.FeatureBackground();
                         "1000",
                         "GBX"});
 #line 29
- testRunner.And("With the interday market data :", ((string)(null)), table12, "And ");
+ testRunner.And("With the interday market data :", ((string)(null)), table4, "And ");
 #line 32
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 33
@@ -223,20 +223,20 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("One order below market cap yields zero alerts")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumemarketcap")]
-        [NUnit.Framework.CategoryAttribute("highvolumemarketcapsensitive")]
+        [NUnit.Framework.CategoryAttribute("highvolumemarketcapnonsensitive")]
         public virtual void OneOrderBelowMarketCapYieldsZeroAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order below market cap yields zero alerts", null, new string[] {
                         "highvolume",
                         "highvolumemarketcap",
-                        "highvolumemarketcapsensitive"});
+                        "highvolumemarketcapnonsensitive"});
 #line 38
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table13 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -252,7 +252,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table13.AddRow(new string[] {
+            table5.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -266,12 +266,12 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "999",
-                        "999"});
+                        "19999",
+                        "19999"});
 #line 39
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table13, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table5, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "OpenPrice",
@@ -282,7 +282,7 @@ this.FeatureBackground();
                         "MarketCap",
                         "DailyVolume",
                         "Currency"});
-            table14.AddRow(new string[] {
+            table6.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018",
                         "10",
@@ -294,7 +294,7 @@ this.FeatureBackground();
                         "1000",
                         "GBX"});
 #line 42
- testRunner.And("With the interday market data :", ((string)(null)), table14, "And ");
+ testRunner.And("With the interday market data :", ((string)(null)), table6, "And ");
 #line 45
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 46
@@ -307,20 +307,20 @@ this.FeatureBackground();
         [NUnit.Framework.DescriptionAttribute("One order above market cap yields one alerts")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumemarketcap")]
-        [NUnit.Framework.CategoryAttribute("highvolumemarketcapsensitive")]
+        [NUnit.Framework.CategoryAttribute("highvolumemarketcapnonsensitive")]
         public virtual void OneOrderAboveMarketCapYieldsOneAlerts()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order above market cap yields one alerts", null, new string[] {
                         "highvolume",
                         "highvolumemarketcap",
-                        "highvolumemarketcapsensitive"});
+                        "highvolumemarketcapnonsensitive"});
 #line 52
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -336,7 +336,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table15.AddRow(new string[] {
+            table7.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -350,12 +350,12 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "1001",
-                        "1000"});
+                        "20001",
+                        "20001"});
 #line 53
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table15, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table7, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "OpenPrice",
@@ -366,7 +366,7 @@ this.FeatureBackground();
                         "MarketCap",
                         "DailyVolume",
                         "Currency"});
-            table16.AddRow(new string[] {
+            table8.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018",
                         "10",
@@ -378,7 +378,7 @@ this.FeatureBackground();
                         "1000",
                         "GBX"});
 #line 56
- testRunner.And("With the interday market data :", ((string)(null)), table16, "And ");
+ testRunner.And("With the interday market data :", ((string)(null)), table8, "And ");
 #line 59
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 60

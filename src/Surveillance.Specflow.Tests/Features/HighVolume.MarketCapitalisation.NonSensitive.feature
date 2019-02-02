@@ -1,0 +1,60 @@
+﻿Feature: HighVolume Market Capitalisation Non Sensitive Parameters
+	In order to meet MAR compliance requirements
+	I need to be able to detect when traders are executing trades
+	At a volume where they are able to exert market manipulating pressure
+	on the prices the market is trading at
+	By measuring their security trades relative to the market cap of the underlying company
+
+Background:
+	Given I have the high volume rule parameter values
+	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
+	| 1           |							  |		                       | 0.2						   |
+
+@highvolume
+@highvolumemarketcap
+@highvolumemarketcapnonsensitive
+Scenario: Empty Universe yields no alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	When I run the high volume rule
+	Then I will have 0 high volume alerts
+
+@highvolume
+@highvolumemarketcap
+@highvolumemarketcapnonsensitive
+Scenario: One order at market cap yields one alert
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 20000          | 20000         |
+	And With the interday market data :
+	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumemarketcap
+@highvolumemarketcapnonsensitive
+Scenario: One order below market cap yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 19999          | 19999         |
+	And With the interday market data :
+	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	When I run the high volume rule
+	Then I will have 0 high volume alerts
+
+
+@highvolume
+@highvolumemarketcap
+@highvolumemarketcapnonsensitive
+Scenario: One order above market cap yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 20001          | 20001         |
+	And With the interday market data :
+	| SecurityName | Epoch               | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+	| Vodafone     | 01/01/2018 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 1000       | GBX      |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts

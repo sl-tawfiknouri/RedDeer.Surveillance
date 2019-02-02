@@ -24,7 +24,7 @@ namespace Surveillance.Factories
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseEquityIntradayCache Build(TimeSpan window, RuleRunMode runMode)
+        public IUniverseEquityIntradayCache BuildIntraday(TimeSpan window, RuleRunMode runMode)
         {
             var repo = runMode == RuleRunMode.ValidationRun
                 ? _dataRequestRepository

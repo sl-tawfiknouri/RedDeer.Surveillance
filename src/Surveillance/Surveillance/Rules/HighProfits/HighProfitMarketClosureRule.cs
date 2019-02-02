@@ -5,6 +5,7 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -27,6 +28,7 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
@@ -40,6 +42,7 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator,
                 orderFilter,
                 factory,
+                marketDataCacheFactory,
                 dataRequestSubscriber,
                 runMode,
                 logger,

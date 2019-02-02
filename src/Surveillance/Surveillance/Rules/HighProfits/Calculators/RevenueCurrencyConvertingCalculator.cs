@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using DomainV2.Trading;
@@ -40,7 +39,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IUniverseEquityIntradayCache universeEquityIntradayCache)
+            IMarketDataCacheStrategy cacheStrategy)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -84,18 +83,17 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
             }
 
-            var marketResponse = universeEquityIntradayCache.Get(marketDataRequest);
+            var marketResponse = cacheStrategy.Query(marketDataRequest);
 
-            if (marketResponse.HadMissingData)
+            if (marketResponse.HadMissingData())
             {
                 Logger.LogInformation($"Revenue currency converting calculator calculating for inferred virtual profits due to missing market data");
 
                 return new RevenueCurrencyAmount(true, null);
             }
 
-            var securityTick = marketResponse.Response;
-            var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.SpreadTimeBar.Price.Currency);
+            var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
+            var currencyAmount = new CurrencyAmount(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Value ?? string.Empty);
             var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
@@ -198,16 +196,6 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
                 ctx?.Id());
-        }
-
-        protected virtual CurrencyAmount? SecurityTickToPrice(EquityInstrumentIntraDayTimeBar tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.SpreadTimeBar.Price;
         }
     }
 }

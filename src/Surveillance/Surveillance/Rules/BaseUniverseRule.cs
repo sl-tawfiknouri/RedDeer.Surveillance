@@ -55,7 +55,7 @@ namespace Surveillance.Rules
             Version = version ?? string.Empty;
 
             UniverseEquityIntradayCache =
-                marketCacheFactory?.Build(windowSize, runMode)
+                marketCacheFactory?.BuildIntraday(windowSize, runMode)
                 ?? throw new ArgumentNullException(nameof(marketCacheFactory));
 
             UniverseEquityInterdayCache =

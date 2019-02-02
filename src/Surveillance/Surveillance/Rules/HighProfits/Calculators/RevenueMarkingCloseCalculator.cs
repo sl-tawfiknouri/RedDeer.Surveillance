@@ -1,5 +1,4 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
@@ -32,16 +31,6 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
                 tradingHours.ClosingInUtcForDay(universeDateTime),
                 ctx?.Id());
-        }
-
-        protected override CurrencyAmount? SecurityTickToPrice(EquityInstrumentIntraDayTimeBar tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.DailySummaryTimeBar.IntradayPrices.Close ?? tick.SpreadTimeBar.Price;
         }
     }
 }

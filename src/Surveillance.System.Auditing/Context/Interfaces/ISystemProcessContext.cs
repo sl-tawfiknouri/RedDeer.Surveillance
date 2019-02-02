@@ -1,5 +1,4 @@
 ﻿using System;
-using Surveillance.Systems.DataLayer.Processes;
 using Surveillance.Systems.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.Systems.Auditing.Context.Interfaces

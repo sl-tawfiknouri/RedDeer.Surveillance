@@ -52,6 +52,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private IUniversePercentageCompletionLoggerFactory _percentageCompletionLogger;
+        private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
         private ILogger<MarketCloseMultiverseTransformer> _multiverseLogger;
@@ -127,6 +128,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
             _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLoggerFactory>();
             _multiverseLogger = A.Fake<Logger<MarketCloseMultiverseTransformer>>();
+            _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
             _highProfitRuleFactory = new HighProfitRuleFactory(
                 _unsubscriberFactory,
@@ -136,6 +138,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 _percentageCompletionLogger,
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
+                _marketDataCacheStrategyFactory,
                 _logger,
                 _tradingLogger,
                 _multiverseLogger);

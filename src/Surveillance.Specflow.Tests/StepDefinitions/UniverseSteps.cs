@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
+using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -61,6 +62,88 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var universe = Build(eventList);
 
             _universeSelectionState.SelectedUniverse = universe;
+        }
+
+        [Given(@"With the intraday market data :")]
+        public void GivenWithTheIntradayMarketData(Table intradayMarketDataTable)
+        {
+            if (_universeSelectionState.SelectedUniverse == null
+                || intradayMarketDataTable == null)
+            {
+                _scenarioContext.Pending();
+                return;
+            }
+
+            var eventList = new List<IUniverseEvent>();
+            var intradayMarketDataParams = intradayMarketDataTable.CreateSet<IntradayMarketDataParameters>();
+            foreach (var row in intradayMarketDataParams)
+            {
+                var proRow = MapRowToIntradayMarketDataEvent(row);
+
+                if (proRow == null)
+                {
+                    continue;
+                }
+
+                eventList.Add(proRow);
+            }
+
+            var otherEvents = _universeSelectionState.SelectedUniverse.UniverseEvents.ToList();
+            otherEvents.AddRange(eventList);
+
+            var comparer = new UniverseEventComparer();
+            var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
+
+            _universeSelectionState.SelectedUniverse =
+                new Universe.Universe(
+                    new Order[0],
+                    new EquityIntraDayTimeBarCollection[0],
+                    new EquityInterDayTimeBarCollection[0],
+                    orderedUniverse);
+        }
+
+        private IUniverseEvent MapRowToIntradayMarketDataEvent(IntradayMarketDataParameters marketDataParam)
+        {
+            if (marketDataParam == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(marketDataParam.SecurityName)
+                || !_securitySelection.Securities.ContainsKey(marketDataParam.SecurityName))
+            {
+                _scenarioContext.Pending();
+                return null;
+            }
+
+            if (marketDataParam.Bid == null
+                || marketDataParam.Ask == null
+                || marketDataParam.Price == null)
+            {
+                _scenarioContext.Pending();
+                return null;
+            }
+
+            var security = _securitySelection.Securities[marketDataParam.SecurityName];
+            var bid = MapToCurrencyAmount(marketDataParam.Bid, marketDataParam.Currency);
+            var ask = MapToCurrencyAmount(marketDataParam.Ask, marketDataParam.Currency);
+            var price = MapToCurrencyAmount(marketDataParam.Price, marketDataParam.Currency);
+            var volume = new Volume(marketDataParam.Volume.GetValueOrDefault(0));
+
+            var intradayPrices = new SpreadTimeBar(bid.Value, ask.Value, price.Value, volume);
+
+            var marketData =
+                new EquityInstrumentIntraDayTimeBar(
+                    security.Instrument,
+                    intradayPrices,
+                    null,
+                    marketDataParam.Epoch,
+                    security.Market);
+
+            var timeBarCollection = new EquityIntraDayTimeBarCollection(security.Market, marketDataParam.Epoch, new[] { marketData });
+            var universeEvent = new UniverseEvent(UniverseStateEvent.EquityIntradayTick, marketDataParam.Epoch, timeBarCollection);
+
+            return universeEvent;
         }
 
         [Given(@"With the interday market data :")]

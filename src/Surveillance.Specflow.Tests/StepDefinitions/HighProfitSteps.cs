@@ -19,6 +19,8 @@ using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.OrganisationalFactors;
 using Surveillance.Rules.HighProfits;
+using Surveillance.Rules.HighProfits.Calculators;
+using Surveillance.Rules.HighProfits.Calculators.Factories;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighProfit;
@@ -107,8 +109,21 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
-            _costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
-            _revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
+
+            _costCalculatorFactory = new CostCalculatorFactory(
+                new CurrencyConverter(exchangeRateApiRepository, new NullLogger<CurrencyConverter>()),
+                new NullLogger<CostCalculator>(),
+                new NullLogger<CostCurrencyConvertingCalculator>());
+
+            _revenueCalculatorFactory =
+                new RevenueCalculatorFactory(
+                    _tradingHoursManager,
+                    new CurrencyConverter(
+                        exchangeRateApiRepository,
+                        new NullLogger<CurrencyConverter>()),
+                    new NullLogger<RevenueCurrencyConvertingCalculator>(),
+                    new NullLogger<RevenueCalculator>());
+
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
             _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLoggerFactory>();
             _multiverseLogger = A.Fake<Logger<MarketCloseMultiverseTransformer>>();

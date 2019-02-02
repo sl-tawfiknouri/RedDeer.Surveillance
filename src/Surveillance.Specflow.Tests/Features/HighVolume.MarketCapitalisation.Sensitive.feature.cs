@@ -86,7 +86,7 @@ namespace Surveillance.Specflow.Tests.Features
                         "1",
                         "",
                         "",
-                        "0.1"});
+                        "0.01"});
 #line 9
  testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table1, "Given ");
 #line hidden
@@ -181,15 +181,40 @@ this.FeatureBackground();
                         "BUY",
                         "GBX",
                         "",
-                        "100",
+                        "10",
                         "1000",
                         "1000"});
 #line 26
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table3, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "Epoch",
+                        "OpenPrice",
+                        "ClosePrice",
+                        "HighIntradayPrice",
+                        "LowIntradayPrice",
+                        "ListedSecurities",
+                        "MarketCap",
+                        "DailyVolume",
+                        "Currency"});
+            table4.AddRow(new string[] {
+                        "Vodafone",
+                        "01/01/2018",
+                        "10",
+                        "11",
+                        "11.5",
+                        "10",
+                        "10",
+                        "1000000",
+                        "1000",
+                        "GBX"});
 #line 29
+ testRunner.And("With the interday market data :", ((string)(null)), table4, "And ");
+#line 32
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 30
- testRunner.Then("I will have 0 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 33
+ testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Drivers\" />
+    <Folder Include="StepDefinitions\IntradayTrade\" />
   </ItemGroup>
 
   <ItemGroup>

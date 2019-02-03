@@ -36,6 +36,20 @@ Scenario: One order at window volume yields one alert
 @highvolume
 @highvolumewindow
 @highvolumewindownonsensitive
+Scenario: One order in different currency and exchange at window volume yields one alert
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0       | 01/01/2018 17:30:00 | 01/01/2018 17:30:00 | MARKET | BUY       | USD      |            | 10              | 1000          | 1000         |
+	And With the intraday market data :
+	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
+	| Nvidia     | 01/01/2018  17:30:00| 1	  | 20  | 10    | USD      | 5000  |
+	| Nvidia     | 01/01/2018  17:29:00| 1	  | 20  | 10    | USD      | 5000  |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumewindow
+@highvolumewindownonsensitive
 Scenario: One order below window volume yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

@@ -78,6 +78,16 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 OpenOffsetInUtc = TimeSpan.FromHours(8)
             });
 
+            A
+                .CallTo(() => _tradingHoursManager.Get("NASDAQ"))
+                .Returns(new TradingHours
+                {
+                    CloseOffsetInUtc = TimeSpan.FromHours(23),
+                    IsValid = true,
+                    Mic = "NASDAQ",
+                    OpenOffsetInUtc = TimeSpan.FromHours(15)
+                });
+
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),

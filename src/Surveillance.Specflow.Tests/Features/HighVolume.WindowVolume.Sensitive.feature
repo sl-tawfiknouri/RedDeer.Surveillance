@@ -36,6 +36,34 @@ Scenario: One order at window volume yields one alert
 @highvolume
 @highvolumewindow
 @highvolumewindowsensitive
+Scenario: One order just buy at window volume yields one alert
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 100          | 100         |
+	And With the intraday market data :
+	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| Vodafone     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumewindow
+@highvolumewindowsensitive
+Scenario: One order just sell at window volume yields one alert
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 | 01/01/2018 09:30:00 | MARKET | SELL       | GBX      |            | 10              | 100          | 100         |
+	And With the intraday market data :
+	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| Vodafone     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumewindow
+@highvolumewindowsensitive
 Scenario: One order in at a different exchange and in a different currency at window volume yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

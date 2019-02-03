@@ -187,7 +187,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         [Then(@"I will have (.*) high profit alerts")]
         public void ThenIWillHaveAlerts(int alertCount)
         {
-            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.That.Matches(i => !i.IsDeleteEvent && !i.IsRemoveEvent))).MustHaveHappenedANumberOfTimesMatching(x => x == alertCount);
         }
     }
 }

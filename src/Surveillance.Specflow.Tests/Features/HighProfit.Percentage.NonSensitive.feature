@@ -43,6 +43,64 @@ Scenario: Buy Sell orders within the time window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
+
+@highprofit
+@highprofitpercentage
+@highprofitpercentagenonsensitive
+Scenario: Buy just buy orders within the time window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | BUY      | GBX      |            | 12               | 100           | 100          |
+	And With the intraday market data :
+	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
+	| Vodafone     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
+@highprofit
+@highprofitpercentage
+@highprofitpercentagenonsensitive
+Scenario: Cover just cover orders within the time window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | COVER       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | COVER       | GBX      |            | 12               | 100           | 100          |
+	And With the intraday market data :
+	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
+	| Vodafone     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
+@highprofit
+@highprofitpercentage
+@highprofitpercentagenonsensitive
+Scenario: Sell just sell orders within the time window yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SELL       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	And With the intraday market data :
+	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
+	| Vodafone     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
+	When I run the high profit rule
+	Then I will have 0 high profit alerts
+
+@highprofit
+@highprofitpercentage
+@highprofitpercentagenonsensitive
+Scenario: Short just short orders within the time window yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | SHORT       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SHORT      | GBX      |            | 12               | 100           | 100          |
+	And With the intraday market data :
+	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
+	| Vodafone     | 01/01/2018 09:30:00 | 101 | 101 | 110   | GBX      | 10000		  |
+	When I run the high profit rule
+	Then I will have 0 high profit alerts
+
+
 @highprofit
 @highprofitpercentage
 @highprofitpercentagenonsensitive

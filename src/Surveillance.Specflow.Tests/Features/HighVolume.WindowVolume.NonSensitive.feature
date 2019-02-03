@@ -59,8 +59,6 @@ Scenario: One order above window volume yields one alerts
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 
-#ok so fahad has some scenarios which are on the window boundaries, if we do these once I think we can copy a bit?? maybe not with the different scenrios tbh and we will need to split a single order into two
-
 @highvolume
 @highvolumewindow
 @highvolumewindownonsensitive

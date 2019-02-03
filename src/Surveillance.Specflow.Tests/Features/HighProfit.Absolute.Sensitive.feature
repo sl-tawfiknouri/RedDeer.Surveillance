@@ -43,7 +43,16 @@ Scenario: Buy Sell orders within time window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
-
+@highprofit
+@highprofitabsolute
+@highprofitabsolutesensitive
+Scenario: Buy Sell orders different exchange within time window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 1000           | 1000        |
+	| Nvidia     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SELL      | GBX      |            | 12               | 1000           | 1000        |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
 	
 @highprofit
 @highprofitabsolute

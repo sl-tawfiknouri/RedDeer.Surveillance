@@ -45,6 +45,17 @@ Scenario: Buy Sell orders within the window yields one alerts
 @highprofit
 @highprofitabsolutecurrency
 @highprofitabsolutenonsensitive
+Scenario: Buy Sell orders different exchange within the window yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Nvidia     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 100              | 100000	       | 100000       |
+	| Nvidia     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | SELL      | USD      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 1 high profit alerts
+
+@highprofit
+@highprofitabsolutecurrency
+@highprofitabsolutenonsensitive
 Scenario: Buy just buy orders within the window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

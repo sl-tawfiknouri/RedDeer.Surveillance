@@ -46,6 +46,21 @@ Scenario: Buy Sell orders within the time window yields two alerts
 @highprofit
 @highprofitpercentage
 @highprofitpercentagenonsensitive
+Scenario: Buy Sell many orders within the time window yields six alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	| Nvidia       | 2       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Nvidia       | 3       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	| Barclays     | 4       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Barclays     | 5       | 01/01/2018 09:31:00 |            |             |              |               | 01/01/2018 09:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	When I run the high profit rule
+	Then I will have 4 high profit alerts
+
+@highprofit
+@highprofitpercentage
+@highprofitpercentagenonsensitive
 Scenario: Buy Sell orders different exchange within the time window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

@@ -45,6 +45,21 @@ Scenario: Buy Sell orders within window yields two alerts
 @highprofit
 @highprofitabsolute
 @highprofitabsolutenonsensitive
+Scenario: Buy Sell orders with many alerts yields four alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 09:45:00 |            |             |              |               | 01/01/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
+	| Barclays     | 2       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Barclays     | 3       | 01/01/2018 09:45:00 |            |             |              |               | 01/01/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
+	| Nvidia       | 4       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Nvidia       | 5       | 01/01/2018 09:45:00 |            |             |              |               | 01/01/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 4 high profit alerts
+
+@highprofit
+@highprofitabsolute
+@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders different exchange within window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

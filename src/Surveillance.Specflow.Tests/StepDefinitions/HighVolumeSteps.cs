@@ -56,7 +56,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var exchangeRateDto = new ExchangeRateDto
             {
-                DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 200d
+                DateTime = new DateTime(2018, 01, 01), Name = "GBX/USD", FixedCurrency = "GBX", VariableCurrency = "USD", Rate = 0.02d
             };
 
             A.CallTo(() =>

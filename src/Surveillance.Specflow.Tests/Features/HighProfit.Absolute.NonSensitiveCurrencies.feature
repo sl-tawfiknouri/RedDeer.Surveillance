@@ -31,6 +31,40 @@ Scenario: Single order yields no alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
+@highprofit
+@highprofitabsolutecurrency
+@highprofitabsolutenonsensitive
+Scenario: Buy Sell orders within the window yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 09:55:00 |            |             |              |               | 01/01/2018 09:55:00 | MARKET | SELL      | USD      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 1 high profit alerts
+
+
+@highprofit
+@highprofitabsolutecurrency
+@highprofitabsolutenonsensitive
+Scenario: Buy Sell orders at the window yields one alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 10:30:00 |            |             |              |               | 01/01/2018 10:30:00 | MARKET | SELL      | USD      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 1 high profit alerts
+
+
+@highprofit
+@highprofitabsolutecurrency
+@highprofitabsolutenonsensitive
+Scenario: Buy Sell orders outside of the window yields zero alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | USD      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 10:35:00 |            |             |              |               | 01/01/2018 10:35:00 | MARKET | SELL      | USD      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 0 high profit alerts
 
 @highprofit
 @highprofitabsolutecurrency

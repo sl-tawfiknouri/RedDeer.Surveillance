@@ -220,13 +220,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order at low daily volume yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("One order at daily volume partially filled yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderAtLowDailyVolumeYieldsOneAlert()
+        public virtual void OneOrderAtDailyVolumePartiallyFilledYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order at low daily volume yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order at daily volume partially filled yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -266,8 +266,8 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "1",
-                        "1"});
+                        "1000",
+                        "100"});
 #line 39
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table89, "Given ");
 #line hidden
@@ -291,7 +291,7 @@ this.FeatureBackground();
                         "10",
                         "10",
                         "1000000",
-                        "10",
+                        "1000",
                         "GBX"});
 #line 42
  testRunner.And("With the interday market data :", ((string)(null)), table90, "And ");
@@ -304,13 +304,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order in different exchange and currency at daily volume yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("One order at low daily volume yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderInDifferentExchangeAndCurrencyAtDailyVolumeYieldsOneAlert()
+        public virtual void OneOrderAtLowDailyVolumeYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order in different exchange and currency at daily volume yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order at low daily volume yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -337,7 +337,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
             table91.AddRow(new string[] {
-                        "Nvidia",
+                        "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
                         "",
@@ -347,11 +347,11 @@ this.FeatureBackground();
                         "01/01/2018 09:30:00",
                         "MARKET",
                         "BUY",
-                        "USD",
+                        "GBX",
                         "",
                         "10",
-                        "100",
-                        "100"});
+                        "1",
+                        "1"});
 #line 52
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table91, "Given ");
 #line hidden
@@ -367,7 +367,7 @@ this.FeatureBackground();
                         "DailyVolume",
                         "Currency"});
             table92.AddRow(new string[] {
-                        "Nvidia",
+                        "Vodafone",
                         "01/01/2018",
                         "10",
                         "11",
@@ -375,8 +375,8 @@ this.FeatureBackground();
                         "10",
                         "10",
                         "1000000",
-                        "1000",
-                        "USD"});
+                        "10",
+                        "GBX"});
 #line 55
  testRunner.And("With the interday market data :", ((string)(null)), table92, "And ");
 #line 58
@@ -388,13 +388,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order just buy at daily volume yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("One order in different exchange and currency at daily volume yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderJustBuyAtDailyVolumeYieldsOneAlert()
+        public virtual void OneOrderInDifferentExchangeAndCurrencyAtDailyVolumeYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order just buy at daily volume yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order in different exchange and currency at daily volume yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -421,7 +421,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
             table93.AddRow(new string[] {
-                        "Barclays",
+                        "Nvidia",
                         "0",
                         "01/01/2018 09:30:00",
                         "",
@@ -431,7 +431,7 @@ this.FeatureBackground();
                         "01/01/2018 09:30:00",
                         "MARKET",
                         "BUY",
-                        "GBX",
+                        "USD",
                         "",
                         "10",
                         "100",
@@ -451,7 +451,7 @@ this.FeatureBackground();
                         "DailyVolume",
                         "Currency"});
             table94.AddRow(new string[] {
-                        "Barclays",
+                        "Nvidia",
                         "01/01/2018",
                         "10",
                         "11",
@@ -460,7 +460,7 @@ this.FeatureBackground();
                         "10",
                         "1000000",
                         "1000",
-                        "GBX"});
+                        "USD"});
 #line 68
  testRunner.And("With the interday market data :", ((string)(null)), table94, "And ");
 #line 71
@@ -472,13 +472,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order just sell at daily volume yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("One order just buy at daily volume yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderJustSellAtDailyVolumeYieldsOneAlert()
+        public virtual void OneOrderJustBuyAtDailyVolumeYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order just sell at daily volume yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order just buy at daily volume yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -514,7 +514,7 @@ this.FeatureBackground();
                         "",
                         "01/01/2018 09:30:00",
                         "MARKET",
-                        "SELL",
+                        "BUY",
                         "GBX",
                         "",
                         "10",
@@ -556,13 +556,13 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order below daily volume yields zero alerts")]
+        [NUnit.Framework.DescriptionAttribute("One order just sell at daily volume yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderBelowDailyVolumeYieldsZeroAlerts()
+        public virtual void OneOrderJustSellAtDailyVolumeYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order below daily volume yields zero alerts", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order just sell at daily volume yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -589,7 +589,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
             table97.AddRow(new string[] {
-                        "Vodafone",
+                        "Barclays",
                         "0",
                         "01/01/2018 09:30:00",
                         "",
@@ -598,12 +598,12 @@ this.FeatureBackground();
                         "",
                         "01/01/2018 09:30:00",
                         "MARKET",
-                        "BUY",
+                        "SELL",
                         "GBX",
                         "",
                         "10",
-                        "99",
-                        "99"});
+                        "100",
+                        "100"});
 #line 91
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table97, "Given ");
 #line hidden
@@ -619,7 +619,7 @@ this.FeatureBackground();
                         "DailyVolume",
                         "Currency"});
             table98.AddRow(new string[] {
-                        "Vodafone",
+                        "Barclays",
                         "01/01/2018",
                         "10",
                         "11",
@@ -634,19 +634,19 @@ this.FeatureBackground();
 #line 97
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 98
- testRunner.Then("I will have 0 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One order above daily volume yields one alerts")]
+        [NUnit.Framework.DescriptionAttribute("One order below daily volume yields zero alerts")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void OneOrderAboveDailyVolumeYieldsOneAlerts()
+        public virtual void OneOrderBelowDailyVolumeYieldsZeroAlerts()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order above daily volume yields one alerts", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order below daily volume yields zero alerts", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
@@ -686,8 +686,8 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "101",
-                        "101"});
+                        "99",
+                        "99"});
 #line 104
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table99, "Given ");
 #line hidden
@@ -718,23 +718,23 @@ this.FeatureBackground();
 #line 110
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 111
- testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("I will have 0 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two order at daily volume at exact window yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("One order above daily volume yields one alerts")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void TwoOrderAtDailyVolumeAtExactWindowYieldsOneAlert()
+        public virtual void OneOrderAboveDailyVolumeYieldsOneAlerts()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume at exact window yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One order above daily volume yields one alerts", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
-#line 117
+#line 116
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
@@ -770,25 +770,9 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "10",
-                        "50",
-                        "50"});
-            table101.AddRow(new string[] {
-                        "Vodafone",
-                        "0",
-                        "01/01/2018 10:30:00",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "01/01/2018 10:30:00",
-                        "MARKET",
-                        "BUY",
-                        "GBX",
-                        "",
-                        "10",
-                        "50",
-                        "50"});
-#line 118
+                        "101",
+                        "101"});
+#line 117
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table101, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table102 = new TechTalk.SpecFlow.Table(new string[] {
@@ -813,28 +797,28 @@ this.FeatureBackground();
                         "1000000",
                         "1000",
                         "GBX"});
-#line 122
+#line 120
  testRunner.And("With the interday market data :", ((string)(null)), table102, "And ");
-#line 125
+#line 123
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 126
+#line 124
  testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two order at daily volume but outside window yields zero alert")]
+        [NUnit.Framework.DescriptionAttribute("Two order at daily volume at exact window yields one alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void TwoOrderAtDailyVolumeButOutsideWindowYieldsZeroAlert()
+        public virtual void TwoOrderAtDailyVolumeAtExactWindowYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume but outside window yields zero alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume at exact window yields one alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
-#line 132
+#line 130
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
@@ -875,12 +859,12 @@ this.FeatureBackground();
             table103.AddRow(new string[] {
                         "Vodafone",
                         "0",
-                        "01/01/2018 10:31:00",
+                        "01/01/2018 10:30:00",
                         "",
                         "",
                         "",
                         "",
-                        "01/01/2018 10:31:00",
+                        "01/01/2018 10:30:00",
                         "MARKET",
                         "BUY",
                         "GBX",
@@ -888,7 +872,7 @@ this.FeatureBackground();
                         "10",
                         "50",
                         "50"});
-#line 133
+#line 131
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table103, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table104 = new TechTalk.SpecFlow.Table(new string[] {
@@ -913,28 +897,28 @@ this.FeatureBackground();
                         "1000000",
                         "1000",
                         "GBX"});
-#line 137
+#line 135
  testRunner.And("With the interday market data :", ((string)(null)), table104, "And ");
-#line 140
+#line 138
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 141
- testRunner.Then("I will have 0 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 139
+ testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two order at daily volume and inside yields one alert")]
+        [NUnit.Framework.DescriptionAttribute("Two order at daily volume but outside window yields zero alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
         [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
-        public virtual void TwoOrderAtDailyVolumeAndInsideYieldsOneAlert()
+        public virtual void TwoOrderAtDailyVolumeButOutsideWindowYieldsZeroAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume and inside yields one alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume but outside window yields zero alert", null, new string[] {
                         "highvolume",
                         "highvolumeDaily",
                         "highvolumedailynonsensitive"});
-#line 147
+#line 145
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
@@ -975,12 +959,12 @@ this.FeatureBackground();
             table105.AddRow(new string[] {
                         "Vodafone",
                         "0",
-                        "01/01/2018 10:25:00",
+                        "01/01/2018 10:31:00",
                         "",
                         "",
                         "",
                         "",
-                        "01/01/2018 10:25:00",
+                        "01/01/2018 10:31:00",
                         "MARKET",
                         "BUY",
                         "GBX",
@@ -988,7 +972,7 @@ this.FeatureBackground();
                         "10",
                         "50",
                         "50"});
-#line 148
+#line 146
  testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table105, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table106 = new TechTalk.SpecFlow.Table(new string[] {
@@ -1013,11 +997,111 @@ this.FeatureBackground();
                         "1000000",
                         "1000",
                         "GBX"});
-#line 152
+#line 150
  testRunner.And("With the interday market data :", ((string)(null)), table106, "And ");
-#line 155
+#line 153
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 156
+#line 154
+ testRunner.Then("I will have 0 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Two order at daily volume and inside yields one alert")]
+        [NUnit.Framework.CategoryAttribute("highvolume")]
+        [NUnit.Framework.CategoryAttribute("highvolumeDaily")]
+        [NUnit.Framework.CategoryAttribute("highvolumedailynonsensitive")]
+        public virtual void TwoOrderAtDailyVolumeAndInsideYieldsOneAlert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order at daily volume and inside yields one alert", null, new string[] {
+                        "highvolume",
+                        "highvolumeDaily",
+                        "highvolumedailynonsensitive"});
+#line 160
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 8
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table107 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "BookedDate",
+                        "AmendedDate",
+                        "RejectedDate",
+                        "CancelledDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table107.AddRow(new string[] {
+                        "Vodafone",
+                        "0",
+                        "01/01/2018 09:30:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 09:30:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "10",
+                        "50",
+                        "50"});
+            table107.AddRow(new string[] {
+                        "Vodafone",
+                        "0",
+                        "01/01/2018 10:25:00",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "01/01/2018 10:25:00",
+                        "MARKET",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "10",
+                        "50",
+                        "50"});
+#line 161
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table107, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table108 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "Epoch",
+                        "OpenPrice",
+                        "ClosePrice",
+                        "HighIntradayPrice",
+                        "LowIntradayPrice",
+                        "ListedSecurities",
+                        "MarketCap",
+                        "DailyVolume",
+                        "Currency"});
+            table108.AddRow(new string[] {
+                        "Vodafone",
+                        "01/01/2018",
+                        "10",
+                        "11",
+                        "11.5",
+                        "10",
+                        "10",
+                        "1000000",
+                        "1000",
+                        "GBX"});
+#line 165
+ testRunner.And("With the interday market data :", ((string)(null)), table108, "And ");
+#line 168
+ testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 169
  testRunner.Then("I will have 1 high volume alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

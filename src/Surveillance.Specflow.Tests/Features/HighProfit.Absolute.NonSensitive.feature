@@ -37,7 +37,6 @@ Scenario: Buy Sell orders within window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
-
 Scenario: Buy Sell orders next day within window yields two alerts
 	Given I have the high profit rule parameter values
 	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
@@ -49,6 +48,26 @@ Scenario: Buy Sell orders next day within window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
+Scenario: Buy Sell orders next day within window and with currency shift yields two alerts
+	Given I have the high profit rule parameter values
+	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
+	| 25           |                      | 100000             | USD                | true                            |
+	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 09:30:00 |            |             |              |               | 01/01/2018 09:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/02/2018 09:45:00 |            |             |              |               | 01/02/2018 09:45:00 | MARKET | SELL      | GBX      |            | 100              | 100000	       | 100000       |
+	And With the intraday market data :
+	| SecurityName | Epoch	             | Bid | Ask | Price | Currency | Volume      |
+	| Vodafone     | 01/01/2018 09:30:00 | 100 | 100 | 100   | GBX      | 10000		  |
+	| Vodafone     | 01/02/2018 09:30:00 | 100 | 100 | 100   | GBX      | 10000		  |
+	And I have the exchange rates :
+	| Date       | Fixed | Variable | Rate  |
+	| 01/01/2018 | GBX   | USD      | 0.02  |
+	| 01/02/2018 | GBX   | USD      | 0.04  |
+	When I run the high profit rule
+	Then I will have 0 high profit alerts
+
+
 Scenario: Buy Sell orders next day outside window yields zero alerts
 	Given I have the high profit rule parameter values
 	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
@@ -59,8 +78,6 @@ Scenario: Buy Sell orders next day outside window yields zero alerts
 	| Vodafone     | 1       | 01/02/2018 09:45:00 |            |             |              |               | 01/02/2018 09:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
-
-
 
 Scenario: Buy Sell orders just before market open within window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :

@@ -1,4 +1,7 @@
-﻿Feature: HighProfit Absolute Non Sensitive Currency Parameters
+﻿@highprofit
+@highprofitabsolutecurrency
+@highprofitabsolutenonsensitive
+Feature: HighProfit Absolute Non Sensitive Currency Parameters
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
 	Which generate unusual levels of profits
@@ -12,18 +15,12 @@ Background:
 	| WindowHours | HighProfitPercentage | HighProfitAbsolute | HighProfitCurrency | HighProfitUseCurrencyConversions |
 	| 1           |                      | 100000             | GBX                | true                             |
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Single order yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -31,9 +28,6 @@ Scenario: Single order yields no alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders within the window yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -42,9 +36,6 @@ Scenario: Buy Sell orders within the window yields one alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders with losses within the window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -53,9 +44,6 @@ Scenario: Buy Sell orders with losses within the window yields zero alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell partially filled orders within the window yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -64,9 +52,6 @@ Scenario: Buy Sell partially filled orders within the window yields one alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell unfilled orders within the window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -75,9 +60,6 @@ Scenario: Buy Sell unfilled orders within the window yields zero alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders over lots of securities within the window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -90,9 +72,6 @@ Scenario: Buy Sell orders over lots of securities within the window yields two a
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders different exchange within the window yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -101,9 +80,6 @@ Scenario: Buy Sell orders different exchange within the window yields one alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy just buy orders within the window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -115,9 +91,6 @@ Scenario: Buy just buy orders within the window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Cover just cover orders within the window yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -129,10 +102,6 @@ Scenario: Cover just cover orders within the window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
-
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Sell just sell orders within the window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -144,10 +113,6 @@ Scenario: Sell just sell orders within the window yields zero alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Short just short orders within the window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -159,10 +124,6 @@ Scenario: Short just short orders within the window yields zero alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders at the window yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -171,10 +132,6 @@ Scenario: Buy Sell orders at the window yields one alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders outside of the window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -183,9 +140,6 @@ Scenario: Buy Sell orders outside of the window yields zero alerts
 	When I run the high profit rule
 	Then I will have 0 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -194,9 +148,6 @@ Scenario: Buy Sell orders yields two alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders at exact threshold yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -205,9 +156,6 @@ Scenario: Buy Sell orders at exact threshold yields two alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy Sell orders at just below threshold yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -216,9 +164,6 @@ Scenario: Buy Sell orders at just below threshold yields zero alerts
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy order with increase in market price (bmll) yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -229,10 +174,6 @@ Scenario: Buy order with increase in market price (bmll) yields one alert
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy order with increase in market price to exact threshold (bmll) yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -243,9 +184,6 @@ Scenario: Buy order with increase in market price to exact threshold (bmll) yiel
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy order with substantial increase in market price (bmll) yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -256,9 +194,6 @@ Scenario: Buy order with substantial increase in market price (bmll) yields one 
 	When I run the high profit rule
 	Then I will have 1 high profit alerts
 
-@highprofit
-@highprofitabsolutecurrency
-@highprofitabsolutenonsensitive
 Scenario: Buy order with decrease in market price (bmll) yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

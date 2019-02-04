@@ -121,6 +121,7 @@ namespace Surveillance.Rules.HighProfits
             var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
+
             var marketCache =
                 MarketClosureRule
                     ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)

@@ -157,7 +157,7 @@ namespace Surveillance.Systems.DataLayer.Repositories
             foreach (var migration in availableMigrationIds)
             {
                 _logger.LogInformation($"MigrationRepository UpdateMigrations about to run the migration {migration?.ScriptIndex} {migration?.FileName}");
-                await GetScriptAndExecute(migration);
+                GetScriptAndExecute(migration).Wait();
                 _logger.LogInformation($"MigrationRepository UpdateMigrations has ran the migration {migration?.ScriptIndex} {migration?.FileName}");
             }
         }

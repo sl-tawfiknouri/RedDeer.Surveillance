@@ -67,6 +67,8 @@ using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.RuleParameters.Manager;
+using Surveillance.RuleParameters.Manager.Interfaces;
 
 namespace Surveillance
 {
@@ -195,6 +197,8 @@ namespace Surveillance
             For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
 
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
+            For<IRuleParameterManager>().Use<RuleParameterManager>();
+            For<IRuleParameterLeadingTimespanCalculator>().Use<RuleParameterLeadingTimespanCalculator>();
         }
     }
 }

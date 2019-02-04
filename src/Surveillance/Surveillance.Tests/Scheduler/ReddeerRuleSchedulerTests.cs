@@ -6,6 +6,7 @@ using DomainV2.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
@@ -13,6 +14,7 @@ using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
+using Surveillance.RuleParameters.Manager.Interfaces;
 using Surveillance.Rules.Spoofing.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Systems.Auditing.Context.Interfaces;
@@ -46,6 +48,8 @@ namespace Surveillance.Tests.Scheduler
         private IUniverseDataRequestsSubscriberFactory _dataRequestsSubscriber;
         private IRuleAnalyticsAlertsRepository _alertsRepository;
         private IUniversePercentageCompletionLogger _percentageCompletionLogger;
+        private IRuleParameterLeadingTimespanCalculator _leadingTimespanCalculator;
+        private IRuleParameterManager _ruleParameterManager;
 
         private ILogger<ReddeerRuleScheduler> _logger;
 
@@ -72,6 +76,8 @@ namespace Surveillance.Tests.Scheduler
             _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLogger>();
             _ruleRunUpdateMessageSender = A.Fake<IRuleRunUpdateMessageSender>();
             _dataRequestsSubscriber = A.Fake<IUniverseDataRequestsSubscriberFactory>();
+            _ruleParameterManager = A.Fake<IRuleParameterManager>();
+            _leadingTimespanCalculator = A.Fake<IRuleParameterLeadingTimespanCalculator>();
 
             _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
         }
@@ -97,6 +103,8 @@ namespace Surveillance.Tests.Scheduler
                     _alertsRepository,
                     _ruleRunUpdateMessageSender,
                     _dataRequestsSubscriber,
+                    _ruleParameterManager,
+                    _leadingTimespanCalculator,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -122,6 +130,8 @@ namespace Surveillance.Tests.Scheduler
                     _alertsRepository,
                     _ruleRunUpdateMessageSender,
                     _dataRequestsSubscriber,
+                    _ruleParameterManager,
+                    _leadingTimespanCalculator,
                     _percentageCompletionLogger,
                     _logger));
         }
@@ -145,6 +155,8 @@ namespace Surveillance.Tests.Scheduler
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
                 _dataRequestsSubscriber,
+                _ruleParameterManager,
+                _leadingTimespanCalculator,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -161,7 +173,7 @@ namespace Surveillance.Tests.Scheduler
            await scheduler.Execute(schedule, _opCtx);
 
             A.CallTo(() => _universePlayerFactory.Build()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<IUniverseDataRequestsSubscriber>.Ignored,  A<ISystemProcessOperationContext>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _universeRuleSubscriber.SubscribeRules(A<ScheduledExecution>.Ignored, A<IUniversePlayer>.Ignored, A<IUniverseAlertStream>.Ignored, A<IUniverseDataRequestsSubscriber>.Ignored,  A<ISystemProcessOperationContext>.Ignored, A<RuleParameterDto>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _universePlayer.Play(A<IUniverse>.Ignored)).MustHaveHappened();
         }
 
@@ -184,6 +196,8 @@ namespace Surveillance.Tests.Scheduler
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
                 _dataRequestsSubscriber,
+                _ruleParameterManager,
+                _leadingTimespanCalculator,
                 _percentageCompletionLogger,
                 _logger);
 
@@ -226,6 +240,8 @@ namespace Surveillance.Tests.Scheduler
                 _alertsRepository,
                 _ruleRunUpdateMessageSender,
                 _dataRequestsSubscriber,
+                _ruleParameterManager,
+                _leadingTimespanCalculator,
                 _percentageCompletionLogger,
                 _logger);
 

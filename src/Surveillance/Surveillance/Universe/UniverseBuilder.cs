@@ -51,7 +51,7 @@ namespace Surveillance.Universe
         {
             if (execution == null)
             {
-                _logger.LogError($"UniverseBuilder had a null execution and therefore null data sets for {opCtx.Id} operation context");
+                _logger.LogError($"UniverseBuilder had a null execution or rule parameters and therefore null data sets for {opCtx.Id} operation context");
                 return new Universe(null, null, null, null);
             }
 
@@ -98,7 +98,7 @@ namespace Surveillance.Universe
         {
             var equities =
                 await _auroraMarketRepository.GetEquityIntraday(
-                    execution.TimeSeriesInitiation.Date,
+                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan).Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 
@@ -111,7 +111,7 @@ namespace Surveillance.Universe
         {
             var equities =
                 await _auroraMarketRepository.GetEquityInterDay(
-                    execution.TimeSeriesInitiation.Date,
+                    execution.TimeSeriesInitiation.Subtract(execution.LeadingTimespan).Date,
                     execution.TimeSeriesTermination.Date,
                     opCtx);
 

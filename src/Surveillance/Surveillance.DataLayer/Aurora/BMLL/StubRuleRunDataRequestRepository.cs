@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using DomainV2.Markets;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using System.Linq;
-using System;
 
 namespace Surveillance.DataLayer.Aurora.BMLL
 {

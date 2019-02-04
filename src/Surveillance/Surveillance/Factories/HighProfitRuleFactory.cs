@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighProfits;
@@ -28,6 +29,7 @@ namespace Surveillance.Factories
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IMarketDataCacheStrategyFactory _cacheStrategyFactory;
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
         private readonly ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
@@ -40,6 +42,7 @@ namespace Surveillance.Factories
             IUniversePercentageCompletionLoggerFactory percentageCompleteFactory,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
+            IMarketDataCacheStrategyFactory cacheStrategyFactory,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger, 
             ILogger<MarketCloseMultiverseTransformer> transformerLogger)
@@ -51,6 +54,7 @@ namespace Surveillance.Factories
                 exchangeRateProfitCalculator
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            _cacheStrategyFactory = cacheStrategyFactory ?? throw new ArgumentNullException(nameof(cacheStrategyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _transformerLogger = transformerLogger ?? throw new ArgumentNullException(nameof(transformerLogger));
@@ -77,6 +81,7 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _cacheStrategyFactory,
                 dataRequestSubscriber,
                 runMode,
                 _logger,
@@ -91,6 +96,7 @@ namespace Surveillance.Factories
                 _exchangeRateProfitCalculator,
                 _orderFilter,
                 _marketCacheFactory,
+                _cacheStrategyFactory,
                 dataRequestSubscriber,
                 runMode,
                 _logger,
@@ -105,6 +111,6 @@ namespace Surveillance.Factories
             return new HighProfitsRule(stream, multiverseTransformer, _logger);
         }
 
-        public static string Version => Versioner.Version(2, 0);
+        public static string Version => Versioner.Version(3, 0);
     }
 }

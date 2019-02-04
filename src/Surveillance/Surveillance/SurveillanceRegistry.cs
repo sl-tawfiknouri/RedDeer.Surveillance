@@ -193,6 +193,8 @@ namespace Surveillance
             For<IOrdersToAllocatedOrdersProjector>().Use<OrdersToAllocatedOrdersProjector>();
             For<IUniverseDataRequestsSubscriber>().Use<UniverseDataRequestsSubscriber>();
             For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
+
+            For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
         }
     }
 }

@@ -9,6 +9,7 @@ using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
@@ -31,6 +32,7 @@ namespace Surveillance.Rules.HighProfits
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
+        private readonly IMarketDataCacheStrategyFactory _marketDataCacheFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -47,6 +49,7 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
+            IMarketDataCacheStrategyFactory marketDataCacheFactory,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
@@ -67,6 +70,7 @@ namespace Surveillance.Rules.HighProfits
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
+            _marketDataCacheFactory = marketDataCacheFactory ?? throw new ArgumentNullException(nameof(marketDataCacheFactory));
             _exchangeRateProfitCalculator =
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
@@ -117,8 +121,13 @@ namespace Surveillance.Rules.HighProfits
             var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
+            var marketCache =
+                MarketClosureRule
+                    ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)
+                    : _marketDataCacheFactory.IntradayStrategy(UniverseEquityIntradayCache);
+
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
-            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, UniverseEquityIntradayCache);
+            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, marketCache);
 
             var cost = costTask.Result;
             var revenueResponse = revenueTask.Result;

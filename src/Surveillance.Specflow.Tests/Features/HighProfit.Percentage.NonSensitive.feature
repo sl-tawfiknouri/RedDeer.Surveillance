@@ -37,6 +37,23 @@ Scenario: Buy Sell orders within the time window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
+Scenario: Buy Sell orders before market open within the time window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 05:30:00 |            |             |              |               | 01/01/2018 05:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 05:31:00 |            |             |              |               | 01/01/2018 05:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
+Scenario: Buy Sell orders after market close within the time window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 19:30:00 |            |             |              |               | 01/01/2018 19:30:00 | MARKET | BUY       | GBX      |            | 10               | 100           | 100          |
+	| Vodafone     | 1       | 01/01/2018 19:31:00 |            |             |              |               | 01/01/2018 19:31:00 | MARKET | SELL      | GBX      |            | 12               | 100           | 100          |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
+
 Scenario: Buy Sell orders with losses within the time window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

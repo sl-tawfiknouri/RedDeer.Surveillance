@@ -37,6 +37,22 @@ Scenario: Buy Sell orders within window yields two alerts
 	When I run the high profit rule
 	Then I will have 2 high profit alerts
 
+Scenario: Buy Sell orders just before market open within window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 06:30:00 |            |             |              |               | 01/01/2018 06:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 06:45:00 |            |             |              |               | 01/01/2018 06:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
+Scenario: Buy Sell orders just after market close within window yields two alerts
+	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/01/2018 19:30:00 |            |             |              |               | 01/01/2018 19:30:00 | MARKET | BUY       | GBX      |            | 100              | 100000	       | 100000       |
+	| Vodafone     | 1       | 01/01/2018 19:45:00 |            |             |              |               | 01/01/2018 19:45:00 | MARKET | SELL      | GBX      |            | 110              | 100000	       | 100000       |
+	When I run the high profit rule
+	Then I will have 2 high profit alerts
+
 Scenario: Buy Sell orders with losses within window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

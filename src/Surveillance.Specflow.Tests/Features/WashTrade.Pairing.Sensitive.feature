@@ -1,4 +1,7 @@
-﻿Feature: WashTrade Pairing Sensitive Parameters
+﻿@washtrade
+@washtradepairing
+@washtradesensitive
+Feature: WashTrade Pairing Sensitive Parameters
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
 	with no meaningful change of ownership
@@ -10,18 +13,14 @@ Background:
 	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 2                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -29,9 +28,7 @@ Scenario: One Trade For Vodafone yields no alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 Scenario: One Trade For Barclays yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -39,9 +36,7 @@ Scenario: One Trade For Barclays yields no alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 Scenario: Two Trades In Wash Trade For Different Securities yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -50,9 +45,8 @@ Scenario: Two Trades In Wash Trade For Different Securities yields one alert
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
+
 Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -62,9 +56,7 @@ Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 Scenario: Two Trades In Wash Trade yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -73,9 +65,7 @@ Scenario: Two Trades In Wash Trade yields one alert
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Two trades when min number of trades threshold set to four yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -88,9 +78,7 @@ Scenario: Two trades when min number of trades threshold set to four yields zero
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Four Trade For Barclays when min number of trades threshold set to four yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -105,9 +93,7 @@ Scenario: Four Trade For Barclays when min number of trades threshold set to fou
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Ten Trade For Barclays when min number of trades threshold set to four yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -129,9 +115,7 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	Then I will have 1 wash trade alerts
 
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @percentofvaluechange
 Scenario: Two Trades In Wash Trade but outside of relative percentage value change yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -141,9 +125,7 @@ Scenario: Two Trades In Wash Trade but outside of relative percentage value chan
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @percentofvaluechange
 Scenario: Two Trades In Wash Trade and on relative percentage value change boundary yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -153,9 +135,7 @@ Scenario: Two Trades In Wash Trade and on relative percentage value change bound
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @percentofvaluechange
 Scenario: Two Trades In Wash Trade and inside of relative percentage value change yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -177,9 +157,7 @@ Scenario: Two Trades In Wash Trade but outside of relative percentage volume cha
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @percentofvolumechange
 Scenario: Two Trades In Wash Trade and on relative percentage volume change boundary yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -189,9 +167,7 @@ Scenario: Two Trades In Wash Trade and on relative percentage volume change boun
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @percentofvolumechange
 Scenario: Two Trades In Wash Trade and inside of relative percentage volume change yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -203,9 +179,7 @@ Scenario: Two Trades In Wash Trade and inside of relative percentage volume chan
 
 
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @maximumabsolutevaluechange
 Scenario: Two Trades In Wash Trade and inside of absolute value change yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -215,9 +189,7 @@ Scenario: Two Trades In Wash Trade and inside of absolute value change yields on
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @maximumabsolutevaluechange
 Scenario: Two Trades In Wash Trade and exactly absolute value change yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -227,9 +199,7 @@ Scenario: Two Trades In Wash Trade and exactly absolute value change yields one 
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @maximumabsolutevaluechange
 Scenario: Two Trades In Wash Trade and outside of absolute value change change yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -240,9 +210,7 @@ Scenario: Two Trades In Wash Trade and outside of absolute value change change y
 	Then I will have 0 wash trade alerts
 
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @justbuy
 Scenario: Five Trade For Barclays yields zero alerts when just buys
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -255,9 +223,7 @@ Scenario: Five Trade For Barclays yields zero alerts when just buys
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @justsell
 Scenario: Five Trade For Barclays yields zero alerts when just sells
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -270,9 +236,7 @@ Scenario: Five Trade For Barclays yields zero alerts when just sells
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtradelosses
 Scenario: Two Trade For Nvidia yields one alerts with losses
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -284,11 +248,8 @@ Scenario: Two Trade For Nvidia yields one alerts with losses
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
+	
 
-
-@washtrade
-@washtradepairing
-@washtradesensitive
 @washtradepartialfill
 Scenario: Two Trade For Nvidia with partial fills yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -298,9 +259,7 @@ Scenario: Two Trade For Nvidia with partial fills yields one alerts
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtradeearlyorder
 Scenario: Two Trade For Nvidia with pre market order times yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -310,9 +269,7 @@ Scenario: Two Trade For Nvidia with pre market order times yields one alerts
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtradelateorder
 Scenario: Two Trade For Nvidia with post market order times yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -322,9 +279,7 @@ Scenario: Two Trade For Nvidia with post market order times yields one alerts
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtradenextdaysell
 Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -337,9 +292,7 @@ Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtradenextdaysell
 Scenario: Two Trade For Nvidia with next day sell outside window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -352,9 +305,7 @@ Scenario: Two Trade For Nvidia with next day sell outside window yields zero ale
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradepairing
-@washtradesensitive
+
 @washtrademultiplealerts
 Scenario: Two Trade For Nvidia and two for vodafone yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -367,9 +318,6 @@ Scenario: Two Trade For Nvidia and two for vodafone yields two alerts
 	Then I will have 2 wash trade alerts
 
 
-@washtrade
-@washtradepairing
-@washtradesensitive
 @washtradecurrencies
 Scenario: Two Trade For Nvidia in USD converts to GBX for absolute currency breach
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :

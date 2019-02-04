@@ -225,14 +225,14 @@ namespace Surveillance.Rules.MarkingTheClose
                 securities
                     .Where(sec => 
                         sec.OrderDirection == OrderDirections.BUY
-                        || sec.OrderDirection == OrderDirections.SHORT)
+                        || sec.OrderDirection == OrderDirections.COVER)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var volumeTradedSell =
                 securities
                     .Where(sec => 
                         sec.OrderDirection == OrderDirections.SELL
-                        || sec.OrderDirection == OrderDirections.COVER)
+                        || sec.OrderDirection == OrderDirections.SHORT)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;

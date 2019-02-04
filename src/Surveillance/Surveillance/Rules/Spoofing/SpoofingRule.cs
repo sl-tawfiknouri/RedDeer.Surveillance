@@ -94,12 +94,14 @@ namespace Surveillance.Rules.Spoofing
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.BUY
+               (mostRecentTrade.OrderDirection == OrderDirections.BUY
+                || mostRecentTrade.OrderDirection == OrderDirections.COVER)
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.SELL
+                (mostRecentTrade.OrderDirection == OrderDirections.SELL
+                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
                     ? buyPosition
                     : sellPosition;
 
@@ -158,9 +160,11 @@ namespace Surveillance.Rules.Spoofing
             switch (nextTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     buyPosition.Add(nextTrade);
                     break;
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     sellPosition.Add(nextTrade);
                     break;
                 default:

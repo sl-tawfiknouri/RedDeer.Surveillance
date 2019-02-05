@@ -90,7 +90,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 

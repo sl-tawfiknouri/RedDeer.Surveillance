@@ -252,7 +252,7 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
@@ -357,7 +357,7 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    startDate,
+                    startDate.Subtract(WindowSize),
                     endDate,
                     _ruleCtx?.Id());
 

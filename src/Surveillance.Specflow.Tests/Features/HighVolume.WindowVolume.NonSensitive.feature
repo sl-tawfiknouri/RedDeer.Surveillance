@@ -42,12 +42,12 @@ Scenario: Two order one inside and one inside but next day window at window volu
 	| 25           |				  		      |	0.1	                       | 			     			   |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| Vodafone     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 500          | 250         |
-	| Vodafone     | 0       | 01/02/2018 16:30:00 | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 500          | 250         |
+	| Vodafone     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 500          | 200         |
+	| Vodafone     | 0       | 01/02/2018 16:30:00 | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 500          | 300         |
 	And With the intraday market data :
 	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
-	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
-	| Vodafone     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 2500  |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 

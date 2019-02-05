@@ -268,7 +268,7 @@ this.FeatureBackground();
                         "",
                         "10",
                         "500",
-                        "250"});
+                        "200"});
             table354.AddRow(new string[] {
                         "Vodafone",
                         "0",
@@ -280,7 +280,7 @@ this.FeatureBackground();
                         "",
                         "10",
                         "500",
-                        "250"});
+                        "300"});
 #line 43
  testRunner.And("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table354, "And ");
 #line hidden
@@ -299,7 +299,7 @@ this.FeatureBackground();
                         "20",
                         "10",
                         "GBX",
-                        "5000"});
+                        "2500"});
             table355.AddRow(new string[] {
                         "Vodafone",
                         "01/02/2018  09:29:00",
@@ -307,7 +307,7 @@ this.FeatureBackground();
                         "20",
                         "10",
                         "GBX",
-                        "5000"});
+                        "2500"});
 #line 47
  testRunner.And("With the intraday market data :", ((string)(null)), table355, "And ");
 #line 51

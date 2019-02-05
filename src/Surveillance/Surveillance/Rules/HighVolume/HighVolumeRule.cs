@@ -180,7 +180,7 @@ namespace Surveillance.Rules.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id()); 
 
@@ -230,7 +230,7 @@ namespace Surveillance.Rules.HighVolume
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
@@ -286,7 +286,7 @@ namespace Surveillance.Rules.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 

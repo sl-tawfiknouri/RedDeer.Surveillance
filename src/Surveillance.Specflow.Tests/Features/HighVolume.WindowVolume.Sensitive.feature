@@ -33,24 +33,23 @@ Scenario: One order at window volume yields one alert
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
 
-
 @highvolume
 @highvolumewindow
 @highvolumewindowsensitive
-Scenario: Two order one inside and one inside window but next day at window volume yields one alert
+Scenario: Two order one inside and one inside window but next day at window volume yields two alert
 	Given I have the high volume rule parameter values
 	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
 	| 25           |				  		      |	0.01                       | 			     			   |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-	| Vodafone     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 25         |
-	| Vodafone     | 0       | 01/02/2018 16:30:00 | 01/02/2018 16:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 25         |
+	| Vodafone     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 50         |
+	| Vodafone     | 0       | 01/02/2018 14:30:00 | 01/02/2018 14:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 10         |
 	And With the intraday market data :
 	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
-	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 5000  |
-	| Vodafone     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 500  |
+	| Vodafone     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5500  |
 	When I run the high volume rule
-	Then I will have 1 high volume alerts
+	Then I will have 2 high volume alerts
 
 
 @highvolume
@@ -230,3 +229,41 @@ Scenario: Two orders split just inside window at window volume yields one alert
 	| Vodafone     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 5000  |
 	When I run the high volume rule
 	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumewindow
+@highvolumewindowsensitive
+Scenario: One order at window volume but with market data on preceding day yields one alert
+	Given I have the high volume rule parameter values
+	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
+	| 100         |				  		      |	0.01                       | 			     			   |
+	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
+	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/02/2018 09:30:00 | 01/02/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 100          | 100         |
+	And With the intraday market data :
+	| SecurityName | Epoch				 | Bid | Ask | Price | Currency | Volume |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/01/2018  09:29:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/02/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/02/2018  09:29:00| 1	  | 20  | 10    | GBX      | 2500  |
+	When I run the high volume rule
+	Then I will have 1 high volume alerts
+
+@highvolume
+@highvolumewindow
+@highvolumewindowsensitive
+Scenario: One order at window volume but with missing data on preceding day yields one alert
+	Given I have the high volume rule parameter values
+	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
+	| 1000        |				  		      |	0.01                       | 			     			   |
+	And I have the orders for a universe from 01/01/2018 to 01/05/2018 :
+	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+	| Vodafone     | 0       | 01/04/2018 09:30:00 | 01/04/2018 09:30:00 | MARKET | BUY       | GBX      |            | 10              | 99          | 99         |
+	And With the intraday market data :
+	| SecurityName | Epoch				 | Bid | Ask | Price | Currency | Volume |
+	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/02/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/03/2018  09:30:00| 1	  | 20  | 10    | GBX      | 2500  |
+	| Vodafone     | 01/04/2018  09:29:00| 1	  | 20  | 10    | GBX      | 2500  |
+	When I run the high volume rule
+	Then I will have 0 high volume alerts

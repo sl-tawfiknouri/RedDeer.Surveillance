@@ -34,5 +34,10 @@ namespace DomainV2.Scheduling
         /// Once we have as much market data as we can get, force a re-run
         /// </summary>
         public bool IsForceRerun { get; set; }
+
+        /// <summary>
+        /// Set in memory; largest timespan for relevant rules
+        /// </summary>
+        public TimeSpan LeadingTimespan { get; set; }
     }
 }

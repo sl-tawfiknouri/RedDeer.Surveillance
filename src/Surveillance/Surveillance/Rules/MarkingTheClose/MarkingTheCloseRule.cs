@@ -114,6 +114,7 @@ namespace Surveillance.Rules.MarkingTheClose
             VolumeBreach windowVolumeBreach = null;
             if (_parameters.PercentageThresholdWindowVolume != null)
             {
+                // probably wrong with the variant of cache method called
                 windowVolumeBreach = CheckWindowVolumeTraded(securities, tradedSecurity);
             }
 

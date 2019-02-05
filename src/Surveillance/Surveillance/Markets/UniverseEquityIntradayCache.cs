@@ -119,7 +119,7 @@ namespace Surveillance.Markets
             }
 
             _logger.LogInformation($"UniverseMarketCache was able to find a match for {request.Identifiers} returning data.");
-            return new MarketDataResponse<EquityInstrumentIntraDayTimeBar>(security, false);
+            return new MarketDataResponse<EquityInstrumentIntraDayTimeBar>(security, false, false);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Surveillance.Markets
 
             _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
 
-            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false);
+            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false, false);
         }
 
         public object Clone()

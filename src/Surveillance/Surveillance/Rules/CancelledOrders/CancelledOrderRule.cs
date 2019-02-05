@@ -120,7 +120,10 @@ namespace Surveillance.Rules.CancelledOrders
                 }
 
                 var nextTrade = tradeWindow.Pop();
-                if (nextTrade.OrderDirection != mostRecentTrade.OrderDirection)
+                var nextTradeIsBuy = IsBuy(nextTrade.OrderDirection);
+                var mostRecentIsBuy = IsBuy(mostRecentTrade.OrderDirection);
+
+                if (nextTradeIsBuy != mostRecentIsBuy)
                 {
                     continue;
                 }
@@ -164,6 +167,12 @@ namespace Surveillance.Rules.CancelledOrders
                 totalPositionOrders,
                 hasBreachedRuleByOrderCount,
                 cancellationRatioByOrderCount);
+        }
+
+        private bool IsBuy(OrderDirections orderDirection)
+        {
+            return orderDirection == OrderDirections.BUY
+                   || orderDirection == OrderDirections.COVER;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

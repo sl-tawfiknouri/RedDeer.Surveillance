@@ -8,7 +8,7 @@ namespace Surveillance.Markets.Interfaces
     public interface IUniverseEquityIntradayCache : ICloneable
     {
         void Add(EquityIntraDayTimeBarCollection value);
-        MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request);
+        MarketDataResponse<EquityInstrumentIntraDayTimeBar> GetForLatestDayOnly(MarketDataRequest request);
         MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> GetMarkets(MarketDataRequest request);
     }
 }

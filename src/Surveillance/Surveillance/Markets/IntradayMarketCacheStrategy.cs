@@ -15,7 +15,7 @@ namespace Surveillance.Markets
 
         public IQueryableMarketDataResponse Query(MarketDataRequest request)
         {
-            var rawResponse = _cache.Get(request);
+            var rawResponse = _cache.GetForLatestDayOnly(request);
             return new IntradayMarketDataResponse(rawResponse);
         }
     }

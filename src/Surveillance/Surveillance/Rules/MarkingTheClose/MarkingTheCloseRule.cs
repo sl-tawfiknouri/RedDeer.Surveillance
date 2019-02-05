@@ -94,7 +94,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseEquityIntradayCache.Get(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.GetForLatestDayOnly(marketDataRequest);
 
             if (dataResponse.HadMissingData)
             {

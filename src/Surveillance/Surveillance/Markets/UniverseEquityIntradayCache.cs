@@ -70,7 +70,7 @@ namespace Surveillance.Markets
             }
         }
 
-        public MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request)
+        public MarketDataResponse<EquityInstrumentIntraDayTimeBar> GetForLatestDayOnly(MarketDataRequest request)
         {
             if (request == null
                 || !request.IsValid())

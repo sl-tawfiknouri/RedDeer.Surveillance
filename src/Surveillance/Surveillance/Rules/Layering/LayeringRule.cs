@@ -256,7 +256,7 @@ namespace Surveillance.Rules.Layering
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseEquityIntradayCache.Get(marketRequest);
+            var marketResult = UniverseEquityIntradayCache.GetForLatestDayOnly(marketRequest);
             if (marketResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");

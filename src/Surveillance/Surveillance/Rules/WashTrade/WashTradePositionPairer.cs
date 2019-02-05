@@ -58,12 +58,14 @@ namespace Surveillance.Rules.WashTrade
                     currentSellPosition = new TradePosition(new List<Order>());
                 }
 
-                if (trade.OrderDirection == OrderDirections.BUY)
+                if (trade.OrderDirection == OrderDirections.BUY 
+                    || trade.OrderDirection == OrderDirections.COVER)
                 {
                     currentBuyPosition.Add(trade);
                 }
 
-                if (trade.OrderDirection == OrderDirections.SELL)
+                if (trade.OrderDirection == OrderDirections.SELL
+                    || trade.OrderDirection == OrderDirections.SHORT)
                 {
                     currentSellPosition.Add(trade);
                 }

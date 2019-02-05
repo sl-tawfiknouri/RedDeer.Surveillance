@@ -94,12 +94,14 @@ namespace Surveillance.Rules.Layering
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                (mostRecentTrade.OrderDirection == OrderDirections.BUY)
+                (mostRecentTrade.OrderDirection == OrderDirections.BUY 
+                 || mostRecentTrade.OrderDirection == OrderDirections.COVER)
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.SELL
+                (mostRecentTrade.OrderDirection == OrderDirections.SELL
+                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
                     ? buyPosition
                     : sellPosition;
 
@@ -125,9 +127,11 @@ namespace Surveillance.Rules.Layering
             switch (nextTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     buyPosition.Add(nextTrade);
                     break;
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     sellPosition.Add(nextTrade);
                     break;
                 default:
@@ -248,7 +252,7 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
@@ -353,7 +357,7 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    startDate,
+                    startDate.Subtract(WindowSize),
                     endDate,
                     _ruleCtx?.Id());
 
@@ -405,10 +409,12 @@ namespace Surveillance.Rules.Layering
             switch (mostRecentTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     return priceMovement < 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." }
                         : RuleBreachDescription.False();
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     return priceMovement > 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:

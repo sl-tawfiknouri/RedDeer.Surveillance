@@ -38,7 +38,8 @@ var testProjects = new []
 	"src/Utilities.Tests/Utilities.Tests.csproj"  ,
 	"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
 	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
-	"src/DomainV2.Tests/DomainV2.Tests.csproj" 
+	"src/DomainV2.Tests/DomainV2.Tests.csproj",
+	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj" 
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>

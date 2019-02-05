@@ -184,8 +184,8 @@ namespace Surveillance.Rules.WashTrade
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY || at.OrderDirection == OrderDirections.COVER).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL || at.OrderDirection == OrderDirections.SHORT).ToList());
 
             var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault(0) * (bp.OrderAverageFillPrice.GetValueOrDefault().Value));
             var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault(0) * (sp.OrderAverageFillPrice.GetValueOrDefault().Value));
@@ -342,8 +342,8 @@ namespace Surveillance.Rules.WashTrade
                 return true;
             }
 
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL).ToList());
+            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY || at.OrderDirection == OrderDirections.COVER).ToList());
+            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL || at.OrderDirection == OrderDirections.SHORT).ToList());
 
             var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAverageFillPrice.GetValueOrDefault().Value));
             var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAverageFillPrice.GetValueOrDefault().Value));

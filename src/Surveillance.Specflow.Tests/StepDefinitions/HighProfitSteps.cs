@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using DomainV2.Equity.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using RedDeer.Contracts.SurveillanceService.Rules;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
-using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
@@ -41,6 +37,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private readonly ScenarioContext _scenarioContext;
         private HighProfitsRuleParameters _highProfitRuleParameters;
         private UniverseSelectionState _universeSelectionState;
+        private ExchangeRateSelection _exchangeRateSelection;
 
         private ICurrencyConverter _currencyConverter;
         private IUniverseOrderFilter _universeOrderFilter;
@@ -61,39 +58,15 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
-        public HighProfitSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState)
+        public HighProfitSteps(ScenarioContext scenarioContext, UniverseSelectionState universeSelectionState, ExchangeRateSelection exchangeRateSelection)
         {
             _scenarioContext = scenarioContext;
             _universeSelectionState = universeSelectionState;
+            _exchangeRateSelection = exchangeRateSelection;
+        }
 
-            var exchangeRateApiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
-
-            var exchangeRateDto = new ExchangeRateDto
-            {
-                DateTime = new DateTime(2018, 01, 01),
-                Name = "GBX/USD",
-                FixedCurrency = "GBX",
-                VariableCurrency = "USD",
-                Rate = 0.02d
-            };
-
-            var exchangeRateDtoEur = new ExchangeRateDto
-            {
-                DateTime = new DateTime(2018, 01, 01),
-                Name = "GBX/EUR",
-                FixedCurrency = "GBX",
-                VariableCurrency = "EUR",
-                Rate = 0.015d
-            };
-
-
-            A.CallTo(() =>
-                    exchangeRateApiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored))
-                .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>
-                        {
-                            { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto, exchangeRateDtoEur }}
-                        });
-
+        private void Setup()
+        {
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
 
             A
@@ -106,13 +79,23 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     OpenOffsetInUtc = TimeSpan.FromHours(8)
                 });
 
+            A
+                .CallTo(() => _tradingHoursManager.Get("NASDAQ"))
+                .Returns(new TradingHours
+                {
+                    CloseOffsetInUtc = TimeSpan.FromHours(23),
+                    IsValid = true,
+                    Mic = "NASDAQ",
+                    OpenOffsetInUtc = TimeSpan.FromHours(15)
+                });
+
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
             var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
+            _currencyConverter = new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
             _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
@@ -122,7 +105,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
-                new CurrencyConverter(exchangeRateApiRepository, new NullLogger<CurrencyConverter>()),
+                new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverter>()),
                 new NullLogger<CostCalculator>(),
                 new NullLogger<CostCurrencyConvertingCalculator>());
 
@@ -130,7 +113,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 new RevenueCalculatorFactory(
                     _tradingHoursManager,
                     new CurrencyConverter(
-                        exchangeRateApiRepository,
+                        _exchangeRateSelection.ExchangeRateRepository,
                         new NullLogger<CurrencyConverter>()),
                     new NullLogger<RevenueCurrencyConvertingCalculator>(),
                     new NullLogger<RevenueCalculator>());
@@ -180,6 +163,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheHighProfitRule()
         {
             var scheduledExecution = new DomainV2.Scheduling.ScheduledExecution { IsForceRerun = true };
+
+            Setup();
 
             var highProfitRule =
                 _highProfitRuleFactory.Build(

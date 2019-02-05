@@ -1,4 +1,7 @@
-﻿Feature: WashTrade Clustering Sensitive Parameters
+﻿@washtrade
+@washtradeclustering
+@washtradesensitive
+Feature: WashTrade Clustering Sensitive Parameters
 	In order to meet MAR compliance requirements
 	I need to be able to detect when traders are executing trades
 	with no meaningful change of ownership
@@ -10,18 +13,14 @@ Background:
 	| WindowHours | ClusteringPositionMinimumNumberOfTrades | ClusteringPercentageValueDifferenceThreshold | UseClustering |
 	| 1           | 2                                       | 0.03                                         | true          |
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 Scenario: Empty Universe yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 Scenario: One Trade For Vodafone yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -29,9 +28,7 @@ Scenario: One Trade For Vodafone yields no alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 Scenario: One Trade For Barclays yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -39,9 +36,7 @@ Scenario: One Trade For Barclays yields no alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 Scenario: Two Trades In Wash Trade For Different Securities yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -50,9 +45,7 @@ Scenario: Two Trades In Wash Trade For Different Securities yields zero alerts
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | BookedDate | AmendedDate | RejectedDate | CancelledDate | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -63,9 +56,7 @@ Scenario: Three Trades at same price point In Wash Trade yields no alerts
 	Then I will have 0 wash trade alerts
 
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Two trades when min number of trades threshold set to four yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -78,9 +69,7 @@ Scenario: Two trades when min number of trades threshold set to four yields zero
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Four Trade For Barclays when min number of trades threshold set to four yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -95,9 +84,7 @@ Scenario: Four Trade For Barclays when min number of trades threshold set to fou
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @MinimumNumberOfTrades
 Scenario: Ten Trade For Barclays when min number of trades threshold set to four yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -118,9 +105,7 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @percentagevaluedifference
 Scenario: Two trades when inside percentage value difference threshold yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -130,9 +115,7 @@ Scenario: Two trades when inside percentage value difference threshold yields on
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @percentagevaluedifference
 Scenario: Two trades when exactly on percentage value difference threshold yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -142,9 +125,7 @@ Scenario: Two trades when exactly on percentage value difference threshold yield
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @percentagevaluedifference
 Scenario: Two trades when outside percentage value difference threshold yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -156,9 +137,7 @@ Scenario: Two trades when outside percentage value difference threshold yields z
 
 
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @justbuy
 Scenario: Five Trade For Barclays yields zero alerts when just buys
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -171,9 +150,7 @@ Scenario: Five Trade For Barclays yields zero alerts when just buys
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @justsell
 Scenario: Five Trade For Barclays yields zero alerts when just sells
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -186,9 +163,7 @@ Scenario: Five Trade For Barclays yields zero alerts when just sells
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradelosses
 Scenario: Four Trade For Nvidia yields zero alerts with losses due to clustering as two price points
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -200,9 +175,7 @@ Scenario: Four Trade For Nvidia yields zero alerts with losses due to clustering
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradepartialfill
 Scenario: Two Trade For Nvidia with partial fills yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -213,9 +186,7 @@ Scenario: Two Trade For Nvidia with partial fills yields one alerts
 	Then I will have 1 wash trade alerts
 
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradeearlyorder
 Scenario: Two Trade For Nvidia with pre market order times yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -225,9 +196,7 @@ Scenario: Two Trade For Nvidia with pre market order times yields one alerts
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradelateorder
 Scenario: Two Trade For Nvidia with post market order times yields one alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -237,9 +206,7 @@ Scenario: Two Trade For Nvidia with post market order times yields one alerts
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradenextdaysell
 Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -252,9 +219,7 @@ Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtradenextdaysell
 Scenario: Two Trade For Nvidia with next day sell outside window yields zero alerts
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :
@@ -268,9 +233,7 @@ Scenario: Two Trade For Nvidia with next day sell outside window yields zero ale
 	Then I will have 0 wash trade alerts
 
 
-@washtrade
-@washtradeclustering
-@washtradesensitive
+
 @washtrademultiplealerts
 Scenario: Two Trade For Nvidia and two for vodafone yields two alerts
 	Given I have the orders for a universe from 01/01/2018 to 03/01/2018 :
@@ -282,11 +245,8 @@ Scenario: Two Trade For Nvidia and two for vodafone yields two alerts
 	When I run the wash trade rule
 	Then I will have 2 wash trade alerts
 
+	
 
-
-@washtrade
-@washtradeclustering
-@washtradesensitive
 @washtradecurrencies
 Scenario: Two Trade For Nvidia in USD converts to GBX for absolute currency breach
 	Given I have the orders for a universe from 01/01/2018 to 02/01/2018 :

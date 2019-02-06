@@ -9,6 +9,7 @@ using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Markets.Interfaces;
+using Surveillance.Rules;
 
 namespace Surveillance.Markets
 {
@@ -69,8 +70,8 @@ namespace Surveillance.Markets
                 history?.ArchiveExpiredActiveItems(value.Epoch);
             }
         }
-
-        public MarketDataResponse<EquityInstrumentIntraDayTimeBar> Get(MarketDataRequest request)
+        
+        public MarketDataResponse<EquityInstrumentIntraDayTimeBar> GetForLatestDayOnly(MarketDataRequest request)
         {
             if (request == null
                 || !request.IsValid())
@@ -119,8 +120,75 @@ namespace Surveillance.Markets
             }
 
             _logger.LogInformation($"UniverseMarketCache was able to find a match for {request.Identifiers} returning data.");
-            return new MarketDataResponse<EquityInstrumentIntraDayTimeBar>(security, false);
+            return new MarketDataResponse<EquityInstrumentIntraDayTimeBar>(security, false, false);
         }
+
+        public MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>> GetMarketsForRange(
+             MarketDataRequest request,
+             IReadOnlyCollection<DateRange> dates,
+             RuleRunMode runMode)
+        {
+            dates = dates?.Where(dat => dat != null)?.ToList();
+
+            if (dates == null
+                || !dates.Any())
+            {
+                _logger.LogError($"UniverseMarketCache GetMarketsForRange received either a null or invalid request (dates)");
+
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
+            }
+
+            if (request == null
+                || !request.IsValid())
+            {
+                _logger.LogError($"UniverseMarketCache GetMarketsForRange received either a null or invalid request");
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
+            }
+
+            var projectedRequests = dates
+                .Select(i =>
+                    new MarketDataRequest(
+                        null,
+                        request.MarketIdentifierCode,
+                        request.Cfi,
+                        request.Identifiers,
+                        i.Start,
+                        i.End,
+                        request.SystemProcessOperationRuleRunId,
+                        request.IsCompleted))
+                .ToList();
+
+            var responseList = new List<MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>>();
+            foreach (var paramSet in projectedRequests)
+            {
+                responseList.Add(GetMarkets(paramSet));
+            }
+
+            if (!responseList.Any())
+            {
+                _logger.LogInformation($"UniverseMarketCache GetMarketsForRange had missing data for rule run id {request.SystemProcessOperationRuleRunId}");
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
+            }
+
+            if (runMode == RuleRunMode.ValidationRun
+                && responseList.Any(o => o.HadMissingData))
+            {
+                _logger.LogInformation($"UniverseMarketCache GetMarketsForRange was running a validation run and had missing data for rule run id {request.SystemProcessOperationRuleRunId}");
+                return MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>.MissingData();
+            }
+
+            var isMissingData = responseList.Any(o => o.HadMissingData);
+            var responses = responseList.Where(i => i.Response != null).SelectMany(i => i.Response).ToList();
+
+            if (isMissingData)
+            {
+                _logger.LogInformation($"UniverseMarketCache GetMarketsForRange was running and had missing data for rule run id {request.SystemProcessOperationRuleRunId} but is proceeding on a best effort basis");
+            }
+
+            // hide that we're missing data from the consumer
+            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(responses, false, true);
+        }
+
 
         /// <summary>
         /// Assumes that any data implies that the whole data set/range is covered
@@ -162,7 +230,7 @@ namespace Surveillance.Markets
 
             _logger.LogInformation($"UniverseMarketCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
 
-            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false);
+            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(securityDataTicks, false, false);
         }
 
         public object Clone()

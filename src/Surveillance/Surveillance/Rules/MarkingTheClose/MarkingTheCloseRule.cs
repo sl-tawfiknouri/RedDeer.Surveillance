@@ -84,7 +84,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 return;
             }
 
-            var tradingHours = _tradingHoursManager.Get(securities.Peek().Market.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(securities.Peek().Market.MarketIdentifierCode);
 
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
@@ -94,7 +94,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseEquityIntradayCache.Get(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.GetForLatestDayOnly(marketDataRequest);
 
             if (dataResponse.HadMissingData)
             {
@@ -114,6 +114,7 @@ namespace Surveillance.Rules.MarkingTheClose
             VolumeBreach windowVolumeBreach = null;
             if (_parameters.PercentageThresholdWindowVolume != null)
             {
+                // probably wrong with the variant of cache method called
                 windowVolumeBreach = CheckWindowVolumeTraded(securities, tradedSecurity);
             }
 
@@ -181,6 +182,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
+            // marking the close should not have windows exceeding a few hours
             var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
             {

@@ -9,6 +9,7 @@ using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Markets.Interfaces;
+using Surveillance.Rules;
 
 namespace Surveillance.Markets
 {
@@ -117,7 +118,72 @@ namespace Surveillance.Markets
             }
 
             _logger.LogInformation($"UniverseEquityInterDayCache was able to find a match for {request.Identifiers} returning data.");
-            return new MarketDataResponse<EquityInstrumentInterDayTimeBar>(security, false);
+            return new MarketDataResponse<EquityInstrumentInterDayTimeBar>(security, false, false);
+        }
+
+        public MarketDataResponse<List<EquityInstrumentInterDayTimeBar>> GetMarketsForRange(
+            MarketDataRequest request,
+            IReadOnlyCollection<DateRange> dates,
+            RuleRunMode runMode)
+        {
+            dates = dates?.Where(dat => dat != null)?.ToList();
+
+            if (dates == null
+                || !dates.Any())
+            {
+                _logger.LogError($"UniverseEquityInterDayCache GetMarketsForRange received either a null or invalid request (dates)");
+
+                return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
+            }
+
+            if (request == null
+                || !request.IsValid())
+            {
+                _logger.LogError($"UniverseEquityInterDayCache GetMarketsForRange received either a null or invalid request");
+                return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
+            }
+
+            var projectedRequests = dates
+                .Select(i => 
+                    new MarketDataRequest(
+                        null, 
+                        request.MarketIdentifierCode,
+                        request.Cfi,
+                        request.Identifiers,
+                        i.Start,
+                        i.End,
+                        request.SystemProcessOperationRuleRunId,
+                        request.IsCompleted))
+                .ToList();
+
+            var responseList = new List<MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>>();
+            foreach (var paramSet in projectedRequests)
+            {
+                responseList.Add(GetMarkets(paramSet));
+            }
+
+            if (!responseList.Any())
+            {
+                _logger.LogInformation($"UniverseEquityInterDayCache GetMarketsForRange had missing data for rule run id {request.SystemProcessOperationRuleRunId}");
+                return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
+            }
+
+            if (runMode == RuleRunMode.ValidationRun
+                && responseList.Any(o => o.HadMissingData))
+            {
+                _logger.LogInformation($"UniverseEquityInterDayCache GetMarketsForRange was running a validation run and had missing data for rule run id {request.SystemProcessOperationRuleRunId}");
+                return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
+            }
+
+            var isMissingData = responseList.Any(o => o.HadMissingData);
+            var responses = responseList.SelectMany(i => i.Response).ToList();
+
+            if (isMissingData)
+            {
+                _logger.LogInformation($"UniverseEquityInterDayCache GetMarketsForRange was running and had missing data for rule run id {request.SystemProcessOperationRuleRunId} but is proceeding on a best effort basis");
+            }
+
+            return new MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>(responses, isMissingData, true);
         }
 
         /// <summary>
@@ -160,7 +226,7 @@ namespace Surveillance.Markets
 
             _logger.LogInformation($"UniverseEquityInterDayCache GetMarkets was able to find a market history entry for {request.MarketIdentifierCode} and id {request.Identifiers}");
 
-            return new MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>(securityDataTicks, false);
+            return new MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>(securityDataTicks, false, false);
         }
 
         public object Clone()

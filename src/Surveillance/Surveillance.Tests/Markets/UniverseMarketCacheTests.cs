@@ -81,7 +81,7 @@ namespace Surveillance.Tests.Markets
 
             cache.Add(frame);
 
-            var result = cache.Get(marketData).Response;
+            var result = cache.GetForLatestDayOnly(marketData).Response;
 
             Assert.IsNull(result);
             A.CallTo(() => _requestRepository.CreateDataRequest(marketData)).MustHaveHappened();
@@ -143,7 +143,7 @@ namespace Surveillance.Tests.Markets
 
             cache.Add(frame);
 
-            var result = cache.Get(marketData).Response;
+            var result = cache.GetForLatestDayOnly(marketData).Response;
 
             Assert.AreEqual(result, securityTick);
             A.CallTo(() => _requestRepository.CreateDataRequest(marketData)).MustNotHaveHappened();

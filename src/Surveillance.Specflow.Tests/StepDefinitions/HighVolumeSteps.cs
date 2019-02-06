@@ -5,11 +5,13 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
+using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
@@ -66,27 +68,43 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                             { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto }}
                         });
 
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+
+            var repository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
 
             A
-                .CallTo(() => _tradingHoursManager.Get("XLON"))
-                .Returns(new TradingHours
-            {
-                CloseOffsetInUtc = TimeSpan.FromHours(16),
-                IsValid = true,
-                Mic = "XLON",
-                OpenOffsetInUtc = TimeSpan.FromHours(8)
-            });
-
-            A
-                .CallTo(() => _tradingHoursManager.Get("NASDAQ"))
-                .Returns(new TradingHours
+                .CallTo(() => repository.Get()).
+                Returns(new ExchangeDto[]
                 {
-                    CloseOffsetInUtc = TimeSpan.FromHours(23),
-                    IsValid = true,
-                    Mic = "NASDAQ",
-                    OpenOffsetInUtc = TimeSpan.FromHours(15)
+                    new ExchangeDto
+                    {
+                        Code = "XLON",
+                        MarketOpenTime = TimeSpan.FromHours(8),
+                        MarketCloseTime = TimeSpan.FromHours(16),
+                        IsOpenOnMonday = true,
+                        IsOpenOnTuesday = true,
+                        IsOpenOnWednesday = true,
+                        IsOpenOnThursday = true,
+                        IsOpenOnFriday = true,
+                        IsOpenOnSaturday = true,
+                        IsOpenOnSunday = true,
+                    },
+
+                    new ExchangeDto
+                    {
+                        Code = "NASDAQ",
+                        MarketOpenTime = TimeSpan.FromHours(15),
+                        MarketCloseTime = TimeSpan.FromHours(23),
+                        IsOpenOnMonday = true,
+                        IsOpenOnTuesday = true,
+                        IsOpenOnWednesday = true,
+                        IsOpenOnThursday = true,
+                        IsOpenOnFriday = true,
+                        IsOpenOnSaturday = true,
+                        IsOpenOnSunday = true,
+                    }
                 });
+
+            _tradingHoursManager = new MarketTradingHoursManager(repository, new NullLogger<MarketTradingHoursManager>());          
 
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),

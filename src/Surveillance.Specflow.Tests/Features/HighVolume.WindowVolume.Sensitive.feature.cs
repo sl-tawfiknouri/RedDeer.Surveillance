@@ -214,15 +214,15 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Two order one inside and one inside window but next day at window volume yields t" +
-            "wo alert")]
+        [NUnit.Framework.DescriptionAttribute("Two order one inside and one inside window but next day at window volume yields o" +
+            "ne alert")]
         [NUnit.Framework.CategoryAttribute("highvolume")]
         [NUnit.Framework.CategoryAttribute("highvolumewindow")]
         [NUnit.Framework.CategoryAttribute("highvolumewindowsensitive")]
-        public virtual void TwoOrderOneInsideAndOneInsideWindowButNextDayAtWindowVolumeYieldsTwoAlert()
+        public virtual void TwoOrderOneInsideAndOneInsideWindowButNextDayAtWindowVolumeYieldsOneAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order one inside and one inside window but next day at window volume yields t" +
-                    "wo alert", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Two order one inside and one inside window but next day at window volume yields o" +
+                    "ne alert", null, new string[] {
                         "highvolume",
                         "highvolumewindow",
                         "highvolumewindowsensitive"});
@@ -271,7 +271,7 @@ this.FeatureBackground();
                         "50"});
             table386.AddRow(new string[] {
                         "Vodafone",
-                        "0",
+                        "1",
                         "01/02/2018 14:30:00",
                         "01/02/2018 14:30:00",
                         "MARKET",

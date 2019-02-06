@@ -182,7 +182,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.Get(mic);
+            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

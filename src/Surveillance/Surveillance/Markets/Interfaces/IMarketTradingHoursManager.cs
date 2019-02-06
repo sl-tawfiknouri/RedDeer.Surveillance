@@ -1,7 +1,12 @@
-﻿namespace Surveillance.Markets.Interfaces
+﻿using System;
+using System.Collections.Generic;
+using DomainV2.Financial;
+
+namespace Surveillance.Markets.Interfaces
 {
     public interface IMarketTradingHoursManager
     {
-        ITradingHours Get(string marketIdentifierCode);
+        ITradingHours GetTradingHoursForMic(string marketIdentifierCode);
+        IReadOnlyCollection<DateRange> GetTradingDaysWithinRangeAdjustedToTime(DateTime fromUtc, DateTime toUtc, string marketIdentifierCode);
     }
 }

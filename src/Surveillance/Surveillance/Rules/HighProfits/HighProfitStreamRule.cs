@@ -121,7 +121,6 @@ namespace Surveillance.Rules.HighProfits
             var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
-
             var marketCache =
                 MarketClosureRule
                     ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)
@@ -239,7 +238,7 @@ namespace Surveillance.Rules.HighProfits
             {
                 var calculator =
                     MarketClosureRule
-                        ? _revenueCalculatorFactory.RevenueCalculatorMarkingTheClose()
+                        ? _revenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
                         : _revenueCalculatorFactory.RevenueCalculator();
 
                 Logger.LogInformation($"HighProfitStreamRule GetRevenueCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");

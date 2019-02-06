@@ -60,8 +60,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (security == null)
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
-                return new RevenueCurrencyAmount(false, realisedRevenue);
 
+                return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 
             var marketDataRequest = 
@@ -74,8 +74,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (marketDataRequest == null)
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
-                return new RevenueCurrencyAmount(false, null);
 
+                return new RevenueCurrencyAmount(false, null);
             }
 
             var marketDataResult = marketCacheStrategy.Query(marketDataRequest);
@@ -161,7 +161,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.Get(mic);
+            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

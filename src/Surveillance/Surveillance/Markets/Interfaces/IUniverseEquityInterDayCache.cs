@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using DomainV2.Equity.TimeBars;
+using DomainV2.Financial;
 using DomainV2.Markets;
+using Surveillance.Rules;
 
 namespace Surveillance.Markets.Interfaces
 {
@@ -10,5 +12,9 @@ namespace Surveillance.Markets.Interfaces
         void Add(EquityInterDayTimeBarCollection value);
         MarketDataResponse<EquityInstrumentInterDayTimeBar> Get(MarketDataRequest request);
         MarketDataResponse<List<EquityInstrumentInterDayTimeBar>> GetMarkets(MarketDataRequest request);
+        MarketDataResponse<List<EquityInstrumentInterDayTimeBar>> GetMarketsForRange(
+            MarketDataRequest request,
+            IReadOnlyCollection<DateRange> dates,
+            RuleRunMode runMode);
     }
 }

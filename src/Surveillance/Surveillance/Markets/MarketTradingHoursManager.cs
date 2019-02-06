@@ -89,9 +89,51 @@ namespace Surveillance.Markets
                 currentDate = currentDate.AddDays(1);
             }
 
-            var holidayAdjustedDateRange = FilterOutForHolidays(dateRanges, exchange);
+            var filteredAdjustedDateRange = FilterOutForNonTradingDays(dateRanges, exchange);
+            var holidayAdjustedDateRange = FilterOutForHolidays(filteredAdjustedDateRange, exchange);
 
             return holidayAdjustedDateRange;
+        }
+
+        private List<DateRange> FilterOutForNonTradingDays(List<DateRange> dateRanges, ExchangeDto exchange)
+        {
+            if (dateRanges == null
+                || !dateRanges.Any()
+                || exchange == null)
+            {
+                return new List<DateRange>();
+            }
+
+            return dateRanges.Where(i => ExchangeIsOpenOnDayStart(i, exchange)).ToList();
+        }
+
+        private bool ExchangeIsOpenOnDayStart(DateRange range, ExchangeDto exchange)
+        {
+            if (range == null
+                || exchange == null)
+            {
+                return false;
+            }
+
+            switch (range.Start.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    return exchange.IsOpenOnMonday;
+                case DayOfWeek.Tuesday:
+                    return exchange.IsOpenOnTuesday;
+                case DayOfWeek.Wednesday:
+                    return exchange.IsOpenOnWednesday;
+                case DayOfWeek.Thursday:
+                    return exchange.IsOpenOnThursday;
+                case DayOfWeek.Friday:
+                    return exchange.IsOpenOnFriday;
+                case DayOfWeek.Saturday:
+                    return exchange.IsOpenOnSaturday;
+                case DayOfWeek.Sunday:
+                    return exchange.IsOpenOnSunday;
+                default:
+                    return false;
+            }
         }
 
         private List<DateRange> FilterOutForHolidays(List<DateRange> dateRanges, ExchangeDto exchange)

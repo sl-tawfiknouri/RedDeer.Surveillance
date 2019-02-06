@@ -178,14 +178,15 @@ namespace Surveillance.Markets
             }
 
             var isMissingData = responseList.Any(o => o.HadMissingData);
-            var responses = responseList.SelectMany(i => i.Response).ToList();
+            var responses = responseList.Where(i => i.Response != null).SelectMany(i => i.Response).ToList();
 
             if (isMissingData)
             {
                 _logger.LogInformation($"UniverseMarketCache GetMarketsForRange was running and had missing data for rule run id {request.SystemProcessOperationRuleRunId} but is proceeding on a best effort basis");
             }
 
-            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(responses, isMissingData, true);
+            // hide that we're missing data from the consumer
+            return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(responses, false, true);
         }
 
 

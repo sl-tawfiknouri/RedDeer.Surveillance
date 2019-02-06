@@ -36,14 +36,14 @@ Scenario: One order at window volume yields one alert
 @highvolume
 @highvolumewindow
 @highvolumewindowsensitive
-Scenario: Two order one inside and one inside window but next day at window volume yields two alert
+Scenario: Two order one inside and one inside window but next day at window volume yields one alert
 	Given I have the high volume rule parameter values
 	| WindowHours | HighVolumePercentageDaily | HighVolumePercentageWindow | HighVolumePercentageMarketCap |  
 	| 25           |				  		      |	0.01                       | 			     			   |
 	And I have the orders for a universe from 01/01/2018 to 03/01/2018 :
 	| SecurityName | OrderId | PlacedDate          | FilledDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
 	| Vodafone     | 0       | 01/01/2018 15:30:00 | 01/01/2018 15:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 50         |
-	| Vodafone     | 0       | 01/02/2018 14:30:00 | 01/02/2018 14:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 10         |
+	| Vodafone     | 1       | 01/02/2018 14:30:00 | 01/02/2018 14:30:00 | MARKET | BUY       | GBX      |            | 10              | 50          | 10         |
 	And With the intraday market data :
 	| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
 	| Vodafone     | 01/01/2018  09:30:00| 1	  | 20  | 10    | GBX      | 500  |

@@ -255,7 +255,6 @@ namespace Surveillance.Rules.Layering
                     tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
-
             
             var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)

@@ -39,7 +39,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             try
             {
-                var cts = new CancellationTokenSource(1000 * 60 * 30);
+                var cts = new CancellationTokenSource(1000 * 60 * 15);
                 var checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
 
                 while (!checkHeartbeat)
@@ -180,7 +180,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
 
             var hasSuccess = false;
-            var cts = new CancellationTokenSource(1000 * 60 * 30);
+            var cts = new CancellationTokenSource(1000 * 60 * 5);
             var minuteBarResult = BmllStatusMinuteBarResult.InProgress;
 
             while (!hasSuccess && !cts.Token.IsCancellationRequested)

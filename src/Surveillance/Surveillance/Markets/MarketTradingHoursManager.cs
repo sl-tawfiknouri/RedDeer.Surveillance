@@ -52,7 +52,7 @@ namespace Surveillance.Markets
 
             if (fromUtc > toUtc)
             {
-                toUtc = fromUtc;
+                return new DateRange[0];
             }
 
             var offsetTimeSpan = TimeSpan.Zero;
@@ -65,7 +65,18 @@ namespace Surveillance.Markets
                 offsetTimeSpan = fromUtc.TimeOfDay - toUtc.TimeOfDay;
             }
 
+            if (offsetTimeSpan == TimeSpan.Zero)
+            {
+                offsetTimeSpan = TimeSpan.FromDays(1);
+            }
+
             var exchange = GetExchange(marketIdentifierCode);
+
+            if (exchange == null)
+            {
+                return new DateRange[0];
+            }
+
             var currentDate = fromUtc.Date;
 
             var dateRanges = new List<DateRange>();
@@ -78,8 +89,21 @@ namespace Surveillance.Markets
                 currentDate = currentDate.AddDays(1);
             }
 
-            var exchangeHolidays = exchange.Holidays;
+            var holidayAdjustedDateRange = FilterOutForHolidays(dateRanges, exchange);
 
+            return holidayAdjustedDateRange;
+        }
+
+        private List<DateRange> FilterOutForHolidays(List<DateRange> dateRanges, ExchangeDto exchange)
+        {
+            if (dateRanges == null
+                || !dateRanges.Any()
+                || exchange == null)
+            {
+                return new List<DateRange>();
+            }
+
+            var exchangeHolidays = exchange.Holidays ?? new DateTime[0];
             var holidays = exchangeHolidays.Select(y => y.Date).ToList();
             var adjustedHolidays = holidays
                 .Select(y => new DateRange(y.Add(exchange.MarketOpenTime), y.Add(exchange.MarketCloseTime)))
@@ -90,7 +114,7 @@ namespace Surveillance.Markets
                 dateRanges.RemoveAll(x => x.Intersection(hol));
             }
 
-            return null;
+            return dateRanges;
         }
 
         private ExchangeDto GetExchange(string marketIdentifierCode)

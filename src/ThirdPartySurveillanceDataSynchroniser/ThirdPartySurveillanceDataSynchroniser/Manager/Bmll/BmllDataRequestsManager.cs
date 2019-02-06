@@ -45,7 +45,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             foreach (var splitTask in splitTasks)
             {
                 var split = splitTask.Select(ProcessBmllRequests).ToList();
-                Task.WhenAll(split).Wait();
+                Task.WhenAll(split).Wait(TimeSpan.FromMinutes(20));
             }
 
             await RescheduleRuleRun(systemOperationId, bmllRequests);
@@ -69,7 +69,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
                 // REQUEST IT
                 var requests = await _senderManager.Send(bmllRequests, false);
-                var retries = 5;
+                var retries = 3;
 
                 while ((!requests.Success) && retries > 0)
                 {

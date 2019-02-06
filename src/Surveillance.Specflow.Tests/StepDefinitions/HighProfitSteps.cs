@@ -70,7 +70,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
 
             A
-                .CallTo(() => _tradingHoursManager.Get("XLON"))
+                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("XLON"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(16),
@@ -80,7 +80,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 });
 
             A
-                .CallTo(() => _tradingHoursManager.Get("NASDAQ"))
+                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("NASDAQ"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(23),

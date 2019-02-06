@@ -170,7 +170,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
@@ -219,7 +219,7 @@ namespace Surveillance.Rules.HighVolume
 
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
@@ -276,7 +276,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");

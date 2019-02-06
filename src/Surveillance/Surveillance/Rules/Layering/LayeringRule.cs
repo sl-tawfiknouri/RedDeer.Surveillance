@@ -237,7 +237,7 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var tradingHoursManager = _tradingHoursManager.Get(mostRecentTrade.Market.MarketIdentifierCode);
+            var tradingHoursManager = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
 
             if (!tradingHoursManager.IsValid)
             {

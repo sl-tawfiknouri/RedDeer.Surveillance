@@ -84,7 +84,7 @@ namespace Surveillance.Rules.MarkingTheClose
                 return;
             }
 
-            var tradingHours = _tradingHoursManager.Get(securities.Peek().Market.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(securities.Peek().Market.MarketIdentifierCode);
 
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,

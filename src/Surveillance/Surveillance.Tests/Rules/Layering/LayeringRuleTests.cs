@@ -185,7 +185,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.FilledDate = tradeSell.PlacedDate.Value.AddMinutes(1);
 
-            A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
+            A.CallTo(() => _tradingHoursManager.GetTradingHoursForMic(A<string>.Ignored))
                 .Returns(new TradingHours
             {
                 IsValid = true,
@@ -248,7 +248,7 @@ namespace Surveillance.Tests.Rules.Layering
             tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.FilledDate = tradeSell.PlacedDate.Value.AddMinutes(1);
 
-            A.CallTo(() => _tradingHoursManager.Get(A<string>.Ignored))
+            A.CallTo(() => _tradingHoursManager.GetTradingHoursForMic(A<string>.Ignored))
                 .Returns(new TradingHours
                 {
                     IsValid = true,

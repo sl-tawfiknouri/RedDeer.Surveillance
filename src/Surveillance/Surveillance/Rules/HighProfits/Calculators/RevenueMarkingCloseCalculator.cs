@@ -17,7 +17,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
         protected override MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.Get(mic);
+            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

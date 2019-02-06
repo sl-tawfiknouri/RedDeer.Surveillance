@@ -31,7 +31,7 @@ namespace Surveillance.Rules.HighProfits.Calculators.Factories
             return new RevenueCalculator(_tradingHoursManager, _logger);
         }
 
-        public IRevenueCalculator RevenueCalculatorMarkingTheClose()
+        public IRevenueCalculator RevenueCalculatorMarketClosureCalculator()
         {
             return new RevenueMarkingCloseCalculator(_tradingHoursManager, _logger);
         }

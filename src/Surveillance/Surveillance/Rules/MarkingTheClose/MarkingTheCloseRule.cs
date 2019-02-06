@@ -182,6 +182,7 @@ namespace Surveillance.Rules.MarkingTheClose
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
+            // marking the close should not have windows exceeding a few hours
             var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
             {

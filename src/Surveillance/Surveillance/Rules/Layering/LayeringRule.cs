@@ -256,7 +256,8 @@ namespace Surveillance.Rules.Layering
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseEquityIntradayCache.GetForLatestDayOnly(marketRequest);
+            
+            var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
@@ -301,7 +302,13 @@ namespace Surveillance.Rules.Layering
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var securityResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+            var tradingDays =
+                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime,
+                    mostRecentTrade.Market.MarketIdentifierCode);
+
+            var securityResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDays, RunMode);
             if (securityResult.HadMissingData)
             {
                 _logger.LogWarning($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
@@ -361,7 +368,13 @@ namespace Surveillance.Rules.Layering
                     endDate,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketRequest);
+            var tradingDays =
+                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime,
+                    mostRecentTrade.Market.MarketIdentifierCode);
+
+            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDays, RunMode);
 
             if (marketResult.HadMissingData)
             {

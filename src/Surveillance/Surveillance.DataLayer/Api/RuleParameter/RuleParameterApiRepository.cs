@@ -42,7 +42,17 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                 }
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
+
+                RuleParameterDto deserialisedResponse = null;
+                try
+                {
+                    deserialisedResponse = JsonConvert.DeserializeObject<RuleParameterDto>(jsonResponse);
+                }
+                catch (Exception)
+                {
+                    _logger.LogError($"Was not able to desiarialise {nameof(RuleParameterDto)} response: {jsonResponse}");
+                    throw;
+                }
 
                 if (deserialisedResponse == null)
                 {

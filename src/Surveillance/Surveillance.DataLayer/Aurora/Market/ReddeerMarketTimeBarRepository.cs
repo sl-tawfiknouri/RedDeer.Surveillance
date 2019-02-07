@@ -19,7 +19,7 @@ namespace Surveillance.DataLayer.Aurora.Market
         private readonly ILogger<ReddeerMarketTimeBarRepository> _logger;
 
         private const string GetFigiToSecurityIdLookup = @"
-            SELECT DISTINCT Id, Figi FROM FinancialInstruments;";
+            SELECT DISTINCT Id, Figi FROM FinancialInstruments WHERE Figi <> '';";
 
         private const string CreateSql = @"
             INSERT IGNORE INTO InstrumentEquityTimeBars (SecurityId, Epoch, BidPrice, AskPrice, MarketPrice, VolumeTraded, Currency) VALUES(@SecurityId, @Epoch, @BidPrice, @AskPrice, @MarketPrice, @VolumeTraded, @Currency)";
@@ -49,19 +49,21 @@ namespace Surveillance.DataLayer.Aurora.Market
             {
                 _logger?.LogInformation($"ReddeerMarketTimeBarRepository Save method open db connection");
 
-                var lookupFigiToSecurityId = new Dictionary<string, string>();
+                var lookupFigiToSecurityIds = new Dictionary<string, List<string>>();
 
                 _logger?.LogInformation($"ReddeerMarketTimeBarRepository Save method about to build figi to security id look up");
                 using (var conn = dbConnection.QueryAsync<FigiLookup>(GetFigiToSecurityIdLookup))
                 {
                     var lookup = (await conn).ToList();
-                    lookupFigiToSecurityId = lookup.ToDictionary(i => i.Figi, i => i.Id);
+                    lookupFigiToSecurityIds = lookup.GroupBy(i => i.Figi).ToDictionary(y => y.Key, y => y.Select(i => i.Figi).ToList());
+
                     _logger?.LogInformation($"ReddeerMarketTimeBarRepository Save method built figi to security id look up");
                 }
-               
-                var saveBarDtos = barDtos.Select(i => new MinuteBarSaveDto(i, lookupFigiToSecurityId)).ToList();
+
+                var saveBarDtos = MinuteBars(barDtos, lookupFigiToSecurityIds);
                 _logger?.LogInformation(
                     $"ReddeerMarketTimeBarRepository Save method about to save {barDtos?.Count} rows. If there are any duplicate inserts these will be  been discarded.");
+
                 using (var conn = dbConnection.ExecuteAsync(CreateSql, saveBarDtos))
                 {
                     await conn;
@@ -71,7 +73,11 @@ namespace Surveillance.DataLayer.Aurora.Market
             }
             catch (Exception e)
             {
-                _logger?.LogError($"ReddeerMarketTimeBarRepository Save method initiated", e);
+                _logger?.LogError($"ReddeerMarketTimeBarRepository Save method exception {e.Message}", e);
+                if (e.InnerException != null)
+                {
+                    _logger?.LogError($"ReddeerMarketTimeBarRepository Save method exception {e.InnerException?.Message}", e);
+                }
             }
             finally
             {
@@ -82,9 +88,45 @@ namespace Surveillance.DataLayer.Aurora.Market
             _logger?.LogInformation($"ReddeerMarketTimeBarRepository Save method initiated");
         }
 
+        private List<MinuteBarSaveDto> MinuteBars(List<MinuteBarDto> barDtos, Dictionary<string, List<string>> lookupFigis)
+        {
+            if (barDtos == null
+                || !barDtos.Any()
+                || lookupFigis == null
+                || !lookupFigis.Any())
+            {
+                return new List<MinuteBarSaveDto>();
+            }
+
+            var saveBars = new List<MinuteBarSaveDto>();
+            foreach (var bar in barDtos)
+            {
+                var securityIds = new List<string>();
+                if (lookupFigis.ContainsKey(bar.Figi))
+                {
+                    securityIds = lookupFigis[bar.Figi];
+                }
+                else
+                {
+                    _logger?.LogError($"ReddeerMarketTimeBarRepository Save method asked to save a bar with a figi of {bar.Figi} but couldn't find the security lookup!");
+                    continue;
+                }
+
+                var saveBarDtos = securityIds.Select(o => new MinuteBarSaveDto(bar, o)).ToList();
+
+                if (saveBarDtos != null
+                    && saveBarDtos.Any())
+                {
+                    saveBars.AddRange(saveBarDtos);
+                }
+            }
+
+            return saveBars;
+        }
+
         private class MinuteBarSaveDto
         {
-            public MinuteBarSaveDto(MinuteBarDto dto, IDictionary<string, string> lookup)
+            public MinuteBarSaveDto(MinuteBarDto dto, string securityId)
             {
                 if (dto == null)
                 {
@@ -108,15 +150,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 BidPrice = dto.BestBidClosePrice;
                 AskPrice = dto.BestAskClosePrice;
 
-                if (lookup == null)
-                {
-                    return;
-                }
-
-                if (lookup.ContainsKey(dto.Figi))
-                {
-                    SecurityId = lookup[dto.Figi];
-                }
+                SecurityId = securityId;
             }
 
             public string SecurityId { get; set; }

@@ -62,6 +62,13 @@ namespace Surveillance.Rules
 
             var ruleBreachOrderItems = _ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
             await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
+            var hasDuplicates = await _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
+
+            if (hasDuplicates && !ruleBreach.IsBackTestRun)
+            {
+                Logger.LogInformation($"BaseMessageSender was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
+                return;
+            }
 
             var caseMessage = new CaseMessage { RuleBreachId = ruleBreachId.GetValueOrDefault(0) };
 

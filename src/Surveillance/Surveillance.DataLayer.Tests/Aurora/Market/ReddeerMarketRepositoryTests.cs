@@ -9,10 +9,9 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
 {
@@ -35,12 +34,12 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         [Test]
         [Explicit("Performs side effect to the d-b")]
-        public async Task Create()
+        public void Create()
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
-            await repo.Create(Frame());
+            repo.Create(Frame());
 
             Assert.IsTrue(true);
         }
@@ -52,15 +51,15 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new ReddeerMarketRepository(factory, _cfiInstrumentMapper, _logger);
 
-            await repo.Create(Frame());
-            await repo.Create(Frame());
+            repo.Create(Frame());
+            repo.Create(Frame());
 
-            var results = await repo.Get(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
+            var results = await repo.GetEquityIntraday(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow, _opCtx);
 
             Assert.IsTrue(true);
         }
 
-        private MarketTimeBarCollection Frame()
+        private EquityIntraDayTimeBarCollection Frame()
         {
             var stockExchange = new DomainV2.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
@@ -74,9 +73,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                 "USD",
                 "Standard Chartered Bank");
 
-            var securities = new List<FinancialInstrumentTimeBar>
+            var securities = new List<EquityInstrumentIntraDayTimeBar>
             {
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     security,
                     new SpreadTimeBar(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP"), new Volume(1000)),
                     new DailySummaryTimeBar(
@@ -89,7 +88,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     stockExchange)
             };
 
-            return new MarketTimeBarCollection(stockExchange, DateTime.UtcNow, securities);
+            return new EquityIntraDayTimeBarCollection(stockExchange, DateTime.UtcNow, securities);
         }
     }
 }

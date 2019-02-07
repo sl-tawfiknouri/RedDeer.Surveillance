@@ -82,8 +82,8 @@ namespace Surveillance.Universe.OrganisationalFactors
                 return;
             }
 
-            if (value.StateChange != UniverseStateEvent.TradeReddeer
-                && value.StateChange != UniverseStateEvent.TradeReddeerSubmitted)
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
                 _logger.LogInformation($"OrganisationalFactorBroker received an event that was not an order. No brokering to perform. {value.EventTime} of type {value.StateChange}");
 
@@ -235,7 +235,8 @@ namespace Surveillance.Universe.OrganisationalFactors
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(data.OrderFund)
+            if ((string.IsNullOrWhiteSpace(data.OrderFund) 
+                 && string.IsNullOrWhiteSpace(data.OrderClientAccountAttributionId))
                 && !_aggregateNonFactorableIntoOwnCategory)
             {
                 return;
@@ -244,6 +245,12 @@ namespace Surveillance.Universe.OrganisationalFactors
             lock (_accountLock)
             {
                 var orderFund = data.OrderFund;
+
+                if (string.IsNullOrWhiteSpace(orderFund))
+                {
+                    // promote client account attribution ids to fund level
+                    orderFund = data.OrderClientAccountAttributionId ?? string.Empty;
+                }
 
                 if (string.IsNullOrWhiteSpace(orderFund))
                 {

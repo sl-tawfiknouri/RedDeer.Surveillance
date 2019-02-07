@@ -5,6 +5,6 @@ namespace TestHarness.Engine.OrderGenerator.Strategies.Interfaces
 {
     public interface ITradeStrategy<T>
     {
-        void ExecuteTradeStrategy(MarketTimeBarCollection tick, IOrderStream<T> tradeOrders);
+        void ExecuteTradeStrategy(EquityIntraDayTimeBarCollection tick, IOrderStream<T> tradeOrders);
     }
 }

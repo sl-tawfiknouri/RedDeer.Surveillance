@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
@@ -41,7 +40,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(20000));
 
             var tick =
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     security,
                     spread,
                     new DailySummaryTimeBar(
@@ -74,7 +73,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(200000));
 
             var tick =
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     security,
                     spread,
                     new DailySummaryTimeBar(

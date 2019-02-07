@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer.Repositories
+namespace Surveillance.Systems.DataLayer.Repositories
 {
     public class MigrationRepository : IMigrationRepository
     {
@@ -43,11 +43,11 @@ namespace Surveillance.System.DataLayer.Repositories
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
+                _logger.LogTrace($"MigrationRepository GetLatestMigrations about to fetch migration records from the database");
                 using (var conn = dbConnection.ExecuteScalarAsync<int>(HighestMigrationSql))
                 {
                     var highestMigrationExecuted = await conn;
-                    _logger.LogInformation($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
+                    _logger.LogTrace($"MigrationRepository checking migrations found {highestMigrationExecuted} in the database");
 
                     return highestMigrationExecuted;
                 }
@@ -157,7 +157,7 @@ namespace Surveillance.System.DataLayer.Repositories
             foreach (var migration in availableMigrationIds)
             {
                 _logger.LogInformation($"MigrationRepository UpdateMigrations about to run the migration {migration?.ScriptIndex} {migration?.FileName}");
-                await GetScriptAndExecute(migration);
+                GetScriptAndExecute(migration).Wait();
                 _logger.LogInformation($"MigrationRepository UpdateMigrations has ran the migration {migration?.ScriptIndex} {migration?.FileName}");
             }
         }

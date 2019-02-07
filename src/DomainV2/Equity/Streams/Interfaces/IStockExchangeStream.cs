@@ -3,7 +3,7 @@ using DomainV2.Streams;
 
 namespace DomainV2.Equity.Streams.Interfaces
 {
-    public interface IStockExchangeStream : IPublishingStream<MarketTimeBarCollection>
+    public interface IStockExchangeStream : IPublishingStream<EquityIntraDayTimeBarCollection>
     {
     }
 }

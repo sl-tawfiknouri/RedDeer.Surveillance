@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using MathNet.Numerics.Distributions;
@@ -27,7 +26,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             _securityPrices = securityPrices ?? throw new ArgumentNullException(nameof(securityPrices));
         }
 
-        public IReadOnlyCollection<MarketTimeBarCollection> OrderedDailyFrames()
+        public IReadOnlyCollection<EquityIntraDayTimeBarCollection> OrderedDailyFrames()
         {
             var close = _market.MarketCloseTime;
             var open = _market.MarketOpenTime;
@@ -48,7 +47,7 @@ namespace TestHarness.Engine.EquitiesGenerator
                 _securityPrices
                     .SelectMany(sm =>
                         sm.Prices.Select(smp =>
-                            new FinancialInstrumentTimeBar(
+                            new EquityInstrumentIntraDayTimeBar(
                                 new FinancialInstrument(
                                     InstrumentTypes.Equity,
                                     new InstrumentIdentifiers(
@@ -110,7 +109,7 @@ namespace TestHarness.Engine.EquitiesGenerator
             var frames = 
                 initialTicks
                     .Select(it =>
-                        new MarketTimeBarCollection(
+                        new EquityIntraDayTimeBarCollection(
                             new Market(
                                 null,
                                 _market.Code,

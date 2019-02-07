@@ -44,8 +44,8 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(_exchangeTickInitialiser, randomWalkStrategy, _heartbeat, _logger);
-            var stream = new StockExchangeStream(new UnsubscriberFactory<MarketTimeBarCollection>());
-            var observer = new RecordingObserver<MarketTimeBarCollection>(_logger, 10);
+            var stream = new ExchangeStream(new UnsubscriberFactory<EquityIntraDayTimeBarCollection>());
+            var observer = new RecordingObserver<EquityIntraDayTimeBarCollection>(_logger, 10);
             stream.Subscribe(observer);
 
             randomWalk.InitiateWalk(stream);
@@ -60,16 +60,16 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         {
             var randomWalkStrategy = new MarkovEquityStrategy();
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), randomWalkStrategy, _heartbeat, _logger);
-            var stream = new StockExchangeStream(new UnsubscriberFactory<MarketTimeBarCollection>());
-            var observer = new RecordingObserver<MarketTimeBarCollection>(_logger, 5);
+            var stream = new ExchangeStream(new UnsubscriberFactory<EquityIntraDayTimeBarCollection>());
+            var observer = new RecordingObserver<EquityIntraDayTimeBarCollection>(_logger, 5);
             stream.Subscribe(observer);
 
             randomWalk.InitiateWalk(stream);
 
-            var timeOut = DateTime.Now.AddSeconds(5);
+            var timeOut = DateTime.UtcNow.AddSeconds(5);
 
             while (observer.Buffer.Count < 2 
-                && DateTime.Now < timeOut)
+                && DateTime.UtcNow < timeOut)
             {
                 // don't sleep the thread
             }
@@ -84,16 +84,16 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
         public void InitiateWalk_WaitThenTerminateWalk_EnsuresNoMoreTicksTocked()
         {
             var randomWalk = new EquitiesMarkovProcess(new NasdaqInitialiser(), _strategy, _heartbeat, _logger);
-            var stream = new StockExchangeStream(new UnsubscriberFactory<MarketTimeBarCollection>());
-            var observer = new RecordingObserver<MarketTimeBarCollection>(_logger, 5);
+            var stream = new ExchangeStream(new UnsubscriberFactory<EquityIntraDayTimeBarCollection>());
+            var observer = new RecordingObserver<EquityIntraDayTimeBarCollection>(_logger, 5);
             stream.Subscribe(observer);
 
             randomWalk.InitiateWalk(stream);
 
-            var timeOut = DateTime.Now.AddSeconds(5);
+            var timeOut = DateTime.UtcNow.AddSeconds(5);
 
             while (observer.Buffer.Count < 2
-                && DateTime.Now < timeOut)
+                && DateTime.UtcNow < timeOut)
             {
                 // don't sleep the thread
             }
@@ -102,9 +102,9 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator
 
             Assert.AreEqual(observer.Buffer.Count, 2);
 
-            var timerForStragglers = DateTime.Now.AddSeconds(2);
+            var timerForStragglers = DateTime.UtcNow.AddSeconds(2);
 
-            while (DateTime.Now < timerForStragglers)
+            while (DateTime.UtcNow < timerForStragglers)
             {
                 // don't sleep the thread
             }

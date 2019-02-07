@@ -1,6 +1,4 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
-
-namespace Surveillance.Rules.HighVolume.Interfaces
+﻿namespace Surveillance.Rules.HighVolume.Interfaces
 {
     public interface IHighVolumeRuleCachedMessageSender
     {

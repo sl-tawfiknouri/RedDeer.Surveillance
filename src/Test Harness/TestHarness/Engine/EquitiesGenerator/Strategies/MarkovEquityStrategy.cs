@@ -37,7 +37,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             }
         }
 
-        public FinancialInstrumentTimeBar AdvanceFrame(FinancialInstrumentTimeBar tick, DateTime advanceTick, bool walkIntraday)
+        public EquityInstrumentIntraDayTimeBar AdvanceFrame(EquityInstrumentIntraDayTimeBar tick, DateTime advanceTick, bool walkIntraday)
         {
             if (tick == null)
             {
@@ -71,7 +71,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
                 advanceTick);
 
             return
-                new FinancialInstrumentTimeBar(
+                new EquityInstrumentIntraDayTimeBar(
                     tick.Security,
                     newSpread,
                    newDaily,
@@ -81,7 +81,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
         public EquityGenerationStrategies Strategy { get; } = EquityGenerationStrategies.Markov;
 
-        private IntradayPrices BuildIntraday(FinancialInstrumentTimeBar tick, decimal newBuy, string currency)
+        private IntradayPrices BuildIntraday(EquityInstrumentIntraDayTimeBar tick, decimal newBuy, string currency)
         {
             if (tick.DailySummaryTimeBar.IntradayPrices?.High == null
                 || tick.DailySummaryTimeBar.IntradayPrices?.Low == null)
@@ -114,13 +114,13 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return newIntraday;
         }
 
-        private decimal CalculateNewBuyValue(FinancialInstrumentTimeBar tick)
+        private decimal CalculateNewBuyValue(EquityInstrumentIntraDayTimeBar tick)
         {
             var newBuy = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Price.Value, _pricingStandardDeviation);
 
-            if (newBuy < 0.001m)
+            if (newBuy < 0.01m)
             {
-                newBuy = 0.001m;
+                newBuy = 0.01m;
             }
 
             newBuy = Math.Round(newBuy, 2);
@@ -128,7 +128,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return newBuy;
         }
 
-        private decimal CalculateNewSellValue(FinancialInstrumentTimeBar tick, decimal newBuy)
+        private decimal CalculateNewSellValue(EquityInstrumentIntraDayTimeBar tick, decimal newBuy)
         {
             var newSellSample = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Price.Value, _pricingStandardDeviation);
 
@@ -140,7 +140,7 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             return newSell;
         }
 
-        private Volume CalculateNewVolume(FinancialInstrumentTimeBar tick)
+        private Volume CalculateNewVolume(EquityInstrumentIntraDayTimeBar tick)
         {
             var newVolumeSample = (int)Normal.Sample(tick.SpreadTimeBar.Volume.Traded, _tradingStandardDeviation);
             var newVolumeSampleFloor = Math.Max(0, newVolumeSample);

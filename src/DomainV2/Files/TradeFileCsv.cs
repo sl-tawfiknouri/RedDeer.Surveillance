@@ -63,6 +63,7 @@
         public string OrderOrderedVolume { get; set; }
         public string OrderFilledVolume { get; set; }
         public string OrderTraderId { get; set; }
+        public string OrderTraderName { get; set; }
         public string OrderClearingAgent { get; set; }
         public string OrderDealingInstructions { get; set; }
 
@@ -91,6 +92,7 @@
 
         // dealer order
         public string DealerOrderDealerId { get; set; }
+        public string DealerOrderDealerName { get; set; }
         public string DealerOrderNotes { get; set; }
         public string DealerOrderCounterParty { get; set; }
         public string DealerOrderType { get; set; }
@@ -101,7 +103,7 @@
         public string DealerOrderCleanDirty { get; set; }
         public string DealerOrderAccumulatedInterest { get; set; }
 
-        
+
         public string DealerOrderLimitPrice { get; set; }
         public string DealerOrderAverageFillPrice { get; set; }
         public string DealerOrderOrderedVolume { get; set; }

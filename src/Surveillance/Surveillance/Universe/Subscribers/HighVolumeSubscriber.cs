@@ -5,12 +5,13 @@ using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.OrganisationalFactors.Interfaces;
@@ -45,6 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(DomainV2.Scheduling.Rules.HighVolume) ?? true)
@@ -61,7 +63,7 @@ namespace Surveillance.Universe.Subscribers
 
             var highVolumeParameters = _ruleParameterMapper.Map(dtos);
 
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, highVolumeParameters);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
 
             return subscriptions;
         }
@@ -70,6 +72,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IHighVolumeRuleParameters> highVolumeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -80,7 +83,7 @@ namespace Surveillance.Universe.Subscribers
             {
                 foreach (var param in highVolumeParameters)
                 {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
                     var broker =
                         _brokerFactory.Build(
                             paramSubscriptions,
@@ -103,6 +106,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IHighVolumeRuleParameters param)
         {
             var ruleCtx = opCtx
@@ -118,7 +122,7 @@ namespace Surveillance.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream, runMode);
+            var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
 
             if (param.HasFilters())
             {

@@ -1,10 +1,9 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Markets.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators
 {
@@ -18,7 +17,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
 
         protected override MarketDataRequest MarketDataRequest(string mic, InstrumentIdentifiers identifiers, DateTime universeDateTime, ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.Get(mic);
+            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
@@ -32,16 +31,6 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 tradingHours.ClosingInUtcForDay(universeDateTime).Subtract(TimeSpan.FromMinutes(15)),
                 tradingHours.ClosingInUtcForDay(universeDateTime),
                 ctx?.Id());
-        }
-
-        protected override CurrencyAmount? SecurityTickToPrice(FinancialInstrumentTimeBar tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.DailySummaryTimeBar.IntradayPrices.Close ?? tick.SpreadTimeBar.Price;
         }
     }
 }

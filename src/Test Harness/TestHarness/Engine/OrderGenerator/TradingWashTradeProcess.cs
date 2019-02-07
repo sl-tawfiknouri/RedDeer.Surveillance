@@ -32,7 +32,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -80,7 +80,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         }
 
-        private void WashTradeInSecurityWithClustering(string sedol, MarketTimeBarCollection value, int clusterSize)
+        private void WashTradeInSecurityWithClustering(string sedol, EquityIntraDayTimeBarCollection value, int clusterSize)
         {
             if (value == null)
             {
@@ -113,6 +113,7 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "version-1",
                     "version-1",
                     "version-1",
@@ -132,6 +133,7 @@ namespace TestHarness.Engine.OrderGenerator
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
                     (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
+                    null,
                     null,
                     null,
                     null,

@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
 

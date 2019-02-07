@@ -11,8 +11,8 @@ using Surveillance.Configuration;
 using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.DataLayer;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer;
+using Surveillance.Systems.DataLayer.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField
 
 namespace RedDeer.Surveillance.App.Configuration
@@ -47,6 +47,7 @@ namespace RedDeer.Surveillance.App.Configuration
                     CaseMessageQueueName = GetValue("CaseMessageQueueName", configurationBuilder),
                     DataSynchroniserRequestQueueName = GetValue("DataSynchronizerQueueName", configurationBuilder),
                     ClientServiceUrl = GetValue("ClientServiceUrlAndPort", configurationBuilder),
+                    TestRuleRunUpdateQueueName = GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
                     BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder)
@@ -182,7 +183,7 @@ namespace RedDeer.Surveillance.App.Configuration
 
                 return casedAttributes;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _hasFetchedEc2Data = true;
             }

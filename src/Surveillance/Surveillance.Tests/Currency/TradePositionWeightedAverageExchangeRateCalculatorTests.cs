@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Surveillance.Currency;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Trades;
 
@@ -49,9 +49,9 @@ namespace Surveillance.Tests.Currency
             var tradeTwo = (new Order()).Random();
             var tradeThree = (new Order()).Random();
 
-            tradeOne.OrderFilledDate = new DateTime(2017, 01, 01);
-            tradeTwo.OrderFilledDate = new DateTime(2017, 10, 25);
-            tradeThree.OrderFilledDate = new DateTime(2017, 10, 25);
+            tradeOne.FilledDate = new DateTime(2017, 01, 01);
+            tradeTwo.FilledDate = new DateTime(2017, 10, 25);
+            tradeThree.FilledDate = new DateTime(2017, 10, 25);
 
             var position = new TradePosition(new List<Order>
             {

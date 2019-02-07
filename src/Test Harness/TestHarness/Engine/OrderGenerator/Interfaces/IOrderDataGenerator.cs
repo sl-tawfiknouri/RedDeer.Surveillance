@@ -6,7 +6,7 @@ using DomainV2.Trading;
 
 namespace TestHarness.Engine.OrderGenerator.Interfaces
 {
-    public interface IOrderDataGenerator : IObserver<MarketTimeBarCollection>
+    public interface IOrderDataGenerator : IObserver<EquityIntraDayTimeBarCollection>
     {
         void InitiateTrading(IStockExchangeStream stockStream, IOrderStream<Order> tradeStream);
         void TerminateTrading();

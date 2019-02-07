@@ -2,10 +2,10 @@
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.System.DataLayer.Repositories;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer.Tests.Repositories
+namespace Surveillance.Systems.DataLayer.Tests.Repositories
 {
     [TestFixture]
     public class MigrationRepositoryTests
@@ -35,7 +35,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
 
         [Test]
         [Explicit]
-        public async Task Get_LatestAvailable_MigrationValue()
+        public void Get_LatestAvailable_MigrationValue()
         {
             var config = new SystemDataLayerConfig
             {

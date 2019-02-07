@@ -8,10 +8,9 @@ using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Trade
 {
@@ -19,7 +18,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
     public class ReddeerTradeRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
-        private ILogger<ReddeerOrdersRepository> _logger;
+        private ILogger<OrdersRepository> _logger;
         private ISystemProcessOperationContext _opCtx;
         private IReddeerMarketRepository _marketRepository;
 
@@ -27,7 +26,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public void Setup()
         {
             _configuration = TestHelpers.Config();
-            _logger = A.Fake<ILogger<ReddeerOrdersRepository>>();
+            _logger = A.Fake<ILogger<OrdersRepository>>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _marketRepository = A.Fake<IReddeerMarketRepository>();
         }
@@ -37,7 +36,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Create()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
             var frame = Frame();
 
             await repo.Create(frame);
@@ -50,7 +49,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
-            var repo = new ReddeerOrdersRepository(factory, _marketRepository, _logger);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
             var row1 = Frame();
             var row2 = Frame();
             var start = row1.MostRecentDateEvent().Date;
@@ -67,8 +66,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         private Order Frame()
         {
             var exch = new DomainV2.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
-            var orderDates = DateTime.Now;
-            var tradeDates = DateTime.Now;
+            var orderDates = DateTime.UtcNow;
+            var tradeDates = DateTime.UtcNow;
 
             var securityIdentifiers =
                 new InstrumentIdentifiers(
@@ -102,7 +101,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 tradeDates,
                 tradeDates,
                 tradeDates,
+                DateTime.UtcNow,
                 "trader-1",
+                "trader-one",
                 "sum-notes",
                 "counter-party",
                 OrderTypes.MARKET,
@@ -132,7 +133,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 tradeDates,
                 tradeDates, 
                 tradeDates, 
+                DateTime.UtcNow,
                 "trader-2", 
+                "trader-two",
                 "sum-notes",
                 "counter-party",
                 OrderTypes.MARKET,
@@ -157,6 +160,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 exch, 
                 null,
                 "order-1",
+                DateTime.UtcNow,
                 "order-v1",
                 "order-v1-link",
                 "order-group-v1",
@@ -177,6 +181,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 1000, 
                 1000,
                 "trader-1",
+                "trader one",
                 "clearing-agent",
                 "deal asap",
                 null,

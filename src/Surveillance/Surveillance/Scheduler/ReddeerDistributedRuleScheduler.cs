@@ -10,14 +10,14 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 using Utilities.Extensions;
 
 namespace Surveillance.Scheduler
 {
-    public class ReddeerDistributedRuleScheduler : IReddeerDistributedRuleScheduler
+    public class ReddeerDistributedRuleScheduler : BaseScheduler, IReddeerDistributedRuleScheduler
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
@@ -36,6 +36,7 @@ namespace Surveillance.Scheduler
             IRuleParameterApiRepository ruleParameterApiRepository,
             ISystemProcessContext systemProcessContext,
             ILogger<ReddeerDistributedRuleScheduler> logger)
+            : base(logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
@@ -80,22 +81,29 @@ namespace Surveillance.Scheduler
             {
                 var opCtx = _systemProcessContext.CreateAndStartOperationContext();
 
-                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
+                _logger.LogInformation($"ReddeerDistributedRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
 
                 var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 
                 if (execution == null)
                 {
-                    _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                    opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    _logger.LogError($"ReddeerDistributedRuleScheduler was unable to deserialise the message {messageId}");
+                    opCtx.EndEventWithError($"ReddeerDistributedRuleScheduler was unable to deserialise the message {messageId}");
                     return;
                 }
 
                 if (execution?.Rules == null
                     || !execution.Rules.Any())
                 {
-                    _logger.LogError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                    opCtx.EndEventWithError($"ReddeerRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    _logger.LogError($"ReddeerDistributedRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    opCtx.EndEventWithError($"ReddeerDistributedRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    return;
+                }
+
+                var scheduleRule = ValidateScheduleRule(execution);
+                if (!scheduleRule)
+                {
+                    opCtx.EndEventWithError("ReddeerDistributedRuleScheduler did not like the scheduled execution passed through. Check error logs.");
                     return;
                 }
 
@@ -107,14 +115,14 @@ namespace Surveillance.Scheduler
                     .EndEvent()
                     .EndEvent();
 
-                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id} has completed");
+                _logger.LogInformation($"ReddeerDistributedRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id} has completed");
             }
             catch (Exception e)
             {
                 _logger.LogError($"ReddeerDistributedRuleScheduler execute non distributed message encountered a top level exception.", e);
             }
         }
-
+        
         private async Task ScheduleRule(
             ScheduledExecution execution,
             RuleParameterDto parameters,
@@ -155,8 +163,8 @@ namespace Surveillance.Scheduler
                     case DomainV2.Scheduling.Rules.UniverseFilter:
                         break;
                     default:
-                        _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
-                        ruleCtx.EventError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        _logger.LogError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        ruleCtx.EventError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         break;
                 }
             }
@@ -171,7 +179,7 @@ namespace Surveillance.Scheduler
             if (identifiableRules == null
                 || !identifiableRules.Any())
             {
-                _logger.LogWarning($"Scheduled rule execution did not have any identifiable rules for rule {rule.Rule}");
+                _logger.LogWarning($"ReddeerDistributedRuleScheduler did not have any identifiable rules for rule {rule.Rule}");
                 return;
             }
 
@@ -316,7 +324,7 @@ namespace Surveillance.Scheduler
             var serialisedDistributedExecution =
                 _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
 
-            _logger.LogInformation($"Reddeer Smart Rule Scheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
+            _logger.LogInformation($"ReddeerDistributedRuleScheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
 
             _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
             

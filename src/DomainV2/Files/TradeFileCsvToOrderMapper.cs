@@ -49,12 +49,12 @@ namespace DomainV2.Files
         private TradeFileCsv MapTradeFields2(DealerOrder trad, TradeFileCsv csv)
         {
             csv.DealerOrderId = trad.DealerOrderId;
-            csv.DealerOrderPlacedDate = trad.PlacedDate?.ToString();
-            csv.DealerOrderBookedDate = trad.BookedDate?.ToString();
-            csv.DealerOrderAmendedDate = trad.AmendedDate?.ToString();
-            csv.DealerOrderRejectedDate = trad.RejectedDate?.ToString();
-            csv.DealerOrderCancelledDate = trad.CancelledDate?.ToString();
-            csv.DealerOrderFilledDate = trad.FilledDate?.ToString();
+            csv.DealerOrderPlacedDate = trad.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderBookedDate = trad.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderAmendedDate = trad.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderRejectedDate = trad.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderCancelledDate = trad.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.DealerOrderFilledDate = trad.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.DealerOrderDealerId = trad.DealerId;
             csv.DealerOrderCounterParty = trad.DealerCounterParty;
             csv.DealerOrderType = ((int?)trad.OrderType).ToString();
@@ -65,7 +65,7 @@ namespace DomainV2.Files
             csv.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
             csv.DealerOrderFilledVolume = trad.FilledVolume?.ToString();
             csv.DealerOrderOptionStrikePrice = trad.OptionStrikePrice?.ToString();
-            csv.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString();
+            csv.DealerOrderOptionExpirationDate = trad.OptionStrikePrice?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.DealerOrderOptionEuropeanAmerican = ((int?)trad.OptionEuropeanAmerican).ToString();
 
             return csv;
@@ -101,12 +101,12 @@ namespace DomainV2.Files
             csv.InstrumentUnderlyingBloombergTicker = order.Instrument.Identifiers.UnderlyingBloombergTicker;
 
             csv.OrderId = order.OrderId;
-            csv.OrderPlacedDate = order.OrderPlacedDate.ToString();
-            csv.OrderBookedDate = order.OrderBookedDate.ToString();
-            csv.OrderAmendedDate = order.OrderAmendedDate.ToString();
-            csv.OrderRejectedDate = order.OrderRejectedDate.ToString();
-            csv.OrderCancelledDate = order.OrderCancelledDate.ToString();
-            csv.OrderFilledDate = order.OrderFilledDate.ToString();
+            csv.OrderPlacedDate = order.PlacedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderBookedDate = order.BookedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderAmendedDate = order.AmendedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderRejectedDate = order.RejectedDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderCancelledDate = order.CancelledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
+            csv.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             csv.OrderType = ((int?) order.OrderType).ToString();
             csv.OrderDirection = ((int?) order.OrderDirection).ToString();
             csv.OrderCurrency = order.OrderCurrency.Value;
@@ -115,6 +115,7 @@ namespace DomainV2.Files
             csv.OrderOrderedVolume = order.OrderOrderedVolume?.ToString();
             csv.OrderFilledVolume = order.OrderFilledVolume?.ToString();
             csv.OrderTraderId = order.OrderTraderId;
+            csv.OrderTraderName = order.OrderTraderName;
             csv.OrderClearingAgent = order.OrderClearingAgent;
             csv.OrderDealingInstructions = order.OrderDealingInstructions;
 
@@ -162,8 +163,8 @@ namespace DomainV2.Files
             var orderDirection = MapToEnum<OrderDirections>(csv.OrderDirection);
             var orderCurrency = new Currency(csv.OrderCurrency);
             var orderSettlementCurrency =
-                !string.IsNullOrWhiteSpace(csv.OrderCurrency) 
-                    ? (Currency?)new Currency(csv.OrderCurrency) 
+                !string.IsNullOrWhiteSpace(csv.OrderSettlementCurrency) 
+                    ? (Currency?)new Currency(csv.OrderSettlementCurrency) 
                     : null;
 
             var orderCleanDirty = MapToEnum<OrderCleanDirty>(csv.OrderCleanDirty);
@@ -185,6 +186,7 @@ namespace DomainV2.Files
                 market,
                 null,
                 csv.OrderId,
+                DateTime.UtcNow,
                 csv.OrderVersion,
                 csv.OrderVersionLinkId,
                 csv.OrderGroupId,
@@ -205,6 +207,7 @@ namespace DomainV2.Files
                 orderedVolume,
                 filledVolume,
                 csv.OrderTraderId,
+                csv.OrderTraderName,
                 csv.OrderClearingAgent,
                 csv.OrderDealingInstructions,
                 orderOptionStrikePrice,
@@ -254,7 +257,9 @@ namespace DomainV2.Files
                 rejectedDate,
                 cancelledDate,
                 filledDate,
+                DateTime.UtcNow,
                 csv.DealerOrderDealerId,
+                csv.DealerOrderDealerName,
                 csv.DealerOrderNotes,
                 csv.DealerOrderCounterParty,
                 dealerOrderType,

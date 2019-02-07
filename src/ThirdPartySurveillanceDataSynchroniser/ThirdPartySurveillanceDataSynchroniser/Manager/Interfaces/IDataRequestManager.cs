@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces
 {
     public interface IDataRequestManager
     {
-        Task Handle(string ruleRunId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext);
+        Task Handle(string systemProcessOperationId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext);
     }
 }

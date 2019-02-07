@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -53,7 +52,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.BMLL
         {
             var repo = new RuleRunDataRequestRepository(new ConnectionStringFactory(_configuration), _logger);
 
-            var results = await repo.DataRequestsForRuleRun("2");
+            var results = await repo.DataRequestsForSystemOperation("2");
 
             Assert.IsNotNull(results);
         }

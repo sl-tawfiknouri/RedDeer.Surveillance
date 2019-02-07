@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using FakeItEasy;
@@ -27,7 +26,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
         }
 
         [Test]
-        public async Task ProjectToRequestKeys_Returns_Expected_MinuteBarKeys()
+        public void ProjectToRequestKeys_Returns_Expected_MinuteBarKeys()
         {
             var requests = new List<MarketDataRequestDataSource>()
             {
@@ -59,7 +58,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
 
             var senderManager = new BmllDataRequestsSenderManager(_timeBarRepository, _logger);
 
-            var result = await senderManager.ProjectToRequestKeys(requests);
+            var result = senderManager.ProjectToRequestKeys(requests);
 
             Assert.AreEqual(result.Count, 7);
         }

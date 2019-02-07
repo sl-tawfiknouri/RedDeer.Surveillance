@@ -5,6 +5,6 @@ namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {
     public interface IApiDataGenerationInitialiser
     {
-        IReadOnlyCollection<MarketTimeBarCollection> OrderedDailyFrames();
+        IReadOnlyCollection<EquityIntraDayTimeBarCollection> OrderedDailyFrames();
     }
 }

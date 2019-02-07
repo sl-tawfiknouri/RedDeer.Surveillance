@@ -18,7 +18,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
     public class ConfigBuilder
     {
         private IDictionary<string, string> _dynamoConfig;
-        private bool _hasFetchedEc2Data;
 
         private readonly object _lock = new object();
 
@@ -62,6 +61,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportS3UploadQueueName = GetSetting("DataImportS3UploadQueueName", configurationBuilder),
                 DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
                 DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),
+                DataImportAllocationFileUploadDirectoryPath = GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
+                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
                 AutoSchedule = autoSchedule,
             };
 

@@ -7,7 +7,6 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -40,13 +39,13 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                     Figi = "BBG000C6K6G9",
                     ClosePrice = 0m,
                     Currency = "usd",
-                    OpenPriceUsd = 1m,
                     DailyVolume = 2,
-                    Epoch = DateTime.Now.AddDays(1),
+                    Epoch = DateTime.UtcNow.AddDays(1),
                     HighIntradayPrice = 3,
                     LowIntradayPrice = 4,
                     MarketCapitalisationUsd = 5,
-                    OpenPrice = 6
+                    OpenPrice = 6,
+                    MarketCapitalisation = 7,
                 }
             };
 

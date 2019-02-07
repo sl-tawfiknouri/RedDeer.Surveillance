@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Processes;
-using Surveillance.System.DataLayer.Repositories;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Systems.DataLayer.Repositories;
 
-namespace Surveillance.System.DataLayer.Tests.Repositories
+namespace Surveillance.Systems.DataLayer.Tests.Repositories
 {
     [TestFixture]
     public class SystemProcessRepositoryTests
@@ -32,8 +32,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -52,15 +52,15 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
 
             await repo.Create(systemProcess);
 
-            systemProcess.Heartbeat = DateTime.Now.AddMinutes(5);
+            systemProcess.Heartbeat = DateTime.UtcNow.AddMinutes(5);
 
             await repo.Update(systemProcess);
 

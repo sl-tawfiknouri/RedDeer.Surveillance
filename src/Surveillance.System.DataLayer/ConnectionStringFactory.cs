@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 using MySql.Data.MySqlClient;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
 
-namespace Surveillance.System.DataLayer
+namespace Surveillance.Systems.DataLayer
 {
     public class ConnectionStringFactory : IConnectionStringFactory
     {

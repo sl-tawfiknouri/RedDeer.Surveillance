@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -94,12 +94,14 @@ namespace Surveillance.Rules.Layering
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                (mostRecentTrade.OrderDirection == OrderDirections.BUY)
+                (mostRecentTrade.OrderDirection == OrderDirections.BUY 
+                 || mostRecentTrade.OrderDirection == OrderDirections.COVER)
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.SELL
+                (mostRecentTrade.OrderDirection == OrderDirections.SELL
+                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
                     ? buyPosition
                     : sellPosition;
 
@@ -125,9 +127,11 @@ namespace Surveillance.Rules.Layering
             switch (nextTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     buyPosition.Add(nextTrade);
                     break;
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     sellPosition.Add(nextTrade);
                     break;
                 default:
@@ -204,6 +208,8 @@ namespace Surveillance.Rules.Layering
 
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
+                    _ruleCtx.CorrelationId(),
                     _parameters,
                     _parameters.WindowSize,
                     allTrades,
@@ -231,7 +237,7 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var tradingHoursManager = _tradingHoursManager.Get(mostRecentTrade.Market.MarketIdentifierCode);
+            var tradingHoursManager = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
 
             if (!tradingHoursManager.IsValid)
             {
@@ -246,11 +252,11 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHoursManager.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHoursManager.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
-
-            var marketResult = UniverseMarketCache.Get(marketRequest);
+            
+            var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
             {
                 _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
@@ -295,7 +301,13 @@ namespace Surveillance.Rules.Layering
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var securityResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            var tradingDays =
+                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime,
+                    mostRecentTrade.Market.MarketIdentifierCode);
+
+            var securityResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDays, RunMode);
             if (securityResult.HadMissingData)
             {
                 _logger.LogWarning($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
@@ -338,8 +350,8 @@ namespace Surveillance.Rules.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var startDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Min(op => op.OrderPlacedDate).GetValueOrDefault();
-            var endDate = opposingPosition.Get().Where(op => op.OrderPlacedDate != null).Max(op => op.OrderPlacedDate).GetValueOrDefault();
+            var startDate = opposingPosition.Get().Where(op => op.PlacedDate != null).Min(op => op.PlacedDate).GetValueOrDefault();
+            var endDate = opposingPosition.Get().Where(op => op.PlacedDate != null).Max(op => op.PlacedDate).GetValueOrDefault();
 
             if (endDate.Subtract(startDate) < TimeSpan.FromMinutes(1))
             {
@@ -351,11 +363,17 @@ namespace Surveillance.Rules.Layering
                     mostRecentTrade.Market.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    startDate,
+                    startDate.Subtract(WindowSize),
                     endDate,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+            var tradingDays =
+                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                    UniverseDateTime.Subtract(WindowSize),
+                    UniverseDateTime,
+                    mostRecentTrade.Market.MarketIdentifierCode);
+
+            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDays, RunMode);
 
             if (marketResult.HadMissingData)
             {
@@ -365,9 +383,9 @@ namespace Surveillance.Rules.Layering
                 return RuleBreachDescription.False();
             }
             
-            if (mostRecentTrade.OrderPlacedDate > endDate)
+            if (mostRecentTrade.PlacedDate > endDate)
             {
-                endDate = mostRecentTrade.OrderPlacedDate.GetValueOrDefault();
+                endDate = mostRecentTrade.PlacedDate.GetValueOrDefault();
             }
 
             var securityDataTicks = marketResult.Response;
@@ -397,16 +415,18 @@ namespace Surveillance.Rules.Layering
         private RuleBreachDescription BuildDescription(
             Order mostRecentTrade,
             decimal priceMovement,
-            FinancialInstrumentTimeBar startTick,
-            FinancialInstrumentTimeBar endTick)
+            EquityInstrumentIntraDayTimeBar startTick,
+            EquityInstrumentIntraDayTimeBar endTick)
         {
             switch (mostRecentTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     return priceMovement < 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." }
                         : RuleBreachDescription.False();
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     return priceMovement > 0
                         ? new RuleBreachDescription { RuleBreached = true, Description = $" Prices in {mostRecentTrade.Instrument.Name} moved from ({endTick.SpreadTimeBar.Price.Currency}) {endTick.SpreadTimeBar.Price.Value} to ({startTick.SpreadTimeBar.Price.Currency}) {startTick.SpreadTimeBar.Price.Value} for a net change of {startTick.SpreadTimeBar.Price.Currency} {priceMovement} in line with the layering price pressure influence." } : RuleBreachDescription.False();
                 default:
@@ -416,7 +436,7 @@ namespace Surveillance.Rules.Layering
             }
         }
 
-        private FinancialInstrumentTimeBar StartTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime startDate)
+        private EquityInstrumentIntraDayTimeBar StartTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime startDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -424,7 +444,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar startTick;
+            EquityInstrumentIntraDayTimeBar startTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp < startDate))
             {
                 startTick =
@@ -444,7 +464,7 @@ namespace Surveillance.Rules.Layering
             return startTick;
         }
 
-        private FinancialInstrumentTimeBar EndTick(List<FinancialInstrumentTimeBar> securityDataTicks, DateTime endDate)
+        private EquityInstrumentIntraDayTimeBar EndTick(List<EquityInstrumentIntraDayTimeBar> securityDataTicks, DateTime endDate)
         {
             if (securityDataTicks == null
                 || !securityDataTicks.Any())
@@ -452,7 +472,7 @@ namespace Surveillance.Rules.Layering
                 return null;
             }
 
-            FinancialInstrumentTimeBar endTick;
+            EquityInstrumentIntraDayTimeBar endTick;
             if (securityDataTicks.Any(sdt => sdt.TimeStamp > endDate))
             {
                 endTick =

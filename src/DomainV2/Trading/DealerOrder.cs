@@ -5,7 +5,7 @@ using DomainV2.Financial.Interfaces;
 
 namespace DomainV2.Trading
 {
-    public class DealerOrder
+    public class DealerOrder : BaseOrder
     {
         public DealerOrder(
             IFinancialInstrument instrument,
@@ -17,7 +17,9 @@ namespace DomainV2.Trading
             DateTime? rejectedDate,
             DateTime? cancelledDate,
             DateTime? filledDate,
+            DateTime? createdDate,
             string traderId,
+            string dealerName,
             string notes,
             string tradeCounterParty,
             OrderTypes orderType,
@@ -36,19 +38,22 @@ namespace DomainV2.Trading
             decimal? optionStrikePrice,
             DateTime? optionExpirationDate,
             OptionEuropeanAmerican tradeOptionEuropeanAmerican)
+            : base(
+                placedDate,
+                bookedDate,
+                amendedDate,
+                rejectedDate,
+                cancelledDate,
+                filledDate)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             ReddeerDealerOrderId = reddeerTradeId ?? string.Empty;
             DealerOrderId = tradeId ?? string.Empty;
 
-            PlacedDate = placedDate;
-            BookedDate = bookedDate;
-            AmendedDate = amendedDate;
-            RejectedDate = rejectedDate;
-            CancelledDate = cancelledDate;
-            FilledDate = filledDate;
+            CreatedDate = createdDate;
 
             DealerId = traderId ?? string.Empty;
+            DealerName = dealerName ?? string.Empty;
             Notes = notes ?? string.Empty;
             DealerCounterParty = tradeCounterParty ?? string.Empty;
             OrderType = orderType;
@@ -75,14 +80,10 @@ namespace DomainV2.Trading
         public string ReddeerDealerOrderId { get; } // primary key
         public string DealerOrderId { get; } // the client id for the trade
 
-        public DateTime? PlacedDate { get; }
-        public DateTime? BookedDate { get; }
-        public DateTime? AmendedDate { get; }
-        public DateTime? RejectedDate { get; }
-        public DateTime? CancelledDate { get; }
-        public DateTime? FilledDate { get; }
+        public DateTime? CreatedDate { get; }
 
         public string DealerId { get; }
+        public string DealerName { get; }
         public string Notes { get; }
         public string DealerCounterParty { get; }
         public OrderTypes OrderType { get; }
@@ -123,11 +124,11 @@ namespace DomainV2.Trading
             var filteredDates = dates.Where(dat => dat != null).ToList();
             if (!filteredDates.Any())
             {
-                return DateTime.Now;
+                return DateTime.UtcNow;
             }
 
             // placed should never be null i.e. this shouldn't call datetime.now
-            return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.Now;
+            return filteredDates.OrderByDescending(fd => fd).FirstOrDefault() ?? DateTime.UtcNow;
         }
     }
 }

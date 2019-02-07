@@ -2,6 +2,7 @@
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.CancelledOrders
@@ -9,6 +10,8 @@ namespace Surveillance.Rules.CancelledOrders
     public class CancelledOrderRuleBreach : ICancelledOrderRuleBreach
     {
         public CancelledOrderRuleBreach(
+            ISystemProcessOperationContext ctx,
+            string correlationId,
             ICancelledOrderRuleParameters parameters,
             ITradePosition trades,
             FinancialInstrument security,
@@ -29,6 +32,9 @@ namespace Surveillance.Rules.CancelledOrders
             ExceededPercentageTradeCountCancellations = exceededPercentageTradeCountCancellations;
             PercentageTradeCountCancelled = percentageTradeCountCancelled;
             Window = parameters.WindowSize;
+            RuleParameterId = Parameters?.Id ?? string.Empty;
+            SystemOperationId = ctx.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public bool HasBreachedRule()
@@ -49,5 +55,8 @@ namespace Surveillance.Rules.CancelledOrders
         public decimal? PercentageTradeCountCancelled { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

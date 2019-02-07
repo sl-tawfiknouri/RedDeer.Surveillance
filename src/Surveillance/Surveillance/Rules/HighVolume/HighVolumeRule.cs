@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighVolume.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -29,7 +29,7 @@ namespace Surveillance.Rules.HighVolume
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
-        private readonly IDataRequestMessageSender _dataRequestSender;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger _logger;
 
         private bool _hadMissingData = false;
@@ -41,7 +41,7 @@ namespace Surveillance.Rules.HighVolume
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
-            IDataRequestMessageSender dataRequestSender,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
@@ -61,7 +61,7 @@ namespace Surveillance.Rules.HighVolume
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
-            _dataRequestSender = dataRequestSender ?? throw new ArgumentNullException(nameof(dataRequestSender));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -104,6 +104,8 @@ namespace Surveillance.Rules.HighVolume
 
             var breach =
                 new HighVolumeRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
+                    _ruleCtx.CorrelationId(),
                     _parameters.WindowSize, 
                     tradePosition,
                     mostRecentTrade?.Instrument,
@@ -168,7 +170,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
@@ -178,11 +180,11 @@ namespace Surveillance.Rules.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id()); 
 
-            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
@@ -198,7 +200,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -217,26 +219,31 @@ namespace Surveillance.Rules.HighVolume
 
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
+
+            var tradingDates = _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                mostRecentTrade.Market?.MarketIdentifierCode);
 
             var marketRequest =
                 new MarketDataRequest(
                     mostRecentTrade.Market?.MarketIdentifierCode,
                     mostRecentTrade.Instrument.Cfi,
                     mostRecentTrade.Instrument.Identifiers,
-                    tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                    tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                     tradingHours.ClosingInUtcForDay(UniverseDateTime),
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketRequest);
+            var marketResult = UniverseEquityIntradayCache.GetMarketsForRange(marketRequest, tradingDates, RunMode);
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogTrace($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
@@ -254,7 +261,7 @@ namespace Surveillance.Rules.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -274,7 +281,7 @@ namespace Surveillance.Rules.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.Get(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
@@ -284,11 +291,11 @@ namespace Surveillance.Rules.HighVolume
                 mostRecentTrade.Market?.MarketIdentifierCode,
                 mostRecentTrade.Instrument.Cfi,
                 mostRecentTrade.Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var securityResult = UniverseMarketCache.Get(marketDataRequest);
+            var securityResult = UniverseEquityInterdayCache.Get(marketDataRequest);
 
             if (securityResult.HadMissingData)
             {
@@ -305,7 +312,7 @@ namespace Surveillance.Rules.HighVolume
             if (thresholdValue <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogError($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
+                _logger.LogInformation($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -321,8 +328,8 @@ namespace Surveillance.Rules.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, security.SpreadTimeBar.Price.Currency);
-                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, security.SpreadTimeBar.Price.Currency);
+                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
+                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }
@@ -358,8 +365,7 @@ namespace Surveillance.Rules.HighVolume
                 var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
-                var requestTask = _dataRequestSender.Send(_ruleCtx.Id());
-                requestTask.Wait();
+                _dataRequestSubscriber.SubmitRequest();
                 _ruleCtx.EndEvent().EndEventWithMissingDataError();
             }
             else

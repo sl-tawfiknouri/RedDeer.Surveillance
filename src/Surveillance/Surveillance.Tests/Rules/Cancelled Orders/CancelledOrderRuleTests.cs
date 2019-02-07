@@ -14,7 +14,7 @@ using Surveillance.RuleParameters;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.CancelledOrders;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Trades;
 using Surveillance.Universe;
@@ -119,7 +119,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.Now, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
 
             foreach (var order in universeEvents)
@@ -166,7 +166,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.Now, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -205,7 +205,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.Now, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -245,7 +245,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.Now, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -281,7 +281,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
 
             var universeEvents =
                 cancelledOrdersByTradeSize
-                    .Select(x => new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.Now, x));
+                    .Select(x => new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, x));
 
             foreach (var order in universeEvents)
             {
@@ -300,10 +300,10 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
             switch (status)
             {
                 case DomainV2.Financial.OrderStatus.Cancelled:
-                    order.OrderCancelledDate = DateTime.Now;
+                    order.CancelledDate = DateTime.UtcNow;
                     return order;
                 case DomainV2.Financial.OrderStatus.Filled:
-                    order.OrderFilledDate = DateTime.Now;
+                    order.FilledDate = DateTime.UtcNow;
                     return order;
             }
 

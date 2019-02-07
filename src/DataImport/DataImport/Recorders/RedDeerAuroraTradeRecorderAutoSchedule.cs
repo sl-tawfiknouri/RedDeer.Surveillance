@@ -15,7 +15,7 @@ namespace DataImport.Recorders
     public class RedDeerAuroraTradeRecorderAutoSchedule : IRedDeerAuroraTradeRecorderAutoSchedule
     {
         private readonly IEnrichmentService _enrichmentService;
-        private readonly IReddeerOrdersRepository _ordersRepository;
+        private readonly IOrdersRepository _ordersRepository;
         private readonly IScheduleRuleMessageSender _sender;
         private readonly IUploadConfiguration _configuration;
         private readonly ILogger _logger;
@@ -25,7 +25,7 @@ namespace DataImport.Recorders
 
         public RedDeerAuroraTradeRecorderAutoSchedule(
             IEnrichmentService enrichmentService,
-            IReddeerOrdersRepository ordersRepository,
+            IOrdersRepository ordersRepository,
             IScheduleRuleMessageSender sender,
             IUploadConfiguration configuration,
             ILogger<RedDeerAuroraTradeRecorderAutoSchedule> logger)
@@ -91,7 +91,7 @@ namespace DataImport.Recorders
                     var schedule = new ScheduledExecution
                     {
                         Rules = GetAllRules(),
-                        TimeSeriesInitiation = value.OrderPlacedDate.GetValueOrDefault(),
+                        TimeSeriesInitiation = value.PlacedDate.GetValueOrDefault(),
                         TimeSeriesTermination = value.MostRecentDateEvent()
                     };
 
@@ -106,11 +106,11 @@ namespace DataImport.Recorders
 
                 schedulePair.Count += 1;
 
-                if (value.OrderPlacedDate.HasValue && value.OrderPlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
+                if (value.PlacedDate.HasValue && value.PlacedDate.Value < schedulePair.Schedule.TimeSeriesInitiation)
                 {
-                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an older placed date than the current time series initiation. Moving date backward to {value.OrderPlacedDate.Value}.");
+                    _logger.LogInformation($"RedDeerAuroraTradeRecorderAutoSchedule discovered {value.OrderId} had an older placed date than the current time series initiation. Moving date backward to {value.PlacedDate.Value}.");
 
-                    schedulePair.Schedule.TimeSeriesInitiation = value.OrderPlacedDate.Value;
+                    schedulePair.Schedule.TimeSeriesInitiation = value.PlacedDate.Value;
                 }
 
                 if (value.MostRecentDateEvent() > schedulePair.Schedule.TimeSeriesTermination)
@@ -151,7 +151,13 @@ namespace DataImport.Recorders
                     || rule == Rules.CancelledOrders
                     || rule == Rules.Layering
                     || rule == Rules.MarkingTheClose
-                    || rule == Rules.Spoofing)
+                    || rule == Rules.Spoofing
+                    || rule == Rules.FrontRunning
+                    || rule == Rules.PaintingTheTape
+                    || rule == Rules.ImproperMatchedOrders
+                    || rule == Rules.CrossAssetManipulation
+                    || rule == Rules.PumpAndDump
+                    || rule == Rules.TrashAndCash)
                     continue;
 
                 allRulesList.Add(rule);

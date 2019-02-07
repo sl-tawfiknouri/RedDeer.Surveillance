@@ -7,7 +7,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using Utilities.Aws_IO;
@@ -98,7 +98,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
         public async Task Execute_SendsRuleId_ToDataRequestManager()
         {
             var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
-            var messageObj = new ThirdPartyDataRequestMessage { SystemProcessOperationRuleRunId = "123" };
+            var messageObj = new ThirdPartyDataRequestMessage { SystemProcessOperationId = "123" };
             var msg = JsonConvert.SerializeObject(messageObj);
 
             await dataRequestsService.Execute("123", msg);

@@ -18,7 +18,7 @@ namespace TestHarness.Engine.OrderGenerator
         private readonly object _lock = new object();
         private readonly IReadOnlyCollection<string> _highVolumeTargetSedols;
         private bool _hasProcessedHighVolumeBreaches;
-        private readonly IMarketHistoryStack _marketHistoryStack;
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly TimeSpan _executePoint = TimeSpan.FromMinutes(65);
 
         private DateTime? _executeOn;
@@ -34,20 +34,20 @@ namespace TestHarness.Engine.OrderGenerator
                     ?.Where(cts => !string.IsNullOrWhiteSpace(cts))
                     ?.ToList()
                 ?? new List<string>();
-            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(2));
+            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(2));
         }
 
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.Epoch);
+            _intraDayHistoryStack.Add(value, value.Epoch);
 
             if (_executeOn == null)
             {
@@ -72,8 +72,8 @@ namespace TestHarness.Engine.OrderGenerator
                     return;
                 }
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _marketHistoryStack.ActiveMarketHistory();
+                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
 
                 var i = 0;
                 foreach (var sedol in _highVolumeTargetSedols)
@@ -107,7 +107,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
+            Stack<EquityIntraDayTimeBarCollection> frames,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -141,6 +141,7 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,    
                     "order-v1",
                     "order-v1",
                     "order-v1",
@@ -165,6 +166,7 @@ namespace TestHarness.Engine.OrderGenerator
                     null,
                     null,
                     null,
+                    null,
                     OptionEuropeanAmerican.NONE,
                     new DealerOrder[0]);
 
@@ -174,7 +176,7 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateHighVolumeTradesForDailyBreachInSedol(
             string sedol,
-            MarketTimeBarCollection frame,
+            EquityIntraDayTimeBarCollection frame,
             decimal percentageOfTraded)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -205,6 +207,7 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "order-v1",
                     "order-v1",
                     "order-v1",
@@ -224,6 +227,7 @@ namespace TestHarness.Engine.OrderGenerator
                     new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
+                    null,
                     null,
                     null,
                     null,

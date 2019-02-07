@@ -1,4 +1,6 @@
-﻿using DataImport.Disk_IO.EquityFile;
+﻿using DataImport.Disk_IO.AllocationFile;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
+using DataImport.Disk_IO.EquityFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
@@ -19,6 +21,8 @@ using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Equity.TimeBars.Interfaces;
 using DomainV2.Files;
+using DomainV2.Files.AllocationFile;
+using DomainV2.Files.AllocationFile.Interfaces;
 using DomainV2.Files.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
@@ -44,8 +48,9 @@ namespace DataImport
 
             For<IMediator>().Use<Mediator>();
 
+            For(typeof(IOrderAllocationStream<>)).Use(typeof(OrderAllocationStream<>));
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
-            For<IStockExchangeStream>().Use<StockExchangeStream>();
+            For<IStockExchangeStream>().Use<ExchangeStream>();
 
             For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
             For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
@@ -77,6 +82,14 @@ namespace DataImport
             For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
+
+            For<IUploadAllocationFileMonitor>().Use<AllocationFileMonitor>();
+            For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
+            For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
+            For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
+            For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
+            For<IOrderAllocationStreamManager>().Use<OrderAllocationStreamManager>();
+            For<IRedDeerAuroraOrderAllocationRecorder>().Use<RedDeerAuroraOrderAllocationRecorder>();
         }
     }
 }

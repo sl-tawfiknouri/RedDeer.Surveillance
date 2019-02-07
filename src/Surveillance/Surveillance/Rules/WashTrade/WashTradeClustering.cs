@@ -48,8 +48,8 @@ namespace Surveillance.Rules.WashTrade
             {
                 var centroid = clusters.Centroids[labels[grp.First().Key]];
                 var grpFrames = grp.Select(i => i.Value).ToList();
-                var buys = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.BUY).ToList());
-                var sells = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.SELL).ToList());
+                var buys = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.BUY || i.OrderDirection == OrderDirections.COVER).ToList());
+                var sells = new TradePosition(grpFrames.Where(i => i.OrderDirection == OrderDirections.SELL || i.OrderDirection == OrderDirections.SHORT).ToList());
 
                 if (buys.Get().Any() && sells.Get().Any())
                 {

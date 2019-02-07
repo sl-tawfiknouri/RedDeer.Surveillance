@@ -5,12 +5,13 @@ using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.OrganisationalFactors.Interfaces;
@@ -45,6 +46,7 @@ namespace Surveillance.Universe.Subscribers
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
             ISystemProcessOperationContext opCtx,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
             if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(DomainV2.Scheduling.Rules.Spoofing)

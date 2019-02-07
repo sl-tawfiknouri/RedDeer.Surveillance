@@ -12,7 +12,7 @@ using Surveillance.Factories;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.MarketEvents;
@@ -94,12 +94,14 @@ namespace Surveillance.Rules.Spoofing
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
 
             var tradingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.BUY
+               (mostRecentTrade.OrderDirection == OrderDirections.BUY
+                || mostRecentTrade.OrderDirection == OrderDirections.COVER)
                     ? buyPosition
                     : sellPosition;
 
             var opposingPosition =
-                mostRecentTrade.OrderDirection == OrderDirections.SELL
+                (mostRecentTrade.OrderDirection == OrderDirections.SELL
+                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
                     ? buyPosition
                     : sellPosition;
 
@@ -158,9 +160,11 @@ namespace Surveillance.Rules.Spoofing
             switch (nextTrade.OrderDirection)
             {
                 case OrderDirections.BUY:
+                case OrderDirections.COVER:
                     buyPosition.Add(nextTrade);
                     break;
                 case OrderDirections.SELL:
+                case OrderDirections.SHORT:
                     sellPosition.Add(nextTrade);
                     break;
                 default:
@@ -179,11 +183,14 @@ namespace Surveillance.Rules.Spoofing
 
             var ruleBreach =
                 new SpoofingRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
+                    _ruleCtx.CorrelationId(),
                     _parameters.WindowSize,
                     tradingPosition,
                     opposingPosition,
                     mostRecentTrade.Instrument, 
-                    mostRecentTrade);
+                    mostRecentTrade,
+                    _parameters);
 
             var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);

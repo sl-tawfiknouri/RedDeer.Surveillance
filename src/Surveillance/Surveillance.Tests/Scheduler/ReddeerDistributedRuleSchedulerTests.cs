@@ -10,7 +10,7 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Scheduler;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Tests.Scheduler
@@ -223,6 +223,50 @@ namespace Surveillance.Tests.Scheduler
                     Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 01)
+                };
+
+            var messageBody = serialiser.SerialiseScheduledExecution(execution);
+
+            await scheduler.ExecuteNonDistributedMessage("any-id", messageBody);
+
+            A
+                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task Initiate_RuleRunForOneHourOnly_JustRunsRule()
+        {
+            A
+                .CallTo(() => _apiRepository.Get())
+                .Returns(
+                    new RuleParameterDto
+                    {
+                        HighVolumes = new[] { new HighVolumeRuleParameterDto()
+                            {
+                                Id = "abc",
+                                WindowSize = new TimeSpan(0, 5, 0, 0, 0)
+                            }
+                        }
+                    });
+
+            var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
+
+            var scheduler =
+                new ReddeerDistributedRuleScheduler(
+                    _awsClient,
+                    _awsConfiguration,
+                    serialiser,
+                    _apiRepository,
+                    _systemProcessContext,
+                    _logger);
+
+            var execution =
+                new ScheduledExecution
+                {
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    TimeSeriesInitiation = new DateTime(2018, 01, 01, 9, 0, 0),
+                    TimeSeriesTermination = new DateTime(2018, 01, 01, 9, 0, 0)
                 };
 
             var messageBody = serialiser.SerialiseScheduledExecution(execution);

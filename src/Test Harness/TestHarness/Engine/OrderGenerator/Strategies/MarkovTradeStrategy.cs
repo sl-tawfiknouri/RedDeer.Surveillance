@@ -39,7 +39,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 _limitStandardDeviation = limitStandardDeviation.Value;
         }
 
-        public void ExecuteTradeStrategy(MarketTimeBarCollection frame, IOrderStream<Order> tradeOrders)
+        public void ExecuteTradeStrategy(EquityIntraDayTimeBarCollection frame, IOrderStream<Order> tradeOrders)
         {
             if (tradeOrders == null)
             {
@@ -73,7 +73,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
         }
 
         private void GenerateAndSubmitTrades(
-            MarketTimeBarCollection frame,
+            EquityIntraDayTimeBarCollection frame,
             IOrderStream<Order> tradeOrders,
             int numberOfTradeOrders)
         {
@@ -89,7 +89,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             _logger.LogInformation($"Submitted {trades.Count} trade orders in frame");
         }
 
-        private IReadOnlyCollection<int> SecuritiesToTrade(MarketTimeBarCollection frame, int securitiesToTrade)
+        private IReadOnlyCollection<int> SecuritiesToTrade(EquityIntraDayTimeBarCollection frame, int securitiesToTrade)
         {
             var upperLimit = frame.Securities.Count - 1;
             var securitiesToTradeIds = new List<int>();
@@ -101,7 +101,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return securitiesToTradeIds;
         }
 
-        private Order GenerateTrade(FinancialInstrumentTimeBar tick, MarketTimeBarCollection exchFrame)
+        private Order GenerateTrade(EquityInstrumentIntraDayTimeBar tick, EquityIntraDayTimeBarCollection exchFrame)
         {
             if (tick == null)
             {
@@ -111,7 +111,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var direction = CalculateTradeDirection();
             var orderType = CalculateTradeOrderType();
             var limit = CalculateLimit(tick, direction, orderType);
-            var executedPrice = tick.SpreadTimeBar.Price;
+            var executedPrice = CalculateExecutedPrice(tick);
             var volume = CalculateVolume(tick);
             var orderStatus = CalculateOrderStatus();
             var orderStatusLastChanged = tick.TimeStamp.AddMilliseconds(300);
@@ -127,9 +127,10 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 tick.Security,
                 tick.Market,
                 null,
-                "order-v1",
-                "order-v1",
-                "order-group-v1",
+                $"order-{Guid.NewGuid()}",
+                DateTime.UtcNow,
+                "",
+                "",
                 Guid.NewGuid().ToString(),
                 orderSubmittedOn,
                 orderSubmittedOn,
@@ -147,6 +148,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 executedPrice,
                 volume,
                 volume,
+                traderId,
                 traderId,
                 "Clearing-Bank",
                 dealerInstructions,
@@ -186,7 +188,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(FinancialInstrumentTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
+        private CurrencyAmount? CalculateLimit(EquityInstrumentIntraDayTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
@@ -211,11 +213,22 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return null;
         }
 
-        private int CalculateVolume(FinancialInstrumentTimeBar tick)
+        private CurrencyAmount CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
+        {
+            if (tick.SpreadTimeBar.Price.Value >= 0.01m)
+            {
+                return tick.SpreadTimeBar.Price;
+            }
+
+            return new CurrencyAmount(0.01m, tick.SpreadTimeBar.Price.Currency);
+
+        }
+
+        private int CalculateVolume(EquityInstrumentIntraDayTimeBar tick)
         {
             var upperLimit = Math.Max(tick.SpreadTimeBar.Volume.Traded, 1);
             var tradingVolume = (int)Math.Sqrt(upperLimit);
-            var volume = DiscreteUniform.Sample(0, tradingVolume);
+            var volume = DiscreteUniform.Sample(1, tradingVolume);
 
             return volume;
         }

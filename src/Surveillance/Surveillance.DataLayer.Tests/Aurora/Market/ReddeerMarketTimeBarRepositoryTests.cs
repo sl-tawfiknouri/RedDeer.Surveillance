@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
-using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -38,7 +37,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
                 new MinuteBarDto
                 {
                     Figi = "BBG000C6K6G9",
-                    DateTime = DateTime.Now,
+                    DateTime = DateTime.UtcNow,
                     ExecutionVolume = 12345,
                     ExecutionClosePrice = 1,
                     BestBidClosePrice = 2,

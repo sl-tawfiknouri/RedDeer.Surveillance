@@ -53,7 +53,9 @@ namespace Surveillance.DataLayer.Aurora.BMLL
              FROM RuleDataRequest as rdr
              LEFT OUTER JOIN FinancialInstruments as fi
              on rdr.FinancialInstrumentId = fi.Id
-             WHERE rdr.SystemProcessOperationRuleRunId = @ruleRunId;";
+             LEFT OUTER JOIN SystemProcessOperationRuleRun as sporr
+             on sporr.Id = rdr.SystemProcessOperationRuleRunId
+             WHERE sporr.SystemProcessOperationId = @SystemOperationId;";
 
         private const string UpdateDataRequestAndDuplicatesSqlToComplete = @"
                 UPDATE RuleDataRequest SET Completed = 1 WHERE (FinancialInstrumentId = @FinancialInstrumentId AND MarketIdentifierCode = @MarketIdentifierCode AND StartTime = @StartTime AND EndTime = @EndTime) OR Id = @Id;";
@@ -66,7 +68,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForRuleRun(string ruleRunId)
+        public async Task<IReadOnlyCollection<MarketDataRequest>> DataRequestsForSystemOperation(string systemOperationId)
         {
             var dbConnection = _dbConnectionFactory.BuildConn();
 
@@ -74,18 +76,18 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"BmllDataRequestRepository fetching market data requests for rule run {ruleRunId}");
-                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(GetDataRequestSql, new { ruleRunId }))
+                _logger.LogInformation($"BmllDataRequestRepository fetching market data requests for operation {systemOperationId}");
+                using (var conn = dbConnection.QueryAsync<MarketDataRequestDto>(GetDataRequestSql, new { SystemOperationId = systemOperationId }))
                 {
                     var result = (await conn).ToList();
 
                     if (!result.Any())
                     {
-                        _logger.LogWarning($"BmllDataRequestRepository fetched market data requests for rule run {ruleRunId} and found no results");
+                        _logger.LogWarning($"BmllDataRequestRepository fetched market data requests for operation {systemOperationId} and found no results");
                         return new MarketDataRequest[0];
                     }
 
-                    _logger.LogInformation($"BmllDataRequestRepository fetched market data requests for rule run {ruleRunId} and found {result.Count}");
+                    _logger.LogInformation($"BmllDataRequestRepository fetched market data requests for operation {systemOperationId} and found {result.Count}");
 
                     var mappedResults =
                         result
@@ -160,12 +162,12 @@ namespace Surveillance.DataLayer.Aurora.BMLL
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest about to save bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                _logger.LogTrace($"BmllDataRequestRepository CreateDataRequest about to save bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 var dtoRequest = new MarketDataRequestDto(request);
                 using (var conn = dbConnection.ExecuteAsync(CreateDataRequestSql, dtoRequest))
                 {
                     await conn;
-                    _logger.LogInformation($"BmllDataRequestRepository CreateDataRequest has saved bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
+                    _logger.LogTrace($"BmllDataRequestRepository CreateDataRequest has saved bmll request for {request.Identifiers} at {request.UniverseEventTimeFrom} to {request.UniverseEventTimeTo}");
                 }
             }
             catch (Exception e)
@@ -192,7 +194,7 @@ namespace Surveillance.DataLayer.Aurora.BMLL
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"BmllDataRequestRepository checked if there's any market data requests and it was {result} for {ruleRunId}");
+                    _logger.LogTrace($"BmllDataRequestRepository checked if there's any market data requests and it was {result} for {ruleRunId}");
                 }
             }
             catch (Exception e)

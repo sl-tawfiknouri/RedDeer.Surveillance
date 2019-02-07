@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
@@ -9,16 +8,16 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Markets.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules;
 using Surveillance.Rules.HighVolume;
 using Surveillance.Rules.HighVolume.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Tests.Helpers;
 using Surveillance.Trades;
 using Surveillance.Universe;
@@ -39,7 +38,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IMarketTradingHoursManager _tradingHoursManager;
         private IRuleRunDataRequestRepository _dataRequestRepository;
         private IStubRuleRunDataRequestRepository _stubDataRequestRepository;
-        private IDataRequestMessageSender _messageSender;
+        private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<UniverseMarketCacheFactory> _factoryCache;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -57,7 +56,7 @@ namespace Surveillance.Tests.Rules.High_Volume
             _factoryCache = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _factory = new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, _factoryCache);
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
-            _messageSender = A.Fake<IDataRequestMessageSender>();
+            _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
@@ -72,7 +71,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(null, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -80,7 +79,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -88,7 +87,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _messageSender, RuleRunMode.ValidationRun, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, null, _tradingLogger));
         }
 
         [Test]
@@ -123,14 +122,14 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
-            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 10;
-            underlyingTrade.OrderFilledDate = DateTime.UtcNow;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value,
@@ -146,14 +145,14 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value),
                             10000,
                             new Volume(10000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -174,12 +173,12 @@ namespace Surveillance.Tests.Rules.High_Volume
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
             underlyingTrade.OrderFilledVolume = 300;
-            underlyingTrade.OrderPlacedDate = DateTime.UtcNow;
+            underlyingTrade.PlacedDate = DateTime.UtcNow;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar
+                    new EquityInstrumentIntraDayTimeBar
                     (underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value, 
@@ -192,15 +191,15 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value, underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(1000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)
                             ),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -220,13 +219,13 @@ namespace Surveillance.Tests.Rules.High_Volume
 
             var trade = Trade();
             var underlyingTrade = (Order)trade.UnderlyingEvent;
-            underlyingTrade.OrderFilledDate = DateTime.Now;
+            underlyingTrade.FilledDate = DateTime.UtcNow;
             underlyingTrade.OrderFilledVolume = 300;
             var market = new Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
-            var marketData = new MarketTimeBarCollection(market, underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
-                new List<FinancialInstrumentTimeBar>
+            var marketData = new EquityIntraDayTimeBarCollection(market, underlyingTrade.PlacedDate.Value.AddSeconds(-55),
+                new List<EquityInstrumentIntraDayTimeBar>
                 {
-                    new FinancialInstrumentTimeBar(
+                    new EquityInstrumentIntraDayTimeBar(
                         underlyingTrade.Instrument,
                         new SpreadTimeBar(
                             underlyingTrade.OrderAverageFillPrice.Value,
@@ -242,14 +241,14 @@ namespace Surveillance.Tests.Rules.High_Volume
                                 underlyingTrade.OrderAverageFillPrice.Value),
                             1000,
                             new Volume(2000),
-                            underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55)),
-                        underlyingTrade.OrderPlacedDate.Value.AddSeconds(-55),
+                            underlyingTrade.PlacedDate.Value.AddSeconds(-55)),
+                        underlyingTrade.PlacedDate.Value.AddSeconds(-55),
                         market)
                 });
 
             var marketEvent =
                 new UniverseEvent(
-                    UniverseStateEvent.StockTickReddeer,
+                    UniverseStateEvent.EquityIntradayTick,
                     DateTime.UtcNow.AddMinutes(-1),
                     marketData);
 
@@ -269,7 +268,7 @@ namespace Surveillance.Tests.Rules.High_Volume
                 _orderFilter,
                 _factory,
                 _tradingHoursManager,
-                _messageSender,
+                _dataRequestSubscriber,
                 RuleRunMode.ValidationRun,
                 _logger,
                 _tradingLogger);
@@ -278,7 +277,7 @@ namespace Surveillance.Tests.Rules.High_Volume
         private IUniverseEvent Trade()
         {
             var trade = ((Order)null).Random();
-            return new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, trade);
+            return new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, trade);
         }
 
         // ReSharper disable once MemberCanBeMadeStatic.Local

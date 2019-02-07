@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Calculators
 {
@@ -34,7 +33,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
-            IUniverseMarketCache universeMarketCache)
+            IMarketDataCacheStrategy marketCacheStrategy)
         {
             if (activeFulfilledTradeOrders == null
                 || !activeFulfilledTradeOrders.Any())
@@ -61,8 +60,8 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (security == null)
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
-                return new RevenueCurrencyAmount(false, realisedRevenue);
 
+                return new RevenueCurrencyAmount(false, realisedRevenue);
             }
 
             var marketDataRequest = 
@@ -75,21 +74,19 @@ namespace Surveillance.Rules.HighProfits.Calculators
             if (marketDataRequest == null)
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
-                return new RevenueCurrencyAmount(false, null);
 
+                return new RevenueCurrencyAmount(false, null);
             }
 
-            var marketDataResult = universeMarketCache.Get(marketDataRequest);
-            if (marketDataResult.HadMissingData)
+            var marketDataResult = marketCacheStrategy.Query(marketDataRequest);
+            if (marketDataResult.HadMissingData())
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
                 return new RevenueCurrencyAmount(true, null);
-
             }
 
-            var securityTick = marketDataResult.Response;           
-            var virtualRevenue = (SecurityTickToPrice(securityTick)?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, securityTick.SpreadTimeBar.Price.Currency);
+            var virtualRevenue = (marketDataResult.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
+            var currencyAmount = new CurrencyAmount(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Value ?? string.Empty);
 
             if (realisedRevenue == null)
             {
@@ -164,7 +161,7 @@ namespace Surveillance.Rules.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.Get(mic);
+            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");
@@ -178,16 +175,6 @@ namespace Surveillance.Rules.HighProfits.Calculators
                 tradingHours.OpeningInUtcForDay(universeDateTime),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(universeDateTime),
                 ctx?.Id());
-        }
-
-        protected virtual CurrencyAmount? SecurityTickToPrice(FinancialInstrumentTimeBar tick)
-        {
-            if (tick == null)
-            {
-                return null;
-            }
-
-            return tick.SpreadTimeBar.Price;
         }
     }
 }

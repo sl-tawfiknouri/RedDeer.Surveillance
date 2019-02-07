@@ -15,6 +15,7 @@ using Surveillance.Analytics.Subscriber.Factory;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
+using Surveillance.Data.Subscribers;
 using Surveillance.Factories.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Interfaces;
@@ -65,6 +66,9 @@ using Surveillance.Universe.Subscribers.Factories;
 using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.RuleParameters.Manager;
+using Surveillance.RuleParameters.Manager.Interfaces;
 
 namespace Surveillance
 {
@@ -183,6 +187,18 @@ namespace Surveillance
             For<IUniversePercentageOfTimeCompletionLoggerFactory>().Use<UniversePercentageOfTimeCompletionLoggerFactory>();
             For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
             For<IUniverseOrderFilter>().Use<UniverseOrderFilter>();
+
+            For<IRuleRunUpdateMessageSender>().Use<RuleRunUpdateMessageSender>();
+            For<IRuleParameterDtoIdExtractor>().Use<RuleParameterDtoIdExtractor>();
+            For<IUniverseEquityInterDayCache>().Use<UniverseEquityInterDayCache>();
+
+            For<IOrdersToAllocatedOrdersProjector>().Use<OrdersToAllocatedOrdersProjector>();
+            For<IUniverseDataRequestsSubscriber>().Use<UniverseDataRequestsSubscriber>();
+            For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
+
+            For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
+            For<IRuleParameterManager>().Use<RuleParameterManager>();
+            For<IRuleParameterLeadingTimespanCalculator>().Use<RuleParameterLeadingTimespanCalculator>();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
-using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.Auditing.Context.Interfaces
+namespace Surveillance.Systems.Auditing.Context.Interfaces
 {
     public interface ISystemProcessOperationRunRuleContext
     {
@@ -10,5 +10,7 @@ namespace Surveillance.System.Auditing.Context.Interfaces
         void EventException(string message);
         void EventException(Exception e);
         string Id();
+        string CorrelationId();
+        ISystemProcessOperationContext SystemProcessOperationContext();
     }
 }

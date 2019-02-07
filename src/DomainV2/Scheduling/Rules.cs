@@ -5,7 +5,7 @@ namespace DomainV2.Scheduling
     public enum Rules
     {
         [Description("Spoofing")]
-        Spoofing,
+        Spoofing = 0,
         [Description("Cancelled Orders")]
         CancelledOrders,
         [Description("High Profits")]
@@ -20,5 +20,17 @@ namespace DomainV2.Scheduling
         WashTrade,
         [Description("Universe Filter")]
         UniverseFilter,
+        [Description("Front Running")]
+        FrontRunning,
+        [Description("Painting The Tape")]
+        PaintingTheTape,
+        [Description("Improper Matched Orders")]
+        ImproperMatchedOrders,
+        [Description("Cross Asset Manipulation")]
+        CrossAssetManipulation,
+        [Description("Pump And Dump")]
+        PumpAndDump,
+        [Description("Trash And Cash")]
+        TrashAndCash
     }
 }

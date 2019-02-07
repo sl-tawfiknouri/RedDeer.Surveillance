@@ -2,6 +2,7 @@
 using DomainV2.Financial;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.Layering.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.Layering
@@ -9,6 +10,8 @@ namespace Surveillance.Rules.Layering
     public class LayeringRuleBreach : ILayeringRuleBreach
     {
         public LayeringRuleBreach(
+            ISystemProcessOperationContext operationContext,
+            string correlationId,
             ILayeringRuleParameters parameters,
             TimeSpan window,
             ITradePosition trades,
@@ -26,6 +29,9 @@ namespace Surveillance.Rules.Layering
             DailyVolumeTradeBreach = dailyVolumeTradeBreach;
             WindowVolumeTradeBreach = windowVolumeTradeBreach;
             PriceMovementBreach = priceMovementBreach;
+            RuleParameterId = parameters?.Id ?? string.Empty;
+            SystemOperationId = operationContext.Id.ToString();
+            CorrelationId = correlationId;
         }
 
         public ILayeringRuleParameters Parameters { get; }
@@ -39,5 +45,8 @@ namespace Surveillance.Rules.Layering
         public RuleBreachDescription PriceMovementBreach { get; }
 
         public bool IsBackTestRun { get; set; }
+        public string RuleParameterId { get; set; }
+        public string SystemOperationId { get; set; }
+        public string CorrelationId { get; set; }
     }
 }

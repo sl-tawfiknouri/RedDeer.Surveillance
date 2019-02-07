@@ -6,8 +6,8 @@ using DataImport.Disk_IO.EquityFile.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.System.DataLayer.Processes;
+using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Systems.DataLayer.Processes;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.EquityFile
@@ -90,7 +90,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void SuccessfulReads(
             string path,
-            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, EquityIntraDayTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var orderedSuccessfulReads = csvReadResults.SuccessfulReads.OrderBy(sr => sr.Epoch).ToList();
@@ -114,7 +114,7 @@ namespace DataImport.Disk_IO.EquityFile
 
         private void FailedReads(
             string path,
-            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, MarketTimeBarCollection> csvReadResults,
+            UploadFileProcessorResult<FinancialInstrumentTimeBarCsv, EquityIntraDayTimeBarCollection> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);

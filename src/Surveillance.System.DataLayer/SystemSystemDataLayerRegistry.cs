@@ -1,9 +1,9 @@
 ﻿using StructureMap;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Repositories;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer
+namespace Surveillance.Systems.DataLayer
 {
     public class SystemSystemDataLayerRegistry : Registry
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Surveillance.System.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.System.DataLayer.Processes
+namespace Surveillance.Systems.DataLayer.Processes
 {
     /// <summary>
     /// Tracks side effects

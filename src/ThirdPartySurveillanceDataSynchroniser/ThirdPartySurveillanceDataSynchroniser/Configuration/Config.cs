@@ -1,5 +1,5 @@
 ﻿using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Configuration
@@ -10,6 +10,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Configuration
         public string ScheduledRuleQueueName { get; set; }
         public string CaseMessageQueueName { get; set; }
         public string ScheduleRuleDistributedWorkQueueName { get; set; }
+        public string TestRuleRunUpdateQueueName { get; set; }
         public string AuroraConnectionString { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
 

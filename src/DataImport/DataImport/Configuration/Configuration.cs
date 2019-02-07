@@ -1,5 +1,5 @@
 ﻿using DataImport.Configuration.Interfaces;
-using Surveillance.System.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
 
 namespace DataImport.Configuration
 {
@@ -13,6 +13,10 @@ namespace DataImport.Configuration
 
         public string DataImportEquityFileUploadDirectoryPath { get; set; }
         public string DataImportS3UploadQueueName { get; set; }
+
+        public string DataImportAllocationFileUploadDirectoryPath { get; set; }
+        public string DataImportAllocationFileFtpDirectoryPath { get; set; }
+
         public bool AutoSchedule { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
     

@@ -29,7 +29,7 @@ namespace DataImport.Recorders
             _logger.LogError($"RedDeerAuroraStockExchangeRecorder {error.Message}");
         }
 
-        public void OnNext(MarketTimeBarCollection value)
+        public void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -42,7 +42,7 @@ namespace DataImport.Recorders
                 lock (_lock)
                 {
                     _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.Epoch} {value.Exchange?.MarketIdentifierCode} Passing market data to repository");
-                    _repository.Create(value).Wait();
+                    _repository.Create(value);
                     _logger.LogInformation($"RedDeerAuroraStockExchangeRecorder {value.Epoch} {value.Exchange?.MarketIdentifierCode} Completed passing market data to repository");
                 }
             }

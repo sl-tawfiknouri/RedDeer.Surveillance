@@ -27,18 +27,32 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task Submit(string systemOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             if (bmllRequests == null
                 || !bmllRequests.Any()
                 || bmllRequests.All(a => a.DataRequest?.IsCompleted ?? false))
             {
-                await RescheduleRuleRun(ruleRunId, bmllRequests);
+                await RescheduleRuleRun(systemOperationId, bmllRequests);
                 return;
             }
 
             bmllRequests = bmllRequests.Where(req => !req.DataRequest?.IsCompleted ?? false).ToList();
 
+            var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
+            var splitTasks = SplitList(splitLists, 4);
+
+            foreach (var splitTask in splitTasks)
+            {
+                var split = splitTask.Select(ProcessBmllRequests).ToList();
+                Task.WhenAll(split).Wait(TimeSpan.FromMinutes(20));
+            }
+
+            await RescheduleRuleRun(systemOperationId, bmllRequests);
+        }
+
+        private async Task ProcessBmllRequests(List<MarketDataRequestDataSource> bmllRequests)
+        {
             try
             {
                 _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
@@ -54,25 +68,34 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 }
 
                 // REQUEST IT
-                var requests = await _senderManager.Send(bmllRequests);
+                var requests = await _senderManager.Send(bmllRequests, false);
+                var retries = 3;
+
+                while ((!requests.Success) && retries > 0)
+                {
+                    _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
+
+                    var forceCompletion = retries == 1;
+                    requests = await _senderManager.Send(bmllRequests, forceCompletion);
+
+                    retries -= 1;
+                }
 
                 // STORE IT
-                await _storageManager.Store(requests);
+                await _storageManager.Store(requests.Value);
             }
             catch (Exception e)
             {
                 _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
             }
-
-            await RescheduleRuleRun(ruleRunId, bmllRequests);
         }
 
-        private async Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             try
             {
                 // RESCHEDULE IT
-                await _rescheduleManager.RescheduleRuleRun(ruleRunId, bmllRequests);
+                await _rescheduleManager.RescheduleRuleRun(systemProcessOperationId, bmllRequests);
 
                 _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
             }
@@ -106,6 +129,27 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
                 To = request.DataRequest.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
                 Interval = "1min",
             };
+        }
+
+        public static List<List<T>> SplitList<T>(List<T> bmllRequests, int splitSize)
+        {
+            if (bmllRequests == null
+                || !bmllRequests.Any())
+            {
+                return new List<List<T>>();
+            }
+
+            var result = new List<List<T>>();
+
+            var totalIterations = (bmllRequests.Count / splitSize) + 1;
+
+            for (var x = 1; x <= totalIterations; x++)
+            {
+                var slice = bmllRequests.Skip((x - 1) * splitSize).Take(splitSize).ToList();
+                result.Add(slice);
+            }
+
+            return result;
         }
     }
 }

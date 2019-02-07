@@ -7,8 +7,8 @@ using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.System.DataLayer.Processes.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
@@ -41,30 +41,22 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RescheduleRuleRun(string ruleRunId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
         {
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager beginning process");
 
-            if (string.IsNullOrWhiteSpace(ruleRunId))
+            if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
                 _logger.LogError($"BmllDataRequestsRescheduleManager had a null or empty rule run id. Returning");
                 return;
             }
 
-            var ruleRunIds = RescheduleRuleRunIds(bmllRequests);
-
-            if (!ruleRunIds.Any())
+            var rulesToReschedule = await _ruleRunRepository.Get(new[] {systemProcessOperationId});
+            var filteredRescheduledRules = rulesToReschedule.GroupBy(i => i.RuleParameterId?.ToLower()).Select(x => x.FirstOrDefault()).ToList();
+            
+            foreach (var rule in filteredRescheduledRules)
             {
-                _logger?.LogWarning(
-                    $"BmllDataRequestsRescheduleManager completing process did not find any rule run ids");
-                return;
-            }
-
-            var rulesToReschedule = await _ruleRunRepository.Get(new[] {ruleRunId});
-
-            foreach (var rule in rulesToReschedule)
-            {
-                await RescheduleRuleRun(rule);
+                RescheduleRuleRun(rule);
             }
 
             var req = bmllRequests?.Select(bm => bm.DataRequest).ToList();
@@ -73,25 +65,7 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
         }
 
-        private IReadOnlyCollection<string> RescheduleRuleRunIds(List<MarketDataRequestDataSource> marketData)
-        {
-            if (marketData == null
-                || !marketData.Any())
-            {
-                return new string[0];
-            }
-
-            var ids =
-                marketData
-                    .GroupBy(i => i.DataRequest?.SystemProcessOperationRuleRunId)
-                    .Select(x => x.Key)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .ToList();
-
-            return ids;
-        }
-
-        private async Task RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
+        private void RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
         {
             if (ruleRun == null
                 // ReSharper disable once MergeSequentialChecks
@@ -126,7 +100,14 @@ namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
 
             _logger?.LogWarning($"BmllDataRequestsRescheduleManager about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-            await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
+            var sendToQueue = _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
+
+            sendToQueue.Wait(TimeSpan.FromMinutes(30));
+
+            if (sendToQueue.IsCanceled)
+            {
+                _logger?.LogError($"BmllDataRequestsRescheduleManager timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            }
 
             _logger?.LogWarning($"BmllDataRequestsRescheduleManager completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
         }

@@ -10,10 +10,9 @@ using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
 using Surveillance.Markets.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -85,17 +84,17 @@ namespace Surveillance.Rules.MarkingTheClose
                 return;
             }
 
-            var tradingHours = _tradingHoursManager.Get(securities.Peek().Market.MarketIdentifierCode);
+            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(securities.Peek().Market.MarketIdentifierCode);
 
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime),
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
                 _ruleCtx?.Id());
 
-            var dataResponse = UniverseMarketCache.Get(marketDataRequest);
+            var dataResponse = UniverseEquityIntradayCache.GetForLatestDayOnly(marketDataRequest);
 
             if (dataResponse.HadMissingData)
             {
@@ -115,6 +114,7 @@ namespace Surveillance.Rules.MarkingTheClose
             VolumeBreach windowVolumeBreach = null;
             if (_parameters.PercentageThresholdWindowVolume != null)
             {
+                // probably wrong with the variant of cache method called
                 windowVolumeBreach = CheckWindowVolumeTraded(securities, tradedSecurity);
             }
 
@@ -127,6 +127,8 @@ namespace Surveillance.Rules.MarkingTheClose
 
             var position = new TradePosition(securities.ToList());
             var breach = new MarkingTheCloseBreach(
+                _ruleCtx.SystemProcessOperationContext(),
+                _ruleCtx.CorrelationId(),
                 _parameters.Window,
                 tradedSecurity.Security,
                 _latestMarketClosure,
@@ -147,7 +149,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckDailyVolumeTraded(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity)
+            EquityInstrumentIntraDayTimeBar tradedSecurity)
         {
             var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
@@ -169,7 +171,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CheckWindowVolumeTraded(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity)
+            EquityInstrumentIntraDayTimeBar tradedSecurity)
         {
             var marketDataRequest =
                 new MarketDataRequest(
@@ -180,7 +182,8 @@ namespace Surveillance.Rules.MarkingTheClose
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
-            var marketResult = UniverseMarketCache.GetMarkets(marketDataRequest);
+            // marking the close should not have windows exceeding a few hours
+            var marketResult = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
             if (marketResult.HadMissingData)
             {
                 _hadMissingData = true;
@@ -209,7 +212,7 @@ namespace Surveillance.Rules.MarkingTheClose
 
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
-            FinancialInstrumentTimeBar tradedSecurity,
+            EquityInstrumentIntraDayTimeBar tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
         {
@@ -224,14 +227,14 @@ namespace Surveillance.Rules.MarkingTheClose
                 securities
                     .Where(sec => 
                         sec.OrderDirection == OrderDirections.BUY
-                        || sec.OrderDirection == OrderDirections.SHORT)
+                        || sec.OrderDirection == OrderDirections.COVER)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var volumeTradedSell =
                 securities
                     .Where(sec => 
                         sec.OrderDirection == OrderDirections.SELL
-                        || sec.OrderDirection == OrderDirections.COVER)
+                        || sec.OrderDirection == OrderDirections.SHORT)
                     .Sum(sec => sec.OrderFilledVolume.GetValueOrDefault(0));
 
             var hasBuyDailyVolumeBreach = volumeTradedBuy >= thresholdVolumeTraded;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainV2.Equity.TimeBars;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Market.Interfaces
 {
@@ -11,8 +11,14 @@ namespace Surveillance.DataLayer.Aurora.Market.Interfaces
     {
         Task<IReadOnlyCollection<SecurityEnrichmentDto>> GetUnEnrichedSecurities();
         Task UpdateUnEnrichedSecurities(IReadOnlyCollection<SecurityEnrichmentDto> dtos);
-        Task Create(MarketTimeBarCollection entity);
-        Task<IReadOnlyCollection<MarketTimeBarCollection>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
+        void Create(EquityIntraDayTimeBarCollection entity);
+        Task<IReadOnlyCollection<EquityIntraDayTimeBarCollection>> GetEquityIntraday(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
+
+        Task<IReadOnlyCollection<EquityInterDayTimeBarCollection>> GetEquityInterDay(
+            DateTime start,
+            DateTime end,
+            ISystemProcessOperationContext opCtx);
+
         Task<ReddeerMarketRepository.MarketSecurityIds> CreateAndOrGetSecurityId(MarketDataPair pair);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Surveillance.System.Auditing.Context.Interfaces;
-using Surveillance.Trades.Interfaces;
+﻿using Surveillance.Trades.Interfaces;
 
 namespace Surveillance.Rules.HighProfits.Interfaces
 {

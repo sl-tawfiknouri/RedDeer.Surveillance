@@ -69,6 +69,23 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\25 - Add rule breach table.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\24 - Add trader name to order dealer order.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <None Update="Migrations\22 - Add two fields to orders tbl.sql">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <None Update="Migrations\23 - Unique constraint for client order id.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Migrations\21 - Add account allocation tbl.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\20 - Update Order DealerOrder tbls.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

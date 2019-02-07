@@ -14,7 +14,7 @@ namespace TestHarness.Engine.OrderGenerator
     public class TradingLayeringProcess : BaseTradingProcess
     {
         private readonly object _lock = new object();
-        private readonly IMarketHistoryStack _marketHistoryStack;
+        private readonly IIntraDayHistoryStack _intraDayHistoryStack;
         private readonly IReadOnlyCollection<DataGenerationPlan> _plan;
 
         public TradingLayeringProcess(
@@ -23,14 +23,14 @@ namespace TestHarness.Engine.OrderGenerator
             ILogger logger)
             : base(logger, orderStrategy)
         {
-            _marketHistoryStack = new MarketHistoryStack(TimeSpan.FromHours(1));
+            _intraDayHistoryStack = new IntraDayHistoryStack(TimeSpan.FromHours(1));
             _plan = plan ?? new DataGenerationPlan[0];
         }
 
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -42,7 +42,7 @@ namespace TestHarness.Engine.OrderGenerator
                 return;
             }
 
-            _marketHistoryStack.Add(value, value.Epoch);
+            _intraDayHistoryStack.Add(value, value.Epoch);
 
             var plan = PlanInDateRange(value);
             if (plan == null)
@@ -53,8 +53,8 @@ namespace TestHarness.Engine.OrderGenerator
             lock (_lock)
             {
 
-                _marketHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
-                var activeItems = _marketHistoryStack.ActiveMarketHistory();
+                _intraDayHistoryStack.ArchiveExpiredActiveItems(value.Epoch);
+                var activeItems = _intraDayHistoryStack.ActiveMarketHistory();
 
                 if (plan.EquityInstructions.TerminationInUtc == value.Epoch)
                 {
@@ -68,7 +68,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private DataGenerationPlan PlanInDateRange(MarketTimeBarCollection value)
+        private DataGenerationPlan PlanInDateRange(EquityIntraDayTimeBarCollection value)
         {
             if (!_plan?.Any() ?? true)
             {
@@ -94,8 +94,8 @@ namespace TestHarness.Engine.OrderGenerator
 
         private void CreateLayeringTradesForWindowBreachInSedol(
             string sedol,
-            Stack<MarketTimeBarCollection> frames,
-            MarketTimeBarCollection latestFrame,
+            Stack<EquityIntraDayTimeBarCollection> frames,
+            EquityIntraDayTimeBarCollection latestFrame,
             bool realisedTrade)
         {
             if (string.IsNullOrWhiteSpace(sedol))
@@ -138,6 +138,7 @@ namespace TestHarness.Engine.OrderGenerator
                 headSecurity.Market,
                 null,
                 Guid.NewGuid().ToString(),
+                DateTime.UtcNow,
                 "version-1",
                 "version-1",
                 "version-1",
@@ -157,6 +158,7 @@ namespace TestHarness.Engine.OrderGenerator
                 headSecurity.SpreadTimeBar.Price,
                 realisedTrade ? (int) tradedVolume : 0,
                 realisedTrade ? (int) tradedVolume : 0,
+                null,
                 null,
                 null,
                 null,

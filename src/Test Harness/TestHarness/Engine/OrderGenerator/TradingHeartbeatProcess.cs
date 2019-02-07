@@ -12,7 +12,7 @@ namespace TestHarness.Engine.OrderGenerator
     /// </summary>
     public class TradingHeartBeatDrivenProcess : BaseTradingProcess
     {
-        private MarketTimeBarCollection _lastFrame;
+        private EquityIntraDayTimeBarCollection _lastFrame;
         private readonly IHeartbeat _heartbeat;
 
         private volatile bool _initiated;
@@ -27,7 +27,7 @@ namespace TestHarness.Engine.OrderGenerator
             _heartbeat = heartbeat ?? throw new ArgumentNullException(nameof(heartbeat));
         }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             lock (_lock)
             {

@@ -10,5 +10,7 @@
     <PackageReference Include="MySql.Data" Version="8.0.12" />
     <PackageReference Include="StructureMap" Version="4.7.0" />
   </ItemGroup>
-
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
+  </PropertyGroup>
 </Project>

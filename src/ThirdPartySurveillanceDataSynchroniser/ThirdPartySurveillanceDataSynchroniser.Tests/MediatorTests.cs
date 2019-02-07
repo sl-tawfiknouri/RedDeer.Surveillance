@@ -2,7 +2,7 @@
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.System.Auditing.Utilities.Interfaces;
+using Surveillance.Systems.Auditing.Utilities.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Tests

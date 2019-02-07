@@ -21,6 +21,8 @@ using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Rules;
+using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Aws_IO;
@@ -40,7 +42,7 @@ namespace Surveillance.DataLayer
             For<IExchangeRateApiCachingDecoratorRepository>().Use<ExchangeRateApiCachingDecoratorRepository>();
             For<IEnrichmentApiRepository>().Use<EnrichmentApiRepository>();
             For<IConnectionStringFactory>().Use<ConnectionStringFactory>();
-            For<IReddeerOrdersRepository>().Use<ReddeerOrdersRepository>().Singleton();
+            For<IOrdersRepository>().Use<OrdersRepository>().Singleton();
             For<IReddeerMarketRepository>().Use<ReddeerMarketRepository>().Singleton();
             For<IRuleAnalyticsUniverseRepository>().Use<RuleAnalyticsUniverseRepository>();
             For<IRuleAnalyticsAlertsRepository>().Use<RuleAnalyticsAlertsRepository>();
@@ -51,6 +53,9 @@ namespace Surveillance.DataLayer
             For<IReddeerMarketDailySummaryRepository>().Use<ReddeerMarketDailySummaryRepository>();
             For<IReddeerMarketTimeBarRepository>().Use<ReddeerMarketTimeBarRepository>();
             For<IFactsetDailyBarApiRepository>().Use<FactsetDailyBarApiRepository>();
+            For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
+            For<IRuleBreachRepository>().Use<RuleBreachRepository>();
+            For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
         }
     }
 }

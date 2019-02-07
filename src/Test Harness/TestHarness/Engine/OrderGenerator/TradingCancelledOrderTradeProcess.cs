@@ -33,7 +33,7 @@ namespace TestHarness.Engine.OrderGenerator
         protected override void _InitiateTrading()
         { }
 
-        public override void OnNext(MarketTimeBarCollection value)
+        public override void OnNext(EquityIntraDayTimeBarCollection value)
         {
             if (value == null)
             {
@@ -91,7 +91,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByPosition(string sedol, MarketTimeBarCollection value, decimal positionPercentageToCancel)
+        private void CancelForSedolByPosition(string sedol, EquityIntraDayTimeBarCollection value, decimal positionPercentageToCancel)
         {
             if (value == null)
             {
@@ -125,6 +125,7 @@ namespace TestHarness.Engine.OrderGenerator
                 security.Market,
                 null,
                 Guid.NewGuid().ToString(),
+                DateTime.UtcNow,
                 "order-v1",
                 "order-v1",
                 "order-group-1",
@@ -145,6 +146,7 @@ namespace TestHarness.Engine.OrderGenerator
                 (int)initialBuyShare,
                 (int)initialBuyShare,
                 "trader-1",
+                "trader one",
                 "clearing-agent",
                 "dealing-instructions",
                 null,
@@ -161,6 +163,7 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "order-v1",
                     "order-v1",
                     "order-group-1",
@@ -181,6 +184,7 @@ namespace TestHarness.Engine.OrderGenerator
                     (int)splitShare,
                     (int)splitShare,
                     "trader-1",
+                    "trader one",
                     "clearing-agent",
                     "dealing-instructions",
                     null,
@@ -197,7 +201,7 @@ namespace TestHarness.Engine.OrderGenerator
             }
         }
 
-        private void CancelForSedolByCount(string sedol, MarketTimeBarCollection value, int amountToCancel)
+        private void CancelForSedolByCount(string sedol, EquityIntraDayTimeBarCollection value, int amountToCancel)
         {
             if (value == null)
             {
@@ -229,6 +233,7 @@ namespace TestHarness.Engine.OrderGenerator
                     security.Market,
                     null,
                     Guid.NewGuid().ToString(),
+                    DateTime.UtcNow,
                     "order-v1",
                     "order-v1",
                     "order-group-1",
@@ -248,6 +253,7 @@ namespace TestHarness.Engine.OrderGenerator
                     new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     i < amountToCancel ? 0 : (int)(security.DailySummaryTimeBar.DailyVolume.Traded * 0.01m),
                     0,
+                    null,
                     null,
                     null,
                     null,

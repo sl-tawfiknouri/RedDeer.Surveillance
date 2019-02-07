@@ -30,7 +30,7 @@ namespace Surveillance.Tests.Universe.Filter
         {
             var orderFilter = new UniverseOrderFilter(_logger);
             var order = ((Order) null).Random();
-            var universeEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, order);
+            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
             order.Instrument.Cfi = nonEquityCfi;
 
             var filteredEvent = orderFilter.Filter(universeEvent);
@@ -47,7 +47,7 @@ namespace Surveillance.Tests.Universe.Filter
         {
             var orderFilter = new UniverseOrderFilter(_logger);
             var order = ((Order)null).Random();
-            var universeEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, order);
+            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
             order.Instrument.Cfi = equityCfi;
 
             var filteredEvent = orderFilter.Filter(universeEvent);
@@ -59,7 +59,7 @@ namespace Surveillance.Tests.Universe.Filter
         public void Filter_NonOrderEvent_ReturnsEvent()
         {
             var orderFilter = new UniverseOrderFilter(_logger);
-            var universeEvent = new UniverseEvent(UniverseStateEvent.TradeReddeer, DateTime.UtcNow, "not-an-order");
+            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, "not-an-order");
 
             var filteredEvent = orderFilter.Filter(universeEvent);
 

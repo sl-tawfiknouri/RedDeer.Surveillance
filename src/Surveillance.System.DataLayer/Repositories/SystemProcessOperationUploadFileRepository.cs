@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Processes;
-using Surveillance.System.DataLayer.Processes.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer.Repositories
+namespace Surveillance.Systems.DataLayer.Repositories
 {
     public class SystemProcessOperationUploadFileRepository : ISystemProcessOperationUploadFileRepository
     {

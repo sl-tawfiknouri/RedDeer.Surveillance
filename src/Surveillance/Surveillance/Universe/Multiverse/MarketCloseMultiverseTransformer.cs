@@ -60,16 +60,16 @@ namespace Surveillance.Universe.Multiverse
 
         public void OnNext(IUniverseEvent value)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer received OnNext() event at {value.EventTime} of type {value.StateChange} forwarding to subscribers");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer received OnNext() event at {value.EventTime} of type {value.StateChange} forwarding to subscribers");
 
             lock (_lock)
             {
                 switch (value.StateChange)
                 {
-                    case UniverseStateEvent.StockTickReddeer:
+                    case UniverseStateEvent.EquityIntradayTick:
                         StockTick(value);
                         break;
-                    case UniverseStateEvent.StockMarketOpen:
+                    case UniverseStateEvent.ExchangeOpen:
                         StockMarketOpen(value);
                         break;
                 }
@@ -82,12 +82,12 @@ namespace Surveillance.Universe.Multiverse
         private void StockTick(IUniverseEvent universeEvent)
         {
             if (universeEvent == null
-                || universeEvent.StateChange != UniverseStateEvent.StockTickReddeer)
+                || universeEvent.StateChange != UniverseStateEvent.EquityIntradayTick)
             {
                 return;
             }
 
-             var frame = (MarketTimeBarCollection)universeEvent.UnderlyingEvent;
+             var frame = (EquityIntraDayTimeBarCollection)universeEvent.UnderlyingEvent;
 
             if (_exchangeFrame.ContainsKey(frame.Exchange.MarketIdentifierCode))
             {
@@ -136,7 +136,7 @@ namespace Surveillance.Universe.Multiverse
 
         private void UnloadQueue(DateTime tailOfQueue, bool flushQueue)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer beginning to unload queue to subscribers");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer beginning to unload queue to subscribers");
 
             if (flushQueue)
             {
@@ -168,12 +168,12 @@ namespace Surveillance.Universe.Multiverse
 
         private IUniverseEvent SwapIfFrame(IUniverseEvent universeEvent)
         {
-            if (universeEvent.StateChange != UniverseStateEvent.StockTickReddeer)
+            if (universeEvent.StateChange != UniverseStateEvent.EquityIntradayTick)
             {
                 return universeEvent;
             }
 
-            var frame = (MarketTimeBarCollection) universeEvent.UnderlyingEvent;
+            var frame = (EquityIntraDayTimeBarCollection) universeEvent.UnderlyingEvent;
             _exchangeFrame.TryGetValue(frame.Exchange.MarketIdentifierCode, out var frames);
 
             if (frames == null)
@@ -196,7 +196,7 @@ namespace Surveillance.Universe.Multiverse
 
         public IDisposable Subscribe(IUniverseCloneableRule rule)
         {
-            _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer of cloneable rule type");
+            _logger.LogTrace($"MarketCloseMultiverseTransformer subscribed a new observer of cloneable rule type");
             _subscribedRules?.Add(rule);
 
             return Subscribe(rule as IObserver<IUniverseEvent>);
@@ -211,7 +211,7 @@ namespace Surveillance.Universe.Multiverse
 
             if (!_universeObservers.ContainsKey(observer))
             {
-                _logger.LogInformation($"MarketCloseMultiverseTransformer subscribed a new observer for universe events");
+                _logger.LogTrace($"MarketCloseMultiverseTransformer subscribed a new observer for universe events");
                 _universeObservers.TryAdd(observer, observer);
             }
 
@@ -250,7 +250,7 @@ namespace Surveillance.Universe.Multiverse
             /// </summary>
             public DateTime OpenDate { get; set; }
             
-            public MarketTimeBarCollection Frame { get; set; }
+            public EquityIntraDayTimeBarCollection Frame { get; set; }
         }
         
         public object Clone()

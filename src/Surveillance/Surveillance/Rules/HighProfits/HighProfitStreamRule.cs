@@ -6,14 +6,15 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories;
 using Surveillance.Factories.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -31,9 +32,10 @@ namespace Surveillance.Rules.HighProfits
 
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
+        private readonly IMarketDataCacheStrategyFactory _marketDataCacheFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IDataRequestMessageSender _dataRequestMessageSender;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         private bool _hasMissingData = false;
         protected bool MarketClosureRule = false;
@@ -47,7 +49,8 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IDataRequestMessageSender messageSender,
+            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -67,11 +70,13 @@ namespace Surveillance.Rules.HighProfits
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
             _revenueCalculatorFactory = revenueCalculatorFactory ?? throw new ArgumentNullException(nameof(revenueCalculatorFactory));
+            _marketDataCacheFactory = marketDataCacheFactory ?? throw new ArgumentNullException(nameof(marketDataCacheFactory));
             _exchangeRateProfitCalculator =
                 exchangeRateProfitCalculator 
                 ?? throw new ArgumentNullException(nameof(exchangeRateProfitCalculator));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _dataRequestMessageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
+
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -116,8 +121,13 @@ namespace Surveillance.Rules.HighProfits
             var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
             var revenueCalculator = GetRevenueCalculator(allTradesInCommonCurrency, targetCurrency);
 
+            var marketCache =
+                MarketClosureRule
+                    ? _marketDataCacheFactory.InterdayStrategy(UniverseEquityInterdayCache)
+                    : _marketDataCacheFactory.IntradayStrategy(UniverseEquityIntradayCache);
+
             var costTask = costCalculator.CalculateCostOfPosition(liveTrades, UniverseDateTime, _ruleCtx);
-            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, UniverseMarketCache);
+            var revenueTask = revenueCalculator.CalculateRevenueOfPosition(liveTrades, UniverseDateTime, _ruleCtx, marketCache);
 
             var cost = costTask.Result;
             var revenueResponse = revenueTask.Result;
@@ -173,7 +183,7 @@ namespace Surveillance.Rules.HighProfits
 
                 WriteAlertToMessageSender(
                     activeTrades,
-                    absoluteProfit.Value,
+                    absoluteProfit,
                     profitRatio,
                     hasHighProfitAbsolute,
                     hasHighProfitPercentage,
@@ -228,7 +238,7 @@ namespace Surveillance.Rules.HighProfits
             {
                 var calculator =
                     MarketClosureRule
-                        ? _revenueCalculatorFactory.RevenueCalculatorMarkingTheClose()
+                        ? _revenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
                         : _revenueCalculatorFactory.RevenueCalculator();
 
                 Logger.LogInformation($"HighProfitStreamRule GetRevenueCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
@@ -253,7 +263,7 @@ namespace Surveillance.Rules.HighProfits
 
         private void WriteAlertToMessageSender(
             Stack<Order> activeTrades,
-            decimal absoluteProfit,
+            CurrencyAmount absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
@@ -266,9 +276,11 @@ namespace Surveillance.Rules.HighProfits
             var position = new TradePosition(activeTrades.ToList());
             var breach =
                 new HighProfitRuleBreach(
+                    _ruleCtx.SystemProcessOperationContext(),
+                    _ruleCtx.CorrelationId(),
                     _parameters,
-                    absoluteProfit,
-                    _parameters.HighProfitCurrencyConversionTargetCurrency,
+                    absoluteProfit.Value,
+                    absoluteProfit.Currency.Value,
                     profitRatio,
                     security,
                     hasHighProfitAbsolute,
@@ -337,8 +349,8 @@ namespace Surveillance.Rules.HighProfits
                 var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
-                var requestTask = _dataRequestMessageSender.Send(_ruleCtx.Id());
-                requestTask.Wait();
+                _dataRequestSubscriber.SubmitRequest();
+
                 var opCtx = _ruleCtx?.EndEvent();
                 opCtx?.EndEventWithMissingDataError();
             }

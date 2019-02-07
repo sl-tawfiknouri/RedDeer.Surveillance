@@ -3,13 +3,13 @@ using System.Diagnostics;
 using NUnit.Framework;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Surveillance.System.DataLayer.Processes;
-using Surveillance.System.DataLayer.Repositories;
+using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Systems.DataLayer.Repositories;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Repositories.Interfaces;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.System.DataLayer.Tests.Repositories
+namespace Surveillance.Systems.DataLayer.Tests.Repositories
 {
     [TestFixture]
     public class SystemProcessOperationRepositoryTests
@@ -38,8 +38,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -49,7 +49,7 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             var systemProcessOperation = new SystemProcessOperation
             {
                 SystemProcessId = systemProcess.Id,
-                OperationStart = DateTime.Now,
+                OperationStart = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 
@@ -70,8 +70,8 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             {
                 MachineId = Environment.MachineName,
                 ProcessId = Process.GetCurrentProcess().Id.ToString(),
-                InstanceInitiated = DateTime.Now,
-                Heartbeat = DateTime.Now,
+                InstanceInitiated = DateTime.UtcNow,
+                Heartbeat = DateTime.UtcNow,
                 SystemProcessType = SystemProcessType.DataImportService
             };
             systemProcess.Id = systemProcess.GenerateInstanceId();
@@ -81,13 +81,13 @@ namespace Surveillance.System.DataLayer.Tests.Repositories
             var systemProcessOperation = new SystemProcessOperation
             {
                 SystemProcessId = systemProcess.Id,
-                OperationStart = DateTime.Now,
+                OperationStart = DateTime.UtcNow,
                 OperationState = OperationState.InProcess
             };
 
             await repository.Create(systemProcessOperation);
 
-            systemProcessOperation.OperationEnd = DateTime.Now;
+            systemProcessOperation.OperationEnd = DateTime.UtcNow;
 
             await repository.Update(systemProcessOperation);
 

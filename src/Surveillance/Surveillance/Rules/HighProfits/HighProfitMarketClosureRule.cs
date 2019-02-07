@@ -3,13 +3,14 @@ using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams;
 using Surveillance.Analytics.Streams.Interfaces;
+using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.Factories.Interfaces;
-using Surveillance.MessageBusIO.Interfaces;
+using Surveillance.Markets.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Rules.HighProfits.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Trades;
 using Surveillance.Trades.Interfaces;
 using Surveillance.Universe.Filter.Interfaces;
@@ -27,7 +28,8 @@ namespace Surveillance.Rules.HighProfits
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IDataRequestMessageSender messageSender,
+            IMarketDataCacheStrategyFactory marketDataCacheFactory,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -40,7 +42,8 @@ namespace Surveillance.Rules.HighProfits
                 exchangeRateProfitCalculator,
                 orderFilter,
                 factory,
-                messageSender,
+                marketDataCacheFactory,
+                dataRequestSubscriber,
                 runMode,
                 logger,
                 tradingHistoryLogger)

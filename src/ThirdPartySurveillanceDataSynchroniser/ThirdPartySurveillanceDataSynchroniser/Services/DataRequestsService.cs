@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DomainV2.DTO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;
@@ -77,15 +77,15 @@ namespace ThirdPartySurveillanceDataSynchroniser.Services
             try
             {
                 var request = _serialiser.Deserialise(messageBody);
-                dataCtx = opCtx.CreateAndStartDataRequestContext(messageId, request.SystemProcessOperationRuleRunId);
+                dataCtx = opCtx.CreateAndStartDataRequestContext(messageId, request.SystemProcessOperationId);
 
-                if (!ValidateDataRequest(request.SystemProcessOperationRuleRunId))
+                if (!ValidateDataRequest(request.SystemProcessOperationId))
                 {
-                    _logger.LogError($"DataRequestsService received a null or empty rule run id. Exiting");
+                    _logger.LogError($"DataRequestsService received a null or empty system process operation id. Exiting");
                     return;
                 }
 
-                await _dataRequestManager.Handle(request.SystemProcessOperationRuleRunId, dataCtx);
+                await _dataRequestManager.Handle(request.SystemProcessOperationId, dataCtx);
             }
             catch (Exception e)
             {

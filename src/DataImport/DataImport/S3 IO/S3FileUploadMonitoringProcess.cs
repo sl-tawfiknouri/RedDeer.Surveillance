@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
@@ -20,6 +21,7 @@ namespace DataImport.S3_IO
 
         private readonly object _lock = new object();
 
+        private IUploadAllocationFileMonitor _uploadAllocationFileMonitor;
         private IUploadEquityFileMonitor _uploadEquityFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
@@ -43,6 +45,7 @@ namespace DataImport.S3_IO
         }
 
         public void Initialise(
+            IUploadAllocationFileMonitor uploadAllocationFileMonitor,
             IUploadTradeFileMonitor uploadTradeFileMonitor,
             IUploadEquityFileMonitor uploadEquityFileMonitor)
         {
@@ -50,6 +53,7 @@ namespace DataImport.S3_IO
             {
                  _logger.LogInformation("Initialising file upload monitoring process");
 
+                _uploadAllocationFileMonitor = uploadAllocationFileMonitor;
                 _uploadTradeFileMonitor = uploadTradeFileMonitor;
                 _uploadEquityFileMonitor = uploadEquityFileMonitor;
                 _cts = new CancellationTokenSource();
@@ -65,58 +69,61 @@ namespace DataImport.S3_IO
 
         private async Task ReadMessage(string messageId, string messageBody)
         {
-            lock (_lock)
+            try
             {
-                try
+                _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
+
+                var dto = _mapper.Map(messageBody);
+
+                if (dto == null)
                 {
-                    _logger.LogInformation($"S3 upload picked up a message with id of {messageId} from the queue");
+                    _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
 
-                    var dto = _mapper.Map(messageBody);
-
-                    if (dto == null)
-                    {
-                        _logger.LogError($"S3 File Upload Monitoring Processor tried to process a message {messageId} but when deserialising the message it had a null result");
-
-                        return;
-                    }
-
-                    if (dto.FileSize == 0)
-                    {
-                        _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
-
-                        return;
-                    }
-
-                    var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
-                    var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
-
-                    _logger.LogInformation($"S3Processor received message for {directoryName}");
-
-                    switch (splitPath)
-                    {
-                        case "surveillance-trade":
-                            var ptf = ProcessTradeFile(
-                                dto,
-                                _configuration.DataImportTradeFileFtpDirectoryPath,
-                                _configuration.DataImportTradeFileUploadDirectoryPath);
-                            ptf.Wait();
-                            break;
-                        case "surveillance-market":
-                            var pef = ProcessEquityFile(
-                                dto,
-                                _configuration.DataImportEquityFileFtpDirectoryPath,
-                                _configuration.DataImportEquityFileUploadDirectoryPath);
-                            pef.Wait();
-                            break;
-                        default:
-                            _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
-                            return;
-                    }
+                    return;
                 }
-                catch (Exception e)
+
+                if (dto.FileSize == 0)
                 {
-                    _logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
+                    _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
+
+                    return;
                 }
+
+                var directoryName = Path.GetDirectoryName(dto.FileName)?.ToLower() ?? string.Empty;
+                var splitPath = directoryName.Split(Path.DirectorySeparatorChar).Last();
+
+                _logger.LogInformation($"S3Processor received message for {directoryName}");
+
+                switch (splitPath)
+                {
+                    case "surveillance-trade":
+                        await ProcessTradeFile(
+                            dto,
+                            _configuration.DataImportTradeFileFtpDirectoryPath,
+                            _configuration.DataImportTradeFileUploadDirectoryPath);
+                        break;
+                    case "surveillance-market":
+                        var pef = ProcessEquityFile(
+                            dto,
+                            _configuration.DataImportEquityFileFtpDirectoryPath,
+                            _configuration.DataImportEquityFileUploadDirectoryPath);
+                        pef.Wait();
+                        break;
+                    case "surveillance-allocation":
+                        var paf = ProcessAllocationFile(
+                            dto,
+                            _configuration.DataImportAllocationFileFtpDirectoryPath,
+                            _configuration.DataImportAllocationFileUploadDirectoryPath);
+                        paf.Wait();
+                        break;
+                    default:
+                        _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
+                        return;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("S3FileUploadMonitoringProcess: " + e.Message);
             }
         }
 
@@ -159,6 +166,47 @@ namespace DataImport.S3_IO
             }
 
             _logger.LogInformation($"Moved all {fileCount}.");
+        }
+
+        private async Task ProcessAllocationFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
+        {
+            await ProcessFile(dto, 3, ftpDirectoryPath);
+
+            var files = Directory.EnumerateFiles(ftpDirectoryPath).ToList();
+            var fileCount = files.Count;
+            _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    _logger.LogInformation($"S3 processing trade file {file}");
+                    var result = _uploadAllocationFileMonitor.ProcessFile(file);
+
+                    if (result == false)
+                    {
+                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
+                        _token.Cancel = true;
+                    }
+
+                    if (File.Exists(file))
+                    {
+                        _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
+                        File.Delete(file);
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"S3 Processor could not find file {file}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"S3 File Upload Monitoring Process moving process allocation file {file} to {uploadDirectoryPath} {e.Message}");
+                    continue;
+                }
+            }
+
+            _logger.LogInformation($"S3 File Upload Moved all {fileCount} files.");
         }
 
         private async Task ProcessEquityFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)

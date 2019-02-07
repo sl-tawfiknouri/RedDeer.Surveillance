@@ -13,11 +13,11 @@ using NLog;
 using StructureMap;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.System.Auditing;
-using Surveillance.System.Auditing.Context;
-using Surveillance.System.DataLayer;
-using Surveillance.System.DataLayer.Interfaces;
-using Surveillance.System.DataLayer.Processes;
+using Surveillance.Systems.Auditing;
+using Surveillance.Systems.Auditing.Context;
+using Surveillance.Systems.DataLayer;
+using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Systems.DataLayer.Processes;
 using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
@@ -43,7 +43,6 @@ namespace RedDeer.DataImport.DataImport.App
             try
             {
                 SetSysLogSettingIfService(args);
-
                 Container = new Container();
                 var builtConfig = BuildConfiguration();
                 Container.Inject(typeof(IUploadConfiguration), builtConfig);

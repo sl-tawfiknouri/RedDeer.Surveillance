@@ -2,7 +2,7 @@
 using System;
 using Surveillance.Rules.Layering;
 using Surveillance.Rules.Layering.Interfaces;
-using Surveillance.System.Auditing.Context.Interfaces;
+using Surveillance.Systems.Auditing.Context.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Analytics.Streams.Interfaces;
 using Surveillance.Factories.Interfaces;

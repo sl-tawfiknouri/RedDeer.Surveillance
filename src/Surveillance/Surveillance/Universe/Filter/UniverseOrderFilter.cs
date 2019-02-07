@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DomainV2.Financial.Cfis;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Universe.Filter.Interfaces;
@@ -46,8 +47,8 @@ namespace Surveillance.Universe.Filter
                 return null;
             }
 
-            var leadingCharacter = cfi.ToLower().First();
-            var filter = leadingCharacter != 'e';
+            var cfiWrap = new Cfi(cfi);
+            var filter = cfiWrap.CfiCategory != CfiCategory.Equities;
 
             if (filter)
             {

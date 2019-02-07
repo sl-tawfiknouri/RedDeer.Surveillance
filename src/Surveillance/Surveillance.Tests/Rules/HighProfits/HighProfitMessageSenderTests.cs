@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.HighProfits;
@@ -25,6 +26,8 @@ namespace Surveillance.Tests.Rules.HighProfits
         private IHighProfitsRuleParameters _parameters;
         private IRuleBreachRepository _ruleBreachRepository;
         private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
+        private IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
+        private IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
         private FinancialInstrument _security;
 
         [SetUp]
@@ -38,6 +41,8 @@ namespace Surveillance.Tests.Rules.HighProfits
 
             _ruleBreachRepository = A.Fake<IRuleBreachRepository>();
             _ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
+            _ruleBreachToRuleBreachOrdersMapper = A.Fake<IRuleBreachToRuleBreachOrdersMapper>();
+            _ruleBreachToRuleBreachMapper = A.Fake<IRuleBreachToRuleBreachMapper>();
             _logger = A.Fake<ILogger<HighProfitMessageSender>>();
             _security =
                 new FinancialInstrument(
@@ -57,7 +62,9 @@ namespace Surveillance.Tests.Rules.HighProfits
                 _logger,
                 _messageSender,
                 _ruleBreachRepository,
-                _ruleBreachOrdersRepository);
+                _ruleBreachOrdersRepository,
+                _ruleBreachToRuleBreachOrdersMapper,
+                _ruleBreachToRuleBreachMapper);
 
             var exchangeRateProfitBreakdown =
                 new ExchangeRateProfitBreakdown(

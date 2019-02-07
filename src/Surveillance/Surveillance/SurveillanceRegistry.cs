@@ -67,8 +67,10 @@ using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.Mappers.RuleBreach;
 using Surveillance.RuleParameters.Manager;
 using Surveillance.RuleParameters.Manager.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 
 namespace Surveillance
 {
@@ -199,6 +201,10 @@ namespace Surveillance
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
             For<IRuleParameterManager>().Use<RuleParameterManager>();
             For<IRuleParameterLeadingTimespanCalculator>().Use<RuleParameterLeadingTimespanCalculator>();
+
+
+            For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
+            For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
         }
     }
 }

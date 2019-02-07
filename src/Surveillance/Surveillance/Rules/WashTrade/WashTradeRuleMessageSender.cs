@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.WashTrade.Interfaces;
 
@@ -15,14 +16,18 @@ namespace Surveillance.Rules.WashTrade
             ILogger<WashTradeRuleMessageSender> logger,
             ICaseMessageSender caseMessageSender,
             IRuleBreachRepository repository,
-            IRuleBreachOrdersRepository ordersRepository)
+            IRuleBreachOrdersRepository ordersRepository,
+            IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
+            IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper)
             : base(
                 "Automated Wash Trade Rule Breach Detected",
                 "Wash Trade Rule Message Sender",
                 logger,
                 caseMessageSender,
                 repository,
-                ordersRepository)
+                ordersRepository,
+                ruleBreachToRuleBreachOrdersMapper,
+                ruleBreachToRuleBreachMapper)
         { }
 
         public async Task Send(IWashTradeRuleBreach breach)

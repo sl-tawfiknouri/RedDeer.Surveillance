@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.MarkingTheClose.Interfaces;
 
@@ -13,14 +14,18 @@ namespace Surveillance.Rules.MarkingTheClose
             ILogger<MarkingTheCloseMessageSender> logger, 
             ICaseMessageSender caseMessageSender,
             IRuleBreachRepository repository,
-            IRuleBreachOrdersRepository ordersRepository)
+            IRuleBreachOrdersRepository ordersRepository,
+            IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
+            IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper)
             : base(
                 "Automated Marking The Close Rule Breach Detected",
                 "Marking The Close Message Sender",
                 logger,
                 caseMessageSender,
                 repository,
-                ordersRepository)
+                ordersRepository,
+                ruleBreachToRuleBreachOrdersMapper,
+                ruleBreachToRuleBreachMapper)
         { }
 
         public async Task Send(IMarkingTheCloseBreach breach)

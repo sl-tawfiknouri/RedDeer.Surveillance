@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Interfaces;
 using Surveillance.Rules.CancelledOrders.Interfaces;
@@ -17,14 +18,18 @@ namespace Surveillance.Rules.CancelledOrders
             ILogger<CancelledOrderMessageSender> logger,
             ICaseMessageSender caseMessageSender,
             IRuleBreachRepository repository,
-            IRuleBreachOrdersRepository ordersRepository)
+            IRuleBreachOrdersRepository ordersRepository,
+            IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
+            IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper)
             : base(
                 "Automated Cancellation Ratio Rule Breach Detected",
                 "Cancelled Order Message Sender",
                 logger,
                 caseMessageSender,
                 repository,
-                ordersRepository)
+                ordersRepository,
+                ruleBreachToRuleBreachOrdersMapper,
+                ruleBreachToRuleBreachMapper)
         { }
 
         public async Task Send(ICancelledOrderRuleBreach ruleBreach)

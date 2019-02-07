@@ -9,6 +9,7 @@ using Surveillance.Rules.WashTrade;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using DomainV2.Trading;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 
 namespace Surveillance.Tests.Rules
 {
@@ -27,7 +28,9 @@ namespace Surveillance.Tests.Rules
                 A.Fake<ILogger<WashTradeRuleMessageSender>>(),
                 A.Fake<ICaseMessageSender>(),
                 A.Fake<IRuleBreachRepository>(),
-                A.Fake<IRuleBreachOrdersRepository>());
+                A.Fake<IRuleBreachOrdersRepository>(),
+                A.Fake<IRuleBreachToRuleBreachOrdersMapper>(),
+                A.Fake<IRuleBreachToRuleBreachMapper>());
 
             var breach = A.Fake<IRuleBreach>();
             A.CallTo(() => breach.Trades).Returns(null);

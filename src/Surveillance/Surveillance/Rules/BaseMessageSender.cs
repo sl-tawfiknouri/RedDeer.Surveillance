@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService;
-using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
+using Surveillance.Mappers.RuleBreach.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.Rules.Interfaces;
 
@@ -16,6 +14,8 @@ namespace Surveillance.Rules
         private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private readonly ICaseMessageSender _caseMessageSender;
+        private readonly IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
+        private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
         private readonly string _messageSenderName;
         private readonly string _caseTitle;
         protected readonly ILogger Logger;
@@ -26,12 +26,16 @@ namespace Surveillance.Rules
             ILogger logger,
             ICaseMessageSender caseMessageSender,
             IRuleBreachRepository ruleBreachRepository,
-            IRuleBreachOrdersRepository ruleBreachOrdersRepository)
+            IRuleBreachOrdersRepository ruleBreachOrdersRepository, 
+            IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
+            IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _ruleBreachOrdersRepository = ruleBreachOrdersRepository ?? throw new ArgumentNullException(nameof(ruleBreachOrdersRepository));
+            _ruleBreachToRuleBreachOrdersMapper = ruleBreachToRuleBreachOrdersMapper ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachOrdersMapper));
+            _ruleBreachToRuleBreachMapper = ruleBreachToRuleBreachMapper ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachMapper));
 
             _messageSenderName = messageSenderName ?? "unknown message sender";
             _caseTitle = caseTitle ?? "unknown rule breach detected";
@@ -47,7 +51,7 @@ namespace Surveillance.Rules
 
             Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
-            var ruleBreachItem = RuleBreachItem(ruleBreach, description);
+            var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleBreach, description, _caseTitle);
             var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
 
             if (ruleBreachId == null)
@@ -56,7 +60,7 @@ namespace Surveillance.Rules
                 return;
             }
 
-            var ruleBreachOrderItems = ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
+            var ruleBreachOrderItems = _ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
             await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
 
             var caseMessage = new CaseMessage { RuleBreachId = ruleBreachId.GetValueOrDefault(0) };
@@ -71,78 +75,6 @@ namespace Surveillance.Rules
             {
                 Logger.LogError($"{_messageSenderName} encountered an error sending the case message to the bus {e}");
             }
-        }
-
-        private IReadOnlyCollection<RuleBreachOrder> ProjectToOrders(IRuleBreach ruleBreach, string ruleBreachId)
-        {
-            if (string.IsNullOrWhiteSpace(ruleBreachId))
-            {
-                return new RuleBreachOrder[0];
-            }
-
-            if (ruleBreach == null)
-            {
-                return new RuleBreachOrder[0];
-            }
-
-            var ruleBreachOrders = ruleBreach
-                .Trades
-                .Get()
-                .Where(i => i != null)
-                .Select(i => new RuleBreachOrder(ruleBreachId, i.ReddeerOrderId?.ToString()))
-                .ToList();
-
-            return ruleBreachOrders;
-        }
-
-        private RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description)
-        {
-            var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.MostRecentDateEvent());
-            var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.MostRecentDateEvent());
-            var venue = ruleBreach.Trades?.Get()?.FirstOrDefault()?.Market?.Name;
-
-            if (oldestPosition == null)
-            {
-                oldestPosition = latestPosition;
-            }
-
-            if (latestPosition == null)
-            {
-                latestPosition = oldestPosition;
-            }
-
-            var oldestPositionValue = oldestPosition ?? DateTime.UtcNow;
-            var latestPositionValue = latestPosition ?? DateTime.UtcNow;
-
-            description = description ?? string.Empty;
-
-            var trades =
-                ruleBreach
-                    .Trades
-                    ?.Get()
-                    ?.Select(io => io.ReddeerOrderId)
-                    .Where(x => x.HasValue)
-                    .Select(y => y.Value)
-                    .ToList();
-
-            var ruleBreachObj =
-                new RuleBreach(
-                    null,
-                    ruleBreach.RuleParameterId,
-                    ruleBreach.CorrelationId,
-                    ruleBreach.IsBackTestRun,
-                    DateTime.UtcNow,
-                    _caseTitle,
-                    description, 
-                    venue,
-                    oldestPositionValue,
-                    latestPositionValue,
-                    ruleBreach.Security.Cfi,
-                    ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
-                    ruleBreach.SystemOperationId,
-                    trades);
-
-            return ruleBreachObj;
         }
     }
 }

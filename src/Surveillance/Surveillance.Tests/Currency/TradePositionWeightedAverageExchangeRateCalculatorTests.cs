@@ -5,6 +5,7 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Currency;
 using Surveillance.Currency.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
@@ -63,7 +64,107 @@ namespace Surveillance.Tests.Currency
              await calculator.WeightedExchangeRate(null, _currency, _ruleCtx);
         }
 
+        [Test]
+        public async Task WeightedExchangeRate_One_Order_With_Zero_Fill_Volume()
+        {
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
 
+            var pos1 = (new Order()).Random();
+            pos1.OrderFilledVolume = null;
+            pos1.OrderOrderedVolume = null;
+            var position = new TradePosition(new List<Order> { pos1 });
+
+            var werResult = await calculator.WeightedExchangeRate(position, new DomainV2.Financial.Currency("GBP"), _ruleCtx);
+
+            Assert.AreEqual(werResult, 0);
+        }
+
+        [Test]
+        public async Task WeightedExchangeRate_One_Order_With_One_Fill_Volume_()
+        {
+            A
+                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
+                .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP"});
+
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+
+            var pos1 = (new Order()).Random();
+            pos1.OrderFilledVolume = 1;
+            pos1.OrderOrderedVolume = 1;
+            var position = new TradePosition(new List<Order> { pos1 });
+
+            var werResult = await calculator.WeightedExchangeRate(position, new DomainV2.Financial.Currency("GBP"), _ruleCtx);
+
+            Assert.AreEqual(werResult, 1);
+        }
+
+        [Test]
+        public async Task WeightedExchangeRate_Two_Order_With_Two_Fill_Volume_()
+        {
+            A
+                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+                .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
+
+            A
+                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+                .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 3, VariableCurrency = "GBP" });
+
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+
+            var pos1 = (new Order()).Random();
+            pos1.OrderFilledVolume = 1;
+            pos1.OrderOrderedVolume = 1;
+
+            var pos2 = (new Order()).Random();
+            pos2.OrderFilledVolume = 1;
+            pos2.OrderOrderedVolume = 1;
+            pos2.AmendedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.BookedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.CancelledDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.FilledDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.PlacedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.RejectedDate = DateTime.UtcNow.Date.AddDays(1);
+
+            var position = new TradePosition(new List<Order> { pos1, pos2 });
+
+            var werResult = await calculator.WeightedExchangeRate(position, new DomainV2.Financial.Currency("GBP"), _ruleCtx);
+
+            Assert.AreEqual(werResult, 2);
+        }
+
+        [Test]
+        public async Task WeightedExchangeRate_Two_Order_With_Unbalanced_Fill()
+        {
+            A
+                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+                .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
+
+            A
+                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+                .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 4, VariableCurrency = "GBP" });
+
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+
+            var pos1 = (new Order()).Random();
+            pos1.OrderFilledVolume = 20;
+            pos1.OrderOrderedVolume = 20;
+
+            var pos2 = (new Order()).Random();
+            pos2.OrderFilledVolume = 10;
+            pos2.OrderOrderedVolume = 10;
+            pos2.AmendedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.BookedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.CancelledDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.FilledDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.PlacedDate = DateTime.UtcNow.Date.AddDays(1);
+            pos2.RejectedDate = DateTime.UtcNow.Date.AddDays(1);
+
+            var position = new TradePosition(new List<Order> { pos1, pos2 });
+
+            var werResult = await calculator.WeightedExchangeRate(position, new DomainV2.Financial.Currency("GBP"), _ruleCtx);
+
+            Assert.AreEqual(Math.Round(werResult, 2), 2);
+        }
 
         [Test]
         [Explicit("Integration test")]

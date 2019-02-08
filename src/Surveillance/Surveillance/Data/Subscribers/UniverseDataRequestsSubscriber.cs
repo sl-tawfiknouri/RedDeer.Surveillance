@@ -33,7 +33,7 @@ namespace Surveillance.Data.Subscribers
 
         public void OnError(Exception error)
         {
-            _logger?.LogError($"UniverseDataRequestsSubscriber reached OnError in its universe subscription", error);
+            _logger?.LogError($"UniverseDataRequestsSubscriber reached OnError in its universe subscription {error.Message}", error);
         }
 
         public void OnNext(IUniverseEvent value)

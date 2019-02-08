@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Currency;
+using Surveillance.Currency.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
@@ -22,6 +23,8 @@ namespace Surveillance.Tests.Currency
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IDataLayerConfiguration _configuration;
         private ILogger<TradePositionWeightedAverageExchangeRateCalculator> _calculatorLogger;
+        private IExchangeRates _exchangeRates;
+        private DomainV2.Financial.Currency _currency;
 
         [SetUp]
         public void Setup()
@@ -30,11 +33,37 @@ namespace Surveillance.Tests.Currency
             _loggerExchRate = A.Fake<ILogger<ExchangeRates>>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateCalculator>>();
+            _exchangeRates = A.Fake<IExchangeRates>();
+            _currency = new DomainV2.Financial.Currency("GBX");
 
             _configuration = A.Fake<IDataLayerConfiguration>();
             _configuration.ClientServiceUrl = "http://localhost:8080";
             _configuration.SurveillanceUserApiAccessToken = "uwat";
         }
+
+        [Test]
+        public void Constructor_Null_Exchange_Rates_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateCalculator(null, _calculatorLogger));
+        }
+
+        [Test]
+        public void Constructor_Null_Logger_Throws_Exception()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, null));
+        }
+
+        [Test]
+        public async Task WeightedExchangeRate_With_Null_Position_Returns_Zero()
+        {
+            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+
+             await calculator.WeightedExchangeRate(null, _currency, _ruleCtx);
+        }
+
+
 
         [Test]
         [Explicit("Integration test")]

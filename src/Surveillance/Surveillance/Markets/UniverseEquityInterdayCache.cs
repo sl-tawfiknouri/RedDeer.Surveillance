@@ -168,15 +168,16 @@ namespace Surveillance.Markets
                 return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
             }
 
+            var isMissingData = responseList.Any(o => o.HadMissingData);
+
             if (runMode == RuleRunMode.ValidationRun
-                && responseList.Any(o => o.HadMissingData))
+                && isMissingData)
             {
                 _logger.LogInformation($"UniverseEquityInterDayCache GetMarketsForRange was running a validation run and had missing data for rule run id {request.SystemProcessOperationRuleRunId}");
                 return MarketDataResponse<List<EquityInstrumentInterDayTimeBar>>.MissingData();
             }
 
-            var isMissingData = responseList.Any(o => o.HadMissingData);
-            var responses = responseList.SelectMany(i => i.Response).ToList();
+            var responses = responseList.Where(i => i.Response != null).SelectMany(i => i.Response).ToList();
 
             if (isMissingData)
             {

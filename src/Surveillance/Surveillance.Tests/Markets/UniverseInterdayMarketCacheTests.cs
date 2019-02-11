@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Markets;
+using Surveillance.Rules;
 
 namespace Surveillance.Tests.Markets
 {
@@ -241,6 +242,54 @@ namespace Surveillance.Tests.Markets
             Assert.IsTrue(response.HadMissingData);
             Assert.AreNotEqual(response.Response, _interdayTimeBarCollectionXlon2.Securities.FirstOrDefault());
         }
+
+        [Test]
+        public void GetMarketsForRange_NullDatesCollection_ReturnsMissingData()
+        {
+            var cache = Build();
+
+            cache.Add(_interdayTimeBarCollectionXlon);
+            var response = cache.GetMarketsForRange(_mdr1, null, RuleRunMode.ForceRun);
+
+            Assert.IsTrue(response.HadMissingData);
+        }
+
+        [Test]
+        public void GetMarketsForRange_DatesCollection_No_Request_ReturnsMissingData()
+        {
+            var cache = Build();
+
+            cache.Add(_interdayTimeBarCollectionXlon);
+            var response = cache.GetMarketsForRange(
+                null,
+                new []
+                {
+                    new DateRange(
+                        DateTime.UtcNow, 
+                        DateTime.UtcNow.AddDays(1)),
+                }, RuleRunMode.ForceRun);
+
+            Assert.IsTrue(response.HadMissingData);
+        }
+
+        [Test]
+        public void GetMarketsForRange_DatesCollection_Request_ReturnsMissingData()
+        {
+            var cache = Build();
+
+            cache.Add(_interdayTimeBarCollectionXlon);
+            var response = cache.GetMarketsForRange(
+                _mdr1,
+                new[]
+                {
+                    new DateRange(
+                        DateTime.UtcNow,
+                        DateTime.UtcNow.AddDays(1)),
+                }, RuleRunMode.ForceRun);
+
+            Assert.IsTrue(response.HadMissingData);
+        }
+
 
 
 

@@ -5,6 +5,9 @@ namespace DomainV2.Markets
 {
     public class MarketDataRequest
     {
+        private MarketDataRequest()
+        { }
+        
         public MarketDataRequest(
             string id,
             string marketIdentifierCode,
@@ -64,6 +67,11 @@ namespace DomainV2.Markets
         public override string ToString()
         {
             return $"{MarketIdentifierCode} - {UniverseEventTimeFrom} - {UniverseEventTimeTo} - {Identifiers}";
+        }
+
+        public static MarketDataRequest Null()
+        {
+            return new MarketDataRequest();
         }
     }
 }

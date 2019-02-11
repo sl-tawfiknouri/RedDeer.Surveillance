@@ -18,16 +18,21 @@ namespace Surveillance.Tests.Markets
         private ILogger _logger;
 
         private MarketDataRequest _mdr1;
+        private MarketDataRequest _mdr2;
         private InstrumentIdentifiers _instrument1;
+        private InstrumentIdentifiers _instrument2;
 
         private EquityInterDayTimeBarCollection _interdayTimeBarCollectionNasdaq;
         private EquityInterDayTimeBarCollection _interdayTimeBarCollectionXlon;
+        private EquityInterDayTimeBarCollection _interdayTimeBarCollectionXlon2;
 
         [SetUp]
         public void Setup()
         {
             _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger>();
+
+            var xlon = new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE);
 
             _instrument1 = new InstrumentIdentifiers(
                 "1",
@@ -42,6 +47,19 @@ namespace Surveillance.Tests.Markets
                 "TEST INC",
                 "TSTY");
 
+            _instrument2 = new InstrumentIdentifiers(
+                "2",
+                "2",
+                "2",
+                "client-id-2",
+                "abcd122",
+                "abcd12345672",
+                "abcd12345672",
+                "abc122",
+                "TES2",
+                "TEST2 INC",
+                "TST2Y");
+
             _mdr1 = new MarketDataRequest(
                 "1",
                 "XLON", 
@@ -52,13 +70,23 @@ namespace Surveillance.Tests.Markets
                 "1",
                 false);
 
+            _mdr2 = new MarketDataRequest(
+                "2",
+                "XLON",
+                "entspb",
+                _instrument1,
+                DateTime.UtcNow.AddDays(-5),
+                DateTime.UtcNow.AddDays(-4),
+                "1",
+                false);
+
             _interdayTimeBarCollectionNasdaq = new EquityInterDayTimeBarCollection(
                 new Market("1", "NASDAQ", "NASDAQ", MarketTypes.STOCKEXCHANGE), 
                 DateTime.UtcNow,
                 new EquityInstrumentInterDayTimeBar[0]);
 
             _interdayTimeBarCollectionXlon = new EquityInterDayTimeBarCollection(
-                new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE),
+                xlon,
                 DateTime.UtcNow,
                 new EquityInstrumentInterDayTimeBar[]
                 {
@@ -77,7 +105,30 @@ namespace Surveillance.Tests.Markets
                                 new Volume(1),
                                 DateTime.Now),
                         DateTime.UtcNow, 
-                        new Market("1", "XLON", "XLON", MarketTypes.STOCKEXCHANGE))
+                        xlon)
+                });
+
+            _interdayTimeBarCollectionXlon2 = new EquityInterDayTimeBarCollection(
+                xlon,
+                DateTime.UtcNow,
+                new EquityInstrumentInterDayTimeBar[]
+                {
+                    new EquityInstrumentInterDayTimeBar(
+                        new FinancialInstrument(
+                            InstrumentTypes.Equity,
+                            _instrument2,
+                            "test",
+                            "entspb",
+                            "GBX",
+                            "TEST"),
+                        new DailySummaryTimeBar(
+                            null,
+                            null,
+                            null,
+                            new Volume(1),
+                            DateTime.Now),
+                        DateTime.UtcNow,
+                        xlon)
                 });
         }
 
@@ -151,12 +202,47 @@ namespace Surveillance.Tests.Markets
             cache.Add(_interdayTimeBarCollectionXlon);
             var response = cache.Get(_mdr1);
 
-            Assert.IsFalse(response.HadMissingData);
             A
                 .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustNotHaveHappened();
+            Assert.IsFalse(response.HadMissingData);
             Assert.AreEqual(response.Response, _interdayTimeBarCollectionXlon.Securities.FirstOrDefault());
         }
+
+        [Test]
+        public void GetForLatestDayOnly_Value_Added_ForSameMarket_Returns_MissingData_And_MarketDataRequestMade_When_Out_Of_Date_Range()
+        {
+            var cache = Build();
+
+            cache.Add(_interdayTimeBarCollectionXlon);
+
+
+
+            var response = cache.Get(_mdr1);
+
+            A
+                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+                .MustNotHaveHappened();
+            Assert.IsFalse(response.HadMissingData);
+            Assert.AreEqual(response.Response, _interdayTimeBarCollectionXlon.Securities.FirstOrDefault());
+        }
+
+        [Test]
+        public void GetForLatestDayOnly_Value_Added_ForSameMarket_But_DifferentSecurity_Returns_MissingData_And_MarketDataRequestMade()
+        {
+            var cache = Build();
+
+            cache.Add(_interdayTimeBarCollectionXlon2);
+            var response = cache.Get(_mdr2);
+
+            A
+                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+                .MustHaveHappened();
+            Assert.IsTrue(response.HadMissingData);
+            Assert.AreNotEqual(response.Response, _interdayTimeBarCollectionXlon2.Securities.FirstOrDefault());
+        }
+
+
 
         private UniverseEquityInterDayCache Build()
         {

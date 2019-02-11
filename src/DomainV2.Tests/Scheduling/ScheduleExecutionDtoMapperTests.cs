@@ -7,7 +7,7 @@ using NUnit.Framework;
 using RuleIdentifier = RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier;
 using ScheduledExecution = RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution;
 
-namespace Surveillance.Tests.Mappers
+namespace DomainV2.Tests.Scheduling
 {
     [TestFixture]
     public class ScheduleExecutionDtoMapperTests

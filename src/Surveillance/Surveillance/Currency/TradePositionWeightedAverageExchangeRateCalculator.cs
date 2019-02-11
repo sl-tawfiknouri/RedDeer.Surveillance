@@ -37,17 +37,17 @@ namespace Surveillance.Currency
             var totalVolume = position.TotalVolume();
             var weightedRates = new List<WeightedXRate>();
             
-            foreach (var trad in position.Get())
+            foreach (var order in position.Get())
             {
-                if (trad.OrderFilledVolume.GetValueOrDefault() == 0)
+                if (order.OrderFilledVolume.GetValueOrDefault() == 0)
                     continue;
 
-                var weight = (decimal)trad.OrderFilledVolume.GetValueOrDefault(0) / (decimal)totalVolume;
+                var weight = (decimal)order.OrderFilledVolume.GetValueOrDefault(0) / (decimal)totalVolume;
 
                 var rate = await _exchangeRates.GetRate(
-                    trad.OrderCurrency,
+                    order.OrderCurrency,
                     targetCurrency,
-                    trad.MostRecentDateEvent(),
+                    order.MostRecentDateEvent(),
                     ruleCtx);
                 
                 weightedRates.Add(new WeightedXRate(weight, ((decimal?)rate?.Rate ?? 0m)));

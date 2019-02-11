@@ -1,13 +1,7 @@
-﻿using System.Threading.Tasks;
-using DomainV2.Scheduling;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-
-namespace Surveillance.Scheduler.Interfaces
+﻿namespace Surveillance.Scheduler.Interfaces
 {
     public interface IReddeerRuleScheduler
     {
-        // ReSharper disable once UnusedMember.Global
-        Task Execute(ScheduledExecution execution, ISystemProcessOperationContext opCtx);
         void Initiate();
         void Terminate();
     }

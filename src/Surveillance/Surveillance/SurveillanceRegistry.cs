@@ -67,10 +67,12 @@ using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.Engine;
 using Surveillance.Mappers.RuleBreach;
 using Surveillance.RuleParameters.Manager;
 using Surveillance.RuleParameters.Manager.Interfaces;
 using Surveillance.Mappers.RuleBreach.Interfaces;
+using Surveillance.Engine.Interfaces;
 
 namespace Surveillance
 {
@@ -205,6 +207,8 @@ namespace Surveillance
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
+
+            For<IAnalysisEngine>().Use<AnalysisEngine>();
         }
     }
 }

@@ -3,6 +3,10 @@ using Surveillance.Markets.Interfaces;
 
 namespace Surveillance.Markets
 {
+    /// <summary>
+    /// Calculates the trading hours for a given date time
+    /// Has a four hour allowance before an opening before it considers a date to belong to a prior day
+    /// </summary>
     public class TradingHours : ITradingHours
     {
         public string Mic { get; set; }

@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.DataCoo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.Interfaces", "Surveillance.Engine.Interfaces\Surveillance.Engine.Interfaces.csproj", "{A252F20B-46C5-47C8-92FD-289B34DC2BD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.RuleDistributor.Tests", "Surveillance.Engine.RuleDistributor.Tests\Surveillance.Engine.RuleDistributor.Tests.csproj", "{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,10 @@ Global
 		{A252F20B-46C5-47C8-92FD-289B34DC2BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A252F20B-46C5-47C8-92FD-289B34DC2BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A252F20B-46C5-47C8-92FD-289B34DC2BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

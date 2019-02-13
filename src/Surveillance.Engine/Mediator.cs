@@ -1,6 +1,6 @@
-﻿using Surveillance.Engine.Interfaces.Mediator;
+﻿using Surveillance.Engines.Interfaces.Mediator;
 
-namespace Surveillance.Engine.Rules
+namespace Surveillance.Engines.Rules
 {
     public class Mediator : IMediator
     {

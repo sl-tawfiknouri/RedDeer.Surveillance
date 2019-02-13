@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DomainV2.Enums;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.Scheduler.Interfaces;
+using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
-using Utilities.Extensions;
 
-namespace Surveillance.Scheduler
+namespace Surveillance.Engine.RuleDistributor.Scheduler
 {
-    public class ReddeerDistributedRuleScheduler : BaseScheduler, IReddeerDistributedRuleScheduler
+    public class ReddeerDistributedRuleScheduler : IReddeerDistributedRuleScheduler
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
@@ -36,7 +36,6 @@ namespace Surveillance.Scheduler
             IRuleParameterApiRepository ruleParameterApiRepository,
             ISystemProcessContext systemProcessContext,
             ILogger<ReddeerDistributedRuleScheduler> logger)
-            : base(logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
@@ -92,6 +91,8 @@ namespace Surveillance.Scheduler
                     return;
                 }
 
+                // here onwards is really a separate class
+
                 if (execution?.Rules == null
                     || !execution.Rules.Any())
                 {
@@ -132,35 +133,35 @@ namespace Surveillance.Scheduler
             {
                 switch (rule.Rule)
                 {
-                    case DomainV2.Scheduling.Rules.CancelledOrders:
+                    case Rules.CancelledOrders:
                         // var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.HighProfits:
+                    case Rules.HighProfits:
                         var highProfitRuleRuns = parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, highProfitRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.HighVolume:
+                    case Rules.HighVolume:
                         var highVolumeRuleRuns = parameters.HighVolumes?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.Layering:
+                    case Rules.Layering:
                         // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.MarkingTheClose:
+                    case Rules.MarkingTheClose:
                         // var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.Spoofing:
+                    case Rules.Spoofing:
                         // var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.WashTrade:
+                    case Rules.WashTrade:
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleCtx);
                         break;
-                    case DomainV2.Scheduling.Rules.UniverseFilter:
+                    case Rules.UniverseFilter:
                         break;
                     default:
                         _logger.LogError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
@@ -332,6 +333,35 @@ namespace Surveillance.Scheduler
                 _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
                 serialisedDistributedExecution,
                 _messageBusCts.Token);
+        }
+
+        protected bool ValidateScheduleRule(ScheduledExecution execution)
+        {
+            if (execution == null)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a null scheduled execution. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesTermination.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series termination before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation that exceeded the time series termination.");
+                return false;
+            }
+
+            return true;
         }
     }
 }

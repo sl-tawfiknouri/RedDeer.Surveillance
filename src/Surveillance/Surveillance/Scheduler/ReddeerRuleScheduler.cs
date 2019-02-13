@@ -2,9 +2,10 @@
 using Surveillance.Scheduler.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
+using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Interfaces;
+using Surveillance.Engines.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Systems.DataLayer.Processes;
 using Surveillance.Utility.Interfaces;
@@ -13,7 +14,7 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Scheduler
 {
-    public class ReddeerRuleScheduler : BaseScheduler, IReddeerRuleScheduler
+    public class ReddeerRuleScheduler : IReddeerRuleScheduler
     {
         private readonly IAnalysisEngine _analysisEngine;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -34,7 +35,6 @@ namespace Surveillance.Scheduler
             IApiHeartbeat apiHeartbeat,
             ISystemProcessContext systemProcessContext,
             ILogger<ReddeerRuleScheduler> logger)
-            : base(logger)
         {
             _analysisEngine = analysisEngine ?? throw new ArgumentNullException(nameof(analysisEngine));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
@@ -132,6 +132,35 @@ namespace Surveillance.Scheduler
                 _logger.LogError($"ReddeerRuleScheduler caught exception in execute distributed message for {messageBody}", e);
                 opCtx.EndEventWithError(e.Message);
             }
+        }
+
+        protected bool ValidateScheduleRule(ScheduledExecution execution)
+        {
+            if (execution == null)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a null scheduled execution. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesTermination.DateTime.Year < 2015)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series termination before 2015. Returning.");
+                return false;
+            }
+
+            if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
+            {
+                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation that exceeded the time series termination.");
+                return false;
+            }
+
+            return true;
         }
     }
 }

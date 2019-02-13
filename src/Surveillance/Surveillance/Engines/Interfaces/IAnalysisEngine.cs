@@ -2,7 +2,7 @@
 using DomainV2.Scheduling;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Engine.Interfaces
+namespace Surveillance.Engines.Interfaces
 {
     public interface IAnalysisEngine
     {

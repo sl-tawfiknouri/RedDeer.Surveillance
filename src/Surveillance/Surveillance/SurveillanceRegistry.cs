@@ -67,12 +67,12 @@ using Surveillance.Universe.Subscribers.Interfaces;
 using Surveillance.Utility;
 using Surveillance.Utility.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
-using Surveillance.Engine;
+using Surveillance.Engines;
 using Surveillance.Mappers.RuleBreach;
 using Surveillance.RuleParameters.Manager;
 using Surveillance.RuleParameters.Manager.Interfaces;
 using Surveillance.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Interfaces;
+using Surveillance.Engines.Interfaces;
 
 namespace Surveillance
 {
@@ -174,7 +174,6 @@ namespace Surveillance
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
-            For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
             For<IExchangeRates>().Use<ExchangeRates>();
             For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
 

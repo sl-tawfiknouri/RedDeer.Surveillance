@@ -8,7 +8,7 @@ using Surveillance.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Data.Subscribers.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
-using Surveillance.Engine.Interfaces;
+using Surveillance.Engines.Interfaces;
 using Surveillance.Factories.Interfaces;
 using Surveillance.MessageBusIO.Interfaces;
 using Surveillance.RuleParameters.Manager.Interfaces;
@@ -16,7 +16,7 @@ using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Universe.Interfaces;
 using Surveillance.Universe.Subscribers.Interfaces;
 
-namespace Surveillance.Engine
+namespace Surveillance.Engines
 {
     /// <summary>
     /// Main entry point to the MAR Analysis Engine

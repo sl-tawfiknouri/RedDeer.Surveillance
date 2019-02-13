@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\DomainV2\DomainV2.csproj" />
+    <ProjectReference Include="..\..\Surveillance.Engine.RuleDistributor\Surveillance.Engine.RuleDistributor.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.System.Auditing.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />

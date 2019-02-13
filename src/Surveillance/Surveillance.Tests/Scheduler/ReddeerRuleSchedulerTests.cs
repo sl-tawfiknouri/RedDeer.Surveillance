@@ -3,7 +3,7 @@ using DomainV2.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Engine.Interfaces;
+using Surveillance.Engines.Interfaces;
 using Surveillance.Scheduler;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Surveillance.Utility.Interfaces;

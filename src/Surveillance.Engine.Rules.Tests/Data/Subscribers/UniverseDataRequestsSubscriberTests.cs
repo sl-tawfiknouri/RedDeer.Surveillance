@@ -1,9 +1,13 @@
 ﻿using System;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Data.Subscribers;
+using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Universe;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Tests.Data.Subscribers
+namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
 {
     [TestFixture]
     public class UniverseDataRequestsSubscriberTests

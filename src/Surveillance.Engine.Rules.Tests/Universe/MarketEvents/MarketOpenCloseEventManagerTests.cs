@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.MarketEvents;
 
-namespace Surveillance.Tests.Universe.MarketEvents
+namespace Surveillance.Engine.Rules.Tests.Universe.MarketEvents
 {
     [TestFixture]
     public class MarketOpenCloseEventManagerTests

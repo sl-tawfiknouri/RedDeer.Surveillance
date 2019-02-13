@@ -1,11 +1,13 @@
 ﻿using System;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
+using Surveillance.Engine.Rules.Markets;
 
-namespace Surveillance.Tests.Markets
+namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class MarketTradingHoursManagerTests
@@ -78,8 +80,7 @@ namespace Surveillance.Tests.Markets
                 IsOpenOnSunday = true
             };
 
-            A
-                .CallTo(() => _marketOpenCloseRepository.Get())
+            A.CallTo(() => _marketOpenCloseRepository.Get())
                 .Returns(new ExchangeDto[] { exchangeDto});
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
@@ -110,8 +111,7 @@ namespace Surveillance.Tests.Markets
                 IsOpenOnSunday = true
             };
 
-            A
-                .CallTo(() => _marketOpenCloseRepository.Get())
+            A.CallTo(() => _marketOpenCloseRepository.Get())
                 .Returns(new ExchangeDto[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
@@ -142,8 +142,7 @@ namespace Surveillance.Tests.Markets
                 IsOpenOnSunday = false
             };
 
-            A
-                .CallTo(() => _marketOpenCloseRepository.Get())
+            A.CallTo(() => _marketOpenCloseRepository.Get())
                 .Returns(new ExchangeDto[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
@@ -174,8 +173,7 @@ namespace Surveillance.Tests.Markets
                 IsOpenOnSunday = true
             };
 
-            A
-                .CallTo(() => _marketOpenCloseRepository.Get())
+            A.CallTo(() => _marketOpenCloseRepository.Get())
                 .Returns(new ExchangeDto[] { exchangeDto });
 
             var result = marketTradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(

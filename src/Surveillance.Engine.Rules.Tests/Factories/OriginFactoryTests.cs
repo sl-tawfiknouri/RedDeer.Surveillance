@@ -1,7 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Factories;
 
-namespace Surveillance.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories
 {
     [TestFixture]
     public class OriginFactoryTests

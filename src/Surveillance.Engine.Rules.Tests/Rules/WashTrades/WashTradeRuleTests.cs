@@ -2,13 +2,25 @@
 using System.Collections.Generic;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.WashTrade;
+using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 
-namespace Surveillance.Tests.Rules.WashTrades
+namespace Surveillance.Engine.Rules.Tests.Rules.WashTrades
 {
     [TestFixture]
     public class WashTradeRuleTests

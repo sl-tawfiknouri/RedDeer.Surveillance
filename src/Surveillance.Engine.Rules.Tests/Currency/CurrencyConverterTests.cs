@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainV2.Financial;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
+using Surveillance.Engine.Rules.Currency;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Tests.Currency
+namespace Surveillance.Engine.Rules.Tests.Currency
 {
     [TestFixture]
     public class CurrencyConverterTests
@@ -110,8 +112,7 @@ namespace Surveillance.Tests.Currency
             var targetCurrency = new DomainV2.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>());
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -143,8 +144,7 @@ namespace Surveillance.Tests.Currency
                 {targetDate, new [] {rate}},
             };
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -188,8 +188,7 @@ namespace Surveillance.Tests.Currency
                 {targetDate, new [] {cnyRate, usdRate}},
             };
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -225,8 +224,7 @@ namespace Surveillance.Tests.Currency
                 {targetDate, new [] {cnyRate}},
             };
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -261,8 +259,7 @@ namespace Surveillance.Tests.Currency
                 {targetDate, new [] {cnyRate}},
             };
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
@@ -308,8 +305,7 @@ namespace Surveillance.Tests.Currency
                 {targetDate, new [] {cnyRate, eurRate}},
             };
 
-            A
-                .CallTo(() => _apiRepository.Get(targetDate, targetDate))
+            A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
             var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);

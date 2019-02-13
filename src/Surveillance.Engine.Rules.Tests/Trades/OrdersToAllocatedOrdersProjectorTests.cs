@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Tests.Trades
+namespace Surveillance.Engine.Rules.Tests.Trades
 {
     [TestFixture]
     public class OrdersToAllocatedOrdersProjectorTests

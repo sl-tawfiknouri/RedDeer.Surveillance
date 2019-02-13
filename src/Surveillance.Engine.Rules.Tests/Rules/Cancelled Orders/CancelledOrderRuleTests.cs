@@ -2,14 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using DomainV2.Financial;
+using DomainV2.Streams;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.CancelledOrders;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 
-namespace Surveillance.Tests.Rules.Cancelled_Orders
+namespace Surveillance.Engine.Rules.Tests.Rules.Cancelled_Orders
 {
     [TestFixture]
     public class CancelledOrderRuleTests
@@ -115,8 +128,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 orderRule.OnNext(order);
             }
 
-            A
-                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -161,8 +173,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 orderRule.OnNext(order);
             }
 
-            A
-                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 11);
         }
 
@@ -200,8 +211,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 orderRule.OnNext(order);
             }
 
-            A
-                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -240,8 +250,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 orderRule.OnNext(order);
             }
 
-            A
-                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(x => x == 8);
         }
 
@@ -276,8 +285,7 @@ namespace Surveillance.Tests.Rules.Cancelled_Orders
                 orderRule.OnNext(order);
             }
 
-            A
-                .CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
+            A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustNotHaveHappened();
         }
 

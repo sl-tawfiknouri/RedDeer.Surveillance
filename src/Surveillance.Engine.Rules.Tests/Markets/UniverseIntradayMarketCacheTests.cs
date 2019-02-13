@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Linq;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Markets;
 
-namespace Surveillance.Tests.Markets
+namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class UniverseIntradayMarketCacheTests

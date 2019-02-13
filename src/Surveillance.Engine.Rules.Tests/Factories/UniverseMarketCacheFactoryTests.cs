@@ -1,10 +1,14 @@
 ﻿using System;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Rules;
 
-namespace Surveillance.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories
 {
     [TestFixture]
     public class UniverseMarketCacheFactoryTests

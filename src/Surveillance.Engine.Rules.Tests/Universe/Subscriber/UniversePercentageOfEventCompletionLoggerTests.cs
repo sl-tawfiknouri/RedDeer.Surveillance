@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Subscribers;
 
-namespace Surveillance.Tests.Universe.Subscriber
+namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
 {
     [TestFixture]
     public class UniversePercentageOfEventCompletionLoggerTests
@@ -48,7 +51,7 @@ namespace Surveillance.Tests.Universe.Subscriber
                 event10,
             };
 
-            var loggerUniverse = new Surveillance.Universe.Universe(new Order[0], new EquityIntraDayTimeBarCollection[0], new EquityInterDayTimeBarCollection[0],  universeEvents);
+            var loggerUniverse = new Engine.Rules.Universe.Universe(new Order[0], new EquityIntraDayTimeBarCollection[0], new EquityInterDayTimeBarCollection[0],  universeEvents);
 
             var logger = new UniversePercentageOfEventCompletionLogger(_logger);
             logger.InitiateEventLogger(loggerUniverse);

@@ -1,10 +1,13 @@
 ﻿using System;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Tests.Helpers;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Filter;
 
-namespace Surveillance.Tests.Universe.Filter
+namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 {
     [TestFixture]
     public class UniverseOrderFilterTests

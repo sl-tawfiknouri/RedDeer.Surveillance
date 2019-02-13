@@ -1,8 +1,9 @@
 ﻿using System;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Engine.Rules.RuleParameters.Manager;
 
-namespace Surveillance.Tests.RuleParameters.Manager
+namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
 {
     [TestFixture]
     public class RuleParameterLeadingTimespanCalculatorTests

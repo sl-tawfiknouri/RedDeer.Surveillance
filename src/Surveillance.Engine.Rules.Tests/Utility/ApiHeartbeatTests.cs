@@ -1,14 +1,16 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using NUnit.Framework;
 using Surveillance.DataLayer.Api.Enrichment.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
+using Surveillance.Engine.Rules.Utility;
 
-namespace Surveillance.Tests.Utility
+namespace Surveillance.Engine.Rules.Tests.Utility
 {
     [TestFixture]
     public class ApiHeartbeatTests

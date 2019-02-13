@@ -1,10 +1,14 @@
 ﻿using System;
 using DomainV2.Equity.Streams.Interfaces;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Analytics.Streams;
+using Surveillance.Engine.Rules.Analytics.Streams.Factory;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 
-namespace Surveillance.Tests.Analytics.Streams.Factory
+namespace Surveillance.Engine.Rules.Tests.Analytics.Streams.Factory
 {
     [TestFixture]
     public class UniverseAlertStreamFactoryTests

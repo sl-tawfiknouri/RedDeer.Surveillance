@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using NUnit.Framework;
-using Surveillance.Tests.Helpers;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.WashTrade;
+using Surveillance.Engine.Rules.Tests.Helpers;
 
-namespace Surveillance.Tests.Rules.WashTrades
+namespace Surveillance.Engine.Rules.Tests.Rules.WashTrades
 {
     [TestFixture]
     public class WashTradePositionPairerTests

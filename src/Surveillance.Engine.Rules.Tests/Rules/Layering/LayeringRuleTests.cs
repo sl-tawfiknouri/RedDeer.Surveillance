@@ -3,16 +3,30 @@ using System.Collections.Generic;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.Layering;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 
-namespace Surveillance.Tests.Rules.Layering
+namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 {
     [TestFixture]
     public class LayeringRuleTests
@@ -52,8 +66,7 @@ namespace Surveillance.Tests.Rules.Layering
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
 
             _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
-            A
-                .CallTo(() => _tradingHoursRepository.Get())
+            A.CallTo(() => _tradingHoursRepository.Get())
                 .Returns(
                     new ExchangeDto[]
                     {

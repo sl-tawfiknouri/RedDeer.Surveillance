@@ -2,13 +2,15 @@
 using System.Threading.Tasks;
 using DomainV2.DTO;
 using DomainV2.DTO.Interfaces;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Configuration;
+using Surveillance.Engine.Rules.MessageBusIO;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Tests.MessageBusIO
+namespace Surveillance.Engine.Rules.Tests.MessageBusIO
 {
     [TestFixture]
     public class DataRequestMessageSenderTests
@@ -34,11 +36,9 @@ namespace Surveillance.Tests.MessageBusIO
 
             await messageSender.Send(null);
 
-            A
-                .CallTo(() => _serialiser.Serialise(A<ThirdPartyDataRequestMessage>.Ignored))
+            A.CallTo(() => _serialiser.Serialise(A<ThirdPartyDataRequestMessage>.Ignored))
                 .MustNotHaveHappened();
-            A
-                .CallTo(() => _awsQueueClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+            A.CallTo(() => _awsQueueClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
                 .MustNotHaveHappened();
         }
 

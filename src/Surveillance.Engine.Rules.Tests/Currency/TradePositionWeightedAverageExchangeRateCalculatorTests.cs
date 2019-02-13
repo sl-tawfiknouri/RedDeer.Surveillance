@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Engine.Rules.Currency;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Trades;
 using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 
-namespace Surveillance.Tests.Currency
+namespace Surveillance.Engine.Rules.Tests.Currency
 {
     [TestFixture]
     public class TradePositionWeightedAverageExchangeRateCalculatorTests
@@ -78,8 +82,7 @@ namespace Surveillance.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_One_Order_With_One_Fill_Volume_()
         {
-            A
-                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP"});
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
@@ -97,12 +100,10 @@ namespace Surveillance.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Two_Fill_Volume_()
         {
-            A
-                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A
-                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 3, VariableCurrency = "GBP" });
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
@@ -131,12 +132,10 @@ namespace Surveillance.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Unbalanced_Fill()
         {
-            A
-                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A
-                .CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<DomainV2.Financial.Currency>.Ignored, A<DomainV2.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 4, VariableCurrency = "GBP" });
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);

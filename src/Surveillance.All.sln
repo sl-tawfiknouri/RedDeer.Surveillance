@@ -71,7 +71,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Interfa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.RuleDistributor.Tests", "Surveillance.Engine.RuleDistributor.Tests\Surveillance.Engine.RuleDistributor.Tests.csproj", "{2CB1834C-17B2-4812-B0BB-0BBB22E7D007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.Rules.Tests", "Surveillance.Engine.Rules.Tests\Surveillance.Engine.Rules.Tests.csproj", "{CB463E2B-7998-463E-9DF9-872391C49887}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.Rules.Tests", "Surveillance.Engine.Rules.Tests\Surveillance.Engine.Rules.Tests.csproj", "{CB463E2B-7998-463E-9DF9-872391C49887}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,10 +1,20 @@
 ﻿using System;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories
 {
     [TestFixture]
     public class MarkingTheCloseRuleFactoryTests

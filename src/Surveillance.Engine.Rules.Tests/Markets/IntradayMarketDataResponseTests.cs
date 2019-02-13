@@ -2,8 +2,9 @@
 using DomainV2.Equity.TimeBars;
 using DomainV2.Markets;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Markets;
 
-namespace Surveillance.Tests.Markets
+namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class IntradayMarketDataResponseTests

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Tests.Trades
+namespace Surveillance.Engine.Rules.Tests.Trades
 {
     [TestFixture]
     public class TradePositionTests

@@ -3,11 +3,14 @@ using System.Linq;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Markets;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Rules;
 
-namespace Surveillance.Tests.Markets
+namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class UniverseInterdayMarketCacheTests
@@ -160,8 +163,7 @@ namespace Surveillance.Tests.Markets
             var response = cache.Get(null);
             
             Assert.IsTrue(response.HadMissingData);
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -173,8 +175,7 @@ namespace Surveillance.Tests.Markets
             var response = cache.Get(_mdr1);
 
             Assert.IsTrue(response.HadMissingData);
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustHaveHappened();
         }
 
@@ -187,8 +188,7 @@ namespace Surveillance.Tests.Markets
             var response = cache.Get(_mdr1);
 
             Assert.IsTrue(response.HadMissingData);
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustHaveHappened();
         }
 
@@ -200,8 +200,7 @@ namespace Surveillance.Tests.Markets
             cache.Add(_interdayTimeBarCollectionXlon);
             var response = cache.Get(_mdr1);
 
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustNotHaveHappened();
             Assert.IsFalse(response.HadMissingData);
             Assert.AreEqual(response.Response, _interdayTimeBarCollectionXlon.Securities.FirstOrDefault());
@@ -218,8 +217,7 @@ namespace Surveillance.Tests.Markets
 
             var response = cache.Get(_mdr1);
 
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustNotHaveHappened();
             Assert.IsFalse(response.HadMissingData);
             Assert.AreEqual(response.Response, _interdayTimeBarCollectionXlon.Securities.FirstOrDefault());
@@ -233,8 +231,7 @@ namespace Surveillance.Tests.Markets
             cache.Add(_interdayTimeBarCollectionXlon2);
             var response = cache.Get(_mdr2);
 
-            A
-                .CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
+            A.CallTo(() => _dataRequestRepository.CreateDataRequest(A<MarketDataRequest>.Ignored))
                 .MustHaveHappened();
             Assert.IsTrue(response.HadMissingData);
             Assert.AreNotEqual(response.Response, _interdayTimeBarCollectionXlon2.Securities.FirstOrDefault());

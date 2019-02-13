@@ -1,10 +1,14 @@
 ﻿using System;
 using DomainV2.Equity.Streams.Interfaces;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 
-namespace Surveillance.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories
 {
     [TestFixture]
     public class UniversePlayerFactoryTests

@@ -4,9 +4,8 @@ using System.Linq;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Universe;
 
-namespace Surveillance.Tests.Universe
+namespace Surveillance.Engine.Rules.Tests.Universe
 {
     [TestFixture]
     public class UniverseSortComparerTests

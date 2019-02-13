@@ -1,8 +1,11 @@
 ﻿using System;
 using DomainV2.Markets;
+using FakeItEasy;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Markets.Interfaces;
 
-namespace Surveillance.Tests.Markets
+namespace Surveillance.Engine.Rules.Tests.Markets
 {
     [TestFixture]
     public class InterdayMarketCacheStrategyTests

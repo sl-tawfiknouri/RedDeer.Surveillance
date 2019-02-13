@@ -1,11 +1,15 @@
 ﻿using System;
 using DomainV2.Scheduling.Interfaces;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Scheduler;
+using Surveillance.Engine.Rules.test.Interfaces;
+using Surveillance.Engine.Rules.Utility.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Tests.Scheduler
+namespace Surveillance.Engine.Rules.Tests.Scheduler
 {
     [TestFixture]
     public class ReddeerRuleSchedulerTests

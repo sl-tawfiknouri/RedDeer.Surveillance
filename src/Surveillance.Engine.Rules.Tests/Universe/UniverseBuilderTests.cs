@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Trades.Interfaces;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.MarketEvents;
+using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Tests.Helpers;
 
-namespace Surveillance.Tests.Universe
+namespace Surveillance.Engine.Rules.Tests.Universe
 {
     [TestFixture]
     public class UniverseBuilderTests
@@ -105,12 +112,10 @@ namespace Surveillance.Tests.Universe
             };
             var frame = ((Order)null).Random();
 
-            A
-                .CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
+            A.CallTo(() => _auroraOrdersRepository.Get(timeSeriesInitiation, timeSeriesTermination, _opCtx))
                 .Returns(new[] {frame});
-
-            A
-                .CallTo(() => _orderAllocationProjector.DecorateOrders(A<IReadOnlyCollection<Order>>.Ignored))
+            
+            A.CallTo(() => _orderAllocationProjector.DecorateOrders(A<IReadOnlyCollection<Order>>.Ignored))
                 .Returns(new[] {frame});
 
             var result = await builder.Summon(schedule, _opCtx);
@@ -158,8 +163,7 @@ namespace Surveillance.Tests.Universe
                     new MarketOpenClose("xlon", timeSeriesTermination, timeSeriesTermination))
             };
 
-            A
-                .CallTo(() => _marketManager.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
+            A.CallTo(() => _marketManager.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
                 .Returns(marketOpenClose);
 
             var result = await builder.Summon(schedule, _opCtx);
@@ -205,8 +209,7 @@ namespace Surveillance.Tests.Universe
                     new List<EquityInstrumentIntraDayTimeBar>())
             };
 
-            A
-                .CallTo(() => _auroraMarketRepository.GetEquityIntraday(A<DateTime>.Ignored, A<DateTime>.Ignored, _opCtx))
+            A.CallTo(() => _auroraMarketRepository.GetEquityIntraday(A<DateTime>.Ignored, A<DateTime>.Ignored, _opCtx))
                 .Returns(exchangeFrames);
 
             var result = await builder.Summon(schedule, _opCtx);

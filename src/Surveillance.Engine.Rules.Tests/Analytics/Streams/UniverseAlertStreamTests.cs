@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using DomainV2.Equity.Streams.Interfaces;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Analytics.Streams;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 
-namespace Surveillance.Tests.Analytics.Streams
+namespace Surveillance.Engine.Rules.Tests.Analytics.Streams
 {
     [TestFixture]
     public class UniverseAlertStreamTests
@@ -23,14 +26,14 @@ namespace Surveillance.Tests.Analytics.Streams
         public void Constructor_Throws_For_Null_Unsubscriber()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseAlertStream(null, _logger));
+            Assert.Throws<System.ArgumentNullException>(() => new UniverseAlertStream(null, _logger));
         }
 
         [Test]
         public void Constructor_Throws_For_Null_Logger()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UniverseAlertStream(_factory, null));
+            Assert.Throws<System.ArgumentNullException>(() => new UniverseAlertStream(_factory, null));
         }
 
         [Test]
@@ -38,14 +41,14 @@ namespace Surveillance.Tests.Analytics.Streams
         {
             var stream = Build();
 
-            Assert.Throws<ArgumentNullException>(() => stream.Subscribe(null));
+            Assert.Throws<System.ArgumentNullException>(() => stream.Subscribe(null));
         }
 
         [Test]
         public void Subscribe_Calls_Unsubscriber_Create()
         {
             var stream = Build();
-            var observer = A.Fake<IObserver<IUniverseAlertEvent>>();
+            var observer = A.Fake<System.IObserver<IUniverseAlertEvent>>();
 
             stream.Subscribe(observer);
 
@@ -60,7 +63,7 @@ namespace Surveillance.Tests.Analytics.Streams
         public void Subscribe_Calls_Unsubscriber_Create_Twice_For_Same_Observer()
         {
             var stream = Build();
-            var observer = A.Fake<IObserver<IUniverseAlertEvent>>();
+            var observer = A.Fake<System.IObserver<IUniverseAlertEvent>>();
 
             stream.Subscribe(observer);
             stream.Subscribe(observer);

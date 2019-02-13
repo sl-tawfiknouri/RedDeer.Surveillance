@@ -1,8 +1,11 @@
 ﻿using System;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Subscribers;
 
-namespace Surveillance.Tests.Universe.Subscriber
+namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
 {
     [TestFixture]
     public class UniversePercentageOfTimeCompletionLoggerTests

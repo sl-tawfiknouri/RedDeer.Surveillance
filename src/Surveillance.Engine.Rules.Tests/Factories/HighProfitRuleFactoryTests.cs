@@ -1,12 +1,27 @@
 ﻿using System;
 using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Scheduling;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.HighProfits;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Multiverse;
+using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories
 {
     [TestFixture]
     public class HighProfitRuleFactoryTests
@@ -29,7 +44,7 @@ namespace Surveillance.Tests.Factories
         private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
         private IUniverseAlertStream _alertStream;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private DomainV2.Scheduling.ScheduledExecution _scheduledExecution;
+        private ScheduledExecution _scheduledExecution;
 
         [SetUp]
         public void Setup()

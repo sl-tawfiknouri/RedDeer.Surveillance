@@ -2,7 +2,7 @@
 using DomainV2.Financial;
 using DomainV2.Trading;
 
-namespace Surveillance.Tests.Trades
+namespace Surveillance.Engine.Rules.Tests.Trades
 {
     public static class OrderHelper
     {

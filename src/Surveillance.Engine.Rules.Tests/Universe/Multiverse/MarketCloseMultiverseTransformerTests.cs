@@ -4,10 +4,16 @@ using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Streams;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Engine.Rules.Rules.Interfaces;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.MarketEvents;
+using Surveillance.Engine.Rules.Universe.Multiverse;
 
-namespace Surveillance.Tests.Universe.Multiverse
+namespace Surveillance.Engine.Rules.Tests.Universe.Multiverse
 {
     [TestFixture]
     public class MarketCloseMultiverseTransformerTests
@@ -48,7 +54,7 @@ namespace Surveillance.Tests.Universe.Multiverse
 
             transformer.OnError(new ArgumentNullException());
 
-            A.CallTo(() => _observer.OnError(A<ArgumentNullException>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnError(A<Exception>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -95,8 +101,7 @@ namespace Surveillance.Tests.Universe.Multiverse
         {
             var genesisDate = new DateTime(2018, 01, 01);
 
-            A
-                .CallTo(() => _observer.OnNext(A<IUniverseEvent>.Ignored))
+            A.CallTo(() => _observer.OnNext(A<IUniverseEvent>.Ignored))
                 .Invokes(a =>
                 {
                     if (((IUniverseEvent)a.Arguments[0]).StateChange == UniverseStateEvent.EquityIntradayTick)
@@ -173,7 +178,7 @@ namespace Surveillance.Tests.Universe.Multiverse
             A.CallTo(() => _observer.OnNext(day2Open)).MustHaveHappenedOnceExactly();
 
             A.CallTo(() => _observer.OnNext(
-                A<UniverseEvent>.That.Matches(m =>
+                A<IUniverseEvent>.That.Matches(m =>
                     m.StateChange == UniverseStateEvent.EquityIntradayTick
                     && ((EquityIntraDayTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 2-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);
@@ -181,7 +186,7 @@ namespace Surveillance.Tests.Universe.Multiverse
 
             A.CallTo(() => _observer.OnNext(day3Open)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _observer.OnNext(
-                    A<UniverseEvent>.That.Matches(m =>
+                    A<IUniverseEvent>.That.Matches(m =>
                         m.StateChange == UniverseStateEvent.EquityIntradayTick
                         && ((EquityIntraDayTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 3-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);
@@ -189,7 +194,7 @@ namespace Surveillance.Tests.Universe.Multiverse
 
             A.CallTo(() => _observer.OnNext(day4Open)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _observer.OnNext(
-                    A<UniverseEvent>.That.Matches(m =>
+                    A<IUniverseEvent>.That.Matches(m =>
                         m.StateChange == UniverseStateEvent.EquityIntradayTick
                         && ((EquityIntraDayTimeBarCollection)m.UnderlyingEvent).Exchange.Name == "NASDAQ day 4-4")))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 4);

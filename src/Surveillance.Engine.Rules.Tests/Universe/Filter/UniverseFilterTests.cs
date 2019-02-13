@@ -3,11 +3,16 @@ using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Equity.TimeBars;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Tests.Helpers;
+using Surveillance.Engine.Rules.RuleParameters.Filter;
+using Surveillance.Engine.Rules.Tests.Helpers;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Filter;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 
-namespace Surveillance.Tests.Universe.Filter
+namespace Surveillance.Engine.Rules.Tests.Universe.Filter
 {
     [TestFixture]
     public class UniverseFilterTests
@@ -54,7 +59,7 @@ namespace Surveillance.Tests.Universe.Filter
 
             filter.OnError(new ArgumentNullException());
 
-            A.CallTo(() => _observer.OnError(A<ArgumentNullException>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnError(A<Exception>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Test]

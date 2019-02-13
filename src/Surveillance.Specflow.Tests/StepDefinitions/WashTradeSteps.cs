@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.WashTrade;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -125,7 +126,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     _washTradeRuleParameters,
                     _ruleCtx,
                     _alertStream,
-                    Rules.RuleRunMode.ForceRun);
+                    RuleRunMode.ForceRun);
 
             foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
                 washTradeRule.OnNext(universeEvent);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DomainV2.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -18,6 +19,7 @@ using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.HighVolume;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -155,7 +157,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     _ruleCtx,
                     _alertStream,
                     _dataRequestSubscriber,
-                    Rules.RuleRunMode.ForceRun);
+                    RuleRunMode.ForceRun);
 
             foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
                 highVolumeRule.OnNext(universeEvent);

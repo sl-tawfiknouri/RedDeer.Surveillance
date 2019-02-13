@@ -12,7 +12,7 @@ using Surveillance.Markets;
 namespace Surveillance.Tests.Markets
 {
     [TestFixture]
-    public class UniverseMarketCacheTests
+    public class UniverseIntradayMarketCacheTests
     {
         private IRuleRunDataRequestRepository _requestRepository;
         private ILogger _logger;

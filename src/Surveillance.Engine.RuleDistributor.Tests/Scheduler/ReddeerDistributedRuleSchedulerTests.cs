@@ -9,11 +9,11 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.Engines.RuleDistributor.Scheduler;
+using Surveillance.Engine.RuleDistributor.Scheduler;
 using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Engines.RuleDistributor.Tests.Scheduler
+namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
 {
     [TestFixture]
     public class ReddeerDistributedRuleSchedulerTests

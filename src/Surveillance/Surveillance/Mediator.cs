@@ -1,7 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Engine.RuleDistributor.Interfaces;
+using Surveillance.Engine.Rules.Interfaces;
 using Surveillance.Interfaces;
-using Surveillance.Scheduler.Interfaces;
 using Surveillance.Systems.Auditing.Utilities.Interfaces;
 
 namespace Surveillance
@@ -12,36 +13,38 @@ namespace Surveillance
     /// </summary>
     public class Mediator : IMediator
     {
-        private readonly IReddeerRuleScheduler _ruleScheduler;
         private readonly Engines.Interfaces.Mediator.IMediator _ruleDistributorMediator;
+        private readonly Engines.Interfaces.Mediator.IMediator _ruleAnalysisMediator;
         private readonly IApplicationHeartbeatService _heartbeatService;
         private readonly ILogger<Mediator> _logger;
 
         public Mediator(
-            IReddeerRuleScheduler ruleScheduler,
-            Engines.Interfaces.Mediator.IMediator ruleDistributorMediator,
+            IRuleDistributorMediator ruleDistributorMediator,
+            IRulesEngineMediator ruleEngineMediator,
             IApplicationHeartbeatService heartbeatService,
             ILogger<Mediator> logger)
         {
-            _ruleScheduler =
-                ruleScheduler
-                ?? throw new ArgumentNullException(nameof(ruleScheduler));
 
             _ruleDistributorMediator = 
                 ruleDistributorMediator
                 ?? throw new ArgumentNullException(nameof(ruleDistributorMediator));
 
+            _ruleAnalysisMediator =
+                ruleEngineMediator
+                ?? throw new ArgumentNullException(nameof(ruleEngineMediator));
+
             _heartbeatService =
                 heartbeatService
                 ?? throw new ArgumentNullException(nameof(heartbeatService));
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Initiate()
         {
             _logger.LogInformation($"Mediator beginning initiate");
-            _ruleScheduler.Initiate();
             _ruleDistributorMediator.Initiate();
+            _ruleAnalysisMediator.Initiate();
             _heartbeatService.Initialise();
             _logger.LogInformation($"Mediator completed initiate");
         }
@@ -49,10 +52,9 @@ namespace Surveillance
         public void Terminate()
         {
             _logger.LogInformation($"Mediator beginning terminate");
-            _ruleScheduler.Terminate();
             _ruleDistributorMediator.Terminate();
+            _ruleAnalysisMediator.Terminate();
             _logger.LogInformation($"Mediator completed terminate");
-            // we don't terminate the heart beat service as it will stop when the entire app has stopped
         }
     }
 }

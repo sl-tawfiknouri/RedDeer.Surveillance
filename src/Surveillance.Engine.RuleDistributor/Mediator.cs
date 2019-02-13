@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
-using Surveillance.Engines.Interfaces.Mediator;
 
 namespace Surveillance.Engine.RuleDistributor
 {
-    public class Mediator : IMediator
+    public class Mediator : IRuleDistributorMediator
     {
         private readonly IReddeerDistributedRuleScheduler _distributedRuleScheduler;
         private readonly ILogger<Mediator> _logger;

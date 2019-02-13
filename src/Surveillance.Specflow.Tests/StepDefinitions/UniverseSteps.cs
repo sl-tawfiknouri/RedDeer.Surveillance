@@ -2,11 +2,11 @@
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Surveillance.Specflow.Tests.StepDefinitions.Orders;
-using Surveillance.Universe;
-using Surveillance.Universe.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using TechTalk.SpecFlow;

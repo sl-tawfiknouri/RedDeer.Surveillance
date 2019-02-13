@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DomainV2.Scheduling;
+using DomainV2.Scheduling.Interfaces;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
+using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Scheduler;
 using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
-using Surveillance.Engines.Interfaces.Mediator;
 
 namespace Surveillance.Engine.RuleDistributor
 {
@@ -15,8 +17,11 @@ namespace Surveillance.Engine.RuleDistributor
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-            For<IMediator>().Use<Mediator>();
+            For<IRuleDistributorMediator>().Use<Mediator>();
             For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
+
+            For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
+            For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
         }
     }
 }

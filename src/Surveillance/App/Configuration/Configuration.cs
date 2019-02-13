@@ -7,10 +7,10 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
 using Microsoft.Extensions.Configuration;
-using Surveillance.Configuration;
-using Surveillance.Configuration.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Engine.Rules.Configuration;
+using Surveillance.Engine.Rules.Configuration.Interfaces;
 using Surveillance.Systems.DataLayer;
 using Surveillance.Systems.DataLayer.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField

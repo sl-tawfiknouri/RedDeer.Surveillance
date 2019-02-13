@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Surveillance.Engine\Surveillance.Engine.Rules.csproj" />
     <ProjectReference Include="..\Surveillance\Surveillance\Surveillance.csproj" />
   </ItemGroup>
 

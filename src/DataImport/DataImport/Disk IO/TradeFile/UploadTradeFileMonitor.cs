@@ -4,37 +4,41 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.Services.Interfaces;
 using DomainV2.Files;
-using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitor : BaseUploadFileMonitor, IUploadTradeFileMonitor
     {
-        private readonly IOrderStream<Order> _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadTradeFileProcessor _fileProcessor;
+        private readonly IEnrichmentService _enrichmentService;
+        private readonly IOrdersRepository _ordersRepository;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
-            IOrderStream<Order> stream,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IUploadTradeFileProcessor fileProcessor,
+            IEnrichmentService enrichmentService,
+            IOrdersRepository ordersRepository,
             ISystemProcessContext systemProcessContext,
             ILogger<UploadTradeFileMonitor> logger) 
             : base(directory, logger, "Upload Trade File Monitor")
         {
-            _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
             _fileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
+            _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
+            _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
@@ -118,17 +122,19 @@ namespace DataImport.Disk_IO.TradeFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
-            _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
+            _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the orders repository.");
 
             foreach (var item in csvReadResults.SuccessfulReads)
             {
                 item.IsInputBatch = true;
                 item.InputBatchId = uploadGuid;
                 item.BatchSize = csvReadResults.SuccessfulReads.Count;
-
-                _stream.Add(item);
+                _ordersRepository.Create(item).Wait();
             }
-            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to delete {path}.");
+
+            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to enrich the security data.");
+            _enrichmentService.Scan();
+            _logger.LogInformation($"Upload Trade File for {path} has enriched the csv records. Now about to delete {path}.");
             ReddeerDirectory.Delete(path);
             _logger.LogInformation($"Upload Trade File for {path} has deleted the file. Now about to check for unsuccessful reads.");
 

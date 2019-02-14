@@ -52,7 +52,6 @@ namespace DataImport
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<ExchangeStream>();
 
-            For<ITradeOrderStreamManager>().Use<TradeOrderStreamManager>();
             For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
@@ -60,7 +59,6 @@ namespace DataImport
 
             For<IUploadTradeFileProcessor>().Use<UploadTradeFileProcessor>();
             For<IUploadTradeFileMonitor>().Use<UploadTradeFileMonitor>();
-            For<IUploadTradeFileMonitorFactory>().Use<UploadTradeFileMonitorFactory>();
 
             For<IUploadEquityFileProcessor>().Use<UploadEquityFileProcessor>();
             For<ISecurityCsvToDtoMapper>().Use<SecurityCsvToDtoMapper>();
@@ -72,7 +70,6 @@ namespace DataImport
             For<IFileUploadMessageMapper>().Use<FileUploadMessageMapper>();
             For<IAwsS3Client>().Use<AwsS3Client>();
 
-            For<IRedDeerAuroraTradeRecorderAutoSchedule>().Use<RedDeerAuroraTradeRecorderAutoSchedule>();
             For<IRedDeerAuroraStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
@@ -84,7 +81,6 @@ namespace DataImport
             For<IEnrichmentService>().Use<EnrichmentService>();
 
             For<IUploadAllocationFileMonitor>().Use<AllocationFileMonitor>();
-            For<IAllocationFileMonitorFactory>().Use<AllocationFileMonitorFactory>();
             For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
+using Surveillance.Engine.DataCoordinator.Coordinator;
+using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
@@ -17,6 +19,7 @@ namespace Surveillance.Engine.DataCoordinator
 
             For<ICoordinatorMediator>().Use<Mediator>();
             For<IQueueSubscriber>().Use<QueueSubscriber>();
+            For<IUploadCoordinator>().Use<UploadCoordinator>();
         }
     }
 }

@@ -1,17 +1,11 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DataImport.Disk_IO.EquityFile;
-using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.Interfaces;
-using DataImport.Managers;
-using DataImport.Managers.Interfaces;
 using DataImport.MessageBusIO;
 using DataImport.MessageBusIO.Interfaces;
-using DataImport.Recorders;
-using DataImport.Recorders.Interfaces;
 using DataImport.S3_IO;
 using DataImport.S3_IO.Interfaces;
 using DataImport.Services;
@@ -52,25 +46,18 @@ namespace DataImport
             For(typeof(IOrderStream<>)).Use(typeof(OrderStream<>));
             For<IStockExchangeStream>().Use<ExchangeStream>();
 
-            For<IStockExchangeStreamManager>().Use<StockExchangeStreamManager>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IReddeerDirectory>().Use<ReddeerDirectory>();
-
             For<IUploadTradeFileProcessor>().Use<UploadTradeFileProcessor>();
             For<IUploadTradeFileMonitor>().Use<UploadTradeFileMonitor>();
-
-            For<IUploadEquityFileProcessor>().Use<UploadEquityFileProcessor>();
             For<ISecurityCsvToDtoMapper>().Use<SecurityCsvToDtoMapper>();
-            For<IUploadEquityFileMonitor>().Use<UploadEquityFileMonitor>();
-            For<IUploadEquityFileMonitorFactory>().Use<UploadEquityFileMonitorFactory>();
 
             For<IS3FileUploadMonitoringProcess>().Use<S3FileUploadMonitoringProcess>();
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IFileUploadMessageMapper>().Use<FileUploadMessageMapper>();
             For<IAwsS3Client>().Use<AwsS3Client>();
 
-            For<IRedDeerAuroraStockExchangeRecorder>().Use<RedDeerAuroraStockExchangeRecorder>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();

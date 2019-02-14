@@ -1,6 +1,4 @@
-﻿using DataImport.Disk_IO.AllocationFile;
-using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DataImport.Disk_IO.EquityFile.Interfaces;
+﻿using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 
 namespace DataImport.S3_IO.Interfaces
@@ -9,8 +7,7 @@ namespace DataImport.S3_IO.Interfaces
     {
         void Initialise(
             IUploadAllocationFileMonitor uploadAllocationFileMonitor,
-            IUploadTradeFileMonitor uploadTradeFileMonitor,
-            IUploadEquityFileMonitor uploadEquityFileMonitor);
+            IUploadTradeFileMonitor uploadTradeFileMonitor);
         void Terminate();
     }
 }

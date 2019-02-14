@@ -2,10 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.TradeFile;
+using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.Services.Interfaces;
+using DomainV2.Files;
 using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Utilities.Disk_IO;
+using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Integration.Tests.Validation
 {
@@ -290,41 +301,62 @@ namespace DataImport.Integration.Tests.Validation
             };
         }
 
-        //[Test]
-        //public void RunAllValidationTests()
-        //{
-        //    if (!_validationFiles.Any())
-        //    {
-        //        return;
-        //    }
+        private IEnrichmentService _enrichmentService;
+        private IOrdersRepository _ordersRepository;
+        private ISystemProcessContext _systemProcessContext;
 
-        //    foreach (var file in _validationFiles)
-        //    {
-        //        // ensure file is in the right location
-        //        Assert.IsTrue(File.Exists(file.Path));
+        private UploadTradeFileMonitor _uploadTradeFileMonitor;
 
-        //        // now pass it through to the data import app
-        //        var manager = graph.Build();
+        [SetUp]
+        public void Setup()
+        {
+            _enrichmentService = A.Fake<IEnrichmentService>();
+            _ordersRepository = A.Fake<IOrdersRepository>();
+            _systemProcessContext = A.Fake<ISystemProcessContext>();
 
-        //        var ordersList = new List<Order>();
-        //        A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
-        //            .Invokes(i => ordersList.Add((Order) i.Arguments[0]));
+            _uploadTradeFileMonitor = new UploadTradeFileMonitor(
+                new Configuration.Configuration(),
+                new ReddeerDirectory(),
+                new UploadTradeFileProcessor(
+                    new TradeFileCsvToOrderMapper(),
+                    new TradeFileCsvValidator(),
+                    new NullLogger<UploadTradeFileProcessor>()),
+                _enrichmentService,
+                _ordersRepository,
+                _systemProcessContext,
+                new NullLogger<UploadTradeFileMonitor>());
+        }
 
-        //        var fileMonitor = manager.Initialise();
+        [Test]
+        public void RunAllValidationTests()
+        {
+            if (!_validationFiles.Any())
+            {
+                return;
+            }
 
-        //        var processFile = fileMonitor.ProcessFile(file.Path);
+            foreach (var file in _validationFiles)
+            {
+                // ensure file is in the right location
+                Assert.IsTrue(File.Exists(file.Path));
 
-        //        Assert.AreEqual(processFile, file.Success);
+                var ordersList = new List<Order>();
+                A.CallTo(() => _ordersRepository.Create(A<Order>.Ignored))
+                    .Invokes(i => ordersList.Add((Order)i.Arguments[0]));
 
-        //        A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
-        //            .MustHaveHappenedANumberOfTimesMatching(n => n == file.SuccessfulRows);
+                var processFile = _uploadTradeFileMonitor.ProcessFile(file.Path);
 
-        //        // positive, any conditions
-        //        foreach (var cond in file.RowAssertions)
-        //        {
-        //            Assert.IsTrue(ordersList.Any(cond));
-        //        }
-        //    }
-        //}
+                Assert.AreEqual(processFile, file.Success);
+
+                A.CallTo(() => _ordersRepository.Create(A<Order>.Ignored))
+                    .MustHaveHappenedANumberOfTimesMatching(n => n == file.SuccessfulRows);
+
+                // positive, any conditions
+                foreach (var cond in file.RowAssertions)
+                {
+                    Assert.IsTrue(ordersList.Any(cond));
+                }
+            }
+        }
     }
 }

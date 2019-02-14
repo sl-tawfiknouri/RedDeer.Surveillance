@@ -6,5 +6,9 @@
         /// Auto schedule rules
         /// </summary>
         bool? AutoScheduleRules { get; set; }
+
+        bool? AlwaysRequireAllocations { get; set; }
+
+
     }
 }

@@ -68,9 +68,13 @@ namespace RedDeer.Surveillance.App.Configuration
                 var autoScheduleRules = GetValue("AutoScheduleRules", configurationBuilder);
                 bool.TryParse(autoScheduleRules, out var autoScheduleRulesValue);
 
+                var alwaysRequireAllocations = GetValue("AlwaysRequireAllocations", configurationBuilder);
+                bool.TryParse(alwaysRequireAllocations, out var alwaysRequireAllocationValue);
+
                 var ruleConfiguration = new RuleConfiguration
                 {
-                    AutoScheduleRules = autoScheduleRulesValue
+                    AutoScheduleRules = autoScheduleRulesValue,
+                    AlwaysRequireAllocations = alwaysRequireAllocationValue
                 };
 
                 return ruleConfiguration;

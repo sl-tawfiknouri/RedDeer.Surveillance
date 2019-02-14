@@ -35,7 +35,21 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 return;
             }
 
-            
+            if (_ruleConfiguration.AlwaysRequireAllocations.GetValueOrDefault(false))
+            {
+                // must have both
+
+                // so if we have both we can just roll onwards
+
+                // what do we do for this? trade file coverage by allocation file
+
+                // ANY or FULL or COVERAGE
+
+                // we need to add the file upload ids I think
+            }
+
+
+
         }
     }
 }

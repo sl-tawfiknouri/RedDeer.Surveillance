@@ -19,9 +19,9 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
         public void Setup()
         {
             _ruleConfiguration = A.Fake<IRuleConfiguration>();
-            A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(true);
-
             _logger = new NullLogger<UploadCoordinator>();
+
+            A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(true);
         }
 
         [Test]
@@ -56,5 +56,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
 
             Assert.DoesNotThrow(() => coordinator.AnalyseFileId(message));
         }
+
+
     }
 }

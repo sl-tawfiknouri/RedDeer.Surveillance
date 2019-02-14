@@ -1,6 +1,6 @@
 ﻿using Surveillance.Engines.Interfaces.Mediator;
 
-namespace Surveillance.Engines.DataCoordinator
+namespace Surveillance.Engine.DataCoordinator
 {
     public class Mediator : IMediator
     {

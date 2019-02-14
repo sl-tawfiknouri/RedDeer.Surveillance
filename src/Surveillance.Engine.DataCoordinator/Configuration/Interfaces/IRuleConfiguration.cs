@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engine.Rules.Configuration.Interfaces
+﻿namespace Surveillance.Engine.DataCoordinator.Configuration.Interfaces
 {
     public interface IRuleConfiguration
     {

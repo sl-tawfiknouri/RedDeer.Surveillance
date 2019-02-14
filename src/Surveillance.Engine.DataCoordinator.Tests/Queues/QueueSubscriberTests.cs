@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -16,55 +18,63 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
     [TestFixture]
     public class QueueSubscriberTests
     {
+        private IUploadCoordinator _uploadCoordinator;
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IMessageBusSerialiser _serialiser;
         private ISystemProcessContext _systemProcessContext;
+        private ISystemProcessOperationContext _systemProcessOperationContext;
         private ILogger<QueueSubscriber> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _uploadCoordinator = A.Fake<IUploadCoordinator>();
             _awsQueueClient = A.Fake<IAwsQueueClient>();
             _awsConfiguration = A.Fake<IAwsConfiguration>();
-            _serialiser = A.Fake<IMessageBusSerialiser>();
+            _serialiser = new MessageBusSerialiser();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
+            _systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
             _logger = new NullLogger<QueueSubscriber>();
+
+            A
+                .CallTo(() => _systemProcessContext.CreateAndStartOperationContext())
+                .Returns(_systemProcessOperationContext);
         }
 
         [Test]
         public void Constructor_AwsQueueClient_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_AwsConfiguration_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_Serialiser_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_SystmeProcessContext_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
+            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
         }
 
         [Test]
@@ -72,7 +82,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         {
             A.CallTo(() => _awsConfiguration.UploadCoordinatorQueueName).Returns("a-queue-name");
 
-            var subscriber = new QueueSubscriber(_awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
             subscriber.Initiate();
 
@@ -86,6 +96,16 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
                 .MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public async Task ExecuteCoordinationMessage_Ends_Event_With_Error_If_Not_Deserialisable()
+        {
+            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
+            await subscriber.ExecuteCoordinationMessage("message-id", "not-a-upload-message");
+
+            A
+                .CallTo(() => _systemProcessOperationContext.EndEventWithError(A<string>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }

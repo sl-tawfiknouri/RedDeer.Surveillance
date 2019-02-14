@@ -19,9 +19,9 @@ using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.Engine.DataCoordinator;
+using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
-using Surveillance.Engine.Rules.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 // ReSharper disable UnusedParameter.Local
 

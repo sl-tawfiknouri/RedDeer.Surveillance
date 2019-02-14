@@ -11,8 +11,8 @@ using Surveillance.Auditing.DataLayer;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Engine.Rules.Configuration;
-using Surveillance.Engine.Rules.Configuration.Interfaces;
+using Surveillance.Engine.DataCoordinator.Configuration;
+using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
 

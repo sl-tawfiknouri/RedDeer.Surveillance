@@ -5,6 +5,7 @@ using Contracts.SurveillanceService.Interfaces;
 using DomainV2.Contracts;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -13,6 +14,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
 {
     public class QueueSubscriber : IQueueSubscriber
     {
+        private readonly IUploadCoordinator _uploadCoordinator;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IMessageBusSerialiser _serialiser;
@@ -23,12 +25,14 @@ namespace Surveillance.Engine.DataCoordinator.Queues
         private AwsResusableCancellationToken _token;
 
         public QueueSubscriber(
+            IUploadCoordinator uploadCoordinator,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IMessageBusSerialiser serialiser,
             ISystemProcessContext systemProcessContext,
             ILogger<QueueSubscriber> logger)
         {
+            _uploadCoordinator = uploadCoordinator ?? throw new ArgumentNullException(nameof(uploadCoordinator));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
@@ -67,7 +71,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
 
                 _logger.LogInformation($"QueueSubscriber read message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
 
-                var coordinateUpload = _serialiser.Deserialise<UploadCoordinatorMessage>(messageBody);
+                var coordinateUpload = Deserialise(messageBody);
 
                 if (coordinateUpload == null)
                 {
@@ -76,12 +80,25 @@ namespace Surveillance.Engine.DataCoordinator.Queues
                     return;
                 }
 
+                _uploadCoordinator.AnalyseFileId();
 
-
+                _logger.LogInformation($"QueueSubscriber completed processing message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
             }
             catch (Exception e)
             {
                 _logger.LogError($"QueueSubscriber execute non distributed message encountered a top level exception.", e);
+            }
+        }
+
+        private UploadCoordinatorMessage Deserialise(string messageBody)
+        {
+            try
+            {
+                return _serialiser.Deserialise<UploadCoordinatorMessage>(messageBody);
+            }
+            catch
+            {
+                return null;
             }
         }
     }

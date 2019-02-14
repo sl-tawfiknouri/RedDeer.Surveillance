@@ -29,8 +29,8 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             ISystemProcessContext systemProcessContext,
             ILogger<QueueSubscriber> logger)
         {
-            _awsQueueClient = awsQueueClient;
-            _awsConfiguration = awsConfiguration;
+            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
+            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             _token = new AwsResusableCancellationToken();
 
             _awsQueueClient.SubscribeToQueueAsync(
-                _awsConfiguration.ScheduledRuleQueueName,
+                _awsConfiguration.UploadCoordinatorQueueName,
                 async (s1, s2) => { await ExecuteCoordinationMessage(s1, s2); },
                 _messageBusCts.Token,
                 _token);
@@ -65,7 +65,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             {
                 var opCtx = _systemProcessContext.CreateAndStartOperationContext();
 
-                _logger.LogInformation($"QueueSubscriber read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
+                _logger.LogInformation($"QueueSubscriber read message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
 
                 var coordinateUpload = _serialiser.Deserialise<UploadCoordinatorMessage>(messageBody);
 

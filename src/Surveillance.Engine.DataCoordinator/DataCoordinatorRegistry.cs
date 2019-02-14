@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
-
+using Surveillance.Engine.DataCoordinator.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator
 {
@@ -13,7 +13,7 @@ namespace Surveillance.Engine.DataCoordinator
             For(typeof(ILoggerFactory)).Use(loggerFactory);
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
-
+            For<ICoordinatorMediator>().Use<Mediator>();
         }
     }
 }

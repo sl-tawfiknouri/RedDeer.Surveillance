@@ -18,6 +18,7 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
 using Surveillance.Engine.Rules.Configuration.Interfaces;
@@ -67,6 +68,7 @@ namespace RedDeer.Surveillance.App
                     config.IncludeRegistry<DataLayerRegistry>();
                     config.IncludeRegistry<RuleDistributorRegistry>();
                     config.IncludeRegistry<RuleRegistry>();
+                    config.IncludeRegistry<DataCoordinatorRegistry>();
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });

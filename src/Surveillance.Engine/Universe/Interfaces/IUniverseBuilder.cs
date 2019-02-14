@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using DomainV2.Scheduling;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Interfaces
 {

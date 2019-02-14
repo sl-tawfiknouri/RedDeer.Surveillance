@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 

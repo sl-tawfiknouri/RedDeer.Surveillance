@@ -1,4 +1,4 @@
-﻿using Surveillance.Engines.Interfaces.Mediator;
+﻿using Surveillance.Engine.Interfaces.Mediator;
 
 namespace Surveillance.Engine.Rules.Interfaces
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces
 {

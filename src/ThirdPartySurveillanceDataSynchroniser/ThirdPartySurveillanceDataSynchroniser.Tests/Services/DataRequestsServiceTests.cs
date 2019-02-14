@@ -7,7 +7,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services;
 using Utilities.Aws_IO;

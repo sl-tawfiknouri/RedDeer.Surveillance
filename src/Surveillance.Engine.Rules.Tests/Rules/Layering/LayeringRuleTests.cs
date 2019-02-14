@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -24,7 +25,6 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 {

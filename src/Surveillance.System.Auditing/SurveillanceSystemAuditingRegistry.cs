@@ -1,16 +1,16 @@
 ﻿using StructureMap;
-using Surveillance.Systems.Auditing.Context;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.Auditing.Factories;
-using Surveillance.Systems.Auditing.Factories.Interfaces;
-using Surveillance.Systems.Auditing.Logging;
-using Surveillance.Systems.Auditing.Logging.Interfaces;
-using Surveillance.Systems.Auditing.Utilities;
-using Surveillance.Systems.Auditing.Utilities.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Exceptions;
-using Surveillance.Systems.DataLayer.Repositories.Exceptions.Interfaces;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Exceptions;
+using Surveillance.Auditing.DataLayer.Repositories.Exceptions.Interfaces;
+using Surveillance.Auditing.Factories;
+using Surveillance.Auditing.Factories.Interfaces;
+using Surveillance.Auditing.Logging;
+using Surveillance.Auditing.Logging.Interfaces;
+using Surveillance.Auditing.Utilities;
+using Surveillance.Auditing.Utilities.Interfaces;
 
-namespace Surveillance.Systems.Auditing
+namespace Surveillance.Auditing
 {
     public class SurveillanceSystemAuditingRegistry : Registry
     {

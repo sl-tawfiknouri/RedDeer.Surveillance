@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Trading;
 using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Trades

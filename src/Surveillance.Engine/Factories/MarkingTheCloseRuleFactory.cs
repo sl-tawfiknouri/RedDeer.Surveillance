@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -8,7 +9,6 @@ using Surveillance.Engine.Rules.Rules.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories
 {

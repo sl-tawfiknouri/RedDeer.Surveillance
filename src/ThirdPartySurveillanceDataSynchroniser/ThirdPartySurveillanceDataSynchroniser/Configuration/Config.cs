@@ -1,5 +1,5 @@
-﻿using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Systems.DataLayer.Interfaces;
+﻿using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Configuration

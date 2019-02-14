@@ -9,8 +9,8 @@ using DomainV2.Streams;
 using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using Utilities.Disk_IO;
 
 namespace DataImport.Integration.Tests.ObjectGraphs

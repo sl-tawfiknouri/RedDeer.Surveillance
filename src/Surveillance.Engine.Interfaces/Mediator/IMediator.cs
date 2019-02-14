@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Engines.Interfaces.Mediator
+﻿namespace Surveillance.Engine.Interfaces.Mediator
 {
     public interface IMediator
     {

@@ -7,6 +7,7 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
@@ -22,7 +23,6 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
 {

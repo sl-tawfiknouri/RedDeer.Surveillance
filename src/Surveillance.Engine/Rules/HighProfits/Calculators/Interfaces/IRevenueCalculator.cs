@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DomainV2.Trading;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces
 {

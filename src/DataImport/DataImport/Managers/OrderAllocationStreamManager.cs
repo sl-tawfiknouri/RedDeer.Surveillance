@@ -4,6 +4,7 @@ using DataImport.Recorders.Interfaces;
 using DomainV2.Streams;
 using DomainV2.Trading;
 using System;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 
 namespace DataImport.Managers
 {

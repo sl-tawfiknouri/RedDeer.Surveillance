@@ -5,6 +5,7 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
@@ -12,7 +13,6 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Trades;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
 {

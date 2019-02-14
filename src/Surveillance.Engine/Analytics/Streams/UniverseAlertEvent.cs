@@ -1,5 +1,5 @@
-﻿using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+﻿using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 
 namespace Surveillance.Engine.Rules.Analytics.Streams
 {

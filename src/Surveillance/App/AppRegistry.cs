@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using RedDeer.Surveillance.App.Interfaces;
 using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
-using Surveillance.Systems.Auditing.Context;
-using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer.Processes;
 
 namespace RedDeer.Surveillance.App
 {

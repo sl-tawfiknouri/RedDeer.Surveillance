@@ -4,19 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Scheduling;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
+using Surveillance.Engine.Rules.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
-using Surveillance.Engine.Rules.test.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
-namespace Surveillance.Engine.Rules.test
+namespace Surveillance.Engine.Rules.Analysis
 {
     /// <summary>
     /// Main entry point to the MAR Analysis Engine

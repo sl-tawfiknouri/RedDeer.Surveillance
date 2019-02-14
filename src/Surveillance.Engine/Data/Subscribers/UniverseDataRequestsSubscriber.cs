@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Data.Subscribers
 {

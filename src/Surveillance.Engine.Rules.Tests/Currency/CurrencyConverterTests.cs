@@ -6,9 +6,9 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Currency;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Currency
 {

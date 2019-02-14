@@ -1,7 +1,7 @@
 ﻿using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 
-namespace DataImport.Disk_IO.AllocationFile
+namespace DataImport.Disk_IO.AllocationFile.Interfaces
 {
     public interface IAllocationFileMonitorFactory
     {

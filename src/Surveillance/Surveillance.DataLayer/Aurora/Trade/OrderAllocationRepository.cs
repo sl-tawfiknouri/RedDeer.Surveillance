@@ -6,6 +6,7 @@ using Dapper;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Trade
 {

@@ -4,6 +4,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency;
@@ -18,7 +19,6 @@ using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.WashTrades;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 

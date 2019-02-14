@@ -3,6 +3,7 @@ using DomainV2.Equity.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency;
@@ -25,7 +26,6 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Multiverse;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighProfit;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 

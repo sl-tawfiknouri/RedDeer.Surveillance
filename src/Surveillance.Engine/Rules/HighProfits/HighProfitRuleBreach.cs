@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using DomainV2.Financial;
 using DomainV2.Trading;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.HighProfits
 {

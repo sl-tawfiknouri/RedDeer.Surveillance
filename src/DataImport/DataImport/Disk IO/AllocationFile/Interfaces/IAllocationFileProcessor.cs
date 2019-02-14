@@ -1,4 +1,5 @@
 ﻿using DomainV2.Files;
+using DomainV2.Files.AllocationFile;
 using DomainV2.Trading;
 
 namespace DataImport.Disk_IO.AllocationFile.Interfaces

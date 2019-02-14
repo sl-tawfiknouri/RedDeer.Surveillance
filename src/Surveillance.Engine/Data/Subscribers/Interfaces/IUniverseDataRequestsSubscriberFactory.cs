@@ -1,4 +1,4 @@
-﻿using Surveillance.Systems.Auditing.Context.Interfaces;
+﻿using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Data.Subscribers.Interfaces
 {

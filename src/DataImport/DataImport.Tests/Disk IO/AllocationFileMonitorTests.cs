@@ -6,8 +6,8 @@ using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using System;
+using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Tests.Disk_IO

@@ -4,11 +4,12 @@ using DomainV2.Files;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
 using System;
 using System.IO;
 using System.Linq;
+using DomainV2.Files.AllocationFile;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile

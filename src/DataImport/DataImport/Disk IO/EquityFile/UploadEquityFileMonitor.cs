@@ -6,8 +6,8 @@ using DataImport.Disk_IO.EquityFile.Interfaces;
 using DomainV2.Equity.Streams.Interfaces;
 using DomainV2.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.EquityFile

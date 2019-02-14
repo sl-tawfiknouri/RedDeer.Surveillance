@@ -4,7 +4,7 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DomainV2.Streams;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile

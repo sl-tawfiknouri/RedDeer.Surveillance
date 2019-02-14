@@ -6,6 +6,7 @@ using DomainV2.Financial;
 using DomainV2.Scheduling;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -14,7 +15,6 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
 

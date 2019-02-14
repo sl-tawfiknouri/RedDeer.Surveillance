@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 
 namespace ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces
 {

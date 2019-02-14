@@ -7,6 +7,8 @@ using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using DomainV2.Streams;
 using StructureMap;
+using Surveillance.Engine.Rules.Analysis;
+using Surveillance.Engine.Rules.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Factory;
 using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Factory;
@@ -52,8 +54,6 @@ using Surveillance.Engine.Rules.Rules.WashTrade;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Scheduler;
 using Surveillance.Engine.Rules.Scheduler.Interfaces;
-using Surveillance.Engine.Rules.test;
-using Surveillance.Engine.Rules.test.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
@@ -71,7 +71,6 @@ using Surveillance.Engine.Rules.Universe.Subscribers.Factories;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;
 using Surveillance.Engine.Rules.Utility.Interfaces;
-using Surveillance.Engines.Interfaces.Mediator;
 
 namespace Surveillance.Engine.Rules
 {

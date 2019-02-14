@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DomainV2.DTO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;

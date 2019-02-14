@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;

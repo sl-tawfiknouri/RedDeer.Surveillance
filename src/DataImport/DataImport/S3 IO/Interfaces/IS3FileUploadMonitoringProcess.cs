@@ -1,4 +1,5 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.EquityFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 

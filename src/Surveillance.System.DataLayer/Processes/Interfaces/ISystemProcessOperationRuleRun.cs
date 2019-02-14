@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Surveillance.Systems.DataLayer.Processes.Interfaces
+namespace Surveillance.Auditing.DataLayer.Processes.Interfaces
 {
     public interface ISystemProcessOperationRuleRun
     {

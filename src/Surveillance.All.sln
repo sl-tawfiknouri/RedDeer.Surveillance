@@ -28,11 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.DataLayer", "Surveillance.System.DataLayer\Surveillance.System.DataLayer.csproj", "{A56736C5-1834-411E-80C6-0193F52A3EAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Auditing.DataLayer", "Surveillance.System.DataLayer\Surveillance.Auditing.DataLayer.csproj", "{A56736C5-1834-411E-80C6-0193F52A3EAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.Auditing", "Surveillance.System.Auditing\Surveillance.System.Auditing.csproj", "{4B284ED4-A223-41D6-94B7-0C0CE8B44500}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Auditing", "Surveillance.System.Auditing\Surveillance.Auditing.csproj", "{4B284ED4-A223-41D6-94B7-0C0CE8B44500}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.System.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.System.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Auditing.DataLayer.Tests", "Surveillance.System.DataLayer.Tests\Surveillance.Auditing.DataLayer.Tests.csproj", "{1A82341B-913A-42F6-BA5B-BE56E136E746}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport.App", "DataImport\App\DataImport.App.csproj", "{7F69784F-39DF-4BDE-B74C-EA5B46053081}"
 EndProject
@@ -83,7 +83,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Harness", "Test Harnes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{5214A434-9675-426D-BD03-A34FE2F963E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Engine.DataCoordinator.Tests", "Surveillance.Engine.DataCoordinator.Tests\Surveillance.Engine.DataCoordinator.Tests.csproj", "{5A54ED4B-2635-444F-8955-607EF8A6329D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.DataCoordinator.Tests", "Surveillance.Engine.DataCoordinator.Tests\Surveillance.Engine.DataCoordinator.Tests.csproj", "{5A54ED4B-2635-444F-8955-607EF8A6329D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

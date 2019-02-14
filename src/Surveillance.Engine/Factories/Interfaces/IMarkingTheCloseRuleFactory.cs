@@ -1,7 +1,7 @@
-﻿using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+﻿using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {

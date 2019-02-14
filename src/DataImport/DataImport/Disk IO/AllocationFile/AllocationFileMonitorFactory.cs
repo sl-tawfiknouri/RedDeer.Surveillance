@@ -3,8 +3,8 @@ using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using System;
+using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile

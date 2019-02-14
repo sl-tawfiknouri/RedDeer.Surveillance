@@ -26,14 +26,14 @@ namespace Surveillance.Engine.Rules.Tests.Analytics.Streams
         public void Constructor_Throws_For_Null_Unsubscriber()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<System.ArgumentNullException>(() => new UniverseAlertStream(null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new UniverseAlertStream(null, _logger));
         }
 
         [Test]
         public void Constructor_Throws_For_Null_Logger()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<System.ArgumentNullException>(() => new UniverseAlertStream(_factory, null));
+            Assert.Throws<ArgumentNullException>(() => new UniverseAlertStream(_factory, null));
         }
 
         [Test]
@@ -41,14 +41,14 @@ namespace Surveillance.Engine.Rules.Tests.Analytics.Streams
         {
             var stream = Build();
 
-            Assert.Throws<System.ArgumentNullException>(() => stream.Subscribe(null));
+            Assert.Throws<ArgumentNullException>(() => stream.Subscribe(null));
         }
 
         [Test]
         public void Subscribe_Calls_Unsubscriber_Create()
         {
             var stream = Build();
-            var observer = A.Fake<System.IObserver<IUniverseAlertEvent>>();
+            var observer = A.Fake<IObserver<IUniverseAlertEvent>>();
 
             stream.Subscribe(observer);
 
@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Tests.Analytics.Streams
         public void Subscribe_Calls_Unsubscriber_Create_Twice_For_Same_Observer()
         {
             var stream = Build();
-            var observer = A.Fake<System.IObserver<IUniverseAlertEvent>>();
+            var observer = A.Fake<IObserver<IUniverseAlertEvent>>();
 
             stream.Subscribe(observer);
             stream.Subscribe(observer);

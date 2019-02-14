@@ -3,6 +3,8 @@ using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
+using Surveillance.Engine.RuleDistributor.Distributor;
+using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Scheduler;
 using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
@@ -22,6 +24,7 @@ namespace Surveillance.Engine.RuleDistributor
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
+            For<IScheduleDisassembler>().Use<ScheduleDisassembler>();
         }
     }
 }

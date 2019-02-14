@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
+using DomainV2.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -105,6 +106,20 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
 
             A
                 .CallTo(() => _systemProcessOperationContext.EndEventWithError(A<string>.Ignored))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task ExecuteCoordinationMessage_Calls_AnalyseFileId_For_Valid_UploadMessage()
+        {
+            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var uploadMessage = new UploadCoordinatorMessage {FileId = Guid.NewGuid().ToString()};
+            var message = _serialiser.Serialise<UploadCoordinatorMessage>(uploadMessage);
+
+            await subscriber.ExecuteCoordinationMessage("message-id", message);
+
+            A
+                .CallTo(() => _uploadCoordinator.AnalyseFileId(A<UploadCoordinatorMessage>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
     }

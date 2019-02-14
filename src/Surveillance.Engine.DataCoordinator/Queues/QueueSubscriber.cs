@@ -80,7 +80,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
                     return;
                 }
 
-                _uploadCoordinator.AnalyseFileId();
+                _uploadCoordinator.AnalyseFileId(coordinateUpload);
 
                 _logger.LogInformation($"QueueSubscriber completed processing message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
             }

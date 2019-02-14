@@ -1,4 +1,5 @@
 ﻿using System;
+using DomainV2.Contracts;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 
@@ -13,7 +14,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             _ruleConfiguration = ruleConfiguration ?? throw new ArgumentNullException(nameof(ruleConfiguration));
         }
 
-        public void AnalyseFileId()
+        public void AnalyseFileId(UploadCoordinatorMessage message)
         {
 
         }

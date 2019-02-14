@@ -1,7 +1,9 @@
-﻿namespace Surveillance.Engine.DataCoordinator.Coordinator.Interfaces
+﻿using DomainV2.Contracts;
+
+namespace Surveillance.Engine.DataCoordinator.Coordinator.Interfaces
 {
     public interface IUploadCoordinator
     {
-        void AnalyseFileId();
+        void AnalyseFileId(UploadCoordinatorMessage message);
     }
 }

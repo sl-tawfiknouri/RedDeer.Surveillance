@@ -40,6 +40,44 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public async Task Create(IReadOnlyCollection<OrderAllocation> entities)
+        {
+            _logger.LogInformation($"OrderAllocationRepository Create bulk method called");
+
+            var filteredEntities = entities?.Where(i => i != null && i.IsValid())?.ToList();
+
+            if (filteredEntities == null
+                || !filteredEntities.Any())
+            {
+                _logger.LogInformation($"OrderAllocationRepository Create bulk method called with null or invalid order allocation, returning without saving");
+                return;
+            }
+
+            var projectedFilteredEntities =
+                filteredEntities
+                    .Where(i => i != null)
+                    .Select(i => new OrderAllocationDto(i))
+                    .ToList();
+
+            try
+            {
+                _logger.LogInformation($"OrderAllocationRepository Create bulk method opened db connection and about to write {projectedFilteredEntities.Count} records");
+
+                using (var dbConn = _connectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, projectedFilteredEntities))
+                {
+                    await conn;
+                    _logger.LogInformation($"OrderAllocationRepository Create bulk method completed writing record");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"OrderAllocationRepository Create bulk method had an exception. ", e);
+            }
+
+            _logger.LogInformation($"OrderAllocationRepository Create bulk method completed");
+        }
+
         public async Task Create(OrderAllocation entity)
         {
             _logger.LogInformation($"OrderAllocationRepository Create method called");
@@ -51,16 +89,13 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 return;
             }
 
-            var dbConnection = _connectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 var dto = new OrderAllocationDto(entity);
-                _logger.LogInformation(
-                    $"OrderAllocationRepository Create method opened db connection and about to write record");
-                using (var conn = dbConnection.ExecuteAsync(InsertAttributionSql, dto))
+                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to write record"); 
+
+                using (var dbConn = _connectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, dto))
                 {
                     await conn;
                     _logger.LogInformation($"OrderAllocationRepository Create method completed writing record");
@@ -69,11 +104,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
             catch (Exception e)
             {
                 _logger.LogError($"OrderAllocationRepository Create method had an exception. ", e);
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             _logger.LogInformation($"OrderAllocationRepository Create method completed");
@@ -91,15 +121,11 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 return new OrderAllocation[0];
             }
 
-            var dbConnection = _connectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
+                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to query for {orders?.Count} order ids");
 
-                _logger.LogInformation(
-                    $"OrderAllocationRepository Create method opened db connection and about to query for {orders?.Count} order ids");
-
+                using (var dbConnection = _connectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orders }))
                 {
                     var result = await conn;
@@ -112,11 +138,6 @@ namespace Surveillance.DataLayer.Aurora.Trade
             catch (Exception e)
             {
                 _logger?.LogError($"OrderAllocationRepository Get encountered an error", e);
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             _logger.LogInformation($"OrderAllocationRepository Get method completed");

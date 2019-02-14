@@ -10,6 +10,7 @@ using System.Linq;
 using DomainV2.Files.AllocationFile;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile
@@ -19,6 +20,7 @@ namespace DataImport.Disk_IO.AllocationFile
         private readonly IAllocationFileProcessor _allocationFileProcessor;
         private readonly IOrderAllocationStream<OrderAllocation> _orderAllocationStream;
         private readonly IUploadConfiguration _uploadConfiguration;
+        private readonly IOrderAllocationRepository _repository;
         private readonly ISystemProcessContext _systemProcessContext;
 
         private readonly object _lock = new object();
@@ -29,6 +31,7 @@ namespace DataImport.Disk_IO.AllocationFile
             ISystemProcessContext systemProcessContext,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
+            IOrderAllocationRepository repository,
             ILogger<AllocationFileMonitor> logger)
             : base(directory, logger, "Allocation File Monitor")
         {
@@ -36,6 +39,7 @@ namespace DataImport.Disk_IO.AllocationFile
             _allocationFileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         protected override string UploadDirectoryPath()
@@ -126,6 +130,14 @@ namespace DataImport.Disk_IO.AllocationFile
         {
             Logger.LogInformation($"AllocationFileMonitor for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
 
+
+
+            //repo
+            _repository.Create(null);
+
+
+
+            // change this bit to sav ein bulk
             foreach (var item in csvReadResults.SuccessfulReads)
             {
                 _orderAllocationStream.Add(item);

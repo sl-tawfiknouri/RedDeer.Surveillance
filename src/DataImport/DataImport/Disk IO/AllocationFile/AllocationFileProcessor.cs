@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DomainV2.Files;
 using DomainV2.Files.AllocationFile;
 using DomainV2.Files.AllocationFile.Interfaces;
 using DomainV2.Trading;

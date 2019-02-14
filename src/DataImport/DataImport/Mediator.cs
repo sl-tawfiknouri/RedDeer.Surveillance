@@ -1,4 +1,5 @@
 ﻿using System;
+using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Interfaces;
 using DataImport.Managers.Interfaces;
 using DataImport.S3_IO.Interfaces;
@@ -12,7 +13,7 @@ namespace DataImport
         private readonly IEnrichmentService _enrichmentService;
         private readonly ITradeOrderStreamManager _tradeOrderStreamManager;
         private readonly IStockExchangeStreamManager _stockExchangeStreamManager;
-        private readonly IOrderAllocationStreamManager _orderAllocationStreamManager;
+        private readonly IUploadAllocationFileMonitor _allocationFileMonitor;
         private readonly IS3FileUploadMonitoringProcess _s3FileUploadProcess;
         private readonly ILogger _logger;
 
@@ -20,7 +21,7 @@ namespace DataImport
             IEnrichmentService enrichmentService,
             ITradeOrderStreamManager tradeOrderStreamManager,
             IStockExchangeStreamManager stockExchangeStreamManager,
-            IOrderAllocationStreamManager orderAllocationStreamManager,
+            IUploadAllocationFileMonitor allocationFileMonitor,
             IS3FileUploadMonitoringProcess s3FileUploadProcess,
             ILogger<Mediator> logger)
         {
@@ -36,9 +37,9 @@ namespace DataImport
                 stockExchangeStreamManager
                 ?? throw new ArgumentNullException(nameof(stockExchangeStreamManager));
 
-            _orderAllocationStreamManager =
-                orderAllocationStreamManager
-                ?? throw new ArgumentNullException(nameof(orderAllocationStreamManager));
+            _allocationFileMonitor =
+                allocationFileMonitor
+                ?? throw new ArgumentNullException(nameof(allocationFileMonitor));
 
             _s3FileUploadProcess =
                 s3FileUploadProcess
@@ -54,11 +55,12 @@ namespace DataImport
                 _logger.LogInformation("Initiating data import in mediator");
 
                 _enrichmentService.Initialise();
+
                 var tradeFileMonitor = _tradeOrderStreamManager.Initialise();
                 var equityFileMonitor = _stockExchangeStreamManager.Initialise();
-                var allocationFileMonitor = _orderAllocationStreamManager.Initialise();
+                _allocationFileMonitor.Initiate();
 
-                _s3FileUploadProcess.Initialise(allocationFileMonitor, tradeFileMonitor, equityFileMonitor);
+                _s3FileUploadProcess.Initialise(_allocationFileMonitor, tradeFileMonitor, equityFileMonitor);
 
                 _logger.LogInformation("Completed initiating data import in mediator");
             }

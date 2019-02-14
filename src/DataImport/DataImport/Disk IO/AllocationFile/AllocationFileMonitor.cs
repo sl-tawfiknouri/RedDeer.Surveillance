@@ -1,7 +1,5 @@
 ﻿using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DomainV2.Files;
-using DomainV2.Streams.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,7 +16,6 @@ namespace DataImport.Disk_IO.AllocationFile
     public class AllocationFileMonitor : BaseUploadFileMonitor, IUploadAllocationFileMonitor
     {
         private readonly IAllocationFileProcessor _allocationFileProcessor;
-        private readonly IOrderAllocationStream<OrderAllocation> _orderAllocationStream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IOrderAllocationRepository _repository;
         private readonly ISystemProcessContext _systemProcessContext;
@@ -26,7 +23,6 @@ namespace DataImport.Disk_IO.AllocationFile
         private readonly object _lock = new object();
 
         public AllocationFileMonitor(
-            IOrderAllocationStream<OrderAllocation> orderAllocationStream,
             IAllocationFileProcessor fileProcessor,
             ISystemProcessContext systemProcessContext,
             IUploadConfiguration uploadConfiguration,
@@ -35,7 +31,6 @@ namespace DataImport.Disk_IO.AllocationFile
             ILogger<AllocationFileMonitor> logger)
             : base(directory, logger, "Allocation File Monitor")
         {
-            _orderAllocationStream = orderAllocationStream ?? throw new ArgumentNullException(nameof(orderAllocationStream));
             _allocationFileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
@@ -129,20 +124,7 @@ namespace DataImport.Disk_IO.AllocationFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             Logger.LogInformation($"AllocationFileMonitor for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
-
-
-
-            //repo
-            _repository.Create(null);
-
-
-
-            // change this bit to sav ein bulk
-            foreach (var item in csvReadResults.SuccessfulReads)
-            {
-                _orderAllocationStream.Add(item);
-            }
-
+            _repository.Create(csvReadResults.SuccessfulReads);
             Logger.LogInformation($"AllocationFileMonitor for {path} has uploaded the csv records. Now about to delete {path}.");
             ReddeerDirectory.Delete(path);
             Logger.LogInformation($"AllocationFileMonitor for {path} has deleted the file. Now about to check for unsuccessful reads.");

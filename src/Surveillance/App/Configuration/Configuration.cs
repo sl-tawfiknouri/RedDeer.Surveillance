@@ -51,7 +51,8 @@ namespace RedDeer.Surveillance.App.Configuration
                     TestRuleRunUpdateQueueName = GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
-                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder)
+                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder)
                 };
 
                 return networkConfiguration;

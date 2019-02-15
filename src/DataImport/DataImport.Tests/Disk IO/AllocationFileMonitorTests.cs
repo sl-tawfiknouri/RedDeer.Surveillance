@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using System;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
@@ -20,6 +21,7 @@ namespace DataImport.Tests.Disk_IO
         private ILogger<AllocationFileMonitor> _logger;
         private IAllocationFileProcessor _fileProcessor;
         private IOrderAllocationRepository _allocationRepository;
+        private IFileUploadOrderAllocationRepository _fileUploadAllocationRepository;
 
         [SetUp]
         public void Setup()
@@ -30,6 +32,7 @@ namespace DataImport.Tests.Disk_IO
 
             _fileProcessor = A.Fake<IAllocationFileProcessor>();
             _allocationRepository = A.Fake<IOrderAllocationRepository>();
+            _fileUploadAllocationRepository = A.Fake<IFileUploadOrderAllocationRepository>();
             _logger = A.Fake<ILogger<AllocationFileMonitor>>();
         }
 
@@ -44,6 +47,7 @@ namespace DataImport.Tests.Disk_IO
                     _uploadConfiguration,
                     _reddeerDirectory,
                     _allocationRepository,
+                    _fileUploadAllocationRepository,
                     _logger));
         }
 
@@ -58,6 +62,7 @@ namespace DataImport.Tests.Disk_IO
                     _uploadConfiguration,
                     _reddeerDirectory,
                     _allocationRepository,
+                    _fileUploadAllocationRepository,
                     _logger));
         }
 
@@ -72,6 +77,7 @@ namespace DataImport.Tests.Disk_IO
                     null,
                     _reddeerDirectory,
                     _allocationRepository,
+                    _fileUploadAllocationRepository,
                     _logger));
         }
 
@@ -86,6 +92,7 @@ namespace DataImport.Tests.Disk_IO
                     _uploadConfiguration,
                     null,
                     _allocationRepository,
+                    _fileUploadAllocationRepository,
                     _logger));
         }
 
@@ -99,6 +106,22 @@ namespace DataImport.Tests.Disk_IO
                     _systemProcessContext,
                     _uploadConfiguration,
                     _reddeerDirectory,
+                    null,
+                    _fileUploadAllocationRepository,
+                    _logger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_FileUploadAllocationRepository_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    _allocationRepository,
                     null,
                     _logger));
         }
@@ -114,6 +137,7 @@ namespace DataImport.Tests.Disk_IO
                     _uploadConfiguration,
                     _reddeerDirectory,
                     _allocationRepository,
+                    _fileUploadAllocationRepository,
                     null));
         }
 
@@ -145,6 +169,7 @@ namespace DataImport.Tests.Disk_IO
                 _uploadConfiguration,
                 _reddeerDirectory,
                 _allocationRepository,
+                _fileUploadAllocationRepository,
                 _logger);
         }
     }

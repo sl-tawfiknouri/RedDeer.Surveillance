@@ -6,7 +6,7 @@ namespace Surveillance.DataLayer.Aurora.Trade.Interfaces
 {
     public interface IOrderAllocationRepository
     {
-        Task Create(IReadOnlyCollection<OrderAllocation> entities);
+        Task<List<string>> Create(IReadOnlyCollection<OrderAllocation> entities);
         Task Create(OrderAllocation entity);
         Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orders);
     }

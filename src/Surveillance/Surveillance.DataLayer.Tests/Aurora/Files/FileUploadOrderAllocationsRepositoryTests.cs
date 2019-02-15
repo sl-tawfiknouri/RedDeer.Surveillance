@@ -32,7 +32,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Files
         {
             var repository = new FileUploadOrderAllocationRepository(_connectionFactory, _logger);
 
-            var insertableIds = new List<int> { 1, 2, 3, 4, 5};
+            var insertableIds = new List<string> { "1", "2", "3", "4", "5"};
 
             await repository.Create(insertableIds, 1);
         }

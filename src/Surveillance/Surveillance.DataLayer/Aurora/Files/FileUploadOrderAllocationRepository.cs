@@ -25,7 +25,7 @@ namespace Surveillance.DataLayer.Aurora.Files
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(IReadOnlyCollection<int> orderAllocationIds, int uploadId)
+        public async Task Create(IReadOnlyCollection<string> orderAllocationIds, int uploadId)
         {
             if (orderAllocationIds == null
                 || !orderAllocationIds.Any())
@@ -61,7 +61,7 @@ namespace Surveillance.DataLayer.Aurora.Files
                 // leave for dapper
             }
 
-            public FileUploadOrderAllocationDto(int orderAllocationId, int fileUploadId)
+            public FileUploadOrderAllocationDto(string orderAllocationId, int fileUploadId)
             {
                 OrderAllocationId = orderAllocationId;
                 FileUploadId = fileUploadId;
@@ -69,7 +69,7 @@ namespace Surveillance.DataLayer.Aurora.Files
 
             public int Id { get; set; }
             public int FileUploadId { get; set; }
-            public int OrderAllocationId { get; set; }
+            public string OrderAllocationId { get; set; }
         }
     }
 }

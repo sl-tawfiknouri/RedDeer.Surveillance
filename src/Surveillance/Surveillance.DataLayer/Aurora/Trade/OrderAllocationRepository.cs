@@ -19,7 +19,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
             INSERT INTO 
                 OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume)
                 VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume)
-            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume;";
+            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume, Id = LAST_INSERT_ID(Id);
+            SELECT LAST_INSERT_ID();";
 
         private const string GetAllocationSql = @"
             SELECT
@@ -40,7 +41,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(IReadOnlyCollection<OrderAllocation> entities)
+        public async Task<List<string>> Create(IReadOnlyCollection<OrderAllocation> entities)
         {
             _logger.LogInformation($"OrderAllocationRepository Create bulk method called");
 
@@ -50,7 +51,7 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 || !filteredEntities.Any())
             {
                 _logger.LogInformation($"OrderAllocationRepository Create bulk method called with null or invalid order allocation, returning without saving");
-                return;
+                return new List<string>();
             }
 
             var projectedFilteredEntities =
@@ -59,15 +60,23 @@ namespace Surveillance.DataLayer.Aurora.Trade
                     .Select(i => new OrderAllocationDto(i))
                     .ToList();
 
+            var insertedIds = new List<string>();
+
             try
             {
                 _logger.LogInformation($"OrderAllocationRepository Create bulk method opened db connection and about to write {projectedFilteredEntities.Count} records");
 
                 using (var dbConn = _connectionFactory.BuildConn())
-                using (var conn = dbConn.ExecuteAsync(InsertAttributionSql, projectedFilteredEntities))
                 {
-                    await conn;
-                    _logger.LogInformation($"OrderAllocationRepository Create bulk method completed writing record");
+                    foreach (var dto in projectedFilteredEntities)
+                    {
+                        using (var conn = dbConn.ExecuteScalarAsync<string>(InsertAttributionSql, dto))
+                        {
+                            var id = await conn;
+                           insertedIds.Add(id);
+                            _logger.LogInformation($"OrderAllocationRepository Create bulk method completed writing record");
+                        }
+                    }
                 }
             }
             catch (Exception e)
@@ -76,6 +85,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
             }
 
             _logger.LogInformation($"OrderAllocationRepository Create bulk method completed");
+
+            return insertedIds;
         }
 
         public async Task Create(OrderAllocation entity)

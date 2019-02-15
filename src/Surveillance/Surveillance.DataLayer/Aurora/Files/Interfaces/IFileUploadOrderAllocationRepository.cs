@@ -5,6 +5,6 @@ namespace Surveillance.DataLayer.Aurora.Files.Interfaces
 {
     public interface IFileUploadOrderAllocationRepository
     {
-        Task Create(IReadOnlyCollection<int> orderAllocationIds, int uploadId);
+        Task Create(IReadOnlyCollection<string> orderAllocationIds, int uploadId);
     }
 }

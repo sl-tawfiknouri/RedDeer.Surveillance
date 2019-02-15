@@ -3,11 +3,14 @@ using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DomainV2.Files.AllocationFile;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
@@ -17,7 +20,8 @@ namespace DataImport.Disk_IO.AllocationFile
     {
         private readonly IAllocationFileProcessor _allocationFileProcessor;
         private readonly IUploadConfiguration _uploadConfiguration;
-        private readonly IOrderAllocationRepository _repository;
+        private readonly IOrderAllocationRepository _allocationRepository;
+        private readonly IFileUploadOrderAllocationRepository _fileUploadRepository;
         private readonly ISystemProcessContext _systemProcessContext;
 
         private readonly object _lock = new object();
@@ -28,13 +32,15 @@ namespace DataImport.Disk_IO.AllocationFile
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IOrderAllocationRepository repository,
+            IFileUploadOrderAllocationRepository fileUploadRepository,
             ILogger<AllocationFileMonitor> logger)
             : base(directory, logger, "Allocation File Monitor")
         {
             _allocationFileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _allocationRepository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _fileUploadRepository = fileUploadRepository ?? throw new ArgumentNullException(nameof(fileUploadRepository));
         }
 
         protected override string UploadDirectoryPath()
@@ -124,13 +130,33 @@ namespace DataImport.Disk_IO.AllocationFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             Logger.LogInformation($"AllocationFileMonitor for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
-            _repository.Create(csvReadResults.SuccessfulReads);
+            var allocationIds = _allocationRepository.Create(csvReadResults.SuccessfulReads).Result;
+            LinkFileUploadDataToUpload(fileUpload?.FileUpload, allocationIds);
             Logger.LogInformation($"AllocationFileMonitor for {path} has uploaded the csv records. Now about to delete {path}.");
             ReddeerDirectory.Delete(path);
             Logger.LogInformation($"AllocationFileMonitor for {path} has deleted the file. Now about to check for unsuccessful reads.");
 
             Logger.LogInformation($"AllocationFileMonitor successfully processed file for {path}. Did not find any unsuccessful reads.");
-            fileUpload.EndEvent().EndEvent();
+            fileUpload?.EndEvent()?.EndEvent();
+        }
+
+        private void LinkFileUploadDataToUpload(ISystemProcessOperationUploadFile fileUploadId, IReadOnlyCollection<string> allocationIds)
+        {
+            if (allocationIds == null
+                || !allocationIds.Any())
+            {
+                Logger.LogInformation($"AllocationFileMonitor had no inserted allocation ids to link the file upload to.");
+                return;
+            }
+
+            if (fileUploadId?.Id != null)
+            {
+                _fileUploadRepository.Create(allocationIds, fileUploadId.Id).Wait();
+            }
+            else
+            {
+                Logger.LogInformation($"AllocationFileMonitor received a null or empty file upload id. Exiting");
+            }
         }
     }
 }

@@ -8,16 +8,10 @@ START TRANSACTION;
 
     INSERT INTO Migrations VALUES(23, "unique constraint for client order id.sql", now());
 
-	SET FOREIGN_KEY_CHECKS=0;
-
-	ALTER IGNORE TABLE DealerOrders ADD UNIQUE INDEX (ClientDealerOrderId);
-	ALTER IGNORE TABLE Orders ADD UNIQUE INDEX (ClientOrderId);
-
-	SET FOREIGN_KEY_CHECKS=1;     
-
+	ALTER TABLE DealerOrders ADD CONSTRAINT unique_dealer_order_client_id UNIQUE (ClientDealerOrderId);
+	ALTER TABLE Orders ADD CONSTRAINT unique_order_client_id UNIQUE(ClientOrderId);
+	
 	ALTER TABLE OrdersAllocation DROP INDEX unique_orders_allocation;
-
-		-- add a unique constraint
 	ALTER TABLE OrdersAllocation ADD CONSTRAINT unique_orders_allocation UNIQUE(OrderId, Fund, Strategy, ClientAccountId);
 
 COMMIT;

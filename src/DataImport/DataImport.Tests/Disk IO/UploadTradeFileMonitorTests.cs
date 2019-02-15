@@ -7,6 +7,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
@@ -20,6 +21,7 @@ namespace DataImport.Tests.Disk_IO
         private IUploadTradeFileProcessor _fileProcessor;
         private IEnrichmentService _enrichmentService;
         private IOrdersRepository _ordersRepository;
+        private IFileUploadOrdersRepository _fileUploadOrdersRepository;
 
         private ISystemProcessContext _systemProcessContext;
         private ILogger<UploadTradeFileMonitor> _logger;
@@ -32,6 +34,7 @@ namespace DataImport.Tests.Disk_IO
             _fileProcessor = A.Fake<IUploadTradeFileProcessor>();
             _enrichmentService = A.Fake<IEnrichmentService>();
             _ordersRepository = A.Fake<IOrdersRepository>();
+            _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
             _logger = A.Fake<ILogger<UploadTradeFileMonitor>>();
         }
@@ -41,7 +44,15 @@ namespace DataImport.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(null, _directory, _fileProcessor, _enrichmentService, _ordersRepository, _systemProcessContext, _logger));
+                new UploadTradeFileMonitor(
+                    null,
+                    _directory,
+                    _fileProcessor,
+                    _enrichmentService,
+                    _ordersRepository,
+                    _fileUploadOrdersRepository,
+                    _systemProcessContext,
+                    _logger));
         }
 
         [Test]
@@ -49,7 +60,15 @@ namespace DataImport.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor( _uploadConfiguration, null, _fileProcessor, _enrichmentService, _ordersRepository, _systemProcessContext, _logger));
+                new UploadTradeFileMonitor(
+                    _uploadConfiguration,
+                    null,
+                    _fileProcessor,
+                    _enrichmentService,
+                    _ordersRepository,
+                    _fileUploadOrdersRepository,
+                    _systemProcessContext,
+                    _logger));
         }
 
         [Test]
@@ -57,7 +76,15 @@ namespace DataImport.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_uploadConfiguration, _directory, null, _enrichmentService, _ordersRepository, _systemProcessContext, _logger));
+                new UploadTradeFileMonitor(
+                    _uploadConfiguration,
+                    _directory,
+                    null,
+                    _enrichmentService,
+                    _ordersRepository,
+                    _fileUploadOrdersRepository,
+                    _systemProcessContext,
+                    _logger));
         }
 
         [Test]
@@ -65,13 +92,28 @@ namespace DataImport.Tests.Disk_IO
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new UploadTradeFileMonitor(_uploadConfiguration, _directory, _fileProcessor, _enrichmentService, _ordersRepository, _systemProcessContext, null));
+                new UploadTradeFileMonitor(
+                    _uploadConfiguration,
+                    _directory,
+                    _fileProcessor,
+                    _enrichmentService,
+                    _ordersRepository,
+                    _fileUploadOrdersRepository,
+                    _systemProcessContext, null));
         }
 
         [Test]
         public void Initiate_EmptyConfigurationPath_Logs()
         {
-            var monitor = new UploadTradeFileMonitor(_uploadConfiguration, _directory, _fileProcessor, _enrichmentService, _ordersRepository, _systemProcessContext, _logger);
+            var monitor = new UploadTradeFileMonitor(
+                _uploadConfiguration,
+                _directory,
+                _fileProcessor,
+                _enrichmentService, 
+                _ordersRepository,
+                _fileUploadOrdersRepository,
+                _systemProcessContext,
+                _logger);
 
             monitor.Initiate();
 
@@ -84,7 +126,16 @@ namespace DataImport.Tests.Disk_IO
         [Explicit]
         public void Initiate_SetConfigurationPath_Logs()
         {
-            var monitor = new UploadTradeFileMonitor(_uploadConfiguration, _directory, _fileProcessor, _enrichmentService, _ordersRepository, _systemProcessContext, _logger);
+            var monitor = new UploadTradeFileMonitor(
+                _uploadConfiguration,
+                _directory,
+                _fileProcessor,
+                _enrichmentService,
+                _ordersRepository,
+                _fileUploadOrdersRepository,
+                _systemProcessContext,
+                _logger);
+
             A.CallTo(() => _uploadConfiguration.DataImportTradeFileUploadDirectoryPath).Returns("testPath");
 
             monitor.Initiate();

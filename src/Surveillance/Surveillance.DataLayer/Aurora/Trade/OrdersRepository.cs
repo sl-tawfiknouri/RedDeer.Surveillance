@@ -115,7 +115,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 DealingInstructions=@OrderDealingInstructions,
                 OptionStrikePrice=@OptionStrikePrice,
                 OptionExpirationDate=@OptionExpirationDate,
-                OptionEuropeanAmerican=@OptionEuropeanAmerican;
+                OptionEuropeanAmerican=@OptionEuropeanAmerican,
+                Id = LAST_INSERT_ID(Id);
                 SELECT LAST_INSERT_ID();";
 
         private const string InsertDealerOrderSql = @"
@@ -211,7 +212,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 FilledVolume = @FilledVolume,
                 OptionStrikePrice = @OptionStrikePrice,
                 OptionExpirationDate = @OptionExpirationDate,
-                OptionEuropeanAmerican = @OptionEuropeanAmerican;
+                OptionEuropeanAmerican = @OptionEuropeanAmerican,
+                Id = LAST_INSERT_ID(Id);
                 SELECT LAST_INSERT_ID();";
 
         private const string GetOrderSql = @"

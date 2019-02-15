@@ -10,6 +10,7 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
@@ -21,6 +22,7 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly IUploadTradeFileProcessor _fileProcessor;
         private readonly IEnrichmentService _enrichmentService;
         private readonly IOrdersRepository _ordersRepository;
+        private readonly IFileUploadOrdersRepository _fileUploadOrdersRepository;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
@@ -31,6 +33,7 @@ namespace DataImport.Disk_IO.TradeFile
             IUploadTradeFileProcessor fileProcessor,
             IEnrichmentService enrichmentService,
             IOrdersRepository ordersRepository,
+            IFileUploadOrdersRepository fileUploadOrdersRepository,
             ISystemProcessContext systemProcessContext,
             ILogger<UploadTradeFileMonitor> logger) 
             : base(directory, logger, "Upload Trade File Monitor")
@@ -39,6 +42,7 @@ namespace DataImport.Disk_IO.TradeFile
             _fileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
             _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
             _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            _fileUploadOrdersRepository = fileUploadOrdersRepository ?? throw new ArgumentNullException(nameof(fileUploadOrdersRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
@@ -132,6 +136,8 @@ namespace DataImport.Disk_IO.TradeFile
                 _ordersRepository.Create(item).Wait();
             }
 
+            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to link uploaded orders to file upload id.");
+            InsertFileUploadOrderIds(csvReadResults, fileUpload);
             _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to enrich the security data.");
             _enrichmentService.Scan();
             _logger.LogInformation($"Upload Trade File for {path} has enriched the csv records. Now about to delete {path}.");
@@ -140,6 +146,33 @@ namespace DataImport.Disk_IO.TradeFile
 
             _logger.LogInformation($"Upload Trade File successfully processed file for {path}. Did not find any unsuccessful reads.");
             fileUpload.EndEvent().EndEvent();
+        }
+
+        private void InsertFileUploadOrderIds(
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
+            ISystemProcessOperationUploadFileContext fileUpload)
+        {
+            if (csvReadResults.SuccessfulReads == null
+                || !csvReadResults.SuccessfulReads.Any())
+            {
+                return;
+            }
+
+            if (fileUpload?.FileUpload?.Id == null)
+            {
+                return;
+            }
+
+            var orderIds = 
+                csvReadResults
+                    .SuccessfulReads
+                    .Select(i => i.ReddeerOrderId?.ToString())
+                    .Where(i => !string.IsNullOrWhiteSpace(i))
+                    .ToList();
+
+            _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Now about to save the link between the file upload and orders");
+            _fileUploadOrdersRepository.Create(orderIds, fileUpload.FileUpload.Id).Wait();
+            _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Completed saving the link between the file upload and orders");
         }
     }
 }

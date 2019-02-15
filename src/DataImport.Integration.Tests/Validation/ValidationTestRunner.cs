@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Disk_IO;
 using Utilities.Disk_IO.Interfaces;
@@ -303,6 +304,7 @@ namespace DataImport.Integration.Tests.Validation
 
         private IEnrichmentService _enrichmentService;
         private IOrdersRepository _ordersRepository;
+        private IFileUploadOrdersRepository _fileUploadOrdersRepository;
         private ISystemProcessContext _systemProcessContext;
 
         private UploadTradeFileMonitor _uploadTradeFileMonitor;
@@ -312,6 +314,7 @@ namespace DataImport.Integration.Tests.Validation
         {
             _enrichmentService = A.Fake<IEnrichmentService>();
             _ordersRepository = A.Fake<IOrdersRepository>();
+            _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
 
             _uploadTradeFileMonitor = new UploadTradeFileMonitor(
@@ -323,6 +326,7 @@ namespace DataImport.Integration.Tests.Validation
                     new NullLogger<UploadTradeFileProcessor>()),
                 _enrichmentService,
                 _ordersRepository,
+                _fileUploadOrdersRepository,
                 _systemProcessContext,
                 new NullLogger<UploadTradeFileMonitor>());
         }

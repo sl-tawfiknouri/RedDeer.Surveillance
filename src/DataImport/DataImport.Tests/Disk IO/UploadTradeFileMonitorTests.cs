@@ -2,7 +2,9 @@
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
+using DomainV2.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -22,6 +24,7 @@ namespace DataImport.Tests.Disk_IO
         private IEnrichmentService _enrichmentService;
         private IOrdersRepository _ordersRepository;
         private IFileUploadOrdersRepository _fileUploadOrdersRepository;
+        private IUploadCoordinatorMessageSender _messageSender;
 
         private ISystemProcessContext _systemProcessContext;
         private ILogger<UploadTradeFileMonitor> _logger;
@@ -36,6 +39,7 @@ namespace DataImport.Tests.Disk_IO
             _ordersRepository = A.Fake<IOrdersRepository>();
             _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
+            _messageSender = A.Fake<IUploadCoordinatorMessageSender>();
             _logger = A.Fake<ILogger<UploadTradeFileMonitor>>();
         }
 
@@ -51,6 +55,7 @@ namespace DataImport.Tests.Disk_IO
                     _enrichmentService,
                     _ordersRepository,
                     _fileUploadOrdersRepository,
+                    _messageSender,
                     _systemProcessContext,
                     _logger));
         }
@@ -67,6 +72,7 @@ namespace DataImport.Tests.Disk_IO
                     _enrichmentService,
                     _ordersRepository,
                     _fileUploadOrdersRepository,
+                    _messageSender,
                     _systemProcessContext,
                     _logger));
         }
@@ -83,6 +89,7 @@ namespace DataImport.Tests.Disk_IO
                     _enrichmentService,
                     _ordersRepository,
                     _fileUploadOrdersRepository,
+                    _messageSender,
                     _systemProcessContext,
                     _logger));
         }
@@ -99,7 +106,9 @@ namespace DataImport.Tests.Disk_IO
                     _enrichmentService,
                     _ordersRepository,
                     _fileUploadOrdersRepository,
-                    _systemProcessContext, null));
+                    _messageSender,
+                    _systemProcessContext,
+                    null));
         }
 
         [Test]
@@ -112,6 +121,7 @@ namespace DataImport.Tests.Disk_IO
                 _enrichmentService, 
                 _ordersRepository,
                 _fileUploadOrdersRepository,
+                _messageSender,
                 _systemProcessContext,
                 _logger);
 
@@ -133,6 +143,7 @@ namespace DataImport.Tests.Disk_IO
                 _enrichmentService,
                 _ordersRepository,
                 _fileUploadOrdersRepository,
+                _messageSender,
                 _systemProcessContext,
                 _logger);
 

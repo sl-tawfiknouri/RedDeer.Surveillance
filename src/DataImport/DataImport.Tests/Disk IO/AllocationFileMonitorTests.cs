@@ -5,6 +5,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using System;
+using DataImport.MessageBusIO.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Trade.Interfaces;
@@ -21,6 +22,7 @@ namespace DataImport.Tests.Disk_IO
         private ILogger<AllocationFileMonitor> _logger;
         private IAllocationFileProcessor _fileProcessor;
         private IOrderAllocationRepository _allocationRepository;
+        private IUploadCoordinatorMessageSender _coordinatorMessageSender;
         private IFileUploadOrderAllocationRepository _fileUploadAllocationRepository;
 
         [SetUp]
@@ -33,6 +35,7 @@ namespace DataImport.Tests.Disk_IO
             _fileProcessor = A.Fake<IAllocationFileProcessor>();
             _allocationRepository = A.Fake<IOrderAllocationRepository>();
             _fileUploadAllocationRepository = A.Fake<IFileUploadOrderAllocationRepository>();
+            _coordinatorMessageSender = A.Fake<IUploadCoordinatorMessageSender>();
             _logger = A.Fake<ILogger<AllocationFileMonitor>>();
         }
 
@@ -48,6 +51,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     _allocationRepository,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -63,6 +67,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     _allocationRepository,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -78,6 +83,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     _allocationRepository,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -93,6 +99,7 @@ namespace DataImport.Tests.Disk_IO
                     null,
                     _allocationRepository,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -108,6 +115,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     null,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -123,6 +131,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     _allocationRepository,
                     null,
+                    _coordinatorMessageSender,
                     _logger));
         }
 
@@ -138,6 +147,7 @@ namespace DataImport.Tests.Disk_IO
                     _reddeerDirectory,
                     _allocationRepository,
                     _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
                     null));
         }
 
@@ -170,6 +180,7 @@ namespace DataImport.Tests.Disk_IO
                 _reddeerDirectory,
                 _allocationRepository,
                 _fileUploadAllocationRepository,
+                _coordinatorMessageSender,
                 _logger);
         }
     }

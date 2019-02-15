@@ -5,6 +5,7 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using DomainV2.Files;
 using DomainV2.Financial;
@@ -305,6 +306,7 @@ namespace DataImport.Integration.Tests.Validation
         private IEnrichmentService _enrichmentService;
         private IOrdersRepository _ordersRepository;
         private IFileUploadOrdersRepository _fileUploadOrdersRepository;
+        private IUploadCoordinatorMessageSender _uploadMessageSender;
         private ISystemProcessContext _systemProcessContext;
 
         private UploadTradeFileMonitor _uploadTradeFileMonitor;
@@ -316,6 +318,7 @@ namespace DataImport.Integration.Tests.Validation
             _ordersRepository = A.Fake<IOrdersRepository>();
             _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
+            _uploadMessageSender = A.Fake<IUploadCoordinatorMessageSender>();
 
             _uploadTradeFileMonitor = new UploadTradeFileMonitor(
                 new Configuration.Configuration(),
@@ -327,6 +330,7 @@ namespace DataImport.Integration.Tests.Validation
                 _enrichmentService,
                 _ordersRepository,
                 _fileUploadOrdersRepository,
+                _uploadMessageSender,
                 _systemProcessContext,
                 new NullLogger<UploadTradeFileMonitor>());
         }

@@ -6,6 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataImport.MessageBusIO.Interfaces;
+using DomainV2.Contracts;
+using DomainV2.Files;
 using DomainV2.Files.AllocationFile;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
@@ -22,6 +25,7 @@ namespace DataImport.Disk_IO.AllocationFile
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IOrderAllocationRepository _allocationRepository;
         private readonly IFileUploadOrderAllocationRepository _fileUploadRepository;
+        private readonly IUploadCoordinatorMessageSender _messageSender;
         private readonly ISystemProcessContext _systemProcessContext;
 
         private readonly object _lock = new object();
@@ -33,6 +37,7 @@ namespace DataImport.Disk_IO.AllocationFile
             IReddeerDirectory directory,
             IOrderAllocationRepository repository,
             IFileUploadOrderAllocationRepository fileUploadRepository,
+            IUploadCoordinatorMessageSender messageSender,
             ILogger<AllocationFileMonitor> logger)
             : base(directory, logger, "Allocation File Monitor")
         {
@@ -41,6 +46,7 @@ namespace DataImport.Disk_IO.AllocationFile
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
             _allocationRepository = repository ?? throw new ArgumentNullException(nameof(repository));
             _fileUploadRepository = fileUploadRepository ?? throw new ArgumentNullException(nameof(fileUploadRepository));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         }
 
         protected override string UploadDirectoryPath()
@@ -152,6 +158,14 @@ namespace DataImport.Disk_IO.AllocationFile
             if (fileUploadId?.Id != null)
             {
                 _fileUploadRepository.Create(allocationIds, fileUploadId.Id).Wait();
+
+                var uploadMessage = new UploadCoordinatorMessage
+                {
+                    FileId = fileUploadId.Id.ToString(),
+                    Type = UploadedFileType.AllocationFile
+                };
+
+                _messageSender.Send(uploadMessage).Wait();
             }
             else
             {

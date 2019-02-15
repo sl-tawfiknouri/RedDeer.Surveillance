@@ -4,7 +4,9 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
+using DomainV2.Contracts;
 using DomainV2.Files;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
@@ -23,6 +25,7 @@ namespace DataImport.Disk_IO.TradeFile
         private readonly IEnrichmentService _enrichmentService;
         private readonly IOrdersRepository _ordersRepository;
         private readonly IFileUploadOrdersRepository _fileUploadOrdersRepository;
+        private readonly IUploadCoordinatorMessageSender _fileUploadMessageSender;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
@@ -34,6 +37,7 @@ namespace DataImport.Disk_IO.TradeFile
             IEnrichmentService enrichmentService,
             IOrdersRepository ordersRepository,
             IFileUploadOrdersRepository fileUploadOrdersRepository,
+            IUploadCoordinatorMessageSender fileUploadMessageSender,
             ISystemProcessContext systemProcessContext,
             ILogger<UploadTradeFileMonitor> logger) 
             : base(directory, logger, "Upload Trade File Monitor")
@@ -43,6 +47,7 @@ namespace DataImport.Disk_IO.TradeFile
             _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
             _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             _fileUploadOrdersRepository = fileUploadOrdersRepository ?? throw new ArgumentNullException(nameof(fileUploadOrdersRepository));
+            _fileUploadMessageSender = fileUploadMessageSender ?? throw new ArgumentNullException(nameof(fileUploadMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
@@ -173,6 +178,14 @@ namespace DataImport.Disk_IO.TradeFile
             _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Now about to save the link between the file upload and orders");
             _fileUploadOrdersRepository.Create(orderIds, fileUpload.FileUpload.Id).Wait();
             _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Completed saving the link between the file upload and orders");
+
+            var uploadMessage = new UploadCoordinatorMessage
+            {
+                FileId = fileUpload?.FileUpload?.Id.ToString(),
+                Type = UploadedFileType.OrdersFile
+            };
+
+            _fileUploadMessageSender.Send(uploadMessage).Wait();
         }
     }
 }

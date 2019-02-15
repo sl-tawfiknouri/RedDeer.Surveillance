@@ -71,6 +71,7 @@ namespace DataImport
             For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
+            For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
         }
     }
 }

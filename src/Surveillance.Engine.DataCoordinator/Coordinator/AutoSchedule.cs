@@ -57,6 +57,9 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 _logger?.LogInformation($"AutoSchedule about to dispatch schedule to the queue");
                 await _messageSender.Send(schedule);
                 _logger?.LogInformation($"AutoSchedule finished dispatched schedule to the queue");
+
+                await _ordersRepository.SetOrdersScheduled(filteredOrders);
+                _logger?.LogInformation($"AutoSchedule finished updating orders with scheduled status. Completing.");
             }
             catch (Exception e)
             {

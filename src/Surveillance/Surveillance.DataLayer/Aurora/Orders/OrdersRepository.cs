@@ -224,6 +224,24 @@ namespace Surveillance.DataLayer.Aurora.Orders
             FROM Orders as ord
             WHERE Live = 1 AND Autoscheduled = 0;";
 
+        private const string SetOrdersToScheduled = @"
+            UPDATE Orders
+            SET Autoscheduled = 1
+            WHERE ClientOrderId = @OrderId;";
+
+        private const string SetOrdersToLivened = @"
+            UPDATE Orders AS ord
+            LEFT OUTER JOIN OrdersAllocation AS oa
+            ON ord.Id = oa.OrderId
+            SET ord.Live = 1
+            WHERE oa.OrderId IS NOT NULL;
+
+            UPDATE OrdersAllocation AS oa
+            LEFT OUTER JOIN Orders AS ord
+            ON oa.OrderId = ord.Id
+            SET Oa.Live = 1
+            WHERE ord.Id IS NOT NULL;";
+
         private const string GetOrderSql = @"
             SELECT
 	            ord.Id as ReddeerOrderId,
@@ -522,6 +540,54 @@ namespace Surveillance.DataLayer.Aurora.Orders
             }
 
             return new List<Order>();
+        }
+
+        public async Task SetOrdersScheduled(IReadOnlyCollection<Order> orders)
+        {
+            if (orders == null
+                || !orders.Any())
+            {
+                return;
+            }
+
+            _logger.LogInformation($"OrdersRepository asked to set orders scheduled");
+
+            try
+            {
+                var dtos = orders.Select(i => new OrderDto(i)).ToList();
+
+                using (var open = _dbConnectionFactory.BuildConn())
+                using (var conn = open.ExecuteAsync(SetOrdersToScheduled, dtos))
+                {
+                    await conn;
+
+                    _logger.LogInformation($"OrdersRepository completed setting orders scheduled");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrdersRepository set orders as scheduled encountered an exception {e.Message}", e);
+            }
+        }
+
+        public async Task LivenCompletedOrderSets()
+        {
+            _logger.LogInformation($"OrdersRepository asked to set order livening");
+
+            try
+            {
+                using (var open = _dbConnectionFactory.BuildConn())
+                using (var conn = open.ExecuteAsync(SetOrdersToLivened))
+                {
+                    await conn;
+
+                    _logger.LogInformation($"OrdersRepository completed setting order livening");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
+            }
         }
 
         private Order Project(OrderDto dto)

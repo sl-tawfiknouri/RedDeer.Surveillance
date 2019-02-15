@@ -59,6 +59,20 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         [Test]
         [Explicit("Performs side effect to the d-b")]
+        public async Task SetScheduledOrder_SetsOrderToAutoScheduled()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+            var frame = Frame();
+            var frames = new[] { frame };
+
+            await repo.SetOrdersScheduled(frames);
+
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
@@ -75,7 +89,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             Assert.IsTrue(true);
         }
-
+        
         private Order Frame()
         {
             var exch = new DomainV2.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);

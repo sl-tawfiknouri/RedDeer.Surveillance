@@ -90,11 +90,11 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             }
         }
 
-        private UploadCoordinatorMessage Deserialise(string messageBody)
+        private AutoScheduleMessage Deserialise(string messageBody)
         {
             try
             {
-                return _serialiser.Deserialise<UploadCoordinatorMessage>(messageBody);
+                return _serialiser.Deserialise<AutoScheduleMessage>(messageBody);
             }
             catch
             {

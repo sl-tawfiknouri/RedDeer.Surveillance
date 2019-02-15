@@ -76,7 +76,7 @@ namespace DataImport.Disk_IO.TradeFile
                     if (csvReadResults == null
                         || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                     {
-                        _logger.LogError($"Upload Trade File for {path} did not find any records or had zero successful and unsuccessful reads");
+                        _logger.LogError($"Upload Trade File for {path} did not find any records or had zero successful and unsuccessful reads. Empty file. CLIENTSERVICE");
                         fileUpload.EndEvent().EndEvent();
                         return false;
                     }
@@ -179,12 +179,7 @@ namespace DataImport.Disk_IO.TradeFile
             _fileUploadOrdersRepository.Create(orderIds, fileUpload.FileUpload.Id).Wait();
             _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Completed saving the link between the file upload and orders");
 
-            var uploadMessage = new UploadCoordinatorMessage
-            {
-                FileId = fileUpload?.FileUpload?.Id.ToString(),
-                Type = UploadedFileType.OrdersFile
-            };
-
+            var uploadMessage = new AutoScheduleMessage();
             _fileUploadMessageSender.Send(uploadMessage).Wait();
         }
     }

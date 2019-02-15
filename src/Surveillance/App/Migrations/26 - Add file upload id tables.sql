@@ -14,4 +14,7 @@ START TRANSACTION;
 	ALTER TABLE FileUploadOrders ADD CONSTRAINT unique_file_upload_orders UNIQUE(FileUploadId, OrderId);
 	ALTER TABLE FileUploadAllocations ADD CONSTRAINT unique_file_upload_order_allocations UNIQUE(FileUploadId, OrderAllocationId);
 
+	ALTER TABLE Orders ADD Live bit NOT NULL DEFAULT 0;
+	ALTER TABLE OrdersAllocation ADD Live bit NOT NULL DEFAULT 0;
+
 COMMIT;

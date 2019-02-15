@@ -5,6 +5,6 @@ namespace DataImport.MessageBusIO.Interfaces
 {
     public interface IUploadCoordinatorMessageSender
     {
-        Task Send(UploadCoordinatorMessage message);
+        Task Send(AutoScheduleMessage message);
     }
 }

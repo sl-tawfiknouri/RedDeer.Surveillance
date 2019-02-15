@@ -19,7 +19,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void AnalyseFileId(UploadCoordinatorMessage message)
+        public void AnalyseFileId(AutoScheduleMessage message)
         {
             if (message == null
                 || string.IsNullOrWhiteSpace(message.FileId))

@@ -52,7 +52,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
             A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(false);
             var coordinator = new UploadCoordinator(_ruleConfiguration, _logger);
 
-            var message = new UploadCoordinatorMessage {FileId = Guid.NewGuid().ToString()};
+            var message = new AutoScheduleMessage {FileId = Guid.NewGuid().ToString()};
 
             Assert.DoesNotThrow(() => coordinator.AnalyseFileId(message));
         }

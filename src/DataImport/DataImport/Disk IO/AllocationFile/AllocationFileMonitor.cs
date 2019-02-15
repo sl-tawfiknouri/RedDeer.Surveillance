@@ -81,14 +81,14 @@ namespace DataImport.Disk_IO.AllocationFile
                     if (csvReadResults == null
                         || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                     {
-                        Logger.LogError($"AllocationFileMonitor for {path} did not find any records or had zero successful and unsuccessful reads");
+                        Logger.LogError($"AllocationFileMonitor for {path} did not find any records or had zero successful and unsuccessful reads. Empty File. CLIENTSERVICE");
                         fileUpload.EndEvent().EndEvent();
                         return false;
                     }
 
                     if (csvReadResults.UnsuccessfulReads.Any())
                     {
-                        Logger.LogInformation($"AllocationFileMonitorhad unsuccessful reads {csvReadResults.UnsuccessfulReads.Count}");
+                        Logger.LogInformation($"AllocationFileMonitor had unsuccessful reads {csvReadResults.UnsuccessfulReads.Count}");
                         FailedRead(path, csvReadResults, fileUpload);
                         return false;
                     }
@@ -159,11 +159,7 @@ namespace DataImport.Disk_IO.AllocationFile
             {
                 _fileUploadRepository.Create(allocationIds, fileUploadId.Id).Wait();
 
-                var uploadMessage = new UploadCoordinatorMessage
-                {
-                    FileId = fileUploadId.Id.ToString(),
-                    Type = UploadedFileType.AllocationFile
-                };
+                var uploadMessage = new AutoScheduleMessage();
 
                 _messageSender.Send(uploadMessage).Wait();
             }

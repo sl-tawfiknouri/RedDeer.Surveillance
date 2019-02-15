@@ -13,14 +13,14 @@ namespace DataImport.MessageBusIO
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly ILogger<ScheduleRuleMessageSender> _logger;
+        private readonly ILogger<UploadCoordinatorMessageSender> _logger;
         private readonly IMessageBusSerialiser _serialiser;
 
         public UploadCoordinatorMessageSender(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IMessageBusSerialiser serialiser,
-            ILogger<ScheduleRuleMessageSender> logger)
+            ILogger<UploadCoordinatorMessageSender> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
@@ -28,7 +28,7 @@ namespace DataImport.MessageBusIO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Send(UploadCoordinatorMessage message)
+        public async Task Send(AutoScheduleMessage message)
         {
             if (message == null)
             {

@@ -18,8 +18,8 @@ namespace Surveillance.Engine.DataCoordinator
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<ICoordinatorMediator>().Use<Mediator>();
-            For<IQueueSubscriber>().Use<QueueSubscriber>();
-            For<IUploadCoordinator>().Use<UploadCoordinator>();
+            For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
+            For<IDataVerifier>().Use<DataVerifier>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IAutoSchedule>().Use<AutoSchedule>();
         }

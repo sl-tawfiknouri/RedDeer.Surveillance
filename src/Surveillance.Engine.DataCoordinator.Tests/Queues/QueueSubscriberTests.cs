@@ -19,24 +19,24 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
     [TestFixture]
     public class QueueSubscriberTests
     {
-        private IUploadCoordinator _uploadCoordinator;
+        private IDataVerifier _dataVerifier;
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IMessageBusSerialiser _serialiser;
         private ISystemProcessContext _systemProcessContext;
         private ISystemProcessOperationContext _systemProcessOperationContext;
-        private ILogger<QueueSubscriber> _logger;
+        private ILogger<QueueAutoscheduleSubscriber> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _uploadCoordinator = A.Fake<IUploadCoordinator>();
+            _dataVerifier = A.Fake<IDataVerifier>();
             _awsQueueClient = A.Fake<IAwsQueueClient>();
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _serialiser = new MessageBusSerialiser();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
             _systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
-            _logger = new NullLogger<QueueSubscriber>();
+            _logger = new NullLogger<QueueAutoscheduleSubscriber>();
 
             A
                 .CallTo(() => _systemProcessContext.CreateAndStartOperationContext())
@@ -47,35 +47,35 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         public void Constructor_AwsQueueClient_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_AwsConfiguration_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_Serialiser_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_SystmeProcessContext_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         {
             A.CallTo(() => _awsConfiguration.UploadCoordinatorQueueName).Returns("a-queue-name");
 
-            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
             subscriber.Initiate();
 
@@ -100,7 +100,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         [Test]
         public async Task ExecuteCoordinationMessage_Ends_Event_With_Error_If_Not_Deserialisable()
         {
-            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
             await subscriber.ExecuteCoordinationMessage("message-id", "not-a-upload-message");
 
@@ -112,14 +112,14 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         [Test]
         public async Task ExecuteCoordinationMessage_Calls_AnalyseFileId_For_Valid_UploadMessage()
         {
-            var subscriber = new QueueSubscriber(_uploadCoordinator, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
             var uploadMessage = new AutoScheduleMessage {FileId = Guid.NewGuid().ToString()};
             var message = _serialiser.Serialise<AutoScheduleMessage>(uploadMessage);
 
             await subscriber.ExecuteCoordinationMessage("message-id", message);
 
             A
-                .CallTo(() => _uploadCoordinator.AnalyseFileId(A<AutoScheduleMessage>.Ignored))
+                .CallTo(() => _dataVerifier.AnalyseFileId(A<AutoScheduleMessage>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
     }

@@ -12,27 +12,30 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Queues
 {
-    public class QueueSubscriber : IQueueSubscriber
+    /// <summary>
+    /// Enable push based auto scheduling
+    /// </summary>
+    public class QueueAutoscheduleSubscriber : IQueueSubscriber
     {
-        private readonly IUploadCoordinator _uploadCoordinator;
+        private readonly IDataVerifier _dataVerifier;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IMessageBusSerialiser _serialiser;
         private readonly ISystemProcessContext _systemProcessContext;
-        private readonly ILogger<QueueSubscriber> _logger;
+        private readonly ILogger<QueueAutoscheduleSubscriber> _logger;
 
         private CancellationTokenSource _messageBusCts;
         private AwsResusableCancellationToken _token;
 
-        public QueueSubscriber(
-            IUploadCoordinator uploadCoordinator,
+        public QueueAutoscheduleSubscriber(
+            IDataVerifier dataVerifier,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IMessageBusSerialiser serialiser,
             ISystemProcessContext systemProcessContext,
-            ILogger<QueueSubscriber> logger)
+            ILogger<QueueAutoscheduleSubscriber> logger)
         {
-            _uploadCoordinator = uploadCoordinator ?? throw new ArgumentNullException(nameof(uploadCoordinator));
+            _dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
@@ -80,7 +83,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
                     return;
                 }
 
-                _uploadCoordinator.AnalyseFileId(coordinateUpload);
+                _dataVerifier.Scan();
 
                 _logger.LogInformation($"QueueSubscriber completed processing message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
             }

@@ -10,5 +10,6 @@ namespace Surveillance.DataLayer.Aurora.Orders.Interfaces
     {
         Task Create(Order entity);
         Task<IReadOnlyCollection<Order>> Get(DateTime start, DateTime end, ISystemProcessOperationContext opCtx);
+        Task<IReadOnlyCollection<Order>> LiveUnscheduledOrders();
     }
 }

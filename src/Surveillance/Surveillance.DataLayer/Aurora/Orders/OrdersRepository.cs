@@ -218,6 +218,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 Id = LAST_INSERT_ID(Id);
                 SELECT LAST_INSERT_ID();";
 
+        private const string GetLiveUnautoscheduledOrders = @"
+            SELECT
+                *
+            FROM Orders as ord
+            WHERE Live = 1 AND Autoscheduled = 0;";
+
         private const string GetOrderSql = @"
             SELECT
 	            ord.Id as ReddeerOrderId,
@@ -491,6 +497,31 @@ namespace Surveillance.DataLayer.Aurora.Orders
             }
 
             return new Order[0];
+        }
+
+        public async Task<IReadOnlyCollection<Order>> LiveUnscheduledOrders()
+        {
+            _logger.LogInformation($"OrdersRepository asked to get live unscheduled order ids");
+
+            try
+            {
+                using (var open = _dbConnectionFactory.BuildConn())
+                using (var conn = open.QueryAsync<OrderDto>(GetLiveUnautoscheduledOrders))
+                {
+                    var response = await conn;
+                    var projectedResponse = response.Select(Project).ToList();
+
+                    _logger.LogInformation($"OrdersRepository completed getting live unscheduled order ids");
+
+                    return projectedResponse;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrdersRepository LiveUnscheduledOrderIds encountered an exception {e.Message}", e);
+            }
+
+            return new List<Order>();
         }
 
         private Order Project(OrderDto dto)

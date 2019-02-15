@@ -13,13 +13,13 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
     public class UploadCoordinatorTests
     {
         private IRuleConfiguration _ruleConfiguration;
-        private ILogger<UploadCoordinator> _logger;
+        private ILogger<DataVerifier> _logger;
 
         [SetUp]
         public void Setup()
         {
             _ruleConfiguration = A.Fake<IRuleConfiguration>();
-            _logger = new NullLogger<UploadCoordinator>();
+            _logger = new NullLogger<DataVerifier>();
 
             A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(true);
         }
@@ -28,33 +28,33 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
         public void Constructor_RuleConfiguration_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UploadCoordinator(null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataVerifier(null, _logger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new UploadCoordinator(_ruleConfiguration, null));
+            Assert.Throws<ArgumentNullException>(() => new DataVerifier(_ruleConfiguration, null));
         }
 
         [Test]
         public void AnalyseFileId_Null_Message_Returns()
         {
-            var coordinator = new UploadCoordinator(_ruleConfiguration, _logger);
+            var coordinator = new DataVerifier(_ruleConfiguration, _logger);
 
-            Assert.DoesNotThrow(() => coordinator.AnalyseFileId(null));
+            Assert.DoesNotThrow(() => coordinator.Scan(null));
         }
 
         [Test]
         public void AnalyseFileId_OkMessage_No_AutoScheduling_Returns()
         {
             A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(false);
-            var coordinator = new UploadCoordinator(_ruleConfiguration, _logger);
+            var coordinator = new DataVerifier(_ruleConfiguration, _logger);
 
             var message = new AutoScheduleMessage {FileId = Guid.NewGuid().ToString()};
 
-            Assert.DoesNotThrow(() => coordinator.AnalyseFileId(message));
+            Assert.DoesNotThrow(() => coordinator.Scan(message));
         }
 
 

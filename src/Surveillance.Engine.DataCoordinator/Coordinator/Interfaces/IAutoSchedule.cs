@@ -4,6 +4,6 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator.Interfaces
 {
     public interface IAutoSchedule
     {
-        Task ScheduleExecution(string fileId);
+        Task Scan();
     }
 }

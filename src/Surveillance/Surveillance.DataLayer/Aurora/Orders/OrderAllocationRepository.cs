@@ -6,9 +6,9 @@ using Dapper;
 using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
-namespace Surveillance.DataLayer.Aurora.Trade
+namespace Surveillance.DataLayer.Aurora.Orders
 {
     public class OrderAllocationRepository : IOrderAllocationRepository
     {
@@ -17,9 +17,9 @@ namespace Surveillance.DataLayer.Aurora.Trade
 
         private const string InsertAttributionSql = @"
             INSERT INTO 
-                OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume)
-                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume)
-            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume, Id = LAST_INSERT_ID(Id);
+                OrdersAllocation (OrderId, Fund, Strategy, ClientAccountId, OrderFilledVolume, CreatedDate)
+                VALUES(@OrderId, @Fund, @Strategy, @ClientAccountId, @OrderFilledVolume, now())
+            ON DUPLICATE KEY UPDATE OrderFilledVolume = @OrderFilledVolume, Id = LAST_INSERT_ID(Id), CreatedDate = now(), Live = 0, Autoscheduled = 0;
             SELECT LAST_INSERT_ID();";
 
         private const string GetAllocationSql = @"

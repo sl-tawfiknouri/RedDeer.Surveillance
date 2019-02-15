@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DomainV2.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 
-namespace Surveillance.DataLayer.Aurora.Trade.Interfaces
+namespace Surveillance.DataLayer.Aurora.Orders.Interfaces
 {
     public interface IOrdersRepository
     {

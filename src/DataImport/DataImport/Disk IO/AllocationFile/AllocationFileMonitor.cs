@@ -14,7 +14,7 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile

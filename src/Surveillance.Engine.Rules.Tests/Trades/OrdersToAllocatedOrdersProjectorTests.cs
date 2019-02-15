@@ -6,8 +6,7 @@ using DomainV2.Financial;
 using DomainV2.Trading;
 using FakeItEasy;
 using NUnit.Framework;
-using Surveillance.DataLayer.Aurora.Trade;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 
 namespace Surveillance.Engine.Rules.Tests.Trades

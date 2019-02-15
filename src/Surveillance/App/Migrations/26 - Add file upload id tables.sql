@@ -16,8 +16,14 @@ START TRANSACTION;
 
 	ALTER TABLE Orders ADD Live bit NOT NULL DEFAULT 0;
 	ALTER TABLE OrdersAllocation ADD Live bit NOT NULL DEFAULT 0;
-
 	UPDATE Orders SET Live = 1;
 	UPDATE OrdersAllocation SET Live = 1;
+
+	ALTER TABLE Orders ADD Autoscheduled bit NOT NULL DEFAULT 0;
+	ALTER TABLE OrdersAllocation ADD Autoscheduled bit NOT NULL DEFAULT 0;
+	UPDATE Orders SET Live = 1;
+	UPDATE OrdersAllocation SET Live = 1;
+
+	ALTER TABLE OrdersAllocation ADD CreatedDate DateTime NOT NULL DEFAULT now();
 
 COMMIT;

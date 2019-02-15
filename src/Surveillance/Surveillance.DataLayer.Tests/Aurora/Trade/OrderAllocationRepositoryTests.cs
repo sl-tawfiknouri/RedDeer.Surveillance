@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Aurora.Orders;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 

@@ -10,9 +10,9 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 
-namespace Surveillance.DataLayer.Aurora.Trade
+namespace Surveillance.DataLayer.Aurora.Orders
 {
     public class OrdersRepository : IOrdersRepository
     {
@@ -116,6 +116,8 @@ namespace Surveillance.DataLayer.Aurora.Trade
                 OptionStrikePrice=@OptionStrikePrice,
                 OptionExpirationDate=@OptionExpirationDate,
                 OptionEuropeanAmerican=@OptionEuropeanAmerican,
+                Live = 0,
+                Autoscheduled = 0,
                 Id = LAST_INSERT_ID(Id);
                 SELECT LAST_INSERT_ID();";
 

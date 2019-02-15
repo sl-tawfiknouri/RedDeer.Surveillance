@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DomainV2.Trading;
 
-namespace Surveillance.DataLayer.Aurora.Trade.Interfaces
+namespace Surveillance.DataLayer.Aurora.Orders.Interfaces
 {
     public interface IOrderAllocationRepository
     {

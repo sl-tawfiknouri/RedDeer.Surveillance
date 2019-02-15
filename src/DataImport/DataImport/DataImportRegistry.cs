@@ -1,4 +1,6 @@
-﻿using DataImport.Disk_IO.AllocationFile;
+﻿using Contracts.SurveillanceService;
+using Contracts.SurveillanceService.Interfaces;
+using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
@@ -72,6 +74,7 @@ namespace DataImport
             For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
+            For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
         }
     }
 }

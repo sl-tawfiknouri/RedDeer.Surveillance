@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DataImport.MessageBusIO.Interfaces;
 using DomainV2.Scheduling;
 using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataImport.MessageBusIO
+namespace Surveillance.Engine.DataCoordinator.Queues
 {
     public class ScheduleRuleMessageSender : IScheduleRuleMessageSender
     {
@@ -24,7 +24,7 @@ namespace DataImport.MessageBusIO
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));            
+            _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

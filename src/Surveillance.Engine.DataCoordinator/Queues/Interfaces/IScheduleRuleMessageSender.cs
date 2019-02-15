@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DomainV2.Scheduling;
 
-namespace DataImport.MessageBusIO.Interfaces
+namespace Surveillance.Engine.DataCoordinator.Queues.Interfaces
 {
     public interface IScheduleRuleMessageSender
     {

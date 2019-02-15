@@ -35,6 +35,12 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 return;
             }
 
+            // if we have auto scheduling then we need to re-queue logic, probably separate?
+
+
+
+            // 
+
             if (_ruleConfiguration.AlwaysRequireAllocations.GetValueOrDefault(false))
             {
                 // must have both
@@ -47,9 +53,6 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
                 // we need to add the file upload ids I think
             }
-
-
-
         }
     }
 }

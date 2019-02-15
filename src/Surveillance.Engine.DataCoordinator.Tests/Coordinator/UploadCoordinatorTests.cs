@@ -43,19 +43,10 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
         {
             var coordinator = new DataVerifier(_ruleConfiguration, _logger);
 
-            Assert.DoesNotThrow(() => coordinator.Scan(null));
+            Assert.DoesNotThrow(() => coordinator.Scan());
         }
 
-        [Test]
-        public void AnalyseFileId_OkMessage_No_AutoScheduling_Returns()
-        {
-            A.CallTo(() => _ruleConfiguration.AutoScheduleRules).Returns(false);
-            var coordinator = new DataVerifier(_ruleConfiguration, _logger);
 
-            var message = new AutoScheduleMessage {FileId = Guid.NewGuid().ToString()};
-
-            Assert.DoesNotThrow(() => coordinator.Scan(message));
-        }
 
 
     }

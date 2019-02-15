@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DomainV2.Financial;
 using DomainV2.Trading;
@@ -40,6 +41,18 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             var frame = Frame();
 
             await repo.Create(frame);
+
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task Creates_LiveUnscheduledOrders()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+
+            var result = await repo.LiveUnscheduledOrders();
 
             Assert.IsTrue(true);
         }

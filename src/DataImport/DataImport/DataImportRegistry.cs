@@ -60,7 +60,6 @@ namespace DataImport
             For<IFileUploadMessageMapper>().Use<FileUploadMessageMapper>();
             For<IAwsS3Client>().Use<AwsS3Client>();
 
-            For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
 

@@ -113,13 +113,13 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         public async Task ExecuteCoordinationMessage_Calls_AnalyseFileId_For_Valid_UploadMessage()
         {
             var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
-            var uploadMessage = new AutoScheduleMessage {FileId = Guid.NewGuid().ToString()};
+            var uploadMessage = new AutoScheduleMessage {};
             var message = _serialiser.Serialise<AutoScheduleMessage>(uploadMessage);
 
             await subscriber.ExecuteCoordinationMessage("message-id", message);
 
             A
-                .CallTo(() => _dataVerifier.AnalyseFileId(A<AutoScheduleMessage>.Ignored))
+                .CallTo(() => _dataVerifier.Scan())
                 .MustHaveHappenedOnceExactly();
         }
     }

@@ -6,6 +6,8 @@ using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
+using Surveillance.Engine.DataCoordinator.Scheduler;
+using Surveillance.Engine.DataCoordinator.Scheduler.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator
 {
@@ -19,9 +21,10 @@ namespace Surveillance.Engine.DataCoordinator
 
             For<ICoordinatorMediator>().Use<Mediator>();
             For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
-            For<IDataVerifier>().Use<DataVerifier>();
             For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IAutoSchedule>().Use<AutoSchedule>();
+            For<IDataVerifier>().Use<DataVerifier>();
+            For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace Surveillance.Engine.DataCoordinator.Coordinator.Interfaces
+﻿using System.Threading.Tasks;
+
+namespace Surveillance.Engine.DataCoordinator.Coordinator.Interfaces
 {
     public interface IDataVerifier
     {
-        void Scan();
+        Task Scan();
     }
 }

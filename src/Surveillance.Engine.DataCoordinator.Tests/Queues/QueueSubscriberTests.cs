@@ -20,6 +20,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
     public class QueueSubscriberTests
     {
         private IDataVerifier _dataVerifier;
+        private IAutoSchedule _autoSchedule;
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private IMessageBusSerialiser _serialiser;
@@ -31,6 +32,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         public void Setup()
         {
             _dataVerifier = A.Fake<IDataVerifier>();
+            _autoSchedule = A.Fake<IAutoSchedule>();
             _awsQueueClient = A.Fake<IAwsQueueClient>();
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _serialiser = new MessageBusSerialiser();
@@ -47,35 +49,35 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         public void Constructor_AwsQueueClient_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_AwsConfiguration_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_Serialiser_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
         }
 
         [Test]
         public void Constructor_SystmeProcessContext_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
+            Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));
         }
 
         [Test]
@@ -83,7 +85,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         {
             A.CallTo(() => _awsConfiguration.UploadCoordinatorQueueName).Returns("a-queue-name");
 
-            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
             subscriber.Initiate();
 
@@ -100,7 +102,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         [Test]
         public async Task ExecuteCoordinationMessage_Ends_Event_With_Error_If_Not_Deserialisable()
         {
-            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
 
             await subscriber.ExecuteCoordinationMessage("message-id", "not-a-upload-message");
 
@@ -112,7 +114,7 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         [Test]
         public async Task ExecuteCoordinationMessage_Calls_AnalyseFileId_For_Valid_UploadMessage()
         {
-            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
+            var subscriber = new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, _logger);
             var uploadMessage = new AutoScheduleMessage {};
             var message = _serialiser.Serialise<AutoScheduleMessage>(uploadMessage);
 

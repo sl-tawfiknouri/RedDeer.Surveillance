@@ -18,6 +18,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
     public class QueueAutoscheduleSubscriber : IQueueSubscriber
     {
         private readonly IDataVerifier _dataVerifier;
+        private readonly IAutoSchedule _autoSchedule;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly IMessageBusSerialiser _serialiser;
@@ -29,6 +30,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
 
         public QueueAutoscheduleSubscriber(
             IDataVerifier dataVerifier,
+            IAutoSchedule autoSchedule,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IMessageBusSerialiser serialiser,
@@ -36,6 +38,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
             ILogger<QueueAutoscheduleSubscriber> logger)
         {
             _dataVerifier = dataVerifier ?? throw new ArgumentNullException(nameof(dataVerifier));
+            _autoSchedule = autoSchedule ?? throw new ArgumentNullException(nameof(autoSchedule));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
@@ -83,7 +86,8 @@ namespace Surveillance.Engine.DataCoordinator.Queues
                     return;
                 }
 
-                _dataVerifier.Scan();
+                await _dataVerifier.Scan();
+                await _autoSchedule.Scan();
 
                 _logger.LogInformation($"QueueSubscriber completed processing message {messageId} with body {messageBody} from {_awsConfiguration.UploadCoordinatorQueueName} for operation {opCtx.Id}");
             }

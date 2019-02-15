@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
@@ -18,7 +19,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Scan()
+        public async Task Scan()
         {
             if (_ruleConfiguration.AutoScheduleRules == null
                 || !_ruleConfiguration.AutoScheduleRules.GetValueOrDefault(false))

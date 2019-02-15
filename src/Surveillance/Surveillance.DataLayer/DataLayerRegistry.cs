@@ -18,6 +18,8 @@ using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.DataLayer.Aurora.Files;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
@@ -56,6 +58,8 @@ namespace Surveillance.DataLayer
             For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
+            For<IFileUploadOrdersRepository>().Use<FileUploadOrdersRepository>();
+            For<IFileUploadOrderAllocationRepository>().Use<FileUploadOrderAllocationRepository>();
         }
     }
 }

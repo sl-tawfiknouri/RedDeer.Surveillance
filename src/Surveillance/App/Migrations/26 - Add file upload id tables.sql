@@ -1,7 +1,7 @@
 ﻿-- SQL MIGRATION SCRIPT --
 -- AUTHOR : RYAN TRENCHARD
 -- DATE : 14/02/2019
--- LAST MODIFIED: 14/02/2019 BY RYAN TRENCHARD
+-- LAST MODIFIED: 15/02/2019 BY RYAN TRENCHARD
 -- PURPOSE : Create two tables for orders and allocations to link ids to file upload guids
 
 START TRANSACTION;
@@ -16,5 +16,8 @@ START TRANSACTION;
 
 	ALTER TABLE Orders ADD Live bit NOT NULL DEFAULT 0;
 	ALTER TABLE OrdersAllocation ADD Live bit NOT NULL DEFAULT 0;
+
+	UPDATE Orders SET Live = 1;
+	UPDATE OrdersAllocation SET Live = 1;
 
 COMMIT;

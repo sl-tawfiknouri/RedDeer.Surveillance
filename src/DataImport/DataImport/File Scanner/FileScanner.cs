@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DataImport.File_Scanner.Interfaces;
-using DomainV2.Files;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.Auditing.DataLayer.Repositories.Interfaces;

@@ -13,5 +13,6 @@ namespace Surveillance.DataLayer.Aurora.Orders.Interfaces
         Task<IReadOnlyCollection<Order>> LiveUnscheduledOrders();
         Task SetOrdersScheduled(IReadOnlyCollection<Order> orders);
         Task LivenCompletedOrderSets();
+        Task<List<Order>> StaleOrders(DateTime stalenessDate);
     }
 }

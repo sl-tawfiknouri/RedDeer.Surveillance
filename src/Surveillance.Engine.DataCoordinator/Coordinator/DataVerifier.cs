@@ -22,7 +22,21 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
         public async Task Scan()
         {
             _logger.LogInformation($"DataVerifier Scanning");
+
+            _logger.LogInformation($"DataVerifier livening completed order sets");
             await _ordersRepository.LivenCompletedOrderSets();
+            _logger.LogInformation($"DataVerifier completed livening order sets");
+
+            var stalenessIndicator = DateTime.UtcNow.AddDays(-1);
+
+            _logger.LogInformation($"DataVerifier fetching stale orders unlivened and older then {stalenessIndicator}");
+            await _ordersRepository.StaleOrders(stalenessIndicator);
+
+
+            _logger.LogInformation($"DataVerifier completed fetching stale orders unlivened and older then {stalenessIndicator}");
+
+
+
             _logger.LogInformation($"DataVerifier completed scanning");
         }
     }

@@ -242,6 +242,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
             SET Oa.Live = 1
             WHERE ord.Id IS NOT NULL;";
 
+        private const string GetStaleOrders = @"
+            SELECT
+                *
+            FROM Orders as ord
+            WHERE Live = 0 AND CreatedDate < @StaleDate;";
+
         private const string GetOrderSql = @"
             SELECT
 	            ord.Id as ReddeerOrderId,
@@ -588,6 +594,34 @@ namespace Surveillance.DataLayer.Aurora.Orders
             {
                 _logger?.LogError($"OrdersRepository liven completed order sets exception {e.Message}", e);
             }
+        }
+
+        /// <summary>
+        /// Does not eagerly fetch related domain entities
+        /// </summary>
+        public async Task<List<Order>> StaleOrders(DateTime stalenessDate)
+        {
+            _logger.LogInformation($"OrdersRepository asked to fetch stale orders");
+
+            try
+            {
+                using (var open = _dbConnectionFactory.BuildConn())
+                using (var conn = open.QueryAsync<OrderDto>(GetStaleOrders, new { StaleDate = stalenessDate }))
+                {
+                    var queryResult = await conn;
+
+                    var staleOrders = queryResult.Select(Project).ToList();
+                    _logger.LogInformation($"OrdersRepository completed fetching stale orders");
+
+                    return staleOrders;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrdersRepository fetch stale orders exception {e.Message}", e);
+            }
+
+            return new List<Order>();
         }
 
         private Order Project(OrderDto dto)

@@ -220,14 +220,143 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
         private const string GetLiveUnautoscheduledOrders = @"
             SELECT
-                *
+	            ord.Id as ReddeerOrderId,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.OrderVersion as OrderVersion,
+                ord.OrderVersionLinkId as OrderVersionLinkId,
+                ord.OrderGroupId as OrderGroupId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.CreatedDate as CreatedDate,
+                ord.OrderType as OrderType,
+                ord.Direction as OrderDirection,
+                ord.Currency as OrderCurrency,
+                ord.SettlementCurrency as OrderSettlementCurrency,
+                ord.CleanDirty as CleanDirty,
+                ord.AccumulatedInterest,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AverageFillPrice as OrderAverageFillPrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.OptionStrikePrice as OptionStrikePrice,
+                ord.OptionExpirationDate as OptionExpirationDate,
+                ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+	            fi.Id AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+                fi.ReddeerId AS SecurityReddeerEnrichmentId,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName
             FROM Orders as ord
-            WHERE Live = 1 AND Autoscheduled = 0;";
+            LEFT OUTER JOIN FinancialInstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN Market as mark
+            on mark.Id = ord.MarketId
+            WHERE Live = 1 AND Autoscheduled = 0
+
+            UNION
+
+            SELECT
+	            ord.Id as ReddeerOrderId,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.OrderVersion as OrderVersion,
+                ord.OrderVersionLinkId as OrderVersionLinkId,
+                ord.OrderGroupId as OrderGroupId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.CreatedDate as CreatedDate,
+                ord.OrderType as OrderType,
+                ord.Direction as OrderDirection,
+                ord.Currency as OrderCurrency,
+                ord.SettlementCurrency as OrderSettlementCurrency,
+                ord.CleanDirty as CleanDirty,
+                ord.AccumulatedInterest,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AverageFillPrice as OrderAverageFillPrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.OptionStrikePrice as OptionStrikePrice,
+                ord.OptionExpirationDate as OptionExpirationDate,
+                ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+	            fi.Id AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+                fi.ReddeerId AS SecurityReddeerEnrichmentId,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName
+            FROM OrdersAllocation as OrdAlloc
+            LEFT OUTER JOIN Orders as ord
+            ON OrdAlloc.OrderId = ord.ClientOrderId
+            LEFT OUTER JOIN FinancialInstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN Market as mark
+            on mark.Id = ord.MarketId
+            WHERE OrdAlloc.Live = 1 AND OrdAlloc.Autoscheduled = 0;";
 
         private const string SetOrdersToScheduled = @"
             UPDATE Orders
             SET Autoscheduled = 1
-            WHERE ClientOrderId = @OrderId;";
+            WHERE ClientOrderId = @OrderId;
+
+            UPDATE OrdersAllocation
+            SET Autoscheduled = 1
+            WHERE OrderId = @OrderId;";
 
         private const string SetOrdersToLivened = @"
             UPDATE Orders AS ord
@@ -244,8 +373,66 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
         private const string GetStaleOrders = @"
             SELECT
-                *
+	            ord.Id as ReddeerOrderId,
+                ord.ClientOrderId as OrderId,
+                ord.SecurityId as SecurityId,
+                ord.OrderVersion as OrderVersion,
+                ord.OrderVersionLinkId as OrderVersionLinkId,
+                ord.OrderGroupId as OrderGroupId,
+                ord.PlacedDate as OrderPlacedDate,
+                ord.BookedDate as OrderBookedDate,
+                ord.AmendedDate as OrderAmendedDate,
+                ord.RejectedDate as OrderRejectedDate,
+                ord.CancelledDate as OrderCancelledDate,
+                ord.FilledDate as OrderFilledDate,
+                ord.CreatedDate as CreatedDate,
+                ord.OrderType as OrderType,
+                ord.Direction as OrderDirection,
+                ord.Currency as OrderCurrency,
+                ord.SettlementCurrency as OrderSettlementCurrency,
+                ord.CleanDirty as CleanDirty,
+                ord.AccumulatedInterest,
+                ord.LimitPrice as OrderLimitPrice,
+                ord.AverageFillPrice as OrderAverageFillPrice,
+                ord.OrderedVolume as OrderOrderedVolume,
+                ord.FilledVolume as OrderFilledVolume,
+                ord.TraderId as OrderTraderId,
+                ord.TraderName as OrderTraderName,
+                ord.ClearingAgent as OrderClearingAgent,
+                ord.DealingInstructions as OrderDealingInstructions,
+                ord.OptionStrikePrice as OptionStrikePrice,
+                ord.OptionExpirationDate as OptionExpirationDate,
+                ord.OptionEuropeanAmerican as OptionEuropeanAmerican,
+	            fi.Id AS SecurityReddeerId,
+	            fi.ClientIdentifier AS SecurityClientIdentifier,
+	            fi.Sedol AS SecuritySedol,
+	            fi.Isin AS SecurityIsin,
+	            fi.Figi AS SecurityFigi,
+	            fi.Cusip AS SecurityCusip,
+	            fi.ExchangeSymbol AS SecurityExchangeSymbol,
+	            fi.Lei AS SecurityLei,
+	            fi.BloombergTicker AS SecurityBloombergTicker,
+	            fi.SecurityName AS SecurityName,
+	            fi.Cfi AS SecurityCfi,
+	            fi.IssuerIdentifier AS SecurityIssuerIdentifier,
+                fi.ReddeerId AS SecurityReddeerEnrichmentId,
+	            fi.UnderlyingSedol AS UnderlyingSedol,
+	            fi.UnderlyingIsin AS UnderlyingIsin,
+	            fi.UnderlyingFigi AS UnderlyingFigi,
+	            fi.UnderlyingCusip AS UnderlyingCusip,
+	            fi.UnderlyingExchangeSymbol AS UnderlyingExchangeSymbol,
+	            fi.UnderlyingLei AS UnderlyingLei,
+	            fi.UnderlyingBloombergTicker AS UnderlyingBloombergTicker,
+	            fi.UnderlyingName AS UnderlyingName,
+	            fi.UnderlyingCfi AS UnderlyingCfi,
+                mark.Id AS MarketId,
+                mark.MarketId AS MarketIdentifierCode,
+                mark.MarketName AS MarketName
             FROM Orders as ord
+            LEFT OUTER JOIN FinancialInstruments as fi
+            ON fi.Id = ord.SecurityId
+            LEFT OUTER JOIN Market as mark
+            on mark.Id = ord.MarketId
             WHERE Live = 0 AND CreatedDate < @StaleDate;";
 
         private const string GetOrderSql = @"

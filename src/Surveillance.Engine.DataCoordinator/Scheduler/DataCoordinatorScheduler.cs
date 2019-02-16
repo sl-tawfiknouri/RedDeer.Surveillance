@@ -31,6 +31,8 @@ namespace Surveillance.Engine.DataCoordinator.Scheduler
 
         public void Initialise()
         {
+            TimerOnElapsed(null, null);
+
             _timer = new Timer(HeartbeatFrequency)
             {
                 AutoReset = true,

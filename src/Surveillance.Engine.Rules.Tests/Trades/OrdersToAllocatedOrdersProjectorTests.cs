@@ -74,14 +74,16 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                     "test-fund-1",
                     "test-strategy-1",
                     "test-account-1",
-                    fiftyPercentVolume),
+                    fiftyPercentVolume,
+                    DateTime.UtcNow),
                 new OrderAllocation(
                     null,
                     orders.OrderId,
                     "test-fund-2",
                     "test-strategy-2",
                     "test-account-2",
-                    fiftyPercentVolume)
+                    fiftyPercentVolume,
+                    DateTime.UtcNow)
             };
 
             A.CallTo(() => _repository.Get(A<IReadOnlyCollection<string>>.Ignored)).Returns(allocations);

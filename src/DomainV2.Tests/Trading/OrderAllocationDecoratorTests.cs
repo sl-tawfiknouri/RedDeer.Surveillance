@@ -15,7 +15,7 @@ namespace DomainV2.Tests.Trading
             order.OrderFilledVolume = 0;
             order.OrderOrderedVolume = 100;
 
-            var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);
+            var orderAllocation = BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
             Assert.AreEqual(decorator.OrderFilledVolume, 100);
@@ -28,7 +28,7 @@ namespace DomainV2.Tests.Trading
             var order = BuildOrder();
             order.OrderFilledVolume = 100;
 
-            var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 0);
+            var orderAllocation = BuildAllocation(0);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
             Assert.AreEqual(decorator.OrderFilledVolume, 0);
@@ -42,7 +42,7 @@ namespace DomainV2.Tests.Trading
             order.OrderOrderedVolume = 1000;
             order.OrderFilledVolume = 1000;
 
-            var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);
+            var orderAllocation = BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
             Assert.AreEqual(decorator.OrderFilledVolume, 100);
@@ -55,7 +55,7 @@ namespace DomainV2.Tests.Trading
             var order = BuildOrder();
             order.OrderFilledVolume = 1000;
 
-            var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);
+            var orderAllocation = BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
             Assert.AreEqual(decorator.OrderClientAccountAttributionId, "allocation-account");
@@ -70,10 +70,15 @@ namespace DomainV2.Tests.Trading
             order.OrderOrderedVolume = 100;
             order.OrderFilledVolume = 1000;
 
-            var orderAllocation = new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", 100);
+            var orderAllocation = BuildAllocation(100);
             var decorator = new OrderAllocationDecorator(order, orderAllocation);
 
             Assert.AreEqual(decorator.OrderOrderedVolume, 10);
+        }
+
+        private OrderAllocation BuildAllocation(long orderFilledVolume)
+        {
+            return new OrderAllocation("id", "order-1", "allocation-fund", "allocation-strategy", "allocation-account", orderFilledVolume, DateTime.UtcNow);
         }
 
         private Order BuildOrder()

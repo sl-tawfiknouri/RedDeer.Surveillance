@@ -1,4 +1,5 @@
-﻿using DomainV2.Files.AllocationFile.Interfaces;
+﻿using System;
+using DomainV2.Files.AllocationFile.Interfaces;
 using DomainV2.Trading;
 
 namespace DomainV2.Files.AllocationFile
@@ -28,7 +29,8 @@ namespace DomainV2.Files.AllocationFile
                 csv.Fund,
                 csv.Strategy,
                 csv.ClientAccountId,
-                orderFilledVolume.GetValueOrDefault(0));
+                orderFilledVolume.GetValueOrDefault(0),
+                DateTime.UtcNow);
 
             return allocation;
         }

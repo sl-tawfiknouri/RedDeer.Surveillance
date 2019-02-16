@@ -29,9 +29,25 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 Fund as Fund,
                 Strategy as Strategy,
                 ClientAccountId as ClientAccountId,
-                OrderFilledVolume as OrderFilledVolume
+                OrderFilledVolume as OrderFilledVolume,
+                CreatedDate as CreatedDate
             FROM OrdersAllocation
             WHERE OrderId IN @OrderIds;";
+
+        private const string GetStaleAllocationSql = @"
+            SELECT
+                Id as Id,
+                OrderId as OrderId,
+                Fund as Fund,
+                Strategy as Strategy,
+                ClientAccountId as ClientAccountId,
+                OrderFilledVolume as OrderFilledVolume,
+                CreatedDate as CreatedDate
+            FROM OrdersAllocation
+            WHERE 
+                Live = 0
+            AND 
+                CreatedDate < @StalenessDate;";
 
         public OrderAllocationRepository(
             IConnectionStringFactory connectionFactory,
@@ -120,24 +136,24 @@ namespace Surveillance.DataLayer.Aurora.Orders
             _logger.LogInformation($"OrderAllocationRepository Create method completed");
         }
 
-        public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orders)
+        public async Task<IReadOnlyCollection<OrderAllocation>> Get(IReadOnlyCollection<string> orderIds)
         {
             _logger.LogInformation($"OrderAllocationRepository Get method called");
 
-            orders = orders?.Where(o => !string.IsNullOrWhiteSpace(o))?.ToList();
+            orderIds = orderIds?.Where(o => !string.IsNullOrWhiteSpace(o))?.ToList();
 
-            if (orders == null
-                || !orders.Any())
+            if (orderIds == null
+                || !orderIds.Any())
             {
                 return new OrderAllocation[0];
             }
 
             try
             {
-                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to query for {orders?.Count} order ids");
+                _logger.LogInformation($"OrderAllocationRepository Create method opened db connection and about to query for {orderIds?.Count} order ids");
 
                 using (var dbConnection = _connectionFactory.BuildConn())
-                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orders }))
+                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetAllocationSql, new { @OrderIds = orderIds }))
                 {
                     var result = await conn;
 
@@ -156,6 +172,33 @@ namespace Surveillance.DataLayer.Aurora.Orders
             return new OrderAllocation[0];
         }
 
+        public async Task<IReadOnlyCollection<OrderAllocation>> GetStaleOrderAllocations(DateTime stalenessIndicator)
+        {
+            _logger.LogInformation($"OrderAllocationRepository GetStaleOrderAllocations method called");
+
+            try
+            {
+                _logger.LogInformation($"OrderAllocationRepository GetStaleOrderAllocations opening connections");
+
+                using (var dbConnection = _connectionFactory.BuildConn())
+                using (var conn = dbConnection.QueryAsync<OrderAllocationDto>(GetStaleAllocationSql, new { @StalenessDate = stalenessIndicator }))
+                {
+                    var result = await conn;
+                    var allocations = result.Select(Project).ToList();
+
+                    return allocations;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"OrderAllocationRepository GetStaleOrderAllocations encountered an error", e);
+            }
+
+            _logger.LogInformation($"OrderAllocationRepository GetStaleOrderAllocations method completed");
+
+            return new OrderAllocation[0];
+        }
+
         public OrderAllocation Project(OrderAllocationDto dto)
         {
             if (dto == null)
@@ -169,7 +212,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 dto.Fund,
                 dto.Strategy,
                 dto.ClientAccountId,
-                dto.OrderFilledVolume);
+                dto.OrderFilledVolume,
+                dto.CreatedDate);
         }
 
         public class OrderAllocationDto
@@ -187,6 +231,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 Strategy = oa.Strategy;
                 ClientAccountId = oa.ClientAccountId;
                 OrderFilledVolume = oa.OrderFilledVolume;
+                CreatedDate = oa.CreatedDate;
             }
 
             public string Id { get; set; }
@@ -195,6 +240,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             public string Strategy { get; set; }
             public string ClientAccountId { get; set; }
             public long OrderFilledVolume { get; set; }
+            public DateTime? CreatedDate { get; set; }
         }
     }
 }

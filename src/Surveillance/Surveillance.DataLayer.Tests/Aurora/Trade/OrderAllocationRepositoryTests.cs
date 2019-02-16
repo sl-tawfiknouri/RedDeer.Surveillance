@@ -46,7 +46,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new OrderAllocationRepository(factory, _logger);
-            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000);
+            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
 
             await repo.Create(orderAllocation);
         }
@@ -57,7 +57,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new OrderAllocationRepository(factory, _logger);
-            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000);
+            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
 
             await repo.Create(orderAllocation);
 
@@ -73,8 +73,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new OrderAllocationRepository(factory, _logger);
-            var orderAllocation1 = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000);
-            var orderAllocation2 = new OrderAllocation(null, "order-2", "my-fund", "my-strategy", "my-account", 1000);
+            var orderAllocation1 = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
+            var orderAllocation2 = new OrderAllocation(null, "order-2", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
             var allocations = new List<OrderAllocation> {orderAllocation1, orderAllocation2};
 
             await repo.Create(allocations);

@@ -599,7 +599,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
         /// <summary>
         /// Does not eagerly fetch related domain entities
         /// </summary>
-        public async Task<List<Order>> StaleOrders(DateTime stalenessDate)
+        public async Task<IReadOnlyCollection<Order>> StaleOrders(DateTime stalenessDate)
         {
             _logger.LogInformation($"OrdersRepository asked to fetch stale orders");
 

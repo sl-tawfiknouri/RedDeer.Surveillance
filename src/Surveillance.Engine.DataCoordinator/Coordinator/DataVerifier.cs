@@ -31,7 +31,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             await _ordersRepository.LivenCompletedOrderSets();
             _logger.LogInformation($"DataVerifier completed livening order sets");
 
-            var stalenessIndicator = DateTime.UtcNow.AddDays(-1);
+            var stalenessIndicator = DateTime.UtcNow.AddHours(-1);
 
             _logger.LogInformation($"DataVerifier fetching stale orders unlivened and older then {stalenessIndicator}");
             var staleOrders = await _ordersRepository.StaleOrders(stalenessIndicator);
@@ -40,7 +40,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
             if (staleOrders?.Any() ?? false)
             {
-                _logger.LogError($"DataVerifier scan found orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
+                _logger.LogError($"DataVerifier scan found {staleOrders.Count} orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var order in staleOrders)
                     _logger.LogError($"DataVerifier scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations. CLIENTSERVICES");
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
             if (staleOrderAllocations?.Any() ?? false)
             {
-                _logger.LogError($"DataVerifier scan found order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
+                _logger.LogError($"DataVerifier scan found {staleOrderAllocations.Count} order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var allocation in staleOrderAllocations)
                     _logger.LogError($"DataVerifier scan found order allocation for order {allocation.OrderId} last updated on {allocation.CreatedDate} which did not have any order data. CLIENTSERVICES");

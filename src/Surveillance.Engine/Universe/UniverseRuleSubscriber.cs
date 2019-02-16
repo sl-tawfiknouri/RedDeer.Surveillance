@@ -72,6 +72,12 @@ namespace Surveillance.Engine.Rules.Universe
             var highProfitSubscriptions =
                 _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
+            var cancelledSubscriptions =
+                _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var markingTheCloseSubscriptions =
+                _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
             foreach (var sub in highVolumeSubscriptions)
             {
                 _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high volume rule");
@@ -87,6 +93,18 @@ namespace Surveillance.Engine.Rules.Universe
             foreach (var sub in highProfitSubscriptions)
             {
                 _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high profit rule");
+                player.Subscribe(sub);
+            }
+
+            foreach (var sub in cancelledSubscriptions)
+            {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a cancellation ratio rule");
+                player.Subscribe(sub);
+            }
+
+            foreach (var sub in markingTheCloseSubscriptions)
+            {
+                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a marking the close rule");
                 player.Subscribe(sub);
             }
 
@@ -108,22 +126,10 @@ namespace Surveillance.Engine.Rules.Universe
             var spoofingSubscriptions = 
                 _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
-            var cancelledSubscriptions = 
-                _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber,  alertStream);
-
-            var markingTheCloseSubscriptions = 
-                _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
-
             var layeringSubscriptions =
                 _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             foreach (var sub in spoofingSubscriptions)
-                player.Subscribe(sub);
-
-            foreach (var sub in cancelledSubscriptions)
-                player.Subscribe(sub);
-
-            foreach (var sub in markingTheCloseSubscriptions)
                 player.Subscribe(sub);
 
             foreach (var sub in layeringSubscriptions)

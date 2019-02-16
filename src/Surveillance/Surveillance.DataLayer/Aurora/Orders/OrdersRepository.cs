@@ -232,13 +232,13 @@ namespace Surveillance.DataLayer.Aurora.Orders
         private const string SetOrdersToLivened = @"
             UPDATE Orders AS ord
             LEFT OUTER JOIN OrdersAllocation AS oa
-            ON ord.Id = oa.OrderId
+            ON ord.ClientOrderId = oa.OrderId
             SET ord.Live = 1
             WHERE oa.OrderId IS NOT NULL;
 
             UPDATE OrdersAllocation AS oa
             LEFT OUTER JOIN Orders AS ord
-            ON oa.OrderId = ord.Id
+            ON oa.OrderId = ord.ClientOrderId
             SET Oa.Live = 1
             WHERE ord.Id IS NOT NULL;";
 

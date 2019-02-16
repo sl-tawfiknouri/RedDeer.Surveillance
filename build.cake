@@ -33,7 +33,6 @@ var testProjects = new []
 {
 	"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
 	"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
-	"src/DataImport.Integration.Tests/DataImport.Integration.Tests.csproj",
 	"src/Surveillance.Engine.DataCoordinator.Tests/Surveillance.Engine.DataCoordinator.Tests.csproj",
 	"src/Surveillance.Engine.RuleDistributor.Tests/Surveillance.Engine.RuleDistributor.Tests.csproj",
 	"src/Surveillance.Engine.Rules.Tests/Surveillance.Engine.Rules.Tests.csproj",
@@ -109,6 +108,7 @@ Task("Test")
 
 		foreach (var testProject in testProjects)
 		{			
+			Information($"About to test {testProject}");
 			DotNetCoreTest(testProject, settings);
 		}
 	});

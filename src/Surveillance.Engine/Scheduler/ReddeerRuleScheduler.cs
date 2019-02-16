@@ -73,39 +73,7 @@ namespace Surveillance.Engine.Rules.Scheduler
             {
                 _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
-                var servicesRunning = await _apiHeartbeat.HeartsBeating();
-
-                if (!servicesRunning)
-                {
-                    _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
-                    // set status here
-                    opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
-                    opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
-                }
-
-                int servicesDownMinutes = 0;
-                var exitClientServiceBlock = servicesRunning;
-                while (!exitClientServiceBlock)
-                {
-                    _logger.LogInformation($"ReddeerRuleScheduler APIs down on heartbeat requests. Sleeping for 30 seconds.");
-
-                    Thread.Sleep(30 * 1000);
-                    var apiHeartBeat = _apiHeartbeat.HeartsBeating();
-                    exitClientServiceBlock = apiHeartBeat.Result;
-                    servicesDownMinutes += 1;
-
-                    if (servicesDownMinutes == 15)
-                    {
-                        _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
-                        opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
-                    }
-                }
-
-                if (!servicesRunning)
-                {
-                    _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
-                    opCtx.UpdateEventState(OperationState.InProcess);
-                }
+                await BlockOnApisDown(opCtx);
 
                 var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 
@@ -131,6 +99,43 @@ namespace Surveillance.Engine.Rules.Scheduler
             {
                 _logger.LogError($"ReddeerRuleScheduler caught exception in execute distributed message for {messageBody}", e);
                 opCtx.EndEventWithError(e.Message);
+            }
+        }
+
+        private async Task BlockOnApisDown(ISystemProcessOperationContext opCtx)
+        {
+            var servicesRunning = await _apiHeartbeat.HeartsBeating();
+
+            if (!servicesRunning)
+            {
+                _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+                // set status here
+                opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
+                opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+            }
+
+            int servicesDownMinutes = 0;
+            var exitClientServiceBlock = servicesRunning;
+            while (!exitClientServiceBlock)
+            {
+                _logger.LogInformation($"ReddeerRuleScheduler APIs down on heartbeat requests. Sleeping for 30 seconds.");
+
+                Thread.Sleep(30 * 1000);
+                var apiHeartBeat = _apiHeartbeat.HeartsBeating();
+                exitClientServiceBlock = apiHeartBeat.Result;
+                servicesDownMinutes += 1;
+
+                if (servicesDownMinutes == 15)
+                {
+                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                    opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                }
+            }
+
+            if (!servicesRunning)
+            {
+                _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
+                opCtx.UpdateEventState(OperationState.InProcess);
             }
         }
 

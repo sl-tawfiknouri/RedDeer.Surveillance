@@ -89,8 +89,8 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                 switch (rule.Rule)
                 {
                     case Rules.CancelledOrders:
-                        // var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
-                        // await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
+                        var cancelledOrderRuleRuns = parameters.CancelledOrders?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, cancelledOrderRuleRuns, rule, ruleCtx);
                         break;
                     case Rules.HighProfits:
                         var highProfitRuleRuns = parameters.HighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
@@ -100,23 +100,23 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         var highVolumeRuleRuns = parameters.HighVolumes?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, highVolumeRuleRuns, rule, ruleCtx);
                         break;
-                    case Rules.Layering:
-                        // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
-                        break;
                     case Rules.MarkingTheClose:
-                        // var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
-                        // await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
-                        break;
-                    case Rules.Spoofing:
-                        // var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        // await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
+                        var markingTheCloseRuleRuns = parameters.MarkingTheCloses?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, markingTheCloseRuleRuns, rule, ruleCtx);
                         break;
                     case Rules.WashTrade:
                         var washTradeRuleRuns = parameters.WashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, washTradeRuleRuns, rule, ruleCtx);
                         break;
                     case Rules.UniverseFilter:
+                        break;
+                    case Rules.Spoofing:
+                        // var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
+                        break;
+                    case Rules.Layering:
+                        // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
+                        // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
                     default:
                         _logger.LogError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

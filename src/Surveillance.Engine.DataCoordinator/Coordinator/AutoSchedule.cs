@@ -93,9 +93,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
             {
                 var rule = (Rules)item;
                 if (rule == Rules.UniverseFilter
-                    || rule == Rules.CancelledOrders
                     || rule == Rules.Layering
-                    || rule == Rules.MarkingTheClose
                     || rule == Rules.Spoofing
                     || rule == Rules.FrontRunning
                     || rule == Rules.PaintingTheTape

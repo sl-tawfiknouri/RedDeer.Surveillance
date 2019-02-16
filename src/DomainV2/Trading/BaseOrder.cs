@@ -35,11 +35,6 @@ namespace DomainV2.Trading
         /// </summary>
         public OrderStatus OrderStatus()
         {
-            if (FilledDate != null)
-            {
-                return Financial.OrderStatus.Filled;
-            }
-
             if (CancelledDate != null)
             {
                 return Financial.OrderStatus.Cancelled;
@@ -48,6 +43,11 @@ namespace DomainV2.Trading
             if (RejectedDate != null)
             {
                 return Financial.OrderStatus.Rejected;
+            }
+
+            if (FilledDate != null)
+            {
+                return Financial.OrderStatus.Filled;
             }
 
             if (AmendedDate != null)

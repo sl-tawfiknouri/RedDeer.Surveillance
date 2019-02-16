@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -37,7 +38,8 @@ namespace Surveillance.Engine.Rules.Factories
             IMarkingTheCloseParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
-            RuleRunMode runMode)
+            RuleRunMode runMode,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             return new MarkingTheCloseRule(
                 parameters,
@@ -46,6 +48,7 @@ namespace Surveillance.Engine.Rules.Factories
                 _orderFilter, 
                 _factory,
                 _tradingHoursManager,
+                dataRequestSubscriber,
                 runMode,
                 _logger,
                 _tradingHistoryLogger);

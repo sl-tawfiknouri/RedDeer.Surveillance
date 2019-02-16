@@ -5,6 +5,8 @@ using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.File_Scanner;
+using DataImport.File_Scanner.Interfaces;
 using DataImport.Interfaces;
 using DataImport.MessageBusIO;
 using DataImport.MessageBusIO.Interfaces;
@@ -74,6 +76,9 @@ namespace DataImport
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
+
+            For<IFileScanner>().Use<FileScanner>();
+            For<IFileScannerScheduler>().Use<FileScannerScheduler>();
         }
     }
 }

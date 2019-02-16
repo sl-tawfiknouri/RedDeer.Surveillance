@@ -7,6 +7,13 @@ using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Coordinator
 {
+    /// <summary>
+    /// Potential candidate to move to data import in the future
+    /// Leaving it in surveillance as it's fairly incestuous with respect to
+    /// knowledge of internal business requirements
+    /// Once we have a web api up for surveillance we will probably have a
+    /// shared data importing project for file import and api where this should live
+    /// </summary>
     public class DataVerifier : IDataVerifier
     {
         private readonly IOrdersRepository _ordersRepository;

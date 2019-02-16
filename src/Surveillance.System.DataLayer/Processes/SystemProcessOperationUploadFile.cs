@@ -1,4 +1,5 @@
-﻿using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+﻿using System;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
 namespace Surveillance.Auditing.DataLayer.Processes
 {
@@ -19,6 +20,8 @@ namespace Surveillance.Auditing.DataLayer.Processes
         public string FilePath { get; set; }
 
         public int FileType { get; set; }
+
+        public DateTime FileUploadTime { get; set; }
 
         public override string ToString()
         {

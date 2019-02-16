@@ -32,7 +32,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderFilledVolume as OrderFilledVolume,
                 CreatedDate as CreatedDate
             FROM OrdersAllocation
-            WHERE OrderId IN @OrderIds;";
+            WHERE OrderId IN @OrderIds
+            AND Live = 1;";
 
         private const string GetStaleAllocationSql = @"
             SELECT

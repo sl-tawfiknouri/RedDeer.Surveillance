@@ -312,7 +312,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
             on mark.Id = ord.MarketId
             WHERE
             ord.PlacedDate >= @Start
-            AND ord.StatusChangedDate <= @End;";
+            AND ord.StatusChangedDate <= @End
+            AND ord.Live = 1;";
 
         private const string GetDealerOrdersSql = @"
             SELECT

@@ -43,7 +43,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 _logger.LogError($"DataVerifier scan found orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var order in staleOrders)
-                    _logger.LogError($"DataVerifier scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations.");
+                    _logger.LogError($"DataVerifier scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations. CLIENTSERVICES");
             }
 
             if (staleOrderAllocations?.Any() ?? false)
@@ -51,8 +51,9 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 _logger.LogError($"DataVerifier scan found order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var allocation in staleOrderAllocations)
-                    _logger.LogError($"DataVerifier scan found order allocation for order {allocation.OrderId} last updated on {allocation.CreatedDate} which did not have any order data.");
+                    _logger.LogError($"DataVerifier scan found order allocation for order {allocation.OrderId} last updated on {allocation.CreatedDate} which did not have any order data. CLIENTSERVICES");
             }
+
             _logger.LogInformation($"DataVerifier completed scanning");
         }
     }

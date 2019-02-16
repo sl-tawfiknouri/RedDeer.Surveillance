@@ -3,7 +3,7 @@
     public enum SystemProcessOperationUploadFileType
     {
         MarketDataFile = 0,
-        TradeDataFile = 1,
+        OrderDataFile = 1,
         AllocationDataFile = 2
     }
 }

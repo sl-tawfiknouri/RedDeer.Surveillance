@@ -67,7 +67,7 @@ namespace DataImport.Disk_IO.TradeFile
                 var fileUpload =
                     opCtx
                         .CreateAndStartUploadFileContext(
-                            SystemProcessOperationUploadFileType.TradeDataFile,
+                            SystemProcessOperationUploadFileType.OrderDataFile,
                             path);
                 try
                 {

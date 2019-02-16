@@ -1,6 +1,7 @@
 ﻿using System;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
+using DataImport.File_Scanner.Interfaces;
 using DataImport.Interfaces;
 using DataImport.S3_IO.Interfaces;
 using DataImport.Services.Interfaces;
@@ -14,6 +15,7 @@ namespace DataImport
         private readonly IUploadAllocationFileMonitor _allocationFileMonitor;
         private readonly IUploadTradeFileMonitor _tradeFileMonitor;
         private readonly IS3FileUploadMonitoringProcess _s3FileUploadProcess;
+        private readonly IFileScannerScheduler _fileScanner;
         private readonly ILogger _logger;
 
         public Mediator(
@@ -21,6 +23,7 @@ namespace DataImport
             IUploadAllocationFileMonitor allocationFileMonitor,
             IUploadTradeFileMonitor tradeFileMonitor,
             IS3FileUploadMonitoringProcess s3FileUploadProcess,
+            IFileScannerScheduler fileScanner,
             ILogger<Mediator> logger)
         {
             _enrichmentService =
@@ -39,6 +42,10 @@ namespace DataImport
                 s3FileUploadProcess
                 ?? throw new ArgumentNullException(nameof(s3FileUploadProcess));
 
+            _fileScanner =
+                fileScanner
+                ?? throw new ArgumentNullException(nameof(fileScanner));
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -51,7 +58,7 @@ namespace DataImport
                 _enrichmentService.Initialise();
                 _tradeFileMonitor.Initiate();
                 _allocationFileMonitor.Initiate();
-
+                _fileScanner.Initialise();
                 _s3FileUploadProcess.Initialise(_allocationFileMonitor, _tradeFileMonitor);
 
                 _logger.LogInformation("Completed initiating data import in mediator");

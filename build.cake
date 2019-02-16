@@ -37,7 +37,7 @@ var testProjects = new []
 	"src/Surveillance.Engine.RuleDistributor.Tests/Surveillance.Engine.RuleDistributor.Tests.csproj",
 	"src/Surveillance.Engine.Rules.Tests/Surveillance.Engine.Rules.Tests.csproj",
 	"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
-	"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
+	"src/Surveillance.System.DataLayer.Tests/Surveillance.Auditing.DataLayer.Tests.csproj" ,
 	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
 	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
 	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",

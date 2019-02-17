@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Multiverse.Interfaces;
 
 // ReSharper disable AssignNullToNotNullAttribute
 namespace Surveillance.Engine.Rules.Rules.HighProfits
@@ -14,18 +13,16 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
     public class HighProfitsRule : IHighProfitRule
     {
         private readonly IHighProfitStreamRule _streamRule;
-        private readonly IMarketCloseMultiverseTransformer _multiverseTransformer;
+        private readonly IHighProfitMarketClosureRule _marketClosureRule;
         private readonly ILogger<HighProfitsRule> _logger;
 
         public HighProfitsRule(
             IHighProfitStreamRule streamRule,
-            IMarketCloseMultiverseTransformer multiverseTransformer,
+            IHighProfitMarketClosureRule marketClosureRule,
             ILogger<HighProfitsRule> logger)
         {
             _streamRule = streamRule ?? throw new ArgumentNullException(nameof(streamRule));
-            _multiverseTransformer =
-                multiverseTransformer
-                ?? throw new ArgumentNullException(nameof(multiverseTransformer));
+            _marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -33,24 +30,24 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             _logger.LogInformation($"HighProfitsRule OnCompleted() event received. Passing onto high profit and high profit market close rules.");
             _streamRule.OnCompleted();
-            _multiverseTransformer.OnCompleted();
+            _marketClosureRule.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
             _logger.LogError($"HighProfitsRule OnCompleted() event received", error);
             _streamRule.OnError(error);
-            _multiverseTransformer.OnError(error);
+            _marketClosureRule.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
             _logger.LogInformation($"HighProfitsRule OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
 
-            // if removing the market cap (multiverse transformer) rule
+            // if removing the market closure rule
             // ensure that the alert subscriber is also updated to remove expectation of 2x flush events
             _streamRule.OnNext(value);
-            _multiverseTransformer.OnNext(value);
+            _marketClosureRule.OnNext(value);
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
@@ -60,7 +57,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             return new HighProfitsRule(
                 (IHighProfitStreamRule)_streamRule.Clone(),
-                (IMarketCloseMultiverseTransformer)_multiverseTransformer.Clone(),
+                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(),
                 _logger);
         }
     }

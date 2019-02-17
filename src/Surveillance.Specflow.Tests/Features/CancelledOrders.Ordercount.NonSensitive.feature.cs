@@ -518,10 +518,10 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One cancelled orders out of eleven yields zero alert")]
-        public virtual void OneCancelledOrdersOutOfElevenYieldsZeroAlert()
+        [NUnit.Framework.DescriptionAttribute("One cancelled orders out of eleven yields two alert")]
+        public virtual void OneCancelledOrdersOutOfElevenYieldsTwoAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One cancelled orders out of eleven yields zero alert", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One cancelled orders out of eleven yields two alert", null, ((string[])(null)));
 #line 75
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -677,16 +677,16 @@ this.FeatureBackground();
 #line 89
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 90
-   testRunner.Then("I will have 0 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+   testRunner.Then("I will have 2 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("One cancelled orders out of ten yields one alert")]
-        public virtual void OneCancelledOrdersOutOfTenYieldsOneAlert()
+        [NUnit.Framework.DescriptionAttribute("One cancelled orders out of ten yields two alert")]
+        public virtual void OneCancelledOrdersOutOfTenYieldsTwoAlert()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One cancelled orders out of ten yields one alert", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("One cancelled orders out of ten yields two alert", null, ((string[])(null)));
 #line 92
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -721,7 +721,7 @@ this.FeatureBackground();
                         "Barclays",
                         "2",
                         "01/01/2019",
-                        "01/01/2019",
+                        "",
                         "Market",
                         "Buy",
                         "GBX",
@@ -733,7 +733,7 @@ this.FeatureBackground();
                         "Barclays",
                         "3",
                         "01/01/2019",
-                        "",
+                        "01/01/2019",
                         "Market",
                         "Buy",
                         "GBX",
@@ -830,7 +830,7 @@ this.FeatureBackground();
 #line 105
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 106
-   testRunner.Then("I will have 1 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+   testRunner.Then("I will have 2 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

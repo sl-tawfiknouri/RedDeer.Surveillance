@@ -7,6 +7,7 @@ using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using TechTalk.SpecFlow;
@@ -43,6 +44,31 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, toDate, new object());
 
             eventList.Add(genesis);
+
+            for (var i = 0; i <= toDate.Subtract(fromDate).Days; i++)
+            {
+                var closeEventXlon =
+                    new UniverseEvent(
+                        UniverseStateEvent.ExchangeClose,
+                        fromDate.Date.AddDays(i).AddHours(16),
+                        new MarketOpenClose(
+                            "XLON",
+                            fromDate.Date.AddDays(i).AddHours(8),
+                            fromDate.Date.AddDays(i).AddHours(16)));
+
+                eventList.Add(closeEventXlon);
+
+                var closeEventNasdaq =
+                    new UniverseEvent(
+                        UniverseStateEvent.ExchangeClose,
+                        fromDate.Date.AddDays(i).AddHours(23),
+                        new MarketOpenClose(
+                            "NASDAQ",
+                            fromDate.Date.AddDays(i).AddHours(15),
+                            fromDate.Date.AddDays(i).AddHours(23)));
+
+                eventList.Add(closeEventNasdaq);
+            }
 
             var orderParams = orderTable.CreateSet<OrderParameters>();
 

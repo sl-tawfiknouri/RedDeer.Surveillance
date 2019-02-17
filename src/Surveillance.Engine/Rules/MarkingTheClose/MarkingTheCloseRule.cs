@@ -90,12 +90,13 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
             var tradingHours = _tradingHoursManager.GetTradingHoursForMic(securities.Peek().Market.MarketIdentifierCode);
 
+            // not sure this is right
             var marketDataRequest = new MarketDataRequest(
                 securities.Peek().Market.MarketIdentifierCode,
                 securities.Peek().Instrument.Cfi,
                 securities.Peek().Instrument.Identifiers,
-                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
-                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime),
+                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 _ruleCtx?.Id());
 
             var dataResponse = UniverseEquityIntradayCache.GetForLatestDayOnly(marketDataRequest);

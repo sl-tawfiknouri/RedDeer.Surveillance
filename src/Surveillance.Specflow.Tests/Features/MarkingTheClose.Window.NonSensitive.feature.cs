@@ -81,17 +81,50 @@ namespace Surveillance.Specflow.Tests.Features
         {
 #line 10
 #line hidden
-            TechTalk.SpecFlow.Table table480 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table481 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "PercentageThresholdDailyVolume",
                         "PercentageThresholdWindowVolume"});
-            table480.AddRow(new string[] {
+            table481.AddRow(new string[] {
                         "1",
                         "",
                         "0.5"});
 #line 11
-  testRunner.Given("I have the marking the close rule parameter values", ((string)(null)), table480, "Given ");
+  testRunner.Given("I have the marking the close rule parameter values", ((string)(null)), table481, "Given ");
 #line hidden
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
+        public virtual void EmptyUniverseYieldsNoAlerts()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, ((string[])(null)));
+#line 15
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 10
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table482 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+#line 16
+   testRunner.Given("I have the orders for a universe from 01/01/2018 to 01/05/2018 :", ((string)(null)), table482, "Given ");
+#line 18
+         testRunner.When("I run the marking the close rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 19
+   testRunner.Then("I will have 0 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
         }
     }
 }

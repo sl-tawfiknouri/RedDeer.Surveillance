@@ -98,7 +98,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 "0",
                 new System.TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.PercentageThresholdDailyVolume,
-                parameters.PercentageThresholdDailyVolume,
+                parameters.PercentageThresholdWindowVolume,
                 null,
                 new[] { ClientOrganisationalFactors.None },
                 true);

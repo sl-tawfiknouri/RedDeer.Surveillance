@@ -18,7 +18,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         private IAwsConfiguration _awsConfiguration;
         private IScheduledExecutionMessageBusSerialiser _busSerialiser;
         private ISystemProcessContext _systemProcessContext;
-        private ILogger<QueueReddeerDistributedRuleSubscriber> _logger;
+        private ILogger<QueueDistributedRuleSubscriber> _logger;
 
         [SetUp]
         public void Setup()
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
             _awsConfiguration = A.Fake<IAwsConfiguration>();
             _busSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
-            _logger = A.Fake<ILogger<QueueReddeerDistributedRuleSubscriber>>();
+            _logger = A.Fake<ILogger<QueueDistributedRuleSubscriber>>();
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new QueueReddeerDistributedRuleSubscriber(
+                new QueueDistributedRuleSubscriber(
                     null,
                     _awsClient,
                     _awsConfiguration,
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new QueueReddeerDistributedRuleSubscriber(
+                new QueueDistributedRuleSubscriber(
                     _scheduleDisassembler,
                     null,
                     _awsConfiguration,
@@ -64,7 +64,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new QueueReddeerDistributedRuleSubscriber(
+                new QueueDistributedRuleSubscriber(
                     _scheduleDisassembler,
                     _awsClient,
                     null,
@@ -79,7 +79,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new QueueReddeerDistributedRuleSubscriber(
+                new QueueDistributedRuleSubscriber(
                     _scheduleDisassembler,
                     _awsClient,
                     _awsConfiguration,
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new QueueReddeerDistributedRuleSubscriber(
+                new QueueDistributedRuleSubscriber(
                     _scheduleDisassembler,
                     _awsClient,
                     _awsConfiguration,

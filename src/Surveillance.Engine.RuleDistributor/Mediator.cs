@@ -7,11 +7,11 @@ namespace Surveillance.Engine.RuleDistributor
 {
     public class Mediator : IRuleDistributorMediator
     {
-        private readonly IQueueReddeerDistributedRuleSubscriber _distributedRuleSubscriber;
+        private readonly IQueueDistributedRuleSubscriber _distributedRuleSubscriber;
         private readonly ILogger<Mediator> _logger;
 
         public Mediator(
-            IQueueReddeerDistributedRuleSubscriber distributedRuleSubscriber,
+            IQueueDistributedRuleSubscriber distributedRuleSubscriber,
             ILogger<Mediator> logger)
         {
             _distributedRuleSubscriber = distributedRuleSubscriber ?? throw new ArgumentNullException(nameof(distributedRuleSubscriber));

@@ -1,6 +1,6 @@
 ﻿namespace Surveillance.Engine.RuleDistributor.Queues.Interfaces
 {
-    public interface IQueueReddeerDistributedRuleSubscriber
+    public interface IQueueDistributedRuleSubscriber
     {
         void Initiate();
         void Terminate();

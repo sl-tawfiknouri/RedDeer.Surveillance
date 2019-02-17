@@ -28,6 +28,8 @@ using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.MessageBusIO;
 using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
@@ -52,8 +54,6 @@ using Surveillance.Engine.Rules.Rules.Spoofing;
 using Surveillance.Engine.Rules.Rules.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Rules.WashTrade;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Scheduler;
-using Surveillance.Engine.Rules.Scheduler.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules
             For<ITradingHistoryStack>().Use<TradingHistoryStack>();
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
-            For<IReddeerRuleScheduler>().Use<ReddeerRuleScheduler>();
+            For<IQueueRuleSubscriber>().Use<QueueRuleSubscriber>();
             For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
             For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();

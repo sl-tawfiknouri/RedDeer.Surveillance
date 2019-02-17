@@ -11,7 +11,7 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Queues
 {
-    public class QueueReddeerDistributedRuleSubscriber : IQueueReddeerDistributedRuleSubscriber
+    public class QueueDistributedRuleSubscriber : IQueueDistributedRuleSubscriber
     {
         private readonly IScheduleDisassembler _scheduleDisassembler;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -19,17 +19,17 @@ namespace Surveillance.Engine.RuleDistributor.Queues
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly ISystemProcessContext _systemProcessContext;
 
-        private readonly ILogger<QueueReddeerDistributedRuleSubscriber> _logger;
+        private readonly ILogger<QueueDistributedRuleSubscriber> _logger;
         private CancellationTokenSource _messageBusCts;
         private AwsResusableCancellationToken _token;
 
-        public QueueReddeerDistributedRuleSubscriber(
+        public QueueDistributedRuleSubscriber(
             IScheduleDisassembler scheduleDisassembler,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ISystemProcessContext systemProcessContext,
-            ILogger<QueueReddeerDistributedRuleSubscriber> logger)
+            ILogger<QueueDistributedRuleSubscriber> logger)
         { 
             _scheduleDisassembler = scheduleDisassembler ?? throw new ArgumentNullException(nameof(scheduleDisassembler));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));

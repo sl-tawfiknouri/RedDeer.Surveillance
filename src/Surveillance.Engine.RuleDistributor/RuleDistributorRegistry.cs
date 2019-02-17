@@ -20,7 +20,7 @@ namespace Surveillance.Engine.RuleDistributor
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IRuleDistributorMediator>().Use<Mediator>();
-            For<IQueueReddeerDistributedRuleSubscriber>().Use<QueueReddeerDistributedRuleSubscriber>();
+            For<IQueueDistributedRuleSubscriber>().Use<QueueDistributedRuleSubscriber>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();

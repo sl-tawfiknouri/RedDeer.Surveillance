@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
-using Surveillance.Engine.Rules.Scheduler;
+using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Utility.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         private IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
 
         private IAnalysisEngine _analysisEngine;
-        private ILogger<ReddeerRuleScheduler> _logger;
+        private ILogger<QueueRuleSubscriber> _logger;
 
         [SetUp]
         public void Setup()
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
             _ctx = A.Fake<ISystemProcessContext>();
 
             _analysisEngine = A.Fake<IAnalysisEngine>();
-            _logger = A.Fake <ILogger<ReddeerRuleScheduler>>();
+            _logger = A.Fake <ILogger<QueueRuleSubscriber>>();
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     null,
                     _awsQueueClient,
                     _awsConfiguration, 
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     null,
                     _awsConfiguration,
@@ -71,7 +71,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     _awsQueueClient,
                     null,
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     _awsQueueClient,
                     _awsConfiguration,
@@ -101,7 +101,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     _awsQueueClient,
                     _awsConfiguration,
@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     _awsQueueClient,
                     _awsConfiguration,
@@ -131,7 +131,7 @@ namespace Surveillance.Engine.Rules.Tests.Scheduler
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new ReddeerRuleScheduler(
+                new QueueRuleSubscriber(
                     _analysisEngine,
                     _awsQueueClient,
                     _awsConfiguration,

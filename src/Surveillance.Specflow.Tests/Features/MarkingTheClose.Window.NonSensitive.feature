@@ -7,5 +7,9 @@ Feature: MarkingTheClose Window Non Sensitive Parameters
 	towards the market closure time at an unusually
 	high volume in order to extract supernormal profits
 
+Background:
+		Given I have the marking the close rule parameter values
+		| WindowHours | PercentageThresholdDailyVolume | PercentageThresholdWindowVolume |
+		| 1			  |								   |						    0.5  |
 
 

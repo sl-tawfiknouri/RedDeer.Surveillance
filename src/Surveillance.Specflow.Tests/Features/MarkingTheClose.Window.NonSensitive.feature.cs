@@ -19,6 +19,9 @@ namespace Surveillance.Specflow.Tests.Features
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("MarkingTheClose Window Non Sensitive Parameters")]
+    [NUnit.Framework.CategoryAttribute("markingtheclose")]
+    [NUnit.Framework.CategoryAttribute("markingtheclosewindow")]
+    [NUnit.Framework.CategoryAttribute("markingtheclosewindownonsensitive")]
     public partial class MarkingTheCloseWindowNonSensitiveParametersFeature
     {
         
@@ -33,7 +36,10 @@ namespace Surveillance.Specflow.Tests.Features
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MarkingTheClose Window Non Sensitive Parameters", "\tIn order to meet MAR compliance requirements\r\n\tI need to be able to detect when " +
                     "traders are executing trades\r\n\ttowards the market closure time at an unusually\r\n" +
-                    "\thigh volume in order to extract supernormal profits", ProgrammingLanguage.CSharp, ((string[])(null)));
+                    "\thigh volume in order to extract supernormal profits", ProgrammingLanguage.CSharp, new string[] {
+                        "markingtheclose",
+                        "markingtheclosewindow",
+                        "markingtheclosewindownonsensitive"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -69,6 +75,23 @@ namespace Surveillance.Specflow.Tests.Features
         public virtual void ScenarioCleanup()
         {
             testRunner.CollectScenarioErrors();
+        }
+        
+        public virtual void FeatureBackground()
+        {
+#line 10
+#line hidden
+            TechTalk.SpecFlow.Table table480 = new TechTalk.SpecFlow.Table(new string[] {
+                        "WindowHours",
+                        "PercentageThresholdDailyVolume",
+                        "PercentageThresholdWindowVolume"});
+            table480.AddRow(new string[] {
+                        "1",
+                        "",
+                        "0.5"});
+#line 11
+  testRunner.Given("I have the marking the close rule parameter values", ((string)(null)), table480, "Given ");
+#line hidden
         }
     }
 }

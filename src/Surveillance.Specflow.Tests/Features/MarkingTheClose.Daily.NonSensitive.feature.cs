@@ -19,6 +19,9 @@ namespace Surveillance.Specflow.Tests.Features
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("MarkingTheClose Daily Non Sensitive Parameters")]
+    [NUnit.Framework.CategoryAttribute("markingtheclose")]
+    [NUnit.Framework.CategoryAttribute("markingtheclosedaily")]
+    [NUnit.Framework.CategoryAttribute("markingtheclosedailynonsensitive")]
     public partial class MarkingTheCloseDailyNonSensitiveParametersFeature
     {
         
@@ -33,7 +36,10 @@ namespace Surveillance.Specflow.Tests.Features
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MarkingTheClose Daily Non Sensitive Parameters", "\tIn order to meet MAR compliance requirements\r\n\tI need to be able to detect when " +
                     "traders are executing trades\r\n\ttowards the market closure time at an unusually\r\n" +
-                    "\thigh volume in order to extract supernormal profits", ProgrammingLanguage.CSharp, ((string[])(null)));
+                    "\thigh volume in order to extract supernormal profits", ProgrammingLanguage.CSharp, new string[] {
+                        "markingtheclose",
+                        "markingtheclosedaily",
+                        "markingtheclosedailynonsensitive"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -69,6 +75,56 @@ namespace Surveillance.Specflow.Tests.Features
         public virtual void ScenarioCleanup()
         {
             testRunner.CollectScenarioErrors();
+        }
+        
+        public virtual void FeatureBackground()
+        {
+#line 10
+#line hidden
+            TechTalk.SpecFlow.Table table477 = new TechTalk.SpecFlow.Table(new string[] {
+                        "WindowHours",
+                        "PercentageThresholdDailyVolume",
+                        "PercentageThresholdWindowVolume"});
+            table477.AddRow(new string[] {
+                        "1",
+                        "0.5",
+                        ""});
+#line 11
+   testRunner.Given("I have the marking the close rule parameter values", ((string)(null)), table477, "Given ");
+#line hidden
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Empty Universe yields no alerts")]
+        public virtual void EmptyUniverseYieldsNoAlerts()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Empty Universe yields no alerts", null, ((string[])(null)));
+#line 15
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 10
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table478 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "FilledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+#line 16
+   testRunner.Given("I have the orders for a universe from 01/01/2018 to 01/05/2018 :", ((string)(null)), table478, "Given ");
+#line 18
+         testRunner.When("I run the marking the close rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 19
+   testRunner.Then("I will have 0 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
         }
     }
 }

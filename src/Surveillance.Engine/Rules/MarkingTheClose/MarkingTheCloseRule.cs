@@ -88,61 +88,56 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
                 return;
             }
 
-            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(securities.Peek().Market.MarketIdentifierCode);
+            // filter the security list by the mic of the closing market....
+            var filteredMarketSecurities =
+                securities
+                    .Where(i => 
+                        string.Equals(
+                            i.Market?.MarketIdentifierCode,
+                            _latestMarketClosure.MarketId, 
+                            StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            // not sure this is right
-            var marketDataRequest = new MarketDataRequest(
-                securities.Peek().Market.MarketIdentifierCode,
-                securities.Peek().Instrument.Cfi,
-                securities.Peek().Instrument.Identifiers,
-                tradingHours.MinimumOfCloseInUtcForDayOrUniverse(UniverseDateTime.Subtract(WindowSize)),
-                tradingHours.ClosingInUtcForDay(UniverseDateTime),
-                _ruleCtx?.Id());
-
-            var dataResponse = UniverseEquityIntradayCache.GetForLatestDayOnly(marketDataRequest);
-
-            if (dataResponse.HadMissingData)
+            if (!filteredMarketSecurities.Any())
             {
-                _hadMissingData = true;
-                _logger.LogInformation($"Marking The Close Rule had missing data for {securities.Peek().Instrument.Identifiers} on {UniverseDateTime}");
+                // no relevant securities were being traded within the market closure time window
                 return;
             }
 
-            var tradedSecurity = dataResponse.Response;
+            var marketSecurities = new Stack<Order>(filteredMarketSecurities);
 
             VolumeBreach dailyVolumeBreach = null;
             if (_parameters.PercentageThresholdDailyVolume != null)
             {
-                dailyVolumeBreach = CheckDailyVolumeTraded(securities, tradedSecurity);
+                dailyVolumeBreach = CheckDailyVolumeTraded(marketSecurities);
             }
 
             VolumeBreach windowVolumeBreach = null;
             if (_parameters.PercentageThresholdWindowVolume != null)
             {
-                // probably wrong with the variant of cache method called
-                windowVolumeBreach = CheckWindowVolumeTraded(securities, tradedSecurity);
+                windowVolumeBreach = CheckWindowVolumeTraded(marketSecurities);
             }
 
             if ((dailyVolumeBreach == null || !dailyVolumeBreach.HasBreach())
                 && (windowVolumeBreach == null || !windowVolumeBreach.HasBreach()))
             {
-                _logger.LogInformation($"MarkingTheCloseRule had no breaches for {tradedSecurity?.Security?.Identifiers} at {UniverseDateTime}");
+                _logger.LogInformation($"MarkingTheCloseRule had no breaches for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}");
                 return;
             }
 
-            var position = new TradePosition(securities.ToList());
+            var position = new TradePosition(marketSecurities.ToList());
             var breach = new MarkingTheCloseBreach(
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
                 _parameters.Window,
-                tradedSecurity.Security,
+                marketSecurities.FirstOrDefault()?.Instrument,
                 _latestMarketClosure,
                 position,
                 _parameters,
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
-            _logger.LogInformation($"MarkingTheCloseRule had a breach for {tradedSecurity?.Security?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
+            _logger.LogInformation($"MarkingTheCloseRule had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
             var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
@@ -153,9 +148,27 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
         }
 
         private VolumeBreach CheckDailyVolumeTraded(
-            Stack<Order> securities,
-            EquityInstrumentIntraDayTimeBar tradedSecurity)
+            Stack<Order> securities)
         {
+            var marketDataRequest = new MarketDataRequest(
+                securities.Peek().Market.MarketIdentifierCode,
+                securities.Peek().Instrument.Cfi,
+                securities.Peek().Instrument.Identifiers,
+                UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
+                UniverseDateTime,
+                _ruleCtx?.Id());
+
+            var dataResponse = UniverseEquityInterdayCache.Get(marketDataRequest);
+
+            if (dataResponse.HadMissingData)
+            {
+                _hadMissingData = true;
+                _logger.LogInformation($"Marking The Close Rule had missing data for {securities.Peek().Instrument.Identifiers} on {UniverseDateTime}");
+                return new VolumeBreach();
+            }
+
+            var tradedSecurity = dataResponse.Response;
+
             var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
 
             if (thresholdVolumeTraded == null)
@@ -167,23 +180,25 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             var result =
                 CalculateVolumeBreaches(
                     securities,
-                    tradedSecurity,
                     thresholdVolumeTraded.GetValueOrDefault(0),
                     tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded);
 
             return result;
         }
 
-        private VolumeBreach CheckWindowVolumeTraded(
-            Stack<Order> securities,
-            EquityInstrumentIntraDayTimeBar tradedSecurity)
+        private VolumeBreach CheckWindowVolumeTraded(Stack<Order> securities)
         {
+            if (!securities.Any())
+            {
+                return new VolumeBreach();
+            }
+
             var marketDataRequest =
                 new MarketDataRequest(
-                    tradedSecurity.Market.MarketIdentifierCode,
-                    tradedSecurity.Security.Cfi,
-                    tradedSecurity.Security.Identifiers,
-                    UniverseDateTime.Subtract(WindowSize),
+                    securities.Peek().Market.MarketIdentifierCode,
+                    securities.Peek().Instrument.Cfi,
+                    securities.Peek().Instrument.Identifiers,
+                    UniverseDateTime.Subtract(WindowSize), // implicitly correct (market closure event trigger)
                     UniverseDateTime,
                     _ruleCtx?.Id());
 
@@ -208,7 +223,6 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             var result =
                 CalculateVolumeBreaches(
                     securities, 
-                    tradedSecurity,
                     thresholdVolumeTraded.GetValueOrDefault(0),
                     securityVolume);
 
@@ -217,13 +231,11 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
         private VolumeBreach CalculateVolumeBreaches(
             Stack<Order> securities,
-            EquityInstrumentIntraDayTimeBar tradedSecurity,
             decimal thresholdVolumeTraded,
             long marketVolumeTraded)
         {
             if (securities == null
-                || !securities.Any()
-                || tradedSecurity == null)
+                || !securities.Any())
             {
                 return new VolumeBreach();
             }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>RedDeer.ThirdPartySurveillanceDataSynchroniser.App</AssemblyName>
-    <RootNamespace>RedDeer.ThirdPartySurveillanceDataSynchroniser.App</RootNamespace>
+    <RootNamespace>DataSynchroniser.App</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -46,7 +46,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
-    <ProjectReference Include="..\ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.csproj" />
+    <ProjectReference Include="..\ThirdPartySurveillanceDataSynchroniser\DataSynchroniser.csproj" />
   </ItemGroup>
 
   <ItemGroup>

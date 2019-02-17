@@ -4,7 +4,7 @@ using System.Linq;
 
 // ReSharper disable InconsistentlySynchronizedField
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     public class RingBuffer<T> where T : class
     {

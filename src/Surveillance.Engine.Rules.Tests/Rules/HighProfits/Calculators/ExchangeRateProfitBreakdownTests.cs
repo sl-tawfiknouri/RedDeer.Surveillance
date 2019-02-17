@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DomainV2.Trading;
+using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Tests.Helpers;
@@ -26,8 +26,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits.Calculators
                 revenuePosition,
                 2, 
                 1.5m,
-                new DomainV2.Financial.Currency("USD"),
-                new DomainV2.Financial.Currency("GBP"));
+                new Domain.Financial.Currency("USD"),
+                new Domain.Financial.Currency("GBP"));
 
             var x = breakdown.AbsoluteAmountDueToWer();
             var y = breakdown.RelativePercentageDueToWer();

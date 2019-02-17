@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Trading;
+using Domain.Trading;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField

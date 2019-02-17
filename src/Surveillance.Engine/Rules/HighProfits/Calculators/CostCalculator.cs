@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;

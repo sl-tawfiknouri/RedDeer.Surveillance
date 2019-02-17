@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
-using DomainV2.Contracts;
+using Domain.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

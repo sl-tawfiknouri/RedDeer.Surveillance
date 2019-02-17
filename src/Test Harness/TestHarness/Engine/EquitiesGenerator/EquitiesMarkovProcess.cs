@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;

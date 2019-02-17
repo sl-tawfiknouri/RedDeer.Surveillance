@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 
 namespace Surveillance.Engine.Rules.Trades.Interfaces
 {

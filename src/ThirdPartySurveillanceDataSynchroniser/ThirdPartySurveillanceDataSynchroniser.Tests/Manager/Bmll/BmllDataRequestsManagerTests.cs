@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using DataSynchroniser.DataSources;
+using DataSynchroniser.Manager;
+using DataSynchroniser.Manager.Bmll;
+using DataSynchroniser.Manager.Bmll.Interfaces;
+using Domain.Financial;
+using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
-using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Tests.Manager.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsManagerTests

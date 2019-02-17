@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
-using DomainV2.Contracts;
+using Domain.Contracts;
 using Microsoft.Extensions.Logging;
 using Utilities.Aws_IO.Interfaces;
 

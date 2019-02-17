@@ -1,7 +1,7 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies

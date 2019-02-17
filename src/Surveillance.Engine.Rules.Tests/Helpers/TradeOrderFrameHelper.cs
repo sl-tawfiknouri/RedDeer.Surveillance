@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 
 namespace Surveillance.Engine.Rules.Tests.Helpers
 {
@@ -38,8 +38,8 @@ namespace Surveillance.Engine.Rules.Tests.Helpers
                 null,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new DomainV2.Financial.Currency("GBP"),
-                new DomainV2.Financial.Currency("GBP"),
+                new Domain.Financial.Currency("GBP"),
+                new Domain.Financial.Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new CurrencyAmount(price.GetValueOrDefault(20), "GBP"),

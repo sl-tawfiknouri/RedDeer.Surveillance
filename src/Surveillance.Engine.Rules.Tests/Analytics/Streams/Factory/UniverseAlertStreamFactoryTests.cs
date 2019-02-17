@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

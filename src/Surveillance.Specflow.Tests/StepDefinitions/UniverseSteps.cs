@@ -1,10 +1,10 @@
-﻿using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Trading;
-using Surveillance.Specflow.Tests.StepDefinitions.Orders;
+﻿using Surveillance.Specflow.Tests.StepDefinitions.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Trading;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
@@ -276,7 +276,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 orderParam.FilledDate,
                 orderParam.Type,
                 orderParam.Direction,
-                new DomainV2.Financial.Currency(orderParam.Currency),
+                new Currency(orderParam.Currency),
                 null,
                 OrderCleanDirty.NONE,
                 null,

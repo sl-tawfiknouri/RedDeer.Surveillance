@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -72,8 +72,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
                     new TradePosition(new List<Order>()),
                     10m,
                     1m,
-                    new DomainV2.Financial.Currency("USD"),
-                    new DomainV2.Financial.Currency("GBP"));
+                    new Domain.Financial.Currency("USD"),
+                    new Domain.Financial.Currency("GBP"));
 
             var breach =
                 new HighProfitRuleBreach(

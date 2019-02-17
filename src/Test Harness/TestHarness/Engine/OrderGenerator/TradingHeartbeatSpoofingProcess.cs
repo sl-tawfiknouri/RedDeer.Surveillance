@@ -2,9 +2,9 @@
 using TestHarness.Engine.Heartbeat.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 

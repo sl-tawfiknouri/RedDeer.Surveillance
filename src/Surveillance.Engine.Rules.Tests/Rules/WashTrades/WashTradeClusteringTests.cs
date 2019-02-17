@@ -1,5 +1,5 @@
-﻿using DomainV2.Financial;
-using DomainV2.Trading;
+﻿using Domain.Financial;
+using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Rules.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;

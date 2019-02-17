@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.TimeBars;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces
 {

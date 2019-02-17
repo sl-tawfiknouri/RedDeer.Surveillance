@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

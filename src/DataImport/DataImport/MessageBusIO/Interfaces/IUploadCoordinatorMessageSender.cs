@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DomainV2.Contracts;
+using Domain.Contracts;
 
 namespace DataImport.MessageBusIO.Interfaces
 {

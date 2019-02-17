@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                DomainV2.Scheduling.Rules.WashTrade,
+                Domain.Scheduling.Rules.WashTrade,
                 WashTradeRuleFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
@@ -132,7 +132,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
                     pairingPositionsCheck,
                     clusteringPositionCheck);
 
-            var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.WashTrade, breach, RuleCtx);
+            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
             _alertStream.Add(universeAlert);
         }
 
@@ -223,7 +223,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency?.Value ?? string.Empty);
 
-            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -359,10 +359,10 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new DomainV2.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
+            var currency = new Domain.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            var targetCurrency = new DomainV2.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)

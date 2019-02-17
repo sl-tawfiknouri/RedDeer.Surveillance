@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

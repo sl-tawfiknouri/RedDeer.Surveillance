@@ -1,5 +1,5 @@
-﻿using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
+﻿using Domain.Financial;
+using Domain.Financial.Interfaces;
 using StructureMap;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;

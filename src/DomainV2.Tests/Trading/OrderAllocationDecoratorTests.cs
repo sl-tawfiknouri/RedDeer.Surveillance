@@ -1,9 +1,9 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using NUnit.Framework;
 
-namespace DomainV2.Tests.Trading
+namespace Domain.Tests.Trading
 {
     [TestFixture]
     public class OrderAllocationDecoratorTests

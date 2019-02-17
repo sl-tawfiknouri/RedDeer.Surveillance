@@ -1,11 +1,11 @@
 ﻿using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
-using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
-using DomainV2.Streams;
+using Domain.DTO;
+using Domain.DTO.Interfaces;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
+using Domain.Streams;
 using StructureMap;
 using Surveillance.Engine.Rules.Analysis;
 using Surveillance.Engine.Rules.Analysis.Interfaces;

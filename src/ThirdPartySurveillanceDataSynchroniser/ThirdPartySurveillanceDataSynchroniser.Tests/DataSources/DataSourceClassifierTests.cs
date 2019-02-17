@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
+﻿using DataSynchroniser.DataSources;
+using NUnit.Framework;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.DataSources
+namespace DataSynchroniser.Tests.DataSources
 {
     [TestFixture]
     public class DataSourceClassifierTests

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
-                DomainV2.Scheduling.Rules.HighProfits,
+                Domain.Scheduling.Rules.HighProfits,
                 HighProfitRuleFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
@@ -108,7 +108,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                 return;
             }
 
-            var targetCurrency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency =
                 liveTrades.Any()
@@ -193,7 +193,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new DomainV2.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new Domain.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderDirection == OrderDirections.BUY 
                 || lt.OrderDirection == OrderDirections.COVER).ToList());
@@ -214,7 +214,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             return exchangeRateProfits;
         }
 
-        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, DomainV2.Financial.Currency targetCurrency)
+        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
         {
             if (!_parameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
@@ -230,7 +230,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             return _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
 
-        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, DomainV2.Financial.Currency targetCurrency)
+        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
         {
             if (!_parameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
@@ -289,7 +289,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                     MarketClosureRule,
                     breakdown);
 
-            var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -346,7 +346,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 Logger.LogInformation($"High Profit Stream Rule deleting alerts off the message sender");
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

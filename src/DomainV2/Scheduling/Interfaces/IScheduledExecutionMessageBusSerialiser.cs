@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Scheduling.Interfaces
+﻿namespace Domain.Scheduling.Interfaces
 {
     public interface IScheduledExecutionMessageBusSerialiser
     {

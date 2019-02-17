@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Trading;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

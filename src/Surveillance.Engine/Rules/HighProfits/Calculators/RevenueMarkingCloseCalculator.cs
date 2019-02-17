@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using Domain.Financial;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;

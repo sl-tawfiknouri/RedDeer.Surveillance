@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace DomainV2.Files.Interfaces
+namespace Domain.Files.Interfaces
 {
     public interface ITradeFileCsvValidator
     {

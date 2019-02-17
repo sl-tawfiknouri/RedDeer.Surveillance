@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Scheduling.Interfaces;
+using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace DomainV2.Scheduling
+namespace Domain.Scheduling
 {
     public class ScheduleExecutionDtoMapper : IScheduleExecutionDtoMapper
     {
@@ -77,76 +77,76 @@ namespace DomainV2.Scheduling
             return scheduleExecution;
         }
 
-        private DomainV2.Scheduling.Rules MapRule(RedDeer.Contracts.SurveillanceService.Rules.Rules rule)
+        private Rules MapRule(RedDeer.Contracts.SurveillanceService.Rules.Rules rule)
         {
             switch (rule)
             {
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.CancelledOrders:
-                    return DomainV2.Scheduling.Rules.CancelledOrders;
+                    return Rules.CancelledOrders;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.HighProfits:
-                    return DomainV2.Scheduling.Rules.HighProfits;
+                    return Rules.HighProfits;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.HighVolume:
-                    return DomainV2.Scheduling.Rules.HighVolume;
+                    return Rules.HighVolume;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.Layering:
-                    return DomainV2.Scheduling.Rules.Layering;
+                    return Rules.Layering;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.MarkingTheClose:
-                    return DomainV2.Scheduling.Rules.MarkingTheClose;
+                    return Rules.MarkingTheClose;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.Spoofing:
-                    return DomainV2.Scheduling.Rules.Spoofing;
+                    return Rules.Spoofing;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.UniverseFilter:
-                    return DomainV2.Scheduling.Rules.UniverseFilter;
+                    return Rules.UniverseFilter;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.WashTrade:
-                    return DomainV2.Scheduling.Rules.WashTrade;
+                    return Rules.WashTrade;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.FrontRunning:
-                    return DomainV2.Scheduling.Rules.FrontRunning;
+                    return Rules.FrontRunning;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.PaintingTheTape:
-                    return DomainV2.Scheduling.Rules.PaintingTheTape;
+                    return Rules.PaintingTheTape;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.ImproperMatchedOrders:
-                    return DomainV2.Scheduling.Rules.ImproperMatchedOrders;
+                    return Rules.ImproperMatchedOrders;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.CrossAssetManipulation:
-                    return DomainV2.Scheduling.Rules.CrossAssetManipulation;
+                    return Rules.CrossAssetManipulation;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.PumpAndDump:
-                    return DomainV2.Scheduling.Rules.PumpAndDump;
+                    return Rules.PumpAndDump;
                 case RedDeer.Contracts.SurveillanceService.Rules.Rules.TrashAndCash:
-                    return DomainV2.Scheduling.Rules.TrashAndCash;
+                    return Rules.TrashAndCash;
             }
 
             _logger?.LogError($"ScheduleExecutionDtoMapper out of range for rule enum {rule} from contracts library");
 
-            return DomainV2.Scheduling.Rules.UniverseFilter;
+            return Rules.UniverseFilter;
         }
 
-        private RedDeer.Contracts.SurveillanceService.Rules.Rules MapRule(DomainV2.Scheduling.Rules rule)
+        private RedDeer.Contracts.SurveillanceService.Rules.Rules MapRule(Rules rule)
         {
             switch (rule)
             {
-                case DomainV2.Scheduling.Rules.CancelledOrders:
+                case Rules.CancelledOrders:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.CancelledOrders;
-                case DomainV2.Scheduling.Rules.HighProfits:
+                case Rules.HighProfits:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.HighProfits;
-                case DomainV2.Scheduling.Rules.HighVolume:
+                case Rules.HighVolume:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.HighVolume;
-                case DomainV2.Scheduling.Rules.Layering:
+                case Rules.Layering:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.Layering;
-                case DomainV2.Scheduling.Rules.MarkingTheClose:
+                case Rules.MarkingTheClose:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.MarkingTheClose;
-                case DomainV2.Scheduling.Rules.Spoofing:
+                case Rules.Spoofing:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.Spoofing;
-                case DomainV2.Scheduling.Rules.UniverseFilter:
+                case Rules.UniverseFilter:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.UniverseFilter;
-                case DomainV2.Scheduling.Rules.WashTrade:
+                case Rules.WashTrade:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.WashTrade;
-                case DomainV2.Scheduling.Rules.FrontRunning:
+                case Rules.FrontRunning:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.FrontRunning;
-                case DomainV2.Scheduling.Rules.PaintingTheTape:
+                case Rules.PaintingTheTape:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.PaintingTheTape;
-                case DomainV2.Scheduling.Rules.ImproperMatchedOrders:
+                case Rules.ImproperMatchedOrders:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.ImproperMatchedOrders;
-                case DomainV2.Scheduling.Rules.CrossAssetManipulation:
+                case Rules.CrossAssetManipulation:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.CrossAssetManipulation;
-                case DomainV2.Scheduling.Rules.PumpAndDump:
+                case Rules.PumpAndDump:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.PumpAndDump;
-                case DomainV2.Scheduling.Rules.TrashAndCash:
+                case Rules.TrashAndCash:
                     return RedDeer.Contracts.SurveillanceService.Rules.Rules.TrashAndCash;
             }
 

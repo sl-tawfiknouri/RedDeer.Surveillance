@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Enums;
-using DomainV2.Scheduling;
+using Domain.Enums;
+using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
@@ -11,7 +11,6 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Distributor
 {

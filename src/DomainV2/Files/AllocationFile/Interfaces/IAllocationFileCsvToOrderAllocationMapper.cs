@@ -1,6 +1,6 @@
-﻿using DomainV2.Trading;
+﻿using Domain.Trading;
 
-namespace DomainV2.Files.AllocationFile.Interfaces
+namespace Domain.Files.AllocationFile.Interfaces
 {
     public interface IAllocationFileCsvToOrderAllocationMapper
     {

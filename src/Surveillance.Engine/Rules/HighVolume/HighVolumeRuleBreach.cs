@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Financial;
+using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighVolume.Interfaces;

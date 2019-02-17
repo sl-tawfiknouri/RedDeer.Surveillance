@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Markets;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Markets;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
-                DomainV2.Scheduling.Rules.MarkingTheClose,
+                Domain.Scheduling.Rules.MarkingTheClose,
                 MarkingTheCloseRuleFactory.Version,
                 "Marking The Close",
                 ruleCtx,
@@ -142,7 +142,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
                 windowVolumeBreach ?? new VolumeBreach());
 
             _logger.LogInformation($"MarkingTheCloseRule had a breach for {tradedSecurity?.Security?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
-            var alertEvent = new UniverseAlertEvent(DomainV2.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -312,7 +312,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             {
                 // delete event
                 _logger.LogInformation("Marking The Close Rule had missing data at eschaton. Recording to op ctx.");
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

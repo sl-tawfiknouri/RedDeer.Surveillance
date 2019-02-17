@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;

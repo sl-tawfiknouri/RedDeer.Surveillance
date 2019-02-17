@@ -9,8 +9,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces
         ITradePosition PositionRevenue { get; }
         decimal PositionRevenueWer { get; }
 
-        DomainV2.Financial.Currency FixedCurrency { get; }
-        DomainV2.Financial.Currency VariableCurrency { get; }
+        Domain.Financial.Currency FixedCurrency { get; }
+        Domain.Financial.Currency VariableCurrency { get; }
 
         decimal AbsoluteAmountDueToWer();
         decimal RelativePercentageDueToWer();

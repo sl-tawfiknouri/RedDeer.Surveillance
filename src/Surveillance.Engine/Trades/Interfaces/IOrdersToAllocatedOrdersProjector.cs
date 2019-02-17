@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Trading;
+using Domain.Trading;
 
 namespace Surveillance.Engine.Rules.Trades.Interfaces
 {

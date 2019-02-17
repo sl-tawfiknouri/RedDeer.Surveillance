@@ -1,4 +1,4 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.Services.Interfaces
+﻿namespace DataSynchroniser.Services.Interfaces
 {
     public interface IDataRequestsService
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DomainV2.Equity.TimeBars
+namespace Domain.Equity.TimeBars
 {
     public class DailySummaryTimeBar
     {

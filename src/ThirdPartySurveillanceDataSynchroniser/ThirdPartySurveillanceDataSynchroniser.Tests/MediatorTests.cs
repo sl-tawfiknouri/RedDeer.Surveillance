@@ -1,11 +1,11 @@
 ﻿using System;
+using DataSynchroniser.Services.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Utilities.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests
+namespace DataSynchroniser.Tests
 {
     [TestFixture]
     public class MediatorTests

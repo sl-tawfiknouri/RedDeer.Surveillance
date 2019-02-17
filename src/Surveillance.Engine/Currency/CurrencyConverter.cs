@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Financial;
+using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Currency
 
         public async Task<CurrencyAmount?> Convert(
             IReadOnlyCollection<CurrencyAmount> currencyAmounts,
-            DomainV2.Financial.Currency targetCurrency,
+            Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Currency
         private CurrencyAmount? Convert(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
-            DomainV2.Financial.Currency targetCurrency,
+            Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -134,7 +134,7 @@ namespace Surveillance.Engine.Rules.Currency
         private CurrencyAmount? TryDirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
-            DomainV2.Financial.Currency targetCurrency)
+            Domain.Financial.Currency targetCurrency)
         {
             var directConversion = exchangeRates
                 .FirstOrDefault(er =>
@@ -154,7 +154,7 @@ namespace Surveillance.Engine.Rules.Currency
         private CurrencyAmount? TryReciprocalConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
-            DomainV2.Financial.Currency targetCurrency)
+            Domain.Financial.Currency targetCurrency)
         {
             var reciprocalConversion = exchangeRates
                 .FirstOrDefault(er =>
@@ -178,7 +178,7 @@ namespace Surveillance.Engine.Rules.Currency
         private CurrencyAmount? TryIndirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             CurrencyAmount initial,
-            DomainV2.Financial.Currency targetCurrency,
+            Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -237,7 +237,7 @@ namespace Surveillance.Engine.Rules.Currency
 
         private List<ExchangeRateDto> GetExchangeRates(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            DomainV2.Financial.Currency targetCurrency)
+            Domain.Financial.Currency targetCurrency)
         {
             return exchangeRates
                 .Where(er =>

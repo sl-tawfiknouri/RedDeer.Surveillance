@@ -1,4 +1,5 @@
 ﻿using System;
+using DataSynchroniser.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,13 +12,11 @@ using Surveillance.Auditing.Context;
 using Surveillance.Auditing.DataLayer;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
-using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer;
-using ThirdPartySurveillanceDataSynchroniser;
-using ThirdPartySurveillanceDataSynchroniser.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public class Startup
     {

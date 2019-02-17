@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 

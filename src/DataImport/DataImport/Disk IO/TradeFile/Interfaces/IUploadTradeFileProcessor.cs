@@ -1,5 +1,5 @@
-﻿using DomainV2.Files;
-using DomainV2.Trading;
+﻿using Domain.Files;
+using Domain.Trading;
 
 namespace DataImport.Disk_IO.TradeFile.Interfaces
 {

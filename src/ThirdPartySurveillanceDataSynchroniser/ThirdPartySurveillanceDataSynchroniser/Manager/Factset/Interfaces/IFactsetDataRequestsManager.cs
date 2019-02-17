@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces
+namespace DataSynchroniser.Manager.Factset.Interfaces
 {
     public interface IFactsetDataRequestsManager
     {

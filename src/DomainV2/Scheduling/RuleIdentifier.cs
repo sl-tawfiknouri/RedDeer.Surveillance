@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace DomainV2.Scheduling
+namespace Domain.Scheduling
 {
     public class RuleIdentifier
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
 {
     public class CancelledOrderApiParameters
     {

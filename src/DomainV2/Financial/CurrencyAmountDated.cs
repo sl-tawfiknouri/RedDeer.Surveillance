@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DomainV2.Financial
+namespace Domain.Financial
 {
     /// <summary>
     /// Extended currency amount with a date for conversions

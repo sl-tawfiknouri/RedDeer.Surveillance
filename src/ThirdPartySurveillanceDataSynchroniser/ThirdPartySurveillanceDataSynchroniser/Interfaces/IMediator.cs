@@ -1,4 +1,4 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.Interfaces
+﻿namespace DataSynchroniser.Interfaces
 {
     public interface IMediator
     {

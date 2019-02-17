@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 
 namespace TestHarness.Tests.Display
 {

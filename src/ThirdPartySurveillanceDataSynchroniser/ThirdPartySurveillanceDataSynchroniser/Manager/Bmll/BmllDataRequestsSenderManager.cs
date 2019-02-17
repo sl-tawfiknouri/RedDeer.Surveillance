@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DataSynchroniser.Manager.Bmll.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsSenderManager : IBmllDataRequestsSenderManager
     {

@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Financial
+﻿namespace Domain.Financial
 {
     public enum OrderCleanDirty
     {

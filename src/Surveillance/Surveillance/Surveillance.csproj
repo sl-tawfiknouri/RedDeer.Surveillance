@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DomainV2\DomainV2.csproj" />
+    <ProjectReference Include="..\..\DomainV2\Domain.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine.DataCoordinator\Surveillance.Engine.DataCoordinator.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine.RuleDistributor\Surveillance.Engine.RuleDistributor.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine\Surveillance.Engine.Rules.csproj" />

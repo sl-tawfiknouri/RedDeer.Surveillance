@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     public class Unsubscriber<T> : IDisposable
     {

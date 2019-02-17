@@ -1,9 +1,9 @@
-﻿using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Streams.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Streams.Interfaces;
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     public class OrderAllocationStream<T> : IOrderAllocationStream<T>
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial.Interfaces;
+using Domain.Equity.TimeBars;
+using Domain.Financial.Interfaces;
 
-namespace DomainV2.Financial
+namespace Domain.Financial
 {
     public class InterDayHistoryStack : IInterDayHistoryStack
     {

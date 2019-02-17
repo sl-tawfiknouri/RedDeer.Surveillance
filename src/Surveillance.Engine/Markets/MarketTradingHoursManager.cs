@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
+using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;

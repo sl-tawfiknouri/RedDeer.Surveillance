@@ -1,5 +1,4 @@
 ﻿using System;
-using DomainV2.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

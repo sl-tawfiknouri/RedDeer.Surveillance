@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Trading;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

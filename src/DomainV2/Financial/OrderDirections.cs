@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DomainV2.Financial
+namespace Domain.Financial
 {
     public enum OrderDirections
     {

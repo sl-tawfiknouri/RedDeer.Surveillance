@@ -1,7 +1,7 @@
-﻿using DomainV2.Equity.Streams;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Streams;
+﻿using Domain.Equity.Streams;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
+using Domain.Streams;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

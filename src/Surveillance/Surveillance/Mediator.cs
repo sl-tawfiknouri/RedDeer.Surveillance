@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Utilities.Interfaces;
-using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Interfaces;
 using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;

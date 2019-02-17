@@ -70,6 +70,20 @@ Scenario: Marking the close raises 0 alerts for differnet exchange
 		 When I run the marking the close rule
 		 Then I will have 0 marking the close alerts
 
+Scenario: Marking the close raises 2 alerts for a different exchange 
+		Given I have the orders for a universe from 01/01/2019 to 01/02/2019 :
+         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Micron     | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | GBX      |            |                  | 2500          | 2500         |
+         | Micron     | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | GBX      |            |                  | 2500          | 2500         |
+         | Micron     | 3       | 01/02/2019 22:35:00 |               | Market | Buy       | GBX      |            |                  | 2500          | 2500         |
+         | Micron     | 4       | 01/02/2019 22:35:00 |               | Market | Buy       | GBX      |            |                  | 2500          | 2500         |
+		And With the interday market data :
+		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | GBX      |
+		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | GBX      |
+		 When I run the marking the close rule
+		 Then I will have 2 marking the close alerts
+
 Scenario: Marking the close raises 0 alerts for differnet days
 		Given I have the orders for a universe from 01/01/2019 to 01/02/2019 :
          | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |

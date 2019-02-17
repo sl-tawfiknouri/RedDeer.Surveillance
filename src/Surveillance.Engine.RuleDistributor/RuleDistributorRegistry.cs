@@ -6,8 +6,8 @@ using StructureMap;
 using Surveillance.Engine.RuleDistributor.Distributor;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Interfaces;
-using Surveillance.Engine.RuleDistributor.Scheduler;
-using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
+using Surveillance.Engine.RuleDistributor.Queues;
+using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor
 {
@@ -20,7 +20,7 @@ namespace Surveillance.Engine.RuleDistributor
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IRuleDistributorMediator>().Use<Mediator>();
-            For<IReddeerDistributedRuleScheduler>().Use<ReddeerDistributedRuleScheduler>();
+            For<IQueueReddeerDistributedRuleSubscriber>().Use<QueueReddeerDistributedRuleSubscriber>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();

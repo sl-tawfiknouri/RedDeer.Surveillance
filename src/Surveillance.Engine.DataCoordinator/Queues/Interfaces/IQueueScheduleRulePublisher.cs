@@ -3,7 +3,7 @@ using DomainV2.Scheduling;
 
 namespace Surveillance.Engine.DataCoordinator.Queues.Interfaces
 {
-    public interface IScheduleRuleMessageSender
+    public interface IQueueScheduleRulePublisher
     {
         Task Send(ScheduledExecution message);
     }

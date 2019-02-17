@@ -5,13 +5,13 @@ using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
-using Surveillance.Engine.RuleDistributor.Scheduler.Interfaces;
+using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Engine.RuleDistributor.Scheduler
+namespace Surveillance.Engine.RuleDistributor.Queues
 {
-    public class ReddeerDistributedRuleScheduler : IReddeerDistributedRuleScheduler
+    public class QueueReddeerDistributedRuleSubscriber : IQueueReddeerDistributedRuleSubscriber
     {
         private readonly IScheduleDisassembler _scheduleDisassembler;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -19,17 +19,17 @@ namespace Surveillance.Engine.RuleDistributor.Scheduler
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly ISystemProcessContext _systemProcessContext;
 
-        private readonly ILogger<ReddeerDistributedRuleScheduler> _logger;
+        private readonly ILogger<QueueReddeerDistributedRuleSubscriber> _logger;
         private CancellationTokenSource _messageBusCts;
         private AwsResusableCancellationToken _token;
 
-        public ReddeerDistributedRuleScheduler(
+        public QueueReddeerDistributedRuleSubscriber(
             IScheduleDisassembler scheduleDisassembler,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ISystemProcessContext systemProcessContext,
-            ILogger<ReddeerDistributedRuleScheduler> logger)
+            ILogger<QueueReddeerDistributedRuleSubscriber> logger)
         { 
             _scheduleDisassembler = scheduleDisassembler ?? throw new ArgumentNullException(nameof(scheduleDisassembler));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));

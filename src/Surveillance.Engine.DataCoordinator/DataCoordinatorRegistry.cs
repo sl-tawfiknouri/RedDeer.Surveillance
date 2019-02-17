@@ -21,7 +21,7 @@ namespace Surveillance.Engine.DataCoordinator
 
             For<ICoordinatorMediator>().Use<Mediator>();
             For<IQueueSubscriber>().Use<QueueAutoscheduleSubscriber>();
-            For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
+            For<IQueueScheduleRulePublisher>().Use<QueueScheduleRulePublisher>();
             For<IAutoSchedule>().Use<AutoSchedule>();
             For<IDataVerifier>().Use<DataVerifier>();
             For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();

@@ -13,16 +13,16 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
     public class AutoSchedule : IAutoSchedule
     {
         private readonly IOrdersRepository _ordersRepository;
-        private readonly IScheduleRuleMessageSender _messageSender;
+        private readonly IQueueScheduleRulePublisher _publisher;
         private readonly ILogger<AutoSchedule> _logger;
 
         public AutoSchedule(
             IOrdersRepository ordersRepository,
-            IScheduleRuleMessageSender messageSender,
+            IQueueScheduleRulePublisher publisher,
             ILogger<AutoSchedule> logger)
         {
             _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
-            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
+            _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -55,7 +55,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 var schedule = BuildSchedule(initiationDate.Value, terminationDate);
 
                 _logger?.LogInformation($"AutoSchedule about to dispatch schedule to the queue");
-                await _messageSender.Send(schedule);
+                await _publisher.Send(schedule);
                 _logger?.LogInformation($"AutoSchedule finished dispatched schedule to the queue");
 
                 await _ordersRepository.SetOrdersScheduled(filteredOrders);

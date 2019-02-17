@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.WashTrade
@@ -14,7 +14,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
     {
         public WashTradeRuleMessageSender(
             ILogger<WashTradeRuleMessageSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
                 "Automated Wash Trade Rule Breach Detected",
                 "Wash Trade Rule Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

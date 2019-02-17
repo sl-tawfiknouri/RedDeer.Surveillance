@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
+using Contracts.SurveillanceService.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using RedDeer.Contracts.SurveillanceService;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Engine.Rules.MessageBusIO
+namespace Surveillance.Engine.Rules.Queues
 {
-    public class DataRequestMessageSender : IDataRequestMessageSender
+    public class QueueRuleUpdatePublisher : IQueueRuleUpdatePublisher
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly ILogger<DataRequestMessageSender> _logger;
-        private readonly IThirdPartyDataRequestSerialiser _serialiser;
+        private readonly ILogger<QueueRuleUpdatePublisher> _logger;
+        private readonly IMessageBusSerialiser _serialiser;
 
-        public DataRequestMessageSender(
+        public QueueRuleUpdatePublisher(
             IAwsConfiguration awsConfiguration,
             IAwsQueueClient awsQueueClient,
-            IThirdPartyDataRequestSerialiser serialiser,
-            ILogger<DataRequestMessageSender> logger)
+            IMessageBusSerialiser serialiser,
+            ILogger<QueueRuleUpdatePublisher> logger)
         {
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
@@ -32,24 +32,30 @@ namespace Surveillance.Engine.Rules.MessageBusIO
         {
             if (string.IsNullOrWhiteSpace(ruleRunId))
             {
-                _logger.LogError($"DataRequestMessageSender received a null or empty rule run id");
+                _logger.LogError($"QueueRuleUpdatePublisher received a null or empty rule run id");
                 return;
             }
 
             var messageBusCts = new CancellationTokenSource();
-            var message = new ThirdPartyDataRequestMessage {SystemProcessOperationId = ruleRunId};
+
+            var message = new TestRuleRunUpdateMessage
+            {
+                TestRuleRunId = ruleRunId
+            };
+
             var serialisedMessage = _serialiser.Serialise(message);
 
             try
             {
                 await _awsQueueClient.SendToQueue(
-                    _awsConfiguration.DataSynchroniserRequestQueueName,
+                    _awsConfiguration.TestRuleRunUpdateQueueName,
                     serialisedMessage,
                     messageBusCts.Token);
             }
             catch (Exception e)
             {
-                _logger.LogError($"DataRequestMessageSender encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.");
+                _logger.LogError(
+                    $"QueueRuleUpdatePublisher encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to rule run updates queue.");
             }
         }
     }

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
@@ -11,18 +11,18 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
     public class UniverseDataRequestsSubscriber : IUniverseDataRequestsSubscriber
     {
         private readonly ISystemProcessOperationContext _operationContext;
-        private readonly IDataRequestMessageSender _dataRequestMessageSender;
+        private readonly IQueueDataSynchroniserRequestPublisher _queueDataSynchroniserRequestPublisher;
         private readonly ILogger<UniverseDataRequestsSubscriber> _logger;
 
         private bool _submitRequests = false;
 
         public UniverseDataRequestsSubscriber(
             ISystemProcessOperationContext operationContext,
-            IDataRequestMessageSender dataRequestMessageSender,
+            IQueueDataSynchroniserRequestPublisher queueDataSynchroniserRequestPublisher,
             ILogger<UniverseDataRequestsSubscriber> logger)
         {
             _operationContext = operationContext ?? throw new ArgumentNullException(nameof(operationContext));
-            _dataRequestMessageSender = dataRequestMessageSender ?? throw new ArgumentNullException(nameof(dataRequestMessageSender));
+            _queueDataSynchroniserRequestPublisher = queueDataSynchroniserRequestPublisher ?? throw new ArgumentNullException(nameof(queueDataSynchroniserRequestPublisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
             
             if (_submitRequests)
             {
-                var task = _dataRequestMessageSender.Send(_operationContext.Id.ToString());
+                var task = _queueDataSynchroniserRequestPublisher.Send(_operationContext.Id.ToString());
                 task.Wait();
             }
 

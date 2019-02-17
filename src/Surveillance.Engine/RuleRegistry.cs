@@ -26,8 +26,6 @@ using Surveillance.Engine.Rules.Mappers.RuleBreach;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
 using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
@@ -114,16 +112,15 @@ namespace Surveillance.Engine.Rules
             For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
             For<IClientOrganisationalFactorMapper>().Use<ClientOrganisationalFactorMapper>();
 
-            For<IScheduleRuleMessageSender>().Use<ScheduleRuleMessageSender>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
             For<IExchangeRateProfitCalculator>().Use<ExchangeRateProfitCalculator>();
 
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
-            For<ICaseMessageSender>().Use<CaseMessageSender>();
+            For<IQueueCasePublisher>().Use<QueueCasePublisher>();
 
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
-            For<IDataRequestMessageSender>().Use<DataRequestMessageSender>();
+            For<IQueueDataSynchroniserRequestPublisher>().Use<QueueDataSynchroniserRequestPublisher>();
 
             For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
@@ -184,7 +181,7 @@ namespace Surveillance.Engine.Rules
             For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
             For<IUniverseOrderFilter>().Use<UniverseOrderFilter>();
 
-            For<IRuleRunUpdateMessageSender>().Use<RuleRunUpdateMessageSender>();
+            For<IQueueRuleUpdatePublisher>().Use<QueueRuleUpdatePublisher>();
             For<IRuleParameterDtoIdExtractor>().Use<RuleParameterDtoIdExtractor>();
             For<IUniverseEquityInterDayCache>().Use<UniverseEquityInterDayCache>();
 

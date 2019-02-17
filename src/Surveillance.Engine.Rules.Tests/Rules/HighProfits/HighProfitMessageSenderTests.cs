@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
     public class HighProfitMessageSenderTests
     {
         private ILogger<HighProfitMessageSender> _logger;
-        private ICaseMessageSender _messageSender;
+        private IQueueCasePublisher _publisher;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _opCtx;
         private IHighProfitsRuleParameters _parameters;
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
         [SetUp]
         public void Setup()
         {
-            _messageSender = A.Fake<ICaseMessageSender>();
+            _publisher = A.Fake<IQueueCasePublisher>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _parameters = A.Fake<IHighProfitsRuleParameters>();
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
         {
             var messageSender = new HighProfitMessageSender(
                 _logger,
-                _messageSender,
+                _publisher,
                 _ruleBreachRepository,
                 _ruleBreachOrdersRepository,
                 _ruleBreachToRuleBreachOrdersMapper,

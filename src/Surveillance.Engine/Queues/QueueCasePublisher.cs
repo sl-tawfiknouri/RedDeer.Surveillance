@@ -4,23 +4,23 @@ using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 using Contracts.SurveillanceService.Interfaces;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Engine.Rules.MessageBusIO
+namespace Surveillance.Engine.Rules.Queues
 {
-    public class CaseMessageSender : ICaseMessageSender
+    public class QueueCasePublisher : IQueueCasePublisher
     {
         private readonly IMessageBusSerialiser _serialiser;
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly ILogger<CaseMessageSender> _logger;
+        private readonly ILogger<QueueCasePublisher> _logger;
 
-        public CaseMessageSender(
+        public QueueCasePublisher(
             IMessageBusSerialiser serialiser,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
-            ILogger<CaseMessageSender> logger)
+            ILogger<QueueCasePublisher> logger)
         {
             _serialiser = serialiser ?? throw new ArgumentNullException(nameof(serialiser));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.MessageBusIO
         {
             if (message == null)
             {
-                _logger.LogWarning("CaseMessageSender tried to send a null case message. Did not send to AWS.");
+                _logger.LogWarning("QueueCasePublisher tried to send a null case message. Did not send to AWS.");
                 return;
             }
 
@@ -41,13 +41,13 @@ namespace Surveillance.Engine.Rules.MessageBusIO
 
             try
             {
-                _logger.LogInformation($"CaseMessageSender Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
+                _logger.LogInformation($"QueueCasePublisher Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
                   await _awsQueueClient.SendToQueue(_awsConfiguration.CaseMessageQueueName, caseMessage, messageBusCts.Token);
-                _logger.LogInformation($"CaseMessageSender Send | now dispatched case with id {message.RuleBreachId}");
+                _logger.LogInformation($"QueueCasePublisher Send | now dispatched case with id {message.RuleBreachId}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception in Case Message Sender sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message}");
+                _logger.LogError($"Exception in QueueCasePublisher sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message}");
             }
         }
     }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
     {
         public MarkingTheCloseMessageSender(
             ILogger<MarkingTheCloseMessageSender> logger, 
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
                 "Automated Marking The Close Rule Breach Detected",
                 "Marking The Close Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

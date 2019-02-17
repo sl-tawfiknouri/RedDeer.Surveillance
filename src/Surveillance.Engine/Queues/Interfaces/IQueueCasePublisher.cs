@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Contracts.SurveillanceService;
 
-namespace Surveillance.Engine.Rules.MessageBusIO.Interfaces
+namespace Surveillance.Engine.Rules.Queues.Interfaces
 {
-    public interface ICaseMessageSender
+    public interface IQueueCasePublisher
     {
         Task Send(CaseMessage message);
     }

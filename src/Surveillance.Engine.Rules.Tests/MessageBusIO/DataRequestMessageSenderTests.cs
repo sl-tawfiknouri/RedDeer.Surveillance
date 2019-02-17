@@ -6,7 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Configuration;
-using Surveillance.Engine.Rules.MessageBusIO;
+using Surveillance.Engine.Rules.Queues;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
@@ -17,7 +17,7 @@ namespace Surveillance.Engine.Rules.Tests.MessageBusIO
     {
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
-        private ILogger<DataRequestMessageSender> _logger;
+        private ILogger<QueueDataSynchroniserRequestPublisher> _logger;
         private IThirdPartyDataRequestSerialiser _serialiser;
 
         [SetUp]
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Tests.MessageBusIO
         {
             _awsQueueClient = A.Fake<IAwsQueueClient>();
             _awsConfiguration = A.Fake<IAwsConfiguration>();
-            _logger = A.Fake<ILogger<DataRequestMessageSender>>();
+            _logger = A.Fake<ILogger<QueueDataSynchroniserRequestPublisher>>();
             _serialiser = A.Fake<IThirdPartyDataRequestSerialiser>();
         }
 
@@ -52,14 +52,14 @@ namespace Surveillance.Engine.Rules.Tests.MessageBusIO
             };
             var queueClient = new AwsQueueClient(null);
             var serialiser = new ThirdPartyDataRequestSerialiser();
-            var messageSender = new DataRequestMessageSender(configuration, queueClient, serialiser, _logger);
+            var messageSender = new QueueDataSynchroniserRequestPublisher(configuration, queueClient, serialiser, _logger);
 
             await messageSender.Send("1");
         }
 
-        private DataRequestMessageSender BuildSender()
+        private QueueDataSynchroniserRequestPublisher BuildSender()
         {
-            return new DataRequestMessageSender(_awsConfiguration, _awsQueueClient, _serialiser, _logger);
+            return new QueueDataSynchroniserRequestPublisher(_awsConfiguration, _awsQueueClient, _serialiser, _logger);
         }
     }
 }

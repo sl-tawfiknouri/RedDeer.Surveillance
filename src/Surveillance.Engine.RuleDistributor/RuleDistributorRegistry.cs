@@ -25,6 +25,7 @@ namespace Surveillance.Engine.RuleDistributor
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
             For<IScheduleDisassembler>().Use<ScheduleDisassembler>();
+            For<IQueueDistributedRulePublisher>().Use<QueueDistributedRulePublisher>();
         }
     }
 }

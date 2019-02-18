@@ -4,7 +4,7 @@ using Contracts.SurveillanceService;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules
@@ -13,7 +13,7 @@ namespace Surveillance.Engine.Rules.Rules
     {
         private readonly IRuleBreachRepository _ruleBreachRepository;
         private readonly IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
-        private readonly ICaseMessageSender _caseMessageSender;
+        private readonly IQueueCasePublisher _queueCasePublisher;
         private readonly IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
         private readonly IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
         private readonly string _messageSenderName;
@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Rules
             string caseTitle,
             string messageSenderName,
             ILogger logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository ruleBreachRepository,
             IRuleBreachOrdersRepository ruleBreachOrdersRepository, 
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
             IRuleBreachToRuleBreachMapper ruleBreachToRuleBreachMapper)
         {
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _caseMessageSender = caseMessageSender ?? throw new ArgumentNullException(nameof(caseMessageSender));
+            _queueCasePublisher = queueCasePublisher ?? throw new ArgumentNullException(nameof(queueCasePublisher));
             _ruleBreachRepository = ruleBreachRepository ?? throw new ArgumentNullException(nameof(ruleBreachRepository));
             _ruleBreachOrdersRepository = ruleBreachOrdersRepository ?? throw new ArgumentNullException(nameof(ruleBreachOrdersRepository));
             _ruleBreachToRuleBreachOrdersMapper = ruleBreachToRuleBreachOrdersMapper ?? throw new ArgumentNullException(nameof(ruleBreachToRuleBreachOrdersMapper));
@@ -75,7 +75,7 @@ namespace Surveillance.Engine.Rules.Rules
             try
             {
                 Logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
-                await _caseMessageSender.Send(caseMessage);
+                await _queueCasePublisher.Send(caseMessage);
                 Logger.LogInformation($"BaseMessageSender sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
             }
             catch (Exception e)

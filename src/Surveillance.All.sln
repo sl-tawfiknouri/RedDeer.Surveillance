@@ -42,11 +42,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImport", "DataImport\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainV2", "DomainV2\DomainV2.csproj", "{3D26B265-C824-49C4-B186-70A2D4876FA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataSynchroniser.App", "ThirdPartySurveillanceDataSynchroniser\App\ThirdPartySurveillanceDataSynchroniser.App.csproj", "{5B87FB40-FB7C-48CC-A481-979395D9A9D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.App", "ThirdPartySurveillanceDataSynchroniser\App\DataSynchroniser.App.csproj", "{5B87FB40-FB7C-48CC-A481-979395D9A9D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataSynchroniser", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.csproj", "{E1ACCFA8-244E-47E2-B822-2095C4040C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser\DataSynchroniser.csproj", "{E1ACCFA8-244E-47E2-B822-2095C4040C0E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThirdPartySurveillanceDataSynchroniser.Tests", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.Tests\ThirdPartySurveillanceDataSynchroniser.Tests.csproj", "{02932DA1-2275-4014-8EE1-4C71865B1F1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Tests", "ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.Tests\DataSynchroniser.Tests.csproj", "{02932DA1-2275-4014-8EE1-4C71865B1F1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainV2.Tests", "DomainV2.Tests\DomainV2.Tests.csproj", "{748CDADE-6EAA-41F7-8CE1-A3AD8D7DE9E2}"
 EndProject

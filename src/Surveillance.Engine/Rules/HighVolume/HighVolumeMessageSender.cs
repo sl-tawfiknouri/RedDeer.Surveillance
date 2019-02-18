@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighVolume.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.HighVolume
@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
     {
         public HighVolumeMessageSender(
             ILogger<IHighVolumeMessageSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
                 "Automated High Volume Rule Breach Detected",
                 "High Volume Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

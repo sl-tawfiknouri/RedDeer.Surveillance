@@ -4,7 +4,7 @@ using DomainV2.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.Spoofing.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Spoofing
@@ -14,7 +14,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
         public SpoofingRuleMessageSender(
             ILogger<SpoofingRuleMessageSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
                 "Automated Spoofing Rule Breach Detected",
                 "Spoofing Rule Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

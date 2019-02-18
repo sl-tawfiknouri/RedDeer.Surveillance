@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -11,7 +10,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor;
-using Surveillance.Engine.RuleDistributor.Scheduler;
+using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
@@ -19,23 +18,17 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
     [TestFixture]
     public class ScheduleDisassemblerTests
     {
-        private IAwsQueueClient _awsClient;
-        private IAwsConfiguration _awsConfiguration;
-        private IScheduledExecutionMessageBusSerialiser _busSerialiser;
         private IRuleParameterApiRepository _apiRepository;
-        private ISystemProcessContext _systemProcessContext;
         private ISystemProcessOperationContext _systemProcessOperationContext;
+        private IQueueDistributedRulePublisher _distributedRulePublisher;
         private ILogger<ScheduleDisassembler> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _awsClient = A.Fake<IAwsQueueClient>();
-            _awsConfiguration = A.Fake<IAwsConfiguration>();
-            _busSerialiser = A.Fake<IScheduledExecutionMessageBusSerialiser>();
             _apiRepository = A.Fake<IRuleParameterApiRepository>();
-            _systemProcessContext = A.Fake<ISystemProcessContext>();
             _systemProcessOperationContext = A.Fake<ISystemProcessOperationContext>();
+            _distributedRulePublisher = A.Fake<IQueueDistributedRulePublisher>();
             _logger = A.Fake<ILogger<ScheduleDisassembler>>();
         }
 
@@ -56,14 +49,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -78,7 +64,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             await scheduler.Disassemble(_systemProcessOperationContext, execution, "any-id", messageBody);
 
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -94,14 +80,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -116,7 +95,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             await scheduler.Disassemble(_systemProcessOperationContext, execution, "any-id", messageBody);
 
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -137,16 +116,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -161,7 +131,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             await scheduler.Disassemble(_systemProcessOperationContext, execution, "any-id", messageBody);
 
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -182,16 +152,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -206,7 +167,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             await scheduler.Disassemble(_systemProcessOperationContext, execution, "any-id", messageBody);
 
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -227,16 +188,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -251,7 +203,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             await scheduler.Disassemble(_systemProcessOperationContext, execution, "any-id", messageBody);
 
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -272,15 +224,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -296,7 +240,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() => _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -317,16 +261,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -342,8 +277,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() =>
-                    _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 2);
         }
 
@@ -364,16 +298,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -389,8 +314,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() =>
-                    _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 3);
         }
 
@@ -411,16 +335,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -436,8 +351,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() =>
-                    _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 22);
         }
 
@@ -458,17 +372,8 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
                     });
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
-
-
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
-
+            var scheduler = Build();
+            
             var execution =
                 new ScheduledExecution
                 {
@@ -483,8 +388,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() =>
-                    _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 52);
         }
 
@@ -509,14 +413,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             var serialiser = new ScheduledExecutionMessageBusSerialiser(new ScheduleExecutionDtoMapper(null));
 
-            var scheduler =
-                new ScheduleDisassembler(
-                    _awsClient,
-                    _awsConfiguration,
-                    serialiser,
-                    _apiRepository,
-                    _logger);
-
+            var scheduler = Build();
 
             var execution =
                 new ScheduledExecution
@@ -532,9 +429,17 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 
             A.CallTo(() => _apiRepository.Get()).MustHaveHappenedOnceExactly();
             A
-                .CallTo(() =>
-                    _awsClient.SendToQueue(A<string>.Ignored, A<string>.Ignored, A<CancellationToken>.Ignored))
+                .CallTo(() => _distributedRulePublisher.ScheduleExecution(A<ScheduledExecution>.Ignored))
                 .MustHaveHappenedANumberOfTimesMatching(i => i == 74);
+        }
+
+        private ScheduleDisassembler Build()
+        {
+            return new ScheduleDisassembler(
+                _apiRepository,
+                _distributedRulePublisher,
+                _logger);
+
         }
     }
 }

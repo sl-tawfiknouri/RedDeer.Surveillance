@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ThirdPartySurveillanceDataSynchroniser\ThirdPartySurveillanceDataSynchroniser.csproj" />
+    <ProjectReference Include="..\ThirdPartySurveillanceDataSynchroniser\DataSynchroniser.csproj" />
   </ItemGroup>
 
 </Project>

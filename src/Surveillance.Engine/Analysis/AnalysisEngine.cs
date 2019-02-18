@@ -11,7 +11,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Factory.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
@@ -35,14 +35,14 @@ namespace Surveillance.Engine.Rules.Analysis
         private readonly IRuleAnalyticsUniverseRepository _ruleAnalyticsRepository;
         private readonly IRuleAnalyticsAlertsRepository _alertsRepository;
 
-        private readonly IRuleRunUpdateMessageSender _ruleRunUpdateMessageSender;
+        private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
         private readonly IRuleParameterManager _ruleParameterManager;
         private readonly IRuleParameterLeadingTimespanCalculator _leadingTimespanCalculator;
         
         private readonly ILogger<AnalysisEngine> _logger;
 
-        public AnalysisEngine(IUniverseBuilder universeBuilder, IUniversePlayerFactory universePlayerFactory, IUniverseRuleSubscriber ruleSubscriber, IUniverseAnalyticsSubscriberFactory analyticsSubscriber, IUniverseAlertStreamFactory alertStreamFactory, IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory, IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory, IUniversePercentageCompletionLogger universeCompletionLogger, IRuleAnalyticsUniverseRepository ruleAnalyticsRepository, IRuleAnalyticsAlertsRepository alertsRepository, IRuleRunUpdateMessageSender ruleRunUpdateMessageSender, IRuleParameterManager ruleParameterManager, IRuleParameterLeadingTimespanCalculator leadingTimespanCalculator, ILogger<AnalysisEngine> logger)
+        public AnalysisEngine(IUniverseBuilder universeBuilder, IUniversePlayerFactory universePlayerFactory, IUniverseRuleSubscriber ruleSubscriber, IUniverseAnalyticsSubscriberFactory analyticsSubscriber, IUniverseAlertStreamFactory alertStreamFactory, IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory, IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory, IUniversePercentageCompletionLogger universeCompletionLogger, IRuleAnalyticsUniverseRepository ruleAnalyticsRepository, IRuleAnalyticsAlertsRepository alertsRepository, IQueueRuleUpdatePublisher queueRuleUpdatePublisher, IRuleParameterManager ruleParameterManager, IRuleParameterLeadingTimespanCalculator leadingTimespanCalculator, ILogger<AnalysisEngine> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _alertStreamFactory = alertStreamFactory ?? throw new ArgumentNullException(nameof(alertStreamFactory));
             _alertStreamSubscriberFactory = alertStreamSubscriberFactory ?? throw new ArgumentNullException(nameof(alertStreamSubscriberFactory));
             _alertsRepository = alertsRepository ?? throw new ArgumentNullException(nameof(alertsRepository));
-            _ruleRunUpdateMessageSender = ruleRunUpdateMessageSender ?? throw new ArgumentNullException(nameof(ruleRunUpdateMessageSender));
+            _queueRuleUpdatePublisher = queueRuleUpdatePublisher ?? throw new ArgumentNullException(nameof(queueRuleUpdatePublisher));
             _dataRequestSubscriberFactory = dataRequestSubscriberFactory ?? throw new ArgumentNullException(nameof(dataRequestSubscriberFactory));
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
@@ -133,7 +133,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             foreach (var id in ids)
             {
-                await _ruleRunUpdateMessageSender.Send(id);
+                await _queueRuleUpdatePublisher.Send(id);
             }
         }
     }

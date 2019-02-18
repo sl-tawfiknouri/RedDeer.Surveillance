@@ -1,42 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using DomainV2.Enums;
 using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
+using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Distributor
 {
     public class ScheduleDisassembler : IScheduleDisassembler
     {
-        private readonly IAwsQueueClient _awsQueueClient;
-        private readonly IAwsConfiguration _awsConfiguration;
-        private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
+        private readonly IQueueDistributedRulePublisher _rulePublisher;
         private readonly ILogger<ScheduleDisassembler> _logger;
-
-        private CancellationTokenSource _messageBusCts;
         
         public ScheduleDisassembler(
-            IAwsQueueClient awsQueueClient,
-            IAwsConfiguration awsConfiguration,
-            IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             IRuleParameterApiRepository ruleParameterApiRepository,
+            IQueueDistributedRulePublisher rulePublisher,
             ILogger<ScheduleDisassembler> logger)
         {
-            _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
-            _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
-            _messageBusSerialiser = messageBusSerialiser ?? throw new ArgumentNullException(nameof(messageBusSerialiser));
             _ruleParameterApiRepository = ruleParameterApiRepository ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
+            _rulePublisher = rulePublisher ?? throw new ArgumentNullException(nameof(rulePublisher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -51,15 +42,15 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                 if (execution?.Rules == null
                     || !execution.Rules.Any())
                 {
-                    _logger.LogError($"ReddeerDistributedRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                    opCtx.EndEventWithError($"ReddeerDistributedRuleScheduler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    _logger.LogError($"ScheduleDisassembler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    opCtx.EndEventWithError($"ScheduleDisassembler deserialised message {messageId} but could not find any rules on the scheduled execution");
                     return;
                 }
 
                 var scheduleRule = ValidateScheduleRule(execution);
                 if (!scheduleRule)
                 {
-                    opCtx.EndEventWithError("ReddeerDistributedRuleScheduler did not like the scheduled execution passed through. Check error logs.");
+                    opCtx.EndEventWithError("ScheduleDisassembler did not validate the scheduled execution passed through. Check error logs.");
                     return;
                 }
 
@@ -71,11 +62,11 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                     .EndEvent()
                     .EndEvent();
 
-                _logger.LogInformation($"ReddeerDistributedRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id} has completed");
+                _logger.LogInformation($"ScheduleDisassembler read message {messageId} with body {messageBody} for operation {opCtx.Id} has completed");
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerDistributedRuleScheduler execute non distributed message encountered a top level exception.", e);
+                _logger.LogError($"ScheduleDisassembler execute non distributed message encountered a top level exception.", e);
             }
         }
 
@@ -119,8 +110,8 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
                     default:
-                        _logger.LogError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
-                        ruleCtx.EventError($"ReddeerDistributedRuleScheduler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        _logger.LogError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        ruleCtx.EventError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         break;
                 }
             }
@@ -135,7 +126,7 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
             if (identifiableRules == null
                 || !identifiableRules.Any())
             {
-                _logger.LogWarning($"ReddeerDistributedRuleScheduler did not have any identifiable rules for rule {rule.Rule}");
+                _logger.LogWarning($"ScheduleDisassembler did not have any identifiable rules for rule {rule.Rule}");
                 return;
             }
 
@@ -158,9 +149,9 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
 
                     if (identifiableRule == null)
                     {
-                        _logger.LogError($"Reddeer Distributed Rule Scheduler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
+                        _logger.LogError($"ScheduleDisassembler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
 
-                        ruleCtx.EventError($"Reddeer Distributed Rule Scheduler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
+                        ruleCtx.EventError($"ScheduleDisassembler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
 
                         continue;
                     }
@@ -190,14 +181,14 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
             if (ruleParameterTimeWindow == null
                 || ruleTimespan.TotalDays < 7)
             {
-                _logger.LogInformation($"ReddeerDistributedRuleScheduler had a rule time span below 7 days. Scheduling single execution.");
+                _logger.LogInformation($"ScheduleDisassembler had a rule time span below 7 days. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
             if (ruleParameterTimeWindow.GetValueOrDefault().TotalDays >= ruleTimespan.TotalDays)
             {
-                _logger.LogInformation($"ReddeerDistributedRuleScheduler had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
+                _logger.LogInformation($"ScheduleDisassembler had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
@@ -206,13 +197,13 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
 
             if (daysToRunRuleFor >= ruleTimespan.TotalDays)
             {
-                _logger.LogInformation($"ReddeerDistributedRuleScheduler had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
+                _logger.LogInformation($"ScheduleDisassembler had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
 
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
-            _logger.LogInformation($"ReddeerDistributedRuleScheduler had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
+            _logger.LogInformation($"ScheduleDisassembler had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
             await TimeSplitter(ruleIdentifier, execution, ruleParameterTimeWindow, daysToRunRuleFor, correlationId);
         }
 
@@ -227,7 +218,7 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                 IsBackTest = execution.IsBackTest
             };
 
-            await ScheduleExecution(distributedExecution);
+            await _rulePublisher.ScheduleExecution(distributedExecution);
         }
 
         private async Task TimeSplitter(
@@ -271,48 +262,33 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
 
             foreach (var executionSplit in executions)
             {
-                await ScheduleExecution(executionSplit);
+                await _rulePublisher.ScheduleExecution(executionSplit);
             }
-        }
-
-        private async Task ScheduleExecution(ScheduledExecution distributedExecution)
-        {
-            var serialisedDistributedExecution =
-                _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
-
-            _logger.LogInformation($"ReddeerDistributedRuleScheduler - dispatching distribute message to queue - {serialisedDistributedExecution}");
-
-            _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
-
-            await _awsQueueClient.SendToQueue(
-                _awsConfiguration.ScheduleRuleDistributedWorkQueueName,
-                serialisedDistributedExecution,
-                _messageBusCts.Token);
         }
 
         protected bool ValidateScheduleRule(ScheduledExecution execution)
         {
             if (execution == null)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a null scheduled execution. Returning.");
+                _logger?.LogError($"ScheduleDisassembler had a null scheduled execution. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation before 2015. Returning.");
+                _logger?.LogError($"ScheduleDisassembler had a time series initiation before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesTermination.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series termination before 2015. Returning.");
+                _logger?.LogError($"ScheduleDisassembler had a time series termination before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation that exceeded the time series termination.");
+                _logger?.LogError($"ScheduleDisassembler had a time series initiation that exceeded the time series termination.");
                 return false;
             }
 

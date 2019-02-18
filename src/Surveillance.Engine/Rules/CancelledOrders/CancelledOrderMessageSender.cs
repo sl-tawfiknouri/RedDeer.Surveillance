@@ -5,7 +5,7 @@ using DomainV2.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.CancelledOrders.Interfaces;
 using Utilities.Extensions;
@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
     {
         public CancelledOrderMessageSender(
             ILogger<CancelledOrderMessageSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
                 "Automated Cancellation Ratio Rule Breach Detected",
                 "Cancelled Order Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

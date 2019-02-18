@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.HighProfits
@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
     {
         public HighProfitMessageSender(
             ILogger<HighProfitMessageSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                 "Automated High Profit Rule Breach Detected",
                 "High Profit Message Sender",
                 logger,
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

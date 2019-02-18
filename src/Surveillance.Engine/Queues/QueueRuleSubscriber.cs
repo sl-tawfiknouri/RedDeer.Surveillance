@@ -7,14 +7,14 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
-using Surveillance.Engine.Rules.Scheduler.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Utility.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace Surveillance.Engine.Rules.Scheduler
+namespace Surveillance.Engine.Rules.Queues
 {
-    public class ReddeerRuleScheduler : IReddeerRuleScheduler
+    public class QueueRuleSubscriber : IQueueRuleSubscriber
     {
         private readonly IAnalysisEngine _analysisEngine;
         private readonly IAwsQueueClient _awsQueueClient;
@@ -23,18 +23,18 @@ namespace Surveillance.Engine.Rules.Scheduler
         private readonly IApiHeartbeat _apiHeartbeat;
         private readonly ISystemProcessContext _systemProcessContext;
 
-        private readonly ILogger<ReddeerRuleScheduler> _logger;
+        private readonly ILogger<QueueRuleSubscriber> _logger;
         private CancellationTokenSource _messageBusCts;
         private AwsResusableCancellationToken _token;
 
-        public ReddeerRuleScheduler(
+        public QueueRuleSubscriber(
             IAnalysisEngine analysisEngine,
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             IApiHeartbeat apiHeartbeat,
             ISystemProcessContext systemProcessContext,
-            ILogger<ReddeerRuleScheduler> logger)
+            ILogger<QueueRuleSubscriber> logger)
         {
             _analysisEngine = analysisEngine ?? throw new ArgumentNullException(nameof(analysisEngine));
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
-using Surveillance.Engine.Rules.MessageBusIO.Interfaces;
+using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.Rules.Layering.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Layering
@@ -11,7 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
     {
         public LayeringAlertSender(
             ILogger<LayeringAlertSender> logger,
-            ICaseMessageSender caseMessageSender,
+            IQueueCasePublisher queueCasePublisher,
             IRuleBreachRepository repository,
             IRuleBreachOrdersRepository ordersRepository,
             IRuleBreachToRuleBreachOrdersMapper ruleBreachToRuleBreachOrdersMapper,
@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
                 "Automated Layering Rule Breach Detected",
                 "Layering Message Sender",
                 logger, 
-                caseMessageSender,
+                queueCasePublisher,
                 repository,
                 ordersRepository,
                 ruleBreachToRuleBreachOrdersMapper,

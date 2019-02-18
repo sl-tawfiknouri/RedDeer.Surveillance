@@ -39,7 +39,7 @@ var testProjects = new []
 	"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
 	"src/Surveillance.System.DataLayer.Tests/Surveillance.Auditing.DataLayer.Tests.csproj" ,
 	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
-	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/DataSynchroniser.Tests.csproj" ,
 	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",
 	"src/DomainV2.Tests/DomainV2.Tests.csproj",
 	"src/Utilities.Tests/Utilities.Tests.csproj"

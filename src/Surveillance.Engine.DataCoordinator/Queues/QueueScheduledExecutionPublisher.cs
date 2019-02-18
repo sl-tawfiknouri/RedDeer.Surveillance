@@ -9,18 +9,18 @@ using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Queues
 {
-    public class ScheduleRuleMessageSender : IScheduleRuleMessageSender
+    public class QueueScheduleRulePublisher : IQueueScheduleRulePublisher
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
-        private readonly ILogger<ScheduleRuleMessageSender> _logger;
+        private readonly ILogger<QueueScheduleRulePublisher> _logger;
         private readonly IScheduledExecutionMessageBusSerialiser _serialiser;
 
-        public ScheduleRuleMessageSender(
+        public QueueScheduleRulePublisher(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IScheduledExecutionMessageBusSerialiser serialiser,
-            ILogger<ScheduleRuleMessageSender> logger)
+            ILogger<QueueScheduleRulePublisher> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
         {
             if (message == null)
             {
-                _logger.LogWarning($"ScheduleRuleMessageSender was asked to send a null message. Will not be sending anything.");
+                _logger.LogWarning($"QueueScheduleRulePublisher was asked to send a null message. Will not be sending anything.");
                 return;
             }
 
@@ -41,13 +41,13 @@ namespace Surveillance.Engine.DataCoordinator.Queues
 
             try
             {
-                _logger.LogInformation($"ScheduleRuleMessageSender dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
+                _logger.LogInformation($"QueueScheduleRulePublisher dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
                 await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token);
-                _logger.LogInformation($"ScheduleRuleMessageSender finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
+                _logger.LogInformation($"QueueScheduleRulePublisher finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception in Schedule Rule Message Sender sending message '{message}' to bus on queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
+                _logger.LogError($"Exception in QueueScheduleRulePublisher sending message '{message}' to bus on queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
             }
         }
     }

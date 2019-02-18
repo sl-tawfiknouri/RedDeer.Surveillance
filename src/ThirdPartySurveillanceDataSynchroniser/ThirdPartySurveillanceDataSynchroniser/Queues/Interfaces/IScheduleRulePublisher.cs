@@ -6,6 +6,6 @@ namespace DataSynchroniser.Queues.Interfaces
 {
     public interface IScheduleRulePublisher
     {
-        Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests);
+        Task RescheduleRuleRun(string systemProcessOperationId, IReadOnlyCollection<MarketDataRequest> bmllRequests);
     }
 }

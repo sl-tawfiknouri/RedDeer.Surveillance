@@ -42,7 +42,7 @@ namespace DataSynchroniser.Queues
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests)
+        public async Task RescheduleRuleRun(string systemProcessOperationId, IReadOnlyCollection<MarketDataRequest> bmllRequests)
         {
             _logger?.LogInformation($"ScheduleRulePublisher beginning process");
 

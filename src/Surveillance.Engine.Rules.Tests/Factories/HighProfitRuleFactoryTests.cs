@@ -70,41 +70,19 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_UnsubscriberFactory_Is_Exceptional()
-        {
-            Assert.Throws<ArgumentNullException>(() => 
-                // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
-                    null,
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
-                    _orderFilter,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
-        }
-
-        [Test]
         public void Constructor_Null_CostCalculatorFactory_Is_Exceptional()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     null,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
                     _orderFilter,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -113,17 +91,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     null,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
                     _orderFilter,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -132,17 +107,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     null,
-                    _percentageCompleteFactory,
                     _orderFilter,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -151,17 +123,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
                     null,
-                    _orderFilter,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -170,17 +139,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
+                    _orderFilter,
                     null,
-                    _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -189,17 +155,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
                     _orderFilter,
+                    _marketCacheFactory,
                     null,
-                    _cacheStrategyFactory,
                     _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -208,17 +171,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
                     _orderFilter,
                     _marketCacheFactory,
+                    _cacheStrategyFactory,
                     null,
-                    _logger,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
+                    _tradingHistoryLogger));
         }
 
         [Test]
@@ -227,72 +187,29 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
                 new HighProfitRuleFactory(
-                    _unsubscriberFactory,
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
-                    _orderFilter,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
                     null,
-                    _tradingHistoryLogger,
-                    _transformerLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_TradingHistoryLogger_Is_Exceptional()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
-                    _unsubscriberFactory,
-                    _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
                     _orderFilter,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
-                    null,
-                    _transformerLogger));
-        }
-
-        [Test]
-        public void Constructor_Null_TransformerLogger_Is_Exceptional()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-                // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
-                    _unsubscriberFactory,
-                    _costCalculatorFactory,
-                    _revenueCalculatorFactory,
-                    _exchangeRateProfitCalculator,
-                    _percentageCompleteFactory,
-                    _orderFilter,
-                    _marketCacheFactory,
-                    _cacheStrategyFactory,
-                    _logger,
-                    _tradingHistoryLogger,
                     null));
         }
+
 
         [Test]
         public void Build_Returns_High_Profits_Rule()
         {
              var factory = new HighProfitRuleFactory(
-                _unsubscriberFactory,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _percentageCompleteFactory,
                 _orderFilter,
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 _logger,
-                _tradingHistoryLogger,
-                _transformerLogger);
+                _tradingHistoryLogger);
 
             var result = factory.Build(_parameters, _ruleCtxStream, _ruleCtxMarket, _alertStream, _dataRequestSubscriber, _scheduledExecution);
 

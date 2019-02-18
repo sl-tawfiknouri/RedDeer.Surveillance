@@ -45,15 +45,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
-        private IUniversePercentageCompletionLoggerFactory _percentageCompletionLogger;
         private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private ILogger<MarketCloseMultiverseTransformer> _multiverseLogger;
         private HighProfitRuleFactory _highProfitRuleFactory;
         
         private ISystemProcessOperationRunRuleContext _ruleCtx;
@@ -103,7 +100,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverter>()),
@@ -120,22 +116,17 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     new NullLogger<RevenueCalculator>());
 
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLoggerFactory>();
-            _multiverseLogger = A.Fake<Logger<MarketCloseMultiverseTransformer>>();
             _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
             _highProfitRuleFactory = new HighProfitRuleFactory(
-                _unsubscriberFactory,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _percentageCompletionLogger,
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
                 _marketDataCacheStrategyFactory,
                 _logger,
-                _tradingLogger,
-                _multiverseLogger);
+                _tradingLogger);
         }
 
         [Given(@"I have the high profit rule parameter values")]

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using DataImport.File_Scanner;
 using DataImport.File_Scanner.Interfaces;
 using FakeItEasy;

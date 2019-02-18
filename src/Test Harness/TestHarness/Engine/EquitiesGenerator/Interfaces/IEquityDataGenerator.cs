@@ -1,4 +1,4 @@
-﻿using DomainV2.Equity.Streams.Interfaces;
+﻿using Domain.Equity.Streams.Interfaces;
 
 namespace TestHarness.Engine.EquitiesGenerator.Interfaces
 {

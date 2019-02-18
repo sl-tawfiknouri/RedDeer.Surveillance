@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -14,12 +14,12 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators
     public class CostCurrencyConvertingCalculator : ICostCalculator
     {
         private readonly ICurrencyConverter _currencyConverter;
-        private readonly DomainV2.Financial.Currency _targetCurrency;
+        private readonly Domain.Financial.Currency _targetCurrency;
         private readonly ILogger<CostCurrencyConvertingCalculator> _logger;
 
         public CostCurrencyConvertingCalculator(
             ICurrencyConverter currencyConverter,
-            DomainV2.Financial.Currency targetCurrency,
+            Domain.Financial.Currency targetCurrency,
             ILogger<CostCurrencyConvertingCalculator> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));

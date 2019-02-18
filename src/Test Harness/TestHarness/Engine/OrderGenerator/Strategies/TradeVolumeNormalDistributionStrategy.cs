@@ -1,7 +1,7 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.TimeBars;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies

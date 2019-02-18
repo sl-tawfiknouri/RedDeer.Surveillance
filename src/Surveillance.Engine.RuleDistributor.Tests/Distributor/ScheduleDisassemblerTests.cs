@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -11,7 +10,6 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
 {
@@ -54,7 +52,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 06)
                 };
@@ -85,7 +83,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighProfits, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighProfits, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 15)
                 };
@@ -121,7 +119,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 01)
                 };
@@ -157,7 +155,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01, 9, 0, 0),
                     TimeSeriesTermination = new DateTime(2018, 01, 01, 9, 0, 0)
                 };
@@ -193,7 +191,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 07)
                 };
@@ -229,7 +227,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 10)
                 };
@@ -266,7 +264,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 8)
                 };
@@ -303,7 +301,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2018, 01, 14)
                 };
@@ -340,7 +338,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -377,7 +375,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };
@@ -418,7 +416,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Distributor
             var execution =
                 new ScheduledExecution
                 {
-                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.HighVolume, Ids = new string[0] }, new RuleIdentifier { Rule = DomainV2.Scheduling.Rules.CancelledOrders, Ids = new string[0] } },
+                    Rules = new List<RuleIdentifier> { new RuleIdentifier { Rule = Rules.HighVolume, Ids = new string[0] }, new RuleIdentifier { Rule = Rules.CancelledOrders, Ids = new string[0] } },
                     TimeSeriesInitiation = new DateTime(2018, 01, 01),
                     TimeSeriesTermination = new DateTime(2019, 01, 01)
                 };

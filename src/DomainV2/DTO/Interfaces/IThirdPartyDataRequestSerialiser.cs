@@ -1,4 +1,4 @@
-﻿namespace DomainV2.DTO.Interfaces
+﻿namespace Domain.DTO.Interfaces
 {
     public interface IThirdPartyDataRequestSerialiser
     {

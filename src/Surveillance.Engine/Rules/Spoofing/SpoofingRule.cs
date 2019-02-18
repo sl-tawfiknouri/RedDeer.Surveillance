@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
-                  DomainV2.Scheduling.Rules.Spoofing,
+                  Domain.Scheduling.Rules.Spoofing,
                   SpoofingRuleFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
@@ -192,7 +192,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
                     mostRecentTrade,
                     _parameters);
 
-            var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
+            var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);
         }
 

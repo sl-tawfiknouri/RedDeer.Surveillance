@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.TimeBars;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers

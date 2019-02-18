@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Financial.Cfis;
-using DomainV2.Trading;
+using Domain.Financial.Cfis;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;

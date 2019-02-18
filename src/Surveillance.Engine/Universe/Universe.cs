@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Trading;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe

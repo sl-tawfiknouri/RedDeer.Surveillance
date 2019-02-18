@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Contracts
+﻿namespace Domain.Contracts
 {
     public class AutoScheduleMessage
     {

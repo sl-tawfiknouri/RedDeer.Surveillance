@@ -7,7 +7,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
 {
     public class RuleBreachToRuleBreachMapper : IRuleBreachToRuleBreachMapper
     {
-        public DomainV2.Trading.RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description, string caseTitle)
+        public Domain.Trading.RuleBreach RuleBreachItem(IRuleBreach ruleBreach, string description, string caseTitle)
         {
             var oldestPosition = ruleBreach.Trades?.Get()?.Min(tr => tr.MostRecentDateEvent());
             var latestPosition = ruleBreach.Trades?.Get()?.Max(tr => tr.MostRecentDateEvent());
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
                     .ToList();
 
             var ruleBreachObj =
-                new DomainV2.Trading.RuleBreach(
+                new Domain.Trading.RuleBreach(
                     null,
                     ruleBreach.RuleParameterId,
                     ruleBreach.CorrelationId,

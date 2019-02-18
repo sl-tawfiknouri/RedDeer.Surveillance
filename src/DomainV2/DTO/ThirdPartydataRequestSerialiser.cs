@@ -1,7 +1,7 @@
-﻿using DomainV2.DTO.Interfaces;
+﻿using Domain.DTO.Interfaces;
 using Newtonsoft.Json;
 
-namespace DomainV2.DTO
+namespace Domain.DTO
 {
     public class ThirdPartyDataRequestSerialiser : IThirdPartyDataRequestSerialiser
     {

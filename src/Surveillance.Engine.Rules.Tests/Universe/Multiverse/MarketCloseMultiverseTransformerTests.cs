@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Scheduling;
-using DomainV2.Streams;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Streams;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using RedDeer.Contracts.SurveillanceService.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule).Contains(DomainV2.Scheduling.Rules.WashTrade) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.WashTrade) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -106,10 +106,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             IWashTradeRuleParameters param)
         {
             var ctx = opCtx.CreateAndStartRuleRunContext(
-                DomainV2.Scheduling.Rules.WashTrade.GetDescription(),
+                Domain.Scheduling.Rules.WashTrade.GetDescription(),
                 WashTradeRuleFactory.Version,
                 param.Id,
-                (int)DomainV2.Scheduling.Rules.WashTrade,
+                (int)Domain.Scheduling.Rules.WashTrade,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
                 execution.TimeSeriesTermination.DateTime,

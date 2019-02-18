@@ -1,5 +1,6 @@
 ﻿using System;
-using DomainV2.Equity.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -162,7 +163,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         [When(@"I run the high profit rule")]
         public void WhenIRunTheHighProfitRule()
         {
-            var scheduledExecution = new DomainV2.Scheduling.ScheduledExecution { IsForceRerun = true };
+            var scheduledExecution = new ScheduledExecution { IsForceRerun = true };
 
             Setup();
 

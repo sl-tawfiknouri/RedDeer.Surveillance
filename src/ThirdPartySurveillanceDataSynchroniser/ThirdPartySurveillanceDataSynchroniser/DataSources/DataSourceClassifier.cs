@@ -1,7 +1,7 @@
-﻿using DomainV2.Financial.Cfis;
-using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
+﻿using DataSynchroniser.DataSources.Interfaces;
+using Domain.Financial.Cfis;
 
-namespace ThirdPartySurveillanceDataSynchroniser.DataSources
+namespace DataSynchroniser.DataSources
 {
     public class DataSourceClassifier : IDataSourceClassifier
     {       

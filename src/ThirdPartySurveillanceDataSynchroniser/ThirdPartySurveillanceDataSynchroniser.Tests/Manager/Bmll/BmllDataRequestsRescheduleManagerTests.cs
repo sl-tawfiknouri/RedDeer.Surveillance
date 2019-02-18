@@ -1,14 +1,14 @@
 ﻿using System;
-using DomainV2.Scheduling.Interfaces;
+using DataSynchroniser.Manager.Bmll;
+using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
 using Utilities.Aws_IO.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Tests.Manager.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsRescheduleManagerTests

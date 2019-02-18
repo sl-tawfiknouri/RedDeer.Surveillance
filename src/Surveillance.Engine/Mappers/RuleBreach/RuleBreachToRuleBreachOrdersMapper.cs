@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Trading;
+using Domain.Trading;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 

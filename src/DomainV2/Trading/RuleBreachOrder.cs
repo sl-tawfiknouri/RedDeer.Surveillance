@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Trading
+﻿namespace Domain.Trading
 {
     public class RuleBreachOrder
     {

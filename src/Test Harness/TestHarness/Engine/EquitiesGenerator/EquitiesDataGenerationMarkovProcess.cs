@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;

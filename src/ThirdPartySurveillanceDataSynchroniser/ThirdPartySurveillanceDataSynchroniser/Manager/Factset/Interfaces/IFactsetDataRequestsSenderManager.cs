@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces
+namespace DataSynchroniser.Manager.Factset.Interfaces
 {
     public interface IFactsetDataRequestsSenderManager
     {

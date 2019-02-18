@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataSynchroniser.Manager.Bmll.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {

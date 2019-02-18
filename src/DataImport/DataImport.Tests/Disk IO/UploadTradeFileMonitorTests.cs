@@ -4,7 +4,6 @@ using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
-using DomainV2.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

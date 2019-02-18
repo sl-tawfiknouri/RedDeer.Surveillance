@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using DataSynchroniser.Interfaces;
+using DataSynchroniser.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Utilities.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser
+namespace DataSynchroniser
 {
     public class Mediator : IMediator
     {

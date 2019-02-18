@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.TimeBars;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies.Interfaces
 {

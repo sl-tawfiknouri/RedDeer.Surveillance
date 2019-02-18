@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces
         Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            DomainV2.Financial.Currency variableCurrency,
+            Domain.Financial.Currency variableCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx);
     }
 }

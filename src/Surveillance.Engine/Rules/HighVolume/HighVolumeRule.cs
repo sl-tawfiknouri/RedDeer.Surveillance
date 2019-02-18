@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Markets;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Markets;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                DomainV2.Scheduling.Rules.HighVolume,
+                Domain.Scheduling.Rules.HighVolume,
                 HighVolumeRuleFactory.Version,
                 "High Volume Rule",
                 opCtx,
@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
                     tradedVolume);
 
             _logger.LogInformation($"HighVolumeRule RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
-            var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, breach, _ruleCtx);
+            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }
 
@@ -362,7 +362,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
             if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
-                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

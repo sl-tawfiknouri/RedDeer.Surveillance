@@ -6,11 +6,11 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
+using DataSynchroniser.Configuration;
 using Microsoft.Extensions.Configuration;
-using ThirdPartySurveillanceDataSynchroniser.Configuration;
 
 // ReSharper disable InconsistentlySynchronizedField
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App.ConfigBuilder
+namespace DataSynchroniser.App.ConfigBuilder
 {
     public class ConfigBuilder
     {

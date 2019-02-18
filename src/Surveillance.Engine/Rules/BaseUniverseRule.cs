@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Scheduling;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Scheduling;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules
 
         protected BaseUniverseRule(
             TimeSpan windowSize,
-            DomainV2.Scheduling.Rules rules,
+            Domain.Scheduling.Rules rules,
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -336,7 +336,7 @@ namespace Surveillance.Engine.Rules.Rules
         protected abstract void MarketClose(MarketOpenClose exchange);
         protected abstract void EndOfUniverse();
 
-        public DomainV2.Scheduling.Rules Rule { get; }
+        public Domain.Scheduling.Rules Rule { get; }
         public string Version { get; }
 
 

@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Equity.TimeBars.Interfaces
+﻿namespace Domain.Equity.TimeBars.Interfaces
 {
     public interface ISecurityCsvToDtoMapper
     {

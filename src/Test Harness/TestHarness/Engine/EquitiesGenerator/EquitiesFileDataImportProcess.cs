@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Equity.TimeBars.Interfaces;
-using DomainV2.Financial;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Equity.TimeBars;
+using Domain.Equity.TimeBars.Interfaces;
+using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 

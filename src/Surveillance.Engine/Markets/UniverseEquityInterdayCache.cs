@@ -2,10 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
-using DomainV2.Markets;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Financial.Interfaces;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;

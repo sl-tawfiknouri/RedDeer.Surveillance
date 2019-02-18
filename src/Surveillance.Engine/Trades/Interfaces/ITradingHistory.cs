@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Trading;
+using Domain.Trading;
 
 // ReSharper disable UnusedMember.Global
 

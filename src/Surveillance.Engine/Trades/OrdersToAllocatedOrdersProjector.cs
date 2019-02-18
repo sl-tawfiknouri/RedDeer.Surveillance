@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Trading;
+using Domain.Trading;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 

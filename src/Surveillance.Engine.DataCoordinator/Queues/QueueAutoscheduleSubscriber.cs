@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Contracts.SurveillanceService.Interfaces;
-using DomainV2.Contracts;
+using Domain.Contracts;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;

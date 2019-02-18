@@ -1,6 +1,6 @@
-﻿using DomainV2.Financial;
+﻿using Domain.Financial;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.TestHelpers
+namespace DataSynchroniser.Tests.TestHelpers
 {
     public static class Helpers
     {

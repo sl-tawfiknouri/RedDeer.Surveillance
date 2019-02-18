@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using Domain.Financial;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
@@ -11,7 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators
     public class RevenueCurrencyConvertingMarkingCloseCalculator : RevenueCurrencyConvertingCalculator
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(
-            DomainV2.Financial.Currency targetCurrency,
+            Domain.Financial.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)

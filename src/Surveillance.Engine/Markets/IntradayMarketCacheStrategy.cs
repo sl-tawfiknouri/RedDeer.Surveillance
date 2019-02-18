@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Markets;
+using Domain.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Markets

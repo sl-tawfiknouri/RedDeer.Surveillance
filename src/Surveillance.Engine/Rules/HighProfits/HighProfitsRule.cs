@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             _multiverseTransformer.OnNext(value);
         }
 
-        public DomainV2.Scheduling.Rules Rule { get; } = DomainV2.Scheduling.Rules.HighProfits;
+        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
         public string Version { get; } = HighProfitRuleFactory.Version;
 
         public object Clone()

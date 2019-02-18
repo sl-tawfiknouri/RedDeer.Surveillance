@@ -1,4 +1,4 @@
-﻿using DomainV2.Markets;
+﻿using Domain.Markets;
 
 namespace Surveillance.Engine.Rules.Markets.Interfaces
 {

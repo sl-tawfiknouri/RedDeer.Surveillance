@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
+using Domain.DTO;
+using Domain.DTO.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

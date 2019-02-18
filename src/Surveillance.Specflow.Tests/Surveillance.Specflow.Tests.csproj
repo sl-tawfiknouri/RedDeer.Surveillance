@@ -24,6 +24,12 @@
     <ProjectReference Include="..\Surveillance\Surveillance\Surveillance.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="StepDefinitions\MarkingTheCloseSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
   <PropertyGroup>
     <Pickles_Generate>True</Pickles_Generate>
     <Pickles_DocumentationFormat>dhtml</Pickles_DocumentationFormat>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Markets;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Markets;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
-                DomainV2.Scheduling.Rules.Layering,
+                Domain.Scheduling.Rules.Layering,
                 LayeringRuleFactory.Version,
                 "Layering Rule",
                 opCtx,
@@ -117,7 +117,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             if (layeringRuleBreach != null)
             {
                 _logger.LogInformation($"LayeringRule RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
-                var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
+                var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
         }
@@ -517,7 +517,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
         {
             _logger.LogInformation("Eschaton occured in Layering Rule");
 
-            var universeAlert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.Layering, null, _ruleCtx, true);
+            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, null, _ruleCtx, true);
             _alertStream.Add(universeAlert);
 
             if (_hadMissingData)

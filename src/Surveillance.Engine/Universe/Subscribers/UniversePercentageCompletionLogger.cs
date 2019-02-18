@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Scheduling;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
@@ -17,7 +18,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             _percentOfTimeLogger = percentOfTimeLogger ?? throw new ArgumentNullException(nameof(percentOfTimeLogger));
         }
 
-        public void InitiateTimeLogger(DomainV2.Scheduling.ScheduledExecution execution)
+        public void InitiateTimeLogger(ScheduledExecution execution)
         {
             _percentOfTimeLogger?.InitiateTimeLogger(execution);
         }

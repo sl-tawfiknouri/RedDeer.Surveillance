@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using DataSynchroniser.Manager.Factset.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Factset
+namespace DataSynchroniser.Manager.Factset
 {
     public class FactsetDataRequestsStorageManager : IFactsetDataRequestsStorageManager
     {

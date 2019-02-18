@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Markets;
+using Domain.Markets;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.BMLL

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces

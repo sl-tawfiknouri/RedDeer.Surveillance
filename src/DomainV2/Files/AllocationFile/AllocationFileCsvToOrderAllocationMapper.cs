@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Files.AllocationFile.Interfaces;
-using DomainV2.Trading;
+using Domain.Files.AllocationFile.Interfaces;
+using Domain.Trading;
 
-namespace DomainV2.Files.AllocationFile
+namespace Domain.Files.AllocationFile
 {
     public class AllocationFileCsvToOrderAllocationMapper : IAllocationFileCsvToOrderAllocationMapper
     {

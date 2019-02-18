@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Scheduling.Interfaces;
+using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

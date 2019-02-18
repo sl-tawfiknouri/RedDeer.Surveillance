@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Interfaces

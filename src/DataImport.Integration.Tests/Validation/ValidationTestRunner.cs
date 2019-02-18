@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.TradeFile;
-using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
-using DomainV2.Files;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Files;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Utilities.Disk_IO;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Integration.Tests.Validation
 {

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;

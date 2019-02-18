@@ -1,4 +1,4 @@
-﻿using DomainV2.Trading;
+﻿using Domain.Trading;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 

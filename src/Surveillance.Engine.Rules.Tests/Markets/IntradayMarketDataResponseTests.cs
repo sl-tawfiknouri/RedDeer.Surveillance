@@ -1,6 +1,6 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Markets;
+using Domain.Equity.TimeBars;
+using Domain.Markets;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Markets;
 

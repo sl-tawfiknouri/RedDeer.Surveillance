@@ -5,6 +5,7 @@ using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
 using DasMulli.Win32.ServiceUtils;
+using DataSynchroniser.Configuration;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
@@ -15,12 +16,10 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser;
-using ThirdPartySurveillanceDataSynchroniser.Configuration;
 using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public class Program
     {

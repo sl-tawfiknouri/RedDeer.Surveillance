@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;

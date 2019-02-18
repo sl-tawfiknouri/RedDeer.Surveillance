@@ -1,4 +1,5 @@
-﻿using Surveillance.Auditing.Context.Interfaces;
+﻿using Domain.Scheduling;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
@@ -14,6 +15,6 @@ namespace Surveillance.Engine.Rules.Factories.Interfaces
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            DomainV2.Scheduling.ScheduledExecution scheduledExecution);
+            ScheduledExecution scheduledExecution);
     }
 }

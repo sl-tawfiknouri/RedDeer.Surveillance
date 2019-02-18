@@ -21,7 +21,8 @@ namespace Surveillance.Engine.Rules.Factories
         private readonly ILogger<MarkingTheCloseRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        public MarkingTheCloseRuleFactory(IUniverseOrderFilter orderFilter,
+        public MarkingTheCloseRuleFactory(
+            IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<MarkingTheCloseRule> logger,

@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
         public void InitiateTimeLogger_LogsWhenExpected_3HourRun()
         {
             var timeCompletionLogger = new UniversePercentageOfTimeCompletionLogger(_logger);
-            var scheduledExecution = new DomainV2.Scheduling.ScheduledExecution
+            var scheduledExecution = new Domain.Scheduling.ScheduledExecution
             {
                 TimeSeriesInitiation = DateTimeOffset.Now,
                 TimeSeriesTermination = DateTimeOffset.Now.AddMinutes(100)

@@ -2,7 +2,7 @@
 using NLog.Extensions.Logging;
 using StructureMap;
 
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public class AppRegistry : Registry
     {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 
 namespace Surveillance.Engine.RuleDistributor.Queues.Interfaces
 {

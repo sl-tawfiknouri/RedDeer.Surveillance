@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DataSynchroniser.Interfaces;
 using Microsoft.Extensions.Logging;
-using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public class DataSynchroniserRunner : IStartUpTaskRunner
     {

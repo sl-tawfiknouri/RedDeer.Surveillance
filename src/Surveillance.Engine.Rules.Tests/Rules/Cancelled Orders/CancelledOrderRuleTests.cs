@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Streams;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -295,10 +294,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Cancelled_Orders
 
             switch (status)
             {
-                case DomainV2.Financial.OrderStatus.Cancelled:
+                case Domain.Financial.OrderStatus.Cancelled:
                     order.CancelledDate = DateTime.UtcNow;
                     return order;
-                case DomainV2.Financial.OrderStatus.Filled:
+                case Domain.Financial.OrderStatus.Filled:
                     order.FilledDate = DateTime.UtcNow;
                     return order;
             }

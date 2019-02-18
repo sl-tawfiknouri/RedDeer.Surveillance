@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Files
+﻿namespace Domain.Files
 {
     /// <summary>
     /// Version 0.3 of the Trade File

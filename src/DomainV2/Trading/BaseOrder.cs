@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Trading.Interfaces;
+using Domain.Financial;
+using Domain.Trading.Interfaces;
 
-namespace DomainV2.Trading
+namespace Domain.Trading
 {
     public abstract class BaseOrder : IBaseOrder
     {

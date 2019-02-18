@@ -11,8 +11,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators
             ITradePosition positionRevenue,
             decimal positionCostWer,
             decimal positionRevenueWer,
-            DomainV2.Financial.Currency fixedCurrency,
-            DomainV2.Financial.Currency variableCurrency)
+            Domain.Financial.Currency fixedCurrency,
+            Domain.Financial.Currency variableCurrency)
         {
             PositionCost = positionCost;
             PositionRevenue = positionRevenue;
@@ -28,8 +28,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits.Calculators
         public decimal PositionCostWer { get; }
         public decimal PositionRevenueWer { get; }
 
-        public DomainV2.Financial.Currency FixedCurrency { get; }
-        public DomainV2.Financial.Currency VariableCurrency { get; }
+        public Domain.Financial.Currency FixedCurrency { get; }
+        public Domain.Financial.Currency VariableCurrency { get; }
 
         public decimal RelativePercentageDueToWer()
         {

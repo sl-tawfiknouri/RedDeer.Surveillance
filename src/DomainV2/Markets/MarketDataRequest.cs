@@ -1,7 +1,7 @@
 ﻿using System;
-using DomainV2.Financial;
+using Domain.Financial;
 
-namespace DomainV2.Markets
+namespace Domain.Markets
 {
     public class MarketDataRequest
     {

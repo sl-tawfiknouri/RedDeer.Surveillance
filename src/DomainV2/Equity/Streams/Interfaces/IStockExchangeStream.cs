@@ -1,7 +1,7 @@
-﻿using DomainV2.Equity.TimeBars;
-using DomainV2.Streams;
+﻿using Domain.Equity.TimeBars;
+using Domain.Streams;
 
-namespace DomainV2.Equity.Streams.Interfaces
+namespace Domain.Equity.Streams.Interfaces
 {
     public interface IStockExchangeStream : IPublishingStream<EquityIntraDayTimeBarCollection>
     {

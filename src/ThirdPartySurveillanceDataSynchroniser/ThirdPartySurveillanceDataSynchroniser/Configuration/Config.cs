@@ -2,7 +2,7 @@
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Configuration
+namespace DataSynchroniser.Configuration
 {
     public class Config : IAwsConfiguration, ISystemDataLayerConfig, IDataLayerConfiguration
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Equity.TimeBars;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Equity.TimeBars;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -25,6 +25,7 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
+
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Surveillance.Auditing.Context.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces
+namespace DataSynchroniser.Manager.Interfaces
 {
     public interface IDataRequestManager
     {

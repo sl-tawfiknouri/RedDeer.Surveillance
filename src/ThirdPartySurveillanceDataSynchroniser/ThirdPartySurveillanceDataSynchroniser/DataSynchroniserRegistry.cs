@@ -1,25 +1,25 @@
-﻿using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
-using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
+﻿using DataSynchroniser.DataSources;
+using DataSynchroniser.DataSources.Interfaces;
+using DataSynchroniser.Interfaces;
+using DataSynchroniser.Manager;
+using DataSynchroniser.Manager.Bmll;
+using DataSynchroniser.Manager.Bmll.Interfaces;
+using DataSynchroniser.Manager.Factset;
+using DataSynchroniser.Manager.Factset.Interfaces;
+using DataSynchroniser.Manager.Interfaces;
+using DataSynchroniser.Services;
+using DataSynchroniser.Services.Interfaces;
+using Domain.DTO;
+using Domain.DTO.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
-using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Factset;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Services;
-using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser
+namespace DataSynchroniser
 {
     public class DataSynchroniserRegistry : Registry
     {

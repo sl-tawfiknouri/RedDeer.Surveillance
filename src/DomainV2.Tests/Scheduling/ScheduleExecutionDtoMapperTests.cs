@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Scheduling;
+using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RuleIdentifier = RedDeer.Contracts.SurveillanceService.Rules.RuleIdentifier;
 using ScheduledExecution = RedDeer.Contracts.SurveillanceService.Rules.ScheduledExecution;
 
-namespace DomainV2.Tests.Scheduling
+namespace Domain.Tests.Scheduling
 {
     [TestFixture]
     public class ScheduleExecutionDtoMapperTests
@@ -50,7 +50,7 @@ namespace DomainV2.Tests.Scheduling
             Assert.AreEqual(result.TimeSeriesTermination, initialDto.TimeSeriesTermination);
             Assert.AreEqual(result.Rules.Count, initialDto.Rules.Count);
             Assert.AreEqual(result.Rules[0].Ids, new [] { "back test-1" });
-            Assert.AreEqual(result.Rules[0].Rule, DomainV2.Scheduling.Rules.HighProfits);
+            Assert.AreEqual(result.Rules[0].Rule, Rules.HighProfits);
         }
 
         [Test]
@@ -58,18 +58,18 @@ namespace DomainV2.Tests.Scheduling
         {
             var mapper = new ScheduleExecutionDtoMapper(_logger);
 
-            var initialDto = new DomainV2.Scheduling.ScheduledExecution()
+            var initialDto = new Domain.Scheduling.ScheduledExecution()
             {
                 CorrelationId = "Correlation-12345",
                 IsBackTest = true,
                 TimeSeriesInitiation = new DateTimeOffset(),
                 TimeSeriesTermination = new DateTimeOffset(),
-                Rules = new List<DomainV2.Scheduling.RuleIdentifier>
+                Rules = new List<Domain.Scheduling.RuleIdentifier>
                 {
-                    new DomainV2.Scheduling.RuleIdentifier
+                    new Domain.Scheduling.RuleIdentifier
                     {
                         Ids = new [] {"back test-2"},
-                        Rule = DomainV2.Scheduling.Rules.Layering
+                        Rule = Rules.Layering
                     }
                 }
             };

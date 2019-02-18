@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(60),
-                DomainV2.Scheduling.Rules.CancelledOrders,
+                Domain.Scheduling.Rules.CancelledOrders,
                 Versioner.Version(2, 0),
                 "Cancelled Order Rule",
                 opCtx,
@@ -88,7 +88,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             if (ruleBreach.HasBreachedRule())
             {
                 _logger.LogInformation($"CancelledOrderRule RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
-                var message = new UniverseAlertEvent(DomainV2.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
+                var message = new UniverseAlertEvent(Domain.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
                 _alertStream.Add(message);
             }
             else

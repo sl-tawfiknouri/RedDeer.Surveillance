@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
+using Domain.DTO;
+using Domain.DTO.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;

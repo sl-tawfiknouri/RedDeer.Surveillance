@@ -1,7 +1,7 @@
-﻿using Firefly.Service.Data.BMLL.Shared.Requests;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
+﻿using DataSynchroniser.Manager.Bmll.Interfaces;
+using Firefly.Service.Data.BMLL.Shared.Requests;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Manager.Bmll
 {
     public class GetTimeBarPair : IGetTimeBarPair
     {

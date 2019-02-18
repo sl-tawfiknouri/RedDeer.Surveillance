@@ -3,7 +3,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Utilities.Interfaces;
-using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Interfaces;
 using Surveillance.Engine.RuleDistributor.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;

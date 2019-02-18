@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainV2.Markets;
+using Domain.Markets;
 using FakeItEasy;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Markets;

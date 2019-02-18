@@ -1,5 +1,6 @@
 ﻿using System;
-using DomainV2.Equity.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -68,7 +69,7 @@ namespace Surveillance.Engine.Rules.Factories
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            DomainV2.Scheduling.ScheduledExecution scheduledExecution)
+            ScheduledExecution scheduledExecution)
         {
             var runMode = scheduledExecution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
 

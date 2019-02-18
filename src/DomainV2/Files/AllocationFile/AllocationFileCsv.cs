@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Files
+﻿namespace DomainV2.Files.AllocationFile
 {
     /// <summary>
     /// Version 0.1 of the Allocation File

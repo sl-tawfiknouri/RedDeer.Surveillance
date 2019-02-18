@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Repositories.Interfaces
+namespace Surveillance.Auditing.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessOperationUploadFileRepository
     {
         Task Create(ISystemProcessOperationUploadFile entity);
         Task<IReadOnlyCollection<ISystemProcessOperationUploadFile>> GetDashboard();
+        Task<IReadOnlyCollection<ISystemProcessOperationUploadFile>> GetOnDate(DateTime date);
     }
 }

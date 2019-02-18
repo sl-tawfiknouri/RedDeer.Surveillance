@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Utilities.Interfaces;
+using Surveillance.Auditing.Utilities.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Interfaces;
 using ThirdPartySurveillanceDataSynchroniser.Services.Interfaces;
 

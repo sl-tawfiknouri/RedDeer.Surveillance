@@ -1,6 +1,7 @@
-﻿using Surveillance.Systems.DataLayer.Processes.Interfaces;
+﻿using System;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Processes
+namespace Surveillance.Auditing.DataLayer.Processes
 {
     /// <summary>
     /// Tracks side effects
@@ -19,6 +20,8 @@ namespace Surveillance.Systems.DataLayer.Processes
         public string FilePath { get; set; }
 
         public int FileType { get; set; }
+
+        public DateTime FileUploadTime { get; set; }
 
         public override string ToString()
         {

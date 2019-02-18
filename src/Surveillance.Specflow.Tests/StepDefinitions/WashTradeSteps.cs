@@ -4,20 +4,21 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
-using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Currency;
-using Surveillance.Currency.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.Factories;
-using Surveillance.Factories.Interfaces;
-using Surveillance.RuleParameters;
-using Surveillance.RuleParameters.OrganisationalFactors;
-using Surveillance.Rules.WashTrade;
-using Surveillance.Rules.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Currency;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.WashTrade;
+using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.WashTrades;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Trades;
-using Surveillance.Universe.Filter.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -125,7 +126,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     _washTradeRuleParameters,
                     _ruleCtx,
                     _alertStream,
-                    Rules.RuleRunMode.ForceRun);
+                    RuleRunMode.ForceRun);
 
             foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
                 washTradeRule.OnNext(universeEvent);

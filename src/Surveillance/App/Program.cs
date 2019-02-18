@@ -11,14 +11,17 @@ using RedDeer.Surveillance.App.Interfaces;
 using RedDeer.Surveillance.App.ScriptRunner.Interfaces;
 using StructureMap;
 using Surveillance;
-using Surveillance.Configuration.Interfaces;
+using Surveillance.Auditing;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Systems.Auditing;
-using Surveillance.Systems.Auditing.Context;
-using Surveillance.Systems.DataLayer;
-using Surveillance.Systems.DataLayer.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Engine.DataCoordinator;
+using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+using Surveillance.Engine.RuleDistributor;
+using Surveillance.Engine.Rules;
 using Utilities.Aws_IO.Interfaces;
 // ReSharper disable UnusedParameter.Local
 
@@ -63,6 +66,9 @@ namespace RedDeer.Surveillance.App
                     config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
                     config.IncludeRegistry<DataLayerRegistry>();
+                    config.IncludeRegistry<RuleDistributorRegistry>();
+                    config.IncludeRegistry<RuleRegistry>();
+                    config.IncludeRegistry<DataCoordinatorRegistry>();
                     config.IncludeRegistry<SurveillanceRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });

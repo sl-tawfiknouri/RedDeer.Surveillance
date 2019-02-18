@@ -2,11 +2,11 @@
 using DomainV2.Financial;
 using DomainV2.Trading;
 using Surveillance.Specflow.Tests.StepDefinitions.Orders;
-using Surveillance.Universe;
-using Surveillance.Universe.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Surveillance.Engine.Rules.Universe;
+using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using TechTalk.SpecFlow;
@@ -95,7 +95,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Universe.Universe(
+                new Universe(
                     new Order[0],
                     new EquityIntraDayTimeBarCollection[0],
                     new EquityInterDayTimeBarCollection[0],
@@ -177,7 +177,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Universe.Universe(
+                new Universe(
                     new Order[0],
                     new EquityIntraDayTimeBarCollection[0],
                     new EquityInterDayTimeBarCollection[0],
@@ -298,9 +298,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             return universeEvent;
         }
 
-        private Universe.Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
+        private Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
-            return new Universe.Universe(
+            return new Universe(
                 new Order[0],
                 new EquityIntraDayTimeBarCollection[0],
                 new EquityInterDayTimeBarCollection[0],

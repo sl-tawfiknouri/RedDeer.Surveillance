@@ -7,11 +7,11 @@ using DomainV2.Financial.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Market
 {

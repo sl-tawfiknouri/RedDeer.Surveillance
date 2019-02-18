@@ -1,16 +1,15 @@
 ﻿using System;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.Auditing.Logging.Interfaces;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.Logging.Interfaces;
 
-namespace Surveillance.Systems.Auditing.Context
+namespace Surveillance.Auditing.Context
 {
     public class SystemProcessOperationUploadFileContext : ISystemProcessOperationUploadFileContext
     {
         private readonly ISystemProcessOperationUploadFileRepository _repository;
         private readonly ISystemProcessOperationContext _processOperationContext;
-        private ISystemProcessOperationUploadFile _fileUpload;
         private readonly IOperationLogging _operationLogging;
 
         public SystemProcessOperationUploadFileContext(
@@ -31,6 +30,8 @@ namespace Surveillance.Systems.Auditing.Context
                 ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        public ISystemProcessOperationUploadFile FileUpload { get; private set; }
+
         public void StartEvent(ISystemProcessOperationUploadFile upload)
         {
             if (upload == null)
@@ -38,8 +39,8 @@ namespace Surveillance.Systems.Auditing.Context
                 return;
             }
 
-            _fileUpload = upload;
-            _repository.Create(upload);
+            FileUpload = upload;
+            _repository.Create(upload).Wait();
         }
 
         public void EventException(string message)
@@ -49,12 +50,12 @@ namespace Surveillance.Systems.Auditing.Context
                 return;
             }
 
-            _operationLogging.Log(new Exception(message), _fileUpload);
+            _operationLogging.Log(new Exception(message), FileUpload);
         }
 
         public void EventException(Exception e)
         {
-            _operationLogging.Log(e, _fileUpload);
+            _operationLogging.Log(e, FileUpload);
         }
 
         public ISystemProcessOperationContext EndEvent()

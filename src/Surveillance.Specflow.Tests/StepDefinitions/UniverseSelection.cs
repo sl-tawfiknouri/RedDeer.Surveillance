@@ -1,4 +1,4 @@
-﻿using Surveillance.Universe.Interfaces;
+﻿using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {

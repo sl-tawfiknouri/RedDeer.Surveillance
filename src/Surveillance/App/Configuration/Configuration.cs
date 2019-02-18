@@ -7,12 +7,13 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
 using Microsoft.Extensions.Configuration;
-using Surveillance.Configuration;
-using Surveillance.Configuration.Interfaces;
+using Surveillance.Auditing.DataLayer;
+using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Systems.DataLayer;
-using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Engine.DataCoordinator.Configuration;
+using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
+
 // ReSharper disable InconsistentlySynchronizedField
 
 namespace RedDeer.Surveillance.App.Configuration
@@ -50,7 +51,8 @@ namespace RedDeer.Surveillance.App.Configuration
                     TestRuleRunUpdateQueueName = GetValue("TestRuleRunUpdateQueueName", configurationBuilder),
                     SurveillanceUserApiAccessToken = GetValue("SurveillanceUserApiAccessToken", configurationBuilder),
                     AuroraConnectionString = GetValue("AuroraConnectionString", configurationBuilder),
-                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder)
+                    BmllServiceUrl = GetValue($"BmllServiceUrlAndPort", configurationBuilder),
+                    UploadCoordinatorQueueName = GetValue($"UploadCoordinatorQueueName", configurationBuilder)
                 };
 
                 return networkConfiguration;
@@ -66,9 +68,13 @@ namespace RedDeer.Surveillance.App.Configuration
                 var autoScheduleRules = GetValue("AutoScheduleRules", configurationBuilder);
                 bool.TryParse(autoScheduleRules, out var autoScheduleRulesValue);
 
+                var alwaysRequireAllocations = GetValue("AlwaysRequireAllocations", configurationBuilder);
+                bool.TryParse(alwaysRequireAllocations, out var alwaysRequireAllocationValue);
+
                 var ruleConfiguration = new RuleConfiguration
                 {
-                    AutoScheduleRules = autoScheduleRulesValue
+                    AutoScheduleRules = autoScheduleRulesValue,
+                    AlwaysRequireAllocations = alwaysRequireAllocationValue
                 };
 
                 return ruleConfiguration;

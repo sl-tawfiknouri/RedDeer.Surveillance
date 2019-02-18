@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.Auditing.Factories.Interfaces;
-using Surveillance.Systems.Auditing.Logging.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.Factories.Interfaces;
+using Surveillance.Auditing.Logging.Interfaces;
 
-namespace Surveillance.Systems.Auditing.Context
+namespace Surveillance.Auditing.Context
 {
     public class SystemProcessContext : ISystemProcessContext
     {

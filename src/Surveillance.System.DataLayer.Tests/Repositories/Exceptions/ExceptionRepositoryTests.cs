@@ -1,9 +1,9 @@
 ﻿using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Systems.DataLayer.Repositories.Exceptions;
+using Surveillance.Auditing.DataLayer.Repositories.Exceptions;
 
-namespace Surveillance.Systems.DataLayer.Tests.Repositories.Exceptions
+namespace Surveillance.Auditing.DataLayer.Tests.Repositories.Exceptions
 {
     [TestFixture]
     public class ExceptionRepositoryTests

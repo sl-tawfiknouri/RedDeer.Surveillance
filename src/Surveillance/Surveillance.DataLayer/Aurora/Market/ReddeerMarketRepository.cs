@@ -8,9 +8,9 @@ using DomainV2.Financial;
 using DomainV2.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Market
 {

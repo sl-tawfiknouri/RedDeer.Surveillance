@@ -33,13 +33,16 @@ var testProjects = new []
 {
 	"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
 	"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
-	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
+	"src/Surveillance.Engine.DataCoordinator.Tests/Surveillance.Engine.DataCoordinator.Tests.csproj",
+	"src/Surveillance.Engine.RuleDistributor.Tests/Surveillance.Engine.RuleDistributor.Tests.csproj",
+	"src/Surveillance.Engine.Rules.Tests/Surveillance.Engine.Rules.Tests.csproj",
 	"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
-	"src/Utilities.Tests/Utilities.Tests.csproj"  ,
-	"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
+	"src/Surveillance.System.DataLayer.Tests/Surveillance.Auditing.DataLayer.Tests.csproj" ,
+	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
 	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
+	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",
 	"src/DomainV2.Tests/DomainV2.Tests.csproj",
-	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj" 
+	"src/Utilities.Tests/Utilities.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>
@@ -105,6 +108,7 @@ Task("Test")
 
 		foreach (var testProject in testProjects)
 		{			
+			Information($"About to test {testProject}");
 			DotNetCoreTest(testProject, settings);
 		}
 	});

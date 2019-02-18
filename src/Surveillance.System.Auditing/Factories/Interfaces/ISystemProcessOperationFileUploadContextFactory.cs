@@ -1,6 +1,6 @@
-﻿using Surveillance.Systems.Auditing.Context.Interfaces;
+﻿using Surveillance.Auditing.Context.Interfaces;
 
-namespace Surveillance.Systems.Auditing.Factories.Interfaces
+namespace Surveillance.Auditing.Factories.Interfaces
 {
     public interface ISystemProcessOperationFileUploadContextFactory
     {

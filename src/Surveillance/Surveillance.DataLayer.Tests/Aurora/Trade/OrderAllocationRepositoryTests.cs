@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Aurora.Orders;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
 
@@ -46,7 +46,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new OrderAllocationRepository(factory, _logger);
-            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000);
+            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
 
             await repo.Create(orderAllocation);
         }
@@ -57,7 +57,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         {
             var factory = new ConnectionStringFactory(_configuration);
             var repo = new OrderAllocationRepository(factory, _logger);
-            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000);
+            var orderAllocation = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
 
             await repo.Create(orderAllocation);
 
@@ -65,6 +65,24 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
             var result = await repo.Get(orderId);
 
             Assert.AreEqual(result.Count, 1);
+        }
+
+        [Test]
+        [Explicit]
+        public async Task Bulk_Then_Get_Rows_Returns_Expected()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new OrderAllocationRepository(factory, _logger);
+            var orderAllocation1 = new OrderAllocation(null, "order-1", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
+            var orderAllocation2 = new OrderAllocation(null, "order-2", "my-fund", "my-strategy", "my-account", 1000, DateTime.UtcNow);
+            var allocations = new List<OrderAllocation> {orderAllocation1, orderAllocation2};
+
+            await repo.Create(allocations);
+
+            var orderId = new List<string> { "order-1", "order-2" };
+            var result = await repo.Get(orderId);
+
+            Assert.AreEqual(result.Count, 2);
         }
     }
 }

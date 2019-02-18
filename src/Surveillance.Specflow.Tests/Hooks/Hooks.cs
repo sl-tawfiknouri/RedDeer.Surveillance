@@ -1,6 +1,6 @@
 ﻿using TechTalk.SpecFlow;
 
-namespace Surveillance.Specflow.Tests
+namespace Surveillance.Specflow.Tests.Hooks
 {
     [Binding]
     public sealed class Hooks

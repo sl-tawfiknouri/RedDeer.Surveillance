@@ -1,4 +1,4 @@
-﻿namespace DataSynchroniser.Manager.Bmll
+﻿namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class SuccessOrFailureResult<T>
     {

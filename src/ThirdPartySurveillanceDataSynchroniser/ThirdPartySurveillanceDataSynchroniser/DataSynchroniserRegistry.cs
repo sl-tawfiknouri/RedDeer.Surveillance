@@ -1,7 +1,5 @@
 ﻿using DataSynchroniser.Interfaces;
 using DataSynchroniser.Manager;
-using DataSynchroniser.Manager.Bmll;
-using DataSynchroniser.Manager.Bmll.Interfaces;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Services;
 using DataSynchroniser.Services.Interfaces;
@@ -32,11 +30,6 @@ namespace DataSynchroniser
 
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
-
-            For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
-            For<IBmllDataRequestsSenderManager>().Use<BmllDataRequestsSenderManager>();
-            For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
-            For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
 
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

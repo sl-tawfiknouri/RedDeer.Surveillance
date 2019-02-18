@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
-using DataSynchroniser.Api.Interfaces;
+using DataSynchroniser.Api.Factset.Interfaces;
 using DataSynchroniser.Manager.Factset.Interfaces;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using Surveillance.Auditing.Context.Interfaces;
 
 namespace DataSynchroniser.Api.Factset
 {
-    public class FactsetDataSynchroniser : IDataSynchroniser
+    public class FactsetDataSynchroniser : IFactsetDataSynchroniser
     {
         private readonly IFactsetDataRequestsManager _dataRequestsManager;
         private readonly IMarketDataRequestFilter _requestFilter;

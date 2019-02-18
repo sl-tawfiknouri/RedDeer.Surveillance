@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataSynchroniser.Manager.Bmll;
-using DataSynchroniser.Manager.Bmll.Interfaces;
+using DataSynchroniser.Api.Bmll.Bmll;
+using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Domain.Financial;
 using Domain.Markets;
 using FakeItEasy;

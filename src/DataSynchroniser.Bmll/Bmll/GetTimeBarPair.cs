@@ -1,7 +1,7 @@
-﻿using DataSynchroniser.Manager.Bmll.Interfaces;
+﻿using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 
-namespace DataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class GetTimeBarPair : IGetTimeBarPair
     {

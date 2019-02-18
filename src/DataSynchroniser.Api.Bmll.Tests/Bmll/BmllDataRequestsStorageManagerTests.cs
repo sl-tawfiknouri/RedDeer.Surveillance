@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DataSynchroniser.Manager.Bmll;
+using DataSynchroniser.Api.Bmll.Bmll;
 using FakeItEasy;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;

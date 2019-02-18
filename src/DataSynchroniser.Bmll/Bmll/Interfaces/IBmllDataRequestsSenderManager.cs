@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Markets;
 
-namespace DataSynchroniser.Manager.Bmll.Interfaces
+namespace DataSynchroniser.Api.Bmll.Bmll.Interfaces
 {
     public interface IBmllDataRequestsSenderManager
     {

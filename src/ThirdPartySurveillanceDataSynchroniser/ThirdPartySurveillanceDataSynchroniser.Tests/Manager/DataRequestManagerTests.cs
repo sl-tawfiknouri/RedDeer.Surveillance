@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Bmll.Interfaces;
+using DataSynchroniser.Api.Factset.Interfaces;
+using DataSynchroniser.Api.Markit.Interfaces;
 using DataSynchroniser.Manager;
-using DataSynchroniser.Manager.Bmll.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -13,16 +15,20 @@ namespace DataSynchroniser.Tests.Manager
     [TestFixture]
     public class DataRequestManagerTests
     {
+        private IBmllDataSynchroniser _bmllSynchroniser;
+        private IFactsetDataSynchroniser _factsetSynchroniser;
+        private IMarkitDataSynchroniser _markitSynchroniser;
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
-        private IBmllDataRequestManager _dataRequestManager;
         private IRuleRunDataRequestRepository _repository;
         private ILogger<DataRequestManager> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _bmllSynchroniser = A.Fake<IBmllDataSynchroniser>();
+            _factsetSynchroniser = A.Fake<IFactsetDataSynchroniser>();
+            _markitSynchroniser = A.Fake<IMarkitDataSynchroniser>();
             _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
-            _dataRequestManager = A.Fake<IBmllDataRequestManager>();
             _repository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger<DataRequestManager>>();
         }
@@ -31,14 +37,14 @@ namespace DataSynchroniser.Tests.Manager
         public void Constructor_Null_Repository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(null, _dataRequestManager,  _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_bmllSynchroniser, _factsetSynchroniser, _markitSynchroniser, null,  _logger));
         }
 
         [Test]
         public void Constructor_Null_Logger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_repository, _dataRequestManager, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_bmllSynchroniser, _factsetSynchroniser, _markitSynchroniser, _repository,  null));
         }
 
         [Test]
@@ -67,7 +73,7 @@ namespace DataSynchroniser.Tests.Manager
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_repository, _dataRequestManager, _logger);
+            return new DataRequestManager(_bmllSynchroniser, _factsetSynchroniser, _markitSynchroniser, _repository, _logger);
         }
     }
 }

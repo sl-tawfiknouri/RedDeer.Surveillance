@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataSynchroniser.Manager.Bmll;
+using DataSynchroniser.Api.Bmll.Bmll;
 using Domain.Financial;
 using Domain.Markets;
 using FakeItEasy;

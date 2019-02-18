@@ -1,5 +1,5 @@
 ﻿using System;
-using DataSynchroniser.Manager.Bmll;
+using DataSynchroniser.Api.Bmll.Bmll;
 using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

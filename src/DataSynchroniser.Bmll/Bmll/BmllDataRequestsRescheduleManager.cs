@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DataSynchroniser.Manager.Bmll.Interfaces;
+using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Domain.Markets;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
@@ -13,7 +13,7 @@ using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class BmllDataRequestsRescheduleManager : IBmllDataRequestsRescheduleManager
     {

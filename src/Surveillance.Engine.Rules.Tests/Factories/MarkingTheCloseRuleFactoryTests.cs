@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -28,6 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         private IMarkingTheCloseParameters _parameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
+        private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
         [SetUp]
         public void Setup()
@@ -37,6 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _logger = new NullLogger<MarkingTheCloseRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
+            _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             _parameters = A.Fake<IMarkingTheCloseParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -83,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             var factory = new MarkingTheCloseRuleFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
 
-            var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+            var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun, _dataRequestSubscriber);
 
             Assert.IsNotNull(result);
         }

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -28,6 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
         private MarketOpenClose _latestMarketClosure;
@@ -40,6 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -59,6 +62,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -303,12 +307,20 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured in Marking The Close Rule");
-            var opCtx = _ruleCtx?.EndEvent();
 
-            if (_hadMissingData)
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
+                // delete event
                 _logger.LogInformation("Marking The Close Rule had missing data at eschaton. Recording to op ctx.");
-                opCtx?.EndEventWithMissingDataError();
+                var alert = new UniverseAlertEvent(DomainV2.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
+
+                _dataRequestSubscriber.SubmitRequest();
+                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+            }
+            else
+            {
+                _ruleCtx?.EndEvent();
             }
         }
 

@@ -110,7 +110,7 @@ namespace Surveillance.Engine.Rules.Trades
 
             if (nonCancelledOrderVolume == 0)
             {
-                return 0;
+                return 1;
             }
 
             var cancelledOrderVolumeRatio =

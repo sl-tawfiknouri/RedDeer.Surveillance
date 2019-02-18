@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     .ToList();
 
             var markingTheCloseParameters = _ruleParameterMapper.Map(dtos);
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, markingTheCloseParameters);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, markingTheCloseParameters);
 
             return subscriptions;
         }
@@ -72,6 +72,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IReadOnlyCollection<IMarkingTheCloseParameters> markingTheCloseParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
@@ -81,7 +82,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             {
                 foreach (var param in markingTheCloseParameters)
                 {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param);
+                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param, dataRequestSubscriber);
                     var broker =
                         _brokerFactory.Build(
                             paramSubscriptions,
@@ -104,7 +105,8 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx, 
             IUniverseAlertStream alertStream,
-            IMarkingTheCloseParameters param)
+            IMarkingTheCloseParameters param,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
@@ -119,7 +121,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx, alertStream, runMode);
+            var markingTheClose = _markingTheCloseFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
 
             if (param.HasFilters())
             {

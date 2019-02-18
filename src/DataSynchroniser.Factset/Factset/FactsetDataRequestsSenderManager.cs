@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Factset.Interfaces;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
@@ -23,7 +24,7 @@ namespace DataSynchroniser.Manager.Factset
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<FactsetSecurityResponseDto> Send(List<MarketDataRequestDataSource> factsetRequests)
+        public async Task<FactsetSecurityResponseDto> Send(List<MarketDataRequest> factsetRequests)
         {
             if (factsetRequests == null
                 || !factsetRequests.Any())
@@ -80,13 +81,13 @@ namespace DataSynchroniser.Manager.Factset
             };
         }
 
-        private FactsetSecurityRequestItem Project(MarketDataRequestDataSource req)
+        private FactsetSecurityRequestItem Project(MarketDataRequest req)
         {
             return new FactsetSecurityRequestItem
             {
-                Figi = req.DataRequest?.Identifiers.Figi,
-                From = req.DataRequest?.UniverseEventTimeFrom?.AddDays(-1) ?? DateTime.UtcNow,
-                To = req.DataRequest?.UniverseEventTimeTo?.AddDays(1) ?? DateTime.UtcNow,
+                Figi = req?.Identifiers.Figi,
+                From = req?.UniverseEventTimeFrom?.AddDays(-1) ?? DateTime.UtcNow,
+                To = req?.UniverseEventTimeTo?.AddDays(1) ?? DateTime.UtcNow,
             };
         }
     }

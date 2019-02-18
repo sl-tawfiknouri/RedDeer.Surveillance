@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Bmll.Interfaces;
+using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
@@ -27,7 +28,7 @@ namespace DataSynchroniser.Manager.Bmll
         }
 
         public async Task<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>> Send(
-            List<MarketDataRequestDataSource> bmllRequests,
+            List<MarketDataRequest> bmllRequests,
             bool completeWithFailures)
         {
             if (bmllRequests == null
@@ -106,7 +107,7 @@ namespace DataSynchroniser.Manager.Bmll
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
         }
 
-        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequestDataSource> bmllRequests)
+        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequest> bmllRequests)
         {
             var keys = new List<MinuteBarRequestKeyDto>();
 
@@ -118,16 +119,16 @@ namespace DataSynchroniser.Manager.Bmll
 
             foreach (var req in bmllRequests)
             {
-                if (req.DataRequest == null
-                    || string.IsNullOrWhiteSpace(req.DataRequest.Identifiers.Figi)
-                    || req.DataRequest.UniverseEventTimeTo == null
-                    || req.DataRequest.UniverseEventTimeFrom == null)
+                if (req == null
+                    || string.IsNullOrWhiteSpace(req.Identifiers.Figi)
+                    || req.UniverseEventTimeTo == null
+                    || req.UniverseEventTimeFrom == null)
                 {
                     continue;
                 }
 
-                var toTarget = req.DataRequest.UniverseEventTimeTo.Value;
-                var fromTarget = req.DataRequest.UniverseEventTimeFrom.Value;
+                var toTarget = req.UniverseEventTimeTo.Value;
+                var fromTarget = req.UniverseEventTimeFrom.Value;
 
                 var timeSpan = toTarget.Subtract(fromTarget);
                 var totalDays = timeSpan.TotalDays + 1;
@@ -137,7 +138,7 @@ namespace DataSynchroniser.Manager.Bmll
                 {
                     var date = fromTarget.AddDays(iter);
 
-                    var barRequest = new MinuteBarRequestKeyDto(req.DataRequest.Identifiers.Figi, "1min", date);
+                    var barRequest = new MinuteBarRequestKeyDto(req.Identifiers.Figi, "1min", date);
                     keys.Add(barRequest);
 
                     iter += 1;

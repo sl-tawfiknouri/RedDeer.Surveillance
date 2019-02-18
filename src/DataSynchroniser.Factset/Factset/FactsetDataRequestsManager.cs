@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Factset.Interfaces;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 
 namespace DataSynchroniser.Manager.Factset
@@ -23,7 +24,7 @@ namespace DataSynchroniser.Manager.Factset
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(List<MarketDataRequestDataSource> factsetRequests)
+        public async Task Submit(List<MarketDataRequest> factsetRequests)
         {
             if (factsetRequests == null
                 || !factsetRequests.Any())
@@ -33,21 +34,21 @@ namespace DataSynchroniser.Manager.Factset
 
             try
             {
-                var factsetReqs = factsetRequests.Where(fr => !fr.DataRequest?.IsCompleted ?? false).ToList();
+                var requests = factsetRequests.Where(fr => !fr?.IsCompleted ?? false).ToList();
 
-                if ( !factsetReqs.Any())
+                if ( !requests.Any())
                 {
                     _logger.LogInformation($"FactsetDataRequestsManager Submit had zero factset requests that were not already completed.");
                     return;
                 }
 
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to send {factsetReqs.Count} requests to the request sender");
-                var dailySummaries = await _requestSender.Send(factsetReqs);
-                _logger.LogInformation($"FactsetDataRequestsManager Send has sent {factsetReqs.Count} requests to the request sender");
+                _logger.LogInformation($"FactsetDataRequestsManager Send about to send {requests.Count} requests to the request sender");
+                var dailySummaries = await _requestSender.Send(requests);
+                _logger.LogInformation($"FactsetDataRequestsManager Send has sent {requests.Count} requests to the request sender");
 
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {factsetReqs.Count} requests to the request sender");
+                _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {requests.Count} requests to the request sender");
                 await _responseStorage.Store(dailySummaries);
-                _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {factsetReqs.Count} requests to the request sender");
+                _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {requests.Count} requests to the request sender");
             }
             catch (Exception e)
             {

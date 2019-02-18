@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Bmll.Interfaces;
+using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 
@@ -27,17 +28,17 @@ namespace DataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(string systemOperationId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task Submit(string systemOperationId, List<MarketDataRequest> bmllRequests)
         {
             if (bmllRequests == null
                 || !bmllRequests.Any()
-                || bmllRequests.All(a => a.DataRequest?.IsCompleted ?? false))
+                || bmllRequests.All(a => a?.IsCompleted ?? false))
             {
                 await RescheduleRuleRun(systemOperationId, bmllRequests);
                 return;
             }
 
-            bmllRequests = bmllRequests.Where(req => !req.DataRequest?.IsCompleted ?? false).ToList();
+            bmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
 
             var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
             var splitTasks = SplitList(splitLists, 4);
@@ -51,7 +52,7 @@ namespace DataSynchroniser.Manager.Bmll
             await RescheduleRuleRun(systemOperationId, bmllRequests);
         }
 
-        private async Task ProcessBmllRequests(List<MarketDataRequestDataSource> bmllRequests)
+        private async Task ProcessBmllRequests(List<MarketDataRequest> bmllRequests)
         {
             try
             {
@@ -90,7 +91,7 @@ namespace DataSynchroniser.Manager.Bmll
             }
         }
 
-        private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
+        private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests)
         {
             try
             {
@@ -105,17 +106,17 @@ namespace DataSynchroniser.Manager.Bmll
             }
         }
 
-        private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequestDataSource request)
+        private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequest request)
         {
             if (request == null
-                || (!request.DataRequest?.IsValid() ?? true))
+                || (!request?.IsValid() ?? true))
             {
-                _logger.LogError($"BmllDataRequestManager had a null request or a request that did not pass data request validation for {request?.DataRequest?.Identifiers}");
+                _logger.LogError($"BmllDataRequestManager had a null request or a request that did not pass data request validation for {request?.Identifiers}");
 
                 return null;
             }
 
-            if (string.IsNullOrWhiteSpace(request.DataRequest.Identifiers.Figi))
+            if (string.IsNullOrWhiteSpace(request.Identifiers.Figi))
             {
                 _logger.LogError($"BmllDataRequestsManager asked to process a security without a figi");
 
@@ -124,9 +125,9 @@ namespace DataSynchroniser.Manager.Bmll
 
             return new GetMinuteBarsRequest
             {
-                Figi = request.DataRequest.Identifiers.Figi,
-                From = request.DataRequest.UniverseEventTimeFrom.Value.Date,
-                To = request.DataRequest.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
+                Figi = request.Identifiers.Figi,
+                From = request.UniverseEventTimeFrom.Value.Date,
+                To = request.UniverseEventTimeTo.Value.Date.AddDays(1).AddMilliseconds(-1),
                 Interval = "1min",
             };
         }

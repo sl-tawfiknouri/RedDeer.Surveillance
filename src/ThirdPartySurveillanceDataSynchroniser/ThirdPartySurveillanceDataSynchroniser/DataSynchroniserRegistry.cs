@@ -1,11 +1,7 @@
-﻿using DataSynchroniser.DataSources;
-using DataSynchroniser.DataSources.Interfaces;
-using DataSynchroniser.Interfaces;
+﻿using DataSynchroniser.Interfaces;
 using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Bmll;
 using DataSynchroniser.Manager.Bmll.Interfaces;
-using DataSynchroniser.Manager.Factset;
-using DataSynchroniser.Manager.Factset.Interfaces;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Services;
 using DataSynchroniser.Services.Interfaces;
@@ -36,16 +32,11 @@ namespace DataSynchroniser
 
             For<IDataRequestsService>().Use<DataRequestsService>();
             For<IDataRequestManager>().Use<DataRequestManager>();
-            For<IDataSourceClassifier>().Use<DataSourceClassifier>();
 
             For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
             For<IBmllDataRequestsSenderManager>().Use<BmllDataRequestsSenderManager>();
             For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
             For<IBmllDataRequestsRescheduleManager>().Use<BmllDataRequestsRescheduleManager>();
-
-            For<IFactsetDataRequestsManager>().Use<FactsetDataRequestsManager>();
-            For<IFactsetDataRequestsSenderManager>().Use<FactsetDataRequestsSenderManager>();
-            For<IFactsetDataRequestsStorageManager>().Use<FactsetDataRequestsStorageManager>();
 
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

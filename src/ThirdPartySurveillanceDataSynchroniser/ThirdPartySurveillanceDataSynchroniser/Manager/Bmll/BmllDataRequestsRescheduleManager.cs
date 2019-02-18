@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Bmll.Interfaces;
+using Domain.Markets;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -41,7 +42,7 @@ namespace DataSynchroniser.Manager.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequestDataSource> bmllRequests)
+        public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests)
         {
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager beginning process");
 
@@ -59,8 +60,7 @@ namespace DataSynchroniser.Manager.Bmll
                 RescheduleRuleRun(rule);
             }
 
-            var req = bmllRequests?.Select(bm => bm.DataRequest).ToList();
-            await _dataRequestRepository.UpdateToCompleteWithDuplicates(req);
+            await _dataRequestRepository.UpdateToCompleteWithDuplicates(bmllRequests);
 
             _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
         }

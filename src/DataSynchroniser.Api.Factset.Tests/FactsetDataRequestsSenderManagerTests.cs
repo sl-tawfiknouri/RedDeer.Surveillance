@@ -2,6 +2,7 @@
 using System.Reflection;
 using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Factset;
+using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -17,12 +18,12 @@ namespace DataSynchroniser.Tests.Manager.FactSet
         {
             // arrange
             Type[] parameterTypes = new Type[] {
-            typeof(MarketDataRequestDataSource)};
+            typeof(MarketDataRequest)};
             var method = typeof(FactsetDataRequestsSenderManager).GetMethod("Project", BindingFlags.Instance | BindingFlags.NonPublic, null, parameterTypes, new ParameterModifier[] { });
             var underTest = new FactsetDataRequestsSenderManager(
                 A.Fake<IFactsetDailyBarApiRepository>(),
                 A.Fake<ILogger<FactsetDataRequestsSenderManager>>());
-            var fakeRequest = A.Fake<MarketDataRequestDataSource>();
+            var fakeRequest = A.Fake<MarketDataRequest>();
             
             var inputParams = new object[] { fakeRequest };
 

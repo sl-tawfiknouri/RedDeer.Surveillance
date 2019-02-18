@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataSynchroniser.DataSources.Interfaces;
 using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Bmll.Interfaces;
-using DataSynchroniser.Manager.Factset.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -15,20 +13,16 @@ namespace DataSynchroniser.Tests.Manager
     [TestFixture]
     public class DataRequestManagerTests
     {
-        private IDataSourceClassifier _dataSourceClassifier;
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
         private IBmllDataRequestManager _dataRequestManager;
         private IRuleRunDataRequestRepository _repository;
-        private IFactsetDataRequestsManager _factsetDataRequestManager;
         private ILogger<DataRequestManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _dataSourceClassifier = A.Fake<IDataSourceClassifier>();
             _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             _dataRequestManager = A.Fake<IBmllDataRequestManager>();
-            _factsetDataRequestManager = A.Fake<IFactsetDataRequestsManager>();
             _repository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger<DataRequestManager>>();
         }
@@ -37,14 +31,14 @@ namespace DataSynchroniser.Tests.Manager
         public void Constructor_Null_Repository_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, null, _dataRequestManager, _factsetDataRequestManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(null, _dataRequestManager,  _logger));
         }
 
         [Test]
         public void Constructor_Null_Logger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_repository, _dataRequestManager, null));
         }
 
         [Test]
@@ -73,7 +67,7 @@ namespace DataSynchroniser.Tests.Manager
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, _logger);
+            return new DataRequestManager(_repository, _dataRequestManager, _logger);
         }
     }
 }

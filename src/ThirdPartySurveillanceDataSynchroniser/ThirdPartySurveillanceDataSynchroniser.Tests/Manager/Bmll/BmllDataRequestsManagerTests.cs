@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataSynchroniser.DataSources;
-using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Bmll;
 using DataSynchroniser.Manager.Bmll.Interfaces;
 using Domain.Financial;
@@ -57,7 +55,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
                 .MustNotHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequestDataSource>>.Ignored))
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequest>>.Ignored))
                 .MustHaveHappened();
         }
 
@@ -66,9 +64,9 @@ namespace DataSynchroniser.Tests.Manager.Bmll
         {
             var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
 
-            var request = new List<MarketDataRequestDataSource>()
+            var request = new List<MarketDataRequest>()
             {
-                new MarketDataRequestDataSource(DataSource.Bmll, BuildRequest())
+                BuildRequest()
             };
 
             await manager.Submit("a", request);
@@ -78,7 +76,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
                 .MustHaveHappened();
 
             A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequestDataSource>>.Ignored))
+                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequest>>.Ignored))
                 .MustHaveHappened();
         }
 

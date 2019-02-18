@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataSynchroniser.DataSources;
-using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Bmll;
 using Domain.Financial;
 using Domain.Markets;
@@ -28,10 +26,8 @@ namespace DataSynchroniser.Tests.Manager.Bmll
         [Test]
         public void ProjectToRequestKeys_Returns_Expected_MinuteBarKeys()
         {
-            var requests = new List<MarketDataRequestDataSource>()
+            var requests = new List<MarketDataRequest>()
             {
-                new MarketDataRequestDataSource(
-                    DataSource.Bmll,
                     new MarketDataRequest(
                         "XLON",
                         "ENTSPB",
@@ -41,9 +37,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
                         },
                         new DateTime(2018, 01, 01),
                         new DateTime(2018, 01, 06),
-                        "1")),
-                new MarketDataRequestDataSource(
-                    DataSource.Bmll,
+                        "1"),
                     new MarketDataRequest(
                         "XLON",
                         "ENTSPB",
@@ -53,7 +47,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
                         },
                         new DateTime(2018, 01, 01),
                         new DateTime(2018, 01, 06),
-                        "1")),
+                        "1"),
             };
 
             var senderManager = new BmllDataRequestsSenderManager(_timeBarRepository, _logger);

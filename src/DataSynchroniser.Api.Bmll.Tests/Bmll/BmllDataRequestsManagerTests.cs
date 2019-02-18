@@ -10,7 +10,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
-namespace DataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsManagerTests

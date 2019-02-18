@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DataSynchroniser.Manager.Factset.Interfaces;
+using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 
-namespace DataSynchroniser.Manager.Factset
+namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsSenderManager : IFactsetDataRequestsSenderManager
     {

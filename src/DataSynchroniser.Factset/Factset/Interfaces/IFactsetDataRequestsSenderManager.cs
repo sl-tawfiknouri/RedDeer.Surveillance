@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Domain.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 
-namespace DataSynchroniser.Manager.Factset.Interfaces
+namespace DataSynchroniser.Api.Factset.Factset.Interfaces
 {
     public interface IFactsetDataRequestsSenderManager
     {

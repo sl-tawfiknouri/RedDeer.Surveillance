@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Markets;
 
-namespace DataSynchroniser.Manager.Factset.Interfaces
+namespace DataSynchroniser.Api.Factset.Factset.Interfaces
 {
     public interface IFactsetDataRequestsManager
     {

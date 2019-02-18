@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 
-namespace DataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsSenderManagerTests

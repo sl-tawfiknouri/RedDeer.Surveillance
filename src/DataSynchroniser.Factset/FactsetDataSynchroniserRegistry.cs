@@ -1,8 +1,8 @@
-﻿using DataSynchroniser.Api.Factset.Filters;
+﻿using DataSynchroniser.Api.Factset.Factset;
+using DataSynchroniser.Api.Factset.Factset.Interfaces;
+using DataSynchroniser.Api.Factset.Filters;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
 using DataSynchroniser.Api.Factset.Interfaces;
-using DataSynchroniser.Manager.Factset;
-using DataSynchroniser.Manager.Factset.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;

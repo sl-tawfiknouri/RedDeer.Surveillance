@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
 using DataSynchroniser.Api.Factset.Interfaces;
-using DataSynchroniser.Manager.Factset.Interfaces;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;

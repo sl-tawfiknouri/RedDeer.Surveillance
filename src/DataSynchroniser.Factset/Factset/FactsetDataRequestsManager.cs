@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataSynchroniser.Manager.Factset.Interfaces;
+using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 
-namespace DataSynchroniser.Manager.Factset
+namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsManager : IFactsetDataRequestsManager
     {

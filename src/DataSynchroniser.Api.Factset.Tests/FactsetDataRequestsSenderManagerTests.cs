@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using DataSynchroniser.Manager;
-using DataSynchroniser.Manager.Factset;
+using DataSynchroniser.Api.Factset.Factset;
 using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 
-namespace DataSynchroniser.Tests.Manager.FactSet
+namespace DataSynchroniser.Api.Factset.Tests
 {
     public class FactsetDataRequestsSenderManagerTests
     {

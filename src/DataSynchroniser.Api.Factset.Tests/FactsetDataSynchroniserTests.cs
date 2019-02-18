@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
-using DataSynchroniser.Manager.Factset.Interfaces;
 using Domain.Financial;
 using Domain.Markets;
 using FakeItEasy;

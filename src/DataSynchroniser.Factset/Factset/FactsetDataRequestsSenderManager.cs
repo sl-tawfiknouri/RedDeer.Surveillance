@@ -33,27 +33,10 @@ namespace DataSynchroniser.Api.Factset.Factset
                 return new FactsetSecurityResponseDto();
             }
 
-            try
-            {
-                var cts = new CancellationTokenSource(1000 * 60 * 30);
-                var checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
+            var apiBlock = await BlockOnHeartbeat();
 
-                while (!checkHeartbeat)
-                {
-                    if (cts.IsCancellationRequested)
-                    {
-                        _logger.LogError($"FactsetDataRequestsSenderManager Send ran out of time to connect to the API. Returning an empty response.");
-                        return new FactsetSecurityResponseDto();
-                    }
-
-                    _logger.LogError($"FactsetDataRequestsSenderManager Send could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
-                    Thread.Sleep(1000 * 30);
-                    checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
-                }
-            }
-            catch (Exception e)
+            if (!apiBlock)
             {
-                _logger.LogError($"FactsetDataRequestsSenderManager send encountered an exception whilst handling heartbeats", e);
                 return new FactsetSecurityResponseDto();
             }
 
@@ -79,6 +62,35 @@ namespace DataSynchroniser.Api.Factset.Factset
                 Request = request,
                 Responses = new List<FactsetSecurityDailyResponseItem>()
             };
+        }
+
+        private async Task<bool> BlockOnHeartbeat()
+        {
+            try
+            {
+                var cts = new CancellationTokenSource(1000 * 60 * 30);
+                var checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
+
+                while (!checkHeartbeat)
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        _logger.LogError($"FactsetDataRequestsSenderManager Send ran out of time to connect to the API. Returning an empty response.");
+                        return false;
+                    }
+
+                    _logger.LogError($"FactsetDataRequestsSenderManager Send could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
+                    Thread.Sleep(1000 * 30);
+                    checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"FactsetDataRequestsSenderManager send encountered an exception whilst handling heartbeats", e);
+                return false;
+            }
         }
 
         private FactsetSecurityRequestItem Project(MarketDataRequest req)

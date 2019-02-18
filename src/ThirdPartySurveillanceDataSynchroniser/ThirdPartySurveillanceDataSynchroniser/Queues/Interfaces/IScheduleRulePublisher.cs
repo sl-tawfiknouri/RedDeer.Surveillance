@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Domain.Markets;
 
-namespace DataSynchroniser.Api.Bmll.Bmll.Interfaces
+namespace DataSynchroniser.Queues.Interfaces
 {
-    public interface IBmllDataRequestsRescheduleManager
+    public interface IScheduleRulePublisher
     {
         Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests);
     }

@@ -13,31 +13,20 @@ namespace DataSynchroniser.Api.Bmll.Bmll
     {
         private readonly IBmllDataRequestsSenderManager _senderManager;
         private readonly IBmllDataRequestsStorageManager _storageManager;
-        private readonly IBmllDataRequestsRescheduleManager _rescheduleManager;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
             IBmllDataRequestsSenderManager senderManager,
             IBmllDataRequestsStorageManager storageManager,
-            IBmllDataRequestsRescheduleManager rescheduleManager,
             ILogger<BmllDataRequestsManager> logger)
         {
             _senderManager = senderManager ?? throw new ArgumentNullException(nameof(senderManager));
             _storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-            _rescheduleManager = rescheduleManager ?? throw new ArgumentNullException(nameof(rescheduleManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task Submit(string systemOperationId, List<MarketDataRequest> bmllRequests)
         {
-            if (bmllRequests == null
-                || !bmllRequests.Any()
-                || bmllRequests.All(a => a?.IsCompleted ?? false))
-            {
-                await RescheduleRuleRun(systemOperationId, bmllRequests);
-                return;
-            }
-
             bmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
 
             var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
@@ -48,8 +37,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 var split = splitTask.Select(ProcessBmllRequests).ToList();
                 Task.WhenAll(split).Wait(TimeSpan.FromMinutes(20));
             }
-
-            await RescheduleRuleRun(systemOperationId, bmllRequests);
         }
 
         private async Task ProcessBmllRequests(List<MarketDataRequest> bmllRequests)
@@ -88,21 +75,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             catch (Exception e)
             {
                 _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
-            }
-        }
-
-        private async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests)
-        {
-            try
-            {
-                // RESCHEDULE IT
-                await _rescheduleManager.RescheduleRuleRun(systemProcessOperationId, bmllRequests);
-
-                _logger.LogInformation($"BmllDataRequestsManager has completed submission of {bmllRequests.Count} requests");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"BmllDataRequestsManager Send encountered an exception in the reschedule rule run!", e);
             }
         }
 

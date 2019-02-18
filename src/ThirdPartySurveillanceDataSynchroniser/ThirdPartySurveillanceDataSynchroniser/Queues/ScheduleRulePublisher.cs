@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using Domain.Markets;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
@@ -13,9 +13,9 @@ using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataSynchroniser.Api.Bmll.Bmll
+namespace DataSynchroniser.Queues
 {
-    public class BmllDataRequestsRescheduleManager : IBmllDataRequestsRescheduleManager
+    public class ScheduleRulePublisher : IScheduleRulePublisher
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
@@ -23,15 +23,15 @@ namespace DataSynchroniser.Api.Bmll.Bmll
         private readonly IRuleRunDataRequestRepository _dataRequestRepository;
         private readonly ISystemProcessOperationRuleRunRepository _ruleRunRepository;
         private readonly IScheduledExecutionMessageBusSerialiser _messageBusSerialiser;
-        private readonly ILogger<BmllDataRequestsRescheduleManager> _logger;
+        private readonly ILogger<ScheduleRulePublisher> _logger;
 
-        public BmllDataRequestsRescheduleManager(
+        public ScheduleRulePublisher(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             IRuleRunDataRequestRepository dataRequestRepository,
             IScheduledExecutionMessageBusSerialiser messageBusSerialiser,
             ISystemProcessOperationRuleRunRepository ruleRunRepository,
-            ILogger<BmllDataRequestsRescheduleManager> logger)
+            ILogger<ScheduleRulePublisher> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));
@@ -44,11 +44,11 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
         public async Task RescheduleRuleRun(string systemProcessOperationId, List<MarketDataRequest> bmllRequests)
         {
-            _logger?.LogInformation($"BmllDataRequestsRescheduleManager beginning process");
+            _logger?.LogInformation($"ScheduleRulePublisher beginning process");
 
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"BmllDataRequestsRescheduleManager had a null or empty rule run id. Returning");
+                _logger.LogError($"ScheduleRulePublisher had a null or empty rule run id. Returning");
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             await _dataRequestRepository.UpdateToCompleteWithDuplicates(bmllRequests);
 
-            _logger?.LogInformation($"BmllDataRequestsRescheduleManager completing process");
+            _logger?.LogInformation($"ScheduleRulePublisher completing process");
         }
 
         private void RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
@@ -73,7 +73,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 || ruleRun.ScheduleRuleEnd == null
                 || string.IsNullOrWhiteSpace(ruleRun.RuleParameterId))
             {
-                _logger?.LogWarning($"BmllDataRequestsRescheduleManager received a badly formed rule run. Skipping.");
+                _logger?.LogWarning($"ScheduleRulePublisher received a badly formed rule run. Skipping.");
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             var cts = new CancellationTokenSource();
             var serialisedMessage = _messageBusSerialiser.SerialiseScheduledExecution(scheduledExecution);
 
-            _logger?.LogWarning($"BmllDataRequestsRescheduleManager about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            _logger?.LogWarning($"ScheduleRulePublisher about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
             var sendToQueue = _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
 
@@ -106,10 +106,10 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             if (sendToQueue.IsCanceled)
             {
-                _logger?.LogError($"BmllDataRequestsRescheduleManager timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+                _logger?.LogError($"ScheduleRulePublisher timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
             }
 
-            _logger?.LogWarning($"BmllDataRequestsRescheduleManager completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            _logger?.LogWarning($"ScheduleRulePublisher completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
         }
     }
 }

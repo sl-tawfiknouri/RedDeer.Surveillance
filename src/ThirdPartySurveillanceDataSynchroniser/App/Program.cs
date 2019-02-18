@@ -5,6 +5,9 @@ using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
 using DasMulli.Win32.ServiceUtils;
+using DataSynchroniser.Api.Bmll;
+using DataSynchroniser.Api.Factset;
+using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
 using Microsoft.Extensions.Configuration;
 using NLog;
@@ -55,6 +58,9 @@ namespace DataSynchroniser.App
                     config.IncludeRegistry<DataSynchroniserRegistry>();
                     config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                     config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                    config.IncludeRegistry<BmllDataSynchroniserRegistry>();
+                    config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
+                    config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                     config.IncludeRegistry<AppRegistry>();
                 });
 

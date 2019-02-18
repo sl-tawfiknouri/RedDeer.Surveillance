@@ -1,5 +1,5 @@
 ﻿using System;
-using DataSynchroniser.Services.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -11,14 +11,14 @@ namespace DataSynchroniser.Tests
     public class MediatorTests
     {
         private ILogger<Mediator> _logger;
-        private IDataRequestsService _dataRequestService;
+        private IDataRequestSubscriber _dataRequestService;
         private IApplicationHeartbeatService _applicationHeartbeatService;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<Mediator>>();
-            _dataRequestService = A.Fake<IDataRequestsService>();
+            _dataRequestService = A.Fake<IDataRequestSubscriber>();
             _applicationHeartbeatService = A.Fake<IApplicationHeartbeatService>();
         }
         

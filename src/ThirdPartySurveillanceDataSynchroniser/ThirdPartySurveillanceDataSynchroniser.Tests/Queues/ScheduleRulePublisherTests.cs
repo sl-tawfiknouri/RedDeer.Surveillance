@@ -1,5 +1,5 @@
 ﻿using System;
-using DataSynchroniser.Api.Bmll.Bmll;
+using DataSynchroniser.Queues;
 using Domain.Scheduling.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -8,7 +8,7 @@ using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Tests.Queues
 {
     [TestFixture]
     public class BmllDataRequestsRescheduleManagerTests
@@ -20,7 +20,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
 
 
         private ISystemProcessOperationRuleRunRepository _repository;
-        private ILogger<BmllDataRequestsRescheduleManager> _logger;
+        private ILogger<ScheduleRulePublisher> _logger;
 
         [SetUp]
         public void Setup()
@@ -31,14 +31,14 @@ namespace DataSynchroniser.Tests.Manager.Bmll
 
             _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
             _repository = A.Fake<ISystemProcessOperationRuleRunRepository>();
-            _logger = A.Fake<ILogger<BmllDataRequestsRescheduleManager>>();
+            _logger = A.Fake<ILogger<ScheduleRulePublisher>>();
         }
 
         [Test]
         public void Ctor_Throws_For_Null_Logger()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsRescheduleManager(
+            Assert.Throws<ArgumentNullException>(() => new ScheduleRulePublisher(
                 _awsQueueClient,
                 _awsConfiguration,
                 _dataRequestRepository,
@@ -51,7 +51,7 @@ namespace DataSynchroniser.Tests.Manager.Bmll
         public void Ctor_Throws_For_Null_Repository()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsRescheduleManager(
+            Assert.Throws<ArgumentNullException>(() => new ScheduleRulePublisher(
                 _awsQueueClient,
                 _awsConfiguration,
                 _dataRequestRepository,

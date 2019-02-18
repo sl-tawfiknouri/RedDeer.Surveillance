@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Interfaces;
-using DataSynchroniser.Services;
+using DataSynchroniser.Queues;
 using Domain.DTO;
 using Domain.DTO.Interfaces;
 using FakeItEasy;
@@ -13,12 +13,12 @@ using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataSynchroniser.Tests.Services
+namespace DataSynchroniser.Tests.Queues
 {
     [TestFixture]
     public class DataRequestsServiceTests
     {
-        private ILogger<DataRequestsService> _logger;
+        private ILogger<DataRequestSubscriber> _logger;
         private IAwsQueueClient _awsQueueClient;
         private IAwsConfiguration _awsConfiguration;
         private ISystemProcessContext _sysCtx;
@@ -30,7 +30,7 @@ namespace DataSynchroniser.Tests.Services
         {
             _awsQueueClient = A.Fake<IAwsQueueClient>();
             _awsConfiguration = A.Fake<IAwsConfiguration>();
-            _logger = A.Fake<ILogger<DataRequestsService>>();
+            _logger = A.Fake<ILogger<DataRequestSubscriber>>();
             _sysCtx = A.Fake<ISystemProcessContext>();
             _serialiser = new ThirdPartyDataRequestSerialiser();
             _requestManager = A.Fake<IDataRequestManager>();
@@ -40,27 +40,27 @@ namespace DataSynchroniser.Tests.Services
         public void Constructor_NullLogger_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, null));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, null));
         }
 
         [Test]
         public void Constructor_NullAwsQueueClient_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(null, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(null, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger));
         }
 
         [Test]
         public void Constructor_NullAwsConfiguration_IsExceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestsService(_awsQueueClient, null, _sysCtx, _serialiser, _requestManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(_awsQueueClient, null, _sysCtx, _serialiser, _requestManager, _logger));
         }
 
         [Test]
         public void Initiate_Calls_AwsQueueClient_SubscribeToQueueAsync()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
+            var dataRequestsService = new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
 
             dataRequestsService.Initiate();
 
@@ -75,7 +75,7 @@ namespace DataSynchroniser.Tests.Services
         public async Task Execute_Deserialises_Message()
         {
             var mockSerialiser = A.Fake<IThirdPartyDataRequestSerialiser>();
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, mockSerialiser, _requestManager, _logger);
+            var dataRequestsService = new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, mockSerialiser, _requestManager, _logger);
 
             await dataRequestsService.Execute("123", "test-str");
 
@@ -86,7 +86,7 @@ namespace DataSynchroniser.Tests.Services
         [Test]
         public async Task Execute_Creates_NewOperationContext()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
+            var dataRequestsService = new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
 
             await dataRequestsService.Execute("123", "test-str");
 
@@ -97,7 +97,7 @@ namespace DataSynchroniser.Tests.Services
         [Test]
         public async Task Execute_SendsRuleId_ToDataRequestManager()
         {
-            var dataRequestsService = new DataRequestsService(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
+            var dataRequestsService = new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger);
             var messageObj = new ThirdPartyDataRequestMessage { SystemProcessOperationId = "123" };
             var msg = JsonConvert.SerializeObject(messageObj);
 

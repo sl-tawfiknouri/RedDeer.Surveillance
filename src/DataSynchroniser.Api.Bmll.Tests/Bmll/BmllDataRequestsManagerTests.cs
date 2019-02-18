@@ -17,7 +17,6 @@ namespace DataSynchroniser.Tests.Manager.Bmll
     {
         private IBmllDataRequestsSenderManager _senderManager;
         private IBmllDataRequestsStorageManager _storageManager;
-        private IBmllDataRequestsRescheduleManager _rescheduleManager;
         private ILogger<BmllDataRequestsManager> _logger;
 
         [SetUp]
@@ -25,7 +24,6 @@ namespace DataSynchroniser.Tests.Manager.Bmll
         {
             _senderManager = A.Fake<IBmllDataRequestsSenderManager>();
             _storageManager = A.Fake<IBmllDataRequestsStorageManager>();
-            _rescheduleManager = A.Fake<IBmllDataRequestsRescheduleManager>();
             _logger = A.Fake<ILogger<BmllDataRequestsManager>>();
         }
 
@@ -33,36 +31,20 @@ namespace DataSynchroniser.Tests.Manager.Bmll
         public void Constructor_ConsidersNull_StorageManager_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, null, _rescheduleManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, null,  _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNull_Logger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, null));
-        }
-
-        [Test]
-        public async Task Submit_ReschedulesRun_When_BmllRequests_Null()
-        {
-            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
-
-            await manager.Submit("a", null);
-
-            A
-                .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
-                .MustNotHaveHappened();
-
-            A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequest>>.Ignored))
-                .MustHaveHappened();
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, _storageManager, null));
         }
 
         [Test]
         public async Task Submit_DoesCall_Store_WhenBmllRequests_Submitted()
         {
-            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _rescheduleManager, _logger);
+            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _logger);
 
             var request = new List<MarketDataRequest>()
             {
@@ -73,10 +55,6 @@ namespace DataSynchroniser.Tests.Manager.Bmll
 
             A
                 .CallTo(() => _storageManager.Store(A<IReadOnlyCollection<IGetTimeBarPair>>.Ignored))
-                .MustHaveHappened();
-
-            A
-                .CallTo(() => _rescheduleManager.RescheduleRuleRun("a", A<List<MarketDataRequest>>.Ignored))
                 .MustHaveHappened();
         }
 

@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.1" />
+    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>

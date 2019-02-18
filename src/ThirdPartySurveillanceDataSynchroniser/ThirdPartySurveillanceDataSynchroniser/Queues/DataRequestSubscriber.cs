@@ -2,34 +2,34 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Interfaces;
-using DataSynchroniser.Services.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using Domain.DTO.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace DataSynchroniser.Services
+namespace DataSynchroniser.Queues
 {
-    public class DataRequestsService : IDataRequestsService
+    public class DataRequestSubscriber : IDataRequestSubscriber
     {
         private readonly IAwsQueueClient _awsQueueClient;
         private readonly IAwsConfiguration _awsConfiguration;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly IThirdPartyDataRequestSerialiser _serialiser;
         private readonly IDataRequestManager _dataRequestManager;
-        private readonly ILogger<DataRequestsService> _logger;
+        private readonly ILogger<DataRequestSubscriber> _logger;
 
         private CancellationTokenSource _messageBusCts;
         private AwsResusableCancellationToken _token;
 
-        public DataRequestsService(
+        public DataRequestSubscriber(
             IAwsQueueClient awsQueueClient,
             IAwsConfiguration awsConfiguration,
             ISystemProcessContext systemProcessContext,
             IThirdPartyDataRequestSerialiser serialiser,
             IDataRequestManager dataRequestManager,
-            ILogger<DataRequestsService> logger)
+            ILogger<DataRequestSubscriber> logger)
         {
             _awsQueueClient = awsQueueClient ?? throw new ArgumentNullException(nameof(awsQueueClient));
             _awsConfiguration = awsConfiguration ?? throw new ArgumentNullException(nameof(awsConfiguration));

@@ -1,8 +1,8 @@
 ﻿using DataSynchroniser.Interfaces;
 using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Interfaces;
-using DataSynchroniser.Services;
-using DataSynchroniser.Services.Interfaces;
+using DataSynchroniser.Queues;
+using DataSynchroniser.Queues.Interfaces;
 using Domain.DTO;
 using Domain.DTO.Interfaces;
 using Domain.Scheduling;
@@ -28,8 +28,9 @@ namespace DataSynchroniser
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
 
-            For<IDataRequestsService>().Use<DataRequestsService>();
+            For<IDataRequestSubscriber>().Use<DataRequestSubscriber>();
             For<IDataRequestManager>().Use<DataRequestManager>();
+            For<IScheduleRulePublisher>().Use<ScheduleRulePublisher>();
 
             For<IAwsQueueClient>().Use<AwsQueueClient>();
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

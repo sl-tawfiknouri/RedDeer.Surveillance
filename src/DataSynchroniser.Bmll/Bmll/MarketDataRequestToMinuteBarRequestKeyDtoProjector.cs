@@ -10,13 +10,22 @@ namespace DataSynchroniser.Api.Bmll.Bmll
     {
         public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequest> bmllRequests)
         {
-            var keys = new List<MinuteBarRequestKeyDto>();
-
             if (bmllRequests == null
                 || !bmllRequests.Any())
             {
-                return keys;
+                return new List<MinuteBarRequestKeyDto>();
             }
+
+            var projectKeys = Project(bmllRequests);
+            var filteredKeys = projectKeys.Where(key => !string.IsNullOrWhiteSpace(key.Figi)).ToList();
+            var deduplicatedKeys = DeduplicateKeys(filteredKeys);
+
+            return deduplicatedKeys;
+        }
+
+        private List<MinuteBarRequestKeyDto> Project(List<MarketDataRequest> bmllRequests)
+        {
+            var keys = new List<MinuteBarRequestKeyDto>();
 
             foreach (var req in bmllRequests)
             {
@@ -46,8 +55,11 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 }
             }
 
-            var filteredKeys = keys.Where(key => !string.IsNullOrWhiteSpace(key.Figi)).ToList();
+            return keys;
+        }
 
+        private List<MinuteBarRequestKeyDto> DeduplicateKeys(List<MinuteBarRequestKeyDto> filteredKeys)
+        {
             var deduplicatedKeys = new List<MinuteBarRequestKeyDto>();
 
             var grps = filteredKeys.GroupBy(x => x.Figi);
@@ -65,7 +77,5 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             return deduplicatedKeys;
         }
-
-
     }
 }

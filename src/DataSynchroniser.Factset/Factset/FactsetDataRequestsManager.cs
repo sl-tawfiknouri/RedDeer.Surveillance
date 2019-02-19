@@ -30,6 +30,7 @@ namespace DataSynchroniser.Api.Factset.Factset
                 || !factsetRequests.Any())
             {
                 _logger.LogError($"FactsetDataRequestsManager had null or empty factset requests");
+                return;
             }
 
             try

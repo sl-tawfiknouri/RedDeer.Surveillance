@@ -13,16 +13,16 @@ namespace DataSynchroniser.Api.Factset
 {
     public class FactsetDataSynchroniser : IFactsetDataSynchroniser
     {
-        private readonly IFactsetDataRequestsManager factsetDataRequestsManager;
+        private readonly IFactsetDataRequestsManager _factsetDataRequestsManager;
         private readonly IMarketDataRequestFilter _requestFilter;
         private readonly ILogger<FactsetDataSynchroniser> _logger;
 
         public FactsetDataSynchroniser(
-            IFactsetDataRequestsManager dataRequestsManager,
+            IFactsetDataRequestsManager factsetDataRequestsManager,
             IMarketDataRequestFilter requestFilter,
             ILogger<FactsetDataSynchroniser> logger)
         {
-            factsetDataRequestsManager = dataRequestsManager ?? throw new ArgumentNullException(nameof(dataRequestsManager));
+            _factsetDataRequestsManager = factsetDataRequestsManager ?? throw new ArgumentNullException(nameof(factsetDataRequestsManager));
             _requestFilter = requestFilter ?? throw new ArgumentNullException(nameof(requestFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -59,7 +59,7 @@ namespace DataSynchroniser.Api.Factset
                 return;
             }
 
-            await factsetDataRequestsManager.Submit(filteredMarketDataRequests);
+            await _factsetDataRequestsManager.Submit(filteredMarketDataRequests);
         }
     }
 }

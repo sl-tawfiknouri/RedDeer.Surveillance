@@ -32,6 +32,8 @@ namespace DataSynchroniser.Api.Bmll
             ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext,
             IReadOnlyCollection<MarketDataRequest> marketDataRequests)
         {
+            _logger.LogInformation($"BmllDataSynchroniser Handle began processing a request");
+
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
                 _logger?.LogError($"BmllDataSynchroniser Handle received a null or empty system process operation id returning");
@@ -59,6 +61,8 @@ namespace DataSynchroniser.Api.Bmll
             }
 
             await _requestManager.Submit(systemProcessOperationId, filteredMarketDataRequests);
+
+            _logger.LogInformation($"BmllDataSynchroniser Handle completed processing a request");
         }
     }
 }

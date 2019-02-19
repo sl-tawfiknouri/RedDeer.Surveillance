@@ -33,10 +33,18 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return;
             }
 
+            var deduplicatedBars = Deduplicate(timeBarPairs);
+
+            await _repository.Save(deduplicatedBars);
+
+            _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");
+        }
+
+        private List<MinuteBarDto> Deduplicate(IReadOnlyCollection<IGetTimeBarPair> timeBarPairs)
+        {
             var selectMany = timeBarPairs.SelectMany(x => x.Response.MinuteBars).ToList();
             var figiGroups = selectMany.GroupBy(o => o.Figi);
 
-            // deduplicate in memory for performance boost
             var deduplicatedBars = new List<MinuteBarDto>();
             foreach (var grp in figiGroups)
             {
@@ -44,9 +52,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 deduplicatedBars.AddRange(firstByDateTime);
             }
 
-            await _repository.Save(deduplicatedBars);
-
-            _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");
+            return deduplicatedBars;
         }
     }
 }

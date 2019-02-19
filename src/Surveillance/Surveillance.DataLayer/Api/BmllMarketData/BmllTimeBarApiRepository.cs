@@ -9,6 +9,7 @@ using Firefly.Service.Data.BMLL.Shared.Emuns;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Polly;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 
@@ -48,7 +49,23 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             try
             {
                 var json = JsonConvert.SerializeObject(createCommand);
-                var response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
+
+                var retryPolicy =
+                    Policy
+                        .Handle<Exception>()
+                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
+                        .WaitAndRetryAsync(10, i => TimeSpan.FromMinutes(1));
+
+                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+
+                HttpResponseMessage response = null;
+                await policyWrap.ExecuteAsync(async () =>
+                {
+                    response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+
+                    return response;
+                });
 
                 if (response == null
                     || !response.IsSuccessStatusCode)

@@ -15,7 +15,7 @@ namespace DataSynchroniser.Api.Bmll.Filters
 
             var cfi = new Cfi(request.Cfi);
 
-            return cfi.CfiCategory != CfiCategory.Equities;
+            return cfi.CfiCategory == CfiCategory.Equities;
         }
     }
 }

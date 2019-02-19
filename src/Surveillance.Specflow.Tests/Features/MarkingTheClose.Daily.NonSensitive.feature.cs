@@ -314,10 +314,10 @@ this.FeatureBackground();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Marking the close raises 2 alerts for differnet days")]
-        public virtual void MarkingTheCloseRaises2AlertsForDiffernetDays()
+        [NUnit.Framework.DescriptionAttribute("Marking the close raises 1 alerts for nasdaq")]
+        public virtual void MarkingTheCloseRaises1AlertsForNasdaq()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Marking the close raises 2 alerts for differnet days", null, ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Marking the close raises 1 alerts for nasdaq", null, ((string[])(null)));
 #line 45
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -337,55 +337,31 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
             table483.AddRow(new string[] {
-                        "Barclays",
+                        "Micron",
                         "1",
-                        "01/01/2019 15:35:00",
+                        "01/01/2019 22:35:00",
                         "",
                         "Market",
                         "Buy",
-                        "GBX",
+                        "USD",
                         "",
                         "",
                         "2500",
                         "2500"});
             table483.AddRow(new string[] {
-                        "Barclays",
+                        "Micron",
                         "2",
-                        "01/01/2019 15:35:00",
+                        "01/01/2019 22:35:00",
                         "",
                         "Market",
                         "Buy",
-                        "GBX",
-                        "",
-                        "",
-                        "2500",
-                        "2500"});
-            table483.AddRow(new string[] {
-                        "Barclays",
-                        "3",
-                        "01/02/2019 15:35:00",
-                        "",
-                        "Market",
-                        "Buy",
-                        "GBX",
-                        "",
-                        "",
-                        "2500",
-                        "2500"});
-            table483.AddRow(new string[] {
-                        "Barclays",
-                        "4",
-                        "01/02/2019 15:35:00",
-                        "",
-                        "Market",
-                        "Buy",
-                        "GBX",
+                        "USD",
                         "",
                         "",
                         "2500",
                         "2500"});
 #line 46
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/02/2019 :", ((string)(null)), table483, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table483, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table484 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
@@ -399,7 +375,7 @@ this.FeatureBackground();
                         "DailyVolume",
                         "Currency"});
             table484.AddRow(new string[] {
-                        "Barclays",
+                        "Micron",
                         "01/01/2019",
                         "10",
                         "11",
@@ -408,9 +384,9 @@ this.FeatureBackground();
                         "10",
                         "1000000",
                         "10000",
-                        "GBX"});
+                        "USD"});
             table484.AddRow(new string[] {
-                        "Barclays",
+                        "Micron",
                         "01/02/2019",
                         "10",
                         "11",
@@ -419,23 +395,23 @@ this.FeatureBackground();
                         "10",
                         "1000000",
                         "10000",
-                        "GBX"});
-#line 52
+                        "USD"});
+#line 50
   testRunner.And("With the interday market data :", ((string)(null)), table484, "And ");
-#line 56
+#line 54
    testRunner.When("I run the marking the close rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 57
-   testRunner.Then("I will have 2 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 55
+   testRunner.Then("I will have 1 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Marking the close raises 0 alerts for differnet days")]
-        public virtual void MarkingTheCloseRaises0AlertsForDiffernetDays()
+        [NUnit.Framework.DescriptionAttribute("Marking the close raises 2 alerts for differnet days")]
+        public virtual void MarkingTheCloseRaises2AlertsForDiffernetDays()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Marking the close raises 0 alerts for differnet days", null, ((string[])(null)));
-#line 59
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Marking the close raises 2 alerts for differnet days", null, ((string[])(null)));
+#line 57
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 10
@@ -463,8 +439,8 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "",
-                        "50",
-                        "50"});
+                        "2500",
+                        "2500"});
             table485.AddRow(new string[] {
                         "Barclays",
                         "2",
@@ -475,8 +451,8 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "",
-                        "50",
-                        "50"});
+                        "2500",
+                        "2500"});
             table485.AddRow(new string[] {
                         "Barclays",
                         "3",
@@ -487,8 +463,8 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "",
-                        "50",
-                        "50"});
+                        "2500",
+                        "2500"});
             table485.AddRow(new string[] {
                         "Barclays",
                         "4",
@@ -499,9 +475,9 @@ this.FeatureBackground();
                         "GBX",
                         "",
                         "",
-                        "50",
-                        "50"});
-#line 60
+                        "2500",
+                        "2500"});
+#line 58
   testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/02/2019 :", ((string)(null)), table485, "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table486 = new TechTalk.SpecFlow.Table(new string[] {
@@ -537,11 +513,128 @@ this.FeatureBackground();
                         "1000000",
                         "10000",
                         "GBX"});
-#line 66
+#line 64
   testRunner.And("With the interday market data :", ((string)(null)), table486, "And ");
-#line 70
+#line 68
    testRunner.When("I run the marking the close rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 69
+   testRunner.Then("I will have 2 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Marking the close raises 0 alerts for differnet days")]
+        public virtual void MarkingTheCloseRaises0AlertsForDiffernetDays()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Marking the close raises 0 alerts for differnet days", null, ((string[])(null)));
 #line 71
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 10
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table487 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "CancelledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table487.AddRow(new string[] {
+                        "Barclays",
+                        "1",
+                        "01/01/2019 15:35:00",
+                        "",
+                        "Market",
+                        "Buy",
+                        "GBX",
+                        "",
+                        "",
+                        "50",
+                        "50"});
+            table487.AddRow(new string[] {
+                        "Barclays",
+                        "2",
+                        "01/01/2019 15:35:00",
+                        "",
+                        "Market",
+                        "Buy",
+                        "GBX",
+                        "",
+                        "",
+                        "50",
+                        "50"});
+            table487.AddRow(new string[] {
+                        "Barclays",
+                        "3",
+                        "01/02/2019 15:35:00",
+                        "",
+                        "Market",
+                        "Buy",
+                        "GBX",
+                        "",
+                        "",
+                        "50",
+                        "50"});
+            table487.AddRow(new string[] {
+                        "Barclays",
+                        "4",
+                        "01/02/2019 15:35:00",
+                        "",
+                        "Market",
+                        "Buy",
+                        "GBX",
+                        "",
+                        "",
+                        "50",
+                        "50"});
+#line 72
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/02/2019 :", ((string)(null)), table487, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table488 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "Epoch",
+                        "OpenPrice",
+                        "ClosePrice",
+                        "HighIntradayPrice",
+                        "LowIntradayPrice",
+                        "ListedSecurities",
+                        "MarketCap",
+                        "DailyVolume",
+                        "Currency"});
+            table488.AddRow(new string[] {
+                        "Barclays",
+                        "01/01/2019",
+                        "10",
+                        "11",
+                        "11.5",
+                        "10",
+                        "10",
+                        "1000000",
+                        "10000",
+                        "GBX"});
+            table488.AddRow(new string[] {
+                        "Barclays",
+                        "01/02/2019",
+                        "10",
+                        "11",
+                        "11.5",
+                        "10",
+                        "10",
+                        "1000000",
+                        "10000",
+                        "GBX"});
+#line 78
+  testRunner.And("With the interday market data :", ((string)(null)), table488, "And ");
+#line 82
+   testRunner.When("I run the marking the close rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 83
    testRunner.Then("I will have 0 marking the close alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

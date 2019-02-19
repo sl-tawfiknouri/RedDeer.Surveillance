@@ -9,6 +9,7 @@ using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
+using Polly;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 
@@ -138,29 +139,25 @@ namespace DataSynchroniser.Api.Bmll.Bmll
         {
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
 
-            var hasSuccess = false;
-            var cts = new CancellationTokenSource(1000 * 60 * 5);
+            var timeoutPolicy = Policy.TimeoutAsync<BmllStatusMinuteBarResult>(TimeSpan.FromMinutes(20));
+            var retryPolicy =
+                Policy
+                    .Handle<Exception>()
+                    .OrResult<BmllStatusMinuteBarResult>(i => i == BmllStatusMinuteBarResult.InProgress)
+                    .WaitAndRetryAsync(15, i => TimeSpan.FromMinutes(1));
+
+            var policyWrap = Policy.WrapAsync(timeoutPolicy, retryPolicy);
+
             var minuteBarResult = BmllStatusMinuteBarResult.InProgress;
+            var request = new GetMinuteBarRequestStatusesRequest { Keys = keys?.ToList() };
 
-            while (!hasSuccess && !cts.Token.IsCancellationRequested)
+            await policyWrap.ExecuteAsync(async () =>
             {
-                _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone in loop");
-
-                var request = new GetMinuteBarRequestStatusesRequest { Keys = keys?.ToList() };
-
-                Thread.Sleep(1000 * 15);
                 minuteBarResult = await _timeBarRepository.StatusMinuteBars(request);
 
-                hasSuccess =
-                    minuteBarResult == BmllStatusMinuteBarResult.Completed
-                    || minuteBarResult == BmllStatusMinuteBarResult.CompletedWithFailures;
-            }
-
-            if (cts.Token.IsCancellationRequested)
-            {
-                _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone timed out after one hour.");
-            }
-
+                return minuteBarResult;
+            });
+            
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
 
             return minuteBarResult;

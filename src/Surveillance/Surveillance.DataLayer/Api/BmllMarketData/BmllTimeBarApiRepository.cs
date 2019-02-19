@@ -111,8 +111,24 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             try
             {
                 var json = JsonConvert.SerializeObject(statusCommand);
-                var response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
+                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
+                var retryPolicy =
+                    Policy
+                        .Handle<Exception>()
+                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
+                        .WaitAndRetryAsync(3, i => TimeSpan.FromMinutes(1));
+
+                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+
+                HttpResponseMessage response = null;
+                await policyWrap.ExecuteAsync(async () =>
+                {
+                    response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+
+                    return response;
+                });
+                
                 if (response == null
                     || !response.IsSuccessStatusCode)
                 {

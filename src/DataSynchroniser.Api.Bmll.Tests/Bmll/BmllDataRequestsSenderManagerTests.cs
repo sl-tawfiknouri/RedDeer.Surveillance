@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DataSynchroniser.Api.Bmll.Bmll;
-using Domain.Financial;
-using Domain.Markets;
+﻿using DataSynchroniser.Api.Bmll.Bmll;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -21,40 +17,6 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         {
             _timeBarRepository = A.Fake<IBmllTimeBarApiRepository>();
             _logger = A.Fake<ILogger<BmllDataRequestsSenderManager>>();
-        }
-
-        [Test]
-        public void ProjectToRequestKeys_Returns_Expected_MinuteBarKeys()
-        {
-            var requests = new List<MarketDataRequest>()
-            {
-                    new MarketDataRequest(
-                        "XLON",
-                        "ENTSPB",
-                        new InstrumentIdentifiers
-                        {
-                            Figi = "BBG000C6K6G9"
-                        },
-                        new DateTime(2018, 01, 01),
-                        new DateTime(2018, 01, 06),
-                        "1"),
-                    new MarketDataRequest(
-                        "XLON",
-                        "ENTSPB",
-                        new InstrumentIdentifiers
-                        {
-                            Figi = "BBG000C6K6G9"
-                        },
-                        new DateTime(2018, 01, 01),
-                        new DateTime(2018, 01, 06),
-                        "1"),
-            };
-
-            var senderManager = new BmllDataRequestsSenderManager(_timeBarRepository, _logger);
-
-            var result = senderManager.ProjectToRequestKeys(requests);
-
-            Assert.AreEqual(result.Count, 7);
         }
     }
 }

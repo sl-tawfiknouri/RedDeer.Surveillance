@@ -22,7 +22,6 @@ namespace DataSynchroniser.Api.Factset
 
             For<IFactsetDataRequestsManager>().Use<FactsetDataRequestsManager>();
             For<IFactsetDataRequestsSenderManager>().Use<FactsetDataRequestsSenderManager>();
-            For<IFactsetDataRequestsStorageManager>().Use<FactsetDataRequestsStorageManager>();
         }
     }
 }

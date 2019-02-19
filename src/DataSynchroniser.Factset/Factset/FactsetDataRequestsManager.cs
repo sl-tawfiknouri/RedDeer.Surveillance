@@ -5,22 +5,23 @@ using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsManager : IFactsetDataRequestsManager
     {
         private readonly IFactsetDataRequestsSenderManager _requestSender;
-        private readonly IFactsetDataRequestsStorageManager _responseStorage;
+        private readonly IReddeerMarketDailySummaryRepository _responseStorage;
         private readonly ILogger<FactsetDataRequestsManager> _logger;
 
         public FactsetDataRequestsManager(
             IFactsetDataRequestsSenderManager requestSender,
-            IFactsetDataRequestsStorageManager responseStorage,
+            IReddeerMarketDailySummaryRepository responseRepository,
             ILogger<FactsetDataRequestsManager> logger)
         {
             _requestSender = requestSender ?? throw new ArgumentNullException(nameof(requestSender));
-            _responseStorage = responseStorage ?? throw new ArgumentNullException(nameof(responseStorage));
+            _responseStorage = responseRepository ?? throw new ArgumentNullException(nameof(responseRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -48,7 +49,7 @@ namespace DataSynchroniser.Api.Factset.Factset
                 _logger.LogInformation($"FactsetDataRequestsManager Send has sent {requests.Count} requests to the request sender");
 
                 _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {requests.Count} requests to the request sender");
-                await _responseStorage.Store(dailySummaries);
+                await _responseStorage.Save(dailySummaries?.Responses);
                 _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {requests.Count} requests to the request sender");
 
             }

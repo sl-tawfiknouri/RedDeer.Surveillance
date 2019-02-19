@@ -9,6 +9,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
+using Surveillance.DataLayer.Aurora.Market.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Tests.Factset
 {
@@ -16,14 +17,14 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
     public class FactsetDataRequestsManagerTests
     {
         private IFactsetDataRequestsSenderManager _requestSender;
-        private IFactsetDataRequestsStorageManager _responseStorage;
+        private IReddeerMarketDailySummaryRepository _responseStorage;
         private ILogger<FactsetDataRequestsManager> _logger;
 
         [SetUp]
         public void Setup()
         {
             _requestSender = A.Fake<IFactsetDataRequestsSenderManager>();
-            _responseStorage = A.Fake<IFactsetDataRequestsStorageManager>();
+            _responseStorage = A.Fake<IReddeerMarketDailySummaryRepository>();
             _logger = A.Fake<ILogger<FactsetDataRequestsManager>>();
         }
 
@@ -86,7 +87,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
                 .MustHaveHappened();
 
             A
-                .CallTo(() => _responseStorage.Store(A<FactsetSecurityResponseDto>.Ignored))
+                .CallTo(() => _responseStorage.Save(A<IReadOnlyCollection<FactsetSecurityDailyResponseItem>>.Ignored))
                 .MustHaveHappened();
         }
 

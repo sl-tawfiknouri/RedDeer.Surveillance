@@ -1,9 +1,9 @@
-﻿using DataSynchroniser.Api.Factset.Filters;
+﻿using DataSynchroniser.Api.Bmll.Filters;
 using Domain.Financial;
 using Domain.Markets;
 using NUnit.Framework;
 
-namespace DataSynchroniser.Api.Factset.Tests.Filters
+namespace DataSynchroniser.Api.Bmll.Tests.Filters
 {
     [TestFixture]
     public class MarketDataRequestFilterTests
@@ -80,5 +80,6 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         {
             return new MarketDataRequestFilter();
         }
+       
     }
 }

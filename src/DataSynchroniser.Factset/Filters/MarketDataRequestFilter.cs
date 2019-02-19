@@ -10,7 +10,7 @@ namespace DataSynchroniser.Api.Factset.Filters
         {
             if (request == null)
             {
-                return true;
+                return false;
             }
             
             var cfi = new Cfi(request.Cfi);

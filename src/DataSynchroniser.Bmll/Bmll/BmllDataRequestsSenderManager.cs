@@ -184,7 +184,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             }
 
             var timeBarResponses = new List<IGetTimeBarPair>();
-
+            
             foreach (var req in consolidatedMinuteBarRequests)
             {
                 var responseTask = _timeBarRepository.GetMinuteBars(req);

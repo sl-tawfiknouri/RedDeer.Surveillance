@@ -45,7 +45,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
-            // PART OF THE OLD PATTERN
             var result = await BlockOnHeartbeatDown();
             if (!result)
             {

@@ -38,27 +38,11 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
-            try
+            // PART OF THE OLD PATTERN
+            var result = await BlockOnHeartbeatDown();
+            if (!result)
             {
-                var cts = new CancellationTokenSource(1000 * 60 * 15);
-                var checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
-
-                while (!checkHeartbeat)
-                {
-                    if (cts.IsCancellationRequested)
-                    {
-                        _logger.LogError($"BmllDataRequestsSenderManager ran out of time to connect to the API. Returning an empty response.");
-                        return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
-                    }
-
-                    _logger.LogError($"BmllDataRequestsSenderManager could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
-                    Thread.Sleep(1000 * 30);
-                    checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
-                }
-            }
-            catch (Exception e)
-            {
-                _logger?.LogError($"BmllDataRequestSenderManager Send encountered an error whilst monitoring for heartbeating...", e);
+                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
             try
@@ -105,6 +89,35 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             }
 
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
+        }
+
+        private async Task<bool> BlockOnHeartbeatDown()
+        {
+            try
+            {
+                var cts = new CancellationTokenSource(1000 * 60 * 15);
+                var checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
+
+                while (!checkHeartbeat)
+                {
+                    if (cts.IsCancellationRequested)
+                    {
+                        _logger.LogError($"BmllDataRequestsSenderManager ran out of time to connect to the API. Returning an empty response.");
+                        return false;
+                    }
+
+                    _logger.LogError($"BmllDataRequestsSenderManager could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
+                    Thread.Sleep(1000 * 30);
+                    checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError($"BmllDataRequestSenderManager Send encountered an error whilst monitoring for heartbeating...", e);
+                return false;
+            }
         }
 
         public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequest> bmllRequests)

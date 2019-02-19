@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using Domain.Markets;
@@ -33,13 +32,6 @@ namespace DataSynchroniser.Api.Factset.Factset
                 return new FactsetSecurityResponseDto();
             }
 
-            var apiBlock = await BlockOnHeartbeat();
-
-            if (!apiBlock)
-            {
-                return new FactsetSecurityResponseDto();
-            }
-
             var requests = factsetRequests.Select(Project).ToList();
             var request = new FactsetSecurityDailyRequest
             {
@@ -48,7 +40,7 @@ namespace DataSynchroniser.Api.Factset.Factset
 
             try
             {
-                var result = await _dailyBarRepository.Get(request);
+                var result = await _dailyBarRepository.GetWithTransientFaultHandling(request);
 
                 return result;
             }
@@ -62,35 +54,6 @@ namespace DataSynchroniser.Api.Factset.Factset
                 Request = request,
                 Responses = new List<FactsetSecurityDailyResponseItem>()
             };
-        }
-
-        private async Task<bool> BlockOnHeartbeat()
-        {
-            try
-            {
-                var cts = new CancellationTokenSource(1000 * 60 * 30);
-                var checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
-
-                while (!checkHeartbeat)
-                {
-                    if (cts.IsCancellationRequested)
-                    {
-                        _logger.LogError($"FactsetDataRequestsSenderManager Send ran out of time to connect to the API. Returning an empty response.");
-                        return false;
-                    }
-
-                    _logger.LogError($"FactsetDataRequestsSenderManager Send could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
-                    Thread.Sleep(1000 * 30);
-                    checkHeartbeat = await _dailyBarRepository.HeartBeating(cts.Token);
-                }
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"FactsetDataRequestsSenderManager send encountered an exception whilst handling heartbeats", e);
-                return false;
-            }
         }
 
         private FactsetSecurityRequestItem Project(MarketDataRequest req)

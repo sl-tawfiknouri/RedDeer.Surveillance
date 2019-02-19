@@ -44,7 +44,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
                 }
             };
 
-            await repo.Get(message);
+            await repo.GetWithTransientFaultHandling(message);
 
             Assert.IsTrue(true);
         }

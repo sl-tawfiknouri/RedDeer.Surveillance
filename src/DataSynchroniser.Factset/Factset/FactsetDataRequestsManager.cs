@@ -49,6 +49,7 @@ namespace DataSynchroniser.Api.Factset.Factset
                 _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {requests.Count} requests to the request sender");
                 await _responseStorage.Store(dailySummaries);
                 _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {requests.Count} requests to the request sender");
+
             }
             catch (Exception e)
             {

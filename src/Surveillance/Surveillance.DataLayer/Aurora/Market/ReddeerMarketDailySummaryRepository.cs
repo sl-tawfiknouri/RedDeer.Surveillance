@@ -42,15 +42,14 @@ namespace Surveillance.DataLayer.Aurora.Market
                 return;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
                 _logger?.LogInformation($"ReddeerMarketDailySummaryRepository Save method opened db connection");
 
                 var projectedItems = responseItems.Select(x => new DailySummaryDto(x)).ToList();
 
-                using (var conn = dbConnection.ExecuteAsync(CreateSql, projectedItems))
+                using (var dbConn = _dbConnectionFactory.BuildConn())
+                using (var conn = dbConn.ExecuteAsync(CreateSql, projectedItems))
                 {
                     await conn;
                     _logger?.LogInformation(
@@ -61,11 +60,6 @@ namespace Surveillance.DataLayer.Aurora.Market
             {
                 _logger?.LogError(
                     $"ReddeerMarketDailySummaryRepository encountered an exception on saving response items", e);
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             _logger?.LogInformation($"ReddeerMarketDailySummaryRepository Save method completed for {responseItems?.Count ?? 0} items");

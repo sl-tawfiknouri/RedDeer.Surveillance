@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Polly;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
@@ -24,6 +25,62 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
             : base(dataLayerConfiguration, logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<FactsetSecurityResponseDto> GetWithTransientFaultHandling(FactsetSecurityDailyRequest request)
+        {
+            _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling has received a request to get daily bars from the client service");
+
+            if (request == null)
+            {
+                _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling received a null request. Returning an empty response");
+
+                return new FactsetSecurityResponseDto
+                {
+                    Request = null,
+                    Responses = new FactsetSecurityDailyResponseItem[0]
+
+                };
+            }
+
+            var httpClient = BuildHttpClient();
+            var json = JsonConvert.SerializeObject(request);
+            HttpResponseMessage responseMessage = null;
+
+            var retryPolicy =
+                Policy
+                    .Handle<Exception>()
+                    .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
+                    .WaitAndRetryAsync(5, i => TimeSpan.FromMinutes(1));
+
+            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3)); 
+            var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+
+            await policyWrap.ExecuteAsync(async () =>
+            {
+                responseMessage = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
+
+                return responseMessage;
+            });
+
+            if (responseMessage == null
+                || !responseMessage.IsSuccessStatusCode)
+            {
+                _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
+                return new FactsetSecurityResponseDto();
+            }
+
+            var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+            var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
+
+            if (deserialisedResponse == null)
+            {
+                _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to deserialise the response");
+                return new FactsetSecurityResponseDto();
+            }
+
+            _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling returning deserialised GET response");
+            return deserialisedResponse;
         }
 
         public async Task<FactsetSecurityResponseDto> Get(FactsetSecurityDailyRequest request)

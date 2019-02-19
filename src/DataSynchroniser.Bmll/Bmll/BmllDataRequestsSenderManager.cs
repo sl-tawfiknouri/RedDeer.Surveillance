@@ -17,15 +17,18 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class BmllDataRequestsSenderManager : IBmllDataRequestsSenderManager
     {
+        private readonly IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private readonly IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
         private readonly IBmllTimeBarApiRepository _timeBarRepository;
         private readonly ILogger<BmllDataRequestsSenderManager> _logger;
 
         public BmllDataRequestsSenderManager(
+            IBmllDataRequestsGetTimeBars requestsGetTimeBars,
             IMarketDataRequestToMinuteBarRequestKeyDtoProjector marketDataRequestProjector,
             IBmllTimeBarApiRepository timeBarRepository,
             ILogger<BmllDataRequestsSenderManager> logger)
         {
+            _requestsGetTimeBars = requestsGetTimeBars ?? throw new ArgumentNullException(nameof(requestsGetTimeBars));
             _marketDataRequestProjector = marketDataRequestProjector ?? throw new ArgumentNullException(nameof(marketDataRequestProjector));
             _timeBarRepository = timeBarRepository ?? throw new ArgumentNullException(nameof(timeBarRepository)); 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -81,7 +84,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
                 // step 3.
                 // get minute bar request
-                var timeBarResponses = GetTimeBars(keys);
+                var timeBarResponses = _requestsGetTimeBars.GetTimeBars(keys);
 
                 _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
@@ -161,95 +164,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
 
             return minuteBarResult;
-        }
-
-        private IReadOnlyCollection<IGetTimeBarPair> GetTimeBars(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
-        {
-            if (keys == null
-                || !keys.Any())
-            {
-                _logger.LogError($"BmllDataRequestsManager received 0 data requests and did not have any to send on after projecting to GetMinuteBarsRequests");
-
-                return new IGetTimeBarPair[0];
-            }
-
-            var minuteBarRequests = keys.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
-            var consolidatedMinuteBarRequests = ConsolidatedMinuteBars(minuteBarRequests);
-
-            if (!consolidatedMinuteBarRequests.Any())
-            {
-                _logger.LogError($"BmllDataRequestsManager received {keys.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
-
-                return new IGetTimeBarPair[0];
-            }
-
-            var timeBarResponses = new List<IGetTimeBarPair>();
-            
-            foreach (var req in consolidatedMinuteBarRequests)
-            {
-                var responseTask = _timeBarRepository.GetMinuteBars(req);
-                responseTask.Wait();
-                var pair = new GetTimeBarPair(req, responseTask.Result);
-                timeBarResponses.Add(pair);
-            }
-
-            return timeBarResponses;
-        }
-
-        private GetMinuteBarsRequest GetMinuteBarsRequest(MinuteBarRequestKeyDto request)
-        {
-            if (request == null
-                || string.IsNullOrWhiteSpace(request.Figi))
-            {
-                _logger.LogError($"BmllDataRequestsSenderManager had a null request or a request that did not pass data request validation for {request?.Figi}");
-
-                return null;
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Figi))
-            {
-                _logger.LogError($"BmllDataRequestsSenderManager asked to process a security without a figi");
-
-                return null;
-            }
-
-            return new GetMinuteBarsRequest
-            {
-                Figi = request.Figi,
-                From = request.Date.Date,
-                To = request.Date.Date.AddDays(1).AddMilliseconds(-1),
-                Interval = "1min",
-            };
-        }
-
-        private List<GetMinuteBarsRequest> ConsolidatedMinuteBars(List<GetMinuteBarsRequest> requests)
-        {
-            if (requests == null
-                || !requests.Any())
-            {
-                return new List<GetMinuteBarsRequest>();
-            }
-
-            var result = new List<GetMinuteBarsRequest>();
-
-            var groupedByFigi = requests.GroupBy(req => req.Figi);
-
-            foreach (var grp in groupedByFigi)
-            {
-                var from = grp.Min(x => x.From);
-                var to = grp.Max(x => x.To);
-                var newRequest = new GetMinuteBarsRequest
-                {
-                    Figi = grp.FirstOrDefault()?.Figi,
-                    From = from,
-                    To = to,
-                    Interval = grp.FirstOrDefault()?.Interval
-                };
-
-                result.Add(newRequest);
-            }
-
-            return result;
         }
     }
 }

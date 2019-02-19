@@ -25,6 +25,7 @@ namespace DataSynchroniser.Api.Bmll
             For<IBmllDataRequestsStorageManager>().Use<BmllDataRequestsStorageManager>();
             For<IGetTimeBarPair>().Use<GetTimeBarPair>();
             For<IMarketDataRequestToMinuteBarRequestKeyDtoProjector>().Use<MarketDataRequestToMinuteBarRequestKeyDtoProjector>();
+            For<IBmllDataRequestsGetTimeBars>().Use<BmllDataRequestsGetTimeBars>();
         }
     }
 }

@@ -10,6 +10,7 @@ using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
+using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
 {
@@ -17,6 +18,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
     public class FactsetDailyBarApiRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
+        private IHttpClientFactory _httpClientFactory;
         private IPolicyFactory _policyFactory;
         private ILogger<FactsetDailyBarApiRepository> _logger;
 
@@ -24,6 +26,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         public void Setup()
         {
             _policyFactory = A.Fake<IPolicyFactory>();
+            _httpClientFactory = A.Fake<IHttpClientFactory>();
             _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<FactsetDailyBarApiRepository>>();
         }
@@ -32,7 +35,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         [Explicit]
         public async Task Get()
         {
-            var repo = new FactsetDailyBarApiRepository(_configuration, _policyFactory, _logger);
+            var repo = new FactsetDailyBarApiRepository(_configuration, _httpClientFactory, _policyFactory, _logger);
 
             var message = new FactsetSecurityDailyRequest
             {
@@ -56,7 +59,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         [Explicit]
         public async Task Heartbeating()
         {
-            var repo = new FactsetDailyBarApiRepository(_configuration, _policyFactory, _logger);
+            var repo = new FactsetDailyBarApiRepository(_configuration, _httpClientFactory, _policyFactory, _logger);
             var cts = new CancellationTokenSource();
 
             await repo.HeartBeating(cts.Token);

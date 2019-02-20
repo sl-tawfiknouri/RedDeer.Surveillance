@@ -22,11 +22,11 @@ namespace DataSynchroniser.Api.Markit
             ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext,
             IReadOnlyCollection<MarketDataRequest> marketDataRequests)
         {
-            _logger.LogInformation($"MarkitDataSynchroniser Handle processing request");
+            _logger.LogInformation($"{nameof(MarkitDataSynchroniser)} Handle processing request");
 
 
 
-            _logger.LogInformation($"MarkitDataSynchroniser Handle completed processing request");
+            _logger.LogInformation($"{nameof(MarkitDataSynchroniser)} Handle completed processing request");
         }
     }
 }

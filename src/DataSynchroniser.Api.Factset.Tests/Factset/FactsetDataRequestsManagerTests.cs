@@ -29,21 +29,21 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         }
 
         [Test]
-        public void Constructor_RequestSender_Null_Is_Exceptional()
+        public void Constructor_RequestSender_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(null, _responseStorage, _logger));
         }
 
         [Test]
-        public void Constructor_ResponseStorage_Null_Is_Exceptional()
+        public void Constructor_ResponseStorage_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestSender, null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestSender, _responseStorage, null));
@@ -52,7 +52,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         [Test]
         public void Submit_NullOrEmptyRequests_Returns()
         {
-            var requestsManager = Build();
+            var requestsManager = BuildDataRequestsManager();
 
             Assert.DoesNotThrowAsync(async () => await requestsManager.Submit(null));
 
@@ -64,8 +64,8 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         [Test]
         public async Task Submit_OnlyCompletedRequests_Returns()
         {
-            var requestsManager = Build();
-            var factsetRequests = new List<MarketDataRequest> {Builder(true)};
+            var requestsManager = BuildDataRequestsManager();
+            var factsetRequests = new List<MarketDataRequest> {BuildMarketDataRequests(true)};
 
             await requestsManager.Submit(factsetRequests);
 
@@ -77,8 +77,8 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         [Test]
         public async Task Submit_IncompleteRequests_Returns()
         {
-            var requestsManager = Build();
-            var factsetRequests = new List<MarketDataRequest> { Builder(false) };
+            var requestsManager = BuildDataRequestsManager();
+            var factsetRequests = new List<MarketDataRequest> { BuildMarketDataRequests(false) };
 
             await requestsManager.Submit(factsetRequests);
 
@@ -91,12 +91,12 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
                 .MustHaveHappened();
         }
 
-        private MarketDataRequest Builder(bool completed)
+        private MarketDataRequest BuildMarketDataRequests(bool completed)
         {
             return new MarketDataRequest("a", "XLON", "e", InstrumentIdentifiers.Null(), null, null, "1", completed);
         }
 
-        private FactsetDataRequestsManager Build()
+        private FactsetDataRequestsManager BuildDataRequestsManager()
         {
             return new FactsetDataRequestsManager(_requestSender, _responseStorage, _logger);
         }

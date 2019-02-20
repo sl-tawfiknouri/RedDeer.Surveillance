@@ -30,7 +30,7 @@ namespace DataSynchroniser
             _heartbeatService.Initialise();
             _dataRequestSubscriber.Initiate();
 
-            _logger.LogInformation($"Mediator initiate complete");
+            _logger.LogInformation($"{nameof(Mediator)} initiate complete");
         }
     }
 }

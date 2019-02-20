@@ -154,7 +154,7 @@ namespace DataImport.Tests.Disk_IO
         [Test]
         public void ProcessFile_ReturnsFalse_ForEmptyOrNullPath()
         {
-            var monitor = Build();
+            var monitor = BuildAllocationFileMonitor();
 
             var result = monitor.ProcessFile(null);
 
@@ -164,14 +164,14 @@ namespace DataImport.Tests.Disk_IO
         [Test]
         public void ProcessFile_ReturnsFalse_APathButNoCsvReads()
         {
-            var monitor = Build();
+            var monitor = BuildAllocationFileMonitor();
 
             var result = monitor.ProcessFile("a-path");
 
             Assert.IsFalse(result);
         }
 
-        private AllocationFileMonitor Build()
+        private AllocationFileMonitor BuildAllocationFileMonitor()
         {
             return new AllocationFileMonitor(
                 _fileProcessor,

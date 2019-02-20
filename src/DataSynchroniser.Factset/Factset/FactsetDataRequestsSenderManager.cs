@@ -23,7 +23,7 @@ namespace DataSynchroniser.Api.Factset.Factset
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<FactsetSecurityResponseDto> Send(List<MarketDataRequest> factsetRequests)
+        public async Task<FactsetSecurityResponseDto> Send(IReadOnlyCollection<MarketDataRequest> factsetRequests)
         {
             if (factsetRequests == null
                 || !factsetRequests.Any())

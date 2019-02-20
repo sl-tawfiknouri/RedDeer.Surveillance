@@ -26,14 +26,14 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         }
 
         [Test]
-        public void Constructor_DailyBarRepository_Null_Is_Exceptional()
+        public void Constructor_DailyBarRepository_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsSenderManager(null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsSenderManager(_dailyBarRepository, null));
@@ -42,7 +42,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         [Test]
         public async Task Send_FactsetRequests_Empty_Returns()
         {
-            var senderManager = Build();
+            var senderManager = BuildRequestsSenderManager();
 
             await senderManager.Send(null);
 
@@ -54,7 +54,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         [Test]
         public async Task Send_FactsetRequests_PassedToRepository()
         {
-            var senderManager = Build();
+            var senderManager = BuildRequestsSenderManager();
             var factsetRequests = new List<MarketDataRequest> {MarketDataRequest.Null()};
 
             await senderManager.Send(factsetRequests);
@@ -64,7 +64,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
                 .MustHaveHappenedOnceExactly();
         }
 
-        private FactsetDataRequestsSenderManager Build()
+        private FactsetDataRequestsSenderManager BuildRequestsSenderManager()
         {
             return new FactsetDataRequestsSenderManager(_dailyBarRepository, _logger);
         }

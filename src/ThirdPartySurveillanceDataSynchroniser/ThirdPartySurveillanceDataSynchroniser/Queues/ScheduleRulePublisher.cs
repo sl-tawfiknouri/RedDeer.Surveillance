@@ -44,11 +44,11 @@ namespace DataSynchroniser.Queues
 
         public async Task RescheduleRuleRun(string systemProcessOperationId, IReadOnlyCollection<MarketDataRequest> bmllRequests)
         {
-            _logger?.LogInformation($"ScheduleRulePublisher beginning process");
+            _logger?.LogInformation($"{nameof(ScheduleRulePublisher)} beginning process");
 
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"ScheduleRulePublisher had a null or empty rule run id. Returning");
+                _logger.LogError($"{nameof(ScheduleRulePublisher)} had a null or empty rule run id. Returning");
                 return;
             }
 
@@ -62,7 +62,7 @@ namespace DataSynchroniser.Queues
 
             await _dataRequestRepository.UpdateToCompleteWithDuplicates(bmllRequests);
 
-            _logger?.LogInformation($"ScheduleRulePublisher completing process");
+            _logger?.LogInformation($"{nameof(ScheduleRulePublisher)} completing process");
         }
 
         private void RescheduleRuleRun(ISystemProcessOperationRuleRun ruleRun)
@@ -73,7 +73,7 @@ namespace DataSynchroniser.Queues
                 || ruleRun.ScheduleRuleEnd == null
                 || string.IsNullOrWhiteSpace(ruleRun.RuleParameterId))
             {
-                _logger?.LogWarning($"ScheduleRulePublisher received a badly formed rule run. Skipping.");
+                _logger?.LogWarning($"{nameof(ScheduleRulePublisher)} received a badly formed rule run. Skipping.");
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace DataSynchroniser.Queues
             var cts = new CancellationTokenSource();
             var serialisedMessage = _messageBusSerialiser.SerialiseScheduledExecution(scheduledExecution);
 
-            _logger?.LogWarning($"ScheduleRulePublisher about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            _logger?.LogWarning($"{nameof(ScheduleRulePublisher)} about to submit {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
             var sendToQueue = _awsQueueClient.SendToQueue(_awsConfiguration.ScheduleRuleDistributedWorkQueueName, serialisedMessage, cts.Token);
 
@@ -106,10 +106,10 @@ namespace DataSynchroniser.Queues
 
             if (sendToQueue.IsCanceled)
             {
-                _logger?.LogError($"ScheduleRulePublisher timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+                _logger?.LogError($"{nameof(ScheduleRulePublisher)} timed out communicating with queue for {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
             }
 
-            _logger?.LogWarning($"ScheduleRulePublisher completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+            _logger?.LogWarning($"{nameof(ScheduleRulePublisher)} completed submitting {serialisedMessage} to {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
         }
     }
 }

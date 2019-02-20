@@ -11,7 +11,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         [Test]
         public void Filter_Null_Returns_False()
         {
-            var filter = Build();
+            var filter = BuildRequestsFilter();
 
             var result = filter.Filter(null);
 
@@ -21,7 +21,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         [Test]
         public void Filter_Empty_Cfi_Returns_False()
         {
-            var filter = Build();
+            var filter = BuildRequestsFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", null, instrument, null, null, null, false);
 
@@ -45,7 +45,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         [TestCase("M")]
         public void Filter_NonEquity_Cfi_Returns_False(string cfi)
         {
-            var filter = Build();
+            var filter = BuildRequestsFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
@@ -67,7 +67,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         [TestCase("EM")]
         public void Filter_Equity_Cfi_Returns_True(string cfi)
         {
-            var filter = Build();
+            var filter = BuildRequestsFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
@@ -76,7 +76,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
             Assert.IsTrue(result);
         }
 
-        private MarketDataRequestFilter Build()
+        private MarketDataRequestFilter BuildRequestsFilter()
         {
             return new MarketDataRequestFilter();
         }

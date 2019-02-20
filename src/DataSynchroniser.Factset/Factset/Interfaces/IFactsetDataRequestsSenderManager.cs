@@ -7,6 +7,6 @@ namespace DataSynchroniser.Api.Factset.Factset.Interfaces
 {
     public interface IFactsetDataRequestsSenderManager
     {
-        Task<FactsetSecurityResponseDto> Send(List<MarketDataRequest> factsetRequests);
+        Task<FactsetSecurityResponseDto> Send(IReadOnlyCollection<MarketDataRequest> factsetRequests);
     }
 }

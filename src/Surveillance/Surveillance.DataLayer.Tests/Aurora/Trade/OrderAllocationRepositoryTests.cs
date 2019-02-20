@@ -29,7 +29,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() => new OrderAllocationRepository(_connectionFactory , null));
         }

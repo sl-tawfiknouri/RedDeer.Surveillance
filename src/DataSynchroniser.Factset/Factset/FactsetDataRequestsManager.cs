@@ -11,16 +11,16 @@ namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsManager : IFactsetDataRequestsManager
     {
-        private readonly IFactsetDataRequestsSenderManager _requestSender;
+        private readonly IFactsetDataRequestsApiManager _requestApi;
         private readonly IReddeerMarketDailySummaryRepository _responseStorage;
         private readonly ILogger<FactsetDataRequestsManager> _logger;
 
         public FactsetDataRequestsManager(
-            IFactsetDataRequestsSenderManager requestSender,
+            IFactsetDataRequestsApiManager requestApi,
             IReddeerMarketDailySummaryRepository responseRepository,
             ILogger<FactsetDataRequestsManager> logger)
         {
-            _requestSender = requestSender ?? throw new ArgumentNullException(nameof(requestSender));
+            _requestApi = requestApi ?? throw new ArgumentNullException(nameof(requestApi));
             _responseStorage = responseRepository ?? throw new ArgumentNullException(nameof(responseRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -45,7 +45,7 @@ namespace DataSynchroniser.Api.Factset.Factset
                 }
 
                 _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send about to send {requests.Count} requests to the request sender");
-                var dailySummaries = await _requestSender.Send(requests);
+                var dailySummaries = await _requestApi.Send(requests);
                 _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send has sent {requests.Count} requests to the request sender");
 
                 _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send about to record the response for {requests.Count} requests to the request sender");

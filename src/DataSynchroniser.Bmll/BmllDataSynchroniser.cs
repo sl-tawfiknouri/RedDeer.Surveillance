@@ -32,7 +32,7 @@ namespace DataSynchroniser.Api.Bmll
             ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext,
             IReadOnlyCollection<MarketDataRequest> marketDataRequests)
         {
-            _logger.LogInformation($"{nameof(BmllDataSynchroniser)} Handle began processing a request");
+            _logger.LogInformation($"{nameof(BmllDataSynchroniser)} Handle began processing a request for {nameof(systemProcessOperationId)} {systemProcessOperationId}");
 
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {

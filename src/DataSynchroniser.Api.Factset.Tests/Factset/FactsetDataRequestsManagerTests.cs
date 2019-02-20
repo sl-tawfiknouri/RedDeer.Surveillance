@@ -16,14 +16,14 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
     [TestFixture]
     public class FactsetDataRequestsManagerTests
     {
-        private IFactsetDataRequestsSenderManager _requestSender;
+        private IFactsetDataRequestsApiManager _requestApi;
         private IReddeerMarketDailySummaryRepository _responseStorage;
         private ILogger<FactsetDataRequestsManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _requestSender = A.Fake<IFactsetDataRequestsSenderManager>();
+            _requestApi = A.Fake<IFactsetDataRequestsApiManager>();
             _responseStorage = A.Fake<IReddeerMarketDailySummaryRepository>();
             _logger = A.Fake<ILogger<FactsetDataRequestsManager>>();
         }
@@ -39,14 +39,14 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
         public void Constructor_ResponseStorage_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestSender, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestApi, null, _logger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestSender, _responseStorage, null));
+            Assert.Throws<ArgumentNullException>(() => new FactsetDataRequestsManager(_requestApi, _responseStorage, null));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
             Assert.DoesNotThrowAsync(async () => await requestsManager.Submit(null));
 
             A
-                .CallTo(() => _requestSender.Send(A<List<MarketDataRequest>>.Ignored))
+                .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -70,7 +70,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
             await requestsManager.Submit(factsetRequests);
 
             A
-                .CallTo(() => _requestSender.Send(A<List<MarketDataRequest>>.Ignored))
+                .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
                 .MustNotHaveHappened();
         }
 
@@ -83,7 +83,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
             await requestsManager.Submit(factsetRequests);
 
             A
-                .CallTo(() => _requestSender.Send(A<List<MarketDataRequest>>.Ignored))
+                .CallTo(() => _requestApi.Send(A<List<MarketDataRequest>>.Ignored))
                 .MustHaveHappened();
 
             A
@@ -98,7 +98,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Factset
 
         private FactsetDataRequestsManager BuildDataRequestsManager()
         {
-            return new FactsetDataRequestsManager(_requestSender, _responseStorage, _logger);
+            return new FactsetDataRequestsManager(_requestApi, _responseStorage, _logger);
         }
 
     }

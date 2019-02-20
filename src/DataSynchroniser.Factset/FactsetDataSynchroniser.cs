@@ -55,7 +55,7 @@ namespace DataSynchroniser.Api.Factset
 
             if (!filteredMarketDataRequests.Any())
             {
-                _logger.LogInformation($"{nameof(FactsetDataSynchroniser)} Handle received market data requests but none passed the filter");
+                _logger.LogInformation($"{nameof(FactsetDataSynchroniser)} Handle received market data requests but none passed the data request filter (equity CFI)");
                 return;
             }
 

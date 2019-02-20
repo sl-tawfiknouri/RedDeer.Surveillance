@@ -16,7 +16,7 @@ namespace DataSynchroniser.Api.Factset.Tests
     public class FactsetDataSynchroniserTests
     {
         private IFactsetDataRequestsManager _dataRequestsManager;
-        private IMarketDataRequestFilter _requestFilter;
+        private IFactsetDataRequestFilter _requestFilter;
         private ISystemProcessOperationThirdPartyDataRequestContext _requestContext;
         private ILogger<FactsetDataSynchroniser> _logger;
 
@@ -25,8 +25,8 @@ namespace DataSynchroniser.Api.Factset.Tests
         {
             _dataRequestsManager = A.Fake<IFactsetDataRequestsManager>();
 
-            _requestFilter = A.Fake<IMarketDataRequestFilter>();
-            A.CallTo(() => _requestFilter.Filter(A<MarketDataRequest>.Ignored)).Returns(true);
+            _requestFilter = A.Fake<IFactsetDataRequestFilter>();
+            A.CallTo(() => _requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(true);
 
             _requestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             _logger = A.Fake<ILogger<FactsetDataSynchroniser>>();
@@ -67,7 +67,7 @@ namespace DataSynchroniser.Api.Factset.Tests
         public async Task Handle_NonRelevantRequests_DoesNotThrow()
         {
             var synchroniser = BuildDataSynchroniser();
-            A.CallTo(() => _requestFilter.Filter(A<MarketDataRequest>.Ignored)).Returns(false);
+            A.CallTo(() => _requestFilter.ValidAssetType(A<MarketDataRequest>.Ignored)).Returns(false);
 
             var request = new List<MarketDataRequest>
             {

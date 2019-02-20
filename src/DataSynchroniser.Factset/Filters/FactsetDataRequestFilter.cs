@@ -4,9 +4,9 @@ using Domain.Markets;
 
 namespace DataSynchroniser.Api.Factset.Filters
 {
-    public class MarketDataRequestFilter : IMarketDataRequestFilter
+    public class FactsetDataRequestFilter : IFactsetDataRequestFilter
     {
-        public bool Filter(MarketDataRequest request)
+        public bool ValidAssetType(MarketDataRequest request)
         {
             if (request == null)
             {

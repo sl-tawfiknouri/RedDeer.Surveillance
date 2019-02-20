@@ -13,7 +13,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
         {
             var filter = BuildRequestsFilter();
 
-            var result = filter.Filter(null);
+            var result = filter.ValidAssetType(null);
 
             Assert.IsFalse(result);
         }
@@ -25,7 +25,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", null, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsFalse(result);
         }
@@ -49,7 +49,7 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsFalse(result);
         }
@@ -71,14 +71,14 @@ namespace DataSynchroniser.Api.Factset.Tests.Filters
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsTrue(result);
         }
 
-        private MarketDataRequestFilter BuildRequestsFilter()
+        private FactsetDataRequestFilter BuildRequestsFilter()
         {
-            return new MarketDataRequestFilter();
+            return new FactsetDataRequestFilter();
         }
     }
 }

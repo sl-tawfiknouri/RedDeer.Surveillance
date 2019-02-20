@@ -14,12 +14,12 @@ namespace DataSynchroniser.Api.Bmll
     public class BmllDataSynchroniser : IBmllDataSynchroniser
     {
         private readonly IBmllDataRequestManager _requestManager;
-        private readonly IMarketDataRequestFilter _filter;
+        private readonly IBmllDataRequestFilter _filter;
         private readonly ILogger<BmllDataSynchroniser> _logger;
 
         public BmllDataSynchroniser(
             IBmllDataRequestManager requestManager,
-            IMarketDataRequestFilter filter,
+            IBmllDataRequestFilter filter,
             ILogger<BmllDataSynchroniser> logger)
         {
             _requestManager = requestManager ?? throw new ArgumentNullException(nameof(requestManager));
@@ -53,7 +53,7 @@ namespace DataSynchroniser.Api.Bmll
                 return;
             }
 
-            var filteredMarketDataRequests = marketDataRequests.Where(_filter.Filter).ToList();
+            var filteredMarketDataRequests = marketDataRequests.Where(_filter.ValidAssetType).ToList();
             if (!filteredMarketDataRequests.Any())
             {
                 _logger?.LogInformation($"{nameof(BmllDataSynchroniser)} Handle received a null or empty market data requests collection");

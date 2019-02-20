@@ -14,12 +14,12 @@ namespace DataSynchroniser.Api.Factset
     public class FactsetDataSynchroniser : IFactsetDataSynchroniser
     {
         private readonly IFactsetDataRequestsManager _factsetDataRequestsManager;
-        private readonly IMarketDataRequestFilter _requestFilter;
+        private readonly IFactsetDataRequestFilter _requestFilter;
         private readonly ILogger<FactsetDataSynchroniser> _logger;
 
         public FactsetDataSynchroniser(
             IFactsetDataRequestsManager factsetDataRequestsManager,
-            IMarketDataRequestFilter requestFilter,
+            IFactsetDataRequestFilter requestFilter,
             ILogger<FactsetDataSynchroniser> logger)
         {
             _factsetDataRequestsManager = factsetDataRequestsManager ?? throw new ArgumentNullException(nameof(factsetDataRequestsManager));
@@ -51,7 +51,7 @@ namespace DataSynchroniser.Api.Factset
                 return;
             }
 
-            var filteredMarketDataRequests = marketDataRequests.Where(_requestFilter.Filter).ToList();
+            var filteredMarketDataRequests = marketDataRequests.Where(_requestFilter.ValidAssetType).ToList();
 
             if (!filteredMarketDataRequests.Any())
             {

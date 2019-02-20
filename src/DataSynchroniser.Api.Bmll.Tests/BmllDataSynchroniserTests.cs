@@ -14,7 +14,7 @@ namespace DataSynchroniser.Api.Bmll.Tests
     public class BmllDataSynchroniserTests
     {
         private IBmllDataRequestManager _dataRequestManager;
-        private IMarketDataRequestFilter _filter;
+        private IBmllDataRequestFilter _filter;
         private ISystemProcessOperationThirdPartyDataRequestContext _requestContext;
         private ILogger<BmllDataSynchroniser> _logger;
 
@@ -22,7 +22,7 @@ namespace DataSynchroniser.Api.Bmll.Tests
         public void Setup()
         {
             _dataRequestManager = A.Fake<IBmllDataRequestManager>();
-            _filter = new MarketDataRequestFilter();
+            _filter = new BmllDataRequestFilter();
             _requestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
             _logger = A.Fake<ILogger<BmllDataSynchroniser>>();
         }

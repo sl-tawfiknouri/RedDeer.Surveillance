@@ -18,7 +18,7 @@ namespace DataSynchroniser.Api.Bmll
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IBmllDataSynchroniser>().Use<BmllDataSynchroniser>();
-            For<IMarketDataRequestFilter>().Use<MarketDataRequestFilter>();
+            For<IBmllDataRequestFilter>().Use<BmllDataRequestFilter>();
 
             For<IBmllDataRequestManager>().Use<BmllDataRequestsManager>();
             For<IBmllDataRequestsSenderManager>().Use<BmllDataRequestsSenderManager>();

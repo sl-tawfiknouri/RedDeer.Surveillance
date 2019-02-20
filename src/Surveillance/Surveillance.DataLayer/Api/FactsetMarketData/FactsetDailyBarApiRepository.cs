@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Policies.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
@@ -17,13 +17,16 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
         private const string HeartbeatRoute = "api/factset/heartbeat";
         private const string Route = "api/factset/surveillance/v1";
 
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<FactsetDailyBarApiRepository> _logger;
 
         public FactsetDailyBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
+            IPolicyFactory policyFactory,
             ILogger<FactsetDailyBarApiRepository> logger)
             : base(dataLayerConfiguration, logger)
         {
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -45,18 +48,10 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
 
             var httpClient = BuildHttpClient();
             var json = JsonConvert.SerializeObject(request);
+            var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 5, TimeSpan.FromMinutes(1));
+
             HttpResponseMessage responseMessage = null;
-
-            var retryPolicy =
-                Policy
-                    .Handle<Exception>()
-                    .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                    .WaitAndRetryAsync(5, i => TimeSpan.FromMinutes(1));
-
-            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3)); 
-            var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
-
-            await policyWrap.ExecuteAsync(async () =>
+            await policy.ExecuteAsync(async () =>
             {
                 responseMessage = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
 

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Policies.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Emuns;
 using Firefly.Service.Data.BMLL.Shared.Requests;
@@ -22,13 +23,16 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
         private const string StatusRoute = "api/bmll/status/v1";
         private const string MinuteBarRoute = "api/bmll/minutebars/v1";
 
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<BmllTimeBarApiRepository> _logger;
 
         public BmllTimeBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
+            IPolicyFactory policyFactory,
             ILogger<BmllTimeBarApiRepository> logger)
             : base(dataLayerConfiguration, logger)
         {
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -49,18 +53,10 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             try
             {
                 var json = JsonConvert.SerializeObject(createCommand);
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(10, i => TimeSpan.FromMinutes(1));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+                var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 10, TimeSpan.FromMinutes(1));
 
                 HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                await policy.ExecuteAsync(async () =>
                 {
                     response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
@@ -111,18 +107,10 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             try
             {
                 var json = JsonConvert.SerializeObject(statusCommand);
-
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(3, i => TimeSpan.FromMinutes(1));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+                var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 3, TimeSpan.FromMinutes(1));
 
                 HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                await policy.ExecuteAsync(async () =>
                 {
                     response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
@@ -195,18 +183,10 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             try
             {
                 var json = JsonConvert.SerializeObject(request);
-
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(1, i => TimeSpan.FromSeconds(30));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
+                var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 1, TimeSpan.FromSeconds(30));
 
                 HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                await policy.ExecuteAsync(async () =>
                 {
                     response = await httpClient.PostAsync(MinuteBarRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using DataSynchroniser.Api.Policies.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -16,11 +17,13 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
     public class FactsetDailyBarApiRepositoryTests
     {
         private IDataLayerConfiguration _configuration;
+        private IPolicyFactory _policyFactory;
         private ILogger<FactsetDailyBarApiRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _policyFactory = A.Fake<IPolicyFactory>();
             _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<FactsetDailyBarApiRepository>>();
         }
@@ -29,7 +32,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         [Explicit]
         public async Task Get()
         {
-            var repo = new FactsetDailyBarApiRepository(_configuration, _logger);
+            var repo = new FactsetDailyBarApiRepository(_configuration, _policyFactory, _logger);
 
             var message = new FactsetSecurityDailyRequest
             {
@@ -53,7 +56,7 @@ namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
         [Explicit]
         public async Task Heartbeating()
         {
-            var repo = new FactsetDailyBarApiRepository(_configuration, _logger);
+            var repo = new FactsetDailyBarApiRepository(_configuration, _policyFactory, _logger);
             var cts = new CancellationTokenSource();
 
             await repo.HeartBeating(cts.Token);

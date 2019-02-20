@@ -22,7 +22,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         private IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
         private IBmllTimeBarApiRepository _timeBarRepository;
-        private ILogger<BmllDataRequestsSenderManager> _logger;
+        private ILogger<BmllDataRequestsApiManager> _logger;
 
         [SetUp]
         public void Setup()
@@ -30,7 +30,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
             _requestsGetTimeBars = A.Fake<IBmllDataRequestsGetTimeBars>();
             _marketDataRequestProjector = A.Fake<IMarketDataRequestToMinuteBarRequestKeyDtoProjector>();
             _timeBarRepository = A.Fake<IBmllTimeBarApiRepository>();
-            _logger = A.Fake<ILogger<BmllDataRequestsSenderManager>>();
+            _logger = A.Fake<ILogger<BmllDataRequestsApiManager>>();
 
             A
                 .CallTo(() => _timeBarRepository.HeartBeating(A<CancellationToken>.Ignored))
@@ -41,28 +41,28 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         public void Constructor_Null_GetTimeBars_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(null, _marketDataRequestProjector, _timeBarRepository, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(null, _marketDataRequestProjector, _timeBarRepository, _logger));
         }
 
         [Test]
         public void Constructor_Null_Projector_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, null, _timeBarRepository, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, null, _timeBarRepository, _logger));
         }
 
         [Test]
         public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, null, _logger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, null));
         }
 
         [Test]
@@ -126,9 +126,9 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
             Assert.IsEmpty(result.Value);
         }
 
-        private BmllDataRequestsSenderManager BuildSenderManager()
+        private BmllDataRequestsApiManager BuildSenderManager()
         {
-            return new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, _logger);
+            return new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, _logger);
         }
     }
 }

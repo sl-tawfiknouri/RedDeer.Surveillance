@@ -11,16 +11,16 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {
-        private readonly IBmllDataRequestsSenderManager _senderManager;
+        private readonly IBmllDataRequestsApiManager _apiManager;
         private readonly IBmllDataRequestsStorageManager _storageManager;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
-            IBmllDataRequestsSenderManager senderManager,
+            IBmllDataRequestsApiManager apiManager,
             IBmllDataRequestsStorageManager storageManager,
             ILogger<BmllDataRequestsManager> logger)
         {
-            _senderManager = senderManager ?? throw new ArgumentNullException(nameof(senderManager));
+            _apiManager = apiManager ?? throw new ArgumentNullException(nameof(apiManager));
             _storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -56,7 +56,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 }
 
                 // REQUEST IT
-                var requests = await _senderManager.Send(bmllRequests, false);
+                var requests = await _apiManager.Send(bmllRequests, false);
                 var retries = 3;
 
                 while ((!requests.Success) && retries > 0)
@@ -64,7 +64,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                     _logger.LogWarning($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
 
                     var forceCompletion = retries == 1;
-                    requests = await _senderManager.Send(bmllRequests, forceCompletion);
+                    requests = await _apiManager.Send(bmllRequests, forceCompletion);
 
                     retries -= 1;
                 }

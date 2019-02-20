@@ -15,14 +15,14 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
     [TestFixture]
     public class BmllDataRequestsManagerTests
     {
-        private IBmllDataRequestsSenderManager _senderManager;
+        private IBmllDataRequestsApiManager _apiManager;
         private IBmllDataRequestsStorageManager _storageManager;
         private ILogger<BmllDataRequestsManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _senderManager = A.Fake<IBmllDataRequestsSenderManager>();
+            _apiManager = A.Fake<IBmllDataRequestsApiManager>();
             _storageManager = A.Fake<IBmllDataRequestsStorageManager>();
             _logger = A.Fake<ILogger<BmllDataRequestsManager>>();
         }
@@ -31,20 +31,20 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         public void Constructor_ConsidersNull_StorageManager_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, null,  _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, null,  _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNull_Logger_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, _storageManager, null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, _storageManager, null));
         }
 
         [Test]
-        public async Task Submit_DoesCall_Store_WhenBmllRequests_Submitted()
+        public async Task Submit_BmllRequests_CallsStore()
         {
-            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _logger);
+            var manager = new BmllDataRequestsManager(_apiManager, _storageManager, _logger);
 
             var request = new List<MarketDataRequest>()
             {

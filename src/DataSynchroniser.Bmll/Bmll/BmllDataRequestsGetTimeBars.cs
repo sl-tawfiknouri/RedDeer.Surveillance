@@ -79,7 +79,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             };
         }
 
-        private List<GetMinuteBarsRequest> ConsolidatedMinuteBars(List<GetMinuteBarsRequest> requests)
+        private IList<GetMinuteBarsRequest> ConsolidatedMinuteBars(IList<GetMinuteBarsRequest> requests)
         {
             if (requests == null
                 || !requests.Any())

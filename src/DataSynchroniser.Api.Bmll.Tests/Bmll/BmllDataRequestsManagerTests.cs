@@ -28,14 +28,14 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         }
 
         [Test]
-        public void Constructor_ConsidersNull_StorageManager_Exceptional()
+        public void Constructor_StorageManager_IsNull_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, null,  _logger));
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Logger_Exceptional()
+        public void Constructor_ConsidersNull_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, _storageManager, null));

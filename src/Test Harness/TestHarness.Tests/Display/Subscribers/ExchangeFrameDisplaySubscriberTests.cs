@@ -19,7 +19,7 @@ namespace TestHarness.Tests.Display.Subscribers
         }
 
         [Test]
-        public void Constructor_NullConsole_IsExceptional()
+        public void Constructor_NullConsole_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new ExchangeFrameDisplaySubscriber(null));

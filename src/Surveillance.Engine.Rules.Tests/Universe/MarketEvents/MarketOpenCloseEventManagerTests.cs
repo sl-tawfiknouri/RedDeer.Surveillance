@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.MarketEvents
         }
 
         [Test]
-        public void Constructor_NullRepository_IsExceptional()
+        public void Constructor_NullRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new MarketOpenCloseEventManager(null, _logger));

@@ -37,7 +37,7 @@ namespace DataSynchroniser.Tests.Manager
         }
 
         [Test]
-        public void Constructor_Null_Repository_IsExceptional()
+        public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => 
@@ -51,7 +51,7 @@ namespace DataSynchroniser.Tests.Manager
         }
 
         [Test]
-        public void Constructor_Null_Logger_IsExceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => 

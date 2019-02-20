@@ -23,7 +23,7 @@ namespace Surveillance.DataLayer.Tests.Api.ExchangeRate
         }
 
         [Test]
-        public void Constructor_NullLogger_ConsideredExceptional()
+        public void Constructor_NullLogger_ConsideredThrows_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new ExchangeRateApiRepository(_configuration, null));

@@ -23,21 +23,21 @@ namespace DataSynchroniser.Tests
         }
         
         [Test]
-        public void Constructor_NullDataRequestsService_IsExceptional()
+        public void Constructor_NullDataRequestsService_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(null, _applicationHeartbeatService, _logger));
         }
 
         [Test]
-        public void Constructor_NullApplicationHeartbeatService_IsExceptional()
+        public void Constructor_NullApplicationHeartbeatService_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, null, _logger));
         }
 
         [Test]
-        public void Constructor_NullLogger_IsExceptional()
+        public void Constructor_NullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, _applicationHeartbeatService, null));

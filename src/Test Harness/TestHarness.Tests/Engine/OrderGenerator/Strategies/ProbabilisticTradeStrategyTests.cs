@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
         }
 
         [Test]
-        public void Constructor_ConsidersANullLogger_ToBeExceptional()
+        public void Constructor_ConsidersANullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new MarkovTradeStrategy(null, _tradeVolumeStrategy));

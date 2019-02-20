@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataSynchroniser.Api.Policies.Interfaces
+namespace PollyFacade.Policies.Interfaces
 {
     public interface IPolicyFactory
     {

@@ -5,6 +5,8 @@ using DataSynchroniser.Api.Bmll.Filters.Interfaces;
 using DataSynchroniser.Api.Bmll.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using PollyFacade.Policies;
+using PollyFacade.Policies.Interfaces;
 using StructureMap;
 
 namespace DataSynchroniser.Api.Bmll
@@ -26,6 +28,7 @@ namespace DataSynchroniser.Api.Bmll
             For<IGetTimeBarPair>().Use<GetTimeBarPair>();
             For<IMarketDataRequestToMinuteBarRequestKeyDtoProjector>().Use<MarketDataRequestToMinuteBarRequestKeyDtoProjector>();
             For<IBmllDataRequestsGetTimeBars>().Use<BmllDataRequestsGetTimeBars>();
+            For<IPolicyFactory>().Use<PolicyFactory>();
         }
     }
 }

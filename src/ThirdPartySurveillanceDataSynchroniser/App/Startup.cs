@@ -1,5 +1,4 @@
 ﻿using System;
-using DataSynchroniser.Api;
 using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
@@ -53,7 +52,6 @@ namespace DataSynchroniser.App
                 config.IncludeRegistry<BmllDataSynchroniserRegistry>();
                 config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
                 config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
-                config.IncludeRegistry<DataSynchroniserApiRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });

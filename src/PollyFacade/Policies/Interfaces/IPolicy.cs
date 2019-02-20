@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace DataSynchroniser.Api.Policies.Interfaces
+namespace PollyFacade.Policies.Interfaces
 {
     public interface IPolicy<T>
     {

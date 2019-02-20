@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataSynchroniser.Api.Policies.Interfaces;
 using Polly.Wrap;
+using PollyFacade.Policies.Interfaces;
 
-namespace DataSynchroniser.Api.Policies
+namespace PollyFacade.Policies
 {
     public class PollyPolicy<T> : IPolicy<T>
     {

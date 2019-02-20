@@ -1,5 +1,7 @@
 ﻿using Domain.Financial;
 using Domain.Financial.Interfaces;
+using PollyFacade.Policies;
+using PollyFacade.Policies.Interfaces;
 using StructureMap;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
@@ -60,6 +62,7 @@ namespace Surveillance.DataLayer
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
             For<IFileUploadOrdersRepository>().Use<FileUploadOrdersRepository>();
             For<IFileUploadOrderAllocationRepository>().Use<FileUploadOrderAllocationRepository>();
+            For<IPolicyFactory>().Use<PolicyFactory>();
         }
     }
 }

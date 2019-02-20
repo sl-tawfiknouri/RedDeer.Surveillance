@@ -4,13 +4,12 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DataSynchroniser.Api.Policies.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Emuns;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly;
+using PollyFacade.Policies.Interfaces;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 

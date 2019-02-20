@@ -85,19 +85,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{5214
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.DataCoordinator.Tests", "Surveillance.Engine.DataCoordinator.Tests\Surveillance.Engine.DataCoordinator.Tests.csproj", "{5A54ED4B-2635-444F-8955-607EF8A6329D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Factset", "DataSynchroniser.Factset\DataSynchroniser.Api.Factset.csproj", "{ABD22F63-5F95-4CAF-9BAE-41E1E1EC9B4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Factset", "DataSynchroniser.Factset\DataSynchroniser.Api.Factset.csproj", "{ABD22F63-5F95-4CAF-9BAE-41E1E1EC9B4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Bmll", "DataSynchroniser.Bmll\DataSynchroniser.Api.Bmll.csproj", "{A4FAA6BC-C602-4F37-82B9-C1A1E346074C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Bmll", "DataSynchroniser.Bmll\DataSynchroniser.Api.Bmll.csproj", "{A4FAA6BC-C602-4F37-82B9-C1A1E346074C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Markit", "DataSynchroniser.Markit\DataSynchroniser.Api.Markit.csproj", "{26EA9793-451E-41DB-9F4D-74ECF2951A18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Markit", "DataSynchroniser.Markit\DataSynchroniser.Api.Markit.csproj", "{26EA9793-451E-41DB-9F4D-74ECF2951A18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Bmll.Tests", "DataSynchroniser.Api.Bmll.Tests\DataSynchroniser.Api.Bmll.Tests.csproj", "{C2A41336-0F56-4FB7-9DD5-E20A8F92CED0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Bmll.Tests", "DataSynchroniser.Api.Bmll.Tests\DataSynchroniser.Api.Bmll.Tests.csproj", "{C2A41336-0F56-4FB7-9DD5-E20A8F92CED0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Factset.Tests", "DataSynchroniser.Api.Factset.Tests\DataSynchroniser.Api.Factset.Tests.csproj", "{1403EF50-CAC3-4EAB-9AD0-BEB697445924}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Factset.Tests", "DataSynchroniser.Api.Factset.Tests\DataSynchroniser.Api.Factset.Tests.csproj", "{1403EF50-CAC3-4EAB-9AD0-BEB697445924}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api.Markit.Tests", "DataSynchroniser.Api.Markit.Tests\DataSynchroniser.Api.Markit.Tests.csproj", "{655AF33B-A3B8-4C2C-A467-DDF4FFD2E952}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Markit.Tests", "DataSynchroniser.Api.Markit.Tests\DataSynchroniser.Api.Markit.Tests.csproj", "{655AF33B-A3B8-4C2C-A467-DDF4FFD2E952}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSynchroniser.Api", "DataSynchroniser.Api\DataSynchroniser.Api.csproj", "{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api", "DataSynchroniser.Api\DataSynchroniser.Api.csproj", "{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PollyFacade", "PollyFacade\PollyFacade.csproj", "{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -253,6 +255,10 @@ Global
 		{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -295,6 +301,7 @@ Global
 		{1403EF50-CAC3-4EAB-9AD0-BEB697445924} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
 		{655AF33B-A3B8-4C2C-A467-DDF4FFD2E952} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
 		{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6} = {8C5F2FF5-3203-4DB2-83DF-322184EF6B49}
+		{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56} = {5214A434-9675-426D-BD03-A34FE2F963E5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

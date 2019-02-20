@@ -1,8 +1,8 @@
 ﻿using System;
-using DataSynchroniser.Api.Policies.Interfaces;
 using Polly;
+using PollyFacade.Policies.Interfaces;
 
-namespace DataSynchroniser.Api.Policies
+namespace PollyFacade.Policies
 {
     public class PolicyFactory : IPolicyFactory
     {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using DataSynchroniser.Api.Policies.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using PollyFacade.Policies.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData;
 using Surveillance.DataLayer.Configuration.Interfaces;

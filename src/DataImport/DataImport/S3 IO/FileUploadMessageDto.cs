@@ -8,5 +8,6 @@
         public string Bucket { get; set; }
         public string FileName { get; set; }
         public long FileSize { get; set; }
+        public string VersionId { get; set; }
     }
 }

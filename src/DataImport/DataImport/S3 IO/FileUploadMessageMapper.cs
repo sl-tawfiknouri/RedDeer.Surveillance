@@ -1,7 +1,8 @@
-﻿using System.Dynamic;
+﻿using System.Linq;
+using Amazon.S3.Util;
+using Amazon.SimpleNotificationService.Util;
 using DataImport.S3_IO.Interfaces;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace DataImport.S3_IO
 {
@@ -9,16 +10,16 @@ namespace DataImport.S3_IO
     {
         public FileUploadMessageDto Map(string json)
         {
-            var converter = new ExpandoObjectConverter();
-
-            dynamic message = JsonConvert.DeserializeObject<ExpandoObject>(json, converter);
-            dynamic message2 = JsonConvert.DeserializeObject<ExpandoObject>(message.Message, converter);
+            var snsMessage = Message.ParseMessage(json);
+            var s3Event = JsonConvert.DeserializeObject<S3EventNotification>(snsMessage.MessageText);
+            var record = s3Event.Records.Single();
 
             return new FileUploadMessageDto
             {
-                FileName = message2.Records[0].s3.@object.key,
-                FileSize = message2.Records[0].s3.@object.size,
-                Bucket = message2.Records[0].s3.bucket.name
+                FileName = record.S3.Object.Key,
+                FileSize = record.S3.Object.Size,
+                VersionId = record.S3.Object.VersionId,
+                Bucket = record.S3.Bucket.Name
             };
         }
     }

@@ -20,7 +20,7 @@ namespace Utilities.Aws_IO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> RetrieveFile(string bucketName, string key, string targetFile, bool retry = true)
+        public async Task<bool> RetrieveFile(string bucketName, string key, string versionId, string targetFile, bool retry = true)
         {
             try
             {
@@ -32,10 +32,10 @@ namespace Utilities.Aws_IO
                     Key = key
                 };
 
-                _logger.LogInformation($"AwsS3Client fetching object with key {key}");
+                _logger.LogInformation($"AwsS3Client fetching object with key {key}, versionId {versionId} from bucket {bucketName}.");
                 var result = await _s3Client.GetObjectAsync(getObjectRequest, cts.Token);
 
-                _logger.LogInformation($"AwsS3Client fetched object with key {key}. Now writing to disk at {targetFile}");
+                _logger.LogInformation($"AwsS3Client fetched object with key {key}, versionId {versionId} from bucket {bucketName}. Now writing to disk at {targetFile}");
                 await result.WriteResponseStreamToFileAsync(targetFile, false, cts.Token);
 
                 return true;
@@ -45,7 +45,7 @@ namespace Utilities.Aws_IO
                 if (retry)
                 {
                     var newKey = Uri.UnescapeDataString(key).Replace('+', ' ');
-                    return await RetrieveFile(bucketName, newKey, targetFile, false);
+                    return await RetrieveFile(bucketName, newKey, versionId, targetFile, false);
                 }
                 else
                 {

@@ -213,20 +213,20 @@ namespace DataImport.S3_IO
             }
 
             var newPath = Path.Combine(ftpDirectoryPath, filePath);
-            var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, newPath);
+            var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, dto.VersionId, newPath);
 
             if (retries <= 0)
                 _logger.LogInformation($"S3 Process File ran out of retries for processing file {dto.FileName}");
 
             if (result)
             {
-                _logger.LogInformation($"S3 Processor successfully retrieved file from {dto.Bucket} {dto.FileName} to {newPath}");
+                _logger.LogInformation($"S3 Processor successfully retrieved file from {dto.Bucket} {dto.FileName} {dto.VersionId} to {newPath}");
                 return;
             }
 
             if (retries <= 0)
             {
-                _logger.LogError($"S3 Processor ran out of retries trying to fetch from {dto.Bucket} {dto.FileName} to {newPath}");
+                _logger.LogError($"S3 Processor ran out of retries trying to fetch from {dto.Bucket} {dto.FileName} {dto.VersionId} to {newPath}");
                 return;
             }
 

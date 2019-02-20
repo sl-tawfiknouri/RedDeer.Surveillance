@@ -41,7 +41,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             if (bmllRequests == null
                 || !bmllRequests.Any())
             {
-                _logger.LogInformation($"BmllDataRequestsSenderManager received a null or empty requests collection. Returning.");
+                _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} received a null or empty requests collection. Returning.");
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
@@ -53,7 +53,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             try
             {
-                _logger.LogInformation($"BmllDataRequestSenderManager beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
+                _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
 
                 // step 0.
                 // project to request keys
@@ -62,7 +62,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 if (keys == null
                     || !keys.Any())
                 {
-                    _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
+                    _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
 
                     return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
                 }
@@ -85,13 +85,13 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 // get minute bar request
                 var timeBarResponses = _requestsGetTimeBars.GetTimeBars(keys);
 
-                _logger.LogInformation($"BmllDataRequestSenderManager completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
+                _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, timeBarResponses);
             }
             catch (Exception e)
             {
-                _logger?.LogError($"BmllDataRequestSenderManager encountered an unexpected error during processing. {e.Message} {e.InnerException?.Message}");
+                _logger?.LogError($"{nameof(BmllDataRequestsSenderManager)} encountered an unexpected error during processing. {e.Message} {e.InnerException?.Message}");
             }
 
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
@@ -108,11 +108,11 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 {
                     if (cts.IsCancellationRequested)
                     {
-                        _logger.LogError($"BmllDataRequestsSenderManager ran out of time to connect to the API. Returning an empty response.");
+                        _logger.LogError($"{nameof(BmllDataRequestsSenderManager)} ran out of time to connect to the API. Returning an empty response.");
                         return false;
                     }
 
-                    _logger.LogError($"BmllDataRequestsSenderManager could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
+                    _logger.LogError($"{nameof(BmllDataRequestsSenderManager)} could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
                     Thread.Sleep(1000 * 30);
                     checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
                 }
@@ -121,25 +121,25 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             }
             catch (Exception e)
             {
-                _logger?.LogError($"BmllDataRequestSenderManager Send encountered an error whilst monitoring for heartbeating...", e);
+                _logger?.LogError($"{nameof(BmllDataRequestsSenderManager)} Send encountered an error whilst monitoring for heartbeating...", e);
                 return false;
             }
         }
 
         private async Task CreateMinuteBarRequest(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
         {
-            _logger.LogInformation($"BmllDataRequestSenderManager CreateMinuteBarRequest active");
+            _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} CreateMinuteBarRequest active");
 
             var request = new CreateMinuteBarRequestCommand { Keys = keys?.ToList() };
 
             await _timeBarRepository.RequestMinuteBars(request);
 
-            _logger.LogInformation($"BmllDataRequestSenderManager CreateMinuteBarRequest complete");
+            _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} CreateMinuteBarRequest complete");
         }
 
         private async Task<BmllStatusMinuteBarResult> BlockUntilBmllWorkIsDone(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)
         {
-            _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone active");
+            _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} BlockUntilBmllWorkIsDone active");
 
             var timeoutPolicy = Policy.TimeoutAsync<BmllStatusMinuteBarResult>(TimeSpan.FromMinutes(20));
             var retryPolicy =
@@ -160,7 +160,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return minuteBarResult;
             });
             
-            _logger.LogInformation($"BmllDataRequestSenderManager BlockUntilBmllWorkIsDone completed");
+            _logger.LogInformation($"{nameof(BmllDataRequestsSenderManager)} BlockUntilBmllWorkIsDone completed");
 
             return minuteBarResult;
         }

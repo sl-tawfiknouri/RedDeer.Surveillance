@@ -25,11 +25,11 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(string systemOperationId, List<MarketDataRequest> bmllRequests)
+        public async Task Submit(string systemOperationId, IReadOnlyCollection<MarketDataRequest> bmllRequests)
         {
-            bmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
+            var filteredBmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
 
-            var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
+            var splitLists = SplitList(filteredBmllRequests, 400); // more reliable but slower with a smaller increment
             var splitTasks = SplitList(splitLists, 4);
 
             foreach (var splitTask in splitTasks)
@@ -43,14 +43,14 @@ namespace DataSynchroniser.Api.Bmll.Bmll
         {
             try
             {
-                _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
+                _logger.LogInformation($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests");
 
                 var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
 
                 if (!minuteBarRequests.Any())
                 {
                     _logger.LogError(
-                        $"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+                        $"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
                     return;
                 }
@@ -61,7 +61,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
                 while ((!requests.Success) && retries > 0)
                 {
-                    _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
+                    _logger.LogWarning($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
 
                     var forceCompletion = retries == 1;
                     requests = await _senderManager.Send(bmllRequests, forceCompletion);
@@ -74,7 +74,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             }
             catch (Exception e)
             {
-                _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
+                _logger.LogError($"{nameof(BmllDataRequestsManager)} Send encountered an exception!", e);
             }
         }
 
@@ -83,14 +83,14 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             if (request == null
                 || (!request?.IsValid() ?? true))
             {
-                _logger.LogError($"BmllDataRequestManager had a null request or a request that did not pass data request validation for {request?.Identifiers}");
+                _logger.LogError($"{nameof(BmllDataRequestsManager)} had a null request or a request that did not pass data request validation for {request?.Identifiers}");
 
                 return null;
             }
 
             if (string.IsNullOrWhiteSpace(request.Identifiers.Figi))
             {
-                _logger.LogError($"BmllDataRequestsManager asked to process a security without a figi");
+                _logger.LogError($"{nameof(BmllDataRequestsManager)} asked to process a security without a figi");
 
                 return null;
             }

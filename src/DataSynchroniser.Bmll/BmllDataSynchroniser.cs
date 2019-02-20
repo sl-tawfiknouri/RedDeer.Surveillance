@@ -32,37 +32,37 @@ namespace DataSynchroniser.Api.Bmll
             ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext,
             IReadOnlyCollection<MarketDataRequest> marketDataRequests)
         {
-            _logger.LogInformation($"BmllDataSynchroniser Handle began processing a request");
+            _logger.LogInformation($"{nameof(BmllDataSynchroniser)} Handle began processing a request");
 
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger?.LogError($"BmllDataSynchroniser Handle received a null or empty system process operation id returning");
+                _logger?.LogError($"{nameof(BmllDataSynchroniser)} Handle received a null or empty system process operation id returning");
                 return;
             }
 
             if (dataRequestContext == null)
             {
-                _logger?.LogError($"BmllDataSynchroniser Handle received a null data request context returning");
+                _logger?.LogError($"{nameof(BmllDataSynchroniser)} Handle received a null data request context returning");
                 return;
             }
 
             if (marketDataRequests == null
                 || !marketDataRequests.Any())
             {
-                _logger?.LogError($"BmllDataSynchroniser Handle received a null or empty market data requests collection");
+                _logger?.LogError($"{nameof(BmllDataSynchroniser)} Handle received a null or empty market data requests collection");
                 return;
             }
 
             var filteredMarketDataRequests = marketDataRequests.Where(_filter.Filter).ToList();
             if (!filteredMarketDataRequests.Any())
             {
-                _logger?.LogInformation($"BmllDataSynchroniser Handle received a null or empty market data requests collection");
+                _logger?.LogInformation($"{nameof(BmllDataSynchroniser)} Handle received a null or empty market data requests collection");
                 return;
             }
 
             await _requestManager.Submit(systemProcessOperationId, filteredMarketDataRequests);
 
-            _logger.LogInformation($"BmllDataSynchroniser Handle completed processing a request");
+            _logger.LogInformation($"{nameof(BmllDataSynchroniser)} Handle completed processing a request");
         }
     }
 }

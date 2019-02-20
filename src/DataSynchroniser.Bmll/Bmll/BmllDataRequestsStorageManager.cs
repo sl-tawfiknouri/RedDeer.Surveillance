@@ -24,12 +24,12 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
         public async Task Store(IReadOnlyCollection<IGetTimeBarPair> timeBarPairs)
         {
-            _logger.LogInformation($"BmllDataRequestsStorageManager beginning storage process for BMLL response data");
+            _logger.LogInformation($"{nameof(BmllDataRequestsStorageManager)} beginning storage process for BMLL response data");
 
             if (timeBarPairs == null
                 || !timeBarPairs.Any())
             {
-                _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data as it had nothing to store.");
+                _logger.LogInformation($"{nameof(BmllDataRequestsStorageManager)} completed storage process for BMLL response data as it had nothing to store.");
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             await _repository.Save(deduplicatedBars);
 
-            _logger.LogInformation($"BmllDataRequestsStorageManager completed storage process for BMLL response data");
+            _logger.LogInformation($"{nameof(BmllDataRequestsStorageManager)} completed storage process for BMLL response data");
         }
 
         private List<MinuteBarDto> Deduplicate(IReadOnlyCollection<IGetTimeBarPair> timeBarPairs)

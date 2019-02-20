@@ -34,20 +34,20 @@ namespace DataSynchroniser.Api.Factset
         {
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null or empty system process operation id");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null or empty system process operation id");
                 return;
             }
 
             if (dataRequestContext == null)
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null data request context");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null data request context");
                 return;
             }
 
             if (marketDataRequests == null
                 || !marketDataRequests.Any())
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null or empty market data request collection");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null or empty market data request collection");
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace DataSynchroniser.Api.Factset
 
             if (!filteredMarketDataRequests.Any())
             {
-                _logger.LogInformation($"FactsetDataSynchroniser Handle received market data requests but none passed the filter");
+                _logger.LogInformation($"{nameof(FactsetDataSynchroniser)} Handle received market data requests but none passed the filter");
                 return;
             }
 

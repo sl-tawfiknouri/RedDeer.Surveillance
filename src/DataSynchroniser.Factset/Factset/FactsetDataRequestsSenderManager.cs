@@ -28,7 +28,7 @@ namespace DataSynchroniser.Api.Factset.Factset
             if (factsetRequests == null
                 || !factsetRequests.Any())
             {
-                _logger?.LogInformation($"FactsetDataRequestsSenderManager Send received a null factset requests list. Returning");
+                _logger?.LogInformation($"{nameof(FactsetDataRequestsSenderManager)} Send received a null factset requests list. Returning");
                 return new FactsetSecurityResponseDto();
             }
 
@@ -46,7 +46,7 @@ namespace DataSynchroniser.Api.Factset.Factset
             }
             catch (Exception e)
             {
-                _logger.LogError($"FactsetDataRequestsSenderManager send encountered an exception when posting to the factset daily bar api", e);
+                _logger.LogError($"{nameof(FactsetDataRequestsSenderManager)} send encountered an exception when posting to the factset daily bar api", e);
             }
 
             return new FactsetSecurityResponseDto

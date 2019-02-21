@@ -7,41 +7,39 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 using Utilities.Extensions;
 
-namespace Surveillance.Engine.Rules.Universe.Subscribers
+namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class CancelledOrderSubscriber : ICancelledOrderSubscriber
+    public class LayeringSubscriber : ILayeringSubscriber
     {
-        private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
+        private readonly IEquityRuleLayeringFactory _equityRuleLayeringFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<CancelledOrderSubscriber> _logger;
+        private readonly ILogger<LayeringSubscriber> _logger;
 
-        public CancelledOrderSubscriber(
-            IEquityRuleCancelledOrderFactory equityRuleCancelledOrderFactory,
+        public LayeringSubscriber(
+            IEquityRuleLayeringFactory equityRuleLayeringFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<CancelledOrderSubscriber> logger)
+            ILogger<LayeringSubscriber> logger)
         {
-            _equityRuleCancelledOrderFactory = equityRuleCancelledOrderFactory;
-            _ruleParameterMapper = ruleParameterMapper;
-            _universeFilterFactory = universeFilterFactory;
-            _brokerFactory = brokerFactory;
-            _logger = logger;
+            _equityRuleLayeringFactory = equityRuleLayeringFactory ?? throw new ArgumentNullException(nameof(equityRuleLayeringFactory));
+            _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+            _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
@@ -51,7 +49,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.Layering) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -59,54 +57,61 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
-                    .CancelledOrders
-                    .Where(co => filteredParameters.Contains(co.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .Layerings
+                    .Where(la => filteredParameters.Contains(la.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
+            var layeringParameters = _ruleParameterMapper.Map(dtos);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, layeringParameters);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, cancelledOrderParameters);
+            return subscriptions;
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IReadOnlyCollection<ICancelledOrderRuleParameters> cancelledOrderParameters)
+            IReadOnlyCollection<ILayeringRuleParameters> layeringParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
-            if (cancelledOrderParameters != null
-                && cancelledOrderParameters.Any())
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (layeringParameters != null
+                && layeringParameters.Any())
             {
-                foreach (var param in cancelledOrderParameters)
+                foreach (var param in layeringParameters)
                 {
-                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
-                    var broker = _brokerFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
-                    subscriptions.Add(broker);
+                    var paramSubscriptions = SubscribeToParameters(execution, opCtx, alertStream, param);
+                    var brokers =
+                        _brokerFactory.Build(
+                            paramSubscriptions,
+                            param.Factors,
+                            param.AggregateNonFactorableIntoOwnCategory);
+
+                    subscriptions.Add(brokers);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
+                _logger.LogError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a layering rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeParamToUniverse(
+        private IUniverseCloneableRule SubscribeToParameters(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            ICancelledOrderRuleParameters param)
+            ILayeringRuleParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                    EquityRuleCancelledOrderFactory.Version,
+                    Domain.Scheduling.Rules.Layering.GetDescription(),
+                    EquityRuleLayeringFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.CancelledOrders,
+                    (int)Domain.Scheduling.Rules.Layering,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
@@ -114,18 +119,21 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
+            var layering = _equityRuleLayeringFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {
-                _logger.LogInformation($"CancelledOrderSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"LayeringSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                filteredUniverse.Subscribe(cancelledOrderRule);
+                filteredUniverse.Subscribe(layering);
 
                 return filteredUniverse;
             }
-
-            return cancelledOrderRule;
+            else
+            {
+                return layering;
+            }
         }
     }
 }

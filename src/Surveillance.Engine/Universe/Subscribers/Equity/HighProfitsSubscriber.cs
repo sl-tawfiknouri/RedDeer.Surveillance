@@ -7,19 +7,17 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
-using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 using Utilities.Extensions;
 
-namespace Surveillance.Engine.Rules.Universe.Subscribers
+namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
     public class HighProfitsSubscriber : IHighProfitsSubscriber
     {

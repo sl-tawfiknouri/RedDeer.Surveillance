@@ -75,6 +75,8 @@ using Surveillance.Engine.Rules.Universe.Multiverse.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Factories;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;

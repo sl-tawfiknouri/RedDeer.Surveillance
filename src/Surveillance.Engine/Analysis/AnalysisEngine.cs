@@ -122,8 +122,8 @@ namespace Surveillance.Engine.Rules.Analysis
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
+            SetOperationContextEndState(dataRequestSubscriber, opCtx);
             _logger.LogInformation($"{nameof(AnalysisEngine)} END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
-            opCtx.EndEvent();
 
             await RuleRunUpdateMessageSend(execution, ids);
         }
@@ -149,6 +149,19 @@ namespace Surveillance.Engine.Rules.Analysis
             {
                 await _queueRuleUpdatePublisher.Send(id);
             }
+        }
+
+        private void SetOperationContextEndState(
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            ISystemProcessOperationContext opCtx)
+        {
+            if (!dataRequestSubscriber?.SubmitRequests ?? true)
+            {
+                opCtx.EndEvent();
+                return;
+            }
+
+            opCtx.EndEventWithMissingDataError();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
         private readonly IQueueDataSynchroniserRequestPublisher _queueDataSynchroniserRequestPublisher;
         private readonly ILogger<UniverseDataRequestsSubscriber> _logger;
 
-        private bool _submitRequests = false;
+        public bool SubmitRequests { get; private set; }
 
         public UniverseDataRequestsSubscriber(
             ISystemProcessOperationContext operationContext,
@@ -43,9 +43,9 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
                 return;
             }
 
-            _logger?.LogInformation($"UniverseDataRequestsSubscriber reached eschaton in its OnNext stream subscription and has a submit requests value of {_submitRequests}");
+            _logger?.LogInformation($"UniverseDataRequestsSubscriber reached eschaton in its OnNext stream subscription and has a submit requests value of {SubmitRequests}");
             
-            if (_submitRequests)
+            if (SubmitRequests)
             {
                 var task = _queueDataSynchroniserRequestPublisher.Send(_operationContext.Id.ToString());
                 task.Wait();
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
         {
             _logger?.LogInformation($"UniverseDataRequestsSubscriber received a submit request indication for operation context {_operationContext.Id}.");
 
-            _submitRequests = true;
+            SubmitRequests = true;
         }
     }
 }

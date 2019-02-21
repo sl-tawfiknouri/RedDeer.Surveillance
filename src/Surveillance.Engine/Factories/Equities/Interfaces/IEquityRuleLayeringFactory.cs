@@ -2,14 +2,14 @@
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories.Interfaces
+namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
 {
-    public interface IEquityRuleSpoofingFactory
+    public interface IEquityRuleLayeringFactory
     {
-        ISpoofingRule Build(
-            ISpoofingRuleParameters spoofingParameters,
+        ILayeringRule Build(
+            ILayeringRuleParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);

@@ -5,7 +5,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories.Interfaces
+namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
 {
     public interface IEquityRuleHighProfitFactory
     {

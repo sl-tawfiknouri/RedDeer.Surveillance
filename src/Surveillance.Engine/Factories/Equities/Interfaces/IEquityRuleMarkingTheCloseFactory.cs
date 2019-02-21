@@ -4,7 +4,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories.Interfaces
+namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
 {
     public interface IEquityRuleMarkingTheCloseFactory
     {

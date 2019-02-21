@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Factories\FixedIncome\" />
-  </ItemGroup>
-
 </Project>

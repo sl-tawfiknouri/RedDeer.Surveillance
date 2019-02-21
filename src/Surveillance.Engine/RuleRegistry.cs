@@ -19,6 +19,7 @@ using Surveillance.Engine.Rules.Data.Subscribers;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers;

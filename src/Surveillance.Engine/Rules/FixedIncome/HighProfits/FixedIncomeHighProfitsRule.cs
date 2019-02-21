@@ -102,11 +102,11 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Clone called at {UniverseDateTime}");
 
-           
+            var clone = (FixedIncomeHighProfitsRule)this.MemberwiseClone();
+            clone.BaseClone();
 
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Clone completed for {UniverseDateTime}");
-
-            throw new NotImplementedException();
+            return clone;
         }
     }
 }

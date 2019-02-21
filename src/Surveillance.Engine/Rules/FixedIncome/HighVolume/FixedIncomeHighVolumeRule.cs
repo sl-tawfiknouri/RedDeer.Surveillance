@@ -97,10 +97,12 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} Clone called at {UniverseDateTime}");
 
+            var clone = (FixedIncomeHighVolumeRule)this.MemberwiseClone();
+            clone.BaseClone();
 
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeRule)} Clone completed for {UniverseDateTime}");
 
-            throw new NotImplementedException();
+            return clone;
         }
     }
 }

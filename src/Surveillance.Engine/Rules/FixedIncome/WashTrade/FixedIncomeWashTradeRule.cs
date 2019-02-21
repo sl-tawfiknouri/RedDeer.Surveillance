@@ -96,10 +96,12 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         {
             _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Clone called at {UniverseDateTime}");
 
+            var clone = (FixedIncomeWashTradeRule)this.MemberwiseClone();
+            clone.BaseClone();
 
             _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Clone completed for {UniverseDateTime}");
 
-            throw new NotImplementedException();
+            return clone;
         }
     }
 }

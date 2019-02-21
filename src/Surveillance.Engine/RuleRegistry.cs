@@ -78,6 +78,8 @@ using Surveillance.Engine.Rules.Universe.Subscribers;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Factories;
+using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome;
+using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;
 using Surveillance.Engine.Rules.Utility.Interfaces;
@@ -176,14 +178,19 @@ namespace Surveillance.Engine.Rules
 
 
 
+
+            For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
             For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
             For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
 
+            For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
             For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
             For<IFixedIncomeHighProfitFactory>().Use<FixedIncomeHighProfitFactory>();
 
+            For<IWashTradeFixedIncomeSubscriber>().Use<WashTradeFixedIncomeSubscriber>();
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
             For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
+
 
 
 

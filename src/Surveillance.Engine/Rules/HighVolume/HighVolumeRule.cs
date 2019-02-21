@@ -366,7 +366,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();
-                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+                _ruleCtx.EndEvent();
             }
             else
             {

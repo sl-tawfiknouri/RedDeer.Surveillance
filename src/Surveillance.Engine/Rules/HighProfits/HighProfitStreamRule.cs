@@ -351,13 +351,11 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
                 _dataRequestSubscriber.SubmitRequest();
 
-                var opCtx = _ruleCtx?.EndEvent();
-                opCtx?.EndEventWithMissingDataError();
+                _ruleCtx?.EndEvent();
             }
             else
             {
-                var opCtx = _ruleCtx?.EndEvent();
-                opCtx?.EndEvent();
+                _ruleCtx?.EndEvent();
             }
         }
 

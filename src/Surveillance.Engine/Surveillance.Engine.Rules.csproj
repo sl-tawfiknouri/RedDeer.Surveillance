@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Rules\FixedIncome\HighVolume\" />
-    <Folder Include="Rules\FixedIncome\WashTrade\" />
   </ItemGroup>
 
 </Project>

@@ -28,12 +28,12 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
 
         public void OnCompleted()
         {
-            _logger?.LogInformation($"UniverseDataRequestsSubscriber reached OnCompleted() in its stream");
+            _logger?.LogInformation($"{nameof(UniverseDataRequestsSubscriber)} reached OnCompleted() in its stream");
         }
 
         public void OnError(Exception error)
         {
-            _logger?.LogError($"UniverseDataRequestsSubscriber reached OnError in its universe subscription {error.Message}", error);
+            _logger?.LogError($"{nameof(UniverseDataRequestsSubscriber)} reached OnError in its universe subscription {error.Message}", error);
         }
 
         public void OnNext(IUniverseEvent value)
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
                 return;
             }
 
-            _logger?.LogInformation($"UniverseDataRequestsSubscriber reached eschaton in its OnNext stream subscription and has a submit requests value of {SubmitRequests}");
+            _logger?.LogInformation($"{nameof(UniverseDataRequestsSubscriber)} reached eschaton in its OnNext stream subscription and has a submit requests value of {SubmitRequests}");
             
             if (SubmitRequests)
             {
@@ -51,12 +51,15 @@ namespace Surveillance.Engine.Rules.Data.Subscribers
                 task.Wait();
             }
 
-            _logger?.LogInformation($"UniverseDataRequestsSubscriber completed eschaton in its OnNext stream subscription");
+            _logger?.LogInformation($"{nameof(UniverseDataRequestsSubscriber)} completed eschaton in its OnNext stream subscription");
         }
 
+        /// <summary>
+        /// Ensure that this can only be set to true and not unset 
+        /// </summary>
         public void SubmitRequest()
         {
-            _logger?.LogInformation($"UniverseDataRequestsSubscriber received a submit request indication for operation context {_operationContext.Id}.");
+            _logger?.LogInformation($"{nameof(UniverseDataRequestsSubscriber)} received a submit request indication for operation context {_operationContext.Id}.");
 
             SubmitRequests = true;
         }

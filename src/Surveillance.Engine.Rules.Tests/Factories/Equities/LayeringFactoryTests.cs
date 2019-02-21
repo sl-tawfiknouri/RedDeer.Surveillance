@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     {
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseMarketCacheFactory _factory;
-        private IUniverseOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilter _orderFilter;
         private ILogger<EquityRuleLayeringFactory> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _orderFilter = A.Fake<IUniverseOrderFilter>();
+            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 

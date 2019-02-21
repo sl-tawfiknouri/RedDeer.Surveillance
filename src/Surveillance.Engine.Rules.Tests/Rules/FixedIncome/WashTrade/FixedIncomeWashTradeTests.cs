@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
 {
@@ -16,6 +17,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
     public class FixedIncomeWashTradeTests
     {
         private RuleRunMode _runMode = RuleRunMode.ForceRun;
+        private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private ILogger<FixedIncomeHighProfitsRule> _logger;
@@ -24,6 +26,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
         [SetUp]
         public void Setup()
         {
+            _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<FixedIncomeHighProfitsRule>();
@@ -37,6 +40,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
             Assert.Throws<ArgumentNullException>(() =>
                 new FixedIncomeWashTradeRule(
                     TimeSpan.Zero,
+                    _fixedIncomeOrderFile,
                     _ruleCtx,
                     _marketCacheFactory,
                     _runMode,

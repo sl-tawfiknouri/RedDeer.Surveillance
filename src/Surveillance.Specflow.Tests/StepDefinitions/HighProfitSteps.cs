@@ -42,7 +42,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private ExchangeRateSelection _exchangeRateSelection;
 
         private ICurrencyConverter _currencyConverter;
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -95,7 +95,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var currencyLogger = new NullLogger<CurrencyConverter>();
             _currencyConverter = new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();

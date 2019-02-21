@@ -15,13 +15,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleSpoofingFactory : IEquityRuleSpoofingFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<SpoofingRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleSpoofingFactory(IUniverseMarketCacheFactory factory,
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             ILogger<SpoofingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {

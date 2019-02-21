@@ -15,13 +15,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleCancelledOrderFactory : IEquityRuleCancelledOrderFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<CancelledOrderRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
         
         public EquityRuleCancelledOrderFactory(
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<CancelledOrderRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)

@@ -111,6 +111,9 @@ namespace Surveillance.Engine.Rules
             For<ILayeringEquitySubscriber>().Use<LayeringEquitySubscriber>();
             For<IWashTradeEquitySubscriber>().Use<WashTradeEquitySubscriber>();
 
+            For<IUniverseEquityOrderFilter>().Use<UniverseEquityOrderFilter>();
+            For<IUniverseFixedIncomeOrderFilter>().Use<UniverseFixedIncomeOrderFilter>();
+
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();
             For<IUniverseEvent>().Use<UniverseEvent>();
@@ -211,7 +214,6 @@ namespace Surveillance.Engine.Rules
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();
             For<IUniversePercentageOfTimeCompletionLoggerFactory>().Use<UniversePercentageOfTimeCompletionLoggerFactory>();
             For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
-            For<IUniverseOrderFilter>().Use<UniverseOrderFilter>();
 
             For<IQueueRuleUpdatePublisher>().Use<QueueRuleUpdatePublisher>();
             For<IRuleParameterDtoIdExtractor>().Use<RuleParameterDtoIdExtractor>();

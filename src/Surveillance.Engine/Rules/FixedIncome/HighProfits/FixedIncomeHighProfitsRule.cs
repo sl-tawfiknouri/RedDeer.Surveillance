@@ -5,6 +5,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 
@@ -12,10 +13,12 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 {
     public class FixedIncomeHighProfitsRule : BaseUniverseRule, IFixedIncomeHighProfitsRule
     {
+        private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
 
         public FixedIncomeHighProfitsRule(
             TimeSpan windowSize,
+            IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -32,12 +35,13 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 logger,
                 tradingStackLogger)
         {
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            throw new NotImplementedException();
+            return _orderFilter.Filter(value);
         }
 
         protected override void RunRule(ITradingHistoryStack history)

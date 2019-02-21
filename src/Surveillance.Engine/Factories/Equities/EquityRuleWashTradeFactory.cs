@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             ICurrencyConverter currencyConverter,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)

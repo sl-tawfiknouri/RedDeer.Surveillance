@@ -36,7 +36,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private ICurrencyConverter _currencyConverter;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeClustering _washTradeClustering;
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -67,7 +67,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _positionPairer = new WashTradePositionPairer();
             _washTradeClustering = new WashTradeClustering();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();

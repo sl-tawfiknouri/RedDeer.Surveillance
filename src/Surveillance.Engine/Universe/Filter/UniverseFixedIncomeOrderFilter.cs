@@ -7,11 +7,11 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Filter
 {
-    public class UniverseOrderFilter : IUniverseOrderFilter
+    public class UniverseFixedIncomeOrderFilter : IUniverseFixedIncomeOrderFilter
     {
-        private readonly ILogger<UniverseOrderFilter> _logger;
+        private readonly ILogger<UniverseFixedIncomeOrderFilter> _logger;
 
-        public UniverseOrderFilter(ILogger<UniverseOrderFilter> logger)
+        public UniverseFixedIncomeOrderFilter(ILogger<UniverseFixedIncomeOrderFilter> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (order == null)
             {
-                _logger.LogError($"UniverseOrderFilter encountered an unexpected type for the underlying value of a trade event. Not filtering.");
+                _logger.LogError($"{nameof(UniverseFixedIncomeOrderFilter)} encountered an unexpected type for the underlying value of a trade event. Not filtering.");
                 return universeEvent;
             }
 
@@ -42,16 +42,16 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (string.IsNullOrWhiteSpace(cfi))
             {
-                _logger.LogError($"UniverseOrderFilter tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
+                _logger.LogError($"{nameof(UniverseFixedIncomeOrderFilter)} tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
                 return null;
             }
 
             var cfiWrap = new Cfi(cfi);
-            var filter = cfiWrap.CfiCategory != CfiCategory.Equities;
+            var filter = cfiWrap.CfiCategory != CfiCategory.DebtInstrument;
 
             if (filter)
             {
-                _logger.LogInformation($"UniverseOrderFilter filtering out cfi of {cfi} as it had a leading character of e");
+                _logger.LogInformation($"{nameof(UniverseFixedIncomeOrderFilter)} filtering out cfi of {cfi} as it did not have a leading character of d");
                 return null;
             }
 

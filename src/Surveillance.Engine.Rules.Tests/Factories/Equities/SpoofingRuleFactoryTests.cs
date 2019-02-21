@@ -18,7 +18,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class SpoofingRuleFactoryTests
     {
-        private IUniverseOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private ILogger<SpoofingRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         [SetUp]
         public void Setup()
         {
-            _orderFilter = A.Fake<IUniverseOrderFilter>();
+            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<SpoofingRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();

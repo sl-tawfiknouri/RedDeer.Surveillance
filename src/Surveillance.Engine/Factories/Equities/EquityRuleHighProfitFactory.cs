@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleHighProfitFactory : IEquityRuleHighProfitFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory cacheStrategyFactory,
             ILogger<HighProfitsRule> logger,

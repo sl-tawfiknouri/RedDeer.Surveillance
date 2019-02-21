@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class HighVolumeRuleFactoryTests
     {
-        private IUniverseOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private ILogger<IHighVolumeRule> _logger;
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         [SetUp]
         public void Setup()
         {
-            _orderFilter = A.Fake<IUniverseOrderFilter>();
+            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();

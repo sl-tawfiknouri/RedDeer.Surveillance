@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class MarkingTheCloseRuleFactoryTests
     {
-        private IUniverseOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private ILogger<MarkingTheCloseRule> _logger;
@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         [SetUp]
         public void Setup()
         {
-            _orderFilter = A.Fake<IUniverseOrderFilter>();
+            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _logger = new NullLogger<MarkingTheCloseRule>();

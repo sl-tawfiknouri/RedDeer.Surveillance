@@ -29,7 +29,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
 
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
         private CancelledOrderRuleParameters _parameters;
@@ -48,7 +48,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
 
             _equityRuleCancelledOrderFactory = new EquityRuleCancelledOrderFactory(
                 _universeOrderFilter,

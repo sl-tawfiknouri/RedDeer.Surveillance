@@ -16,14 +16,14 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleLayeringFactory : IEquityRuleLayeringFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<EquityRuleLayeringFactory> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleLayeringFactory(
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IMarketTradingHoursManager tradingHoursManager,
             IUniverseMarketCacheFactory factory,
             ILogger<EquityRuleLayeringFactory> logger,

@@ -16,14 +16,14 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleMarkingTheCloseFactory : IEquityRuleMarkingTheCloseFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ILogger<MarkingTheCloseRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleMarkingTheCloseFactory(
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<MarkingTheCloseRule> logger,

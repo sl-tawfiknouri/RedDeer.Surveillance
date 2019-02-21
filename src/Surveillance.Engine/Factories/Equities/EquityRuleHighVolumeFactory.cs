@@ -17,20 +17,20 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleHighVolumeFactory : IEquityRuleHighVolumeFactory
     {
-        private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly ILogger<IHighVolumeRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleHighVolumeFactory(
-            IUniverseOrderFilter orderFilter,
+            IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(IUniverseOrderFilter));
+            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

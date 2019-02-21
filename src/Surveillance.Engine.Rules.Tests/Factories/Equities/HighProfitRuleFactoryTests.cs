@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     public class HighProfitRuleFactoryTests
     {
         private IUniversePercentageCompletionLoggerFactory _percentageCompleteFactory;
-        private IUniverseOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilter _orderFilter;
         private IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Setup()
         {
             _percentageCompleteFactory = A.Fake<IUniversePercentageCompletionLoggerFactory>();
-            _orderFilter = A.Fake<IUniverseOrderFilter>();
+            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
             _costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             _revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();

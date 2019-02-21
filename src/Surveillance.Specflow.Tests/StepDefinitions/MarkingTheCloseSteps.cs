@@ -35,7 +35,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _universeMarketCacheFactory;
         private MarkingTheCloseParameters _parameters;
 
@@ -53,7 +53,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 

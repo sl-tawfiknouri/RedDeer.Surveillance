@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -13,11 +14,13 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 {
     public class FixedIncomeHighProfitsRule : BaseUniverseRule, IFixedIncomeHighProfitsRule
     {
+        private readonly IHighProfitsRuleFixedIncomeParameters _parameters;
         private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
 
         public FixedIncomeHighProfitsRule(
             TimeSpan windowSize,
+            IHighProfitsRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -35,6 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 logger,
                 tradingStackLogger)
         {
+            _parameters = parameters ?? throw new ArgumentNullException(nameof(_parameters));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

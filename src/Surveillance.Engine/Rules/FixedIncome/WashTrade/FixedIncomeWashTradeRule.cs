@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -13,11 +14,13 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 {
     public class FixedIncomeWashTradeRule : BaseUniverseRule, IFixedIncomeWashTradeRule
     {
+        private readonly IWashTradeRuleFixedIncomeParameters _parameters;
         private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
 
         public FixedIncomeWashTradeRule(
             TimeSpan windowSize,
+            IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
@@ -35,6 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 logger,
                 tradingStackLogger)
         {
+            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

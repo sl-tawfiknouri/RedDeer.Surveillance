@@ -356,8 +356,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             }
             else
             {
-                var opCtx = _ruleCtx?.EndEvent();
-                opCtx?.EndEvent();
+                _ruleCtx?.EndEvent();
             }
         }
 

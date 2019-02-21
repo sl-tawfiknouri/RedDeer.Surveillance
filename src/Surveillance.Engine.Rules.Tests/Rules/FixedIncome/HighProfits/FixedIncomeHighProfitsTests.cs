@@ -9,7 +9,7 @@ using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome
+namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighProfits
 {
     [TestFixture]
     public class FixedIncomeHighProfitsTests

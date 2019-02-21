@@ -1,6 +1,6 @@
-﻿using Surveillance.Systems.DataLayer.Interfaces;
+﻿using Surveillance.Auditing.DataLayer.Interfaces;
 
-namespace Surveillance.Systems.DataLayer
+namespace Surveillance.Auditing.DataLayer
 {
     public class SystemDataLayerConfig : ISystemDataLayerConfig
     {

@@ -1,11 +1,11 @@
 ﻿using System;
-using DomainV2.Trading;
-using NUnit.Framework;
+using Domain.Financial;
+using Domain.Financial.Interfaces;
+using Domain.Trading;
 using FakeItEasy;
-using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
+using NUnit.Framework;
 
-namespace DomainV2.Tests.Trading
+namespace Domain.Tests.Trading
 {
     public class DealerOrderTests
     {

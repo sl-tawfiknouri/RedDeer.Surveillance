@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Files.Interfaces;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Files.Interfaces;
+using Domain.Financial;
+using Domain.Trading;
 
-namespace DomainV2.Files
+namespace Domain.Files
 {
     public class TradeFileCsvToOrderMapper : ITradeFileCsvToOrderMapper
     {

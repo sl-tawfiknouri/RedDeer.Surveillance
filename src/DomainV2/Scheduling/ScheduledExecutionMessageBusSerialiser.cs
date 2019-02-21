@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Scheduling.Interfaces;
+using Domain.Scheduling.Interfaces;
 using Newtonsoft.Json;
 
-namespace DomainV2.Scheduling
+namespace Domain.Scheduling
 {
     public class ScheduledExecutionMessageBusSerialiser : IScheduledExecutionMessageBusSerialiser
     {

@@ -1,7 +1,8 @@
-﻿using DomainV2.Files.AllocationFile.Interfaces;
-using DomainV2.Trading;
+﻿using System;
+using Domain.Files.AllocationFile.Interfaces;
+using Domain.Trading;
 
-namespace DomainV2.Files.AllocationFile
+namespace Domain.Files.AllocationFile
 {
     public class AllocationFileCsvToOrderAllocationMapper : IAllocationFileCsvToOrderAllocationMapper
     {
@@ -28,7 +29,8 @@ namespace DomainV2.Files.AllocationFile
                 csv.Fund,
                 csv.Strategy,
                 csv.ClientAccountId,
-                orderFilledVolume.GetValueOrDefault(0));
+                orderFilledVolume.GetValueOrDefault(0),
+                DateTime.UtcNow);
 
             return allocation;
         }

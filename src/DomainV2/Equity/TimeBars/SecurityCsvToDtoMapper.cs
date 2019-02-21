@@ -1,9 +1,9 @@
 ﻿using System;
-using DomainV2.Equity.TimeBars.Interfaces;
-using DomainV2.Financial;
+using Domain.Equity.TimeBars.Interfaces;
+using Domain.Financial;
 using Microsoft.Extensions.Logging;
 
-namespace DomainV2.Equity.TimeBars
+namespace Domain.Equity.TimeBars
 {
     public class SecurityCsvToDtoMapper : ISecurityCsvToDtoMapper
     {

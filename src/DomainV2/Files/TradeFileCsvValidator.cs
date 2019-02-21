@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using DomainV2.Files.Interfaces;
-using DomainV2.Financial;
+using Domain.Files.Interfaces;
+using Domain.Financial;
 using FluentValidation;
 using FluentValidation.Validators;
 
-namespace DomainV2.Files
+namespace Domain.Files
 {
     public class TradeFileCsvValidator : AbstractValidator<TradeFileCsv>, ITradeFileCsvValidator
     {

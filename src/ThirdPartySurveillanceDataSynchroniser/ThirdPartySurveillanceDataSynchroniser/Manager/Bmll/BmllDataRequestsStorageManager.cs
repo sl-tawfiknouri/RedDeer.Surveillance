@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataSynchroniser.Manager.Bmll.Interfaces;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsStorageManager : IBmllDataRequestsStorageManager
     {

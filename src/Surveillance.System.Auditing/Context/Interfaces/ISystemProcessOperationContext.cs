@@ -1,8 +1,8 @@
 ﻿using System;
-using Surveillance.Systems.DataLayer.Processes;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Systems.Auditing.Context.Interfaces
+namespace Surveillance.Auditing.Context.Interfaces
 {
     public interface ISystemProcessOperationContext
     {

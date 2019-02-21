@@ -1,7 +1,7 @@
-﻿using DomainV2.Financial.Cfis;
+﻿using Domain.Financial.Cfis;
 using NUnit.Framework;
 
-namespace DomainV2.Tests.Financial.Cfis
+namespace Domain.Tests.Financial.Cfis
 {
     [TestFixture]
     public class CfiTests

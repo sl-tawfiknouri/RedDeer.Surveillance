@@ -1,4 +1,4 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces
+﻿namespace DataSynchroniser.DataSources.Interfaces
 {
     public interface IDataSourceClassifier
     {

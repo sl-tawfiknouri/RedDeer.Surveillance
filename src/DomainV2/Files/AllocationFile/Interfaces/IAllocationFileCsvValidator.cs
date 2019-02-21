@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace DomainV2.Files.AllocationFile.Interfaces
+namespace Domain.Files.AllocationFile.Interfaces
 {
     public interface IAllocationFileCsvValidator
     {

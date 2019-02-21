@@ -1,4 +1,4 @@
-﻿namespace DomainV2.Markets
+﻿namespace Domain.Markets
 {
     public class MarketDataResponse<T> where T : class
     {

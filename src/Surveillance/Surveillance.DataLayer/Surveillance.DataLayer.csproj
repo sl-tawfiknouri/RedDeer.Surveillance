@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DomainV2\DomainV2.csproj" />
-    <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.System.Auditing.csproj" />
+    <ProjectReference Include="..\..\DomainV2\Domain.csproj" />
+    <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

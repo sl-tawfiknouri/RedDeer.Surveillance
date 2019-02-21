@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DomainV2.Equity.TimeBars
+namespace Domain.Equity.TimeBars
 {
     /// <summary>
     /// An aggregation of security time bars

@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Systems.DataLayer.Processes.Interfaces
+﻿using System;
+
+namespace Surveillance.Auditing.DataLayer.Processes.Interfaces
 {
     public interface ISystemProcessOperationUploadFile
     {
@@ -7,5 +9,6 @@
         int Id { get; set; }
         string SystemProcessId { get; set; }
         int SystemProcessOperationId { get; set; }
+        DateTime FileUploadTime { get; set; }
     }
 }

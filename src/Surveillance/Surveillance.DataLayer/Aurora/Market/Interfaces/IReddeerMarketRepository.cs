@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DomainV2.Equity.TimeBars;
+using Domain.Equity.TimeBars;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
-using Surveillance.Systems.Auditing.Context.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Aurora.Market.Interfaces
 {

@@ -1,7 +1,7 @@
-﻿using DomainV2.Equity.TimeBars.Interfaces;
+﻿using Domain.Equity.TimeBars.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace DomainV2.Equity.TimeBars
+namespace Domain.Equity.TimeBars
 {
     public class DtoToSecurityCsvMapper : IDtoToSecurityCsvMapper
     {

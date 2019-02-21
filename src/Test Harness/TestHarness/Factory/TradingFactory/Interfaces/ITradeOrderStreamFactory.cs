@@ -1,5 +1,5 @@
-﻿using DomainV2.Streams.Interfaces;
-using DomainV2.Trading;
+﻿using Domain.Streams.Interfaces;
+using Domain.Trading;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Factory.TradingFactory.Interfaces

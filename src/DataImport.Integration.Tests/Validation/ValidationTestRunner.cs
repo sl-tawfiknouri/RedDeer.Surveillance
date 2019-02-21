@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataImport.Integration.Tests.ObjectGraphs;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using DataImport.Disk_IO.TradeFile;
+using DataImport.MessageBusIO.Interfaces;
+using DataImport.Services.Interfaces;
+using Domain.Files;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
+using Utilities.Disk_IO;
 
 namespace DataImport.Integration.Tests.Validation
 {
@@ -291,6 +299,38 @@ namespace DataImport.Integration.Tests.Validation
             };
         }
 
+        private IEnrichmentService _enrichmentService;
+        private IOrdersRepository _ordersRepository;
+        private IFileUploadOrdersRepository _fileUploadOrdersRepository;
+        private IUploadCoordinatorMessageSender _uploadMessageSender;
+        private ISystemProcessContext _systemProcessContext;
+
+        private UploadTradeFileMonitor _uploadTradeFileMonitor;
+
+        [SetUp]
+        public void Setup()
+        {
+            _enrichmentService = A.Fake<IEnrichmentService>();
+            _ordersRepository = A.Fake<IOrdersRepository>();
+            _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
+            _systemProcessContext = A.Fake<ISystemProcessContext>();
+            _uploadMessageSender = A.Fake<IUploadCoordinatorMessageSender>();
+
+            _uploadTradeFileMonitor = new UploadTradeFileMonitor(
+                new Configuration.Configuration(),
+                new ReddeerDirectory(),
+                new UploadTradeFileProcessor(
+                    new TradeFileCsvToOrderMapper(),
+                    new TradeFileCsvValidator(),
+                    new NullLogger<UploadTradeFileProcessor>()),
+                _enrichmentService,
+                _ordersRepository,
+                _fileUploadOrdersRepository,
+                _uploadMessageSender,
+                _systemProcessContext,
+                new NullLogger<UploadTradeFileMonitor>());
+        }
+
         [Test]
         public void RunAllValidationTests()
         {
@@ -299,27 +339,20 @@ namespace DataImport.Integration.Tests.Validation
                 return;
             }
 
-            var graph = new TradeOrderStreamManagerGraph();
-
             foreach (var file in _validationFiles)
             {
                 // ensure file is in the right location
                 Assert.IsTrue(File.Exists(file.Path));
 
-                // now pass it through to the data import app
-                var manager = graph.Build();
-
                 var ordersList = new List<Order>();
-                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
-                    .Invokes(i => ordersList.Add((Order) i.Arguments[0]));
+                A.CallTo(() => _ordersRepository.Create(A<Order>.Ignored))
+                    .Invokes(i => ordersList.Add((Order)i.Arguments[0]));
 
-                var fileMonitor = manager.Initialise();
-
-                var processFile = fileMonitor.ProcessFile(file.Path);
+                var processFile = _uploadTradeFileMonitor.ProcessFile(file.Path);
 
                 Assert.AreEqual(processFile, file.Success);
 
-                A.CallTo(() => graph.OrdersRepository.Create(A<Order>.Ignored))
+                A.CallTo(() => _ordersRepository.Create(A<Order>.Ignored))
                     .MustHaveHappenedANumberOfTimesMatching(n => n == file.SuccessfulRows);
 
                 // positive, any conditions

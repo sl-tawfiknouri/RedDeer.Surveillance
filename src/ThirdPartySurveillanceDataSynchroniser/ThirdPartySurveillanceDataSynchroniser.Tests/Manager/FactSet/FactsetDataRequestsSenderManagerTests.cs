@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Reflection;
-
-using Microsoft.Extensions.Logging;
-
-using NUnit.Framework;
+using DataSynchroniser.Manager;
+using DataSynchroniser.Manager.Factset;
 using FakeItEasy;
-
-using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Factset;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.FactSet
+namespace DataSynchroniser.Tests.Manager.FactSet
 {
     public class FactsetDataRequestsSenderManagerTests
     {

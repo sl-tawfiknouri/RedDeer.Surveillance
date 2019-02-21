@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataImport.Disk_IO.AllocationFile
+namespace DataImport.Disk_IO.AllocationFile.Interfaces
 {
     public interface IUploadAllocationFileMonitor : IDisposable
     {

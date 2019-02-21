@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public interface IStartUpTaskRunner
     {

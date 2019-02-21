@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace DomainV2.Enums
+namespace Domain.Enums
 {
     public static class EnumExtensions
     {

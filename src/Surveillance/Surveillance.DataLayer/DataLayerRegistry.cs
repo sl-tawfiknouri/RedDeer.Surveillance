@@ -1,5 +1,5 @@
-﻿using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
+﻿using Domain.Financial;
+using Domain.Financial.Interfaces;
 using StructureMap;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
@@ -18,13 +18,15 @@ using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.DataLayer.Aurora.Analytics.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
+using Surveillance.DataLayer.Aurora.Files;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Market;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade;
-using Surveillance.DataLayer.Aurora.Trade.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
@@ -56,6 +58,8 @@ namespace Surveillance.DataLayer
             For<IOrderAllocationRepository>().Use<OrderAllocationRepository>();
             For<IRuleBreachRepository>().Use<RuleBreachRepository>();
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
+            For<IFileUploadOrdersRepository>().Use<FileUploadOrdersRepository>();
+            For<IFileUploadOrderAllocationRepository>().Use<FileUploadOrderAllocationRepository>();
         }
     }
 }

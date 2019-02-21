@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DomainV2.Files;
-using DomainV2.Files.AllocationFile.Interfaces;
-using DomainV2.Trading;
+using Domain.Files.AllocationFile;
+using Domain.Files.AllocationFile.Interfaces;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 
 namespace DataImport.Disk_IO.AllocationFile

@@ -77,18 +77,18 @@ namespace Surveillance.Specflow.Tests.Features
         {
 #line 8
 #line hidden
-            TechTalk.SpecFlow.Table table349 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table407 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "HighVolumePercentageDaily",
                         "HighVolumePercentageWindow",
                         "HighVolumePercentageMarketCap"});
-            table349.AddRow(new string[] {
+            table407.AddRow(new string[] {
                         "1",
                         "",
                         "0.1",
                         ""});
 #line 9
- testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table349, "Given ");
+ testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table407, "Given ");
 #line hidden
         }
         
@@ -109,7 +109,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table350 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table408 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -126,7 +126,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
 #line 17
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table350, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table408, "Given ");
 #line 19
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 20
@@ -152,7 +152,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table351 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table409 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -164,7 +164,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table351.AddRow(new string[] {
+            table409.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -177,9 +177,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 26
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table351, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table409, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table352 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table410 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -187,7 +187,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table352.AddRow(new string[] {
+            table410.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -195,7 +195,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table352.AddRow(new string[] {
+            table410.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -204,7 +204,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 29
- testRunner.And("With the intraday market data :", ((string)(null)), table352, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table410, "And ");
 #line 33
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 34
@@ -232,20 +232,20 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table353 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table411 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "HighVolumePercentageDaily",
                         "HighVolumePercentageWindow",
                         "HighVolumePercentageMarketCap"});
-            table353.AddRow(new string[] {
+            table411.AddRow(new string[] {
                         "25",
                         "",
                         "0.1",
                         ""});
 #line 40
- testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table353, "Given ");
+ testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table411, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table354 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table412 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -257,7 +257,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table354.AddRow(new string[] {
+            table412.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 15:30:00",
@@ -269,7 +269,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "200"});
-            table354.AddRow(new string[] {
+            table412.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/02/2018 16:30:00",
@@ -282,9 +282,9 @@ this.FeatureBackground();
                         "500",
                         "300"});
 #line 43
- testRunner.And("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table354, "And ");
+ testRunner.And("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table412, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table355 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table413 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -292,7 +292,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table355.AddRow(new string[] {
+            table413.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -300,7 +300,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "2500"});
-            table355.AddRow(new string[] {
+            table413.AddRow(new string[] {
                         "Vodafone",
                         "01/02/2018  09:29:00",
                         "1",
@@ -309,7 +309,7 @@ this.FeatureBackground();
                         "GBX",
                         "2500"});
 #line 47
- testRunner.And("With the intraday market data :", ((string)(null)), table355, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table413, "And ");
 #line 51
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 52
@@ -337,20 +337,20 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table356 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table414 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "HighVolumePercentageDaily",
                         "HighVolumePercentageWindow",
                         "HighVolumePercentageMarketCap"});
-            table356.AddRow(new string[] {
+            table414.AddRow(new string[] {
                         "23",
                         "",
                         "0.1",
                         ""});
 #line 58
- testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table356, "Given ");
+ testRunner.Given("I have the high volume rule parameter values", ((string)(null)), table414, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table357 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table415 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -362,7 +362,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table357.AddRow(new string[] {
+            table415.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 15:30:00",
@@ -374,7 +374,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "250"});
-            table357.AddRow(new string[] {
+            table415.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/02/2018 16:30:00",
@@ -387,9 +387,9 @@ this.FeatureBackground();
                         "500",
                         "250"});
 #line 61
- testRunner.And("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table357, "And ");
+ testRunner.And("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table415, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table358 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table416 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -397,7 +397,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table358.AddRow(new string[] {
+            table416.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -405,7 +405,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table358.AddRow(new string[] {
+            table416.AddRow(new string[] {
                         "Vodafone",
                         "01/02/2018  09:29:00",
                         "1",
@@ -414,7 +414,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 65
- testRunner.And("With the intraday market data :", ((string)(null)), table358, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table416, "And ");
 #line 69
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 70
@@ -442,7 +442,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table359 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table417 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -454,7 +454,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table359.AddRow(new string[] {
+            table417.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 15:30:00",
@@ -466,7 +466,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "500"});
-            table359.AddRow(new string[] {
+            table417.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 16:30:00",
@@ -479,9 +479,9 @@ this.FeatureBackground();
                         "500",
                         "500"});
 #line 76
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table359, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table417, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table360 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table418 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -489,7 +489,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table360.AddRow(new string[] {
+            table418.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -497,7 +497,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table360.AddRow(new string[] {
+            table418.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -506,7 +506,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 80
- testRunner.And("With the intraday market data :", ((string)(null)), table360, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table418, "And ");
 #line 84
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 85
@@ -532,7 +532,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table361 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table419 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -544,7 +544,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table361.AddRow(new string[] {
+            table419.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -557,9 +557,9 @@ this.FeatureBackground();
                         "10000",
                         "1000"});
 #line 91
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table361, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table419, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table362 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table420 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -567,7 +567,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table362.AddRow(new string[] {
+            table420.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -575,7 +575,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table362.AddRow(new string[] {
+            table420.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -584,7 +584,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 94
- testRunner.And("With the intraday market data :", ((string)(null)), table362, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table420, "And ");
 #line 98
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 99
@@ -610,7 +610,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table363 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table421 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -622,7 +622,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table363.AddRow(new string[] {
+            table421.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -635,9 +635,9 @@ this.FeatureBackground();
                         "10",
                         "10"});
 #line 105
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table363, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table421, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table364 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table422 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -645,7 +645,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table364.AddRow(new string[] {
+            table422.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -653,7 +653,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "50"});
-            table364.AddRow(new string[] {
+            table422.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -662,7 +662,7 @@ this.FeatureBackground();
                         "GBX",
                         "50"});
 #line 108
- testRunner.And("With the intraday market data :", ((string)(null)), table364, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table422, "And ");
 #line 112
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 113
@@ -688,7 +688,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table365 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table423 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -700,7 +700,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table365.AddRow(new string[] {
+            table423.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -713,9 +713,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 120
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table365, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table423, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table366 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table424 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -723,7 +723,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table366.AddRow(new string[] {
+            table424.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -731,7 +731,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table366.AddRow(new string[] {
+            table424.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -740,7 +740,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 123
- testRunner.And("With the intraday market data :", ((string)(null)), table366, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table424, "And ");
 #line 127
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 128
@@ -766,7 +766,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table367 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table425 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -778,7 +778,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table367.AddRow(new string[] {
+            table425.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -791,9 +791,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 134
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table367, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table425, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table368 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table426 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -801,7 +801,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table368.AddRow(new string[] {
+            table426.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -809,7 +809,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table368.AddRow(new string[] {
+            table426.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -818,7 +818,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 137
- testRunner.And("With the intraday market data :", ((string)(null)), table368, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table426, "And ");
 #line 141
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 142
@@ -844,7 +844,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table369 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table427 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -856,7 +856,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table369.AddRow(new string[] {
+            table427.AddRow(new string[] {
                         "Nvidia",
                         "0",
                         "01/01/2018 17:30:00",
@@ -869,9 +869,9 @@ this.FeatureBackground();
                         "1000",
                         "1000"});
 #line 148
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table369, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table427, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table370 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table428 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -879,7 +879,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table370.AddRow(new string[] {
+            table428.AddRow(new string[] {
                         "Nvidia",
                         "01/01/2018  17:30:00",
                         "1",
@@ -887,7 +887,7 @@ this.FeatureBackground();
                         "10",
                         "USD",
                         "5000"});
-            table370.AddRow(new string[] {
+            table428.AddRow(new string[] {
                         "Nvidia",
                         "01/01/2018  17:29:00",
                         "1",
@@ -896,7 +896,7 @@ this.FeatureBackground();
                         "USD",
                         "5000"});
 #line 151
- testRunner.And("With the intraday market data :", ((string)(null)), table370, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table428, "And ");
 #line 155
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 156
@@ -922,7 +922,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table371 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table429 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -934,7 +934,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table371.AddRow(new string[] {
+            table429.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -947,9 +947,9 @@ this.FeatureBackground();
                         "999",
                         "999"});
 #line 162
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table371, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table429, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table372 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table430 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -957,7 +957,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table372.AddRow(new string[] {
+            table430.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018 09:30:00",
                         "1",
@@ -966,7 +966,7 @@ this.FeatureBackground();
                         "GBX",
                         "10000"});
 #line 165
- testRunner.And("With the intraday market data :", ((string)(null)), table372, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table430, "And ");
 #line 168
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 169
@@ -992,7 +992,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table373 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table431 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1004,7 +1004,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table373.AddRow(new string[] {
+            table431.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -1017,9 +1017,9 @@ this.FeatureBackground();
                         "1001",
                         "1001"});
 #line 175
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table373, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table431, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table374 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table432 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -1027,7 +1027,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table374.AddRow(new string[] {
+            table432.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018 09:30:00",
                         "1",
@@ -1036,7 +1036,7 @@ this.FeatureBackground();
                         "GBX",
                         "10000"});
 #line 178
- testRunner.And("With the intraday market data :", ((string)(null)), table374, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table432, "And ");
 #line 181
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 182
@@ -1062,7 +1062,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table375 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table433 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1074,7 +1074,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table375.AddRow(new string[] {
+            table433.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -1086,7 +1086,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "500"});
-            table375.AddRow(new string[] {
+            table433.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 10:35:00",
@@ -1099,9 +1099,9 @@ this.FeatureBackground();
                         "500",
                         "500"});
 #line 188
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table375, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table433, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table376 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table434 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -1109,7 +1109,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table376.AddRow(new string[] {
+            table434.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -1117,7 +1117,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table376.AddRow(new string[] {
+            table434.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -1126,7 +1126,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 192
- testRunner.And("With the intraday market data :", ((string)(null)), table376, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table434, "And ");
 #line 196
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 197
@@ -1152,7 +1152,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table377 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table435 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1164,7 +1164,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table377.AddRow(new string[] {
+            table435.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -1176,7 +1176,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "500"});
-            table377.AddRow(new string[] {
+            table435.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 10:30:00",
@@ -1189,9 +1189,9 @@ this.FeatureBackground();
                         "500",
                         "500"});
 #line 203
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table377, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table435, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table378 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table436 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -1199,7 +1199,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table378.AddRow(new string[] {
+            table436.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -1207,7 +1207,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table378.AddRow(new string[] {
+            table436.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -1216,7 +1216,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 207
- testRunner.And("With the intraday market data :", ((string)(null)), table378, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table436, "And ");
 #line 211
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 212
@@ -1242,7 +1242,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 8
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table379 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table437 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1254,7 +1254,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table379.AddRow(new string[] {
+            table437.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 09:30:00",
@@ -1266,7 +1266,7 @@ this.FeatureBackground();
                         "10",
                         "500",
                         "500"});
-            table379.AddRow(new string[] {
+            table437.AddRow(new string[] {
                         "Vodafone",
                         "0",
                         "01/01/2018 10:25:00",
@@ -1279,9 +1279,9 @@ this.FeatureBackground();
                         "500",
                         "500"});
 #line 218
- testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table379, "Given ");
+ testRunner.Given("I have the orders for a universe from 01/01/2018 to 03/01/2018 :", ((string)(null)), table437, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table380 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table438 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "Epoch",
                         "Bid",
@@ -1289,7 +1289,7 @@ this.FeatureBackground();
                         "Price",
                         "Currency",
                         "Volume"});
-            table380.AddRow(new string[] {
+            table438.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:30:00",
                         "1",
@@ -1297,7 +1297,7 @@ this.FeatureBackground();
                         "10",
                         "GBX",
                         "5000"});
-            table380.AddRow(new string[] {
+            table438.AddRow(new string[] {
                         "Vodafone",
                         "01/01/2018  09:29:00",
                         "1",
@@ -1306,7 +1306,7 @@ this.FeatureBackground();
                         "GBX",
                         "5000"});
 #line 222
- testRunner.And("With the intraday market data :", ((string)(null)), table380, "And ");
+ testRunner.And("With the intraday market data :", ((string)(null)), table438, "And ");
 #line 226
  testRunner.When("I run the high volume rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 227

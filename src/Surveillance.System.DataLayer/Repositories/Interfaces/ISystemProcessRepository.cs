@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Repositories.Interfaces
+namespace Surveillance.Auditing.DataLayer.Repositories.Interfaces
 {
     public interface ISystemProcessRepository
     {

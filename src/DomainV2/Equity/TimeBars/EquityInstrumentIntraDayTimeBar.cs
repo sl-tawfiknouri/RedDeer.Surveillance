@@ -1,7 +1,7 @@
 ﻿using System;
-using DomainV2.Financial;
+using Domain.Financial;
 
-namespace DomainV2.Equity.TimeBars
+namespace Domain.Equity.TimeBars
 {
     /// <summary>
     /// Intraday update for financial instrument trading data

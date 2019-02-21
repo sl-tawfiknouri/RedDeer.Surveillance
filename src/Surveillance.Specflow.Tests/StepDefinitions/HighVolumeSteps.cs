@@ -1,32 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using Accord.Statistics;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
-using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Currency;
-using Surveillance.Currency.Interfaces;
-using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.Factories;
-using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
-using Surveillance.Markets.Interfaces;
-using Surveillance.RuleParameters;
-using Surveillance.RuleParameters.OrganisationalFactors;
-using Surveillance.Rules.HighVolume;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Currency;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.HighVolume;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighVolume;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Trades;
-using Surveillance.Universe.Filter.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
-using NullLogger = Castle.Core.Logging.NullLogger;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {
@@ -157,7 +156,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     _ruleCtx,
                     _alertStream,
                     _dataRequestSubscriber,
-                    Rules.RuleRunMode.ForceRun);
+                    RuleRunMode.ForceRun);
 
             foreach (var universeEvent in _universeSelectionState.SelectedUniverse.UniverseEvents)
                 highVolumeRule.OnNext(universeEvent);

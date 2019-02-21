@@ -1,4 +1,4 @@
-﻿using DomainV2.Equity.Streams.Interfaces;
+﻿using Domain.Equity.Streams.Interfaces;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Factory.EquitiesFactory.Interfaces

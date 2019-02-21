@@ -69,6 +69,9 @@
     <None Update="Migrations\13 - Order table update.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Migrations\26 - Add file upload id tables.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Migrations\25 - Add rule breach table.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

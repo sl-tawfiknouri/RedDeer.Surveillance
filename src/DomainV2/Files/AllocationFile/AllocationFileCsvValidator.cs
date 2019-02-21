@@ -1,8 +1,8 @@
-﻿using DomainV2.Files.AllocationFile.Interfaces;
+﻿using Domain.Files.AllocationFile.Interfaces;
 using FluentValidation;
 using FluentValidation.Validators;
 
-namespace DomainV2.Files.AllocationFile
+namespace Domain.Files.AllocationFile
 {
     public class AllocationFileCsvValidator : AbstractValidator<AllocationFileCsv>, IAllocationFileCsvValidator
     {

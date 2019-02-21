@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DomainV2.Enums;
-using DomainV2.Financial;
+using Domain.Enums;
+using Domain.Financial;
 
-namespace DomainV2.Trading
+namespace Domain.Trading
 {
     /// <summary>
     /// This is the Order from within the firm originating the order

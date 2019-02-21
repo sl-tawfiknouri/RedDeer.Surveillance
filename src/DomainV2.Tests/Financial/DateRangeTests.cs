@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Financial;
+using Domain.Financial;
 using NUnit.Framework;
 
-namespace DomainV2.Tests.Financial
+namespace Domain.Tests.Financial
 {
     [TestFixture]
     public class DateRangeTests

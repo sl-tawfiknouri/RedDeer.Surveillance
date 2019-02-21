@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DomainV2.Trading
+namespace Domain.Trading
 {
     public class RuleBreach
     {

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using DataSynchroniser.DataSources;
+using DataSynchroniser.Manager;
+using DataSynchroniser.Manager.Bmll;
+using Domain.Financial;
+using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
-using ThirdPartySurveillanceDataSynchroniser.Manager;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.Manager.Bmll
+namespace DataSynchroniser.Tests.Manager.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsSenderManagerTests

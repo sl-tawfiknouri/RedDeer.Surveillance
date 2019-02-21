@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DomainV2.Scheduling
+namespace Domain.Scheduling
 {
     /// <summary>
     /// DTO type for messages

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DomainV2.Streams.Interfaces
+namespace Domain.Streams.Interfaces
 {
     public interface IOrderStream<T>
     {

@@ -6,6 +6,7 @@
         string ScheduledRuleQueueName { get; }
         string CaseMessageQueueName { get; }
         string ScheduleRuleDistributedWorkQueueName { get; }
+        string UploadCoordinatorQueueName { get; }
         string TestRuleRunUpdateQueueName { get; }
         string AuroraConnectionString { get; }
     }

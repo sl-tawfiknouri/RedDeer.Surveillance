@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.DataLayer.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Repositories
+namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class MigrationRepository : IMigrationRepository
     {

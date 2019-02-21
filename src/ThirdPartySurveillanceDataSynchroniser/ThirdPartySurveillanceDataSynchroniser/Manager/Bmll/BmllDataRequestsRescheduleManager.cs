@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.Scheduling;
-using DomainV2.Scheduling.Interfaces;
+using DataSynchroniser.Manager.Bmll.Interfaces;
+using Domain.Scheduling;
+using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+namespace DataSynchroniser.Manager.Bmll
 {
     public class BmllDataRequestsRescheduleManager : IBmllDataRequestsRescheduleManager
     {

@@ -1,4 +1,6 @@
-﻿namespace DomainV2.Trading
+﻿using System;
+
+namespace Domain.Trading
 {
     public class OrderAllocation
     {
@@ -8,7 +10,8 @@
             string fund,
             string strategy,
             string clientAccountId,
-            long orderFilledVolume)
+            long orderFilledVolume,
+            DateTime? createdDate)
         {
             Id = id ?? string.Empty;
             OrderId = orderId ?? string.Empty;
@@ -16,6 +19,7 @@
             Strategy = strategy ?? string.Empty;
             ClientAccountId = clientAccountId ?? string.Empty;
             OrderFilledVolume = orderFilledVolume;
+            CreatedDate = createdDate;
         }
 
         /// <summary>
@@ -42,6 +46,7 @@
         public string Strategy { get; }
         public string ClientAccountId { get; }
         public long OrderFilledVolume { get; }
+        public DateTime? CreatedDate { get; }
 
         public bool IsValid()
         {

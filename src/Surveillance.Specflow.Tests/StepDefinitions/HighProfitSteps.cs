@@ -1,31 +1,32 @@
 ﻿using System;
-using DomainV2.Equity.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Surveillance.Analytics.Streams.Interfaces;
-using Surveillance.Currency;
-using Surveillance.Currency.Interfaces;
-using Surveillance.Data.Subscribers.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
-using Surveillance.Factories;
-using Surveillance.Factories.Interfaces;
-using Surveillance.Markets;
-using Surveillance.Markets.Interfaces;
-using Surveillance.RuleParameters;
-using Surveillance.RuleParameters.OrganisationalFactors;
-using Surveillance.Rules.HighProfits;
-using Surveillance.Rules.HighProfits.Calculators;
-using Surveillance.Rules.HighProfits.Calculators.Factories;
-using Surveillance.Rules.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Rules.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Currency;
+using Surveillance.Engine.Rules.Currency.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets;
+using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules.HighProfits;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Trades;
+using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
+using Surveillance.Engine.Rules.Universe.Interfaces;
+using Surveillance.Engine.Rules.Universe.Multiverse;
+using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighProfit;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Trades;
-using Surveillance.Universe.Filter.Interfaces;
-using Surveillance.Universe.Interfaces;
-using Surveillance.Universe.Multiverse;
-using Surveillance.Universe.Subscribers.Interfaces;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -44,15 +45,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
-        private IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
         private IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
-        private IUniversePercentageCompletionLoggerFactory _percentageCompletionLogger;
         private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private ILogger<MarketCloseMultiverseTransformer> _multiverseLogger;
         private HighProfitRuleFactory _highProfitRuleFactory;
         
         private ISystemProcessOperationRunRuleContext _ruleCtx;
@@ -102,7 +100,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
                 new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverter>()),
@@ -119,22 +116,17 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     new NullLogger<RevenueCalculator>());
 
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
-            _percentageCompletionLogger = A.Fake<IUniversePercentageCompletionLoggerFactory>();
-            _multiverseLogger = A.Fake<Logger<MarketCloseMultiverseTransformer>>();
             _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
             _highProfitRuleFactory = new HighProfitRuleFactory(
-                _unsubscriberFactory,
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _percentageCompletionLogger,
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
                 _marketDataCacheStrategyFactory,
                 _logger,
-                _tradingLogger,
-                _multiverseLogger);
+                _tradingLogger);
         }
 
         [Given(@"I have the high profit rule parameter values")]
@@ -162,7 +154,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         [When(@"I run the high profit rule")]
         public void WhenIRunTheHighProfitRule()
         {
-            var scheduledExecution = new DomainV2.Scheduling.ScheduledExecution { IsForceRerun = true };
+            var scheduledExecution = new ScheduledExecution { IsForceRerun = true };
 
             Setup();
 

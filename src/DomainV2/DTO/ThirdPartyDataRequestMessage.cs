@@ -1,4 +1,4 @@
-﻿namespace DomainV2.DTO
+﻿namespace Domain.DTO
 {
     public class ThirdPartyDataRequestMessage
     {

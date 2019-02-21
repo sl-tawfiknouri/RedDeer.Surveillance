@@ -1,6 +1,6 @@
-﻿using DomainV2.Financial;
+﻿using Domain.Financial;
 
-namespace DomainV2.Trading.Interfaces
+namespace Domain.Trading.Interfaces
 {
     public interface IBaseOrder
     {

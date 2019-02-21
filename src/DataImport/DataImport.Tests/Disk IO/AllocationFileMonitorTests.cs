@@ -1,13 +1,14 @@
 ﻿using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using DomainV2.Streams.Interfaces;
-using DomainV2.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 using System;
+using DataImport.MessageBusIO.Interfaces;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Tests.Disk_IO
@@ -19,9 +20,10 @@ namespace DataImport.Tests.Disk_IO
         private ISystemProcessContext _systemProcessContext;
         private IReddeerDirectory _reddeerDirectory;
         private ILogger<AllocationFileMonitor> _logger;
-        private IOrderAllocationStream<OrderAllocation> _orderAllocationStream;
         private IAllocationFileProcessor _fileProcessor;
-
+        private IOrderAllocationRepository _allocationRepository;
+        private IUploadCoordinatorMessageSender _coordinatorMessageSender;
+        private IFileUploadOrderAllocationRepository _fileUploadAllocationRepository;
 
         [SetUp]
         public void Setup()
@@ -29,21 +31,124 @@ namespace DataImport.Tests.Disk_IO
             _uploadConfiguration = A.Fake<IUploadConfiguration>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
             _reddeerDirectory = A.Fake<IReddeerDirectory>();
-            _orderAllocationStream = A.Fake<IOrderAllocationStream<OrderAllocation>>();
+
             _fileProcessor = A.Fake<IAllocationFileProcessor>();
+            _allocationRepository = A.Fake<IOrderAllocationRepository>();
+            _fileUploadAllocationRepository = A.Fake<IFileUploadOrderAllocationRepository>();
+            _coordinatorMessageSender = A.Fake<IUploadCoordinatorMessageSender>();
             _logger = A.Fake<ILogger<AllocationFileMonitor>>();
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_FileProcessor_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    null,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    _allocationRepository,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNull_Context_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new AllocationFileMonitor(_orderAllocationStream, _fileProcessor, null, _uploadConfiguration, _reddeerDirectory, _logger));
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() => 
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    null,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    _allocationRepository,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    _logger));
         }
 
         [Test]
         public void Constructor_ConsidersNull_Configuration_ToBeExceptional()
         {
-            Assert.Throws<ArgumentNullException>(() => new AllocationFileMonitor(_orderAllocationStream, _fileProcessor, _systemProcessContext, null, _reddeerDirectory, _logger));
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor, 
+                    _systemProcessContext,
+                    null,
+                    _reddeerDirectory,
+                    _allocationRepository,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    _logger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_Directory_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    null,
+                    _allocationRepository,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    _logger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_AllocationRepository_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    null,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    _logger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_FileUploadAllocationRepository_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    _allocationRepository,
+                    null,
+                    _coordinatorMessageSender,
+                    _logger));
+        }
+
+        [Test]
+        public void Constructor_ConsidersNull_Logger_ToBeExceptional()
+        {
+            // ReSharper disable once ObjectCreationAsStatement
+            Assert.Throws<ArgumentNullException>(() =>
+                new AllocationFileMonitor(
+                    _fileProcessor,
+                    _systemProcessContext,
+                    _uploadConfiguration,
+                    _reddeerDirectory,
+                    _allocationRepository,
+                    _fileUploadAllocationRepository,
+                    _coordinatorMessageSender,
+                    null));
         }
 
         [Test]
@@ -61,7 +166,6 @@ namespace DataImport.Tests.Disk_IO
         {
             var monitor = Build();
 
-
             var result = monitor.ProcessFile("a-path");
 
             Assert.IsFalse(result);
@@ -70,11 +174,13 @@ namespace DataImport.Tests.Disk_IO
         private AllocationFileMonitor Build()
         {
             return new AllocationFileMonitor(
-                _orderAllocationStream,
                 _fileProcessor,
                 _systemProcessContext,
                 _uploadConfiguration,
                 _reddeerDirectory,
+                _allocationRepository,
+                _fileUploadAllocationRepository,
+                _coordinatorMessageSender,
                 _logger);
         }
     }

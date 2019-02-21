@@ -1,4 +1,4 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.Manager.Bmll
+﻿namespace DataSynchroniser.Manager.Bmll
 {
     public class SuccessOrFailureResult<T>
     {

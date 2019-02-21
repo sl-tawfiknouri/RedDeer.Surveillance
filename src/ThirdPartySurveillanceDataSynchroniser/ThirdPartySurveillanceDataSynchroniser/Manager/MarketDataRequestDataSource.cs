@@ -1,7 +1,7 @@
-﻿using DomainV2.Markets;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
+﻿using DataSynchroniser.DataSources;
+using Domain.Markets;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager
+namespace DataSynchroniser.Manager
 {
     public class MarketDataRequestDataSource
     {

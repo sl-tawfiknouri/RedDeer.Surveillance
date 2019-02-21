@@ -33,18 +33,21 @@ var testProjects = new []
 {
 	"src/Test Harness/TestHarness.Tests/TestHarness.Tests.csproj" ,
 	"src/DataImport/DataImport.Tests/DataImport.Tests.csproj" ,
-	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
+	"src/Surveillance.Engine.DataCoordinator.Tests/Surveillance.Engine.DataCoordinator.Tests.csproj",
+	"src/Surveillance.Engine.RuleDistributor.Tests/Surveillance.Engine.RuleDistributor.Tests.csproj",
+	"src/Surveillance.Engine.Rules.Tests/Surveillance.Engine.Rules.Tests.csproj",
 	"src/Surveillance/Surveillance.Tests/Surveillance.Tests.csproj" ,
-	"src/Utilities.Tests/Utilities.Tests.csproj"  ,
-	"src/Surveillance.System.DataLayer.Tests/Surveillance.System.DataLayer.Tests.csproj" ,
-	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/ThirdPartySurveillanceDataSynchroniser.Tests.csproj" ,
-	"src/DomainV2.Tests/DomainV2.Tests.csproj",
-	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj" 
+	"src/Surveillance.System.DataLayer.Tests/Surveillance.Auditing.DataLayer.Tests.csproj" ,
+	"src/Surveillance/Surveillance.DataLayer.Tests/Surveillance.DataLayer.Tests.csproj" ,
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/DataSynchroniser.Tests.csproj" ,
+	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",
+	"src/DomainV2.Tests/Domain.Tests.csproj",
+	"src/Utilities.Tests/Utilities.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>
 {  
-	new Tuple<string,string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App","ThirdPartySurveillanceDataSynchroniser.App.csproj" ,"DataSynchronizerService.zip","netcoreapp2.1" ),
+	new Tuple<string,string,string,string> ("src/ThirdPartySurveillanceDataSynchroniser/App","DataSynchroniser.App.csproj" ,"DataSynchronizerService.zip","netcoreapp2.1" ),
     new Tuple<string,string,string,string> ("src/DataImport/App","DataImport.App.csproj", "DataImport.zip","netcoreapp2.0"),
 	new Tuple<string,string,string,string> ("src/Surveillance/App", "Surveillance.App.csproj","SurveillanceService.zip","netcoreapp2.0" ),
     new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" )
@@ -105,6 +108,7 @@ Task("Test")
 
 		foreach (var testProject in testProjects)
 		{			
+			Information($"About to test {testProject}");
 			DotNetCoreTest(testProject, settings);
 		}
 	});

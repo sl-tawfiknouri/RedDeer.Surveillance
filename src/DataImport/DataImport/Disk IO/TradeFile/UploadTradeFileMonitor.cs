@@ -4,37 +4,50 @@ using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using DomainV2.Files;
-using DomainV2.Streams.Interfaces;
-using DomainV2.Trading;
+using DataImport.MessageBusIO.Interfaces;
+using DataImport.Services.Interfaces;
+using Domain.Contracts;
+using Domain.Files;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.DataLayer.Aurora.Files.Interfaces;
+using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile
 {
     public class UploadTradeFileMonitor : BaseUploadFileMonitor, IUploadTradeFileMonitor
     {
-        private readonly IOrderStream<Order> _stream;
         private readonly IUploadConfiguration _uploadConfiguration;
         private readonly IUploadTradeFileProcessor _fileProcessor;
+        private readonly IEnrichmentService _enrichmentService;
+        private readonly IOrdersRepository _ordersRepository;
+        private readonly IFileUploadOrdersRepository _fileUploadOrdersRepository;
+        private readonly IUploadCoordinatorMessageSender _fileUploadMessageSender;
         private readonly ISystemProcessContext _systemProcessContext;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
         public UploadTradeFileMonitor(
-            IOrderStream<Order> stream,
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
             IUploadTradeFileProcessor fileProcessor,
+            IEnrichmentService enrichmentService,
+            IOrdersRepository ordersRepository,
+            IFileUploadOrdersRepository fileUploadOrdersRepository,
+            IUploadCoordinatorMessageSender fileUploadMessageSender,
             ISystemProcessContext systemProcessContext,
             ILogger<UploadTradeFileMonitor> logger) 
             : base(directory, logger, "Upload Trade File Monitor")
         {
-            _stream = stream ?? throw new ArgumentNullException(nameof(stream));
             _uploadConfiguration = uploadConfiguration ?? throw new ArgumentNullException(nameof(uploadConfiguration));
             _fileProcessor = fileProcessor ?? throw new ArgumentNullException(nameof(fileProcessor));
+            _enrichmentService = enrichmentService ?? throw new ArgumentNullException(nameof(enrichmentService));
+            _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
+            _fileUploadOrdersRepository = fileUploadOrdersRepository ?? throw new ArgumentNullException(nameof(fileUploadOrdersRepository));
+            _fileUploadMessageSender = fileUploadMessageSender ?? throw new ArgumentNullException(nameof(fileUploadMessageSender));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
         }
@@ -54,7 +67,7 @@ namespace DataImport.Disk_IO.TradeFile
                 var fileUpload =
                     opCtx
                         .CreateAndStartUploadFileContext(
-                            SystemProcessOperationUploadFileType.TradeDataFile,
+                            SystemProcessOperationUploadFileType.OrderDataFile,
                             path);
                 try
                 {
@@ -63,7 +76,7 @@ namespace DataImport.Disk_IO.TradeFile
                     if (csvReadResults == null
                         || (!csvReadResults.SuccessfulReads.Any() && !(csvReadResults.UnsuccessfulReads.Any())))
                     {
-                        _logger.LogError($"Upload Trade File for {path} did not find any records or had zero successful and unsuccessful reads");
+                        _logger.LogError($"Upload Trade File for {path} did not find any records or had zero successful and unsuccessful reads. Empty file. CLIENTSERVICE");
                         fileUpload.EndEvent().EndEvent();
                         return false;
                     }
@@ -118,22 +131,56 @@ namespace DataImport.Disk_IO.TradeFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
-            _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");
+            _logger.LogInformation($"Upload Trade File for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the orders repository.");
 
             foreach (var item in csvReadResults.SuccessfulReads)
             {
                 item.IsInputBatch = true;
                 item.InputBatchId = uploadGuid;
                 item.BatchSize = csvReadResults.SuccessfulReads.Count;
-
-                _stream.Add(item);
+                _ordersRepository.Create(item).Wait();
             }
-            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to delete {path}.");
+
+            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to link uploaded orders to file upload id.");
+            InsertFileUploadOrderIds(csvReadResults, fileUpload);
+            _logger.LogInformation($"Upload Trade File for {path} has uploaded the csv records. Now about to enrich the security data.");
+            _enrichmentService.Scan();
+            _logger.LogInformation($"Upload Trade File for {path} has enriched the csv records. Now about to delete {path}.");
             ReddeerDirectory.Delete(path);
             _logger.LogInformation($"Upload Trade File for {path} has deleted the file. Now about to check for unsuccessful reads.");
 
             _logger.LogInformation($"Upload Trade File successfully processed file for {path}. Did not find any unsuccessful reads.");
             fileUpload.EndEvent().EndEvent();
+        }
+
+        private void InsertFileUploadOrderIds(
+            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
+            ISystemProcessOperationUploadFileContext fileUpload)
+        {
+            if (csvReadResults.SuccessfulReads == null
+                || !csvReadResults.SuccessfulReads.Any())
+            {
+                return;
+            }
+
+            if (fileUpload?.FileUpload?.Id == null)
+            {
+                return;
+            }
+
+            var orderIds = 
+                csvReadResults
+                    .SuccessfulReads
+                    .Select(i => i.ReddeerOrderId?.ToString())
+                    .Where(i => !string.IsNullOrWhiteSpace(i))
+                    .ToList();
+
+            _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Now about to save the link between the file upload and orders");
+            _fileUploadOrdersRepository.Create(orderIds, fileUpload.FileUpload.Id).Wait();
+            _logger.LogInformation($"Upload Trade File for {fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Completed saving the link between the file upload and orders");
+
+            var uploadMessage = new AutoScheduleMessage();
+            _fileUploadMessageSender.Send(uploadMessage).Wait();
         }
     }
 }

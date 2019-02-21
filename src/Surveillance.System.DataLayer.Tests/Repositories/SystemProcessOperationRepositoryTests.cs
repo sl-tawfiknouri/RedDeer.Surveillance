@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
-using NUnit.Framework;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Surveillance.Systems.DataLayer.Processes;
-using Surveillance.Systems.DataLayer.Repositories;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.DataLayer.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
+using NUnit.Framework;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Auditing.DataLayer.Repositories;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Tests.Repositories
+namespace Surveillance.Auditing.DataLayer.Tests.Repositories
 {
     [TestFixture]
     public class SystemProcessOperationRepositoryTests

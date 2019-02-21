@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using DomainV2.Equity.Streams.Interfaces;
-using DomainV2.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
+using Domain.Streams.Interfaces;
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     public class OrderStream<T> : IOrderStream<T>
     {

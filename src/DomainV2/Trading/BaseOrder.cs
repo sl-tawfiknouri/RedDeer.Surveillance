@@ -1,8 +1,8 @@
 ﻿using System;
-using DomainV2.Financial;
-using DomainV2.Trading.Interfaces;
+using Domain.Financial;
+using Domain.Trading.Interfaces;
 
-namespace DomainV2.Trading
+namespace Domain.Trading
 {
     public abstract class BaseOrder : IBaseOrder
     {
@@ -35,11 +35,6 @@ namespace DomainV2.Trading
         /// </summary>
         public OrderStatus OrderStatus()
         {
-            if (FilledDate != null)
-            {
-                return Financial.OrderStatus.Filled;
-            }
-
             if (CancelledDate != null)
             {
                 return Financial.OrderStatus.Cancelled;
@@ -48,6 +43,11 @@ namespace DomainV2.Trading
             if (RejectedDate != null)
             {
                 return Financial.OrderStatus.Rejected;
+            }
+
+            if (FilledDate != null)
+            {
+                return Financial.OrderStatus.Filled;
             }
 
             if (AmendedDate != null)

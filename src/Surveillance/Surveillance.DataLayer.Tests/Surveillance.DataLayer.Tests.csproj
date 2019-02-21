@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Surveillance.System.DataLayer\Surveillance.System.DataLayer.csproj" />
+    <ProjectReference Include="..\..\Surveillance.System.DataLayer\Surveillance.Auditing.DataLayer.csproj" />
     <ProjectReference Include="..\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 

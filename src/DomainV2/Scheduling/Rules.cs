@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DomainV2.Scheduling
+namespace Domain.Scheduling
 {
     public enum Rules
     {

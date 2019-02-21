@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using DomainV2.DTO;
-using DomainV2.DTO.Interfaces;
+using DataSynchroniser.Manager.Interfaces;
+using DataSynchroniser.Services;
+using Domain.DTO;
+using Domain.DTO.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Services;
+using Surveillance.Auditing.Context.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Tests.Services
+namespace DataSynchroniser.Tests.Services
 {
     [TestFixture]
     public class DataRequestsServiceTests

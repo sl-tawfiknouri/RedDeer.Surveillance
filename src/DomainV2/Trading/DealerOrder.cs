@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using DomainV2.Financial;
-using DomainV2.Financial.Interfaces;
+using Domain.Financial;
+using Domain.Financial.Interfaces;
 
-namespace DomainV2.Trading
+namespace Domain.Trading
 {
     public class DealerOrder : BaseOrder
     {

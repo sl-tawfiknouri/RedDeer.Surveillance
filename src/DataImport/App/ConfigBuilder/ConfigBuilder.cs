@@ -50,8 +50,6 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 }
             }
 
-            bool.TryParse(GetSetting("DataImportServiceAutoSchedule", configurationBuilder), out var autoSchedule);
-
             var networkConfiguration = new Configuration
             {
                 DataImportTradeFileUploadDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), GetSetting("DataImportTradeFileUploadDirectoryPath", configurationBuilder)),
@@ -62,8 +60,7 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
                 DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),
                 DataImportAllocationFileUploadDirectoryPath = GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
-                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
-                AutoSchedule = autoSchedule,
+                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder)
             };
 
             return networkConfiguration;
@@ -98,7 +95,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 ClientServiceUrl = GetSetting("ClientServiceUrlAndPort", configurationBuilder),
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
                 AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
-                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder)
+                BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
+                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder)
             };
         }
 

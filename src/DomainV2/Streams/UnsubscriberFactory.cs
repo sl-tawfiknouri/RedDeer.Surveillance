@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using DomainV2.Equity.Streams.Interfaces;
+using Domain.Equity.Streams.Interfaces;
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     public class UnsubscriberFactory<T> : IUnsubscriberFactory<T>
     {

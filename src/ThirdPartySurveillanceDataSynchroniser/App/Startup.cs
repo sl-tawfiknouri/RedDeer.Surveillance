@@ -1,4 +1,5 @@
 ﻿using System;
+using DataSynchroniser.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,18 +7,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using StructureMap;
-using Surveillance.DataLayer.Configuration.Interfaces;
-using Surveillance.Systems.DataLayer.Interfaces;
+using Surveillance.Auditing;
+using Surveillance.Auditing.Context;
+using Surveillance.Auditing.DataLayer;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
-using Surveillance.Systems.Auditing;
-using Surveillance.Systems.Auditing.Context;
-using Surveillance.Systems.DataLayer;
-using Surveillance.Systems.DataLayer.Processes;
-using ThirdPartySurveillanceDataSynchroniser;
-using ThirdPartySurveillanceDataSynchroniser.Configuration;
+using Surveillance.DataLayer.Configuration.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 
-namespace RedDeer.ThirdPartySurveillanceDataSynchroniser.App
+namespace DataSynchroniser.App
 {
     public class Startup
     {

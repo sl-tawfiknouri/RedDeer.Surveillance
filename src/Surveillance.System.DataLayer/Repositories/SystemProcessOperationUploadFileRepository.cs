@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Surveillance.Systems.DataLayer.Interfaces;
-using Surveillance.Systems.DataLayer.Processes;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
-using Surveillance.Systems.DataLayer.Repositories.Interfaces;
+using Surveillance.Auditing.DataLayer.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Repositories
+namespace Surveillance.Auditing.DataLayer.Repositories
 {
     public class SystemProcessOperationUploadFileRepository : ISystemProcessOperationUploadFileRepository
     {
@@ -17,7 +17,16 @@ namespace Surveillance.Systems.DataLayer.Repositories
         private readonly ILogger<SystemProcessOperationUploadFileRepository> _logger;
 
         private const string CreateSql = @"INSERT INTO SystemProcessOperationUploadFile(SystemProcessOperationId, FilePath, FileType) VALUES (@SystemProcessOperationId, @FilePath, @FileType); SELECT LAST_INSERT_ID();";
+
         private const string GetDashboardSql = @"SELECT * FROM SystemProcessOperationUploadFile ORDER BY Id desc LIMIT 10;";
+
+        private const string GetByDate = @"
+            SELECT UploadFile.*, SysOp.OperationStart AS FileUploadTime
+            FROM SystemProcessOperationUploadFile AS UploadFile
+            LEFT OUTER JOIN SystemProcessOperation AS SysOp
+            ON UploadFile.SystemProcessOperationId = SysOp.Id
+            WHERE SysOp.OperationStart >= @StartDate
+            AND SysOp.OperationStart < @EndDate";
 
         public SystemProcessOperationUploadFileRepository(
             IConnectionStringFactory dbConnectionFactory,
@@ -84,5 +93,34 @@ namespace Surveillance.Systems.DataLayer.Repositories
             return new ISystemProcessOperationUploadFile[0];
         }
 
+        public async Task<IReadOnlyCollection<ISystemProcessOperationUploadFile>> GetOnDate(DateTime date)
+        {
+            var startDate = date.Date;
+            var endDate = date.Date.AddDays(1).AddSeconds(-1);
+
+            var dbConnection = _dbConnectionFactory.BuildConn();
+
+            try
+            {
+                dbConnection.Open();
+                
+                using (var conn = dbConnection.QueryAsync<SystemProcessOperationUploadFile>(GetByDate, new { StartDate = startDate, EndDate = endDate }))
+                {
+                    var result = await conn;
+                    return result.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"System Process Operation Upload File Repository Get On Date method {e.Message}");
+            }
+            finally
+            {
+                dbConnection.Close();
+                dbConnection.Dispose();
+            }
+
+            return new ISystemProcessOperationUploadFile[0];
+        }
     }
 }

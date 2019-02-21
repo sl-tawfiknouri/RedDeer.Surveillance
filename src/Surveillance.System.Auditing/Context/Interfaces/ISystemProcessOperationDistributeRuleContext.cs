@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Systems.Auditing.Context.Interfaces
+﻿namespace Surveillance.Auditing.Context.Interfaces
 {
     public interface ISystemProcessOperationDistributeRuleContext
     {

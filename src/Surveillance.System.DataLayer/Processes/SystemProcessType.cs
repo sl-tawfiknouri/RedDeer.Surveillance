@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Systems.DataLayer.Processes
+﻿namespace Surveillance.Auditing.DataLayer.Processes
 {
     public enum SystemProcessType
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace DomainV2.Streams
+namespace Domain.Streams
 {
     /// <summary>
     /// This observer just records all the data it has recorded up to the maximum ring buffer allowance

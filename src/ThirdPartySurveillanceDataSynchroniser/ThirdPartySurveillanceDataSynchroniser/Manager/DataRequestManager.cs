@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DomainV2.Markets;
+using DataSynchroniser.DataSources;
+using DataSynchroniser.DataSources.Interfaces;
+using DataSynchroniser.Manager.Bmll.Interfaces;
+using DataSynchroniser.Manager.Factset.Interfaces;
+using DataSynchroniser.Manager.Interfaces;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Surveillance.Systems.Auditing.Context.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.DataSources;
-using ThirdPartySurveillanceDataSynchroniser.DataSources.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Bmll.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Factset.Interfaces;
-using ThirdPartySurveillanceDataSynchroniser.Manager.Interfaces;
 
-namespace ThirdPartySurveillanceDataSynchroniser.Manager
+namespace DataSynchroniser.Manager
 {
     public class DataRequestManager : IDataRequestManager
     {

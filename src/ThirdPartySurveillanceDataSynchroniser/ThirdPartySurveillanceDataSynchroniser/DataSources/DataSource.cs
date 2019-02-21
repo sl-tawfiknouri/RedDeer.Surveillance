@@ -1,4 +1,4 @@
-﻿namespace ThirdPartySurveillanceDataSynchroniser.DataSources
+﻿namespace DataSynchroniser.DataSources
 {
     public enum DataSource
     {

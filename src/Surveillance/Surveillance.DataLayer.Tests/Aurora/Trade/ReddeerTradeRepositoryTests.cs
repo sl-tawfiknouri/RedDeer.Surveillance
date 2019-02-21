@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Trading;
+using Domain.Financial;
+using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
-using Surveillance.DataLayer.Aurora.Trade;
+using Surveillance.DataLayer.Aurora.Orders;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
-using Surveillance.Systems.Auditing.Context.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Aurora.Trade
 {
@@ -46,6 +46,32 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
         [Test]
         [Explicit("Performs side effect to the d-b")]
+        public async Task Creates_LiveUnscheduledOrders()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+
+            var result = await repo.LiveUnscheduledOrders();
+
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
+        public async Task SetScheduledOrder_SetsOrderToAutoScheduled()
+        {
+            var factory = new ConnectionStringFactory(_configuration);
+            var repo = new OrdersRepository(factory, _marketRepository, _logger);
+            var frame = Frame();
+            var frames = new[] { frame };
+
+            await repo.SetOrdersScheduled(frames);
+
+            Assert.IsTrue(true);
+        }
+
+        [Test]
+        [Explicit("Performs side effect to the d-b")]
         public async Task Get()
         {
             var factory = new ConnectionStringFactory(_configuration);
@@ -62,10 +88,10 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
 
             Assert.IsTrue(true);
         }
-
+        
         private Order Frame()
         {
-            var exch = new DomainV2.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new Domain.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.UtcNow;
             var tradeDates = DateTime.UtcNow;
 

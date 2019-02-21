@@ -1,7 +1,7 @@
 ﻿using System;
-using Surveillance.Systems.DataLayer.Processes.Interfaces;
+using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 
-namespace Surveillance.Systems.DataLayer.Processes
+namespace Surveillance.Auditing.DataLayer.Processes
 {
     public class SystemProcessOperation : ISystemProcessOperation
     {

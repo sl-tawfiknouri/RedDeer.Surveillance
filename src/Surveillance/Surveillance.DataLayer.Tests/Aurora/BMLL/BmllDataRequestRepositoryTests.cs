@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DomainV2.Financial;
-using DomainV2.Markets;
+using Domain.Financial;
+using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;

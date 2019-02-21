@@ -80,20 +80,20 @@ namespace Surveillance.Specflow.Tests.Features
         {
 #line 9
 #line hidden
-            TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "CancelledOrderPercentagePositionThreshold",
                         "CancelledOrderCountPercentageThreshold",
                         "MinimumNumberOfTradesToApplyRuleTo",
                         "MaximumNumberOfTradesToApplyRuleTo"});
-            table25.AddRow(new string[] {
+            table33.AddRow(new string[] {
                         "1",
                         "0.5",
                         "",
                         "2",
                         ""});
 #line 10
-   testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table25, "Given ");
+   testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table33, "Given ");
 #line hidden
         }
         
@@ -108,7 +108,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -121,7 +121,7 @@ this.FeatureBackground();
                         "OrderedVolume",
                         "FilledVolume"});
 #line 15
-   testRunner.Given("I have the orders for a universe from 01/01/2018 to 01/05/2018 :", ((string)(null)), table26, "Given ");
+   testRunner.Given("I have the orders for a universe from 01/01/2018 to 01/05/2018 :", ((string)(null)), table34, "Given ");
 #line 17
          testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 18
@@ -141,7 +141,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -153,7 +153,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table27.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -165,7 +165,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table27.AddRow(new string[] {
+            table35.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 09:30:00",
@@ -178,7 +178,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 21
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table27, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table35, "Given ");
 #line 25
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 26
@@ -198,7 +198,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table28 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -210,7 +210,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table28.AddRow(new string[] {
+            table36.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -222,7 +222,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table28.AddRow(new string[] {
+            table36.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 10:31:00",
@@ -235,7 +235,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 29
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table28, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table36, "Given ");
 #line 33
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 34
@@ -255,7 +255,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table37 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -267,7 +267,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table29.AddRow(new string[] {
+            table37.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -279,7 +279,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table29.AddRow(new string[] {
+            table37.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 10:29:00",
@@ -292,7 +292,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 37
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table29, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table37, "Given ");
 #line 41
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 42
@@ -312,7 +312,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -324,7 +324,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table30.AddRow(new string[] {
+            table38.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -336,7 +336,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table30.AddRow(new string[] {
+            table38.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 10:30:00",
@@ -349,7 +349,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 45
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table30, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table38, "Given ");
 #line 49
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 50
@@ -369,7 +369,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table39 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -381,7 +381,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table31.AddRow(new string[] {
+            table39.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -393,7 +393,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table31.AddRow(new string[] {
+            table39.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 10:29:00",
@@ -406,7 +406,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 53
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table31, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table39, "Given ");
 #line 57
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 58
@@ -426,7 +426,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -438,7 +438,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table32.AddRow(new string[] {
+            table40.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 09:30:00",
@@ -450,7 +450,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table32.AddRow(new string[] {
+            table40.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019 10:29:00",
@@ -463,7 +463,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 61
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table32, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table40, "Given ");
 #line 65
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 66
@@ -483,7 +483,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table41 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -495,7 +495,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table33.AddRow(new string[] {
+            table41.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019 10:30:00",
@@ -508,7 +508,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 69
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table33, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table41, "Given ");
 #line 72
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 73
@@ -530,7 +530,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table42 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -542,7 +542,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019",
@@ -554,7 +554,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019",
@@ -566,7 +566,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2019",
@@ -578,7 +578,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2019",
@@ -590,7 +590,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2019",
@@ -602,7 +602,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2019",
@@ -614,7 +614,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2019",
@@ -626,7 +626,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2019",
@@ -638,7 +638,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2019",
@@ -650,7 +650,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "10",
                         "01/01/2019",
@@ -662,7 +662,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table34.AddRow(new string[] {
+            table42.AddRow(new string[] {
                         "Barclays",
                         "11",
                         "01/01/2019",
@@ -675,7 +675,7 @@ this.FeatureBackground();
                         "800",
                         ""});
 #line 76
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table34, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table42, "Given ");
 #line 89
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 90
@@ -695,7 +695,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table43 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -707,7 +707,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019",
@@ -719,7 +719,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019",
@@ -731,7 +731,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2019",
@@ -743,7 +743,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2019",
@@ -755,7 +755,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2019",
@@ -767,7 +767,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2019",
@@ -779,7 +779,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2019",
@@ -791,7 +791,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2019",
@@ -803,7 +803,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2019",
@@ -815,7 +815,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table35.AddRow(new string[] {
+            table43.AddRow(new string[] {
                         "Barclays",
                         "10",
                         "01/01/2019",
@@ -828,7 +828,7 @@ this.FeatureBackground();
                         "900",
                         ""});
 #line 93
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table35, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table43, "Given ");
 #line 105
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 106
@@ -850,7 +850,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -862,7 +862,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019",
@@ -874,7 +874,7 @@ this.FeatureBackground();
                         "",
                         "1000",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019",
@@ -886,7 +886,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2019",
@@ -898,7 +898,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2019",
@@ -910,7 +910,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2019",
@@ -922,7 +922,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2019",
@@ -934,7 +934,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2019",
@@ -946,7 +946,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2019",
@@ -958,7 +958,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2019",
@@ -970,7 +970,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "10",
                         "01/01/2019",
@@ -982,7 +982,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table36.AddRow(new string[] {
+            table44.AddRow(new string[] {
                         "Barclays",
                         "11",
                         "01/01/2019",
@@ -995,7 +995,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 109
-  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table36, "Given ");
+  testRunner.Given("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table44, "Given ");
 #line 122
    testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 123
@@ -1015,22 +1015,22 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table37 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table45 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "CancelledOrderPercentagePositionThreshold",
                         "CancelledOrderCountPercentageThreshold",
                         "MinimumNumberOfTradesToApplyRuleTo",
                         "MaximumNumberOfTradesToApplyRuleTo"});
-            table37.AddRow(new string[] {
+            table45.AddRow(new string[] {
                         "1",
                         "0.5",
                         "",
                         "10",
                         ""});
 #line 126
-  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table37, "Given ");
+  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table45, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table46 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1042,7 +1042,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019",
@@ -1054,7 +1054,7 @@ this.FeatureBackground();
                         "",
                         "1000",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019",
@@ -1066,7 +1066,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2019",
@@ -1078,7 +1078,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2019",
@@ -1090,7 +1090,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2019",
@@ -1102,7 +1102,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2019",
@@ -1114,7 +1114,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2019",
@@ -1126,7 +1126,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2019",
@@ -1138,7 +1138,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2019",
@@ -1150,7 +1150,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table38.AddRow(new string[] {
+            table46.AddRow(new string[] {
                         "Barclays",
                         "10",
                         "01/01/2019",
@@ -1163,7 +1163,7 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 129
-  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table38, "And ");
+  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table46, "And ");
 #line 141
          testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 142
@@ -1183,22 +1183,22 @@ this.ScenarioInitialize(scenarioInfo);
 #line 9
 this.FeatureBackground();
 #line hidden
-            TechTalk.SpecFlow.Table table39 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table47 = new TechTalk.SpecFlow.Table(new string[] {
                         "WindowHours",
                         "CancelledOrderPercentagePositionThreshold",
                         "CancelledOrderCountPercentageThreshold",
                         "MinimumNumberOfTradesToApplyRuleTo",
                         "MaximumNumberOfTradesToApplyRuleTo"});
-            table39.AddRow(new string[] {
+            table47.AddRow(new string[] {
                         "1",
                         "0.5",
                         "",
                         "10",
                         ""});
 #line 145
-  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table39, "Given ");
+  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table47, "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table48 = new TechTalk.SpecFlow.Table(new string[] {
                         "SecurityName",
                         "OrderId",
                         "PlacedDate",
@@ -1210,7 +1210,7 @@ this.FeatureBackground();
                         "AverageFillPrice",
                         "OrderedVolume",
                         "FilledVolume"});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "1",
                         "01/01/2019",
@@ -1222,7 +1222,7 @@ this.FeatureBackground();
                         "",
                         "900",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "2",
                         "01/01/2019",
@@ -1234,7 +1234,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "3",
                         "01/01/2019",
@@ -1246,7 +1246,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "4",
                         "01/01/2019",
@@ -1258,7 +1258,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "5",
                         "01/01/2019",
@@ -1270,7 +1270,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "6",
                         "01/01/2019",
@@ -1282,7 +1282,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "7",
                         "01/01/2019",
@@ -1294,7 +1294,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "8",
                         "01/01/2019",
@@ -1306,7 +1306,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "9",
                         "01/01/2019",
@@ -1318,7 +1318,7 @@ this.FeatureBackground();
                         "",
                         "100",
                         ""});
-            table40.AddRow(new string[] {
+            table48.AddRow(new string[] {
                         "Barclays",
                         "10",
                         "01/01/2019",
@@ -1331,10 +1331,262 @@ this.FeatureBackground();
                         "100",
                         ""});
 #line 148
-  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table40, "And ");
+  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table48, "And ");
 #line 160
          testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 161
+   testRunner.Then("I will have 1 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Inside CancelledOrderPercentagePositionThreshold yields One alert")]
+        public virtual void InsideCancelledOrderPercentagePositionThresholdYieldsOneAlert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Inside CancelledOrderPercentagePositionThreshold yields One alert", null, ((string[])(null)));
+#line 164
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 9
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table49 = new TechTalk.SpecFlow.Table(new string[] {
+                        "WindowHours",
+                        "CancelledOrderPercentagePositionThreshold",
+                        "CancelledOrderCountPercentageThreshold",
+                        "MinimumNumberOfTradesToApplyRuleTo",
+                        "MaximumNumberOfTradesToApplyRuleTo"});
+            table49.AddRow(new string[] {
+                        "1",
+                        "0.5",
+                        "",
+                        "2",
+                        ""});
+#line 165
+  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table49, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table50 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "CancelledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table50.AddRow(new string[] {
+                        "Barclays",
+                        "1",
+                        "01/01/2019",
+                        "",
+                        "Market",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "",
+                        "100",
+                        ""});
+            table50.AddRow(new string[] {
+                        "Barclays",
+                        "2",
+                        "01/01/2019",
+                        "01/01/2019",
+                        "Market",
+                        "Sell",
+                        "GBX",
+                        "",
+                        "",
+                        "150",
+                        ""});
+#line 168
+  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table50, "And ");
+#line 172
+   testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 173
+   testRunner.Then("I will have 1 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Outside CancelledOrderPercentagePositionThreshold yields No alert")]
+        public virtual void OutsideCancelledOrderPercentagePositionThresholdYieldsNoAlert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Outside CancelledOrderPercentagePositionThreshold yields No alert", null, ((string[])(null)));
+#line 175
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 9
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table51 = new TechTalk.SpecFlow.Table(new string[] {
+                        "WindowHours",
+                        "CancelledOrderPercentagePositionThreshold",
+                        "CancelledOrderCountPercentageThreshold",
+                        "MinimumNumberOfTradesToApplyRuleTo",
+                        "MaximumNumberOfTradesToApplyRuleTo"});
+            table51.AddRow(new string[] {
+                        "1",
+                        "0.5",
+                        "",
+                        "3",
+                        ""});
+#line 176
+  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table51, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table52 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "CancelledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table52.AddRow(new string[] {
+                        "Barclays",
+                        "1",
+                        "01/01/2019",
+                        "",
+                        "Market",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "",
+                        "100",
+                        ""});
+            table52.AddRow(new string[] {
+                        "Barclays",
+                        "2",
+                        "01/01/2019",
+                        "01/01/2019",
+                        "Market",
+                        "Sell",
+                        "GBX",
+                        "",
+                        "",
+                        "10",
+                        ""});
+            table52.AddRow(new string[] {
+                        "Barclays",
+                        "3",
+                        "01/01/2019",
+                        "",
+                        "Market",
+                        "Sell",
+                        "GBX",
+                        "",
+                        "",
+                        "90",
+                        ""});
+#line 179
+  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table52, "And ");
+#line 185
+         testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 186
+   testRunner.Then("I will have 0 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Same as CancelledOrderPercentagePositionThreshold yields 1 alert")]
+        public virtual void SameAsCancelledOrderPercentagePositionThresholdYields1Alert()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Same as CancelledOrderPercentagePositionThreshold yields 1 alert", null, ((string[])(null)));
+#line 188
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 9
+this.FeatureBackground();
+#line hidden
+            TechTalk.SpecFlow.Table table53 = new TechTalk.SpecFlow.Table(new string[] {
+                        "WindowHours",
+                        "CancelledOrderPercentagePositionThreshold",
+                        "CancelledOrderCountPercentageThreshold",
+                        "MinimumNumberOfTradesToApplyRuleTo",
+                        "MaximumNumberOfTradesToApplyRuleTo"});
+            table53.AddRow(new string[] {
+                        "1",
+                        "0.5",
+                        "",
+                        "4",
+                        ""});
+#line 189
+  testRunner.Given("I have the cancelled orders rule parameter values", ((string)(null)), table53, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table54 = new TechTalk.SpecFlow.Table(new string[] {
+                        "SecurityName",
+                        "OrderId",
+                        "PlacedDate",
+                        "CancelledDate",
+                        "Type",
+                        "Direction",
+                        "Currency",
+                        "LimitPrice",
+                        "AverageFillPrice",
+                        "OrderedVolume",
+                        "FilledVolume"});
+            table54.AddRow(new string[] {
+                        "Barclays",
+                        "1",
+                        "01/01/2019",
+                        "",
+                        "Market",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "",
+                        "100",
+                        ""});
+            table54.AddRow(new string[] {
+                        "Barclays",
+                        "2",
+                        "01/01/2019",
+                        "01/01/2019",
+                        "Market",
+                        "Sell",
+                        "GBX",
+                        "",
+                        "",
+                        "150",
+                        ""});
+            table54.AddRow(new string[] {
+                        "Barclays",
+                        "3",
+                        "01/01/2019",
+                        "",
+                        "Market",
+                        "BUY",
+                        "GBX",
+                        "",
+                        "",
+                        "100",
+                        ""});
+            table54.AddRow(new string[] {
+                        "Barclays",
+                        "4",
+                        "01/01/2019",
+                        "01/01/2019",
+                        "Market",
+                        "Sell",
+                        "GBX",
+                        "",
+                        "",
+                        "150",
+                        ""});
+#line 192
+  testRunner.And("I have the orders for a universe from 01/01/2019 to 01/01/2019 :", ((string)(null)), table54, "And ");
+#line 199
+         testRunner.When("I run the cancelled orders rule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 200
    testRunner.Then("I will have 1 cancelled orders alerts", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

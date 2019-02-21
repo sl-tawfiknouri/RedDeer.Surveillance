@@ -178,3 +178,11 @@ Scenario: Nine cancelled orders out of ten with less than 10% volume yields 0 al
          | Barclays     | 10      | 01/01/2019 | 01/01/2019    | Market | Sell       | GBX      |            |                  | 100           |              |
          When I run the cancelled orders rule
 		 Then I will have 0 cancelled orders alerts
+
+Scenario: Outside Time Window yields No alert
+		Given I have the orders for a universe from 01/01/2019 to 01/02/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2019 | 01/02/2019    | Market | Sell      | GBX      |            |                  | 100           |              |       
+		 When I run the cancelled orders rule
+		 Then I will have 0 cancelled orders alerts

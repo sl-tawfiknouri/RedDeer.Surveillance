@@ -110,7 +110,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
             highVolumeRule.OnNext(Trade());
             highVolumeRule.OnNext(Eschaton());
 
-            A.CallTo(() => _opCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _dataRequestSubscriber.SubmitRequest()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
         }
 

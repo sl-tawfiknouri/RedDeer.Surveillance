@@ -55,7 +55,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                 using (var conn = dbConnection.QueryAsync<FigiLookup>(GetFigiToSecurityIdLookup))
                 {
                     var lookup = (await conn).ToList();
-                    lookupFigiToSecurityIds = lookup.GroupBy(i => i.Figi).ToDictionary(y => y.Key, y => y.Select(i => i.Id).ToList());
+                    lookupFigiToSecurityIds = lookup.GroupBy(i => i.Figi).ToDictionary(y => y.Key, y => y.Select(i => i.Figi).ToList());
 
                     _logger?.LogInformation($"ReddeerMarketTimeBarRepository Save method built figi to security id look up");
                 }

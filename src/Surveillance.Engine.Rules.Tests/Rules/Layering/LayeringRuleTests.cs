@@ -170,7 +170,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
             rule.OnNext(eschaton);
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -196,7 +195,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
             rule.OnNext(eschaton);
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -357,7 +355,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappened();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappened();
         }
 
         [Test]
@@ -407,7 +404,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappened();
         }
 
         [Test]
@@ -462,7 +458,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -701,7 +696,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         private EquityIntraDayTimeBarCollection SetExchangeFrameToPrice(

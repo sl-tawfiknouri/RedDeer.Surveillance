@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Utilities.Extensions;

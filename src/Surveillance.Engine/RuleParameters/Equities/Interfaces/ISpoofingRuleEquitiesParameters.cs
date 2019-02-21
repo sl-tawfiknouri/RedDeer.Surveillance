@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
+namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
     public interface ISpoofingRuleEquitiesParameters : IFilterableRule, IRuleParameter
     {

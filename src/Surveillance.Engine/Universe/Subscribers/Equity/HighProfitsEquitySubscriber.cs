@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;

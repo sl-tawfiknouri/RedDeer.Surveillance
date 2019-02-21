@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;

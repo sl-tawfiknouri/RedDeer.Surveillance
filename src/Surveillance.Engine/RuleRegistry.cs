@@ -34,6 +34,7 @@ using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;

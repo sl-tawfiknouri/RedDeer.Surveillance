@@ -18,6 +18,7 @@ using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.Layering;

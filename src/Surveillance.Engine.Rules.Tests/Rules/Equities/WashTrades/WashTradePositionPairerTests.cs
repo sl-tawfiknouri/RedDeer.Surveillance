@@ -6,6 +6,7 @@ using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;

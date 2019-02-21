@@ -200,9 +200,10 @@ namespace DataImport.S3_IO
 
         private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)
         {
-            var filePath = Path.GetFileName(dto.FileName) ?? string.Empty;
+            var versionId = string.IsNullOrWhiteSpace(dto?.VersionId) ? "" : $"{dto?.VersionId}-";
+            var fileName = Path.GetFileName(dto.FileName) ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 _logger.LogInformation($"S3 File Upload Monitoring Process had a null or empty file path when reading from S3 message");
                 return;
@@ -212,7 +213,8 @@ namespace DataImport.S3_IO
                 _logger.LogInformation($"S3 Processor about to process {filePath}");
             }
 
-            var newPath = Path.Combine(ftpDirectoryPath, filePath);
+            fileName = $"{versionId}{fileName}";
+            var newPath = Path.Combine(ftpDirectoryPath, fileName);
             var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, dto.VersionId, newPath);
 
             if (retries <= 0)

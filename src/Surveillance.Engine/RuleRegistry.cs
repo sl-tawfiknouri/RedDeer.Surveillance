@@ -20,6 +20,8 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.Factories.FixedIncome;
+using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers;
@@ -170,11 +172,17 @@ namespace Surveillance.Engine.Rules
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
             For<IWashTradeClustering>().Use<WashTradeClustering>();
 
+
+
             For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
+            For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
 
             For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
+            For<IFixedIncomeHighProfitFactory>().Use<FixedIncomeHighProfitFactory>();
 
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
+            For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
+
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();

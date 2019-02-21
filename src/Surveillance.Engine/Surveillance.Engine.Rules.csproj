@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Rules\FixedIncome\HighProfits\Interfaces\" />
     <Folder Include="Rules\FixedIncome\HighVolume\" />
     <Folder Include="Rules\FixedIncome\WashTrade\" />
   </ItemGroup>

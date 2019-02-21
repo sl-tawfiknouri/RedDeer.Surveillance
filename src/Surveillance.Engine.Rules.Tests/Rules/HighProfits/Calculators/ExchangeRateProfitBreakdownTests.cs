@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Domain.Trading;
 using NUnit.Framework;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
 

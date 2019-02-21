@@ -10,8 +10,8 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 

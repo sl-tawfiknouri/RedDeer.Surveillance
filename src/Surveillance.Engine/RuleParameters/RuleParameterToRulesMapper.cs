@@ -6,7 +6,7 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Engine.Rules.Mappers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters
 {

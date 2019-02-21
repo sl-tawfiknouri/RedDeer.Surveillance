@@ -10,8 +10,8 @@ using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Trades;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits

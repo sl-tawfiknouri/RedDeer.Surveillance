@@ -8,10 +8,10 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.HighProfits;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 

@@ -2,7 +2,7 @@
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {

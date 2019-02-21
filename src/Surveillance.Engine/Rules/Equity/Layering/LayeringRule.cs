@@ -524,7 +524,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             if (_hadMissingData)
             {
                 _logger.LogInformation($"LayeringRule had missing data. Updating rule context with state.");
-                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+                _ruleCtx.EndEvent();
             }
             else
             {

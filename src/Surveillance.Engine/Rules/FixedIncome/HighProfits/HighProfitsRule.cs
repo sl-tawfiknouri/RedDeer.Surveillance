@@ -11,9 +11,10 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 {
     public class HighProfitsRule : BaseUniverseRule
     {
+        private readonly ILogger<HighProfitsRule> _logger;
+
         public HighProfitsRule(
             TimeSpan windowSize,
-            Domain.Scheduling.Rules rules,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -21,7 +22,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 windowSize,
-                rules,
+                Domain.Scheduling.Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",
                 ruleCtx,
@@ -30,6 +31,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 logger,
                 tradingStackLogger)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)

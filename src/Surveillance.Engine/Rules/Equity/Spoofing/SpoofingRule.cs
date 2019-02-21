@@ -22,14 +22,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 {
     public class SpoofingRule : BaseUniverseRule, ISpoofingRule
     {
-        private readonly ISpoofingRuleParameters _parameters;
+        private readonly ISpoofingRuleEquitiesParameters _equitiesParameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
 
         public SpoofingRule(
-            ISpoofingRuleParameters parameters,
+            ISpoofingRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                  parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
+                  equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                   Domain.Scheduling.Rules.Spoofing,
                   EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                   logger,
                   tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -81,15 +81,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var buyPosition =
                 new TradePositionCancellations(
                     new List<Order>(),
-                    _parameters.CancellationThreshold,
-                    _parameters.CancellationThreshold,
+                    _equitiesParameters.CancellationThreshold,
+                    _equitiesParameters.CancellationThreshold,
                     _logger);
 
             var sellPosition =
                 new TradePositionCancellations(
                     new List<Order>(),
-                    _parameters.CancellationThreshold,
-                    _parameters.CancellationThreshold,
+                    _equitiesParameters.CancellationThreshold,
+                    _equitiesParameters.CancellationThreshold,
                     _logger);
 
             AddToPositions(buyPosition, sellPosition, mostRecentTrade);
@@ -147,7 +147,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 
                 var adjustedFulfilledOrders =
                     (tradingPosition.VolumeInStatus(OrderStatus.Filled)
-                     * _parameters.RelativeSizeMultipleForSpoofExceedingReal);
+                     * _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal);
 
                 var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
                 hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
@@ -186,12 +186,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 new SpoofingRuleBreach(
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _parameters.WindowSize,
+                    _equitiesParameters.WindowSize,
                     tradingPosition,
                     opposingPosition,
                     mostRecentTrade.Instrument, 
                     mostRecentTrade,
-                    _parameters);
+                    _equitiesParameters);
 
             var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);

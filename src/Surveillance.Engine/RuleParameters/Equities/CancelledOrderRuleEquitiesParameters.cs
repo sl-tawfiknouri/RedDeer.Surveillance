@@ -4,11 +4,11 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class CancelledOrderRuleParameters : ICancelledOrderRuleParameters
+    public class CancelledOrderRuleEquitiesParameters : ICancelledOrderRuleEquitiesParameters
     {
-        public CancelledOrderRuleParameters(
+        public CancelledOrderRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             decimal? cancelledOrderPositionPercentageThreshold,
@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public CancelledOrderRuleParameters(
+        public CancelledOrderRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             decimal? cancelledOrderPositionPercentageThreshold,

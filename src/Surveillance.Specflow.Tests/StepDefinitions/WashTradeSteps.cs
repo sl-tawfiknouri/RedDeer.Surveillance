@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
@@ -29,7 +30,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class WashTradeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private WashTradeRuleParameters _washTradeRuleParameters;
+        private WashTradeRuleEquitiesParameters _washTradeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
         // wash trade factory and arguments
@@ -97,8 +98,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<WashTradeApiParameters>();
 
-            _washTradeRuleParameters =
-                new WashTradeRuleParameters(
+            _washTradeRuleEquitiesParameters =
+                new WashTradeRuleEquitiesParameters(
                     "0",
                     new System.TimeSpan(parameters.WindowHours, 0, 0),
                     parameters.UseAverageNetting.GetValueOrDefault(false),
@@ -124,7 +125,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         {
             var washTradeRule = 
                 _equityRuleWashTradeFactory.Build(
-                    _washTradeRuleParameters,
+                    _washTradeRuleEquitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     RuleRunMode.ForceRun);

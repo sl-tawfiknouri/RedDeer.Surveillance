@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (ruleBreach.DailyBreach.HasBreach)
             {
-                var dailyPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
+                var dailyPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * 100);
                 var dailyBreachPercentage = Math.Ceiling(ruleBreach.DailyBreach.BreachPercentage.GetValueOrDefault(0) * 100);
 
                 dailyDescription = $" Percentage of daily volume breach has occured. A daily volume limit of {dailyPercentage}% was exceeded by trading {dailyBreachPercentage}% of daily volume. {ruleBreach.TotalOrdersTradedInWindow} volume was ordered against a breach threshold volume of {ruleBreach.DailyBreach.BreachThresholdAmount}.";
@@ -57,15 +57,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (ruleBreach.WindowBreach.HasBreach)
             {
-                var windowPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100);
+                var windowPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * 100);
                 var windowBreachPercentage = Math.Ceiling(ruleBreach.WindowBreach.BreachPercentage.GetValueOrDefault(0) * 100);
                 
-                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by trading {windowBreachPercentage}% of window volume within the window of {ruleBreach.Parameters.WindowSize.TotalMinutes} minutes. {ruleBreach.TotalOrdersTradedInWindow} volume was ordered against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
+                windowDescription = $" Percentage of window volume breach has occured. A window volume limit of {windowPercentage}% was exceeded by trading {windowBreachPercentage}% of window volume within the window of {ruleBreach.EquitiesParameters.WindowSize.TotalMinutes} minutes. {ruleBreach.TotalOrdersTradedInWindow} volume was ordered against a breach threshold volume of {ruleBreach.WindowBreach.BreachThresholdAmount}.";
             }
 
             if (ruleBreach.MarketCapBreach.HasBreach)
             {
-                var marketCapPercentage = Math.Ceiling(ruleBreach.Parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100);
+                var marketCapPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100);
                 var marketCapBreachPercentage = Math.Ceiling(ruleBreach.MarketCapBreach.BreachPercentage.GetValueOrDefault(0) * 100);
                 var tradedAmount = Math.Round(ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);
                 var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);

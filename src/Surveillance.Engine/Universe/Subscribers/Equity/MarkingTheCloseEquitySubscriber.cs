@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IMarkingTheCloseParameters> markingTheCloseParameters)
+            IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> markingTheCloseParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
@@ -105,7 +105,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx, 
             IUniverseAlertStream alertStream,
-            IMarkingTheCloseParameters param,
+            IMarkingTheCloseEquitiesParameters param,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             var ruleCtx = opCtx

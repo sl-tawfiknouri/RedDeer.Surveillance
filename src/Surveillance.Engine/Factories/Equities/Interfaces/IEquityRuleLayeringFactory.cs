@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleLayeringFactory
     {
         ILayeringRule Build(
-            ILayeringRuleParameters parameters,
+            ILayeringRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);

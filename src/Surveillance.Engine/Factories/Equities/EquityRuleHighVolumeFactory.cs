@@ -38,14 +38,14 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public IHighVolumeRule Build(
-            IHighVolumeRuleParameters parameters,
+            IHighVolumeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode)
         {
 
-            return new HighVolumeRule(parameters, opCtx, alertStream, _orderFilter, _factory, _tradingHoursManager, dataRequestSubscriber, runMode, _logger, _tradingHistoryLogger);
+            return new HighVolumeRule(equitiesParameters, opCtx, alertStream, _orderFilter, _factory, _tradingHoursManager, dataRequestSubscriber, runMode, _logger, _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(1, 0);

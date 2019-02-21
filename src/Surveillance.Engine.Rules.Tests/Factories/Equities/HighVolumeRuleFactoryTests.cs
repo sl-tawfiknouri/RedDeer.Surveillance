@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private IHighVolumeRuleParameters _parameters;
+        private IHighVolumeRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _opCtx;
         private IUniverseAlertStream _alertStream;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
             _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            _parameters = A.Fake<IHighVolumeRuleParameters>();
+            _equitiesParameters = A.Fake<IHighVolumeRuleEquitiesParameters>();
             _opCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
 
-            var result = factory.Build(_parameters, _opCtx, _alertStream, _dataRequestSubscriber, RuleRunMode.ForceRun);
+            var result = factory.Build(_equitiesParameters, _opCtx, _alertStream, _dataRequestSubscriber, RuleRunMode.ForceRun);
 
             Assert.IsNotNull(result);
         }

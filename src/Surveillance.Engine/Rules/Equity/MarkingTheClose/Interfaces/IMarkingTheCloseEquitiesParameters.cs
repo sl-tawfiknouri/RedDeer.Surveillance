@@ -7,7 +7,7 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
 {
-    public interface IMarkingTheCloseParameters : IFilterableRule, IRuleParameter
+    public interface IMarkingTheCloseEquitiesParameters : IFilterableRule, IRuleParameter
     {
         decimal? PercentageThresholdDailyVolume { get; }
         decimal? PercentageThresholdWindowVolume { get; }

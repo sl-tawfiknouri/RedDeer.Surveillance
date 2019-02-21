@@ -10,7 +10,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleHighVolumeFactory
     {
         IHighVolumeRule Build(
-            IHighVolumeRuleParameters parameters,
+            IHighVolumeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,

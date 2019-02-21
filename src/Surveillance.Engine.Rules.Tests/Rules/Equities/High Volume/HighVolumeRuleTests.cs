@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
     public class HighVolumeRuleTests
     {
         private IUniverseAlertStream _alertStream;
-        private IHighVolumeRuleParameters _parameters;
+        private IHighVolumeRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _opCtx;
         private IUniverseOrderFilter _orderFilter;
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         public void Setup()
         {
             _alertStream = A.Fake<IUniverseAlertStream>();
-            _parameters = A.Fake<IHighVolumeRuleParameters>();
+            _equitiesParameters = A.Fake<IHighVolumeRuleEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _dataRequestRepository = A.Fake<IRuleRunDataRequestRepository>();
@@ -79,7 +79,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, null, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, _logger, _tradingLogger));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         {
             // ReSharper disable once ObjectCreationAsStatement
 
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_parameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new HighVolumeRule(_equitiesParameters, _ruleCtx, _alertStream, _orderFilter, _factory, _tradingHoursManager, _dataRequestSubscriber, RuleRunMode.ValidationRun, null, _tradingLogger));
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void Eschaton_SetsMissingData_WhenExchangeDataMissing()
         {
-            A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
+            A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
             var highVolumeRule = BuildRule();
 
             highVolumeRule.OnNext(Trade());
@@ -116,8 +116,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void DailyParameter_NoThresholdBreach_DoesNotRaiseAlert()
         {
-            A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
-            A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
+            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();
@@ -166,8 +166,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void DailyParameter_ThresholdBreach_RaisesAlert()
         {
-            A.CallTo(() => _parameters.HighVolumePercentageDaily).Returns(0.1m);
-            A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.HighVolumePercentageDaily).Returns(0.1m);
+            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();
@@ -213,8 +213,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         [Test]
         public void WindowParameter_ThresholdBreach_RaisesAlert()
         {
-            A.CallTo(() => _parameters.HighVolumePercentageWindow).Returns(0.1m);
-            A.CallTo(() => _parameters.WindowSize).Returns(TimeSpan.FromHours(1));
+            A.CallTo(() => _equitiesParameters.HighVolumePercentageWindow).Returns(0.1m);
+            A.CallTo(() => _equitiesParameters.WindowSize).Returns(TimeSpan.FromHours(1));
             var highVolumeRule = BuildRule();
 
             var trade = Trade();
@@ -262,7 +262,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         private HighVolumeRule BuildRule()
         {
             return new HighVolumeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _alertStream,
                 _orderFilter,

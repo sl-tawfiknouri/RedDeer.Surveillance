@@ -6,6 +6,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces
 {
     public interface IWashTradePositionPairer
     {
-        IReadOnlyCollection<PositionCluster> PairUp(List<Order> trades, IWashTradeRuleParameters parameters);
+        IReadOnlyCollection<PositionCluster> PairUp(List<Order> trades, IWashTradeRuleEquitiesParameters equitiesParameters);
     }
 }

@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         }
 
         private string BuildDescription(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ICancelledOrderRuleBreach ruleBreach,
             Order anyOrder)
         {
@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         }
 
         private string PositionSizeText(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ICancelledOrderRuleBreach ruleBreach,
             decimal percentagePositionCancelled)
         {
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         }
 
         private string OrderRatioText(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ICancelledOrderRuleBreach ruleBreach,
             decimal tradeCountCancelled)
         {

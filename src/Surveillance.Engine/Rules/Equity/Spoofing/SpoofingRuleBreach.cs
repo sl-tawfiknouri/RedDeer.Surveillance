@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             ITradePosition cancelledTradePosition,
             FinancialInstrument security,
             Order mostRecentTrade,
-            ISpoofingRuleParameters spoofingParameters)
+            ISpoofingRuleEquitiesParameters spoofingEquitiesParameters)
         {
             Window = window;
             Security = security;
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             TradesInFulfilledPosition = fulfilledTradePosition;
             CancelledTrades = cancelledTradePosition;
 
-            RuleParameterId = spoofingParameters?.Id ?? string.Empty;
+            RuleParameterId = spoofingEquitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }

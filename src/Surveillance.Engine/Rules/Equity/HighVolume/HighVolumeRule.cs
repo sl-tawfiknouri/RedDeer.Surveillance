@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 {
     public class HighVolumeRule : BaseUniverseRule, IHighVolumeRule
     {
-        private readonly IHighVolumeRuleParameters _parameters;
+        private readonly IHighVolumeRuleEquitiesParameters _equitiesParameters;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         private bool _hadMissingData = false;
 
         public HighVolumeRule(
-            IHighVolumeRuleParameters parameters,
+            IHighVolumeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
@@ -57,7 +57,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -107,10 +107,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 new HighVolumeRuleBreach(
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _parameters.WindowSize, 
+                    _equitiesParameters.WindowSize, 
                     tradePosition,
                     mostRecentTrade?.Instrument,
-                    _parameters,
+                    _equitiesParameters,
                     dailyBreach,
                     windowBreach,
                     marketCapBreach,
@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         private HighVolumeRuleBreach.BreachDetails CheckDailyVolume(Order mostRecentTrade, long tradedVolume)
         {
             var dailyBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageDaily.HasValue)
+            if (_equitiesParameters.HighVolumePercentageDaily.HasValue)
             {
                 dailyBreach = DailyVolumeCheck(mostRecentTrade, tradedVolume);
             }
@@ -135,7 +135,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         private HighVolumeRuleBreach.BreachDetails CheckWindowVolume(Order mostRecentTrade, long tradedVolume)
         {
             var windowBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageWindow.HasValue)
+            if (_equitiesParameters.HighVolumePercentageWindow.HasValue)
             {
                 windowBreach = WindowVolumeCheck(mostRecentTrade, tradedVolume);
             }
@@ -146,7 +146,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         private HighVolumeRuleBreach.BreachDetails CheckMarketCap(Order mostRecentTrade, List<Order> tradedSecurities)
         {
             var marketCapBreach = HighVolumeRuleBreach.BreachDetails.None();
-            if (_parameters.HighVolumePercentageMarketCap.HasValue)
+            if (_equitiesParameters.HighVolumePercentageMarketCap.HasValue)
             {
                 marketCapBreach = MarketCapCheck(mostRecentTrade, tradedSecurities);
             }
@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             var security = securityResult.Response;
             var threshold = (long)Math.Ceiling(
-                _parameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailySummaryTimeBar.DailyVolume.Traded);
+                _equitiesParameters.HighVolumePercentageDaily.GetValueOrDefault(0) * security.DailySummaryTimeBar.DailyVolume.Traded);
 
             if (threshold <= 0)
             {
@@ -252,7 +252,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             var securityDataTicks = marketResult.Response;           
             var windowVolume = securityDataTicks.Sum(sdt => sdt.SpreadTimeBar.Volume.Traded);
-            var threshold = (long)Math.Ceiling(_parameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
+            var threshold = (long)Math.Ceiling(_equitiesParameters.HighVolumePercentageWindow.GetValueOrDefault(0) * windowVolume);
 
             var breachPercentage =
                 windowVolume != 0 && tradedVolume != 0
@@ -307,7 +307,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             var security = securityResult.Response;
             double thresholdValue =
-                (double)Math.Ceiling(_parameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
+                (double)Math.Ceiling(_equitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0)
                 * security.DailySummaryTimeBar.MarketCap.GetValueOrDefault(0));
 
             if (thresholdValue <= 0)

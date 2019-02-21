@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             FinancialInstrument security,
             MarketOpenClose marketClose,
             ITradePosition tradingPosition,
-            IMarkingTheCloseParameters parameters,
+            IMarkingTheCloseEquitiesParameters equitiesParameters,
             VolumeBreach dailyBreach,
             VolumeBreach windowBreach)
         {
@@ -28,12 +28,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 
             MarketClose = marketClose ?? throw new ArgumentNullException(nameof(marketClose));
             Trades = tradingPosition ?? new TradePosition(new List<Order>());
-            Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            EquitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
 
             DailyBreach = dailyBreach;
             WindowBreach = windowBreach;
 
-            RuleParameterId = parameters?.Id ?? string.Empty;
+            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         public TimeSpan Window { get; }
 
         public MarketOpenClose MarketClose { get; }
-        public IMarkingTheCloseParameters Parameters { get; }
+        public IMarkingTheCloseEquitiesParameters EquitiesParameters { get; }
 
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }

@@ -32,13 +32,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public ISpoofingRule Build(
-            ISpoofingRuleParameters spoofingParameters,
+            ISpoofingRuleEquitiesParameters spoofingEquitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode)
         {
             return new SpoofingRule(
-                spoofingParameters,
+                spoofingEquitiesParameters,
                 ruleCtx,
                 alertStream,
                 _orderFilter,

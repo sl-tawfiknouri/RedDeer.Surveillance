@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     public class HighProfitStreamRule : BaseUniverseRule, IHighProfitStreamRule
     {
         protected readonly ILogger<HighProfitsRule> Logger;
-        private readonly IHighProfitsRuleParameters _parameters;
+        private readonly IHighProfitsRuleEquitiesParameters _equitiesParameters;
         protected readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         protected readonly IUniverseAlertStream _alertStream;
 
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         protected bool MarketClosureRule = false;
 
         public HighProfitStreamRule(
-            IHighProfitsRuleParameters parameters,
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromHours(8),
+                equitiesParameters?.WindowSize ?? TimeSpan.FromHours(8),
                 Domain.Scheduling.Rules.HighProfits,
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
@@ -66,7 +66,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _costCalculatorFactory = costCalculatorFactory ?? throw new ArgumentNullException(nameof(costCalculatorFactory));
@@ -109,7 +109,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            var targetCurrency = new Domain.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency =
                 liveTrades.Any()
@@ -169,10 +169,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             IExchangeRateProfitBreakdown exchangeRateProfits = null;
 
-            if (_parameters.UseCurrencyConversions
-                && !string.IsNullOrEmpty(_parameters.HighProfitCurrencyConversionTargetCurrency))
+            if (_equitiesParameters.UseCurrencyConversions
+                && !string.IsNullOrEmpty(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency))
             {
-                Logger.LogInformation($"High profit rules is set to use currency conversions and has a target conversion currency to {_parameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
+                Logger.LogInformation($"High profit rules is set to use currency conversions and has a target conversion currency to {_equitiesParameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
 
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
@@ -194,7 +194,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new Domain.Financial.Currency(_parameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new Domain.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderDirection == OrderDirections.BUY 
                 || lt.OrderDirection == OrderDirections.COVER).ToList());
@@ -217,7 +217,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
         {
-            if (!_parameters.UseCurrencyConversions
+            if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
                 || string.IsNullOrWhiteSpace(targetCurrency.Value))
             {
@@ -233,7 +233,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
         {
-            if (!_parameters.UseCurrencyConversions
+            if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
                 || string.IsNullOrWhiteSpace(targetCurrency.Value))
             {
@@ -279,7 +279,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 new HighProfitRuleBreach(
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _parameters,
+                    _equitiesParameters,
                     absoluteProfit.Value,
                     absoluteProfit.Currency.Value,
                     profitRatio,
@@ -296,20 +296,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private bool HasHighProfitPercentage(decimal profitRatio)
         {
-            return _parameters.HighProfitPercentageThreshold.HasValue
-               && _parameters.HighProfitPercentageThreshold.Value <= profitRatio;
+            return _equitiesParameters.HighProfitPercentageThreshold.HasValue
+               && _equitiesParameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
         private bool HasHighProfitAbsolute(CurrencyAmount absoluteProfits)
         {
-            if (_parameters.HighProfitAbsoluteThreshold == null)
+            if (_equitiesParameters.HighProfitAbsoluteThreshold == null)
             {
                 return false;
             }
 
-            if (_parameters.UseCurrencyConversions
+            if (_equitiesParameters.UseCurrencyConversions
                 && !string.Equals(
-                _parameters.HighProfitCurrencyConversionTargetCurrency,
+                _equitiesParameters.HighProfitCurrencyConversionTargetCurrency,
                 absoluteProfits.Currency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {
@@ -317,7 +317,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 throw new InvalidOperationException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
             }
 
-            return absoluteProfits.Value >= _parameters.HighProfitAbsoluteThreshold;
+            return absoluteProfits.Value >= _equitiesParameters.HighProfitAbsoluteThreshold;
         }    
         
         protected override void Genesis()

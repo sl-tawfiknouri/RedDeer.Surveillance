@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             var highRelativeProfitAsPercentageSetByUser =
                 Math.Round(
-                    (ruleBreach.Parameters.HighProfitPercentageThreshold.GetValueOrDefault(0) * 100m),
+                    (ruleBreach.EquitiesParameters.HighProfitPercentageThreshold.GetValueOrDefault(0) * 100m),
                     2,
                     MidpointRounding.AwayFromZero);
 
@@ -76,13 +76,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         private string HighAbsoluteProfitText(IHighProfitRuleBreach ruleBreach, decimal absoluteProfit)
         {
             return ruleBreach.HasAbsoluteProfitBreach
-                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.Parameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.Parameters.HighProfitCurrencyConversionTargetCurrency})."
+                ? $" There was a high profit of {absoluteProfit} ({ruleBreach.AbsoluteProfitCurrency}) which exceeded the configured profit limit of {ruleBreach.EquitiesParameters.HighProfitAbsoluteThreshold.GetValueOrDefault(0)}({ruleBreach.EquitiesParameters.HighProfitCurrencyConversionTargetCurrency})."
                 : string.Empty;
         }
 
         private string HighProfitExchangeRateText(IHighProfitRuleBreach ruleBreach)
         {
-            if (!ruleBreach.Parameters.UseCurrencyConversions
+            if (!ruleBreach.EquitiesParameters.UseCurrencyConversions
                 || ruleBreach.ExchangeRateProfits == null)
             {
                 return string.Empty;

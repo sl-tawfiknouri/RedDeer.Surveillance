@@ -33,6 +33,7 @@ using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
@@ -139,11 +140,11 @@ namespace Surveillance.Engine.Rules
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
             For<IQueueDataSynchroniserRequestPublisher>().Use<QueueDataSynchroniserRequestPublisher>();
 
-            For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
+            For<ISpoofingRuleEquitiesParameters>().Use<SpoofingRuleEquitiesParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
             For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
-            For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
+            For<ICancelledOrderRuleEquitiesParameters>().Use<CancelledOrderRuleEquitiesParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderRuleCachedMessageSender>().Use<CancelledOrderRuleCachedMessageSender>();
             For<IEquityRuleCancelledOrderFactory>().Use<EquityRuleCancelledOrderFactory>();

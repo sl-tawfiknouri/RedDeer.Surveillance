@@ -79,20 +79,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var percentageChangeMax =
                 Math.Round(
-                    breach.Parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0) * 100,
+                    breach.EquitiesParameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0) * 100,
                     2,
                     MidpointRounding.AwayFromZero);
 
             var averagePosition = $" {trades} trades appeared to be part of a series of wash trade activity. These trades netted a total of {percentageChange}% in the value of the traders position, lower values of change are considered to be stronger evidence of wash trading. {percentageChangeMax}% was the configured maximum value change for this to be considered an alert.";
 
-            if (breach.Parameters.AveragePositionMaximumAbsoluteValueChangeAmount != null
+            if (breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount != null
                 && breach.AveragePositionBreach.AveragePositionAbsoluteValueChange != null)
             {
                 var absoluteChange =
                     Math.Round(breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Value, 2,
                         MidpointRounding.AwayFromZero);
 
-                averagePosition = $"{averagePosition} The absolute value change of the traders position in {breach.Security.Name} changed by ({breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Currency.Value}){absoluteChange} against a maximum position value change of ({breach.Parameters.AveragePositionMaximumAbsoluteValueChangeCurrency}){breach.Parameters.AveragePositionMaximumAbsoluteValueChangeAmount}.";
+                averagePosition = $"{averagePosition} The absolute value change of the traders position in {breach.Security.Name} changed by ({breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Currency.Value}){absoluteChange} against a maximum position value change of ({breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency}){breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount}.";
             }
 
             return averagePosition;
@@ -107,7 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         {
             var percentageChangeMax = 
                 Math.Round(
-                    breach.Parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0) * 100,
+                    breach.EquitiesParameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0) * 100,
                     2,
                     MidpointRounding.AwayFromZero);
 

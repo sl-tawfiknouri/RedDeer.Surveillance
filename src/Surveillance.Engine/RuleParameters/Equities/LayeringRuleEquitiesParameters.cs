@@ -4,11 +4,11 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class LayeringRuleParameters : ILayeringRuleParameters
+    public class LayeringRuleEquitiesParameters : ILayeringRuleEquitiesParameters
     {
-        public LayeringRuleParameters(
+        public LayeringRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             decimal? percentageOfMarketDailyVolume,
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public LayeringRuleParameters(
+        public LayeringRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             decimal? percentageOfMarketDailyVolume,

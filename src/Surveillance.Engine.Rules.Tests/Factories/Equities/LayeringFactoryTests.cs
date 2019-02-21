@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<EquityRuleLayeringFactory> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
-        private ILayeringRuleParameters _parameters;
+        private ILayeringRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            _parameters = A.Fake<ILayeringRuleParameters>();
+            _equitiesParameters = A.Fake<ILayeringRuleEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
@@ -81,7 +81,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var ruleFactory = new EquityRuleLayeringFactory(_orderFilter, _tradingHoursManager, _factory, _logger, _tradingLogger);
 
-            var result = ruleFactory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+            var result = ruleFactory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 
             Assert.IsNotNull(result);
         }

@@ -37,13 +37,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public ILayeringRule Build(
-            ILayeringRuleParameters parameters,
+            ILayeringRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode)
         {
             return new LayeringRule(
-                parameters,
+                equitiesParameters,
                 alertStream,
                 _orderFilter,
                 _logger,

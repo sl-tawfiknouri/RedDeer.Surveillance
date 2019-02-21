@@ -26,7 +26,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<MarkingTheCloseRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private IMarkingTheCloseParameters _parameters;
+        private IMarkingTheCloseEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
-            _parameters = A.Fake<IMarkingTheCloseParameters>();
+            _equitiesParameters = A.Fake<IMarkingTheCloseEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
 
-            var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun, _dataRequestSubscriber);
+            var result = factory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun, _dataRequestSubscriber);
 
             Assert.IsNotNull(result);
         }

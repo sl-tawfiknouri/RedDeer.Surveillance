@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
@@ -37,7 +38,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _universeMarketCacheFactory;
-        private MarkingTheCloseParameters _parameters;
+        private MarkingTheCloseEquitiesParameters _equitiesParameters;
 
         public MarkingTheCloseSteps(
             ScenarioContext scenarioContext,
@@ -96,7 +97,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = markingTheCloseParameters.CreateInstance<MarkingTheCloseApiParameters>();
 
-            _parameters = new MarkingTheCloseParameters(
+            _equitiesParameters = new MarkingTheCloseEquitiesParameters(
                 "0",
                 new System.TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.PercentageThresholdDailyVolume,
@@ -111,7 +112,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         {
             var cancelledOrders =
                 _equityRuleMarkingTheCloseFactory.Build(
-                    _parameters,
+                    _equitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     RuleRunMode.ForceRun,

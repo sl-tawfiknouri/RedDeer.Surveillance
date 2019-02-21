@@ -4,23 +4,27 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class SpoofingRuleParameters : ISpoofingRuleParameters
+    public class HighProfitsRuleEquitiesParameters : IHighProfitsRuleEquitiesParameters
     {
-        public SpoofingRuleParameters(
+        public HighProfitsRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal cancellationThreshold,
-            decimal relativeSizeMultipleForSpoofingExceedingReal,
+            decimal? highProfitPercentageThreshold,
+            decimal? highProfitAbsoluteThreshold,
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
 
             WindowSize = windowSize;
-            CancellationThreshold = cancellationThreshold;
-            RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
+            HighProfitPercentageThreshold = highProfitPercentageThreshold;
+            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -30,11 +34,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public SpoofingRuleParameters(
+        public HighProfitsRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal cancellationThreshold,
-            decimal relativeSizeMultipleForSpoofingExceedingReal,
+            decimal? highProfitPercentageThreshold,
+            decimal? highProfitAbsoluteThreshold,
+            bool useCurrencyConversions,
+            string highProfitCurrencyConversionTargetCurrency,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -44,8 +50,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
             Id = id ?? string.Empty;
 
             WindowSize = windowSize;
-            CancellationThreshold = cancellationThreshold;
-            RelativeSizeMultipleForSpoofExceedingReal = relativeSizeMultipleForSpoofingExceedingReal;
+            HighProfitPercentageThreshold = highProfitPercentageThreshold;
+            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
+            UseCurrencyConversions = useCurrencyConversions;
+            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -56,12 +64,30 @@ namespace Surveillance.Engine.Rules.RuleParameters
         }
 
         public string Id { get; }
+
         public TimeSpan WindowSize { get; }
-        public decimal CancellationThreshold { get; }
-        public decimal RelativeSizeMultipleForSpoofExceedingReal { get; }
+
+        // Percentage
+        public decimal? HighProfitPercentageThreshold { get; }
+
+        // Absolute level
+        public decimal? HighProfitAbsoluteThreshold { get; }
+
+        /// <summary>
+        /// If true we will use the target currency provided.
+        /// Using absolute profits is implicitly always a yes on use currency conversions
+        /// </summary>
+        public bool UseCurrencyConversions { get; }
+
+        /// <summary>
+        /// Target currency if using currency conversions and also used for high profit absolute threshold
+        /// </summary>
+        public string HighProfitCurrencyConversionTargetCurrency { get; }
+
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
+
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 

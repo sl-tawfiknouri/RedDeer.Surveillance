@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IHighVolumeRuleParameters> highVolumeParameters)
+            IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> highVolumeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
@@ -107,7 +107,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IHighVolumeRuleParameters param)
+            IHighVolumeRuleEquitiesParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(

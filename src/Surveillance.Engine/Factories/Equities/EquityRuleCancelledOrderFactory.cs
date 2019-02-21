@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public ICancelledOrderRule Build(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode)

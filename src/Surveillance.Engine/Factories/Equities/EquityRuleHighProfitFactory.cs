@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public IHighProfitRule Build(
-            IHighProfitsRuleParameters parameters,
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
             IUniverseAlertStream alertStream,
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             var runMode = scheduledExecution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
 
             var stream = new HighProfitStreamRule(
-                parameters,
+                equitiesParameters,
                 ruleCtxStream,
                 alertStream,
                 _costCalculatorFactory,
@@ -77,7 +77,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _tradingHistoryLogger);
 
             var marketClosure = new HighProfitMarketClosureRule(
-                parameters,
+                equitiesParameters,
                 ruleCtxMarket,
                 alertStream,
                 _costCalculatorFactory,

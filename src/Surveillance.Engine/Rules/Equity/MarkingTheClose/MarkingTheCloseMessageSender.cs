@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 
             var windowVolumePercentageSetByUser =
                 Math.Round(
-                    (ruleBreach.Parameters.PercentageThresholdWindowVolume.GetValueOrDefault(0) * 100m),
+                    (ruleBreach.EquitiesParameters.PercentageThresholdWindowVolume.GetValueOrDefault(0) * 100m),
                     2,
                     MidpointRounding.AwayFromZero);
 
@@ -109,7 +109,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 
             var dailyVolumePercentageSetByUser =
                 Math.Round(
-                    (ruleBreach.Parameters.PercentageThresholdDailyVolume.GetValueOrDefault(0) * 100m),
+                    (ruleBreach.EquitiesParameters.PercentageThresholdDailyVolume.GetValueOrDefault(0) * 100m),
                     2,
                     MidpointRounding.AwayFromZero);
 

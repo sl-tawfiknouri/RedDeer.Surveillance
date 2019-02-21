@@ -15,7 +15,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
-            IHighVolumeRuleParameters parameters,
+            IHighVolumeRuleEquitiesParameters equitiesParameters,
             BreachDetails dailyBreach,
             BreachDetails windowBreach,
             BreachDetails marketCapBreach,
@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             Window = window;
             Trades = trades;
             Security = security;
-            Parameters = parameters;
+            EquitiesParameters = equitiesParameters;
 
             DailyBreach = dailyBreach;
             WindowBreach = windowBreach;
             MarketCapBreach = marketCapBreach;
 
             TotalOrdersTradedInWindow = totalOrdersTradedInWindow;
-            RuleParameterId = parameters?.Id ?? string.Empty;
+            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }
@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }
 
-        public IHighVolumeRuleParameters Parameters { get; }
+        public IHighVolumeRuleEquitiesParameters EquitiesParameters { get; }
 
         public BreachDetails DailyBreach { get; }
         public BreachDetails WindowBreach { get; }

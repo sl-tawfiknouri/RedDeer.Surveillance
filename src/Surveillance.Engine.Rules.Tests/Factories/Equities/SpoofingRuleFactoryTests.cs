@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<SpoofingRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private ISpoofingRuleParameters _spoofingParameters;
+        private ISpoofingRuleEquitiesParameters _spoofingEquitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
@@ -35,7 +35,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _logger = new NullLogger<SpoofingRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
 
-            _spoofingParameters = A.Fake<ISpoofingRuleParameters>();
+            _spoofingEquitiesParameters = A.Fake<ISpoofingRuleEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleSpoofingFactory(_factory, _orderFilter, _logger, _tradingHistoryLogger);
 
-            var result = factory.Build(_spoofingParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+            var result = factory.Build(_spoofingEquitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 
             Assert.IsNotNull(result);
         }

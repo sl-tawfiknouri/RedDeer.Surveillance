@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private IWashTradeRuleParameters _parameters;
+        private IWashTradeRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _logger = new NullLogger<WashTradeRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
 
-            _parameters = A.Fake<IWashTradeRuleParameters>();
+            _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
         }
@@ -165,7 +165,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _logger,
                 _tradingHistoryLogger);
 
-            Assert.Throws<ArgumentNullException>(() => factory.Build(_parameters, null, _alertStream, RuleRunMode.ForceRun));
+            Assert.Throws<ArgumentNullException>(() => factory.Build(_equitiesParameters, null, _alertStream, RuleRunMode.ForceRun));
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _logger,
                 _tradingHistoryLogger);
 
-            var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
+            var result = factory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<WashTradeRule>(result);

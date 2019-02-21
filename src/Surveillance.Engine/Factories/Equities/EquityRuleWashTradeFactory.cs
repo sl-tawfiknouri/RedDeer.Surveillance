@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public IWashTradeRule Build(
-            IWashTradeRuleParameters parameters,
+            IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode)
@@ -55,13 +55,13 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 throw new ArgumentNullException(nameof(ruleCtx));
             }
 
-            if (parameters == null)
+            if (equitiesParameters == null)
             {
-                throw new ArgumentNullException(nameof(parameters));
+                throw new ArgumentNullException(nameof(equitiesParameters));
             }
 
             return new WashTradeRule(
-                parameters,
+                equitiesParameters,
                 ruleCtx,
                 _positionPairer,
                 _clustering,

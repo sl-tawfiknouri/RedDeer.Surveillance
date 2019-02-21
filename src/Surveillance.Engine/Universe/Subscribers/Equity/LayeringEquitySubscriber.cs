@@ -71,7 +71,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IReadOnlyCollection<ILayeringRuleParameters> layeringParameters)
+            IReadOnlyCollection<ILayeringRuleEquitiesParameters> layeringParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
@@ -104,7 +104,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            ILayeringRuleParameters param)
+            ILayeringRuleEquitiesParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(

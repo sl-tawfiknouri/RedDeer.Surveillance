@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleWashTradeFactory
     {
         IWashTradeRule Build(
-            IWashTradeRuleParameters parameters,
+            IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx, 
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);

@@ -4,11 +4,11 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class WashTradeRuleParameters : IWashTradeRuleParameters
+    public class WashTradeRuleEquitiesParameters : IWashTradeRuleEquitiesParameters
     {
-        public WashTradeRuleParameters(
+        public WashTradeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public WashTradeRuleParameters(
+        public WashTradeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,

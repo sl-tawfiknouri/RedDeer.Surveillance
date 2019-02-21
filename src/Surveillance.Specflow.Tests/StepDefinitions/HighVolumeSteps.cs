@@ -19,6 +19,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
@@ -34,7 +35,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class HighVolumeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private HighVolumeRuleParameters _highVolumeRuleParameters;
+        private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
         private ICurrencyConverter _currencyConverter;
@@ -138,7 +139,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<HighVolumeApiParameters>();
 
-            _highVolumeRuleParameters = new HighVolumeRuleParameters(
+            _highVolumeRuleEquitiesParameters = new HighVolumeRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 parameters.HighVolumePercentageDaily,
@@ -153,7 +154,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         {
             var highVolumeRule =
                 _equityRuleHighVolumeFactory.Build(
-                    _highVolumeRuleParameters,
+                    _highVolumeRuleEquitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     _dataRequestSubscriber,

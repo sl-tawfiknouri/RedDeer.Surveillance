@@ -30,11 +30,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly ILayeringRuleParameters _parameters;
+        private readonly ILayeringRuleEquitiesParameters _equitiesParameters;
         private bool _hadMissingData = false;
 
         public LayeringRule(
-            ILayeringRuleParameters parameters,
+            ILayeringRuleEquitiesParameters equitiesParameters,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             ILogger logger,
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleRunMode runMode,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
+                equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(20),
                 Domain.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
@@ -54,7 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
@@ -176,9 +176,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 }
 
                 // IF ALL PARAMETERS ARE NULL JUST DO THE BIDIRECTIONAL TRADE CHECK
-                if (_parameters.PercentageOfMarketDailyVolume == null
-                    && _parameters.PercentageOfMarketWindowVolume == null
-                    && _parameters.CheckForCorrespondingPriceMovement == null)
+                if (_equitiesParameters.PercentageOfMarketDailyVolume == null
+                    && _equitiesParameters.PercentageOfMarketWindowVolume == null
+                    && _equitiesParameters.CheckForCorrespondingPriceMovement == null)
                 {
                     hasBidirectionalBreach = new RuleBreachDescription
                     {
@@ -187,18 +187,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     };
                 }
 
-                if (_parameters.PercentageOfMarketDailyVolume != null)
+                if (_equitiesParameters.PercentageOfMarketDailyVolume != null)
                 {
                     hasDailyVolumeBreach = CheckDailyVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
-                if (_parameters.PercentageOfMarketWindowVolume != null)
+                if (_equitiesParameters.PercentageOfMarketWindowVolume != null)
                 {
                     hasWindowVolumeBreach = CheckWindowVolumeBreach(opposingPosition, mostRecentTrade);
                 }
 
-                if (_parameters.CheckForCorrespondingPriceMovement != null
-                    && _parameters.CheckForCorrespondingPriceMovement.Value)
+                if (_equitiesParameters.CheckForCorrespondingPriceMovement != null
+                    && _equitiesParameters.CheckForCorrespondingPriceMovement.Value)
                 {
                     priceMovementBreach = CheckForPriceMovement(opposingPosition, mostRecentTrade);
                 }
@@ -211,8 +211,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                 ? new LayeringRuleBreach(
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
-                    _parameters,
-                    _parameters.WindowSize,
+                    _equitiesParameters,
+                    _equitiesParameters.WindowSize,
                     allTrades,
                     mostRecentTrade.Instrument,
                     hasBidirectionalBreach,
@@ -277,12 +277,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             }
 
             var percentageDailyVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded;
-            if (percentageDailyVolume >= _parameters.PercentageOfMarketDailyVolume)
+            if (percentageDailyVolume >= _equitiesParameters.PercentageOfMarketDailyVolume)
             {
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market daily volume traded within a {_parameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_parameters.PercentageOfMarketDailyVolume * 100}%."
+                    Description = $" Percentage of market daily volume traded within a {_equitiesParameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketDailyVolume * 100}%."
                 };
             }
 
@@ -335,12 +335,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             }
 
             var percentageWindowVolume = (decimal)opposingPosition.TotalVolumeOrderedOrFilled() / (decimal)windowVolume;
-            if (percentageWindowVolume >= _parameters.PercentageOfMarketWindowVolume)
+            if (percentageWindowVolume >= _equitiesParameters.PercentageOfMarketWindowVolume)
             {
                 return new RuleBreachDescription
                 {
                     RuleBreached = true,
-                    Description = $" Percentage of market volume traded within a {_parameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_parameters.PercentageOfMarketWindowVolume * 100}%."
+                    Description = $" Percentage of market volume traded within a {_equitiesParameters.WindowSize.TotalSeconds} second window exceeded the layering window threshold of {_equitiesParameters.PercentageOfMarketWindowVolume * 100}%."
                 };
             }
 

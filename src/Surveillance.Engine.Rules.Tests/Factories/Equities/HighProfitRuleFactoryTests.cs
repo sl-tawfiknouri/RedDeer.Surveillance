@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
 
 
-        private IHighProfitsRuleParameters _parameters;
+        private IHighProfitsRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtxStream;
         private ISystemProcessOperationRunRuleContext _ruleCtxMarket;
         private IUniverseAlertStream _alertStream;
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
             _transformerLogger = new NullLogger<MarketCloseMultiverseTransformer>();
 
-            _parameters = A.Fake<IHighProfitsRuleParameters>();
+            _equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
             _ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();
             _ruleCtxMarket = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
@@ -211,7 +211,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _logger,
                 _tradingHistoryLogger);
 
-            var result = factory.Build(_parameters, _ruleCtxStream, _ruleCtxMarket, _alertStream, _dataRequestSubscriber, _scheduledExecution);
+            var result = factory.Build(_equitiesParameters, _ruleCtxStream, _ruleCtxMarket, _alertStream, _dataRequestSubscriber, _scheduledExecution);
 
             Assert.IsNotNull(result);
         }

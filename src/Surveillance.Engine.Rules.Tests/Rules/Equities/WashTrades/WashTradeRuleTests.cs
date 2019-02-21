@@ -31,7 +31,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         private IUniverseAlertStream _alertStream;
         private IWashTradeClustering _clustering;
         private IWashTradePositionPairer _positionPairer;
-        private IWashTradeRuleParameters _parameters;
+        private IWashTradeRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private ILogger _logger;
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             _alertStream = A.Fake<IUniverseAlertStream>();
             _clustering = new WashTradeClustering();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
-            _parameters = A.Fake<IWashTradeRuleParameters>();
+            _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
             _logger = A.Fake<ILogger>();
             _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
             _stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
@@ -60,18 +60,18 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _loggerCache);
             A.CallTo(() => _orderFilter.Filter(A<IUniverseEvent>.Ignored)).ReturnsLazily(i => (IUniverseEvent)i.Arguments[0]);
 
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
-            A.CallTo(() => _parameters.ClusteringPercentageValueDifferenceThreshold).Returns(0.05m);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.ClusteringPercentageValueDifferenceThreshold).Returns(0.05m);
         }
 
         [Test]
         public void Clustering_DontPerformAnalysis_ReturnsNoBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(false);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(false);
 
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -91,10 +91,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_NullActiveTrades_ReturnsNoBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -114,10 +114,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_NullClusterResponse_ReturnsNoBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -138,10 +138,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_OneClusterExpected_ReturnsNoBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
             
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -172,10 +172,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_OneClusterExpectedWithinValueRange_ReturnsOneBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -207,10 +207,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_TwoClusterExpectedWithOneWithinValueRange_ReturnsOneBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -252,10 +252,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_TwoClusterExpectedWithTwoWithinValueRange_ReturnsOneBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -293,10 +293,10 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_FourClusterExpectedWithTwoWithinValueRange_ReturnsOneBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,
@@ -349,11 +349,11 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Explicit]
         public void Clustering_FourClusterExpectedWithOnInValueAndNumberOfTradesRange_ReturnsOneBreach()
         {
-            A.CallTo(() => _parameters.PerformClusteringPositionAnalysis).Returns(true);
-            A.CallTo(() => _parameters.ClusteringPositionMinimumNumberOfTrades).Returns(4);
+            A.CallTo(() => _equitiesParameters.PerformClusteringPositionAnalysis).Returns(true);
+            A.CallTo(() => _equitiesParameters.ClusteringPositionMinimumNumberOfTrades).Returns(4);
 
             var rule = new WashTradeRule(
-                _parameters,
+                _equitiesParameters,
                 _ruleCtx,
                 _positionPairer,
                 _clustering,

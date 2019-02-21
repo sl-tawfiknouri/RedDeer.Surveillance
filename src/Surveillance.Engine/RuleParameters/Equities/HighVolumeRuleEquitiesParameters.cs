@@ -4,27 +4,25 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class HighProfitsRuleParameters : IHighProfitsRuleParameters
+    public class HighVolumeRuleEquitiesParameters : IHighVolumeRuleEquitiesParameters
     {
-        public HighProfitsRuleParameters(
+        public HighVolumeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? highProfitPercentageThreshold,
-            decimal? highProfitAbsoluteThreshold,
-            bool useCurrencyConversions,
-            string highProfitCurrencyConversionTargetCurrency,
+            decimal? highVolumePercentageDaily,
+            decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
             Id = id ?? string.Empty;
 
             WindowSize = windowSize;
-            HighProfitPercentageThreshold = highProfitPercentageThreshold;
-            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
-            UseCurrencyConversions = useCurrencyConversions;
-            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            HighVolumePercentageDaily = highVolumePercentageDaily;
+            HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
@@ -34,13 +32,12 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public HighProfitsRuleParameters(
+        public HighVolumeRuleEquitiesParameters(
             string id,
             TimeSpan windowSize,
-            decimal? highProfitPercentageThreshold,
-            decimal? highProfitAbsoluteThreshold,
-            bool useCurrencyConversions,
-            string highProfitCurrencyConversionTargetCurrency,
+            decimal? highVolumePercentageDaily,
+            decimal? highVolumePercentageWindow,
+            decimal? highVolumePercentageMarketCap,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -50,10 +47,9 @@ namespace Surveillance.Engine.Rules.RuleParameters
             Id = id ?? string.Empty;
 
             WindowSize = windowSize;
-            HighProfitPercentageThreshold = highProfitPercentageThreshold;
-            HighProfitAbsoluteThreshold = highProfitAbsoluteThreshold;
-            UseCurrencyConversions = useCurrencyConversions;
-            HighProfitCurrencyConversionTargetCurrency = highProfitCurrencyConversionTargetCurrency ?? string.Empty;
+            HighVolumePercentageDaily = highVolumePercentageDaily;
+            HighVolumePercentageWindow = highVolumePercentageWindow;
+            HighVolumePercentageMarketCap = highVolumePercentageMarketCap;
 
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
@@ -64,30 +60,13 @@ namespace Surveillance.Engine.Rules.RuleParameters
         }
 
         public string Id { get; }
-
         public TimeSpan WindowSize { get; }
-
-        // Percentage
-        public decimal? HighProfitPercentageThreshold { get; }
-
-        // Absolute level
-        public decimal? HighProfitAbsoluteThreshold { get; }
-
-        /// <summary>
-        /// If true we will use the target currency provided.
-        /// Using absolute profits is implicitly always a yes on use currency conversions
-        /// </summary>
-        public bool UseCurrencyConversions { get; }
-
-        /// <summary>
-        /// Target currency if using currency conversions and also used for high profit absolute threshold
-        /// </summary>
-        public string HighProfitCurrencyConversionTargetCurrency { get; }
-
+        public decimal? HighVolumePercentageDaily { get; }
+        public decimal? HighVolumePercentageWindow { get; }
+        public decimal? HighVolumePercentageMarketCap { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
-
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
 

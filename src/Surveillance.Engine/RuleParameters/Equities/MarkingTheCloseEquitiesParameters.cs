@@ -4,11 +4,11 @@ using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
-namespace Surveillance.Engine.Rules.RuleParameters
+namespace Surveillance.Engine.Rules.RuleParameters.Equities
 {
-    public class MarkingTheCloseParameters : IMarkingTheCloseParameters
+    public class MarkingTheCloseEquitiesParameters : IMarkingTheCloseEquitiesParameters
     {
-        public MarkingTheCloseParameters(
+        public MarkingTheCloseEquitiesParameters(
             string id,
             TimeSpan window,
             decimal? percentageThresholdDailyVolume,
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
         }
 
-        public MarkingTheCloseParameters(
+        public MarkingTheCloseEquitiesParameters(
             string id,
             TimeSpan window,
             decimal? percentageThresholdDailyVolume,

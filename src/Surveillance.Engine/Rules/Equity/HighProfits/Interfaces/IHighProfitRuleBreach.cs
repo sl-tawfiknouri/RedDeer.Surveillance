@@ -6,7 +6,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces
 {
     public interface IHighProfitRuleBreach : IRuleBreach
     {
-        IHighProfitsRuleParameters Parameters { get; }
+        IHighProfitsRuleEquitiesParameters EquitiesParameters { get; }
         bool HasAbsoluteProfitBreach { get; }
         bool HasRelativeProfitBreach { get; }
         decimal? AbsoluteProfits { get; }

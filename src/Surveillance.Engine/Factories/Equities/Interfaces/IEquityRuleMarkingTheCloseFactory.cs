@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleMarkingTheCloseFactory
     {
         IMarkingTheCloseRule Build(
-            IMarkingTheCloseParameters parameters,
+            IMarkingTheCloseEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode,

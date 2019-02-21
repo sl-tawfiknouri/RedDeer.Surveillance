@@ -5,7 +5,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces
 {
     public interface ILayeringRuleBreach : IRuleBreach
     {
-        ILayeringRuleParameters Parameters { get; }
+        ILayeringRuleEquitiesParameters EquitiesParameters { get; }
         RuleBreachDescription BidirectionalTradeBreach { get; }
         RuleBreachDescription DailyVolumeTradeBreach { get; }
         RuleBreachDescription WindowVolumeTradeBreach { get; }

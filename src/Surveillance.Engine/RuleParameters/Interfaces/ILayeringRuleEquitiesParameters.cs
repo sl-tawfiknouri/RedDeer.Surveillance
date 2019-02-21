@@ -4,7 +4,7 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
-    public interface ILayeringRuleParameters : IFilterableRule, IRuleParameter
+    public interface ILayeringRuleEquitiesParameters : IFilterableRule, IRuleParameter
     {
         TimeSpan WindowSize { get; }
         decimal? PercentageOfMarketDailyVolume { get; }

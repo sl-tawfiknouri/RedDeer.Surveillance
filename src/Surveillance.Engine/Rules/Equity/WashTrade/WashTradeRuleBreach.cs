@@ -13,16 +13,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         public WashTradeRuleBreach(
             ISystemProcessOperationContext operationContext,
             string correlationId,
-            IWashTradeRuleParameters parameters,
+            IWashTradeRuleEquitiesParameters equitiesParameters,
             ITradePosition tradePosition,
             FinancialInstrument security,
             WashTradeAveragePositionBreach averagePositionBreach,
             WashTradePairingPositionBreach pairingPositionBreach,
             WashTradeClusteringPositionBreach clusteringPositionBreach)
         {
-            Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            EquitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
 
-            Window = parameters.WindowSize;
+            Window = equitiesParameters.WindowSize;
             Trades = tradePosition;
             Security = security;
 
@@ -30,12 +30,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             PairingPositionBreach = pairingPositionBreach ?? throw new ArgumentNullException(nameof(pairingPositionBreach));
             ClusteringPositionBreach = clusteringPositionBreach ?? throw new ArgumentNullException(nameof(clusteringPositionBreach));
 
-            RuleParameterId = parameters?.Id ?? string.Empty;
+            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }
 
-        public IWashTradeRuleParameters Parameters { get; }
+        public IWashTradeRuleEquitiesParameters EquitiesParameters { get; }
 
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }

@@ -10,7 +10,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleHighProfitFactory
     {
         IHighProfitRule Build(
-            IHighProfitsRuleParameters parameters,
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtxStream,
             ISystemProcessOperationRunRuleContext ruleCtxMarket,
             IUniverseAlertStream alertStream,

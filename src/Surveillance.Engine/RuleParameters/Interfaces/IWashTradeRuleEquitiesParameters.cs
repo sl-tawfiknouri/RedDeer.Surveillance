@@ -4,7 +4,7 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
-    public interface IWashTradeRuleParameters : IFilterableRule, IRuleParameter
+    public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter
     {
         TimeSpan WindowSize { get; }
 

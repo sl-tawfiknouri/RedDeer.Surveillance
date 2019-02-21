@@ -5,7 +5,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces
 {
     public interface ICancelledOrderRuleBreach : IRuleBreach
     {
-        ICancelledOrderRuleParameters Parameters { get; }
+        ICancelledOrderRuleEquitiesParameters Parameters { get; }
 
         bool HasBreachedRule();
         bool ExceededPercentagePositionCancellations { get; }

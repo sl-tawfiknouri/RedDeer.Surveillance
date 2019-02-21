@@ -37,14 +37,14 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         }
 
         public IMarkingTheCloseRule Build(
-            IMarkingTheCloseParameters parameters,
+            IMarkingTheCloseEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode,
             IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             return new MarkingTheCloseRule(
-                parameters,
+                equitiesParameters,
                 alertStream,
                 ruleCtx,
                 _orderFilter, 

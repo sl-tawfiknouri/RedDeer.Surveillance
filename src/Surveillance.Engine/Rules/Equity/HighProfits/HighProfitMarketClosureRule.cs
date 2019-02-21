@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     public class HighProfitMarketClosureRule : HighProfitStreamRule, IHighProfitMarketClosureRule
     {
         public HighProfitMarketClosureRule(
-            IHighProfitsRuleParameters parameters,
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             ICostCalculatorFactory costCalculatorFactory,
@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ILogger<HighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters, 
+                equitiesParameters, 
                 ruleCtx,
                 alertStream,
                 costCalculatorFactory,

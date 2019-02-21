@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
         private IQueueCasePublisher _publisher;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private ISystemProcessOperationContext _opCtx;
-        private IHighProfitsRuleParameters _parameters;
+        private IHighProfitsRuleEquitiesParameters _equitiesParameters;
         private IRuleBreachRepository _ruleBreachRepository;
         private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
@@ -36,8 +36,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
             _publisher = A.Fake<IQueueCasePublisher>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
-            _parameters = A.Fake<IHighProfitsRuleParameters>();
-            A.CallTo(() => _parameters.UseCurrencyConversions).Returns(true);
+            _equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
+            A.CallTo(() => _equitiesParameters.UseCurrencyConversions).Returns(true);
 
             _ruleBreachRepository = A.Fake<IRuleBreachRepository>();
             _ruleBreachOrdersRepository = A.Fake<IRuleBreachOrdersRepository>();
@@ -79,7 +79,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
                 new HighProfitRuleBreach(
                     _opCtx,
                     "correlation-id",
-                    _parameters,
+                    _equitiesParameters,
                     10m,
                     "GBP",
                     0.3m,

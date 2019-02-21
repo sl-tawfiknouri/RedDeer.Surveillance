@@ -5,6 +5,7 @@ using Domain.Financial;
 using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;
@@ -14,12 +15,12 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
     [TestFixture]
     public class WashTradePositionPairerTests
     {
-        private IWashTradeRuleParameters _parameters;
+        private IWashTradeRuleEquitiesParameters _equitiesParameters;
 
         [SetUp]
         public void Setup()
         {
-            _parameters = new WashTradeRuleParameters(
+            _equitiesParameters = new WashTradeRuleEquitiesParameters(
                 "id",
                 TimeSpan.FromHours(8),
                 true,
@@ -45,7 +46,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         {
             var pairer = new WashTradePositionPairer();
 
-            var results = pairer.PairUp(null, _parameters);
+            var results = pairer.PairUp(null, _equitiesParameters);
 
             Assert.IsNotNull(results);
             Assert.AreEqual(results.Count, 0);
@@ -66,7 +67,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             var tradeList = new List<Order>{ buy, sell };
 
-            var results = pairer.PairUp(tradeList, _parameters);
+            var results = pairer.PairUp(tradeList, _equitiesParameters);
 
             Assert.IsNotNull(results);
             Assert.AreEqual(results.Count, 1);
@@ -100,7 +101,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             var tradeList = new List<Order> { buy1, sell1, buy2, sell2 };
 
-            var results = pairer.PairUp(tradeList, _parameters);
+            var results = pairer.PairUp(tradeList, _equitiesParameters);
 
             Assert.IsNotNull(results);
             Assert.AreEqual(results.Count, 2);
@@ -167,7 +168,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             var tradeList = new List<Order> { buy1, sell1, buy2, sell2, buy3, buy4, buy5, sell5, sell6, sell7, sell8, sell9 };
 
-            var results = pairer.PairUp(tradeList, _parameters);
+            var results = pairer.PairUp(tradeList, _equitiesParameters);
 
             Assert.IsNotNull(results);
             Assert.AreEqual(results.Count, 3);

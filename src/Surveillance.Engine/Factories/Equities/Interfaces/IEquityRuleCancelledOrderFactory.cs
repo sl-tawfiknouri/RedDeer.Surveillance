@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleCancelledOrderFactory
     {
         ICancelledOrderRule Build(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);

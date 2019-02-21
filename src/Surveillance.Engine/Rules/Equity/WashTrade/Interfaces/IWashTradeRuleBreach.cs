@@ -5,7 +5,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces
 {
     public interface IWashTradeRuleBreach : IRuleBreach
     {
-        IWashTradeRuleParameters Parameters { get; }
+        IWashTradeRuleEquitiesParameters EquitiesParameters { get; }
         WashTradeRuleBreach.WashTradeAveragePositionBreach AveragePositionBreach { get; }
         WashTradeRuleBreach.WashTradePairingPositionBreach PairingPositionBreach { get; }
         WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }

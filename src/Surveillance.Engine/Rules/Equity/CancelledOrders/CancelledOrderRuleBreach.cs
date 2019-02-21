@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         public CancelledOrderRuleBreach(
             ISystemProcessOperationContext ctx,
             string correlationId,
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ITradePosition trades,
             FinancialInstrument security,
             bool exceededPercentagePositionCancellations,
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
                 || ExceededPercentagePositionCancellations;
         }
 
-        public ICancelledOrderRuleParameters Parameters { get; }
+        public ICancelledOrderRuleEquitiesParameters Parameters { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }

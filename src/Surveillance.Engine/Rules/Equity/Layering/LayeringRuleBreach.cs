@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public LayeringRuleBreach(
             ISystemProcessOperationContext operationContext,
             string correlationId,
-            ILayeringRuleParameters parameters,
+            ILayeringRuleEquitiesParameters equitiesParameters,
             TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleBreachDescription windowVolumeTradeBreach,
             RuleBreachDescription priceMovementBreach)
         {
-            Parameters = parameters;
+            EquitiesParameters = equitiesParameters;
             Window = window;
             Trades = trades;
             Security = security;
@@ -29,12 +29,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             DailyVolumeTradeBreach = dailyVolumeTradeBreach;
             WindowVolumeTradeBreach = windowVolumeTradeBreach;
             PriceMovementBreach = priceMovementBreach;
-            RuleParameterId = parameters?.Id ?? string.Empty;
+            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }
 
-        public ILayeringRuleParameters Parameters { get; }
+        public ILayeringRuleEquitiesParameters EquitiesParameters { get; }
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }
         public FinancialInstrument Security { get; }

@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ILogger<CancelledOrderRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        private ICancelledOrderRuleParameters _parameters;
+        private ICancelledOrderRuleEquitiesParameters _parameters;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
             _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
-            _parameters = A.Fake<ICancelledOrderRuleParameters>();
+            _parameters = A.Fake<ICancelledOrderRuleEquitiesParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
         }

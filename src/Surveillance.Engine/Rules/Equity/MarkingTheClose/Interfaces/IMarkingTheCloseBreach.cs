@@ -6,7 +6,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces
     public interface IMarkingTheCloseBreach : IRuleBreach
     {
         MarketOpenClose MarketClose { get; }
-        IMarkingTheCloseParameters Parameters { get; }
+        IMarkingTheCloseEquitiesParameters EquitiesParameters { get; }
 
         VolumeBreach DailyBreach { get; }
         VolumeBreach WindowBreach { get; }

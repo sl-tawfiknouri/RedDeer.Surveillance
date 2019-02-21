@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
     /// </summary>
     public class CancelledOrderRule : BaseUniverseRule, ICancelledOrderRule
     {
-        private readonly ICancelledOrderRuleParameters _parameters;
+        private readonly ICancelledOrderRuleEquitiesParameters _parameters;
         private readonly ISystemProcessOperationRunRuleContext _opCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
         private readonly ILogger _logger;
         
         public CancelledOrderRule(
-            ICancelledOrderRuleParameters parameters,
+            ICancelledOrderRuleEquitiesParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,

@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities.Interfaces
     public interface IEquityRuleSpoofingFactory
     {
         ISpoofingRule Build(
-            ISpoofingRuleParameters spoofingParameters,
+            ISpoofingRuleEquitiesParameters spoofingEquitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);

@@ -16,11 +16,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
     {
         public IReadOnlyCollection<PositionCluster> PairUp(
             List<Order> trades,
-            IWashTradeRuleParameters parameters)
+            IWashTradeRuleEquitiesParameters equitiesParameters)
         {
             if (trades == null
                 || !trades.Any()
-                || parameters == null)
+                || equitiesParameters == null)
             {
                 return new PositionCluster[0];
             }
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     benchmarkPrice = trade.OrderAverageFillPrice.GetValueOrDefault().Value;                   
                 }
 
-                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAverageFillPrice.GetValueOrDefault().Value, parameters))
+                if (!InRangeOfCurrentPrice(benchmarkPrice, trade.OrderAverageFillPrice.GetValueOrDefault().Value, equitiesParameters))
                 {
                     benchmarkPrice = trade.OrderAverageFillPrice.GetValueOrDefault().Value;
 
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             return positionPairs;
         }
 
-        private bool InRangeOfCurrentPrice(decimal currentPrice, decimal newPrice, IWashTradeRuleParameters parameters)
+        private bool InRangeOfCurrentPrice(decimal currentPrice, decimal newPrice, IWashTradeRuleEquitiesParameters equitiesParameters)
         {
             if (currentPrice == 0
                 || newPrice == 0)
@@ -88,7 +88,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return false;
             }
 
-            var offset = currentPrice * parameters.PairingPositionPercentagePriceChangeThresholdPerPair.GetValueOrDefault(0);
+            var offset = currentPrice * equitiesParameters.PairingPositionPercentagePriceChangeThresholdPerPair.GetValueOrDefault(0);
 
             var lowerBoundary = currentPrice - offset;
             var upperBoundary = currentPrice + offset;

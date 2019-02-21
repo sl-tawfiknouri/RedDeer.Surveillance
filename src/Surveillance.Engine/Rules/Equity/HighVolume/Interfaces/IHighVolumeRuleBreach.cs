@@ -5,7 +5,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces
 {
     public interface IHighVolumeRuleBreach : IRuleBreach
     {
-        IHighVolumeRuleParameters Parameters { get; }
+        IHighVolumeRuleEquitiesParameters EquitiesParameters { get; }
 
         HighVolumeRuleBreach.BreachDetails DailyBreach { get; }
         HighVolumeRuleBreach.BreachDetails WindowBreach { get; }

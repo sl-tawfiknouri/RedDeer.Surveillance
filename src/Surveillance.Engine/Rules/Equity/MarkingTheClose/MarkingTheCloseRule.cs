@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {
     public class MarkingTheCloseRule : BaseUniverseRule, IMarkingTheCloseRule
     {
-        private readonly IMarkingTheCloseParameters _parameters;
+        private readonly IMarkingTheCloseEquitiesParameters _equitiesParameters;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         private bool _hadMissingData = false;
 
         public MarkingTheCloseRule(
-            IMarkingTheCloseParameters parameters,
+            IMarkingTheCloseEquitiesParameters equitiesParameters,
             IUniverseAlertStream alertStream,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseOrderFilter orderFilter,
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters?.Window ?? TimeSpan.FromMinutes(30),
+                equitiesParameters?.Window ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
@@ -57,7 +57,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -107,13 +107,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             var marketSecurities = new Stack<Order>(filteredMarketSecurities);
 
             VolumeBreach dailyVolumeBreach = null;
-            if (_parameters.PercentageThresholdDailyVolume != null)
+            if (_equitiesParameters.PercentageThresholdDailyVolume != null)
             {
                 dailyVolumeBreach = CheckDailyVolumeTraded(marketSecurities);
             }
 
             VolumeBreach windowVolumeBreach = null;
-            if (_parameters.PercentageThresholdWindowVolume != null)
+            if (_equitiesParameters.PercentageThresholdWindowVolume != null)
             {
                 windowVolumeBreach = CheckWindowVolumeTraded(marketSecurities);
             }
@@ -129,11 +129,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             var breach = new MarkingTheCloseBreach(
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
-                _parameters.Window,
+                _equitiesParameters.Window,
                 marketSecurities.FirstOrDefault()?.Instrument,
                 _latestMarketClosure,
                 position,
-                _parameters,
+                _equitiesParameters,
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
@@ -169,7 +169,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 
             var tradedSecurity = dataResponse.Response;
 
-            var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _parameters.PercentageThresholdDailyVolume;
+            var thresholdVolumeTraded = tradedSecurity.DailySummaryTimeBar.DailyVolume.Traded * _equitiesParameters.PercentageThresholdDailyVolume;
 
             if (thresholdVolumeTraded == null)
             {
@@ -212,7 +212,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 
             var securityUpdates = marketResult.Response;
             var securityVolume = securityUpdates.Sum(su => su.SpreadTimeBar.Volume.Traded);
-            var thresholdVolumeTraded = securityVolume * _parameters.PercentageThresholdWindowVolume;
+            var thresholdVolumeTraded = securityVolume * _equitiesParameters.PercentageThresholdWindowVolume;
 
             if (thresholdVolumeTraded == null)
             {

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Engine.Rules.Mappers.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
@@ -28,7 +29,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IReadOnlyCollection<ISpoofingRuleParameters> Map(List<SpoofingRuleParameterDto> dtos)
+        public IReadOnlyCollection<ISpoofingRuleEquitiesParameters> Map(List<SpoofingRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -39,7 +40,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return dtos
                 .Select(dto =>
-                    new SpoofingRuleParameters(
+                    new SpoofingRuleEquitiesParameters(
                     dto.Id,
                     dto.WindowSize,
                     dto.CancellationThreshold,
@@ -52,7 +53,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<ICancelledOrderRuleParameters> Map(List<CancelledOrderRuleParameterDto> dtos)
+        public IReadOnlyCollection<ICancelledOrderRuleEquitiesParameters> Map(List<CancelledOrderRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -63,7 +64,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return dtos
                 .Select(dto =>
-                    new CancelledOrderRuleParameters(
+                    new CancelledOrderRuleEquitiesParameters(
                         dto.Id,
                         dto.WindowSize,
                         dto.CancelledOrderPercentagePositionThreshold,
@@ -78,7 +79,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighProfitsRuleParameters> Map(List<HighProfitsRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighProfitsRuleEquitiesParameters> Map(List<HighProfitsRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -89,7 +90,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return dtos
                 .Select(dto =>
-                    new HighProfitsRuleParameters(
+                    new HighProfitsRuleEquitiesParameters(
                         dto.Id,
                         dto.WindowSize,
                         dto.HighProfitPercentageThreshold,
@@ -104,7 +105,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IMarkingTheCloseParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos)
+        public IReadOnlyCollection<IMarkingTheCloseEquitiesParameters> Map(List<MarkingTheCloseRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -115,7 +116,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return dtos
                 .Select(dto =>
-                    new MarkingTheCloseParameters(
+                    new MarkingTheCloseEquitiesParameters(
                         dto.Id,
                         dto.WindowSize,
                         dto.PercentageThresholdDailyVolume,
@@ -129,7 +130,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<ILayeringRuleParameters> Map(List<LayeringRuleParameterDto> dtos)
+        public IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(List<LayeringRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -141,7 +142,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             return
                 dtos
                     .Select(dto =>
-                        new LayeringRuleParameters(
+                        new LayeringRuleEquitiesParameters(
                             dto.Id,
                             dto.WindowSize,
                             dto.PercentageOfMarketDailyVolume,
@@ -155,7 +156,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeRuleParameters> Map(List<HighVolumeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -167,7 +168,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             return 
                 dtos
                     .Select(dto => 
-                        new HighVolumeRuleParameters(
+                        new HighVolumeRuleEquitiesParameters(
                             dto.Id,
                             dto.WindowSize,
                             dto.HighVolumePercentageDaily,
@@ -181,7 +182,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                     .ToList();
         }
 
-        public IReadOnlyCollection<IWashTradeRuleParameters> Map(List<WashTradeRuleParameterDto> dtos)
+        public IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -193,7 +194,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             return
                 dtos
                     .Select(dto =>
-                        new WashTradeRuleParameters(
+                        new WashTradeRuleEquitiesParameters(
                             dto.Id,
                             dto.WindowSize,
                             dto.PerformAveragePositionAnalysis,

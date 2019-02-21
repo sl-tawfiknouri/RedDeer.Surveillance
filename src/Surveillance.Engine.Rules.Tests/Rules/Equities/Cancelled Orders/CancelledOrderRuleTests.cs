@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
@@ -27,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
     public class CancelledOrderRuleTests
     {
         private ISystemProcessOperationRunRuleContext _ruleCtx;
-        private ICancelledOrderRuleParameters _parameters;
+        private ICancelledOrderRuleEquitiesParameters _parameters;
         private IUniverseAlertStream _alertStream;
         private IUniverseOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _cacheFactory;
@@ -41,7 +42,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
         public void Setup()
         {
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _parameters = A.Fake<ICancelledOrderRuleParameters>();
+            _parameters = A.Fake<ICancelledOrderRuleEquitiesParameters>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _cacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
@@ -113,7 +114,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, 20, null, false);
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
 
@@ -158,7 +159,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.3m, 3, null, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -196,7 +197,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleParameters("id", TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.70m, 3, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -235,7 +236,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleParameters("id", TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.8m, null, 3, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);
@@ -270,7 +271,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
                 OrderFactory(OrderStatus.Filled),
             };
 
-            var parameters = new CancelledOrderRuleParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
+            var parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
 
             var orderRule = new CancelledOrderRule(parameters,  _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
                 _logger, _tradingHistoryLogger);

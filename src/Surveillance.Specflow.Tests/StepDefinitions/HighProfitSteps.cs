@@ -16,6 +16,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
@@ -37,7 +38,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class HighProfitSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private HighProfitsRuleParameters _highProfitRuleParameters;
+        private HighProfitsRuleEquitiesParameters _highProfitRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
 
@@ -141,7 +142,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<HighProfitApiParameters>();
 
-            _highProfitRuleParameters = new HighProfitsRuleParameters(
+            _highProfitRuleEquitiesParameters = new HighProfitsRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 parameters.HighProfitPercentage,
@@ -161,7 +162,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var highProfitRule =
                 _equityRuleHighProfitFactory.Build(
-                    _highProfitRuleParameters,
+                    _highProfitRuleEquitiesParameters,
                     _ruleCtx,
                     _ruleCtx,
                     _alertStream,

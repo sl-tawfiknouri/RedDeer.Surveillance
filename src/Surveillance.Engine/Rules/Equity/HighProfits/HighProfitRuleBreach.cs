@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public HighProfitRuleBreach(
             ISystemProcessOperationContext operationContext,
             string correlationId,
-            IHighProfitsRuleParameters parameters,
+            IHighProfitsRuleEquitiesParameters equitiesParameters,
             decimal? absoluteProfits,
             string absoluteProfitCurrency,
             decimal? relativeProfits,
@@ -27,8 +27,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             bool marketClosureVirtualProfitComponent,
             IExchangeRateProfitBreakdown profitBreakdown)
         {
-            Window = parameters.WindowSize;
-            Parameters = parameters;
+            Window = equitiesParameters.WindowSize;
+            EquitiesParameters = equitiesParameters;
             AbsoluteProfits = absoluteProfits;
             AbsoluteProfitCurrency = absoluteProfitCurrency;
             RelativeProfits = relativeProfits;
@@ -38,12 +38,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             Trades = trades ?? new TradePosition(new List<Order>());
             MarketClosureVirtualProfitComponent = marketClosureVirtualProfitComponent;
             ExchangeRateProfits = profitBreakdown;
-            RuleParameterId = parameters?.Id ?? string.Empty;
+            RuleParameterId = equitiesParameters?.Id ?? string.Empty;
             SystemOperationId = operationContext.Id.ToString();
             CorrelationId = correlationId;
         }
 
-        public IHighProfitsRuleParameters Parameters { get; }
+        public IHighProfitsRuleEquitiesParameters EquitiesParameters { get; }
         public bool HasAbsoluteProfitBreach { get; }
         public bool HasRelativeProfitBreach { get; }
         public decimal? AbsoluteProfits { get; }

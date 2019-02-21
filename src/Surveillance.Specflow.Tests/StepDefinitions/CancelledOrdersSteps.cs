@@ -8,6 +8,7 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
@@ -32,7 +33,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
-        private CancelledOrderRuleParameters _parameters;
+        private CancelledOrderRuleEquitiesParameters _parameters;
 
         public CancelledOrdersSteps(
             ScenarioContext scenarioContext,
@@ -68,7 +69,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = cancelledOrderParameters.CreateInstance<CancelledOrderApiParameters>();
 
-            _parameters = new CancelledOrderRuleParameters(
+            _parameters = new CancelledOrderRuleEquitiesParameters(
                 "0",
                 new System.TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.CancelledOrderPercentagePositionThreshold,

@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
     public class WashTradeRule : BaseUniverseRule, IWashTradeRule
     {
         private readonly ILogger _logger;
-        private readonly IWashTradeRuleParameters _parameters;
+        private readonly IWashTradeRuleEquitiesParameters _equitiesParameters;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IWashTradeClustering _clustering;
         private readonly IUniverseAlertStream _alertStream;
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         private readonly IUniverseOrderFilter _orderFilter;
 
         public WashTradeRule(
-            IWashTradeRuleParameters parameters,
+            IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
-                parameters?.WindowSize ?? TimeSpan.FromDays(1),
+                equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
@@ -63,7 +63,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 logger,
                 tradingHistoryLogger)
         {
-            _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 new WashTradeRuleBreach(
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),
-                    _parameters,
+                    _equitiesParameters,
                     tradePosition,
                     security,
                     averagePositionCheck,
@@ -169,7 +169,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         /// </summary>
         public async Task<WashTradeRuleBreach.WashTradeAveragePositionBreach> NettingTrades(List<Order> activeTrades)
         {
-            if (!_parameters.PerformAveragePositionAnalysis)
+            if (!_equitiesParameters.PerformAveragePositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
@@ -180,7 +180,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
         
-            if (activeTrades.Count < _parameters.AveragePositionMinimumNumberOfTrades)
+            if (activeTrades.Count < _equitiesParameters.AveragePositionMinimumNumberOfTrades)
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
@@ -203,13 +203,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var relativeValue = Math.Abs((valueOfBuy / valueOfSell) - 1);
 
-            if (relativeValue > _parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
+            if (relativeValue > _equitiesParameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
             {
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
 
-            if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount == null
-                || string.IsNullOrWhiteSpace(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency))
+            if (_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount == null
+                || string.IsNullOrWhiteSpace(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency))
             {
                 _logger.LogInformation("WashTradeRule found an average position breach and does not have an absolute limit set. Returning with average position breach");
 
@@ -224,7 +224,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency?.Value ?? string.Empty);
 
-            var targetCurrency = new Domain.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -238,9 +238,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     null);
             }
 
-            if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount < convertedCurrency.Value.Value)
+            if (_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount < convertedCurrency.Value.Value)
             {
-                _logger.LogInformation($"WashTradeRule found an average position breach but the total change in position value exceeded the threshold of {_parameters.AveragePositionMaximumAbsoluteValueChangeAmount} ({_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency}).");
+                _logger.LogInformation($"WashTradeRule found an average position breach but the total change in position value exceeded the threshold of {_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount} ({_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency}).");
 
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
@@ -254,7 +254,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
         public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<Order> activeTrades)
         {
-            if (!_parameters.PerformPairingPositionAnalysis)
+            if (!_equitiesParameters.PerformPairingPositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
             }
@@ -272,9 +272,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
             }
             
-            var pairings = _positionPairer.PairUp(activeTrades, _parameters);
+            var pairings = _positionPairer.PairUp(activeTrades, _equitiesParameters);
 
-            if (_parameters.PairingPositionPercentageVolumeDifferenceThreshold != null)
+            if (_equitiesParameters.PairingPositionPercentageVolumeDifferenceThreshold != null)
             {
                 pairings = FilteredPairsByVolume(pairings);
             }
@@ -288,12 +288,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var sellCount = pairings.SelectMany(a => a.Sells.Get()).Count();
             var totalTradesWithinPairings = buyCount + sellCount;
 
-            if (_parameters.PairingPositionMinimumNumberOfPairedTrades == null)
+            if (_equitiesParameters.PairingPositionMinimumNumberOfPairedTrades == null)
             {
                 return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
             }
 
-            if ((totalTradesWithinPairings) >= _parameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
+            if ((totalTradesWithinPairings) >= _equitiesParameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
             {
                 return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
             }
@@ -323,7 +323,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
                 var larger = Math.Max(buyVolume, sellVolume);
                 var smaller = Math.Min(buyVolume, sellVolume);
-                var offset = (decimal)larger * (_parameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
+                var offset = (decimal)larger * (_equitiesParameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
 
                 if ((smaller >= larger - offset))
                 {
@@ -337,8 +337,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
         private async Task<bool> CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(List<Order> activeTrades)
         {
-            if (_parameters.PairingPositionMaximumAbsoluteCurrencyAmount == null
-                || string.IsNullOrWhiteSpace(_parameters.PairingPositionMaximumAbsoluteCurrency))
+            if (_equitiesParameters.PairingPositionMaximumAbsoluteCurrencyAmount == null
+                || string.IsNullOrWhiteSpace(_equitiesParameters.PairingPositionMaximumAbsoluteCurrency))
             {
                 return true;
             }
@@ -363,7 +363,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var currency = new Domain.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
             var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
 
-            var targetCurrency = new Domain.Financial.Currency(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -373,7 +373,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return true;
             }
 
-            if (convertedCurrency?.Value > _parameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
+            if (convertedCurrency?.Value > _equitiesParameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
             {
                 return false;
             }
@@ -383,7 +383,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
         public WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringTrades(List<Order> activeTrades)
         {
-            if (!_parameters.PerformClusteringPositionAnalysis)
+            if (!_equitiesParameters.PerformClusteringPositionAnalysis)
             {
                 return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
@@ -407,7 +407,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             {
                 var counts = cluster.Buys.Get().Count + cluster.Sells.Get().Count;
 
-                if (counts < _parameters.ClusteringPositionMinimumNumberOfTrades)
+                if (counts < _equitiesParameters.ClusteringPositionMinimumNumberOfTrades)
                 {
                     continue;
                 }
@@ -418,7 +418,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 var largerValue = Math.Max(buyValue, sellValue);
                 var smallerValue = Math.Min(buyValue, sellValue);
 
-                var offset = largerValue * _parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
+                var offset = largerValue * _equitiesParameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
                 var lowerBoundary = largerValue - offset;
                 var upperBoundary = largerValue + offset;
 

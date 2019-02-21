@@ -101,13 +101,13 @@ namespace Surveillance.Engine.Rules
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
             For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
 
-            For<ISpoofingSubscriber>().Use<SpoofingSubscriber>();
-            For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();
-            For<IHighProfitsSubscriber>().Use<HighProfitsSubscriber>();
-            For<IHighVolumeSubscriber>().Use<HighVolumeSubscriber>();
-            For<IMarkingTheCloseSubscriber>().Use<MarkingTheCloseSubscriber>();
-            For<ILayeringSubscriber>().Use<LayeringSubscriber>();
-            For<IWashTradeSubscriber>().Use<WashTradeSubscriber>();
+            For<ISpoofingEquitySubscriber>().Use<SpoofingEquitySubscriber>();
+            For<ICancelledOrderEquitySubscriber>().Use<CancelledOrderEquitySubscriber>();
+            For<IHighProfitsEquitySubscriber>().Use<HighProfitsEquitySubscriber>();
+            For<IHighVolumeEquitySubscriber>().Use<HighVolumeEquitySubscriber>();
+            For<IMarkingTheCloseEquitySubscriber>().Use<MarkingTheCloseEquitySubscriber>();
+            For<ILayeringEquitySubscriber>().Use<LayeringEquitySubscriber>();
+            For<IWashTradeEquitySubscriber>().Use<WashTradeEquitySubscriber>();
 
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();

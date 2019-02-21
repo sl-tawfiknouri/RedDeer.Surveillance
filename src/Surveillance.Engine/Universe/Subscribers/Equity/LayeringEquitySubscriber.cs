@@ -20,20 +20,20 @@ using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class LayeringSubscriber : ILayeringSubscriber
+    public class LayeringEquitySubscriber : ILayeringEquitySubscriber
     {
         private readonly IEquityRuleLayeringFactory _equityRuleLayeringFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<LayeringSubscriber> _logger;
+        private readonly ILogger<LayeringEquitySubscriber> _logger;
 
-        public LayeringSubscriber(
+        public LayeringEquitySubscriber(
             IEquityRuleLayeringFactory equityRuleLayeringFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<LayeringSubscriber> logger)
+            ILogger<LayeringEquitySubscriber> logger)
         {
             _equityRuleLayeringFactory = equityRuleLayeringFactory ?? throw new ArgumentNullException(nameof(equityRuleLayeringFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));

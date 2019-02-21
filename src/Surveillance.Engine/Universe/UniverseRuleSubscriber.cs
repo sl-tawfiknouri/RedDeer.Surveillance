@@ -16,35 +16,35 @@ namespace Surveillance.Engine.Rules.Universe
 {
     public class UniverseRuleSubscriber : IUniverseRuleSubscriber
     {
-        private readonly ISpoofingSubscriber _spoofingSubscriber;
-        private readonly ICancelledOrderSubscriber _cancelledOrderSubscriber;
-        private readonly IHighProfitsSubscriber _highProfitSubscriber;
-        private readonly IHighVolumeSubscriber _highVolumeSubscriber;
-        private readonly IMarkingTheCloseSubscriber _markingTheCloseSubscriber;
-        private readonly ILayeringSubscriber _layeringSubscriber;
-        private readonly IWashTradeSubscriber _washTradeSubscriber;
+        private readonly ISpoofingEquitySubscriber _spoofingEquitySubscriber;
+        private readonly ICancelledOrderEquitySubscriber _cancelledOrderEquitySubscriber;
+        private readonly IHighProfitsEquitySubscriber _highProfitEquitySubscriber;
+        private readonly IHighVolumeEquitySubscriber _highVolumeEquitySubscriber;
+        private readonly IMarkingTheCloseEquitySubscriber _markingTheCloseEquitySubscriber;
+        private readonly ILayeringEquitySubscriber _layeringEquitySubscriber;
+        private readonly IWashTradeEquitySubscriber _washTradeEquitySubscriber;
 
         private readonly IRuleParameterDtoIdExtractor _idExtractor;
         private readonly ILogger<UniverseRuleSubscriber> _logger;
 
         public UniverseRuleSubscriber(
-            ISpoofingSubscriber spoofingSubscriber,
-            ICancelledOrderSubscriber cancelledOrderSubscriber,
-            IHighProfitsSubscriber highProfitSubscriber,
-            IHighVolumeSubscriber highVolumeSubscriber,
-            IMarkingTheCloseSubscriber markingTheCloseSubscriber,
-            ILayeringSubscriber layeringSubscriber,
-            IWashTradeSubscriber washTradeSubscriber,
+            ISpoofingEquitySubscriber spoofingEquitySubscriber,
+            ICancelledOrderEquitySubscriber cancelledOrderEquitySubscriber,
+            IHighProfitsEquitySubscriber highProfitEquitySubscriber,
+            IHighVolumeEquitySubscriber highVolumeEquitySubscriber,
+            IMarkingTheCloseEquitySubscriber markingTheCloseEquitySubscriber,
+            ILayeringEquitySubscriber layeringEquitySubscriber,
+            IWashTradeEquitySubscriber washTradeEquitySubscriber,
             IRuleParameterDtoIdExtractor idExtractor,
             ILogger<UniverseRuleSubscriber> logger)
         {
-            _spoofingSubscriber = spoofingSubscriber ?? throw new ArgumentNullException(nameof(spoofingSubscriber));
-            _cancelledOrderSubscriber = cancelledOrderSubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderSubscriber));
-            _highProfitSubscriber = highProfitSubscriber ?? throw new ArgumentNullException(nameof(highProfitSubscriber));
-            _highVolumeSubscriber = highVolumeSubscriber ?? throw new ArgumentNullException(nameof(highVolumeSubscriber));
-            _markingTheCloseSubscriber = markingTheCloseSubscriber ?? throw new ArgumentNullException(nameof(markingTheCloseSubscriber));
-            _layeringSubscriber = layeringSubscriber ?? throw new ArgumentNullException(nameof(layeringSubscriber));
-            _washTradeSubscriber = washTradeSubscriber ?? throw new ArgumentNullException(nameof(washTradeSubscriber));
+            _spoofingEquitySubscriber = spoofingEquitySubscriber ?? throw new ArgumentNullException(nameof(spoofingEquitySubscriber));
+            _cancelledOrderEquitySubscriber = cancelledOrderEquitySubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderEquitySubscriber));
+            _highProfitEquitySubscriber = highProfitEquitySubscriber ?? throw new ArgumentNullException(nameof(highProfitEquitySubscriber));
+            _highVolumeEquitySubscriber = highVolumeEquitySubscriber ?? throw new ArgumentNullException(nameof(highVolumeEquitySubscriber));
+            _markingTheCloseEquitySubscriber = markingTheCloseEquitySubscriber ?? throw new ArgumentNullException(nameof(markingTheCloseEquitySubscriber));
+            _layeringEquitySubscriber = layeringEquitySubscriber ?? throw new ArgumentNullException(nameof(layeringEquitySubscriber));
+            _washTradeEquitySubscriber = washTradeEquitySubscriber ?? throw new ArgumentNullException(nameof(washTradeEquitySubscriber));
             _idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -65,19 +65,19 @@ namespace Surveillance.Engine.Rules.Universe
             }
 
             var highVolumeSubscriptions =
-                _highVolumeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highVolumeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var washTradeSubscriptions =
-                _washTradeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _washTradeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var highProfitSubscriptions =
-                _highProfitSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _highProfitEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var cancelledSubscriptions =
-                _cancelledOrderSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _cancelledOrderEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var markingTheCloseSubscriptions =
-                _markingTheCloseSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             foreach (var sub in highVolumeSubscriptions)
             {
@@ -125,10 +125,10 @@ namespace Surveillance.Engine.Rules.Universe
             ISystemProcessOperationContext opCtx)
         {
             var spoofingSubscriptions = 
-                _spoofingSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var layeringSubscriptions =
-                _layeringSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+                _layeringEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             foreach (var sub in spoofingSubscriptions)
                 player.Subscribe(sub);

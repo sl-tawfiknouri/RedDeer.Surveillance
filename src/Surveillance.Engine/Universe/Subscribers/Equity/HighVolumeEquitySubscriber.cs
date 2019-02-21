@@ -20,26 +20,26 @@ using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class CancelledOrderSubscriber : ICancelledOrderSubscriber
+    public class HighVolumeEquitySubscriber : IHighVolumeEquitySubscriber
     {
-        private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
+        private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<CancelledOrderSubscriber> _logger;
+        private readonly ILogger<HighVolumeEquitySubscriber> _logger;
 
-        public CancelledOrderSubscriber(
-            IEquityRuleCancelledOrderFactory equityRuleCancelledOrderFactory,
+        public HighVolumeEquitySubscriber(
+            IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<CancelledOrderSubscriber> logger)
+            ILogger<HighVolumeEquitySubscriber> logger)
         {
-            _equityRuleCancelledOrderFactory = equityRuleCancelledOrderFactory;
-            _ruleParameterMapper = ruleParameterMapper;
-            _universeFilterFactory = universeFilterFactory;
-            _brokerFactory = brokerFactory;
-            _logger = logger;
+            _equityRuleHighVolumeFactory = equityRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
+            _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
+            _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
+            _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.Contains(Domain.Scheduling.Rules.CancelledOrders) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighVolume) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -57,54 +57,64 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
-                    .CancelledOrders
-                    .Where(co => filteredParameters.Contains(co.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .HighVolumes
+                    .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            var cancelledOrderParameters = _ruleParameterMapper.Map(dtos);
+            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, cancelledOrderParameters);
+            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
+
+            return subscriptions;
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IReadOnlyCollection<ICancelledOrderRuleParameters> cancelledOrderParameters)
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IReadOnlyCollection<IHighVolumeRuleParameters> highVolumeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
-            if (cancelledOrderParameters != null
-                && cancelledOrderParameters.Any())
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (highVolumeParameters != null
+                && highVolumeParameters.Any())
             {
-                foreach (var param in cancelledOrderParameters)
+                foreach (var param in highVolumeParameters)
                 {
-                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
-                    var broker = _brokerFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
+                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
+                    var broker =
+                        _brokerFactory.Build(
+                            paramSubscriptions,
+                            param.Factors,
+                            param.AggregateNonFactorableIntoOwnCategory);
+
                     subscriptions.Add(broker);
                 }
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
+                _logger.LogError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
+                opCtx.EventError("Rule Scheduler - tried to schedule a high volume rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeParamToUniverse(
+        private IUniverseCloneableRule SubscribeToParams(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            ICancelledOrderRuleParameters param)
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
+            IHighVolumeRuleParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                    EquityRuleCancelledOrderFactory.Version,
+                    Domain.Scheduling.Rules.HighVolume.GetDescription(),
+                    EquityRuleHighVolumeFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.CancelledOrders,
+                    (int)Domain.Scheduling.Rules.HighVolume,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
@@ -112,18 +122,21 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
+            var highVolume = _equityRuleHighVolumeFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
 
             if (param.HasFilters())
             {
-                _logger.LogInformation($"CancelledOrderSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"HighVolumeSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                filteredUniverse.Subscribe(cancelledOrderRule);
+                filteredUniverse.Subscribe(highVolume);
 
                 return filteredUniverse;
             }
-
-            return cancelledOrderRule;
+            else
+            {
+                return highVolume;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces
 {
-    public interface IHighProfitsSubscriber : IRuleSubscriber
+    public interface IWashTradeEquitySubscriber : IRuleSubscriber
     {
     }
 }

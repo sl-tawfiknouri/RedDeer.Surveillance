@@ -2,7 +2,7 @@
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces
 {
-    public interface ICancelledOrderSubscriber : IRuleSubscriber
+    public interface IMarkingTheCloseEquitySubscriber : IRuleSubscriber
     {
     }
 }

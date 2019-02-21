@@ -20,20 +20,20 @@ using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class WashTradeSubscriber : IWashTradeSubscriber
+    public class WashTradeEquitySubscriber : IWashTradeEquitySubscriber
     {
         private readonly IEquityRuleWashTradeFactory _equityRuleWashTradeFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<MarkingTheCloseSubscriber> _logger;
+        private readonly ILogger<MarkingTheCloseEquitySubscriber> _logger;
 
-        public WashTradeSubscriber(
+        public WashTradeEquitySubscriber(
             IEquityRuleWashTradeFactory equityRuleWashTradeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<MarkingTheCloseSubscriber> logger)
+            ILogger<MarkingTheCloseEquitySubscriber> logger)
         {
             _equityRuleWashTradeFactory = equityRuleWashTradeFactory ?? throw new ArgumentNullException(nameof(equityRuleWashTradeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));

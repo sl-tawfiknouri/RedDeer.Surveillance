@@ -2,7 +2,7 @@
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces
 {
-    public interface IMarkingTheCloseSubscriber : IRuleSubscriber
+    public interface IHighVolumeEquitySubscriber : IRuleSubscriber
     {
     }
 }

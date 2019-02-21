@@ -11,7 +11,6 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -21,28 +20,28 @@ using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
-    public class MarkingTheCloseSubscriber : IMarkingTheCloseSubscriber
+    public class SpoofingEquitySubscriber : ISpoofingEquitySubscriber
     {
-        private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
+        private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<MarkingTheCloseSubscriber> _logger;
+        private readonly ILogger _logger;
 
-        public MarkingTheCloseSubscriber(
-            IEquityRuleMarkingTheCloseFactory equityRuleMarkingTheCloseFactory,
+        public SpoofingEquitySubscriber(
+            IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<MarkingTheCloseSubscriber> logger)
+            ILogger<UniverseRuleSubscriber> logger)
         {
-            _equityRuleMarkingTheCloseFactory = equityRuleMarkingTheCloseFactory ?? throw new ArgumentNullException(nameof(equityRuleMarkingTheCloseFactory));
+            _equityRuleSpoofingFactory = equityRuleSpoofingFactory ?? throw new ArgumentNullException(nameof(equityRuleSpoofingFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
+        
         public IReadOnlyCollection<IObserver<IUniverseEvent>> CollateSubscriptions(
             ScheduledExecution execution,
             RuleParameterDto ruleParameters,
@@ -50,39 +49,45 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.MarkingTheClose) ?? true)
+            if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Scheduling.Rules.Spoofing)
+                ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
-            var dtos =
-                ruleParameters
-                    .MarkingTheCloses
-                    .Where(mtc => filteredParameters.Contains(mtc.Id, StringComparer.InvariantCultureIgnoreCase))
+            var filteredParameters =
+                execution
+                    .Rules
+                    .SelectMany(ru => ru.Ids)
+                    .Where(ru => ru != null)
                     .ToList();
 
-            var markingTheCloseParameters = _ruleParameterMapper.Map(dtos);
-            var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, markingTheCloseParameters);
+            var dtos =
+                ruleParameters
+                    .Spoofings
+                    .Where(sp => filteredParameters.Contains(sp.Id, StringComparer.InvariantCultureIgnoreCase))
+                    .ToList();
 
-            return subscriptions;
+            var spoofingParameters = _ruleParameterMapper.Map(dtos);
+            var subscriptionRequests = SubscribeToUniverse(execution, opCtx, alertStream, spoofingParameters);
+
+            return subscriptionRequests;
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IMarkingTheCloseParameters> markingTheCloseParameters)
+            IReadOnlyCollection<ISpoofingRuleParameters> spoofingParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
-            if (markingTheCloseParameters != null
-                && markingTheCloseParameters.Any())
+            if (spoofingParameters != null
+                && spoofingParameters.Any())
             {
-                foreach (var param in markingTheCloseParameters)
+                foreach (var param in spoofingParameters)
                 {
-                    var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, param, dataRequestSubscriber);
+                    var paramSubscriptions = SubscribeForParams(execution, opCtx, alertStream, param);
                     var broker =
                         _brokerFactory.Build(
                             paramSubscriptions,
@@ -94,26 +99,25 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a marking the close rule execution with no parameters set");
+                _logger.LogError("Spoofing Rule Scheduler - tried to schedule a spoofing rule execution with no parameters set");
+                opCtx.EventError("Spoofing Scheduler - tried to schedule a spoofing rule execution with no parameters set");
             }
 
             return subscriptions;
         }
 
-        private IUniverseCloneableRule SubscribeToParams(
+        private IUniverseCloneableRule SubscribeForParams(
             ScheduledExecution execution,
-            ISystemProcessOperationContext opCtx, 
+            ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IMarkingTheCloseParameters param,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber)
+            ISpoofingRuleParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.MarkingTheClose.GetDescription(),
-                    EquityRuleMarkingTheCloseFactory.Version,
+                    Domain.Scheduling.Rules.Spoofing.GetDescription(),
+                    EquityRuleSpoofingFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.MarkingTheClose,
+                    (int)Domain.Scheduling.Rules.Spoofing,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,
@@ -121,21 +125,19 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var markingTheClose = _equityRuleMarkingTheCloseFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
+            var spoofingRule = _equityRuleSpoofingFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {
-                _logger.LogInformation($"MarkingTheCloseSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"SpoofingSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
-                filteredUniverse.Subscribe(markingTheClose);
+                filteredUniverse.Subscribe(spoofingRule);
 
                 return filteredUniverse;
             }
-            else
-            {
-                return markingTheClose;
-            }
+
+            return spoofingRule;
         }
     }
 }

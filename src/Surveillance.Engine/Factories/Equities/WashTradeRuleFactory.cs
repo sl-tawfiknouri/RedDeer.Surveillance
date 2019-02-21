@@ -11,7 +11,7 @@ using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories
+namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class WashTradeRuleFactory : IWashTradeRuleFactory
     {

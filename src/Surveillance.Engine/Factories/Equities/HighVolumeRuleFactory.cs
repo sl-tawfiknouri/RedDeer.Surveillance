@@ -12,7 +12,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories
+namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class HighVolumeRuleFactory : IHighVolumeRuleFactory
     {

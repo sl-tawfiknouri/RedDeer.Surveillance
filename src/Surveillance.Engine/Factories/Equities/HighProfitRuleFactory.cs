@@ -15,7 +15,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
-namespace Surveillance.Engine.Rules.Factories
+namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class HighProfitRuleFactory : IHighProfitRuleFactory
     {

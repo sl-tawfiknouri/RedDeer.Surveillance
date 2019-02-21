@@ -21,4 +21,10 @@
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Rules\FixedIncome\HighProfits\Interfaces\" />
+    <Folder Include="Rules\FixedIncome\HighVolume\" />
+    <Folder Include="Rules\FixedIncome\WashTrade\" />
+  </ItemGroup>
+
 </Project>

@@ -29,7 +29,8 @@ namespace Utilities.Aws_IO
                 var getObjectRequest = new GetObjectRequest()
                 {
                     BucketName = bucketName,
-                    Key = key
+                    Key = key,
+                    VersionId = versionId
                 };
 
                 _logger.LogInformation($"AwsS3Client fetching object with key {key}, versionId {versionId} from bucket {bucketName}.");

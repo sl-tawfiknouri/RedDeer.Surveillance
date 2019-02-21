@@ -19,7 +19,6 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
 
         public FixedIncomeHighProfitsRule(
-            TimeSpan windowSize,
             IHighProfitsRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -28,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                windowSize,
+                parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.FixedIncomeHighProfits,
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",

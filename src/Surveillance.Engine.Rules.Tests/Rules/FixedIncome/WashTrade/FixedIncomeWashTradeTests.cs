@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
@@ -17,6 +18,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
     public class FixedIncomeWashTradeTests
     {
         private RuleRunMode _runMode = RuleRunMode.ForceRun;
+        private IWashTradeRuleFixedIncomeParameters _parameters;
         private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
@@ -26,6 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
         [SetUp]
         public void Setup()
         {
+            _parameters = A.Fake<IWashTradeRuleFixedIncomeParameters>();
             _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
@@ -39,7 +42,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
                 new FixedIncomeWashTradeRule(
-                    TimeSpan.Zero,
+                    _parameters,
                     _fixedIncomeOrderFile,
                     _ruleCtx,
                     _marketCacheFactory,

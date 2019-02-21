@@ -8,17 +8,20 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
     {
         public WashTradeRuleFixedIncomeParameters(
             string id,
+            TimeSpan windowSize,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets)
         {
             Id = id ?? string.Empty;
+            WindowSize = windowSize;
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
         }
 
         public string Id { get; }
+        public TimeSpan WindowSize { get; }
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }

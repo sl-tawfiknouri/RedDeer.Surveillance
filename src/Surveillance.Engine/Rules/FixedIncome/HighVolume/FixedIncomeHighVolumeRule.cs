@@ -19,7 +19,6 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
         private readonly ILogger<FixedIncomeHighVolumeRule> _logger;
 
         public FixedIncomeHighVolumeRule(
-            TimeSpan windowSize,
             IHighVolumeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -28,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
             ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                windowSize,
+                parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.FixedIncomeHighVolume,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeRule)}",

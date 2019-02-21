@@ -19,7 +19,6 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
 
         public FixedIncomeWashTradeRule(
-            TimeSpan windowSize,
             IWashTradeRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilter orderFilter,
             ISystemProcessOperationRunRuleContext ruleCtx,
@@ -28,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
-                windowSize,
+                parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",

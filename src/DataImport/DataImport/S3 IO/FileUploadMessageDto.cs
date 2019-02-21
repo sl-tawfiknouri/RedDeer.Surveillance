@@ -9,5 +9,8 @@
         public string FileName { get; set; }
         public long FileSize { get; set; }
         public string VersionId { get; set; }
+
+        public override string ToString() 
+            => $"Bucket: {Bucket}, FileName: {FileName}, VersionId: {VersionId}, FileSize: {FileSize}";
     }
 }

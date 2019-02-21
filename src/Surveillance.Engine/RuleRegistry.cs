@@ -52,6 +52,12 @@ using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
@@ -161,6 +167,13 @@ namespace Surveillance.Engine.Rules
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
             For<IWashTradeClustering>().Use<WashTradeClustering>();
+
+            For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
+
+            For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
+
+            For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
+
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();

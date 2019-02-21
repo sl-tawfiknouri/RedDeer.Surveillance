@@ -9,16 +9,16 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 {
-    public class HighProfitsRule : BaseUniverseRule
+    public class FixedIncomeHighProfitsRule : BaseUniverseRule
     {
-        private readonly ILogger<HighProfitsRule> _logger;
+        private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
 
-        public HighProfitsRule(
+        public FixedIncomeHighProfitsRule(
             TimeSpan windowSize,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
-            ILogger<HighProfitsRule> logger,
+            ILogger<FixedIncomeHighProfitsRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 windowSize,

@@ -42,7 +42,21 @@ namespace Surveillance.Engine.Rules.Analysis
         
         private readonly ILogger<AnalysisEngine> _logger;
 
-        public AnalysisEngine(IUniverseBuilder universeBuilder, IUniversePlayerFactory universePlayerFactory, IUniverseRuleSubscriber ruleSubscriber, IUniverseAnalyticsSubscriberFactory analyticsSubscriber, IUniverseAlertStreamFactory alertStreamFactory, IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory, IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory, IUniversePercentageCompletionLogger universeCompletionLogger, IRuleAnalyticsUniverseRepository ruleAnalyticsRepository, IRuleAnalyticsAlertsRepository alertsRepository, IQueueRuleUpdatePublisher queueRuleUpdatePublisher, IRuleParameterManager ruleParameterManager, IRuleParameterLeadingTimespanCalculator leadingTimespanCalculator, ILogger<AnalysisEngine> logger)
+        public AnalysisEngine(
+            IUniverseBuilder universeBuilder,
+            IUniversePlayerFactory universePlayerFactory,
+            IUniverseRuleSubscriber ruleSubscriber,
+            IUniverseAnalyticsSubscriberFactory analyticsSubscriber,
+            IUniverseAlertStreamFactory alertStreamFactory,
+            IUniverseAlertStreamSubscriberFactory alertStreamSubscriberFactory,
+            IUniverseDataRequestsSubscriberFactory dataRequestSubscriberFactory,
+            IUniversePercentageCompletionLogger universeCompletionLogger,
+            IRuleAnalyticsUniverseRepository ruleAnalyticsRepository,
+            IRuleAnalyticsAlertsRepository alertsRepository,
+            IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
+            IRuleParameterManager ruleParameterManager,
+            IRuleParameterLeadingTimespanCalculator leadingTimespanCalculator,
+            ILogger<AnalysisEngine> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
 
@@ -72,12 +86,12 @@ namespace Surveillance.Engine.Rules.Analysis
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {
-                _logger.LogError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
-                opCtx.EndEventWithError($"ReddeerRuleScheduler was executing a schedule that did not specify any rules to run");
+                _logger.LogError($"{nameof(AnalysisEngine)} was executing a schedule that did not specify any rules to run");
+                opCtx.EndEventWithError($"{nameof(AnalysisEngine)} was executing a schedule that did not specify any rules to run");
                 return;
             }
 
-            _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            _logger.LogInformation($"{nameof(AnalysisEngine)} START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
 
             var ruleParameters = await _ruleParameterManager.RuleParameters(execution);
             execution.LeadingTimespan = _leadingTimespanCalculator.LeadingTimespan(ruleParameters);
@@ -100,15 +114,15 @@ namespace Surveillance.Engine.Rules.Analysis
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
 
-            _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
+            _logger.LogInformation($"{nameof(AnalysisEngine)} START PLAYING UNIVERSE TO SUBSCRIBERS");
             player.Play(universe);
-            _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
+            _logger.LogInformation($"{nameof(AnalysisEngine)} STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
-            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            _logger.LogInformation($"{nameof(AnalysisEngine)} END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
             opCtx.EndEvent();
 
             await RuleRunUpdateMessageSend(execution, ids);

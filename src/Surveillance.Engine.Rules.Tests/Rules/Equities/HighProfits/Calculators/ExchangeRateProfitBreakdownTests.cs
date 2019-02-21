@@ -5,7 +5,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits.Calculators
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
 {
     [TestFixture]
     public class ExchangeRateProfitBreakdownTests

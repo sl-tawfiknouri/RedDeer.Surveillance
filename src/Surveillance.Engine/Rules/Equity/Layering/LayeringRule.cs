@@ -46,7 +46,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromMinutes(20),
                 Domain.Scheduling.Rules.Layering,
-                LayeringRuleFactory.Version,
+                EquityRuleLayeringFactory.Version,
                 "Layering Rule",
                 opCtx,
                 factory,

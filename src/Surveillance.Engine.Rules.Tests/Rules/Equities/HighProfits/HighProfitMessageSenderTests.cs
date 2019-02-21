@@ -14,7 +14,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
 using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
 {
     [TestFixture]
     public class HighProfitMessageSenderTests

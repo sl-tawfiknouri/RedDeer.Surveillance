@@ -23,20 +23,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class WashTradeSubscriber : IWashTradeSubscriber
     {
-        private readonly IWashTradeRuleFactory _washTradeRuleFactory;
+        private readonly IEquityRuleWashTradeFactory _equityRuleWashTradeFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<MarkingTheCloseSubscriber> _logger;
 
         public WashTradeSubscriber(
-            IWashTradeRuleFactory washTradeRuleFactory,
+            IEquityRuleWashTradeFactory equityRuleWashTradeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<MarkingTheCloseSubscriber> logger)
         {
-            _washTradeRuleFactory = washTradeRuleFactory ?? throw new ArgumentNullException(nameof(washTradeRuleFactory));
+            _equityRuleWashTradeFactory = equityRuleWashTradeFactory ?? throw new ArgumentNullException(nameof(equityRuleWashTradeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
@@ -108,7 +108,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
         {
             var ctx = opCtx.CreateAndStartRuleRunContext(
                 Domain.Scheduling.Rules.WashTrade.GetDescription(),
-                WashTradeRuleFactory.Version,
+                EquityRuleWashTradeFactory.Version,
                 param.Id,
                 (int)Domain.Scheduling.Rules.WashTrade,
                 execution.IsBackTest,
@@ -118,7 +118,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var washTrade = _washTradeRuleFactory.Build(param, ctx, alertStream, runMode);
+            var washTrade = _equityRuleWashTradeFactory.Build(param, ctx, alertStream, runMode);
 
             if (param.HasFilters())
             {

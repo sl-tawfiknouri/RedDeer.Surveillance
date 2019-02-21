@@ -23,20 +23,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class SpoofingSubscriber : ISpoofingSubscriber
     {
-        private readonly ISpoofingRuleFactory _spoofingRuleFactory;
+        private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger _logger;
 
         public SpoofingSubscriber(
-            ISpoofingRuleFactory spoofingRuleFactory,
+            IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
-            _spoofingRuleFactory = spoofingRuleFactory ?? throw new ArgumentNullException(nameof(spoofingRuleFactory));
+            _equityRuleSpoofingFactory = equityRuleSpoofingFactory ?? throw new ArgumentNullException(nameof(equityRuleSpoofingFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
@@ -116,7 +116,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
                     Domain.Scheduling.Rules.Spoofing.GetDescription(),
-                    SpoofingRuleFactory.Version,
+                    EquityRuleSpoofingFactory.Version,
                     param.Id,
                     (int)Domain.Scheduling.Rules.Spoofing,
                     execution.IsBackTest,
@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var spoofingRule = _spoofingRuleFactory.Build(param, ruleCtx, alertStream, runMode);
+            var spoofingRule = _equityRuleSpoofingFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {

@@ -52,7 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         }
 
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
-        public string Version { get; } = HighProfitRuleFactory.Version;
+        public string Version { get; } = EquityRuleHighProfitFactory.Version;
 
         public object Clone()
         {

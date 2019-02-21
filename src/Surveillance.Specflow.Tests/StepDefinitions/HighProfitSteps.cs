@@ -52,7 +52,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private HighProfitRuleFactory _highProfitRuleFactory;
+        private EquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
@@ -119,7 +119,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
             _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
-            _highProfitRuleFactory = new HighProfitRuleFactory(
+            _equityRuleHighProfitFactory = new EquityRuleHighProfitFactory(
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
@@ -160,7 +160,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             Setup();
 
             var highProfitRule =
-                _highProfitRuleFactory.Build(
+                _equityRuleHighProfitFactory.Build(
                     _highProfitRuleParameters,
                     _ruleCtx,
                     _ruleCtx,

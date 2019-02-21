@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.WashTrade,
-                WashTradeRuleFactory.Version,
+                EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
                 factory,

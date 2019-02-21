@@ -24,8 +24,7 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
-
-namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
 {
     [TestFixture]
     public class HighVolumeRuleTests

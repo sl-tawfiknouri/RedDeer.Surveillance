@@ -7,7 +7,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {
-    public interface IHighVolumeRuleFactory
+    public interface IEquityRuleHighVolumeFactory
     {
         IHighVolumeRule Build(
             IHighVolumeRuleParameters parameters,

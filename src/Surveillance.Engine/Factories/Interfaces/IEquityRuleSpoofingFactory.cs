@@ -2,15 +2,15 @@
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {
-    public interface IWashTradeRuleFactory
+    public interface IEquityRuleSpoofingFactory
     {
-        IWashTradeRule Build(
-            IWashTradeRuleParameters parameters,
-            ISystemProcessOperationRunRuleContext ruleCtx, 
+        ISpoofingRule Build(
+            ISpoofingRuleParameters spoofingParameters,
+            ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);
     }

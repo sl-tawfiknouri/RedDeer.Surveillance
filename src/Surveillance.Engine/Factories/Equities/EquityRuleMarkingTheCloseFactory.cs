@@ -2,54 +2,56 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.Layering;
-using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Equities
 {
-    public class LayeringRuleFactory : ILayeringRuleFactory
+    public class EquityRuleMarkingTheCloseFactory : IEquityRuleMarkingTheCloseFactory
     {
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly IUniverseMarketCacheFactory _factory;
-        private readonly ILogger<LayeringRuleFactory> _logger;
+        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly ILogger<MarkingTheCloseRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        public LayeringRuleFactory(
+        public EquityRuleMarkingTheCloseFactory(
             IUniverseOrderFilter orderFilter,
-            IMarketTradingHoursManager tradingHoursManager,
             IUniverseMarketCacheFactory factory,
-            ILogger<LayeringRuleFactory> logger,
+            IMarketTradingHoursManager tradingHoursManager,
+            ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
         }
 
-        public ILayeringRule Build(
-            ILayeringRuleParameters parameters,
+        public IMarkingTheCloseRule Build(
+            IMarkingTheCloseParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseAlertStream alertStream,
-            RuleRunMode runMode)
+            RuleRunMode runMode,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
-            return new LayeringRule(
+            return new MarkingTheCloseRule(
                 parameters,
                 alertStream,
-                _orderFilter,
-                _logger,
+                ruleCtx,
+                _orderFilter, 
                 _factory,
                 _tradingHoursManager,
-                ruleCtx,
+                dataRequestSubscriber,
                 runMode,
+                _logger,
                 _tradingHistoryLogger);
         }
 

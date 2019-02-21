@@ -22,20 +22,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class HighProfitsSubscriber : IHighProfitsSubscriber
     {
-        private readonly IHighProfitRuleFactory _highProfitRuleFactory;
+        private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
         public HighProfitsSubscriber(
-            IHighProfitRuleFactory highProfitRuleFactory,
+            IEquityRuleHighProfitFactory equityRuleHighProfitFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactor,
             ILogger<UniverseRuleSubscriber> logger)
         {
-            _highProfitRuleFactory = highProfitRuleFactory ?? throw new ArgumentNullException(nameof(highProfitRuleFactory));
+            _equityRuleHighProfitFactory = equityRuleHighProfitFactory ?? throw new ArgumentNullException(nameof(equityRuleHighProfitFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactor ?? throw new ArgumentNullException(nameof(brokerFactor));
@@ -109,7 +109,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtxStream = opCtx
                     .CreateAndStartRuleRunContext(
                         Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                        HighProfitRuleFactory.Version,
+                        EquityRuleHighProfitFactory.Version,
                         param.Id,
                         (int)Domain.Scheduling.Rules.HighProfits,
                         execution.IsBackTest,
@@ -121,7 +121,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtxMarketClosure = opCtx
                 .CreateAndStartRuleRunContext(
                     Domain.Scheduling.Rules.HighProfits.GetDescription(),
-                    HighProfitRuleFactory.Version,
+                    EquityRuleHighProfitFactory.Version,
                     param.Id,
                     (int)Domain.Scheduling.Rules.HighProfits,
                     execution.IsBackTest,
@@ -130,7 +130,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.CorrelationId,
                     execution.IsForceRerun);
 
-            var highProfitsRule = _highProfitRuleFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, dataRequestSubscriber, execution);
+            var highProfitsRule = _equityRuleHighProfitFactory.Build(param, ruleCtxStream, ruleCtxMarketClosure, alertStream, dataRequestSubscriber, execution);
 
             if (param.HasFilters())
             {

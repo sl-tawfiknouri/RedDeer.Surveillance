@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromHours(8),
                 Domain.Scheduling.Rules.HighProfits,
-                HighProfitRuleFactory.Version,
+                EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
                 factory,

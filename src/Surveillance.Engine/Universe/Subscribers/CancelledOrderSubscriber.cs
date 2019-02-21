@@ -23,20 +23,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class CancelledOrderSubscriber : ICancelledOrderSubscriber
     {
-        private readonly ICancelledOrderRuleFactory _cancelledOrderRuleFactory;
+        private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<CancelledOrderSubscriber> _logger;
 
         public CancelledOrderSubscriber(
-            ICancelledOrderRuleFactory cancelledOrderRuleFactory,
+            IEquityRuleCancelledOrderFactory equityRuleCancelledOrderFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<CancelledOrderSubscriber> logger)
         {
-            _cancelledOrderRuleFactory = cancelledOrderRuleFactory;
+            _equityRuleCancelledOrderFactory = equityRuleCancelledOrderFactory;
             _ruleParameterMapper = ruleParameterMapper;
             _universeFilterFactory = universeFilterFactory;
             _brokerFactory = brokerFactory;
@@ -103,7 +103,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
                     Domain.Scheduling.Rules.CancelledOrders.GetDescription(),
-                    CancelledOrderRuleFactory.Version,
+                    EquityRuleCancelledOrderFactory.Version,
                     param.Id,
                     (int)Domain.Scheduling.Rules.CancelledOrders,
                     execution.IsBackTest,
@@ -113,7 +113,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var cancelledOrderRule = _cancelledOrderRuleFactory.Build(param, ruleCtx, alertStream, runMode);
+            var cancelledOrderRule = _equityRuleCancelledOrderFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {

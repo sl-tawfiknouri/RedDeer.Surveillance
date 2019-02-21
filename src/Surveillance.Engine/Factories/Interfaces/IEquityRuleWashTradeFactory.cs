@@ -2,15 +2,15 @@
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {
-    public interface ILayeringRuleFactory
+    public interface IEquityRuleWashTradeFactory
     {
-        ILayeringRule Build(
-            ILayeringRuleParameters parameters,
-            ISystemProcessOperationRunRuleContext ruleCtx,
+        IWashTradeRule Build(
+            IWashTradeRuleParameters parameters,
+            ISystemProcessOperationRunRuleContext ruleCtx, 
             IUniverseAlertStream alertStream,
             RuleRunMode runMode);
     }

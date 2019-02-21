@@ -7,7 +7,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {
-    public interface IHighProfitRuleFactory
+    public interface IEquityRuleHighProfitFactory
     {
         IHighProfitRule Build(
             IHighProfitsRuleParameters parameters,

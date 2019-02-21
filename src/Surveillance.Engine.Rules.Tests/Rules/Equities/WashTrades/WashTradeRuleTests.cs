@@ -20,7 +20,7 @@ using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.WashTrades
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 {
     [TestFixture]
     public class WashTradeRuleTests

@@ -8,7 +8,6 @@ using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -22,7 +21,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Multiverse;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
-namespace Surveillance.Engine.Rules.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
     [TestFixture]
     public class HighProfitRuleFactoryTests
@@ -75,7 +74,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     null,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -91,7 +90,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     null,
                     _exchangeRateProfitCalculator,
@@ -107,7 +106,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     null,
@@ -123,7 +122,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -139,7 +138,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -155,7 +154,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -171,7 +170,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -187,7 +186,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
-                new HighProfitRuleFactory(
+                new EquityRuleHighProfitFactory(
                     null,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
@@ -202,7 +201,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         [Test]
         public void Build_Returns_High_Profits_Rule()
         {
-             var factory = new HighProfitRuleFactory(
+             var factory = new EquityRuleHighProfitFactory(
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,

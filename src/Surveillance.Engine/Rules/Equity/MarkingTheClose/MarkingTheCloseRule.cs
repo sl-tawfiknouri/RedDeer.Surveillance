@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             : base(
                 parameters?.Window ?? TimeSpan.FromMinutes(30),
                 Domain.Scheduling.Rules.MarkingTheClose,
-                MarkingTheCloseRuleFactory.Version,
+                EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
                 ruleCtx,
                 factory,

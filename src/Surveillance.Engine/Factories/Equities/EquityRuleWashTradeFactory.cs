@@ -13,7 +13,7 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Equities
 {
-    public class WashTradeRuleFactory : IWashTradeRuleFactory
+    public class EquityRuleWashTradeFactory : IEquityRuleWashTradeFactory
     {
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IWashTradePositionPairer _positionPairer;
@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 
         public static string Version { get; } = Versioner.Version(1, 0);
 
-        public WashTradeRuleFactory(
+        public EquityRuleWashTradeFactory(
             ICurrencyConverter currencyConverter,
             IWashTradePositionPairer positionPairer,
             IWashTradeClustering clustering,

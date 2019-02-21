@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
@@ -16,7 +15,7 @@ using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
-namespace Surveillance.Engine.Rules.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
     [TestFixture]
     public class WashTradeRuleFactoryTests
@@ -54,7 +53,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     null,
                     _positionPairer, 
                     _clustering,
@@ -69,7 +68,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     null,
                     _clustering,
@@ -84,7 +83,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     null,
@@ -99,7 +98,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _clustering,
@@ -114,7 +113,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _clustering,
@@ -129,7 +128,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _clustering,
@@ -144,7 +143,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new WashTradeRuleFactory(
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _clustering,
@@ -157,7 +156,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         [Test]
         public void Build_RuleCtx_Null_Throws_Exception()
         {
-            var factory = new WashTradeRuleFactory(
+            var factory = new EquityRuleWashTradeFactory(
                 _currencyConverter,
                 _positionPairer,
                 _clustering,
@@ -172,7 +171,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         [Test]
         public void Build_Parameters_Null_Throws_Exception()
         {
-            var factory = new WashTradeRuleFactory(
+            var factory = new EquityRuleWashTradeFactory(
                 _currencyConverter,
                 _positionPairer,
                 _clustering,
@@ -187,7 +186,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         [Test]
         public void Build_Returns_A_WashTrade_Rule()
         {
-            var factory = new WashTradeRuleFactory(
+            var factory = new EquityRuleWashTradeFactory(
                 _currencyConverter,
                 _positionPairer,
                 _clustering,

@@ -40,7 +40,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private WashTradeRuleFactory _washTradeRuleFactory;
+        private EquityRuleWashTradeFactory _equityRuleWashTradeFactory;
 
         // wash trade run
         private ISystemProcessOperationRunRuleContext _ruleCtx;
@@ -72,8 +72,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _logger = new NullLogger<WashTradeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
 
-            _washTradeRuleFactory =
-                new WashTradeRuleFactory(
+            _equityRuleWashTradeFactory =
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _washTradeClustering,
@@ -123,7 +123,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheWashTradeRule()
         {
             var washTradeRule = 
-                _washTradeRuleFactory.Build(
+                _equityRuleWashTradeFactory.Build(
                     _washTradeRuleParameters,
                     _ruleCtx,
                     _alertStream,

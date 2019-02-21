@@ -44,7 +44,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private HighVolumeRuleFactory _highVolumeRuleFactory;
+        private EquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
@@ -119,7 +119,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            _highVolumeRuleFactory = new HighVolumeRuleFactory(
+            _equityRuleHighVolumeFactory = new EquityRuleHighVolumeFactory(
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
                 _tradingHoursManager,
@@ -152,7 +152,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheHighVolumeRule()
         {
             var highVolumeRule =
-                _highVolumeRuleFactory.Build(
+                _equityRuleHighVolumeFactory.Build(
                     _highVolumeRuleParameters,
                     _ruleCtx,
                     _alertStream,

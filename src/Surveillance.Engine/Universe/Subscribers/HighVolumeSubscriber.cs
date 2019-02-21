@@ -23,20 +23,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class HighVolumeSubscriber : IHighVolumeSubscriber
     {
-        private readonly IHighVolumeRuleFactory _highVolumeRuleFactory;
+        private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<HighVolumeSubscriber> _logger;
 
         public HighVolumeSubscriber(
-            IHighVolumeRuleFactory highVolumeRuleFactory,
+            IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<HighVolumeSubscriber> logger)
         {
-            _highVolumeRuleFactory = highVolumeRuleFactory ?? throw new ArgumentNullException(nameof(highVolumeRuleFactory));
+            _equityRuleHighVolumeFactory = equityRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
@@ -113,7 +113,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
                     Domain.Scheduling.Rules.HighVolume.GetDescription(),
-                    HighVolumeRuleFactory.Version,
+                    EquityRuleHighVolumeFactory.Version,
                     param.Id,
                     (int)Domain.Scheduling.Rules.HighVolume,
                     execution.IsBackTest,
@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var highVolume = _highVolumeRuleFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
+            var highVolume = _equityRuleHighVolumeFactory.Build(param, ruleCtx, alertStream, dataRequestSubscriber, runMode);
 
             if (param.HasFilters())
             {

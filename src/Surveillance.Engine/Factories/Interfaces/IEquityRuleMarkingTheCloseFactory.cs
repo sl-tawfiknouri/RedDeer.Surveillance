@@ -6,7 +6,7 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Interfaces
 {
-    public interface IMarkingTheCloseRuleFactory
+    public interface IEquityRuleMarkingTheCloseFactory
     {
         IMarkingTheCloseRule Build(
             IMarkingTheCloseParameters parameters,

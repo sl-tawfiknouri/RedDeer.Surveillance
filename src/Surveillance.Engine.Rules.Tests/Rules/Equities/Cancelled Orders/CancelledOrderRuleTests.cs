@@ -21,7 +21,7 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.Cancelled_Orders
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
 {
     [TestFixture]
     public class CancelledOrderRuleTests

@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             : base(
                   parameters?.WindowSize ?? TimeSpan.FromMinutes(30),
                   Domain.Scheduling.Rules.Spoofing,
-                  SpoofingRuleFactory.Version,
+                  EquityRuleSpoofingFactory.Version,
                   "Spoofing Rule",
                   ruleCtx,
                   factory,

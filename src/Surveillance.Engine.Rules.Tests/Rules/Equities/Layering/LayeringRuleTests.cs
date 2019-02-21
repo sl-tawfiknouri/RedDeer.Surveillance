@@ -26,8 +26,7 @@ using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
-
-namespace Surveillance.Engine.Rules.Tests.Rules.Layering
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
 {
     [TestFixture]
     public class LayeringRuleTests

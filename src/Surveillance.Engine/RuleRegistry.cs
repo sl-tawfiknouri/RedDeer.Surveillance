@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IQueueRuleSubscriber>().Use<QueueRuleSubscriber>();
-            For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
+            For<IEquityRuleSpoofingFactory>().Use<EquityRuleSpoofingFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
             For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
 
@@ -136,9 +136,9 @@ namespace Surveillance.Engine.Rules
             For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderRuleCachedMessageSender>().Use<CancelledOrderRuleCachedMessageSender>();
-            For<ICancelledOrderRuleFactory>().Use<CancelledOrderRuleFactory>();
+            For<IEquityRuleCancelledOrderFactory>().Use<EquityRuleCancelledOrderFactory>();
 
-            For<IHighProfitRuleFactory>().Use<HighProfitRuleFactory>();
+            For<IEquityRuleHighProfitFactory>().Use<EquityRuleHighProfitFactory>();
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
@@ -146,16 +146,16 @@ namespace Surveillance.Engine.Rules
             For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
-            For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
+            For<IEquityRuleMarkingTheCloseFactory>().Use<EquityRuleMarkingTheCloseFactory>();
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
 
             For<ILayeringRule>().Use<LayeringRule>();
-            For<ILayeringRuleFactory>().Use<LayeringRuleFactory>();
+            For<IEquityRuleLayeringFactory>().Use<EquityRuleLayeringFactory>();
             For<ILayeringAlertSender>().Use<LayeringAlertSender>();
             For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
 
             For<IHighVolumeRule>().Use<HighVolumeRule>();
-            For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
+            For<IEquityRuleHighVolumeFactory>().Use<EquityRuleHighVolumeFactory>();
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
@@ -163,7 +163,7 @@ namespace Surveillance.Engine.Rules
             For<IMarketCloseMultiverseTransformer>()
                 .Use<MarketCloseMultiverseTransformer>();
 
-            For<IWashTradeRuleFactory>().Use<WashTradeRuleFactory>();
+            For<IEquityRuleWashTradeFactory>().Use<EquityRuleWashTradeFactory>();
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();

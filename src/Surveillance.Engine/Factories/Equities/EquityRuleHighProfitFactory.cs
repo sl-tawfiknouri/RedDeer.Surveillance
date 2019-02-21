@@ -17,7 +17,7 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
 namespace Surveillance.Engine.Rules.Factories.Equities
 {
-    public class HighProfitRuleFactory : IHighProfitRuleFactory
+    public class EquityRuleHighProfitFactory : IEquityRuleHighProfitFactory
     {
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ICostCalculatorFactory _costCalculatorFactory;
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         private readonly ILogger<HighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
-        public HighProfitRuleFactory(
+        public EquityRuleHighProfitFactory(
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,

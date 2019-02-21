@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -15,7 +14,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
-namespace Surveillance.Engine.Rules.Tests.Factories
+namespace Surveillance.Engine.Rules.Tests.Factories.Equities
 {
     [TestFixture]
     public class HighVolumeRuleFactoryTests
@@ -50,41 +49,41 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         public void Constructor_Null_Order_Filter_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(null, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(null, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Market_Cache_Factory_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, null, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, null, _tradingHoursManager, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Market_Trading_Hours_Manager_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, null, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, null, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, _tradingHoursManager, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Trading_History_Logger_Is_Exceptional()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, _tradingHoursManager, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, _logger, null));
         }
 
         [Test]
         public void Build_Has_Non_Null_Response()
         {
-            var factory = new HighVolumeRuleFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_parameters, _opCtx, _alertStream, _dataRequestSubscriber, RuleRunMode.ForceRun);
 

@@ -23,20 +23,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
 {
     public class LayeringSubscriber : ILayeringSubscriber
     {
-        private readonly ILayeringRuleFactory _layeringRuleFactory;
+        private readonly IEquityRuleLayeringFactory _equityRuleLayeringFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
         private readonly ILogger<LayeringSubscriber> _logger;
 
         public LayeringSubscriber(
-            ILayeringRuleFactory layeringRuleFactory,
+            IEquityRuleLayeringFactory equityRuleLayeringFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<LayeringSubscriber> logger)
         {
-            _layeringRuleFactory = layeringRuleFactory ?? throw new ArgumentNullException(nameof(layeringRuleFactory));
+            _equityRuleLayeringFactory = equityRuleLayeringFactory ?? throw new ArgumentNullException(nameof(equityRuleLayeringFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
@@ -110,7 +110,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
                     Domain.Scheduling.Rules.Layering.GetDescription(),
-                    LayeringRuleFactory.Version,
+                    EquityRuleLayeringFactory.Version,
                     param.Id,
                     (int)Domain.Scheduling.Rules.Layering,
                     execution.IsBackTest,
@@ -120,7 +120,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var layering = _layeringRuleFactory.Build(param, ruleCtx, alertStream, runMode);
+            var layering = _equityRuleLayeringFactory.Build(param, ruleCtx, alertStream, runMode);
 
             if (param.HasFilters())
             {

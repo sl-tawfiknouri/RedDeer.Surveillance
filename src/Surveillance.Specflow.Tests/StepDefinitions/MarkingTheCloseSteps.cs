@@ -30,7 +30,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
+        private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
@@ -76,7 +76,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     CloseOffsetInUtc = TimeSpan.FromHours(23)
                 });
 
-            _markingTheCloseFactory = new MarkingTheCloseRuleFactory(
+            _equityRuleMarkingTheCloseFactory = new EquityRuleMarkingTheCloseFactory(
                 _universeOrderFilter,
                 _universeMarketCacheFactory,
                 _tradingHoursManager,
@@ -109,7 +109,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheMarkingTheCloseRule()
         {
             var cancelledOrders =
-                _markingTheCloseFactory.Build(
+                _equityRuleMarkingTheCloseFactory.Build(
                     _parameters,
                     _ruleCtx,
                     _alertStream,

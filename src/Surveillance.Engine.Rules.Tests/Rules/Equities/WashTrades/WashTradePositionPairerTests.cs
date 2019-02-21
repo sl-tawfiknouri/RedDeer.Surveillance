@@ -9,7 +9,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;
 
-namespace Surveillance.Engine.Rules.Tests.Rules.WashTrades
+namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 {
     [TestFixture]
     public class WashTradePositionPairerTests

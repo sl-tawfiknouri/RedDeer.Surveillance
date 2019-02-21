@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.HighVolume,
-                HighVolumeRuleFactory.Version,
+                EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
                 opCtx,
                 factory,

@@ -122,3 +122,10 @@ Scenario: Ten cancelled orders out of eleven yields one alert
 		 When I run the cancelled orders rule
 		 Then I will have 10 cancelled orders alerts
 
+Scenario: Outside Time Window yields No alert
+		Given I have the orders for a universe from 01/01/2019 to 01/02/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2019 | 01/02/2019    | Market | Sell      | GBX      |            |                  | 100           |              |       
+		 When I run the cancelled orders rule
+		 Then I will have 0 cancelled orders alerts

@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -35,6 +36,7 @@ namespace Surveillance.Engine.Rules.Universe
         // Fixed Income
         private readonly IWashTradeFixedIncomeSubscriber _washTradeFixedIncomeSubscriber;
         private readonly IHighVolumeFixedIncomeSubscriber _highVolumeFixedIncomeSubscriber;
+        private readonly IHighProfitsFixedIncomeSubscriber _highProfitFixedIncomeSubscriber;
 
         private readonly IRuleParameterDtoIdExtractor _idExtractor;
         private readonly ILogger<UniverseRuleSubscriber> _logger;
@@ -50,7 +52,8 @@ namespace Surveillance.Engine.Rules.Universe
             IRuleParameterDtoIdExtractor idExtractor,
             ILogger<UniverseRuleSubscriber> logger, 
             IWashTradeFixedIncomeSubscriber washTradeFixedIncomeSubscriber,
-            IHighVolumeFixedIncomeSubscriber highVolumeFixedIncomeSubscriber)
+            IHighVolumeFixedIncomeSubscriber highVolumeFixedIncomeSubscriber,
+            IHighProfitsFixedIncomeSubscriber highProfitFixedIncomeSubscriber)
         {
             _spoofingEquitySubscriber = spoofingEquitySubscriber ?? throw new ArgumentNullException(nameof(spoofingEquitySubscriber));
             _cancelledOrderEquitySubscriber = cancelledOrderEquitySubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderEquitySubscriber));
@@ -65,6 +68,7 @@ namespace Surveillance.Engine.Rules.Universe
 
             _washTradeFixedIncomeSubscriber = washTradeFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(washTradeFixedIncomeSubscriber));
             _highVolumeFixedIncomeSubscriber = highVolumeFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highVolumeFixedIncomeSubscriber));
+            _highProfitFixedIncomeSubscriber = highProfitFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(highProfitFixedIncomeSubscriber));
         }
 
         public async Task<IReadOnlyCollection<string>> SubscribeRules(
@@ -106,6 +110,9 @@ namespace Surveillance.Engine.Rules.Universe
 
             var highVolumeFixedIncomeSubscriptions =
                 _highVolumeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            var highProfitFixedIncomeSubscriptions =
+                _highProfitFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             // EQUITY
 
@@ -150,6 +157,12 @@ namespace Surveillance.Engine.Rules.Universe
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
                 _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeRule)}");
+                player.Subscribe(sub);
+            }
+
+            foreach (var sub in highProfitFixedIncomeSubscriptions)
+            {
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
                 player.Subscribe(sub);
             }
 

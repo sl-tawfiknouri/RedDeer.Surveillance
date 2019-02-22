@@ -80,7 +80,7 @@ namespace DataImport.S3_IO
 
                 if (dto.FileSize == 0)
                 {
-                    _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message.");
+                    _logger.LogInformation($"S3FileUploadMonitoringProcess deserialised message {messageId} but found the file size to be 0. Assuming this is the preceding message to the actual file uploaded message. File ({dto?.ToString()}).");
 
                     return;
                 }
@@ -200,33 +200,35 @@ namespace DataImport.S3_IO
 
         private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)
         {
-            var filePath = Path.GetFileName(dto.FileName) ?? string.Empty;
+            var versionId = string.IsNullOrWhiteSpace(dto?.VersionId) ? "" : $"{dto?.VersionId}-";
+            var fileName = Path.GetFileName(dto.FileName) ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
-                _logger.LogInformation($"S3 File Upload Monitoring Process had a null or empty file path when reading from S3 message");
+                _logger.LogInformation($"S3 File Upload Monitoring Process had a null or empty file path when reading from S3 message.  File ({dto?.ToString()}).");
                 return;
             }
             else
             {
-                _logger.LogInformation($"S3 Processor about to process {filePath}");
+                _logger.LogInformation($"S3 Processor about to process file ({dto?.ToString()}).");
             }
 
-            var newPath = Path.Combine(ftpDirectoryPath, filePath);
-            var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, newPath);
+            fileName = $"{versionId}{fileName}";
+            var destinationFileName = Path.Combine(ftpDirectoryPath, fileName);
+            var result = await _s3Client.RetrieveFile(dto.Bucket, dto.FileName, dto.VersionId, destinationFileName);
 
             if (retries <= 0)
                 _logger.LogInformation($"S3 Process File ran out of retries for processing file {dto.FileName}");
 
             if (result)
             {
-                _logger.LogInformation($"S3 Processor successfully retrieved file from {dto.Bucket} {dto.FileName} to {newPath}");
+                _logger.LogInformation($"S3 Processor successfully retrieved file ({dto?.ToString()}) to {destinationFileName}");
                 return;
             }
 
             if (retries <= 0)
             {
-                _logger.LogError($"S3 Processor ran out of retries trying to fetch from {dto.Bucket} {dto.FileName} to {newPath}");
+                _logger.LogError($"S3 Processor ran out of retries trying to fetch file ({dto?.ToString()}) to {destinationFileName}");
                 return;
             }
 

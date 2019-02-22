@@ -8,14 +8,21 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe
 {
     public class UniverseRuleSubscriber : IUniverseRuleSubscriber
     {
+        // Equity
         private readonly ISpoofingEquitySubscriber _spoofingEquitySubscriber;
         private readonly ICancelledOrderEquitySubscriber _cancelledOrderEquitySubscriber;
         private readonly IHighProfitsEquitySubscriber _highProfitEquitySubscriber;
@@ -23,6 +30,9 @@ namespace Surveillance.Engine.Rules.Universe
         private readonly IMarkingTheCloseEquitySubscriber _markingTheCloseEquitySubscriber;
         private readonly ILayeringEquitySubscriber _layeringEquitySubscriber;
         private readonly IWashTradeEquitySubscriber _washTradeEquitySubscriber;
+
+        // Fixed Income
+        private readonly IWashTradeFixedIncomeSubscriber _washTradeFixedIncomeSubscriber;
 
         private readonly IRuleParameterDtoIdExtractor _idExtractor;
         private readonly ILogger<UniverseRuleSubscriber> _logger;
@@ -36,7 +46,8 @@ namespace Surveillance.Engine.Rules.Universe
             ILayeringEquitySubscriber layeringEquitySubscriber,
             IWashTradeEquitySubscriber washTradeEquitySubscriber,
             IRuleParameterDtoIdExtractor idExtractor,
-            ILogger<UniverseRuleSubscriber> logger)
+            ILogger<UniverseRuleSubscriber> logger, 
+            IWashTradeFixedIncomeSubscriber washTradeFixedIncomeSubscriber)
         {
             _spoofingEquitySubscriber = spoofingEquitySubscriber ?? throw new ArgumentNullException(nameof(spoofingEquitySubscriber));
             _cancelledOrderEquitySubscriber = cancelledOrderEquitySubscriber ?? throw new ArgumentNullException(nameof(cancelledOrderEquitySubscriber));
@@ -45,8 +56,11 @@ namespace Surveillance.Engine.Rules.Universe
             _markingTheCloseEquitySubscriber = markingTheCloseEquitySubscriber ?? throw new ArgumentNullException(nameof(markingTheCloseEquitySubscriber));
             _layeringEquitySubscriber = layeringEquitySubscriber ?? throw new ArgumentNullException(nameof(layeringEquitySubscriber));
             _washTradeEquitySubscriber = washTradeEquitySubscriber ?? throw new ArgumentNullException(nameof(washTradeEquitySubscriber));
+
             _idExtractor = idExtractor ?? throw new ArgumentNullException(nameof(idExtractor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _washTradeFixedIncomeSubscriber = washTradeFixedIncomeSubscriber ?? throw new ArgumentNullException(nameof(washTradeFixedIncomeSubscriber));
         }
 
         public async Task<IReadOnlyCollection<string>> SubscribeRules(
@@ -60,9 +74,11 @@ namespace Surveillance.Engine.Rules.Universe
             if (execution == null
                 || player == null)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber received null execution or player. Returning");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} received null execution or player. Returning");
                 return new string[0];
             }
+
+            // EQUITY
 
             var highVolumeSubscriptions =
                 _highVolumeEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
@@ -79,33 +95,48 @@ namespace Surveillance.Engine.Rules.Universe
             var markingTheCloseSubscriptions =
                 _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
+            // FIXED INCOME
+
+            var washTradeFixedIncomeSubscriptions =
+                _washTradeFixedIncomeSubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
+            // EQUITY
+
             foreach (var sub in highVolumeSubscriptions)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high volume rule");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in washTradeSubscriptions)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a wash trade rule");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(WashTradeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highProfitSubscriptions)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a high profit rule");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in cancelledSubscriptions)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a cancellation ratio rule");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in markingTheCloseSubscriptions)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules subscribing a marking the close rule");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
+                player.Subscribe(sub);
+            }
+
+            // FIXED INCOME
+
+            foreach (var sub in washTradeFixedIncomeSubscriptions)
+            {
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
                 player.Subscribe(sub);
             }
 

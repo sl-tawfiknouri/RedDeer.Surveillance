@@ -32,13 +32,13 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
         private readonly ILogger<HighVolumeFixedIncomeSubscriber> _logger;
 
         public HighVolumeFixedIncomeSubscriber(
-            IFixedIncomeHighVolumeFactory equityRuleHighVolumeFactory,
+            IFixedIncomeHighVolumeFactory fixedIncomeRuleHighVolumeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
             ILogger<HighVolumeFixedIncomeSubscriber> logger)
         {
-            _fixedIncomeRuleHighVolumeFactory = equityRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
+            _fixedIncomeRuleHighVolumeFactory = fixedIncomeRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(fixedIncomeRuleHighVolumeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
@@ -22,6 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
         private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
+        private IUniverseAlertStream _alertStream;
         private ILogger<FixedIncomeHighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingStackLogger;
 
@@ -32,6 +34,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
             _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
+            _alertStream = A.Fake<IUniverseAlertStream>();
             _logger = new NullLogger<FixedIncomeHighProfitsRule>();
             _tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }
@@ -47,6 +50,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
                     _ruleCtx,
                     _marketCacheFactory,
                     _runMode,
+                    _alertStream,
                     null,
                     _tradingStackLogger));
         }

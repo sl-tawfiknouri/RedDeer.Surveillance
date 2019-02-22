@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
@@ -16,6 +17,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
     {
         private readonly IHighVolumeRuleFixedIncomeParameters _parameters;
         private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
+        private readonly IUniverseAlertStream _alertStream;
         private readonly ILogger<FixedIncomeHighVolumeRule> _logger;
 
         public FixedIncomeHighVolumeRule(
@@ -24,6 +26,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
+            IUniverseAlertStream alertStream,
             ILogger<FixedIncomeHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -39,6 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

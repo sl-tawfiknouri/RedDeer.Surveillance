@@ -46,5 +46,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
                 _logger,
                 _tradingLogger);
         }
+
+        public static string Version => Versioner.Version(1, 0);
     }
 }

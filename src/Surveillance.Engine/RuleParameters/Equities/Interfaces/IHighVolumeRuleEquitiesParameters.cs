@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface IHighVolumeRuleEquitiesParameters : IFilterableRule, IRuleParameter
+    public interface IHighVolumeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable
     {
         decimal? HighVolumePercentageDaily { get; }
         decimal? HighVolumePercentageWindow { get; }
         decimal? HighVolumePercentageMarketCap { get; }
         TimeSpan WindowSize { get; }
-        IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; }
-        bool AggregateNonFactorableIntoOwnCategory { get; }
     }
 }

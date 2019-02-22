@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
 {
-    public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter
+    public interface IWashTradeRuleEquitiesParameters : IFilterableRule, IRuleParameter, IOrganisationalFactorable
     {
         TimeSpan WindowSize { get; }
 
@@ -29,8 +27,5 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
         // Parameter set three
         int? ClusteringPositionMinimumNumberOfTrades { get; }
         decimal? ClusteringPercentageValueDifferenceThreshold { get; }
-
-        IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
-        bool AggregateNonFactorableIntoOwnCategory { get; set; }
     }
 }

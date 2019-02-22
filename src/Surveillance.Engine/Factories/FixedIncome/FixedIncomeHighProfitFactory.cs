@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
@@ -34,6 +35,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         public IFixedIncomeHighProfitsRule BuildRule(
             IHighProfitsRuleFixedIncomeParameters parameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
+            IUniverseAlertStream alertStream,
             RuleRunMode runMode)
         {
             return new FixedIncomeHighProfitsRule(
@@ -42,6 +44,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
                 ruleCtx,
                 _marketCacheFactory,
                 runMode,
+                alertStream,
                 _logger,
                 _stackLogger);
         }

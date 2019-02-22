@@ -51,50 +51,41 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
-            try
+            _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
+
+            // step 0.
+            // project to request keys
+            var keys = _marketDataRequestProjector.ProjectToRequestKeys(bmllRequests);
+
+            if (keys == null
+                || !keys.Any())
             {
-                _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
+                _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
 
-                // step 0.
-                // project to request keys
-                var keys = _marketDataRequestProjector.ProjectToRequestKeys(bmllRequests);
-
-                if (keys == null
-                    || !keys.Any())
-                {
-                    _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars) at Project Keys. Had no keys to fetch. Returning.");
-
-                    return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
-                }
-
-                // step 1.
-                // create minute bar request
-                await CreateMinuteBarRequest(keys);
-
-                // step 2.
-                // loop on the status update polling
-                var bmllWorkResult = await BlockUntilBmllWorkIsDone(keys);
-
-                if (bmllWorkResult == BmllStatusMinuteBarResult.CompletedWithFailures
-                    && !completeWithFailures)
-                {
-                    return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(false, new IGetTimeBarPair[0]);
-                }
-
-                // step 3.
-                // get minute bar request
-                var timeBarResponses = _requestsGetTimeBars.GetTimeBars(keys);
-
-                _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
-
-                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, timeBarResponses);
-            }
-            catch (Exception e)
-            {
-                _logger?.LogError($"{nameof(BmllDataRequestsApiManager)} encountered an unexpected error during processing. {e.Message} {e.InnerException?.Message}");
+                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
-            return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
+            // step 1.
+            // create minute bar request
+            await CreateMinuteBarRequest(keys);
+
+            // step 2.
+            // loop on the status update polling
+            var bmllWorkResult = await BlockUntilBmllWorkIsDone(keys);
+
+            if (bmllWorkResult == BmllStatusMinuteBarResult.CompletedWithFailures
+                && !completeWithFailures)
+            {
+                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(false, new IGetTimeBarPair[0]);
+            }
+
+            // step 3.
+            // get minute bar request
+            var timeBarResponses = _requestsGetTimeBars.GetTimeBars(keys);
+
+            _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
+
+            return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, timeBarResponses);
         }
 
         private async Task<bool> BlockOnHeartbeatDown()

@@ -160,3 +160,41 @@ Scenario: Nine cancelled orders out of ten with 50% volume yields 1 alert
          When I run the cancelled orders rule
 		 Then I will have 1 cancelled orders alerts
 
+
+Scenario: Inside CancelledOrderPercentagePositionThreshold yields One alert
+		Given I have the cancelled orders rule parameter values
+		| WindowHours | CancelledOrderPercentagePositionThreshold | CancelledOrderCountPercentageThreshold | MinimumNumberOfTradesToApplyRuleTo | MaximumNumberOfTradesToApplyRuleTo |
+		| 1           | 0.5                                       |                                        | 2                                  |                                    |
+		And I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2019 | 01/01/2019    | Market | Sell      | GBX      |            |                  | 150           |              |
+		 When I run the cancelled orders rule
+		 Then I will have 1 cancelled orders alerts
+
+Scenario: Outside CancelledOrderPercentagePositionThreshold yields No alert
+		Given I have the cancelled orders rule parameter values
+		| WindowHours | CancelledOrderPercentagePositionThreshold | CancelledOrderCountPercentageThreshold | MinimumNumberOfTradesToApplyRuleTo | MaximumNumberOfTradesToApplyRuleTo |
+		| 1           | 0.5                                       |                                        | 3                                  |                                    |
+		And I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2019 | 01/01/2019    | Market | Sell      | GBX      |            |                  | 10            |              |
+         | Barclays     | 3       | 01/01/2019 |               | Market | Sell      | GBX      |            |                  | 90            |              |
+              
+         When I run the cancelled orders rule
+		 Then I will have 0 cancelled orders alerts
+
+Scenario: Same as CancelledOrderPercentagePositionThreshold yields 1 alert
+		Given I have the cancelled orders rule parameter values
+		| WindowHours | CancelledOrderPercentagePositionThreshold | CancelledOrderCountPercentageThreshold | MinimumNumberOfTradesToApplyRuleTo | MaximumNumberOfTradesToApplyRuleTo |
+		| 1           | 0.5                                       |                                        | 4                                  |                                    |
+		And I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 2       | 01/01/2019 | 01/01/2019    | Market | Sell      | GBX      |            |                  | 150           |              |
+         | Barclays     | 3       | 01/01/2019 |               | Market | BUY       | GBX      |            |                  | 100           |              |
+         | Barclays     | 4       | 01/01/2019 | 01/01/2019    | Market | Sell      | GBX      |            |                  | 150           |              |  
+       
+         When I run the cancelled orders rule
+		 Then I will have 1 cancelled orders alerts

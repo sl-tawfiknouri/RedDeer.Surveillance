@@ -121,7 +121,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
                 execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var washTrade = _fixedIncomeRuleWashTradeFactory.BuildRule(param, ctx, runMode);
+            var washTrade = _fixedIncomeRuleWashTradeFactory.BuildRule(param, ctx, alertStream, runMode);
 
             if (param.HasFilters())
             {

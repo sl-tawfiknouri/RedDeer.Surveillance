@@ -6,6 +6,7 @@ using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
+using PollyFacade.Policies.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {
@@ -13,15 +14,18 @@ namespace DataSynchroniser.Api.Bmll.Bmll
     {
         private readonly IBmllDataRequestsApiManager _apiManager;
         private readonly IBmllDataRequestsStorageManager _storageManager;
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
             IBmllDataRequestsApiManager apiManager,
             IBmllDataRequestsStorageManager storageManager,
+            IPolicyFactory policyFactory,
             ILogger<BmllDataRequestsManager> logger)
         {
             _apiManager = apiManager ?? throw new ArgumentNullException(nameof(apiManager));
             _storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -53,22 +57,26 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return;
             }
 
-            // REQUEST IT
-            var requests = await _apiManager.Send(bmllRequests, false);
-            var retries = 3;
+            SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>> requestResult = null;
+            var policyWrap = _policyFactory.PolicyTimeoutGeneric<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>>(
+                TimeSpan.FromMinutes(15),
+                i => !i.Success,
+                3,
+                TimeSpan.FromSeconds(30));
 
-            while ((!requests.Success) && retries > 0)
+            await policyWrap.ExecuteAsync(async () =>
             {
-                _logger.LogWarning($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
+                requestResult = await _apiManager.Send(bmllRequests, false);
 
-                var forceCompletion = retries == 1;
-                requests = await _apiManager.Send(bmllRequests, forceCompletion);
+                return requestResult;
+            });
 
-                retries -= 1;
+            if (!requestResult?.Success ?? true)
+            {
+                requestResult = await _apiManager.Send(bmllRequests, true);
             }
 
-            // STORE IT
-            await _storageManager.Store(requests.Value);
+            await _storageManager.Store(requestResult.Value);
         }
 
         private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequest request)

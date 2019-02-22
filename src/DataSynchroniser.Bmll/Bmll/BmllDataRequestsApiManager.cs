@@ -8,7 +8,7 @@ using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
-using Polly;
+using PollyFacade.Policies.Interfaces;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 
@@ -18,17 +18,20 @@ namespace DataSynchroniser.Api.Bmll.Bmll
     {
         private readonly IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private readonly IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
+        private readonly IPolicyFactory _policyFactory;
         private readonly IBmllTimeBarApiRepository _timeBarRepository;
         private readonly ILogger<BmllDataRequestsApiManager> _logger;
 
         public BmllDataRequestsApiManager(
             IBmllDataRequestsGetTimeBars requestsGetTimeBars,
             IMarketDataRequestToMinuteBarRequestKeyDtoProjector marketDataRequestProjector,
+            IPolicyFactory policyFactory,
             IBmllTimeBarApiRepository timeBarRepository,
             ILogger<BmllDataRequestsApiManager> logger)
         {
             _requestsGetTimeBars = requestsGetTimeBars ?? throw new ArgumentNullException(nameof(requestsGetTimeBars));
             _marketDataRequestProjector = marketDataRequestProjector ?? throw new ArgumentNullException(nameof(marketDataRequestProjector));
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _timeBarRepository = timeBarRepository ?? throw new ArgumentNullException(nameof(timeBarRepository)); 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -96,14 +99,12 @@ namespace DataSynchroniser.Api.Bmll.Bmll
         {
             _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} BlockUntilBmllWorkIsDone active");
 
-            var timeoutPolicy = Policy.TimeoutAsync<BmllStatusMinuteBarResult>(TimeSpan.FromMinutes(20));
-            var retryPolicy =
-                Policy
-                    .Handle<Exception>()
-                    .OrResult<BmllStatusMinuteBarResult>(i => i == BmllStatusMinuteBarResult.InProgress)
-                    .WaitAndRetryAsync(15, i => TimeSpan.FromMinutes(1));
-
-            var policyWrap = Policy.WrapAsync(timeoutPolicy, retryPolicy);
+            var policyWrap =
+                _policyFactory.PolicyTimeoutGeneric<BmllStatusMinuteBarResult>(
+                    TimeSpan.FromMinutes(20),
+                    i => i == BmllStatusMinuteBarResult.InProgress,
+                    15,
+                    TimeSpan.FromMinutes(1));
 
             var minuteBarResult = BmllStatusMinuteBarResult.InProgress;
             var request = new GetMinuteBarRequestStatusesRequest { Keys = keys?.ToList() };

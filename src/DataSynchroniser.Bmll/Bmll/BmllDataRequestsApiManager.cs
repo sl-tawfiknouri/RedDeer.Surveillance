@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Domain.Markets;
@@ -45,12 +44,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
                 return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
             }
 
-            var result = await BlockOnHeartbeatDown();
-            if (!result)
-            {
-                return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, new IGetTimeBarPair[0]);
-            }
-
             _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} beginning 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars");
 
             // step 0.
@@ -86,35 +79,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             _logger.LogInformation($"{nameof(BmllDataRequestsApiManager)} completed 4 step BMLL process (Project Keys; Create Minute Bars; Poll Minute Bars; Get MinuteBars)");
 
             return new SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>(true, timeBarResponses);
-        }
-
-        private async Task<bool> BlockOnHeartbeatDown()
-        {
-            try
-            {
-                var cts = new CancellationTokenSource(1000 * 60 * 15);
-                var checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
-
-                while (!checkHeartbeat)
-                {
-                    if (cts.IsCancellationRequested)
-                    {
-                        _logger.LogError($"{nameof(BmllDataRequestsApiManager)} ran out of time to connect to the API. Returning an empty response.");
-                        return false;
-                    }
-
-                    _logger.LogError($"{nameof(BmllDataRequestsApiManager)} could not elicit a successful heartbeat response. Waiting for a maximum of 30 minutes...");
-                    Thread.Sleep(1000 * 30);
-                    checkHeartbeat = await _timeBarRepository.HeartBeating(cts.Token);
-                }
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                _logger?.LogError($"{nameof(BmllDataRequestsApiManager)} Send encountered an error whilst monitoring for heartbeating...", e);
-                return false;
-            }
         }
 
         private async Task CreateMinuteBarRequest(IReadOnlyCollection<MinuteBarRequestKeyDto> keys)

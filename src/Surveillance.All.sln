@@ -99,7 +99,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api.Markit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSynchroniser.Api", "DataSynchroniser.Api\DataSynchroniser.Api.csproj", "{C66FDD7E-05F6-441D-BA5F-EDE0B6C580E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PollyFacade", "PollyFacade\PollyFacade.csproj", "{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PollyFacade", "PollyFacade\PollyFacade.csproj", "{0F5E7CB3-D5DC-42FC-A3BB-B89FF3973D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

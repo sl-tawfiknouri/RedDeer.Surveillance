@@ -41,41 +41,34 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
         private async Task ProcessBmllRequests(List<MarketDataRequest> bmllRequests)
         {
-            try
+            _logger.LogInformation($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests");
+
+            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+
+            if (!minuteBarRequests.Any())
             {
-                _logger.LogInformation($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests");
+                _logger.LogError(
+                    $"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
-                var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
-
-                if (!minuteBarRequests.Any())
-                {
-                    _logger.LogError(
-                        $"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
-
-                    return;
-                }
-
-                // REQUEST IT
-                var requests = await _apiManager.Send(bmllRequests, false);
-                var retries = 3;
-
-                while ((!requests.Success) && retries > 0)
-                {
-                    _logger.LogWarning($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
-
-                    var forceCompletion = retries == 1;
-                    requests = await _apiManager.Send(bmllRequests, forceCompletion);
-
-                    retries -= 1;
-                }
-
-                // STORE IT
-                await _storageManager.Store(requests.Value);
+                return;
             }
-            catch (Exception e)
+
+            // REQUEST IT
+            var requests = await _apiManager.Send(bmllRequests, false);
+            var retries = 3;
+
+            while ((!requests.Success) && retries > 0)
             {
-                _logger.LogError($"{nameof(BmllDataRequestsManager)} Send encountered an exception!", e);
+                _logger.LogWarning($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
+
+                var forceCompletion = retries == 1;
+                requests = await _apiManager.Send(bmllRequests, forceCompletion);
+
+                retries -= 1;
             }
+
+            // STORE IT
+            await _storageManager.Store(requests.Value);
         }
 
         private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequest request)

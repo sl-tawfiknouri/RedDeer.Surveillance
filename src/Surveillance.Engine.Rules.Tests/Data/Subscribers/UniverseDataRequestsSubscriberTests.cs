@@ -25,21 +25,21 @@ namespace Surveillance.Engine.Rules.Tests.Data.Subscribers
         }
 
         [Test]
-        public void Constructor_Considers_Null_Operation_Context_To_Be_Exceptional()
+        public void Constructor_Considers_Null_Operation_Context_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriber(null, _queueDataSynchroniserRequestPublisher, _logger));
         }
 
         [Test]
-        public void Constructor_Considers_Null_Message_Sender_To_Be_Exceptional()
+        public void Constructor_Considers_Null_Message_Sender_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriber(_operationContext, null, _logger));
         }
 
         [Test]
-        public void Constructor_Considers_Null_Logger_To_Be_Exceptional()
+        public void Constructor_Considers_Null_Logger_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseDataRequestsSubscriber(_operationContext, _queueDataSynchroniserRequestPublisher, null));

@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_UnsubscriberFactory_Null_Is_Exceptional()
+        public void Constructor_UnsubscriberFactory_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniversePlayerFactory(null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniversePlayerFactory(_universeEventUnsubscriberFactory, null));

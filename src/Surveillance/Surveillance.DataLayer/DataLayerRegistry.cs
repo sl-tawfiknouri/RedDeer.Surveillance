@@ -1,5 +1,7 @@
 ﻿using Domain.Financial;
 using Domain.Financial.Interfaces;
+using PollyFacade.Policies;
+using PollyFacade.Policies.Interfaces;
 using StructureMap;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
@@ -29,6 +31,8 @@ using Surveillance.DataLayer.Aurora.Rules;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
+using Utilities.HttpClient;
+using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer
 {
@@ -60,6 +64,8 @@ namespace Surveillance.DataLayer
             For<IRuleBreachOrdersRepository>().Use<RuleBreachOrdersRepository>();
             For<IFileUploadOrdersRepository>().Use<FileUploadOrdersRepository>();
             For<IFileUploadOrderAllocationRepository>().Use<FileUploadOrderAllocationRepository>();
+            For<IPolicyFactory>().Use<PolicyFactory>();
+            For<IHttpClientFactory>().Use<HttpClientFactory>();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
@@ -13,6 +14,7 @@ using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
+using Utilities.HttpClient;
 
 namespace Surveillance.Engine.Rules.Tests.Currency
 {
@@ -165,7 +167,8 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Explicit("Integration test")]
         public async Task WeightedExchangeRate_Returns_ExpectedResult()
         {
-            var repo = new ExchangeRateApiRepository(_configuration, _logger);
+            var clientFactory = new HttpClientFactory(new NullLogger<HttpClientFactory>());
+            var repo = new ExchangeRateApiRepository(_configuration, clientFactory, _logger);
             var repoDecorator = new ExchangeRateApiCachingDecoratorRepository(repo);
             var exchangeRates = new ExchangeRates(repoDecorator, _loggerExchRate);
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(exchangeRates, _calculatorLogger);

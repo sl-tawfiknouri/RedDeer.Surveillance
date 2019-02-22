@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DataSynchroniser.DataSources.Interfaces;
+using DataSynchroniser.Api.Bmll.Interfaces;
+using DataSynchroniser.Api.Factset.Interfaces;
+using DataSynchroniser.Api.Markit.Interfaces;
 using DataSynchroniser.Manager;
-using DataSynchroniser.Manager.Bmll.Interfaces;
-using DataSynchroniser.Manager.Factset.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -15,36 +16,52 @@ namespace DataSynchroniser.Tests.Manager
     [TestFixture]
     public class DataRequestManagerTests
     {
-        private IDataSourceClassifier _dataSourceClassifier;
+        private IBmllDataSynchroniser _bmllSynchroniser;
+        private IFactsetDataSynchroniser _factsetSynchroniser;
+        private IMarkitDataSynchroniser _markitSynchroniser;
         private ISystemProcessOperationThirdPartyDataRequestContext _dataRequestContext;
-        private IBmllDataRequestManager _dataRequestManager;
+        private IScheduleRulePublisher _scheduleRulePublisher;
         private IRuleRunDataRequestRepository _repository;
-        private IFactsetDataRequestsManager _factsetDataRequestManager;
         private ILogger<DataRequestManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _dataSourceClassifier = A.Fake<IDataSourceClassifier>();
+            _bmllSynchroniser = A.Fake<IBmllDataSynchroniser>();
+            _factsetSynchroniser = A.Fake<IFactsetDataSynchroniser>();
+            _markitSynchroniser = A.Fake<IMarkitDataSynchroniser>();
             _dataRequestContext = A.Fake<ISystemProcessOperationThirdPartyDataRequestContext>();
-            _dataRequestManager = A.Fake<IBmllDataRequestManager>();
-            _factsetDataRequestManager = A.Fake<IFactsetDataRequestsManager>();
+            _scheduleRulePublisher = A.Fake<IScheduleRulePublisher>();
             _repository = A.Fake<IRuleRunDataRequestRepository>();
             _logger = A.Fake<ILogger<DataRequestManager>>();
         }
 
         [Test]
-        public void Constructor_Null_Repository_IsExceptional()
+        public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, null, _dataRequestManager, _factsetDataRequestManager, _logger));
+            Assert.Throws<ArgumentNullException>(() => 
+                new DataRequestManager(
+                    _bmllSynchroniser,
+                    _factsetSynchroniser,
+                    _markitSynchroniser,
+                    _scheduleRulePublisher,
+                    null, 
+                    _logger));
         }
 
         [Test]
-        public void Constructor_Null_Logger_IsExceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, null));
+            Assert.Throws<ArgumentNullException>(() => 
+                new DataRequestManager(
+                    _bmllSynchroniser,
+                    _factsetSynchroniser,
+                    _markitSynchroniser,
+                    _scheduleRulePublisher, 
+                    _repository, 
+                    null));
         }
 
         [Test]
@@ -73,7 +90,7 @@ namespace DataSynchroniser.Tests.Manager
 
         private DataRequestManager BuildManager()
         {
-            return new DataRequestManager(_dataSourceClassifier, _repository, _dataRequestManager, _factsetDataRequestManager, _logger);
+            return new DataRequestManager(_bmllSynchroniser, _factsetSynchroniser, _markitSynchroniser, _scheduleRulePublisher, _repository, _logger);
         }
     }
 }

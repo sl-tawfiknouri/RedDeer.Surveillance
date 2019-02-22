@@ -27,14 +27,14 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
-        private readonly ILogger<MarkingTheCloseEquitySubscriber> _logger;
+        private readonly ILogger<WashTradeEquitySubscriber> _logger;
 
         public WashTradeEquitySubscriber(
             IEquityRuleWashTradeFactory equityRuleWashTradeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerFactory brokerFactory,
-            ILogger<MarkingTheCloseEquitySubscriber> logger)
+            ILogger<WashTradeEquitySubscriber> logger)
         {
             _equityRuleWashTradeFactory = equityRuleWashTradeFactory ?? throw new ArgumentNullException(nameof(equityRuleWashTradeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));

@@ -9,6 +9,10 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules
 {
+    /// <summary>
+    /// Shared code before reaching the case queue publisher
+    /// Contains deduplication logic
+    /// </summary>
     public abstract class BaseMessageSender
     {
         private readonly IRuleBreachRepository _ruleBreachRepository;

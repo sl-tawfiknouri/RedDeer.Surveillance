@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
         private readonly IReadOnlyCollection<ClientOrganisationalFactors> _factors;
         private readonly bool _aggregateNonFactorableIntoOwnCategory;
 
-        private readonly IUniverseRule _noneFactor;
+        private readonly IUniverseCloneableRule _noneFactor;
         private readonly IDictionary<string, IUniverseRule> _traderFactors;
         private readonly IDictionary<string, IUniverseRule> _portfolioManagerFactors;
         private readonly IDictionary<string, IUniverseRule> _fundFactors;
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
             ILogger<OrganisationalFactorBroker> logger)
         {
             _cloneSource = cloneSource ?? throw new ArgumentNullException(nameof(cloneSource));
-            _noneFactor = (IUniverseRule)_cloneSource.Clone();
+            _noneFactor = (IUniverseCloneableRule)_cloneSource.Clone();
             _factors = FactorGuard(factors);
 
             _aggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;

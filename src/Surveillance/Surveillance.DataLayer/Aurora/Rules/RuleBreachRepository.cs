@@ -78,14 +78,12 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return null;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 _logger.LogInformation($"{nameof(RuleBreachRepository)} saving rule breach to repository");
                 var dto = new RuleBreachDto(message);
+
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                 {
                     var result = await conn;
@@ -99,11 +97,6 @@ namespace Surveillance.DataLayer.Aurora.Rules
             {
                 _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
 
             return null;
         }
@@ -116,13 +109,11 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return null;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
                 _logger.LogInformation($"{nameof(RuleBreachRepository)} fetching rule breaches");
+
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QuerySingleAsync<RuleBreachDto>(GetRuleBreachSql, new { Id = id}))
                 {
                     var result = await conn;
@@ -138,11 +129,6 @@ namespace Surveillance.DataLayer.Aurora.Rules
             {
                 _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
             }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
-            }
 
             return null;
         }
@@ -154,13 +140,10 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return false;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
                 _logger.LogInformation($"{nameof(RuleBreachRepository)} checking duplicates");
-
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateSql, new { RuleBreachId = ruleId }))
                 {
                     var result = await conn;
@@ -173,11 +156,6 @@ namespace Surveillance.DataLayer.Aurora.Rules
             catch (Exception e)
             {
                 _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
             }
 
             return false;

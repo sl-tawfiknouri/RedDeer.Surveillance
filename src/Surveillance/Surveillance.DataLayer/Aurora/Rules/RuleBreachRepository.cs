@@ -74,7 +74,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (message == null)
             {
-                _logger.LogWarning($"RuleBreachRepository saving rule was passed a null message. Returning.");
+                _logger.LogWarning($"{nameof(RuleBreachRepository)} saving rule was passed a null message. Returning.");
                 return null;
             }
 
@@ -84,20 +84,20 @@ namespace Surveillance.DataLayer.Aurora.Rules
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"RuleBreachRepository saving rule breach to repository");
+                _logger.LogInformation($"{nameof(RuleBreachRepository)} saving rule breach to repository");
                 var dto = new RuleBreachDto(message);
                 using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed saving rule breach to repository");
+                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed saving rule breach to repository");
 
                     return result;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
             }
             finally
             {
@@ -112,7 +112,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                _logger.LogWarning($"RuleBreachRepository get rule breach was passed a null message. Returning.");
+                _logger.LogWarning($"{nameof(RuleBreachRepository)} get rule breach was passed a null message. Returning.");
                 return null;
             }
 
@@ -122,12 +122,12 @@ namespace Surveillance.DataLayer.Aurora.Rules
             {
                 dbConnection.Open();
 
-                _logger.LogInformation($"RuleBreachRepository fetching rule breaches");
+                _logger.LogInformation($"{nameof(RuleBreachRepository)} fetching rule breaches");
                 using (var conn = dbConnection.QuerySingleAsync<RuleBreachDto>(GetRuleBreachSql, new { Id = id}))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed fetching rule breach");
+                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed fetching rule breach");
 
                     var mappedResult = Project(result);
 
@@ -136,7 +136,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
             }
             finally
             {
@@ -159,20 +159,20 @@ namespace Surveillance.DataLayer.Aurora.Rules
             try
             {
                 dbConnection.Open();
-                _logger.LogInformation($"RuleBreachRepository checking duplicates");
+                _logger.LogInformation($"{nameof(RuleBreachRepository)} checking duplicates");
 
                 using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateSql, new { RuleBreachId = ruleId }))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed checking duplicates");
+                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed checking duplicates");
 
                     return result == 0;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
             }
             finally
             {

@@ -10,6 +10,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -53,6 +54,8 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
@@ -227,10 +230,11 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             _ruleCtx?.EndEvent();
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (SpoofingRule)this.MemberwiseClone();
             clone.BaseClone();
+            clone.FactorValue = factor;
 
             return clone;
         }

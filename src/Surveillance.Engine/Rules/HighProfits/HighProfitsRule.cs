@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
 // ReSharper disable AssignNullToNotNullAttribute
@@ -25,6 +26,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             _marketClosureRule = marketClosureRule ?? throw new ArgumentNullException(nameof(marketClosureRule));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         public void OnCompleted()
         {
@@ -53,11 +56,11 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
         public string Version { get; } = HighProfitRuleFactory.Version;
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             return new HighProfitsRule(
-                (IHighProfitStreamRule)_streamRule.Clone(),
-                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(),
+                (IHighProfitStreamRule)_streamRule.Clone(factor),
+                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(factor),
                 _logger);
         }
     }

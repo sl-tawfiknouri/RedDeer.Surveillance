@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -65,6 +66,8 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -337,10 +340,11 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             }
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (MarkingTheCloseRule)this.MemberwiseClone();
             clone.BaseClone();
+            FactorValue = factor;
 
             return clone;
         }

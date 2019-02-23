@@ -10,6 +10,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.CancelledOrders.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -57,6 +58,8 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -188,10 +191,11 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             _opCtx?.EndEvent();
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (CancelledOrderRule)this.MemberwiseClone();
             clone.BaseClone();
+            FactorValue = factor;
 
             return clone;
         }

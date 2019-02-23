@@ -7,6 +7,7 @@ using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 
@@ -40,6 +41,10 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
         }
+
+        public IFactorValue FactorValue { get; set; }
+        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
+        public string Version { get; } = Versioner.Version(0, 0);
 
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
@@ -323,14 +328,15 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             return false;
         }
 
-        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
-        public string Version { get; } = Versioner.Version(0, 0);
-
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             _logger.LogInformation($"UniverseFilter Clone called; returning a memberwise clone");
             // we will want to keep the same universe observers here
-            return this.MemberwiseClone();
+
+            var newClone = (IUniverseCloneableRule)this.MemberwiseClone();
+            newClone.FactorValue = factor;
+
+            return newClone;
         }
     }
 }

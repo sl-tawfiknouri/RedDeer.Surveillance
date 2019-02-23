@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Layering.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -60,6 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
+        public IFactorValue FactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -531,10 +533,11 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             }
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (LayeringRule)this.MemberwiseClone();
             clone.BaseClone();
+            FactorValue = factor;
 
             return clone;
         }

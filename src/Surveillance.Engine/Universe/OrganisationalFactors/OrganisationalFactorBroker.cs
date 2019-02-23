@@ -4,6 +4,7 @@ using System.Linq;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
+using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
@@ -38,7 +39,7 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
             ILogger<OrganisationalFactorBroker> logger)
         {
             _cloneSource = cloneSource ?? throw new ArgumentNullException(nameof(cloneSource));
-            _noneFactor = (IUniverseCloneableRule)_cloneSource.Clone();
+            _noneFactor = _cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.None, string.Empty));
             _factors = FactorGuard(factors);
 
             _aggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
@@ -166,7 +167,10 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
                 if (!_traderFactors.ContainsKey(orderTraderId))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(orderTraderId, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(
+                        orderTraderId,
+                        _cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Trader, orderTraderId)));
+
                     _traderFactors.Add(kvp);
                 }
 
@@ -209,7 +213,10 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
                 if (!_strategyFactors.ContainsKey(orderStrategy))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(orderStrategy, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(
+                        orderStrategy,
+                        _cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Strategy, orderStrategy)));
+
                     _strategyFactors.Add(kvp);
                 }
 
@@ -259,7 +266,10 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
                 if (!_fundFactors.ContainsKey(orderFund))
                 {
-                    var kvp = new KeyValuePair<string, IUniverseRule>(orderFund, (IUniverseRule)_cloneSource.Clone());
+                    var kvp = new KeyValuePair<string, IUniverseRule>(
+                        orderFund,
+                        _cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.Fund, orderFund)));
+
                     _fundFactors.Add(kvp);
                 }
 

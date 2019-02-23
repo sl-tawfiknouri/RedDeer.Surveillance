@@ -11,6 +11,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -94,10 +95,11 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             return false;
         }
 
-        public override object Clone()
+        public override IUniverseCloneableRule Clone(IFactorValue factorValue)
         {
             var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
             clone.BaseClone();
+            clone.FactorValue = factorValue;
 
             return clone;
         }

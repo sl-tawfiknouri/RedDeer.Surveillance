@@ -14,6 +14,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -64,6 +65,8 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -374,10 +377,11 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
             }
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (HighVolumeRule)this.MemberwiseClone();
             clone.BaseClone();
+            FactorValue = factor;
 
             return clone;
         }

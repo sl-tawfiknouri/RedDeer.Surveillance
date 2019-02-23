@@ -15,6 +15,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -79,6 +80,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected virtual bool RunRuleGuard(ITradingHistoryStack history)
         {
@@ -359,10 +362,11 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             }
         }
 
-        public virtual object Clone()
+        public virtual IUniverseCloneableRule Clone(IFactorValue factor)
         {
             var clone = (HighProfitStreamRule)this.MemberwiseClone();
             clone.BaseClone();
+            FactorValue = factor;
 
             return clone;
         }

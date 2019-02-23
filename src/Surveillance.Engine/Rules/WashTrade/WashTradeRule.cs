@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -70,6 +71,8 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue FactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -461,10 +464,11 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             RuleCtx?.EndEvent();
         }
 
-        public object Clone()
+        public IUniverseCloneableRule Clone(IFactorValue value)
         {
             var clone = (WashTradeRule)this.MemberwiseClone();
             clone.BaseClone();
+            clone.FactorValue = value;
 
             return clone;
         }

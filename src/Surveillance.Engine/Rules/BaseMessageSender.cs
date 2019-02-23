@@ -49,11 +49,11 @@ namespace Surveillance.Engine.Rules.Rules
         {
             if (ruleBreach?.Trades?.Get() == null)
             {
-                Logger.LogInformation($"BaseMessageSender for {_messageSenderName} had null trades. Returning.");
+                Logger.LogInformation($"{nameof(BaseMessageSender)} for {_messageSenderName} had null trades. Returning.");
                 return;
             }
 
-            Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+            Logger.LogInformation($"{nameof(BaseMessageSender)} received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
             var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleBreach, description, _caseTitle);
             var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.Rules
 
             if (hasDuplicates && !ruleBreach.IsBackTestRun)
             {
-                Logger.LogInformation($"BaseMessageSender was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
+                Logger.LogInformation($"{nameof(BaseMessageSender)} was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
                 return;
             }
 
@@ -78,9 +78,9 @@ namespace Surveillance.Engine.Rules.Rules
 
             try
             {
-                Logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+                Logger.LogInformation($"{nameof(BaseMessageSender)} about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
                 await _queueCasePublisher.Send(caseMessage);
-                Logger.LogInformation($"BaseMessageSender sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
+                Logger.LogInformation($"{nameof(BaseMessageSender)} sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
             }
             catch (Exception e)
             {

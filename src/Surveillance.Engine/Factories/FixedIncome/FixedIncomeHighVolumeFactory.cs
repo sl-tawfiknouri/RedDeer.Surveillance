@@ -6,8 +6,8 @@ using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -18,13 +18,13 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         private readonly IUniverseFixedIncomeOrderFilter _filter;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
 
-        private readonly ILogger<FixedIncomeHighVolumeRule> _logger;
+        private readonly ILogger<FixedIncomeHighVolumeIssuanceRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
 
         public FixedIncomeHighVolumeFactory(
             IUniverseFixedIncomeOrderFilter filter,
             IUniverseMarketCacheFactory marketCacheFactory,
-            ILogger<FixedIncomeHighVolumeRule> logger,
+            ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
             _filter = filter ?? throw new ArgumentNullException(nameof(filter));
@@ -34,12 +34,12 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         }
 
         public IFixedIncomeHighVolumeRule BuildRule(
-            IHighVolumeRuleFixedIncomeParameters parameters,
+            IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             ISystemProcessOperationRunRuleContext opCtx,
             IUniverseAlertStream alertStream,
             RuleRunMode runMode)
         {
-            return new FixedIncomeHighVolumeRule(
+            return new FixedIncomeHighVolumeIssuanceRule(
                 parameters,
                 _filter,
                 opCtx,

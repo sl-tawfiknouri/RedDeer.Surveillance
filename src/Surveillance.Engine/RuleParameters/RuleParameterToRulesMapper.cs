@@ -267,7 +267,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
                 .ToList();
         }
 
-        public IReadOnlyCollection<IHighVolumeRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+        public IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
         {
             if (dtos == null
                 || !dtos.Any())
@@ -278,7 +278,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
 
             return dtos
                 .Select(dto =>
-                    new HighVolumeRuleFixedIncomeParameters(
+                    new HighVolumeIssuanceRuleFixedIncomeParameters(
                         dto.Id,
                         dto.WindowSize,
                         _ruleProjector.Project(dto.Accounts),

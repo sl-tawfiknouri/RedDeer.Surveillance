@@ -9,7 +9,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
     public class FixedIncomeHighVolumeTests
     {
         private RuleRunMode _runMode = RuleRunMode.ForceRun;
-        private IHighVolumeRuleFixedIncomeParameters _parameters;
+        private IHighVolumeIssuanceRuleFixedIncomeParameters _parameters;
         private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
         [SetUp]
         public void Setup()
         {
-            _parameters = A.Fake<IHighVolumeRuleFixedIncomeParameters>();
+            _parameters = A.Fake<IHighVolumeIssuanceRuleFixedIncomeParameters>();
             _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighVolume
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
-                new FixedIncomeHighVolumeRule(
+                new FixedIncomeHighVolumeIssuanceRule(
                     _parameters,
                     _fixedIncomeOrderFile,
                     _ruleCtx,

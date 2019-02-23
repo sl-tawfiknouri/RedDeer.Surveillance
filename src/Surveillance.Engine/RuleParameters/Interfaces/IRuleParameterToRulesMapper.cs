@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 
         IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos);
 
-        IReadOnlyCollection<IHighVolumeRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos);
+        IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos);
 
     }
 }

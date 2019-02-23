@@ -6,9 +6,9 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 {
-    public class HighVolumeRuleFixedIncomeParameters : IHighVolumeRuleFixedIncomeParameters
+    public class HighVolumeIssuanceRuleFixedIncomeParameters : IHighVolumeIssuanceRuleFixedIncomeParameters
     {
-        public HighVolumeRuleFixedIncomeParameters(
+        public HighVolumeIssuanceRuleFixedIncomeParameters(
             string id,
             TimeSpan windowSize,
             RuleFilter accounts,

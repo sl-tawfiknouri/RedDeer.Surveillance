@@ -14,7 +14,7 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
@@ -156,7 +156,7 @@ namespace Surveillance.Engine.Rules.Universe
 
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeRule)}");
+                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
                 player.Subscribe(sub);
             }
 

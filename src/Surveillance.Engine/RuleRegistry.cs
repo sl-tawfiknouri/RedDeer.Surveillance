@@ -60,8 +60,8 @@ using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -185,7 +185,7 @@ namespace Surveillance.Engine.Rules
 
 
             For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
-            For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeRule>();
+            For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeIssuanceRule>();
             For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
 
             For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();

@@ -13,7 +13,7 @@ using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
@@ -74,7 +74,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IReadOnlyCollection<IHighVolumeRuleFixedIncomeParameters> highVolumeParameters)
+            IReadOnlyCollection<IHighVolumeIssuanceRuleFixedIncomeParameters> highVolumeParameters)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
@@ -96,8 +96,8 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             }
             else
             {
-                _logger.LogError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeRule)} rule execution with no parameters set");
-                opCtx.EventError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeRule)} rule execution with no parameters set");
+                _logger.LogError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
+                opCtx.EventError($"{nameof(HighVolumeFixedIncomeSubscriber)} - tried to schedule a {nameof(FixedIncomeHighVolumeIssuanceRule)} rule execution with no parameters set");
             }
 
             return subscriptions;
@@ -108,7 +108,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
-            IHighVolumeRuleFixedIncomeParameters param)
+            IHighVolumeIssuanceRuleFixedIncomeParameters param)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(

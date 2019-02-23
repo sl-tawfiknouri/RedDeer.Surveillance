@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         }
 
         [Test]
-        public void Constructor_ConsidersNullUnsubscriber_ToBeExceptional()
+        public void Constructor_ConsidersNullUnsubscriber_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseFilter(null,

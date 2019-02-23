@@ -40,7 +40,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_FileProcessor_ToBeExceptional()
+        public void Constructor_ConsidersNull_FileProcessor_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -56,7 +56,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Context_ToBeExceptional()
+        public void Constructor_ConsidersNull_Context_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => 
@@ -72,7 +72,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Configuration_ToBeExceptional()
+        public void Constructor_ConsidersNull_Configuration_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -88,7 +88,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Directory_ToBeExceptional()
+        public void Constructor_ConsidersNull_Directory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -104,7 +104,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_AllocationRepository_ToBeExceptional()
+        public void Constructor_ConsidersNull_AllocationRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -120,7 +120,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_FileUploadAllocationRepository_ToBeExceptional()
+        public void Constructor_ConsidersNull_FileUploadAllocationRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -136,7 +136,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Logger_ToBeExceptional()
+        public void Constructor_ConsidersNull_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -154,7 +154,7 @@ namespace DataImport.Tests.Disk_IO
         [Test]
         public void ProcessFile_ReturnsFalse_ForEmptyOrNullPath()
         {
-            var monitor = Build();
+            var monitor = BuildAllocationFileMonitor();
 
             var result = monitor.ProcessFile(null);
 
@@ -164,14 +164,14 @@ namespace DataImport.Tests.Disk_IO
         [Test]
         public void ProcessFile_ReturnsFalse_APathButNoCsvReads()
         {
-            var monitor = Build();
+            var monitor = BuildAllocationFileMonitor();
 
             var result = monitor.ProcessFile("a-path");
 
             Assert.IsFalse(result);
         }
 
-        private AllocationFileMonitor Build()
+        private AllocationFileMonitor BuildAllocationFileMonitor()
         {
             return new AllocationFileMonitor(
                 _fileProcessor,

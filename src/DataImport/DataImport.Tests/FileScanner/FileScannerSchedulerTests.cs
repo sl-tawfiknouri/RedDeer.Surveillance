@@ -22,14 +22,14 @@ namespace DataImport.Tests.FileScanner
         }
 
         [Test]
-        public void Constructor_FileScanner_Null_Is_Exceptional()
+        public void Constructor_FileScanner_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FileScannerScheduler(null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new FileScannerScheduler(_fileScanner, null));

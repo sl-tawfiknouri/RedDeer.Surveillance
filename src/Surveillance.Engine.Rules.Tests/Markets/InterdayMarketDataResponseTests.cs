@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
         }
 
         [Test]
-        public void Constructor_Response_Null_Is_Exceptional()
+        public void Constructor_Response_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new InterdayMarketDataResponse(null));

@@ -80,6 +80,22 @@ namespace Domain.Financial
             UnderlyingClientIdentifier = underlyingClientIdentifier ?? string.Empty;
         }
 
+        public static InstrumentIdentifiers Null()
+        {
+            return new InstrumentIdentifiers(
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+        }
+
         /// <summary>
         /// Primary key id
         /// </summary>

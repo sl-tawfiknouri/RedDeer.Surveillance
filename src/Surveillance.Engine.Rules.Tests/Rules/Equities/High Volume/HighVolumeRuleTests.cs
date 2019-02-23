@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullParameters_ToBeExceptional()
+        public void Constructor_ConsidersNullParameters_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 
@@ -76,7 +76,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullOpCtx_ToBeExceptional()
+        public void Constructor_ConsidersNullOpCtx_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 
@@ -84,7 +84,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_ToBeExceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 

@@ -91,21 +91,21 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         }
 
         [Test]
-        public void Constructor_NullParametersConsidered_ToBeExceptional()
+        public void Constructor_NullParametersConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_NullLoggerConsidered_ToBeExceptional()
+        public void Constructor_NullLoggerConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_NullRuleContextConsidered_ToBeExceptional()
+        public void Constructor_NullRuleContextConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, RuleRunMode.ValidationRun, _tradingLogger));

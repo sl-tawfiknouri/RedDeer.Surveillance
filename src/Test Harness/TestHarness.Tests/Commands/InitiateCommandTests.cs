@@ -21,14 +21,14 @@ namespace TestHarness.Tests.Commands
         }
 
         [Test]
-        public void Constructor_NullProgramState_ConsideredExceptional()
+        public void Constructor_NullProgramState_ConsideredThrows_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new InitiateCommand(null, _commandManager));
         }
 
         [Test]
-        public void Constructor_NullCommandManager_ConsideredExceptional()
+        public void Constructor_NullCommandManager_ConsideredThrows_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new InitiateCommand(_programState, null));

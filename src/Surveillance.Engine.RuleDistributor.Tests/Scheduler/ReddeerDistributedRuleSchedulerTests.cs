@@ -32,7 +32,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         }
 
         [Test]
-        public void Constructor_ConsidersNullDisassembler_ToBeExceptional()
+        public void Constructor_ConsidersNullDisassembler_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -46,7 +46,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         }
 
         [Test]
-        public void Constructor_ConsidersNullAwsClient_ToBeExceptional()
+        public void Constructor_ConsidersNullAwsClient_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         }
 
         [Test]
-        public void Constructor_ConsidersNullAwsConfiguration_ToBeExceptional()
+        public void Constructor_ConsidersNullAwsConfiguration_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -75,7 +75,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
 
 
         [Test]
-        public void Constructor_ConsidersNullMessageBusSerialiser_ToBeExceptional()
+        public void Constructor_ConsidersNullMessageBusSerialiser_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -89,7 +89,7 @@ namespace Surveillance.Engine.RuleDistributor.Tests.Scheduler
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_ToBeExceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement

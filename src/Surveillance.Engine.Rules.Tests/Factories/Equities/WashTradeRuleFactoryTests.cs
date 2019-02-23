@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_CurrencyConverter_Null_IsExceptional()
+        public void Constructor_CurrencyConverter_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -65,7 +65,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_PositionPairer_Null_IsExceptional()
+        public void Constructor_PositionPairer_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -80,7 +80,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_Clustering_Null_IsExceptional()
+        public void Constructor_Clustering_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -95,7 +95,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_OrderFilter_Null_IsExceptional()
+        public void Constructor_OrderFilter_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -110,7 +110,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_Factory_Null_IsExceptional()
+        public void Constructor_Factory_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -125,7 +125,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_Logger_Null_IsExceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -140,7 +140,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_TradingHistoryLogger_Null_IsExceptional()
+        public void Constructor_TradingHistoryLogger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>

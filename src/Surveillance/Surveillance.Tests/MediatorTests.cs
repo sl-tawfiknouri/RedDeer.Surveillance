@@ -30,21 +30,21 @@ namespace Surveillance.Tests
         }
 
         [Test]
-        public void Constructor_NullRuleScheduler_IsExceptional()
+        public void Constructor_NullRuleScheduler_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_ruleDistributorMediator, null, _coordinatorMediator, _heartbeatService, _logger));
         }
 
         [Test]
-        public void Constructor_NullRuleDistributorMediator_IsExceptional()
+        public void Constructor_NullRuleDistributorMediator_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(null, _ruleSchedulerMediator, _coordinatorMediator, _heartbeatService, _logger));
         }
 
         [Test]
-        public void Constructor_NullCoordinatorMediator_IsExceptional()
+        public void Constructor_NullCoordinatorMediator_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_ruleDistributorMediator, _ruleSchedulerMediator, null, _heartbeatService, _logger));

@@ -57,7 +57,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
         }
 
         [Test]
-        public void Constructor_ConsidersNullParameters_Exceptional()
+        public void Constructor_ConsidersNullParameters_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => 
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_Exceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => 

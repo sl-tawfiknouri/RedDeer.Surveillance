@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using DataSynchroniser.Interfaces;
-using DataSynchroniser.Services.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Utilities.Interfaces;
 
@@ -9,16 +9,16 @@ namespace DataSynchroniser
 {
     public class Mediator : IMediator
     {
-        private readonly IDataRequestsService _dataRequestsService;
+        private readonly IDataRequestSubscriber _dataRequestSubscriber;
         private readonly IApplicationHeartbeatService _heartbeatService;
         private readonly ILogger<Mediator> _logger;
 
         public Mediator(
-            IDataRequestsService dataRequestsService,
+            IDataRequestSubscriber dataRequestSubscriber,
             IApplicationHeartbeatService heartbeatService,
             ILogger<Mediator> logger)
         {
-            _dataRequestsService = dataRequestsService ?? throw new ArgumentNullException(nameof(dataRequestsService));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _heartbeatService = heartbeatService ?? throw new ArgumentNullException(nameof(heartbeatService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -28,9 +28,9 @@ namespace DataSynchroniser
             _logger.LogInformation($"DATA SYNCHRONISER | process-id {Process.GetCurrentProcess().Id} | started-at {Process.GetCurrentProcess().StartTime}");
 
             _heartbeatService.Initialise();
-            _dataRequestsService.Initiate();
+            _dataRequestSubscriber.Initiate();
 
-            _logger.LogInformation($"Mediator initiate complete");
+            _logger.LogInformation($"{nameof(Mediator)} initiate complete");
         }
     }
 }

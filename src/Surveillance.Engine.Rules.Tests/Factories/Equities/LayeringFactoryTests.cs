@@ -43,35 +43,35 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         }
 
         [Test]
-        public void Constructor_ConsidersNullOrderFilter_ToBeExceptional()
+        public void Constructor_ConsidersNullOrderFilter_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(null, _tradingHoursManager, _factory, _logger, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_ConsidersNullMarketTradingHoursManager_ToBeExceptional()
+        public void Constructor_ConsidersNullMarketTradingHoursManager_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, null, _factory, _logger, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_ConsidersNullUniverseMarketCacheFactory_ToBeExceptional()
+        public void Constructor_ConsidersNullUniverseMarketCacheFactory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursManager, null, _logger, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_ToBeExceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursManager, _factory, null, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_ConsidersNullTradingHistoryLogger_ToBeExceptional()
+        public void Constructor_ConsidersNullTradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursManager, _factory, _logger, null));

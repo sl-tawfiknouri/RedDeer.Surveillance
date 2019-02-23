@@ -67,7 +67,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -130,7 +130,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
             var position = new TradePosition(marketSecurities.ToList());
             var breach = new MarkingTheCloseBreach(
-                FactorValue,
+                OrganisationFactorValue,
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
                 _parameters.Window,
@@ -345,7 +345,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
         {
             var clone = (MarkingTheCloseRule)this.MemberwiseClone();
             clone.BaseClone();
-            FactorValue = factor;
+            OrganisationFactorValue = factor;
 
             return clone;
         }

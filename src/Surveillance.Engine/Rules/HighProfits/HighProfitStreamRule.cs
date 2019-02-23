@@ -81,7 +81,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected virtual bool RunRuleGuard(ITradingHistoryStack history)
         {
@@ -279,7 +279,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             var position = new TradePosition(activeTrades.ToList());
             var breach =
                 new HighProfitRuleBreach(
-                    FactorValue,
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters,
@@ -367,7 +367,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             var clone = (HighProfitStreamRule)this.MemberwiseClone();
             clone.BaseClone();
-            FactorValue = factor;
+            OrganisationFactorValue = factor;
 
             return clone;
         }

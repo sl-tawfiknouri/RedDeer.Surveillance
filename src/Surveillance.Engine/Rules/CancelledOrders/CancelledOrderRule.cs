@@ -59,7 +59,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -152,7 +152,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             var totalPositionOrders = tradingPosition.Get().Count;
 
             return new CancelledOrderRuleBreach(
-                FactorValue,
+                OrganisationFactorValue,
                 _opCtx.SystemProcessOperationContext(),
                 RuleCtx.CorrelationId(),
                 _parameters,
@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
         {
             var clone = (CancelledOrderRule)this.MemberwiseClone();
             clone.BaseClone();
-            FactorValue = factor;
+            OrganisationFactorValue = factor;
 
             return clone;
         }

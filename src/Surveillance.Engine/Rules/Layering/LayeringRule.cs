@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -210,7 +210,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
 
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
-                    FactorValue,
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters,
@@ -538,7 +538,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
         {
             var clone = (LayeringRule)this.MemberwiseClone();
             clone.BaseClone();
-            FactorValue = factor;
+            OrganisationFactorValue = factor;
 
             return clone;
         }

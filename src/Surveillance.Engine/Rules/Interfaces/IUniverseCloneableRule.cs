@@ -3,6 +3,6 @@
     public interface IUniverseCloneableRule : IUniverseRule
     {
         IUniverseCloneableRule Clone(IFactorValue factor);
-        IFactorValue FactorValue { get; set; }
+        IFactorValue OrganisationFactorValue { get; set; }
     }
 }

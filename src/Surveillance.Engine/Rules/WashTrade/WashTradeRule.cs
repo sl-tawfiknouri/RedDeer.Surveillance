@@ -72,7 +72,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
-                    FactorValue,
+                    OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),
                     _parameters,
@@ -469,7 +469,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
         {
             var clone = (WashTradeRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.FactorValue = value;
+            clone.OrganisationFactorValue = value;
 
             return clone;
         }

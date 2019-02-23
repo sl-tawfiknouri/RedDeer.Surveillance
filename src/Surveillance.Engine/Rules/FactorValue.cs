@@ -15,5 +15,7 @@ namespace Surveillance.Engine.Rules.Rules
 
         public ClientOrganisationalFactors OrganisationalFactors { get; }
         public string Value { get; }
+
+        public static IFactorValue None => new FactorValue(ClientOrganisationalFactors.None, string.Empty);
     }
 }

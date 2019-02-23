@@ -66,7 +66,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -107,7 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
 
             var breach =
                 new HighVolumeRuleBreach(
-                    FactorValue,
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters.WindowSize, 
@@ -382,7 +382,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
         {
             var clone = (HighVolumeRule)this.MemberwiseClone();
             clone.BaseClone();
-            FactorValue = factor;
+            OrganisationFactorValue = factor;
 
             return clone;
         }

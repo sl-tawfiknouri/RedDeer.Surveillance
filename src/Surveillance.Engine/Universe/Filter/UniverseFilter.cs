@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
         public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
         public string Version { get; } = Versioner.Version(0, 0);
 
@@ -334,7 +334,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             // we will want to keep the same universe observers here
 
             var newClone = (IUniverseCloneableRule)this.MemberwiseClone();
-            newClone.FactorValue = factor;
+            newClone.OrganisationFactorValue = factor;
 
             return newClone;
         }

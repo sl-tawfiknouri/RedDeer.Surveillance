@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
-        public IFactorValue FactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
@@ -186,7 +186,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
             var ruleBreach =
                 new SpoofingRuleBreach(
-                    FactorValue,
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters.WindowSize,
@@ -235,7 +235,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
         {
             var clone = (SpoofingRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.FactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

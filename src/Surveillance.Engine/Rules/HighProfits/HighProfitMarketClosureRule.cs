@@ -99,7 +99,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.FactorValue = factorValue;
+            clone.OrganisationFactorValue = factorValue;
 
             return clone;
         }

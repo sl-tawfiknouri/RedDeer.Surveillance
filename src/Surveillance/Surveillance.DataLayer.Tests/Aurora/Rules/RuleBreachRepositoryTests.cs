@@ -47,6 +47,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb", 
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
            var result = await repo.Create(caseMessage);
@@ -84,6 +86,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
             var caseMessage2 =
@@ -101,6 +105,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
             var result1 = await repo.Create(caseMessage1);
@@ -141,6 +147,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
             var caseMessage2 =
@@ -158,6 +166,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
             var caseMessage3 =
@@ -175,6 +185,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
 
             var result1 = await repo.Create(caseMessage1);
@@ -219,8 +231,9 @@ namespace Surveillance.DataLayer.Tests.Aurora.Rules
                     "entspb",
                     "RD00",
                     "0",
+                    0,
+                    "1",
                     new int[0]);
-
 
             var result1 = await repo.Create(caseMessage1);
 

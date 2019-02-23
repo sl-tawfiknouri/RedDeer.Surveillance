@@ -173,6 +173,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dto.AssetCfi, 
                 dto.ReddeerEnrichmentId,
                 dto.SystemOperationId,
+                dto.OrganisationalFactor,
+                dto.OrganisationalFactorValue,
                 new int[0]);
         }
 
@@ -205,6 +207,9 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 AssetCfi = message?.AssetCfi;
                 SystemOperationId = message?.SystemOperationId;
                 ReddeerEnrichmentId = message?.ReddeerEnrichmentId;
+
+                OrganisationalFactor = message?.OrganisationalFactor ?? 0;
+                OrganisationalFactorValue = message?.OrganisationalFactorValue ?? string.Empty;
             }
 
             public int? Id { get; set; }
@@ -220,6 +225,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
             public string AssetCfi { get; set; }
             public string ReddeerEnrichmentId { get; set; }
             public string SystemOperationId { get; set; }
+            public int OrganisationalFactor { get; set; }
+            public string OrganisationalFactorValue { get; set; }
         }
     }
 }

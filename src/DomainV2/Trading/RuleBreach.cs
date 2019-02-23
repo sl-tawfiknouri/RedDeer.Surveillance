@@ -19,6 +19,8 @@ namespace Domain.Trading
             string assetCfi,
             string reddeerEnrichmentId,
             string systemOperationId,
+            int organisationalFactor,
+            string organisationalFactorValue,
             IReadOnlyCollection<int> ruleBreachOrderIds)
         {
             Id = id;
@@ -34,7 +36,8 @@ namespace Domain.Trading
             AssetCfi = assetCfi;
             ReddeerEnrichmentId = reddeerEnrichmentId;
             SystemOperationId = systemOperationId;
-
+            OrganisationalFactor = organisationalFactor;
+            OrganisationalFactorValue = organisationalFactorValue ?? string.Empty;
             RuleBreachOrderIds = ruleBreachOrderIds ?? new List<int>();
         }
 
@@ -51,6 +54,8 @@ namespace Domain.Trading
         public string AssetCfi { get; set; }
         public string ReddeerEnrichmentId { get; set; }
         public string SystemOperationId { get; set; }
+        public int OrganisationalFactor { get; set; }
+        public string OrganisationalFactorValue { get; set; }
 
         public IReadOnlyCollection<int> RuleBreachOrderIds { get; set; }
     }

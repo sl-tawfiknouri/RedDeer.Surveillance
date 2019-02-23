@@ -22,6 +22,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
             var highVolumeIds = dtos.HighVolumes?.Select(x => x.Id)?.ToList() ?? new List<string>();
             var washTradeIds = dtos.WashTrades?.Select(x => x.Id)?.ToList() ?? new List<string>();
 
+            var fixedIncomeHighProfitIds = dtos.FixedIncomeHighProfits?.Select(x => x.Id)?.ToList() ?? new List<string>();
+            var fixedIncomeHighVolumeIssuanceIds = dtos.FixedIncomeHighVolumeIssuance?.Select(x => x.Id)?.ToList() ?? new List<string>();
+            var fixedIncomeWashTradeIds = dtos.FixedIncomeWashTrades?.Select(x => x.Id)?.ToList() ?? new List<string>();
+
             var response = new List<string>();
 
             response.AddRange(cancelledOrderIds);
@@ -31,6 +35,10 @@ namespace Surveillance.Engine.Rules.RuleParameters
             response.AddRange(layeringIds);
             response.AddRange(highVolumeIds);
             response.AddRange(washTradeIds);
+
+            response.AddRange(fixedIncomeHighProfitIds);
+            response.AddRange(fixedIncomeHighVolumeIssuanceIds);
+            response.AddRange(fixedIncomeWashTradeIds);
 
             return response;
         }

@@ -55,6 +55,7 @@ namespace Surveillance.Engine.Rules.Rules
 
             Logger.LogInformation($"{nameof(BaseMessageSender)} received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
+            // Save the rule breach
             var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleBreach, description, _caseTitle);
             var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
 
@@ -64,8 +65,11 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
+            // Save the rule breach orders
             var ruleBreachOrderItems = _ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
             await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
+
+            // Check for duplicates
             var hasDuplicates = await _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
 
             if (hasDuplicates && !ruleBreach.IsBackTestRun)

@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {

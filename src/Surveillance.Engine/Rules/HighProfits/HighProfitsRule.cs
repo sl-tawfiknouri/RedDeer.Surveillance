@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         public void OnCompleted()
         {

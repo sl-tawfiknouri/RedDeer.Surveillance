@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {

@@ -81,7 +81,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected virtual bool RunRuleGuard(ITradingHistoryStack history)
         {

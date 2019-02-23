@@ -72,7 +72,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {

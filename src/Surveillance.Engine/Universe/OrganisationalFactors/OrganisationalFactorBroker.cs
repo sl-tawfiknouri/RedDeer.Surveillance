@@ -65,13 +65,13 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
         public void OnCompleted()
         {
-            _logger.LogInformation($"OrganisationalFactorBroker received OnCompleted() event from the universe stream");
+            _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} received OnCompleted() event from the universe stream");
             _cloneSource.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"OrganisationalFactorBroker received OnError() event from the universe stream");
+            _logger.LogError($"{nameof(OrganisationalFactorBroker)} received OnError() event from the universe stream");
             _cloneSource.OnError(error);
         }
 
@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
             if (value.StateChange != UniverseStateEvent.Order
                 && value.StateChange != UniverseStateEvent.OrderPlaced)
             {
-                _logger.LogInformation($"OrganisationalFactorBroker received an event that was not an order. No brokering to perform. {value.EventTime} of type {value.StateChange}");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} received an event that was not an order. No brokering to perform. {value.EventTime} of type {value.StateChange}");
 
                 _cloneSource.OnNext(value);
                 _noneFactor.OnNext(value);
@@ -107,36 +107,36 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
             if (_factors.Contains(ClientOrganisationalFactors.None))
             {
-                _logger.LogInformation("OrganisationalFactorBroker has a none organisational factor so passing onto next");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a none organisational factor so passing onto next");
                 _noneFactor.OnNext(value);
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.Trader))
             {
-                _logger.LogInformation("OrganisationalFactorBroker has a trader organisational factor passing to trade factoring");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a trader organisational factor passing to trade factoring");
                 TraderFactor(value);
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.Fund))
             {
-                _logger.LogInformation("OrganisationalFactorBroker has a fund organisational factor so passing to fund factoring");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a fund organisational factor so passing to fund factoring");
                 FundFactor(value);
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.Strategy))
             {
-                _logger.LogInformation("OrganisationalFactorBroker has a strategy organisational factor so passing to strategy factoring");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a strategy organisational factor so passing to strategy factoring");
                 StrategyFactor(value);
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.PortfolioManager))
             {
-                _logger.LogInformation("OrganisationalFactorBroker passed a portfolio manager organisational factor which is not currently supported");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} passed a portfolio manager organisational factor which is not currently supported");
             }
 
             if (_factors.Contains(ClientOrganisationalFactors.Unknown))
             {
-                _logger.LogInformation("OrganisationalFactorBroker passed a unknown organisational factor which is not currently supported");
+                _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} passed a unknown organisational factor which is not currently supported");
             }
         }
 
@@ -174,12 +174,12 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
                 {
                     _traderFactors.TryGetValue(orderTraderId, out var rule);
 
-                    _logger.LogInformation($"OrganisationalFactorBroker has a trader organisational factor and found a rule for order trader id {orderTraderId}. Brokering.");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a trader organisational factor and found a rule for order trader id {orderTraderId}. Brokering.");
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    _logger.LogInformation($"OrganisationalFactorBroker has a trader organisational factor but could not find a factored rule to pass onto for trader {orderTraderId}. Not brokering.");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a trader organisational factor but could not find a factored rule to pass onto for trader {orderTraderId}. Not brokering.");
                 }
             }
         }
@@ -215,13 +215,13 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
                 if (_strategyFactors.ContainsKey(orderStrategy))
                 {
-                    _logger.LogInformation($"OrganisationalFactorBroker has a strategy organisational factor and found a rule for strategy {orderStrategy}");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a strategy organisational factor and found a rule for strategy {orderStrategy}");
                     _strategyFactors.TryGetValue(orderStrategy, out var rule);
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    _logger.LogInformation($"OrganisationalFactorBroker has a strategy organisational factor and could not find a rule for strategy {orderStrategy}");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a strategy organisational factor and could not find a rule for strategy {orderStrategy}");
                 }
             }
         }
@@ -265,13 +265,13 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 
                 if (_fundFactors.ContainsKey(orderFund))
                 {
-                    _logger.LogInformation($"OrganisationalFactorBroker has a fund organisational factor and found a rule for fund {orderFund}");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a fund organisational factor and found a rule for fund {orderFund}");
                     _fundFactors.TryGetValue(orderFund, out var rule);
                     rule?.OnNext(value);
                 }
                 else
                 {
-                    _logger.LogInformation($"OrganisationalFactorBroker has a fund organisational factor but could not find a rule for {orderFund}");
+                    _logger.LogInformation($"{nameof(OrganisationalFactorBroker)} has a fund organisational factor but could not find a rule for {orderFund}");
                 }
             }
         }

@@ -1,5 +1,5 @@
 ﻿using System;
-using DataSynchroniser.Services.Interfaces;
+using DataSynchroniser.Queues.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -11,33 +11,33 @@ namespace DataSynchroniser.Tests
     public class MediatorTests
     {
         private ILogger<Mediator> _logger;
-        private IDataRequestsService _dataRequestService;
+        private IDataRequestSubscriber _dataRequestService;
         private IApplicationHeartbeatService _applicationHeartbeatService;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<Mediator>>();
-            _dataRequestService = A.Fake<IDataRequestsService>();
+            _dataRequestService = A.Fake<IDataRequestSubscriber>();
             _applicationHeartbeatService = A.Fake<IApplicationHeartbeatService>();
         }
         
         [Test]
-        public void Constructor_NullDataRequestsService_IsExceptional()
+        public void Constructor_NullDataRequestsService_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(null, _applicationHeartbeatService, _logger));
         }
 
         [Test]
-        public void Constructor_NullApplicationHeartbeatService_IsExceptional()
+        public void Constructor_NullApplicationHeartbeatService_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, null, _logger));
         }
 
         [Test]
-        public void Constructor_NullLogger_IsExceptional()
+        public void Constructor_NullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataRequestService, _applicationHeartbeatService, null));

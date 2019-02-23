@@ -134,14 +134,14 @@ namespace Surveillance.Engine.Rules.Tests.Markets
         }
 
         [Test]
-        public void Constructor_Null_Repository_Is_Exceptional()
+        public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseEquityInterDayCache(null, _logger));
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseEquityInterDayCache(_dataRequestRepository, null));

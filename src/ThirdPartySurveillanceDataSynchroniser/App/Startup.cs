@@ -1,4 +1,7 @@
 ﻿using System;
+using DataSynchroniser.Api.Bmll;
+using DataSynchroniser.Api.Factset;
+using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,6 +49,9 @@ namespace DataSynchroniser.App
                 config.IncludeRegistry<DataSynchroniserRegistry>();
                 config.IncludeRegistry<SystemSystemDataLayerRegistry>();
                 config.IncludeRegistry<SurveillanceSystemAuditingRegistry>();
+                config.IncludeRegistry<BmllDataSynchroniserRegistry>();
+                config.IncludeRegistry<FactsetDataSynchroniserRegistry>();
+                config.IncludeRegistry<MarkitDataSynchroniserRegistry>();
                 config.IncludeRegistry<AppRegistry>();
                 config.Populate(services);
             });

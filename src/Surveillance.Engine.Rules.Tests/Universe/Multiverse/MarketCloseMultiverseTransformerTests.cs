@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Multiverse
         }
 
         [Test]
-        public void Constructor_NullUnsubscriberFactory_IsExceptional()
+        public void Constructor_NullUnsubscriberFactory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new MarketCloseMultiverseTransformer(null, _logger));

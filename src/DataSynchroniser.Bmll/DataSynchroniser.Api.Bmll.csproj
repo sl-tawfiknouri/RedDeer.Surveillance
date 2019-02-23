@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Firefly.Service.Data.BMLL.Shared" Version="1.0.1" />
+    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
+    <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
+    <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

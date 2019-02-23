@@ -6,18 +6,21 @@ using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.DataLayer.Api.Enrichment;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
+using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Api.Enrichment
 {
     [TestFixture]
     public class EnrichmentApiRepositoryTests
     {
+        private IHttpClientFactory _httpClientFactory;
         private IDataLayerConfiguration _configuration;
         private ILogger<EnrichmentApiRepository> _logger;
 
         [SetUp]
         public void Setup()
         {
+            _httpClientFactory = A.Fake<IHttpClientFactory>();
             _configuration = TestHelpers.Config();
             _logger = A.Fake<ILogger<EnrichmentApiRepository>>();
         }
@@ -26,7 +29,7 @@ namespace Surveillance.DataLayer.Tests.Api.Enrichment
         [Explicit]
         public async Task Get()
         {
-            var repo = new EnrichmentApiRepository(_configuration, _logger);
+            var repo = new EnrichmentApiRepository(_configuration, _httpClientFactory, _logger);
 
             var message = new SecurityEnrichmentMessage
             {

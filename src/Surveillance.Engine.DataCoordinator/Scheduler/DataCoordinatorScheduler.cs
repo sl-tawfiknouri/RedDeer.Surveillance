@@ -11,7 +11,7 @@ namespace Surveillance.Engine.DataCoordinator.Scheduler
     /// </summary>
     public class DataCoordinatorScheduler : IDataCoordinatorScheduler
     {
-        private const int HeartbeatFrequency = 1000 * 60 * 1; // milliseconds (1 min)
+        private const int HeartbeatFrequency = 1000 * 60 * 20; // milliseconds (20 min)
 
         private readonly IDataVerifier _dataVerifier;
         private readonly IAutoSchedule _autoScheduler;

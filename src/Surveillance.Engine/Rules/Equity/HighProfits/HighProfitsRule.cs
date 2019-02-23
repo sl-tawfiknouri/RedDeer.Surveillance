@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;

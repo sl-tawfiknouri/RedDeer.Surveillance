@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Equities

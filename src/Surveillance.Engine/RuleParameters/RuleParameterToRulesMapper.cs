@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using Surveillance.Engine.Rules.Mappers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;

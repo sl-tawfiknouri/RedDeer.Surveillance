@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.Interfaces;
 using Domain.Contracts;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using RedDeer.Contracts.SurveillanceService;
+using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues;

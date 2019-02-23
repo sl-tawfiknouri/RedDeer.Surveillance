@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
 using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -15,7 +14,6 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
@@ -25,9 +23,6 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.I
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Multiverse;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighProfit;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;

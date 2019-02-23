@@ -4,7 +4,6 @@ using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
 using Surveillance.Engine.Rules.Trades;

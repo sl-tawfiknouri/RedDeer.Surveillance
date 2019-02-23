@@ -60,12 +60,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
 
             var dtos =
                 ruleParameters
-                    .HighVolumes
+                    .FixedIncomeHighProfits
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            // var highProfitParameters = _ruleParameterMapper.Map(dtos);
-            var highProfitParameters = new List<IHighProfitsRuleFixedIncomeParameters>();
+            var highProfitParameters = _ruleParameterMapper.Map(dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highProfitParameters);
 
             return subscriptions;

@@ -59,12 +59,11 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
             var dtos =
                 ruleParameters
-                    .HighVolumes
+                    .FixedIncomeHighVolumeIssuance
                     .Where(hv => filteredParameters.Contains(hv.Id, StringComparer.InvariantCultureIgnoreCase))
                     .ToList();
 
-            // var highVolumeParameters = _ruleParameterMapper.Map(dtos);
-            var highVolumeParameters = new List<IHighVolumeRuleFixedIncomeParameters>();
+            var highVolumeParameters = _ruleParameterMapper.Map(dtos);
             var subscriptions = SubscribeToUniverse(execution, opCtx, alertStream, dataRequestSubscriber, highVolumeParameters);
 
             return subscriptions;

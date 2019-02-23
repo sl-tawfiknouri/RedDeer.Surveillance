@@ -186,6 +186,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
             var ruleBreach =
                 new SpoofingRuleBreach(
+                    FactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters.WindowSize,

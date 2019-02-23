@@ -3,6 +3,7 @@ using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.CancelledOrders.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.CancelledOrders
@@ -10,6 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
     public class CancelledOrderRuleBreach : ICancelledOrderRuleBreach
     {
         public CancelledOrderRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext ctx,
             string correlationId,
             ICancelledOrderRuleParameters parameters,
@@ -22,6 +24,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             bool exceededPercentageTradeCountCancellations,
             decimal? percentageTradeCountCancelled)
         {
+            FactorValue = factorValue;
             Parameters = parameters;
             Trades = trades;
             Security = security;
@@ -58,5 +61,6 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
     }
 }

@@ -152,6 +152,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
             var totalPositionOrders = tradingPosition.Get().Count;
 
             return new CancelledOrderRuleBreach(
+                FactorValue,
                 _opCtx.SystemProcessOperationContext(),
                 RuleCtx.CorrelationId(),
                 _parameters,

@@ -210,6 +210,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
 
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
+                    FactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters,

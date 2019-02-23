@@ -107,6 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
 
             var breach =
                 new HighVolumeRuleBreach(
+                    FactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _parameters.WindowSize, 

@@ -13,7 +13,34 @@ namespace Surveillance.DataLayer.Aurora.Rules
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<RuleBreachRepository> _logger;
 
-        private const string SaveRuleBreachSql = @"INSERT IGNORE INTO RuleBreach (RuleId, CorrelationId, IsBackTest, CreatedOn, Title, Description, Venue, StartOfPeriodUnderInvestigation, EndOfPeriodUnderInvestigation, AssetCfi, ReddeerEnrichmentId, SystemOperationId) VALUES(@RuleId, @CorrelationId, @IsBackTest, @CreatedOn, @Title, @Description, @Venue, @StartOfPeriodUnderInvestigation, @EndOfPeriodUnderInvestigation, @AssetCfi, @ReddeerEnrichmentId, @SystemOperationId); SELECT LAST_INSERT_ID();";
+        private const string SaveRuleBreachSql = 
+            @"INSERT IGNORE INTO RuleBreach
+                (RuleId, 
+                CorrelationId, 
+                IsBackTest, 
+                CreatedOn, 
+                Title, 
+                Description, 
+                Venue, 
+                StartOfPeriodUnderInvestigation, 
+                EndOfPeriodUnderInvestigation, 
+                AssetCfi, 
+                ReddeerEnrichmentId, 
+                SystemOperationId)
+            VALUES(
+                @RuleId,
+                @CorrelationId,
+                @IsBackTest, 
+                @CreatedOn,
+                @Title, 
+                @Description, 
+                @Venue, 
+                @StartOfPeriodUnderInvestigation, 
+                @EndOfPeriodUnderInvestigation, 
+                @AssetCfi, 
+                @ReddeerEnrichmentId, 
+                @SystemOperationId); 
+            SELECT LAST_INSERT_ID();";
 
         private const string HasDuplicateSql = @"
             SELECT COUNT(*) FROM (

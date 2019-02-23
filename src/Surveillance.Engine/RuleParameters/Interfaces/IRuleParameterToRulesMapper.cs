@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
@@ -14,5 +16,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
         IReadOnlyCollection<ILayeringRuleEquitiesParameters> Map(List<LayeringRuleParameterDto> dtos);
         IReadOnlyCollection<IHighVolumeRuleEquitiesParameters> Map(List<HighVolumeRuleParameterDto> dtos);
         IReadOnlyCollection<IWashTradeRuleEquitiesParameters> Map(List<WashTradeRuleParameterDto> dtos);
+        IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos);
+
+        IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos);
+
+        IReadOnlyCollection<IHighVolumeRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos);
+
     }
 }

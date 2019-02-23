@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.FixedIncome;
 using Surveillance.Engine.Rules.Mappers.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
+using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 
@@ -218,6 +221,72 @@ namespace Surveillance.Engine.Rules.RuleParameters
                             _organisationalFactorMapper.Map(dto.OrganisationalFactors),
                             dto.AggregateNonFactorableIntoOwnCategory))
                     .ToList();
+        }
+
+        public IReadOnlyCollection<IWashTradeRuleFixedIncomeParameters> Map(List<FixedIncomeWashTradeRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeWashTradeRuleParameterDto)}");
+                return null;
+            }
+
+            return dtos
+                .Select(dto =>
+                    new WashTradeRuleFixedIncomeParameters(
+                        dto.Id,
+                        dto.WindowSize,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
+                .ToList();
+        }
+
+        public IReadOnlyCollection<IHighProfitsRuleFixedIncomeParameters> Map(List<FixedIncomeHighProfitRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeHighProfitRuleParameterDto)}");
+                return null;
+            }
+
+            return dtos
+                .Select(dto =>
+                    new HighProfitsRuleFixedIncomeParameters(
+                        dto.Id,
+                        dto.WindowSize,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
+                .ToList();
+        }
+
+        public IReadOnlyCollection<IHighVolumeRuleFixedIncomeParameters> Map(List<FixedIncomeHighVolumeIssuanceRuleParameterDto> dtos)
+        {
+            if (dtos == null
+                || !dtos.Any())
+            {
+                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeHighVolumeIssuanceRuleParameterDto)}");
+                return null;
+            }
+
+            return dtos
+                .Select(dto =>
+                    new HighVolumeRuleFixedIncomeParameters(
+                        dto.Id,
+                        dto.WindowSize,
+                        _ruleProjector.Project(dto.Accounts),
+                        _ruleProjector.Project(dto.Traders),
+                        _ruleProjector.Project(dto.Markets),
+                        _organisationalFactorMapper.Map(dto.OrganisationalFactors),
+                        dto.AggregateNonFactorableIntoOwnCategory))
+                .ToList();
         }
     }
 }

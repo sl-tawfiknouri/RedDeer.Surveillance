@@ -108,6 +108,18 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();
                         // await ScheduleRuleRuns(execution, layeringRuleRuns, rule, ruleCtx);
                         break;
+                    case Rules.FixedIncomeHighProfits:
+                        var fixedIncomeHighProfits = parameters.FixedIncomeHighProfits?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, fixedIncomeHighProfits, rule, ruleCtx);
+                        break;
+                    case Rules.FixedIncomeHighVolumeIssuance:
+                        var fixedIncomeHighVolumeIssuance = parameters.FixedIncomeHighVolumeIssuance?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, fixedIncomeHighVolumeIssuance, rule, ruleCtx);
+                        break;
+                    case Rules.FixedIncomeWashTrades:
+                        var fixedIncomeWashTrade = parameters.FixedIncomeWashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleCtx);
+                        break;
                     default:
                         _logger.LogError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         ruleCtx.EventError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

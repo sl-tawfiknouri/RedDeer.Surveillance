@@ -4,9 +4,9 @@ using Domain.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Filters
 {
-    public class MarketDataRequestFilter : IMarketDataRequestFilter
+    public class BmllDataRequestFilter : IBmllDataRequestFilter
     {
-        public bool Filter(MarketDataRequest request)
+        public bool ValidAssetType(MarketDataRequest request)
         {
             if (request == null)
             {

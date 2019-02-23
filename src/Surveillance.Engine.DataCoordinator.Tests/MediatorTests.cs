@@ -23,14 +23,14 @@ namespace Surveillance.Engine.DataCoordinator.Tests
         }
 
         [Test]
-        public void Constructor_QueueSubscriber_Null_Is_Exceptional()
+        public void Constructor_QueueSubscriber_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataScheduler, null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new Mediator(_dataScheduler, _queueSubscriber, null));

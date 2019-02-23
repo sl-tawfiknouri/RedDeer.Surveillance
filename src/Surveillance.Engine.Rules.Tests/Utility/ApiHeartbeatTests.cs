@@ -32,21 +32,21 @@ namespace Surveillance.Engine.Rules.Tests.Utility
         }
 
         [Test]
-        public void Constructor_NullExchangeRateApi_IsExceptional()
+        public void Constructor_NullExchangeRateApi_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(null, _marketApi, _ruleApi, _enrichmentApi, _logger));
         }
 
         [Test]
-        public void Constructor_NullMarketApi_IsExceptional()
+        public void Constructor_NullMarketApi_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, null, _ruleApi, _enrichmentApi, _logger));
         }
 
         [Test]
-        public void Constructor_NullRulesApi_IsExceptional()
+        public void Constructor_NullRulesApi_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new ApiHeartbeat(_exchangeRateApi, _marketApi, null, _enrichmentApi, _logger));

@@ -11,26 +11,26 @@ namespace DataSynchroniser.Api.Factset.Factset
 {
     public class FactsetDataRequestsManager : IFactsetDataRequestsManager
     {
-        private readonly IFactsetDataRequestsSenderManager _requestSender;
+        private readonly IFactsetDataRequestsApiManager _requestApi;
         private readonly IReddeerMarketDailySummaryRepository _responseStorage;
         private readonly ILogger<FactsetDataRequestsManager> _logger;
 
         public FactsetDataRequestsManager(
-            IFactsetDataRequestsSenderManager requestSender,
+            IFactsetDataRequestsApiManager requestApi,
             IReddeerMarketDailySummaryRepository responseRepository,
             ILogger<FactsetDataRequestsManager> logger)
         {
-            _requestSender = requestSender ?? throw new ArgumentNullException(nameof(requestSender));
+            _requestApi = requestApi ?? throw new ArgumentNullException(nameof(requestApi));
             _responseStorage = responseRepository ?? throw new ArgumentNullException(nameof(responseRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(List<MarketDataRequest> factsetRequests)
+        public async Task Submit(IReadOnlyCollection<MarketDataRequest> factsetRequests)
         {
             if (factsetRequests == null
                 || !factsetRequests.Any())
             {
-                _logger.LogError($"FactsetDataRequestsManager had null or empty factset requests");
+                _logger.LogError($"{nameof(FactsetDataRequestsManager)} had null or empty factset requests");
                 return;
             }
 
@@ -40,22 +40,22 @@ namespace DataSynchroniser.Api.Factset.Factset
 
                 if ( !requests.Any())
                 {
-                    _logger.LogInformation($"FactsetDataRequestsManager Submit had zero factset requests that were not already completed.");
+                    _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Submit had zero factset requests that were not already completed.");
                     return;
                 }
 
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to send {requests.Count} requests to the request sender");
-                var dailySummaries = await _requestSender.Send(requests);
-                _logger.LogInformation($"FactsetDataRequestsManager Send has sent {requests.Count} requests to the request sender");
+                _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send about to send {requests.Count} requests to the request sender");
+                var dailySummaries = await _requestApi.Send(requests);
+                _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send has sent {requests.Count} requests to the request sender");
 
-                _logger.LogInformation($"FactsetDataRequestsManager Send about to record the response for {requests.Count} requests to the request sender");
+                _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send about to record the response for {requests.Count} requests to the request sender");
                 await _responseStorage.Save(dailySummaries?.Responses);
-                _logger.LogInformation($"FactsetDataRequestsManager Send has recorded the response for {requests.Count} requests to the request sender");
+                _logger.LogInformation($"{nameof(FactsetDataRequestsManager)} Send has recorded the response for {requests.Count} requests to the request sender");
 
             }
             catch (Exception e)
             {
-                _logger.LogError("FactsetDataRequestsManager send method encountered an exception!", e);
+                _logger.LogError($"{nameof(FactsetDataRequestsManager)} send method encountered an exception!", e);
             }
         }
     }

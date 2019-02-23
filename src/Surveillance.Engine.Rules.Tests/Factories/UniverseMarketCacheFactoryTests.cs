@@ -26,21 +26,21 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_StubDataRequestRepository_Is_Exceptional()
+        public void Constructor_Null_StubDataRequestRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(null, _dataRequestRepository, _logger));
         }
 
         [Test]
-        public void Constructor_Null_DataRequestRepository_Is_Exceptional()
+        public void Constructor_Null_DataRequestRepository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(_stubDataRequestRepository, null, _logger));
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseMarketCacheFactory(_stubDataRequestRepository, _dataRequestRepository, null));

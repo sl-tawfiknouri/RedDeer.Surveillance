@@ -43,7 +43,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNullConfiguration_Exceptional()
+        public void Constructor_ConsidersNullConfiguration_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -60,7 +60,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNullDirectory_Exceptional()
+        public void Constructor_ConsidersNullDirectory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -77,7 +77,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNullProcessor_Exceptional()
+        public void Constructor_ConsidersNullProcessor_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>
@@ -94,7 +94,7 @@ namespace DataImport.Tests.Disk_IO
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_Exceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() =>

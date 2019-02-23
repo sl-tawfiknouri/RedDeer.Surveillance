@@ -9,26 +9,34 @@ using Firefly.Service.Data.BMLL.Shared.Emuns;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly;
+using PollyFacade.Policies.Interfaces;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.BmllMarketData
 {
-    public class BmllTimeBarApiRepository : BaseApiRepository, IBmllTimeBarApiRepository
+    public class BmllTimeBarApiRepository : IBmllTimeBarApiRepository
     {
         private const string HeartbeatRoute = "api/bmll/heartbeat";
         private const string RequestsRoute = "api/bmll/requests/v1";
         private const string StatusRoute = "api/bmll/status/v1";
         private const string MinuteBarRoute = "api/bmll/minutebars/v1";
 
+        private readonly IDataLayerConfiguration _dataLayerConfiguration;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<BmllTimeBarApiRepository> _logger;
 
         public BmllTimeBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
+            IHttpClientFactory httpClientFactory,
+            IPolicyFactory policyFactory,
             ILogger<BmllTimeBarApiRepository> logger)
-            : base(dataLayerConfiguration, logger)
         {
+            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -44,48 +52,42 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
 
             _logger.LogInformation($"BmllTimeBarApiRepository RequestMinuteBars received {createCommand.Keys.Count} keys to query BMLL for");
 
-            var httpClient = BuildBmllHttpClient();
-
             try
             {
-                var json = JsonConvert.SerializeObject(createCommand);
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(10, i => TimeSpan.FromMinutes(1));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
-
-                HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
                 {
-                    response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+                    var json = JsonConvert.SerializeObject(createCommand);
+                    var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 10, TimeSpan.FromMinutes(1));
 
-                    return response;
-                });
+                    HttpResponseMessage response = null;
+                    await policy.ExecuteAsync(async () =>
+                    {
+                        response = await httpClient.PostAsync(RequestsRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
-                if (response == null
-                    || !response.IsSuccessStatusCode)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository RequestMinuteBars Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
+                        return response;
+                    });
+
+                    if (response == null
+                        || !response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository RequestMinuteBars Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
+
+                        return;
+                    }
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var deserialisedResponse = JsonConvert.DeserializeObject<CreateMinuteBarRequestResponse>(jsonResponse);
+
+                    if (deserialisedResponse == null)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository RequestMinuteBars was unable to deserialise the response");
+                        return;
+                    }
+
+                    _logger.LogInformation($"BmllTimeBarApiRepository RequestMinuteBars returning deserialised GET response");
 
                     return;
                 }
-
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<CreateMinuteBarRequestResponse>(jsonResponse);
-
-                if (deserialisedResponse == null)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository RequestMinuteBars was unable to deserialise the response");
-                    return;
-                }
-
-                _logger.LogInformation($"BmllTimeBarApiRepository RequestMinuteBars returning deserialised GET response");
-                return;
             }
             catch (Exception e)
             {
@@ -106,69 +108,62 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
             }
 
             _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars received {statusCommand.Keys.Count} keys to query BMLL for");
-            var httpClient = BuildBmllHttpClient();
 
             try
             {
-                var json = JsonConvert.SerializeObject(statusCommand);
-
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(3, i => TimeSpan.FromMinutes(1));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
-
-                HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
                 {
-                    response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+                    var json = JsonConvert.SerializeObject(statusCommand);
+                    var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 3, TimeSpan.FromMinutes(1));
 
-                    return response;
-                });
-                
-                if (response == null
-                    || !response.IsSuccessStatusCode)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
-                    return BmllStatusMinuteBarResult.InProgress;
-                }
+                    HttpResponseMessage response = null;
+                    await policy.ExecuteAsync(async () =>
+                    {
+                        response = await httpClient.PostAsync(StatusRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<GetMinuteBarRequestStatusesResponse>(jsonResponse);
+                        return response;
+                    });
 
-                if (deserialisedResponse == null)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars was unable to deserialise the response");
-                    return BmllStatusMinuteBarResult.InProgress;
-                }
+                    if (response == null
+                        || !response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
+                        return BmllStatusMinuteBarResult.InProgress;
+                    }
 
-                _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars returning deserialised GET response");
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var deserialisedResponse = JsonConvert.DeserializeObject<GetMinuteBarRequestStatusesResponse>(jsonResponse);
 
-                var acceptedRequests = new []
-                {
+                    if (deserialisedResponse == null)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository StatusMinuteBars was unable to deserialise the response");
+                        return BmllStatusMinuteBarResult.InProgress;
+                    }
+
+                    _logger.LogInformation($"BmllTimeBarApiRepository StatusMinuteBars returning deserialised GET response");
+
+                    var acceptedRequests = new[]
+                    {
                     MinuteBarRequestStatus.Completed,
                     MinuteBarRequestStatus.Failed,
-                };
+                    };
 
-                var completed = deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));
+                    var completed = deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));
 
-                if (!completed)
-                {
-                    return BmllStatusMinuteBarResult.InProgress;
+                    if (!completed)
+                    {
+                        return BmllStatusMinuteBarResult.InProgress;
+                    }
+
+                    if (deserialisedResponse.Statuses.Any(i => i.Status == MinuteBarRequestStatus.Failed))
+                    {
+                        return BmllStatusMinuteBarResult.CompletedWithFailures;
+                    }
+                    else
+                    {
+                        return BmllStatusMinuteBarResult.Completed;
+                    }
                 }
-
-                if (deserialisedResponse.Statuses.Any(i => i.Status == MinuteBarRequestStatus.Failed))
-                {
-                    return BmllStatusMinuteBarResult.CompletedWithFailures;
-                }
-                else
-                {
-                    return BmllStatusMinuteBarResult.Completed;
-                }
-
             }
             catch (Exception e)
             {
@@ -190,48 +185,42 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
 
             _logger?.LogInformation($"BmllTimeBarApiRepository Get received a get minute bars request for {request?.Figi} at {request?.From} to {request?.To}");
 
-            var httpClient = BuildBmllHttpClient();
-
             try
             {
-                var json = JsonConvert.SerializeObject(request);
-
-                var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3));
-                var retryPolicy =
-                    Policy
-                        .Handle<Exception>()
-                        .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                        .WaitAndRetryAsync(1, i => TimeSpan.FromSeconds(30));
-
-                var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
-
-                HttpResponseMessage response = null;
-                await policyWrap.ExecuteAsync(async () =>
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
                 {
-                    response = await httpClient.PostAsync(MinuteBarRoute, new StringContent(json, Encoding.UTF8, "application/json"));
+                    var json = JsonConvert.SerializeObject(request);
+                    var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 1, TimeSpan.FromSeconds(30));
 
-                    return response;
-                });
+                    HttpResponseMessage response = null;
+                    await policy.ExecuteAsync(async () =>
+                    {
+                        response = await httpClient.PostAsync(MinuteBarRoute, new StringContent(json, Encoding.UTF8, "application/json"));
 
-                if (response == null
-                    || !response.IsSuccessStatusCode)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
+                        return response;
+                    });
 
-                    return new GetMinuteBarsResponse();
+                    if (response == null
+                        || !response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository Unsuccessful bmll time bar api repository GET request. {response?.StatusCode}");
+
+                        return new GetMinuteBarsResponse();
+                    }
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var deserialisedResponse = JsonConvert.DeserializeObject<GetMinuteBarsResponse>(jsonResponse);
+
+                    if (deserialisedResponse == null)
+                    {
+                        _logger.LogError($"BmllTimeBarApiRepository was unable to deserialise the response");
+                        return new GetMinuteBarsResponse();
+                    }
+
+                    _logger.LogInformation($"BmllTimeBarApiRepository returning deserialised GET response");
+
+                    return deserialisedResponse;
                 }
-
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<GetMinuteBarsResponse>(jsonResponse);
-
-                if (deserialisedResponse == null)
-                {
-                    _logger.LogError($"BmllTimeBarApiRepository was unable to deserialise the response");
-                    return new GetMinuteBarsResponse();
-                }
-
-                _logger.LogInformation($"BmllTimeBarApiRepository returning deserialised GET response");
-                return deserialisedResponse;
             }
             catch (Exception e)
             {
@@ -246,16 +235,17 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
         {
             try
             {
-                var httpClient = BuildBmllHttpClient();
+                using (var httpClient = _httpClientFactory.GenericHttpClient(_dataLayerConfiguration.BmllServiceUrl))
+                {
+                    var response = await httpClient.GetAsync(HeartbeatRoute, token);
 
-                var response = await httpClient.GetAsync(HeartbeatRoute, token);
+                    if (!response.IsSuccessStatusCode)
+                        _logger.LogError($"HEARTBEAT FOR BMLL TIME BAR DATA API REPOSITORY NEGATIVE");
+                    else
+                        _logger.LogInformation($"HEARTBEAT POSITIVE FOR TIME BAR API REPOSITORY");
 
-                if (!response.IsSuccessStatusCode)
-                    _logger.LogError($"HEARTBEAT FOR BMLL TIME BAR DATA API REPOSITORY NEGATIVE");
-                else
-                    _logger.LogInformation($"HEARTBEAT POSITIVE FOR TIME BAR API REPOSITORY");
-
-                return response.IsSuccessStatusCode;
+                    return response.IsSuccessStatusCode;
+                }
             }
             catch (Exception e)
             {

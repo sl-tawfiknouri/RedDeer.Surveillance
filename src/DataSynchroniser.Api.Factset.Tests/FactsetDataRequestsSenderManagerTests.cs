@@ -18,10 +18,10 @@ namespace DataSynchroniser.Api.Factset.Tests
             // arrange
             Type[] parameterTypes = new Type[] {
             typeof(MarketDataRequest)};
-            var method = typeof(FactsetDataRequestsSenderManager).GetMethod("Project", BindingFlags.Instance | BindingFlags.NonPublic, null, parameterTypes, new ParameterModifier[] { });
-            var underTest = new FactsetDataRequestsSenderManager(
+            var method = typeof(FactsetDataRequestsApiManager).GetMethod("Project", BindingFlags.Instance | BindingFlags.NonPublic, null, parameterTypes, new ParameterModifier[] { });
+            var underTest = new FactsetDataRequestsApiManager(
                 A.Fake<IFactsetDailyBarApiRepository>(),
-                A.Fake<ILogger<FactsetDataRequestsSenderManager>>());
+                A.Fake<ILogger<FactsetDataRequestsApiManager>>());
             var fakeRequest = A.Fake<MarketDataRequest>();
             
             var inputParams = new object[] { fakeRequest };

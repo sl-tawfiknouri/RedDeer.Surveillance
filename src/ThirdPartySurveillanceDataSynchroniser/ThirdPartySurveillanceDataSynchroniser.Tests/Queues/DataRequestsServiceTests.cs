@@ -37,21 +37,21 @@ namespace DataSynchroniser.Tests.Queues
         }
 
         [Test]
-        public void Constructor_NullLogger_IsExceptional()
+        public void Constructor_NullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(_awsQueueClient, _awsConfiguration, _sysCtx, _serialiser, _requestManager, null));
         }
 
         [Test]
-        public void Constructor_NullAwsQueueClient_IsExceptional()
+        public void Constructor_NullAwsQueueClient_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(null, _awsConfiguration, _sysCtx, _serialiser, _requestManager, _logger));
         }
 
         [Test]
-        public void Constructor_NullAwsConfiguration_IsExceptional()
+        public void Constructor_NullAwsConfiguration_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataRequestSubscriber(_awsQueueClient, null, _sysCtx, _serialiser, _requestManager, _logger));

@@ -6,30 +6,34 @@ using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
+using PollyFacade.Policies.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class BmllDataRequestsManager : IBmllDataRequestManager
     {
-        private readonly IBmllDataRequestsSenderManager _senderManager;
+        private readonly IBmllDataRequestsApiManager _apiManager;
         private readonly IBmllDataRequestsStorageManager _storageManager;
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<BmllDataRequestsManager> _logger;
 
         public BmllDataRequestsManager(
-            IBmllDataRequestsSenderManager senderManager,
+            IBmllDataRequestsApiManager apiManager,
             IBmllDataRequestsStorageManager storageManager,
+            IPolicyFactory policyFactory,
             ILogger<BmllDataRequestsManager> logger)
         {
-            _senderManager = senderManager ?? throw new ArgumentNullException(nameof(senderManager));
+            _apiManager = apiManager ?? throw new ArgumentNullException(nameof(apiManager));
             _storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Submit(string systemOperationId, List<MarketDataRequest> bmllRequests)
+        public async Task Submit(string systemOperationId, IReadOnlyCollection<MarketDataRequest> bmllRequests)
         {
-            bmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
+            var filteredBmllRequests = bmllRequests.Where(req => !req?.IsCompleted ?? false).ToList();
 
-            var splitLists = SplitList(bmllRequests, 400); // more reliable but slower with a smaller increment
+            var splitLists = SplitList(filteredBmllRequests, 400); // more reliable but slower with a smaller increment
             var splitTasks = SplitList(splitLists, 4);
 
             foreach (var splitTask in splitTasks)
@@ -41,41 +45,38 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
         private async Task ProcessBmllRequests(List<MarketDataRequest> bmllRequests)
         {
-            try
+            _logger.LogInformation($"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests");
+
+            var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
+
+            if (!minuteBarRequests.Any())
             {
-                _logger.LogInformation($"BmllDataRequestsManager received {bmllRequests.Count} data requests");
+                _logger.LogError(
+                    $"{nameof(BmllDataRequestsManager)} received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
-                var minuteBarRequests = bmllRequests.Select(GetMinuteBarsRequest).Where(i => i != null).ToList();
-
-                if (!minuteBarRequests.Any())
-                {
-                    _logger.LogError(
-                        $"BmllDataRequestsManager received {bmllRequests.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
-
-                    return;
-                }
-
-                // REQUEST IT
-                var requests = await _senderManager.Send(bmllRequests, false);
-                var retries = 3;
-
-                while ((!requests.Success) && retries > 0)
-                {
-                    _logger.LogWarning($"BmllDataRequestsManager received {bmllRequests.Count} data requests but had some failed requests. Retrying loop {retries}");
-
-                    var forceCompletion = retries == 1;
-                    requests = await _senderManager.Send(bmllRequests, forceCompletion);
-
-                    retries -= 1;
-                }
-
-                // STORE IT
-                await _storageManager.Store(requests.Value);
+                return;
             }
-            catch (Exception e)
+
+            SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>> requestResult = null;
+            var policyWrap = _policyFactory.PolicyTimeoutGeneric<SuccessOrFailureResult<IReadOnlyCollection<IGetTimeBarPair>>>(
+                TimeSpan.FromMinutes(15),
+                i => !i.Success,
+                3,
+                TimeSpan.FromSeconds(30));
+
+            await policyWrap.ExecuteAsync(async () =>
             {
-                _logger.LogError($"BmllDataRequestsManager Send encountered an exception!", e);
+                requestResult = await _apiManager.Send(bmllRequests, false);
+
+                return requestResult;
+            });
+
+            if (!requestResult?.Success ?? true)
+            {
+                requestResult = await _apiManager.Send(bmllRequests, true);
             }
+
+            await _storageManager.Store(requestResult.Value);
         }
 
         private GetMinuteBarsRequest GetMinuteBarsRequest(MarketDataRequest request)
@@ -83,14 +84,14 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             if (request == null
                 || (!request?.IsValid() ?? true))
             {
-                _logger.LogError($"BmllDataRequestManager had a null request or a request that did not pass data request validation for {request?.Identifiers}");
+                _logger.LogError($"{nameof(BmllDataRequestsManager)} had a null request or a request that did not pass data request validation for {request?.Identifiers}");
 
                 return null;
             }
 
             if (string.IsNullOrWhiteSpace(request.Identifiers.Figi))
             {
-                _logger.LogError($"BmllDataRequestsManager asked to process a security without a figi");
+                _logger.LogError($"{nameof(BmllDataRequestsManager)} asked to process a security without a figi");
 
                 return null;
             }

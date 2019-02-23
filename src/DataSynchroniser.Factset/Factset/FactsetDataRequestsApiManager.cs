@@ -10,25 +10,25 @@ using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Factset
 {
-    public class FactsetDataRequestsSenderManager : IFactsetDataRequestsSenderManager
+    public class FactsetDataRequestsApiManager : IFactsetDataRequestsApiManager
     {
         private readonly IFactsetDailyBarApiRepository _dailyBarRepository;
-        private readonly ILogger<FactsetDataRequestsSenderManager> _logger;
+        private readonly ILogger<FactsetDataRequestsApiManager> _logger;
 
-        public FactsetDataRequestsSenderManager(
+        public FactsetDataRequestsApiManager(
             IFactsetDailyBarApiRepository dailyBarRepository,
-            ILogger<FactsetDataRequestsSenderManager> logger)
+            ILogger<FactsetDataRequestsApiManager> logger)
         {
             _dailyBarRepository = dailyBarRepository ?? throw new ArgumentNullException(nameof(dailyBarRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<FactsetSecurityResponseDto> Send(List<MarketDataRequest> factsetRequests)
+        public async Task<FactsetSecurityResponseDto> Send(IReadOnlyCollection<MarketDataRequest> factsetRequests)
         {
             if (factsetRequests == null
                 || !factsetRequests.Any())
             {
-                _logger?.LogInformation($"FactsetDataRequestsSenderManager Send received a null factset requests list. Returning");
+                _logger?.LogInformation($"{nameof(FactsetDataRequestsApiManager)} Send received a null factset requests list. Returning");
                 return new FactsetSecurityResponseDto();
             }
 
@@ -46,7 +46,7 @@ namespace DataSynchroniser.Api.Factset.Factset
             }
             catch (Exception e)
             {
-                _logger.LogError($"FactsetDataRequestsSenderManager send encountered an exception when posting to the factset daily bar api", e);
+                _logger.LogError($"{nameof(FactsetDataRequestsApiManager)} send encountered an exception when posting to the factset daily bar api", e);
             }
 
             return new FactsetSecurityResponseDto

@@ -24,14 +24,14 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         }
 
         [Test]
-        public void Constructor_TimeBarRepository_Null_Is_Exceptional()
+        public void Constructor_TimeBarRepository_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsGetTimeBars(null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsGetTimeBars(_timeBarRepository, null));
@@ -40,7 +40,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_Null_Keys_Returns_Empty_Collection()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
 
             var result = getTimeBars.GetTimeBars(null);
 
@@ -51,7 +51,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_Empty_Keys_Returns_Empty_Collection()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
 
             var result = getTimeBars.GetTimeBars(new MinuteBarRequestKeyDto[0]);
 
@@ -62,7 +62,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_OneKey_Calls_TimeBarRepository_Once()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
             var keyDtos = new MinuteBarRequestKeyDto[]
             {
                 new MinuteBarRequestKeyDto("a-figi", "1min", new DateTime(2019, 01, 01))
@@ -78,7 +78,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_TwoKey_SameKey_Calls_TimeBarRepository_Once()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
             var keyDtos = new MinuteBarRequestKeyDto[]
             {
                 new MinuteBarRequestKeyDto("a-figi", "1min", new DateTime(2019, 01, 01)),
@@ -95,7 +95,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_TwoKey_DifferentKey_Calls_TimeBarRepository_Twice()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
             var keyDtos = new MinuteBarRequestKeyDto[]
             {
                 new MinuteBarRequestKeyDto("a-figi-1", "1min", new DateTime(2019, 01, 01)),
@@ -112,7 +112,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public void GetTimeBars_ThreeKey_DifferentKey_Calls_TimeBarRepository_Twice()
         {
-            var getTimeBars = Build();
+            var getTimeBars = BuildGetTimeBars();
             var keyDtos = new MinuteBarRequestKeyDto[]
             {
                 new MinuteBarRequestKeyDto("a-figi-1", "1min", new DateTime(2019, 01, 01)),
@@ -127,7 +127,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
                 .MustHaveHappenedTwiceExactly();
         }
 
-        private BmllDataRequestsGetTimeBars Build()
+        private BmllDataRequestsGetTimeBars BuildGetTimeBars()
         {
             return new BmllDataRequestsGetTimeBars(_timeBarRepository, _logger);
         }

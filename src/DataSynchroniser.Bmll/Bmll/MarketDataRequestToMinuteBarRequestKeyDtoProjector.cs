@@ -8,7 +8,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 {
     public class MarketDataRequestToMinuteBarRequestKeyDtoProjector : IMarketDataRequestToMinuteBarRequestKeyDtoProjector
     {
-        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequest> bmllRequests)
+        public IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(IList<MarketDataRequest> bmllRequests)
         {
             if (bmllRequests == null
                 || !bmllRequests.Any())
@@ -23,7 +23,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             return deduplicatedKeys;
         }
 
-        private List<MinuteBarRequestKeyDto> Project(List<MarketDataRequest> bmllRequests)
+        private IList<MinuteBarRequestKeyDto> Project(IList<MarketDataRequest> bmllRequests)
         {
             var keys = new List<MinuteBarRequestKeyDto>();
 
@@ -58,7 +58,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             return keys;
         }
 
-        private List<MinuteBarRequestKeyDto> DeduplicateKeys(List<MinuteBarRequestKeyDto> filteredKeys)
+        private List<MinuteBarRequestKeyDto> DeduplicateKeys(IList<MinuteBarRequestKeyDto> filteredKeys)
         {
             var deduplicatedKeys = new List<MinuteBarRequestKeyDto>();
 

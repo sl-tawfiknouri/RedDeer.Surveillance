@@ -30,7 +30,7 @@ namespace TestHarness.Tests.Commands
         }
 
         [Test]
-        public void Constructor_ConsidersNullAppFactory_ToBeExceptional()
+        public void Constructor_ConsidersNullAppFactory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DemoMarketEquityFileCommand(null));

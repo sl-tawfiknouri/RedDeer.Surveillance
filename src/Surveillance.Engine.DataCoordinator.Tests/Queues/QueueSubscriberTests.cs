@@ -46,35 +46,35 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Queues
         }
 
         [Test]
-        public void Constructor_AwsQueueClient_Null_Is_Exceptional()
+        public void Constructor_AwsQueueClient_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, null, _awsConfiguration, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
-        public void Constructor_AwsConfiguration_Null_Is_Exceptional()
+        public void Constructor_AwsConfiguration_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, null, _serialiser, _systemProcessContext, _logger));
         }
 
         [Test]
-        public void Constructor_Serialiser_Null_Is_Exceptional()
+        public void Constructor_Serialiser_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, null, _systemProcessContext, _logger));
         }
 
         [Test]
-        public void Constructor_SystmeProcessContext_Null_Is_Exceptional()
+        public void Constructor_SystmeProcessContext_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new QueueAutoscheduleSubscriber(_dataVerifier, _autoSchedule, _awsQueueClient, _awsConfiguration, _serialiser, _systemProcessContext, null));

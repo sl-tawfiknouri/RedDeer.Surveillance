@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullParameters_ToBeExceptional()
+        public void Constructor_ConsidersNullParameters_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 
@@ -76,7 +76,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullOpCtx_ToBeExceptional()
+        public void Constructor_ConsidersNullOpCtx_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 
@@ -84,7 +84,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
         }
 
         [Test]
-        public void Constructor_ConsidersNullLogger_ToBeExceptional()
+        public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
 
@@ -110,7 +110,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.High_Volume
             highVolumeRule.OnNext(Trade());
             highVolumeRule.OnNext(Eschaton());
 
-            A.CallTo(() => _opCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _dataRequestSubscriber.SubmitRequest()).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
         }
 

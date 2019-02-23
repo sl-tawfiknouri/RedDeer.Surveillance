@@ -9,42 +9,45 @@ using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using PollyFacade.Policies.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Tests.Bmll
 {
     [TestFixture]
     public class BmllDataRequestsManagerTests
     {
-        private IBmllDataRequestsSenderManager _senderManager;
+        private IBmllDataRequestsApiManager _apiManager;
+        private IPolicyFactory _policyFactory;
         private IBmllDataRequestsStorageManager _storageManager;
         private ILogger<BmllDataRequestsManager> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _senderManager = A.Fake<IBmllDataRequestsSenderManager>();
+            _apiManager = A.Fake<IBmllDataRequestsApiManager>();
+            _policyFactory = A.Fake<IPolicyFactory>();
             _storageManager = A.Fake<IBmllDataRequestsStorageManager>();
             _logger = A.Fake<ILogger<BmllDataRequestsManager>>();
         }
 
         [Test]
-        public void Constructor_ConsidersNull_StorageManager_Exceptional()
+        public void Constructor_StorageManager_IsNull_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, null,  _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, null, _policyFactory, _logger));
         }
 
         [Test]
-        public void Constructor_ConsidersNull_Logger_Exceptional()
+        public void Constructor_ConsidersNull_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_senderManager, _storageManager, null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsManager(_apiManager, _storageManager, _policyFactory, null));
         }
 
         [Test]
-        public async Task Submit_DoesCall_Store_WhenBmllRequests_Submitted()
+        public async Task Submit_BmllRequests_CallsStore()
         {
-            var manager = new BmllDataRequestsManager(_senderManager, _storageManager, _logger);
+            var manager = new BmllDataRequestsManager(_apiManager, _storageManager, _policyFactory, _logger);
 
             var request = new List<MarketDataRequest>()
             {

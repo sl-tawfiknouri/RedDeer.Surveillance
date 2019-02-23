@@ -18,10 +18,10 @@ namespace DataSynchroniser.Api.Factset
             For(typeof(ILogger<>)).Use(typeof(Logger<>));
 
             For<IFactsetDataSynchroniser>().Use<FactsetDataSynchroniser>();
-            For<IMarketDataRequestFilter>().Use<MarketDataRequestFilter>();
+            For<IFactsetDataRequestFilter>().Use<FactsetDataRequestFilter>();
 
             For<IFactsetDataRequestsManager>().Use<FactsetDataRequestsManager>();
-            For<IFactsetDataRequestsSenderManager>().Use<FactsetDataRequestsSenderManager>();
+            For<IFactsetDataRequestsApiManager>().Use<FactsetDataRequestsApiManager>();
         }
     }
 }

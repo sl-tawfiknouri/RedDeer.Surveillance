@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_CostCalculatorFactory_Is_Exceptional()
+        public void Constructor_Null_CostCalculatorFactory_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_RevenueCalculatorFactory_Is_Exceptional()
+        public void Constructor_Null_RevenueCalculatorFactory_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -102,7 +102,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_ExchangeRateProfitCalculator_Is_Exceptional()
+        public void Constructor_Null_ExchangeRateProfitCalculator_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -118,7 +118,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_PercentageComplete_Is_Exceptional()
+        public void Constructor_Null_PercentageComplete_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -134,7 +134,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_OrderFilter_Is_Exceptional()
+        public void Constructor_Null_OrderFilter_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -150,7 +150,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_MarketCacheFactory_Is_Exceptional()
+        public void Constructor_Null_MarketCacheFactory_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -166,7 +166,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_CacheStrategyFactory_Is_Exceptional()
+        public void Constructor_Null_CacheStrategyFactory_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement
@@ -182,7 +182,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             Assert.Throws<ArgumentNullException>(() =>
                 // ReSharper disable once ObjectCreationAsStatement

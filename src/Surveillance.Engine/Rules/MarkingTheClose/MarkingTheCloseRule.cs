@@ -329,7 +329,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();
-                _ruleCtx.EndEvent().EndEventWithMissingDataError();
+                _ruleCtx.EndEvent();
             }
             else
             {

@@ -25,7 +25,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             if (keys == null
                 || !keys.Any())
             {
-                _logger.LogError($"BmllDataRequestsManager received 0 data requests and did not have any to send on after projecting to GetMinuteBarsRequests");
+                _logger.LogError($"{nameof(BmllDataRequestsGetTimeBars)} received 0 data requests and did not have any to send on after projecting to GetMinuteBarsRequests");
 
                 return new IGetTimeBarPair[0];
             }
@@ -35,7 +35,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
 
             if (!consolidatedMinuteBarRequests.Any())
             {
-                _logger.LogError($"BmllDataRequestsManager received {keys.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
+                _logger.LogError($"{nameof(BmllDataRequestsGetTimeBars)} received {keys.Count} data requests but did not have any to send on after projecting to GetMinuteBarsRequests");
 
                 return new IGetTimeBarPair[0];
             }
@@ -58,14 +58,14 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             if (request == null
                 || string.IsNullOrWhiteSpace(request.Figi))
             {
-                _logger.LogError($"BmllDataRequestsSenderManager had a null request or a request that did not pass data request validation for {request?.Figi}");
+                _logger.LogError($"{nameof(BmllDataRequestsGetTimeBars)} had a null request or a request that did not pass data request validation for {request?.Figi}");
 
                 return null;
             }
 
             if (string.IsNullOrWhiteSpace(request.Figi))
             {
-                _logger.LogError($"BmllDataRequestsSenderManager asked to process a security without a figi");
+                _logger.LogError($"{nameof(BmllDataRequestsGetTimeBars)} asked to process a security without a figi");
 
                 return null;
             }
@@ -79,7 +79,7 @@ namespace DataSynchroniser.Api.Bmll.Bmll
             };
         }
 
-        private List<GetMinuteBarsRequest> ConsolidatedMinuteBars(List<GetMinuteBarsRequest> requests)
+        private IList<GetMinuteBarsRequest> ConsolidatedMinuteBars(IList<GetMinuteBarsRequest> requests)
         {
             if (requests == null
                 || !requests.Any())

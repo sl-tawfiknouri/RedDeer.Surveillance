@@ -90,21 +90,21 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
         }
 
         [Test]
-        public void Constructor_NullParametersConsidered_ToBeExceptional()
+        public void Constructor_NullParametersConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_NullLoggerConsidered_ToBeExceptional()
+        public void Constructor_NullLoggerConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
-        public void Constructor_NullRuleContextConsidered_ToBeExceptional()
+        public void Constructor_NullRuleContextConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new LayeringRule(_parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, RuleRunMode.ValidationRun, _tradingLogger));
@@ -170,7 +170,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
             rule.OnNext(eschaton);
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -196,7 +195,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
             rule.OnNext(eschaton);
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -357,7 +355,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappened();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappened();
         }
 
         [Test]
@@ -407,7 +404,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappened();
         }
 
         [Test]
@@ -462,7 +458,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -701,7 +696,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => _operationCtx.EndEventWithMissingDataError()).MustHaveHappenedOnceExactly();
         }
 
         private EquityIntraDayTimeBarCollection SetExchangeFrameToPrice(

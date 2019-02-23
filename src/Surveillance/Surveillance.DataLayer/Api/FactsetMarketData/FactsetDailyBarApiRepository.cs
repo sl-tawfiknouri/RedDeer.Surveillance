@@ -5,25 +5,33 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Polly;
+using PollyFacade.Policies.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
+using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.FactsetMarketData
 {
-    public class FactsetDailyBarApiRepository : BaseApiRepository, IFactsetDailyBarApiRepository
+    public class FactsetDailyBarApiRepository : IFactsetDailyBarApiRepository
     {
         private const string HeartbeatRoute = "api/factset/heartbeat";
         private const string Route = "api/factset/surveillance/v1";
 
+        private readonly IDataLayerConfiguration _dataLayerConfiguration;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IPolicyFactory _policyFactory;
         private readonly ILogger<FactsetDailyBarApiRepository> _logger;
 
         public FactsetDailyBarApiRepository(
             IDataLayerConfiguration dataLayerConfiguration,
+            IHttpClientFactory httpClientFactory,
+            IPolicyFactory policyFactory,
             ILogger<FactsetDailyBarApiRepository> logger)
-            : base(dataLayerConfiguration, logger)
         {
+            _dataLayerConfiguration = dataLayerConfiguration ?? throw new ArgumentNullException(nameof(dataLayerConfiguration));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _policyFactory = policyFactory ?? throw new ArgumentNullException(nameof(policyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -43,44 +51,41 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
                 };
             }
 
-            var httpClient = BuildHttpClient();
-            var json = JsonConvert.SerializeObject(request);
-            HttpResponseMessage responseMessage = null;
-
-            var retryPolicy =
-                Policy
-                    .Handle<Exception>()
-                    .OrResult<HttpResponseMessage>(i => !i.IsSuccessStatusCode)
-                    .WaitAndRetryAsync(5, i => TimeSpan.FromMinutes(1));
-
-            var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromMinutes(3)); 
-            var policyWrap = Policy.WrapAsync(retryPolicy, timeoutPolicy);
-
-            await policyWrap.ExecuteAsync(async () =>
+            using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
+                _dataLayerConfiguration.ClientServiceUrl,
+                _dataLayerConfiguration.SurveillanceUserApiAccessToken))
             {
-                responseMessage = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
+                var json = JsonConvert.SerializeObject(request);
+                var policy = _policyFactory.PolicyTimeoutGeneric<HttpResponseMessage>(TimeSpan.FromMinutes(3), i => !i.IsSuccessStatusCode, 5, TimeSpan.FromMinutes(1));
 
-                return responseMessage;
-            });
+                HttpResponseMessage responseMessage = null;
+                await policy.ExecuteAsync(async () =>
+                {
+                    responseMessage = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
 
-            if (responseMessage == null
-                || !responseMessage.IsSuccessStatusCode)
-            {
-                _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
-                return new FactsetSecurityResponseDto();
+                    return responseMessage;
+                });
+
+                if (responseMessage == null
+                    || !responseMessage.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to elicit a successful http response {responseMessage?.StatusCode}");
+                    return new FactsetSecurityResponseDto();
+                }
+
+                var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+                var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
+
+                if (deserialisedResponse == null)
+                {
+                    _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to deserialise the response");
+                    return new FactsetSecurityResponseDto();
+                }
+
+                _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling returning deserialised GET response");
+
+                return deserialisedResponse;
             }
-
-            var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
-            var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
-
-            if (deserialisedResponse == null)
-            {
-                _logger.LogError($"FactsetDailyBarApiRepository GetWithTransientFaultHandling was unable to deserialise the response");
-                return new FactsetSecurityResponseDto();
-            }
-
-            _logger.LogInformation($"FactsetDailyBarApiRepository GetWithTransientFaultHandling returning deserialised GET response");
-            return deserialisedResponse;
         }
 
         public async Task<FactsetSecurityResponseDto> Get(FactsetSecurityDailyRequest request)
@@ -99,32 +104,35 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
                 };
             }
 
-            var httpClient = BuildHttpClient();
-
             try
             {
-                var json = JsonConvert.SerializeObject(request);
-                var response = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
-
-                if (response == null
-                    || !response.IsSuccessStatusCode)
+                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
+                    _dataLayerConfiguration.ClientServiceUrl,
+                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
                 {
-                    _logger.LogError($"FactsetDailyBarApiRepository Unsuccessful factset time bar api repository GET request. {response?.StatusCode}");
+                    var json = JsonConvert.SerializeObject(request);
+                    var response = await httpClient.PostAsync(Route, new StringContent(json, Encoding.UTF8, "application/json"));
 
-                    return new FactsetSecurityResponseDto();
+                    if (response == null
+                        || !response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError($"FactsetDailyBarApiRepository Unsuccessful factset time bar api repository GET request. {response?.StatusCode}");
+
+                        return new FactsetSecurityResponseDto();
+                    }
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
+
+                    if (deserialisedResponse == null)
+                    {
+                        _logger.LogError($"FactsetDailyBarApiRepository was unable to deserialise the response");
+                        return new FactsetSecurityResponseDto();
+                    }
+
+                    _logger.LogInformation($"FactsetDailyBarApiRepository returning deserialised GET response");
+                    return deserialisedResponse;
                 }
-
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var deserialisedResponse = JsonConvert.DeserializeObject<FactsetSecurityResponseDto>(jsonResponse);
-
-                if (deserialisedResponse == null)
-                {
-                    _logger.LogError($"FactsetDailyBarApiRepository was unable to deserialise the response");
-                    return new FactsetSecurityResponseDto();
-                }
-
-                _logger.LogInformation($"FactsetDailyBarApiRepository returning deserialised GET response");
-                return deserialisedResponse;
             }
             catch (Exception e)
             {
@@ -139,16 +147,19 @@ namespace Surveillance.DataLayer.Api.FactsetMarketData
         {
             try
             {
-                var httpClient = BuildHttpClient();
+                using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
+                    _dataLayerConfiguration.ClientServiceUrl,
+                    _dataLayerConfiguration.SurveillanceUserApiAccessToken))
+                {
+                    var response = await httpClient.GetAsync(HeartbeatRoute, token);
 
-                var response = await httpClient.GetAsync(HeartbeatRoute, token);
+                    if (!response.IsSuccessStatusCode)
+                        _logger.LogError($"HEARTBEAT FOR FACTSET TIME BAR DATA API REPOSITORY NEGATIVE");
+                    else
+                        _logger.LogInformation($"HEARTBEAT POSITIVE FOR FACTSET TIME BAR API REPOSITORY");
 
-                if (!response.IsSuccessStatusCode)
-                    _logger.LogError($"HEARTBEAT FOR FACTSET TIME BAR DATA API REPOSITORY NEGATIVE");
-                else
-                    _logger.LogInformation($"HEARTBEAT POSITIVE FOR FACTSET TIME BAR API REPOSITORY");
-
-                return response.IsSuccessStatusCode;
+                    return response.IsSuccessStatusCode;
+                }
             }
             catch (Exception e)
             {

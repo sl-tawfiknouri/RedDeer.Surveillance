@@ -11,9 +11,9 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         [Test]
         public void Filter_Null_Returns_False()
         {
-            var filter = Build();
+            var filter = BuildRequestFilter();
 
-            var result = filter.Filter(null);
+            var result = filter.ValidAssetType(null);
 
             Assert.IsFalse(result);
         }
@@ -21,11 +21,11 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         [Test]
         public void Filter_Empty_Cfi_Returns_False()
         {
-            var filter = Build();
+            var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", null, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsFalse(result);
         }
@@ -45,11 +45,11 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         [TestCase("M")]
         public void Filter_NonEquity_Cfi_Returns_False(string cfi)
         {
-            var filter = Build();
+            var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsFalse(result);
         }
@@ -67,18 +67,18 @@ namespace DataSynchroniser.Api.Bmll.Tests.Filters
         [TestCase("EM")]
         public void Filter_Equity_Cfi_Returns_True(string cfi)
         {
-            var filter = Build();
+            var filter = BuildRequestFilter();
             var instrument = InstrumentIdentifiers.Null();
             var emptyCfiRequest = new MarketDataRequest("id", "XLON", cfi, instrument, null, null, null, false);
 
-            var result = filter.Filter(emptyCfiRequest);
+            var result = filter.ValidAssetType(emptyCfiRequest);
 
             Assert.IsTrue(result);
         }
 
-        private MarketDataRequestFilter Build()
+        private BmllDataRequestFilter BuildRequestFilter()
         {
-            return new MarketDataRequestFilter();
+            return new BmllDataRequestFilter();
         }
        
     }

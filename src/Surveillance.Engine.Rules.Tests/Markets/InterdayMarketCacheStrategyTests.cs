@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Markets
         }
 
         [Test]
-        public void Constructor_Cache_Null_Is_Exceptional()
+        public void Constructor_Cache_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new InterdayMarketCacheStrategy(null));

@@ -5,8 +5,8 @@ using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 
 namespace DataSynchroniser.Api.Factset.Factset.Interfaces
 {
-    public interface IFactsetDataRequestsSenderManager
+    public interface IFactsetDataRequestsApiManager
     {
-        Task<FactsetSecurityResponseDto> Send(List<MarketDataRequest> factsetRequests);
+        Task<FactsetSecurityResponseDto> Send(IReadOnlyCollection<MarketDataRequest> factsetRequests);
     }
 }

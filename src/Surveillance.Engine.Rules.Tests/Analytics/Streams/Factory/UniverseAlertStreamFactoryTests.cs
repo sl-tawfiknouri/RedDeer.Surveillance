@@ -24,14 +24,14 @@ namespace Surveillance.Engine.Rules.Tests.Analytics.Streams.Factory
         }
 
         [Test]
-        public void Constructor_Considers_Null_Unsubscriber_To_Be_Exceptional()
+        public void Constructor_Considers_Null_Unsubscriber_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseAlertStreamFactory(null, _logger));
         }
 
         [Test]
-        public void Constructor_Considers_Null_Logger_To_Be_Exceptional()
+        public void Constructor_Considers_Null_Logger_To_Be_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new UniverseAlertStreamFactory(_unsubscriberFactory, null));

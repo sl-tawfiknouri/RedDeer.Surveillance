@@ -24,21 +24,21 @@ namespace Surveillance.Engine.DataCoordinator.Tests.Coordinator
         }
 
         [Test]
-        public void Constructor_OrdersRepository_Null_Is_Exceptional()
+        public void Constructor_OrdersRepository_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataVerifier(null, _orderAllocationRepository, _logger));
         }
 
         [Test]
-        public void Constructor_OrderAllocationsRepository_Null_Is_Exceptional()
+        public void Constructor_OrderAllocationsRepository_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataVerifier(_ordersRepository, null, _logger));
         }
 
         [Test]
-        public void Constructor_Logger_Null_Is_Exceptional()
+        public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new DataVerifier(_ordersRepository, _orderAllocationRepository, null));

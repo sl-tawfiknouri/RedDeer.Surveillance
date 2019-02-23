@@ -10,6 +10,7 @@ using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using PollyFacade.Policies.Interfaces;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 
@@ -22,7 +23,8 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         private IBmllDataRequestsGetTimeBars _requestsGetTimeBars;
         private IMarketDataRequestToMinuteBarRequestKeyDtoProjector _marketDataRequestProjector;
         private IBmllTimeBarApiRepository _timeBarRepository;
-        private ILogger<BmllDataRequestsSenderManager> _logger;
+        private IPolicyFactory _policyFactory;
+        private ILogger<BmllDataRequestsApiManager> _logger;
 
         [SetUp]
         public void Setup()
@@ -30,7 +32,8 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
             _requestsGetTimeBars = A.Fake<IBmllDataRequestsGetTimeBars>();
             _marketDataRequestProjector = A.Fake<IMarketDataRequestToMinuteBarRequestKeyDtoProjector>();
             _timeBarRepository = A.Fake<IBmllTimeBarApiRepository>();
-            _logger = A.Fake<ILogger<BmllDataRequestsSenderManager>>();
+            _policyFactory = A.Fake<IPolicyFactory>();
+            _logger = A.Fake<ILogger<BmllDataRequestsApiManager>>();
 
             A
                 .CallTo(() => _timeBarRepository.HeartBeating(A<CancellationToken>.Ignored))
@@ -38,37 +41,37 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         }
 
         [Test]
-        public void Constructor_Null_GetTimeBars_Is_Exceptional()
+        public void Constructor_Null_GetTimeBars_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(null, _marketDataRequestProjector, _timeBarRepository, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(null, _marketDataRequestProjector, _policyFactory, _timeBarRepository, _logger));
         }
 
         [Test]
-        public void Constructor_Null_Projector_Is_Exceptional()
+        public void Constructor_Null_Projector_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, null, _timeBarRepository, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, null, _policyFactory, _timeBarRepository, _logger));
         }
 
         [Test]
-        public void Constructor_Null_Repository_Is_Exceptional()
+        public void Constructor_Null_Repository_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, _policyFactory, null, _logger));
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, null));
+            Assert.Throws<ArgumentNullException>(() => new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, _policyFactory, _timeBarRepository, null));
         }
 
         [Test]
         public async Task Send_BmllRequests_Null_Returns_Success()
         {
-            var sender = Build();
+            var sender = BuildSenderManager();
 
             var result = await sender.Send(null, true);
 
@@ -80,7 +83,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public async Task Send_BmllRequests_ProjectRequestToKeys_Null_Returns_Success()
         {
-            var sender = Build();
+            var sender = BuildSenderManager();
             var bmllRequests = new List<MarketDataRequest>
             {
                 MarketDataRequest.Null()
@@ -100,7 +103,7 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
         [Test]
         public async Task Send_BmllRequests_OkProjectedKeys_Returns_Success()
         {
-            var sender = Build();
+            var sender = BuildSenderManager();
             var bmllRequests = new List<MarketDataRequest>
             {
                 MarketDataRequest.Null()
@@ -126,9 +129,9 @@ namespace DataSynchroniser.Api.Bmll.Tests.Bmll
             Assert.IsEmpty(result.Value);
         }
 
-        private BmllDataRequestsSenderManager Build()
+        private BmllDataRequestsApiManager BuildSenderManager()
         {
-            return new BmllDataRequestsSenderManager(_requestsGetTimeBars, _marketDataRequestProjector, _timeBarRepository, _logger);
+            return new BmllDataRequestsApiManager(_requestsGetTimeBars, _marketDataRequestProjector, _policyFactory, _timeBarRepository, _logger);
         }
     }
 }

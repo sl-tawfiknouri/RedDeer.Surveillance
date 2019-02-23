@@ -6,6 +6,6 @@ namespace DataSynchroniser.Api.Bmll.Bmll.Interfaces
 {
     public interface IMarketDataRequestToMinuteBarRequestKeyDtoProjector
     {
-        IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(List<MarketDataRequest> bmllRequests);
+        IReadOnlyCollection<MinuteBarRequestKeyDto> ProjectToRequestKeys(IList<MarketDataRequest> bmllRequests);
     }
 }

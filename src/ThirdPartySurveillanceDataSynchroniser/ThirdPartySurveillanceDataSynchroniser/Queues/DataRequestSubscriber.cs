@@ -41,7 +41,7 @@ namespace DataSynchroniser.Queues
 
         public void Initiate()
         {
-            _logger.LogInformation($"DataRequestsService initiate beginning");
+            _logger.LogInformation($"{nameof(DataRequestSubscriber)} initiate beginning");
 
             _messageBusCts?.Cancel();
 
@@ -54,22 +54,22 @@ namespace DataSynchroniser.Queues
                 _messageBusCts.Token,
                 _token);
 
-            _logger.LogInformation($"DataRequestsService initiate completed");
+            _logger.LogInformation($"{nameof(DataRequestSubscriber)} initiate completed");
         }
 
         public void Terminate()
         {
-            _logger.LogInformation($"DataRequestsService terminate beginning");
+            _logger.LogInformation($"{nameof(DataRequestSubscriber)} terminate beginning");
 
             _messageBusCts?.Cancel();
             _messageBusCts = null;
 
-            _logger.LogInformation($"DataRequestsService terminate completed");
+            _logger.LogInformation($"{nameof(DataRequestSubscriber)} terminate completed");
         }
 
         public async Task Execute(string messageId, string messageBody)
         {
-            _logger.LogInformation($"DataRequestsService about to process a message with id of {messageId}");
+            _logger.LogInformation($"{nameof(DataRequestSubscriber)} about to process a message with id of {messageId}");
 
             var opCtx = _systemProcessContext.CreateAndStartOperationContext();
             ISystemProcessOperationThirdPartyDataRequestContext dataCtx = null;
@@ -81,7 +81,7 @@ namespace DataSynchroniser.Queues
 
                 if (!ValidateDataRequest(request.SystemProcessOperationId))
                 {
-                    _logger.LogError($"DataRequestsService received a null or empty system process operation id. Exiting");
+                    _logger.LogError($"{nameof(DataRequestSubscriber)} received a null or empty system process operation id. Exiting");
                     return;
                 }
 
@@ -96,7 +96,7 @@ namespace DataSynchroniser.Queues
                 dataCtx?.EndEvent();
                 opCtx.EndEvent();
 
-                _logger.LogInformation($"DataRequestsService completed processing a message with id of {messageId}");
+                _logger.LogInformation($"{nameof(DataRequestSubscriber)} completed processing a message with id of {messageId}");
             }
         }
 

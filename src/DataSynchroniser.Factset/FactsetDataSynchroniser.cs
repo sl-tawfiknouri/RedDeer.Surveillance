@@ -14,12 +14,12 @@ namespace DataSynchroniser.Api.Factset
     public class FactsetDataSynchroniser : IFactsetDataSynchroniser
     {
         private readonly IFactsetDataRequestsManager _factsetDataRequestsManager;
-        private readonly IMarketDataRequestFilter _requestFilter;
+        private readonly IFactsetDataRequestFilter _requestFilter;
         private readonly ILogger<FactsetDataSynchroniser> _logger;
 
         public FactsetDataSynchroniser(
             IFactsetDataRequestsManager factsetDataRequestsManager,
-            IMarketDataRequestFilter requestFilter,
+            IFactsetDataRequestFilter requestFilter,
             ILogger<FactsetDataSynchroniser> logger)
         {
             _factsetDataRequestsManager = factsetDataRequestsManager ?? throw new ArgumentNullException(nameof(factsetDataRequestsManager));
@@ -34,28 +34,28 @@ namespace DataSynchroniser.Api.Factset
         {
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null or empty system process operation id");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null or empty system process operation id");
                 return;
             }
 
             if (dataRequestContext == null)
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null data request context");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null data request context");
                 return;
             }
 
             if (marketDataRequests == null
                 || !marketDataRequests.Any())
             {
-                _logger.LogError($"FactsetDataSynchroniser Handle received a null or empty market data request collection");
+                _logger.LogError($"{nameof(FactsetDataSynchroniser)} Handle received a null or empty market data request collection");
                 return;
             }
 
-            var filteredMarketDataRequests = marketDataRequests.Where(_requestFilter.Filter).ToList();
+            var filteredMarketDataRequests = marketDataRequests.Where(_requestFilter.ValidAssetType).ToList();
 
             if (!filteredMarketDataRequests.Any())
             {
-                _logger.LogInformation($"FactsetDataSynchroniser Handle received market data requests but none passed the filter");
+                _logger.LogInformation($"{nameof(FactsetDataSynchroniser)} Handle received market data requests but none passed the data request filter (equity CFI)");
                 return;
             }
 

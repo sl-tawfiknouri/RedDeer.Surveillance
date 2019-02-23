@@ -40,22 +40,25 @@ namespace DataSynchroniser.Manager
         {
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
-                _logger.LogError($"DataRequestManager asked to handle a systemProcessOperationId that had a null or empty id");
+                _logger.LogError($"{nameof(DataRequestManager)} asked to handle a systemProcessOperationId that had a null or empty id");
                 dataRequestContext.EventError($"DataRequestManager systemProcessOperationId was null");
                 return;
             }
 
-            _logger.LogInformation($"DataRequestManager handling request with id {systemProcessOperationId}");
+            _logger.LogInformation($"{nameof(DataRequestManager)} handling request with id {systemProcessOperationId}");
 
             var dataRequests = await _dataRequestRepository.DataRequestsForSystemOperation(systemProcessOperationId);
             
-            await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+            // Equity handling
             await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+            await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+
+            // Fixed income handling
             await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
 
             await _rulePublisher.RescheduleRuleRun(systemProcessOperationId, dataRequests);
 
-            _logger.LogInformation($"DataRequestManager completed handling request with id {systemProcessOperationId}");
+            _logger.LogInformation($"{nameof(DataRequestManager)} completed handling request with id {systemProcessOperationId}");
         }
     }
 }

@@ -6,6 +6,6 @@ namespace DataSynchroniser.Api.Factset.Factset.Interfaces
 {
     public interface IFactsetDataRequestsManager
     {
-        Task Submit(List<MarketDataRequest> factsetRequests);
+        Task Submit(IReadOnlyCollection<MarketDataRequest> factsetRequests);
     }
 }

@@ -46,35 +46,35 @@ namespace Surveillance.Engine.Rules.Tests.Factories
         }
 
         [Test]
-        public void Constructor_Null_Order_Filter_Is_Exceptional()
+        public void Constructor_Null_Order_Filter_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(null, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger));
         }
 
         [Test]
-        public void Constructor_Null_Market_Cache_Factory_Is_Exceptional()
+        public void Constructor_Null_Market_Cache_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, null, _tradingHoursManager, _logger, _tradingHistoryLogger));
         }
 
         [Test]
-        public void Constructor_Null_Market_Trading_Hours_Manager_Is_Exceptional()
+        public void Constructor_Null_Market_Trading_Hours_Manager_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, null, _logger, _tradingHistoryLogger));
         }
 
         [Test]
-        public void Constructor_Null_Logger_Is_Exceptional()
+        public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, _tradingHoursManager, null, _tradingHistoryLogger));
         }
 
         [Test]
-        public void Constructor_Null_Trading_History_Logger_Is_Exceptional()
+        public void Constructor_Null_Trading_History_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
             Assert.Throws<ArgumentNullException>(() => new HighVolumeRuleFactory(_orderFilter, _factory, _tradingHoursManager, _logger, null));

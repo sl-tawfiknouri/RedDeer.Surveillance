@@ -41,15 +41,15 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                 if (execution?.Rules == null
                     || !execution.Rules.Any())
                 {
-                    _logger.LogError($"ScheduleDisassembler deserialised message {messageId} but could not find any rules on the scheduled execution");
-                    opCtx.EndEventWithError($"ScheduleDisassembler deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    _logger.LogError($"{nameof(ScheduleDisassembler)} deserialised message {messageId} but could not find any rules on the scheduled execution");
+                    opCtx.EndEventWithError($"{nameof(ScheduleDisassembler)} deserialised message {messageId} but could not find any rules on the scheduled execution");
                     return;
                 }
 
                 var scheduleRule = ValidateScheduleRule(execution);
                 if (!scheduleRule)
                 {
-                    opCtx.EndEventWithError("ScheduleDisassembler did not validate the scheduled execution passed through. Check error logs.");
+                    opCtx.EndEventWithError($"{nameof(ScheduleDisassembler)} did not validate the scheduled execution passed through. Check error logs.");
                     return;
                 }
 
@@ -61,11 +61,11 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                     .EndEvent()
                     .EndEvent();
 
-                _logger.LogInformation($"ScheduleDisassembler read message {messageId} with body {messageBody} for operation {opCtx.Id} has completed");
+                _logger.LogInformation($"{nameof(ScheduleDisassembler)} read message {messageId} with body {messageBody} for operation {opCtx.Id} has completed");
             }
             catch (Exception e)
             {
-                _logger.LogError($"ScheduleDisassembler execute non distributed message encountered a top level exception.", e);
+                _logger.LogError($"{nameof(ScheduleDisassembler)} execute non distributed message encountered a top level exception.", e);
             }
         }
 
@@ -121,8 +121,8 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         await ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleCtx);
                         break;
                     default:
-                        _logger.LogError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
-                        ruleCtx.EventError($"ScheduleDisassembler {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        _logger.LogError($"{nameof(ScheduleDisassembler)} {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
+                        ruleCtx.EventError($"{nameof(ScheduleDisassembler)} {rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         break;
                 }
             }
@@ -137,7 +137,7 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
             if (identifiableRules == null
                 || !identifiableRules.Any())
             {
-                _logger.LogWarning($"ScheduleDisassembler did not have any identifiable rules for rule {rule.Rule}");
+                _logger.LogWarning($"{nameof(ScheduleDisassembler)} did not have any identifiable rules for rule {rule.Rule}");
                 return;
             }
 
@@ -160,9 +160,9 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
 
                     if (identifiableRule == null)
                     {
-                        _logger.LogError($"ScheduleDisassembler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
+                        _logger.LogError($"{nameof(ScheduleDisassembler)} asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
 
-                        ruleCtx.EventError($"ScheduleDisassembler asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
+                        ruleCtx.EventError($"{nameof(ScheduleDisassembler)} asked to schedule an execution for rule {rule.Rule.GetDescription()} with id of {id} which was not found when querying the rule parameter API on the client service.");
 
                         continue;
                     }
@@ -192,14 +192,14 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
             if (ruleParameterTimeWindow == null
                 || ruleTimespan.TotalDays < 7)
             {
-                _logger.LogInformation($"ScheduleDisassembler had a rule time span below 7 days. Scheduling single execution.");
+                _logger.LogInformation($"{nameof(ScheduleDisassembler)} had a rule time span below 7 days. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
             if (ruleParameterTimeWindow.GetValueOrDefault().TotalDays >= ruleTimespan.TotalDays)
             {
-                _logger.LogInformation($"ScheduleDisassembler had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
+                _logger.LogInformation($"{nameof(ScheduleDisassembler)} had a rule parameter time window that exceeded the rule time span. Scheduling single execution.");
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
@@ -208,13 +208,13 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
 
             if (daysToRunRuleFor >= ruleTimespan.TotalDays)
             {
-                _logger.LogInformation($"ScheduleDisassembler had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
+                _logger.LogInformation($"{nameof(ScheduleDisassembler)} had days to run rule for {daysToRunRuleFor} greater than or equal to rule time span total days {ruleTimespan.TotalDays} . Scheduling single execution.");
 
                 await ScheduleSingleExecution(ruleIdentifier, execution, correlationId);
                 return;
             }
 
-            _logger.LogInformation($"ScheduleDisassembler had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
+            _logger.LogInformation($"{nameof(ScheduleDisassembler)} had a time span too excessive for the time window. Utilising time splitter to divide and conquer the requested rule run.");
             await TimeSplitter(ruleIdentifier, execution, ruleParameterTimeWindow, daysToRunRuleFor, correlationId);
         }
 
@@ -281,25 +281,25 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
         {
             if (execution == null)
             {
-                _logger?.LogError($"ScheduleDisassembler had a null scheduled execution. Returning.");
+                _logger?.LogError($"{nameof(ScheduleDisassembler)} had a null scheduled execution. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ScheduleDisassembler had a time series initiation before 2015. Returning.");
+                _logger?.LogError($"{nameof(ScheduleDisassembler)} had a time series initiation before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesTermination.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ScheduleDisassembler had a time series termination before 2015. Returning.");
+                _logger?.LogError($"{nameof(ScheduleDisassembler)} had a time series termination before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
             {
-                _logger?.LogError($"ScheduleDisassembler had a time series initiation that exceeded the time series termination.");
+                _logger?.LogError($"{nameof(ScheduleDisassembler)} had a time series initiation that exceeded the time series termination.");
                 return false;
             }
 

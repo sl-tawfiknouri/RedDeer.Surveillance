@@ -34,8 +34,8 @@ namespace Domain.Scheduling
         TrashAndCash,
         [Description("Fixed Income High Profits")]
         FixedIncomeHighProfits,
-        [Description("Fixed Income High Volume")]
-        FixedIncomeHighVolume,
+        [Description("Fixed Income High Volume Issuance")]
+        FixedIncomeHighVolumeIssuance,
         [Description("Fixed Income Wash Trades")]
         FixedIncomeWashTrades
     }

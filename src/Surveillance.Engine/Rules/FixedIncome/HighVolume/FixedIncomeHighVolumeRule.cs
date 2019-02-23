@@ -31,7 +31,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolume
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.FixedIncomeHighVolume,
+                Domain.Scheduling.Rules.FixedIncomeHighVolumeIssuance,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeRule)}",
                 ruleCtx,

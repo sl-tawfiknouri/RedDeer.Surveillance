@@ -47,18 +47,25 @@ namespace Surveillance.DataLayer.Aurora.Rules
             SELECT LAST_INSERT_ID();";
 
         private const string HasDuplicateSql = @"
+            SET @RuleId = (SELECT RuleId FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorType = (SELECT OrganisationalFactorType FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorValue = (SELECT OrganisationalFactorValue FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+
             SELECT COUNT(*) FROM (
-            SELECT rbo.OrderId 
-	            FROM RuleBreach AS rb
-	            LEFT OUTER JOIN RuleBreachOrders as rbo
+	            SELECT COUNT(*) AS CNT FROM RuleBreach AS rb
+	            RIGHT OUTER JOIN RuleBreachOrders AS rbo
 	            ON rb.Id = rbo.RuleBreachId
-	            WHERE rb.Id = @ruleBreachId
-            AND NOT rbo.OrderId IN (SELECT rbo.OrderId 
-            FROM RuleBreach AS rb
-            LEFT OUTER JOIN RuleBreachOrders AS rbo
-            ON rb.Id = rbo.RuleBreachId
-            WHERE rb.RuleId = (SELECT RuleId FROM RuleBreach WHERE Id = @ruleBreachId)
-            AND Id <> @ruleBreachId)) AS DuplicatesCheck;";
+	            WHERE rb.Id <> @ruleBreachId
+	            AND rb.RuleId = @RuleId
+	            AND rb.OrganisationalFactorType = @OrganisationalFactorType
+	            AND rb.OrganisationalFactorValue = @OrganisationalFactorValue
+	            AND rbo.OrderId = ANY (
+		            SELECT rbo.OrderId FROM RuleBreach AS rb
+		            RIGHT OUTER JOIN RuleBreachOrders AS rbo
+		            ON rb.Id = rbo.RuleBreachId
+		            WHERE rb.Id = @ruleBreachId)
+		            GROUP BY rbo.RuleBreachId) AS InnerCounts
+            WHERE InnerCounts.CNT = (SELECT COUNT(*) FROM RuleBreach AS rb RIGHT OUTER JOIN RuleBreachOrders AS rbo ON rb.Id = rbo.RuleBreachId WHERE rb.Id = @ruleBreachId);";
 
         private const string GetRuleBreachSql = @"SELECT * FROM RuleBreach WHERE Id = @Id";
 

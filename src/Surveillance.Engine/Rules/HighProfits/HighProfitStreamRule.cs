@@ -367,7 +367,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             var clone = (HighProfitStreamRule)this.MemberwiseClone();
             clone.BaseClone();
-            OrganisationFactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

@@ -58,10 +58,13 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            return new HighProfitsRule(
+            var cloneRule = new HighProfitsRule(
                 (IHighProfitStreamRule)_streamRule.Clone(factor),
                 (IHighProfitMarketClosureRule)_marketClosureRule.Clone(factor),
                 _logger);
+            cloneRule.OrganisationFactorValue = factor;
+
+            return cloneRule;
         }
     }
 }

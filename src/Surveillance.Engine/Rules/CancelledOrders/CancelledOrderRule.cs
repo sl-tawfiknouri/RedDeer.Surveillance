@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
         {
             var clone = (CancelledOrderRule)this.MemberwiseClone();
             clone.BaseClone();
-            OrganisationFactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

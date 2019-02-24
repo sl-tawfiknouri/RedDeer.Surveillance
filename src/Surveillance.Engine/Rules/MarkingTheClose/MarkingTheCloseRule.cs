@@ -345,7 +345,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
         {
             var clone = (MarkingTheCloseRule)this.MemberwiseClone();
             clone.BaseClone();
-            OrganisationFactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

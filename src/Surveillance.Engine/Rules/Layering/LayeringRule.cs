@@ -538,7 +538,7 @@ namespace Surveillance.Engine.Rules.Rules.Layering
         {
             var clone = (LayeringRule)this.MemberwiseClone();
             clone.BaseClone();
-            OrganisationFactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

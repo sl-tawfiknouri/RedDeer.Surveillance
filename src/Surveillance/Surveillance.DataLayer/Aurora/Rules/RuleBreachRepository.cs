@@ -157,7 +157,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
                     _logger.LogInformation($"{nameof(RuleBreachRepository)} completed checking duplicates");
 
-                    return result == 0;
+                    return result != 0;
                 }
             }
             catch (Exception e)
@@ -189,7 +189,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dto.AssetCfi, 
                 dto.ReddeerEnrichmentId,
                 dto.SystemOperationId,
-                dto.OrganisationalFactor,
+                dto.OrganisationalFactorType,
                 dto.OrganisationalFactorValue,
                 new int[0]);
         }
@@ -224,7 +224,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 SystemOperationId = message?.SystemOperationId;
                 ReddeerEnrichmentId = message?.ReddeerEnrichmentId;
 
-                OrganisationalFactor = message?.OrganisationalFactor ?? 0;
+                OrganisationalFactorType = message?.OrganisationalFactor ?? 0;
                 OrganisationalFactorValue = message?.OrganisationalFactorValue ?? string.Empty;
             }
 
@@ -241,7 +241,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             public string AssetCfi { get; set; }
             public string ReddeerEnrichmentId { get; set; }
             public string SystemOperationId { get; set; }
-            public int OrganisationalFactor { get; set; }
+            public int OrganisationalFactorType { get; set; }
             public string OrganisationalFactorValue { get; set; }
         }
     }

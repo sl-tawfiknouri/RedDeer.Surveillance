@@ -382,7 +382,7 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
         {
             var clone = (HighVolumeRule)this.MemberwiseClone();
             clone.BaseClone();
-            OrganisationFactorValue = factor;
+            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

@@ -365,9 +365,16 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
         public virtual IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (HighProfitStreamRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (HighProfitStreamRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

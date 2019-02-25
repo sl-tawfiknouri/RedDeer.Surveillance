@@ -233,9 +233,16 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (SpoofingRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (SpoofingRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

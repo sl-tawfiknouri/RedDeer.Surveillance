@@ -536,9 +536,16 @@ namespace Surveillance.Engine.Rules.Rules.Layering
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (LayeringRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (LayeringRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

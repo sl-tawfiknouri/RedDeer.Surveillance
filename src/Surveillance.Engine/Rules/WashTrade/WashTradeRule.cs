@@ -467,9 +467,16 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
         public IUniverseCloneableRule Clone(IFactorValue value)
         {
+            var clone = (WashTradeRule)Clone();
+            clone.OrganisationFactorValue = value;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (WashTradeRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = value;
 
             return clone;
         }

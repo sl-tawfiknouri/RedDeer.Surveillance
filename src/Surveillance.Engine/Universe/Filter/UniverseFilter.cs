@@ -330,11 +330,21 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            _logger.LogInformation($"Clone with organisational factors called; returning a memberwise clone");
+            // we will want to keep the same universe observers here
+
+            var newClone = (IUniverseCloneableRule) Clone();
+            newClone.OrganisationFactorValue = factor;
+
+            return newClone;
+        }
+
+        public object Clone()
+        {
             _logger.LogInformation($"Clone called; returning a memberwise clone");
             // we will want to keep the same universe observers here
 
             var newClone = (IUniverseCloneableRule)this.MemberwiseClone();
-            newClone.OrganisationFactorValue = factor;
 
             return newClone;
         }

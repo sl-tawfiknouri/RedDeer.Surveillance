@@ -194,9 +194,16 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (CancelledOrderRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (CancelledOrderRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

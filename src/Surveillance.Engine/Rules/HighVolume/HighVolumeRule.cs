@@ -380,9 +380,16 @@ namespace Surveillance.Engine.Rules.Rules.HighVolume
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (HighVolumeRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (HighVolumeRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

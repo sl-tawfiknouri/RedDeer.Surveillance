@@ -66,5 +66,15 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
             return cloneRule;
         }
+
+        public object Clone()
+        {
+            var cloneRule = new HighProfitsRule(
+                (IHighProfitStreamRule)_streamRule.Clone(),
+                (IHighProfitMarketClosureRule)_marketClosureRule.Clone(),
+                _logger);
+
+            return cloneRule;
+        }
     }
 }

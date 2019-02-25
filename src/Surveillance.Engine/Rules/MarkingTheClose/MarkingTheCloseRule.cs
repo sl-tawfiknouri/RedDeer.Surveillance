@@ -343,9 +343,16 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
+            var clone = (MarkingTheCloseRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
+        }
+
+        public object Clone()
+        {
             var clone = (MarkingTheCloseRule)this.MemberwiseClone();
             clone.BaseClone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

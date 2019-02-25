@@ -368,7 +368,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             UPDATE OrdersAllocation AS oa
             LEFT OUTER JOIN Orders AS ord
             ON oa.OrderId = ord.ClientOrderId
-            SET Oa.Live = 1
+            SET oa.Live = 1
             WHERE ord.Id IS NOT NULL;";
 
         private const string GetStaleOrders = @"

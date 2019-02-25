@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -65,6 +66,8 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -121,12 +124,13 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             if ((dailyVolumeBreach == null || !dailyVolumeBreach.HasBreach())
                 && (windowVolumeBreach == null || !windowVolumeBreach.HasBreach()))
             {
-                _logger.LogInformation($"MarkingTheCloseRule had no breaches for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}");
+                _logger.LogInformation($"had no breaches for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}");
                 return;
             }
 
             var position = new TradePosition(marketSecurities.ToList());
             var breach = new MarkingTheCloseBreach(
+                OrganisationFactorValue,
                 _ruleCtx.SystemProcessOperationContext(),
                 _ruleCtx.CorrelationId(),
                 _parameters.Window,
@@ -137,7 +141,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
                 dailyVolumeBreach ?? new VolumeBreach(),
                 windowVolumeBreach ?? new VolumeBreach());
 
-            _logger.LogInformation($"MarkingTheCloseRule had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
+            _logger.LogInformation($"had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
             var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
@@ -163,7 +167,7 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             if (dataResponse.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"Marking The Close Rule had missing data for {securities.Peek().Instrument.Identifiers} on {UniverseDateTime}");
+                _logger.LogInformation($"had missing data for {securities.Peek().Instrument.Identifiers} on {UniverseDateTime}");
                 return new VolumeBreach();
             }
 
@@ -299,17 +303,17 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred in the Marking The Close Rule");
+            _logger.LogInformation("Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred at {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in Marking The Close Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred at {exchange?.MarketClose}");
 
             _processingMarketClose = true;
             _latestMarketClosure = exchange;
@@ -319,12 +323,12 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured in Marking The Close Rule");
+            _logger.LogInformation("Eschaton occured");
 
             if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
-                _logger.LogInformation("Marking The Close Rule had missing data at eschaton. Recording to op ctx.");
+                _logger.LogInformation("had missing data at eschaton. Recording to op ctx.");
                 var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
@@ -335,6 +339,14 @@ namespace Surveillance.Engine.Rules.Rules.MarkingTheClose
             {
                 _ruleCtx?.EndEvent();
             }
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (MarkingTheCloseRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
         }
 
         public object Clone()

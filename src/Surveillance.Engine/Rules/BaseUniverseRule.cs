@@ -17,7 +17,6 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 // ReSharper disable InconsistentlySynchronizedField
-
 namespace Surveillance.Engine.Rules.Rules
 {
     public abstract class BaseUniverseRule : IUniverseRule

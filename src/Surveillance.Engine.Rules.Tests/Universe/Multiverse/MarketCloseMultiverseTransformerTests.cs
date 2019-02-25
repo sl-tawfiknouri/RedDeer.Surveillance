@@ -87,7 +87,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Multiverse
         {
             var otherSub = A.Fake<IUniverseCloneableRule>();
             var cloneSub = A.Fake<IUniverseCloneableRule>();
-            A.CallTo(() => otherSub.Clone()).Returns(cloneSub);
+            A.CallTo(() => otherSub.Clone(A<IFactorValue>.Ignored)).Returns(cloneSub);
             var transformer = new MarketCloseMultiverseTransformer(new UnsubscriberFactory<IUniverseEvent>(), _logger);
 
             var sub = transformer.Subscribe(_observer);

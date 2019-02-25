@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
@@ -28,11 +29,13 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
         private IRuleBreachOrdersRepository _ruleBreachOrdersRepository;
         private IRuleBreachToRuleBreachOrdersMapper _ruleBreachToRuleBreachOrdersMapper;
         private IRuleBreachToRuleBreachMapper _ruleBreachToRuleBreachMapper;
+        private IFactorValue _factorValue;
         private FinancialInstrument _security;
 
         [SetUp]
         public void Setup()
         {
+            _factorValue = A.Fake<IFactorValue>();
             _publisher = A.Fake<IQueueCasePublisher>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
@@ -77,6 +80,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.HighProfits
 
             var breach =
                 new HighProfitRuleBreach(
+                    _factorValue,
                     _opCtx,
                     "correlation-id",
                     _parameters,

@@ -8,10 +8,10 @@ START TRANSACTION;
 
     INSERT INTO Migrations VALUES(23, "unique constraint for client order id.sql", now());
 
-	ALTER TABLE DealerOrders ADD CONSTRAINT unique_dealer_order_client_id UNIQUE (ClientDealerOrderId);
-	ALTER TABLE Orders ADD CONSTRAINT unique_order_client_id UNIQUE(ClientOrderId);
-	
 	ALTER TABLE OrdersAllocation DROP INDEX unique_orders_allocation;
 	ALTER TABLE OrdersAllocation ADD CONSTRAINT unique_orders_allocation UNIQUE(OrderId, Fund, Strategy, ClientAccountId);
+
+	ALTER TABLE DealerOrders ADD CONSTRAINT unique_dealer_order_client_id UNIQUE (ClientDealerOrderId);
+	ALTER TABLE Orders ADD CONSTRAINT unique_order_client_id UNIQUE(ClientOrderId);
 
 COMMIT;

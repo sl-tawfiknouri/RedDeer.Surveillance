@@ -18,6 +18,7 @@ using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Layering;
 using Surveillance.Engine.Rules.Tests.Helpers;
@@ -696,6 +697,33 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Layering
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _ruleCtx.EndEvent()).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void Clone_Copies_FactorValue_To_New_Clone()
+        {
+            var rule = BuildRule();
+            var factor = new FactorValue(ClientOrganisationalFactors.Fund, "abcd");
+
+            var clone = rule.Clone(factor);
+
+            Assert.AreEqual(rule.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.None);
+            Assert.AreEqual(rule.OrganisationFactorValue.Value, string.Empty);
+
+            Assert.AreEqual(clone.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.Fund);
+            Assert.AreEqual(clone.OrganisationFactorValue.Value, "abcd");
+        }
+
+        private LayeringRule BuildRule(LayeringRuleParameters parameters = null)
+        {
+            if (parameters == null)
+            {
+                parameters = new LayeringRuleParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
+            }
+
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+
+            return rule;
         }
 
         private EquityIntraDayTimeBarCollection SetExchangeFrameToPrice(

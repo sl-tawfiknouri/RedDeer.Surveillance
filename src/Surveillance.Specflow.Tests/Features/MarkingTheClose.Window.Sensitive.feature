@@ -31,6 +31,18 @@ Scenario: Marking the close just out of window raises 0 alerts
 		 When I run the marking the close rule
 		 Then I will have 0 marking the close alerts
 
+Scenario: Marking the close on the window raises 0 alerts
+		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 15:00:00 |               | Market | Buy       | GBX      |            |                  | 500           | 500          |
+         | Barclays     | 2       | 01/01/2019 15:00:00 |               | Market | Buy       | GBX      |            |                  | 500           | 500          |
+		 	And With the intraday market data :
+		| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
+		| Barclays | 01/01/2019  16:00:00| 1	  | 20  | 10    | GBX      | 5000  |
+		| Barclays | 01/01/2019  15:55:00| 1	  | 20  | 10    | GBX      | 5000  |
+		 When I run the marking the close rule
+		 Then I will have 1 marking the close alerts
+
 Scenario: Marking the close raises 1 alerts
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
          | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -40,6 +52,16 @@ Scenario: Marking the close raises 1 alerts
 		| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
 		| Barclays | 01/01/2019  16:00:00| 1	  | 20  | 10    | GBX      | 5000  |
 		| Barclays | 01/01/2019  15:55:00| 1	  | 20  | 10    | GBX      | 5000  |
+		 When I run the marking the close rule
+		 Then I will have 1 marking the close alerts
+
+Scenario: Marking the close one second before the close raises 1 alerts
+		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 15:59:59 |               | Market | Buy       | GBX      |            |                  | 500           | 500          |
+		 	And With the intraday market data :
+		| SecurityName | Epoch      | Bid | Ask | Price | Currency | Volume |
+		| Barclays | 01/01/2019  16:00:00| 1	  | 20  | 10    | GBX      | 5000  |
 		 When I run the marking the close rule
 		 Then I will have 1 marking the close alerts
 

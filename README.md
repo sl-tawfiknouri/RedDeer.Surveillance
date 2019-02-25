@@ -20,12 +20,16 @@
 | ScheduledRuleQueueName | {env}-surveillance-{client}-scheduledrule |
 | ScheduleRuleDistributedWorkQueueName | {env}-surveillance-{client}-scheduledruledistributedwork|
 | CaseMessageQueueName | {env}-surveillance-{client}-casemessage|
-| TestRuleRunUpdateQueueName | {env}-surveillance-{client}-scheduledrule-dlq|
+| TestRuleRunUpdateQueueName | {env}-surveillance-{client}-scheduledrule|
+| UploadCoordinatorQueueName | {env}-surveillance-{client}-uploadcoordinator |
 
 #### Database
 |Configuration Setting|Example value|
 |--|--|
 |AuroraConnectionString|server=0.0.0.0; port=0000;uid=any;pwd='any';database={env}_{dbname}; Allow User Variables=True|
+
+#### Pre-requisite configuration settings
+| AutoScheduleRules | true |
 
 
 ## Data Importer Service
@@ -37,6 +41,7 @@
 | ScheduleRuleDistributedWorkQueueName | {env}-surveillance-{client}-scheduledruledistributedwork |
 | CaseMessageQueueName | {env}-surveillance-{client}-casemessage |
 | DataImportS3UploadQueueName | {env}-surveillance-{client}-ftp |
+| UploadCoordinatorQueueName | {env}-surveillance-{client}-uploadcoordinator |
 
 #### Client Service
 |Configuration Setting|Example value|
@@ -58,8 +63,6 @@
 | DataImportTradeFileFtpDirectoryPath | {dirname_1}\\FtpTrade |
 | DataImportEquityFileFtpDirectoryPath | {dirname_2}\\FtpEquity |
 | DataImportAllocationFileFtpDirectoryPath | {dirname_3}\\FtpAllocation |  
-| DataImportServiceAutoSchedule | true |
-
 
 ## Data Synchronizer Service
 ### Dependencies

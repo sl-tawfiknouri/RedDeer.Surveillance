@@ -112,7 +112,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
             if (hasBreachedSpoofingRule)
             {
-                _logger.LogInformation($"SpoofingRule RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
+                _logger.LogInformation($"RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
                 RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
             }
         }
@@ -171,8 +171,8 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
                     sellPosition.Add(nextTrade);
                     break;
                 default:
-                    _logger.LogError("Spoofing rule not considering an out of range order direction");
-                    _ruleCtx.EventException("Spoofing rule not considering an out of range order direction");
+                    _logger.LogError("not considering an out of range order direction");
+                    _ruleCtx.EventException("not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
@@ -182,7 +182,7 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
             ITradePosition tradingPosition,
             ITradePosition opposingPosition)
         {
-            _logger.LogInformation($"Spoofing rule breach detected for {mostRecentTrade.Instrument?.Identifiers}");
+            _logger.LogInformation($"detected for {mostRecentTrade.Instrument?.Identifiers}");
 
             var ruleBreach =
                 new SpoofingRuleBreach(
@@ -212,22 +212,22 @@ namespace Surveillance.Engine.Rules.Rules.Spoofing
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred in the Spoofing Rule");
+            _logger.LogInformation("Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred at {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in Spoofing Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred at {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured in Spoofing Rule");
+            _logger.LogInformation("Eschaton occured");
             _ruleCtx?.EndEvent();
         }
 

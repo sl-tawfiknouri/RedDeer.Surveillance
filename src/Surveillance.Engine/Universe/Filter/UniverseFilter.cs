@@ -50,13 +50,13 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         {
             if (observer == null)
             {
-                _logger.LogError($"UniverseFilter subscribe received a null observer");
+                _logger.LogError($"subscribe received a null observer");
                 return null;
             }
 
             if (!_universeObservers.ContainsKey(observer))
             {
-                _logger.LogInformation($"UniverseFilter subscribing a new observer");
+                _logger.LogInformation($"subscribing a new observer");
                 _universeObservers.TryAdd(observer, observer);
             }
 
@@ -65,7 +65,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public void OnCompleted()
         {
-            _logger.LogInformation($"UniverseFilter has received OnCompleted() from the stream. Forwarding to observers.");
+            _logger.LogInformation($"has received OnCompleted() from the stream. Forwarding to observers.");
 
             foreach (var obs in _universeObservers)
             {
@@ -75,7 +75,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"UniverseFilter OnError() received an exception", error);
+            _logger.LogError($"OnError() received an exception", error);
 
             foreach (var obs in _universeObservers)
             {
@@ -100,7 +100,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
-            _logger.LogInformation($"UniverseFilter is not filtering event at {value.EventTime} with type {value.StateChange}");
+            _logger.LogInformation($"is not filtering event at {value.EventTime} with type {value.StateChange}");
             foreach (var obs in _universeObservers)
             {
                 obs.Value?.OnNext(value);
@@ -151,7 +151,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (filterResult)
             {
-                _logger.LogInformation($"UniverseFilter FilterOnAccount filtering out order with id {frame.ReddeerOrderId}");
+                _logger.LogInformation($"FilterOnAccount filtering out order with id {frame.ReddeerOrderId}");
             }
 
             return filterResult;
@@ -201,7 +201,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (filterResult)
             {
-                _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out order with id {frame.ReddeerOrderId}");
+                _logger.LogInformation($"FilterOnTraders filtering out order with id {frame.ReddeerOrderId}");
             }
 
             return filterResult;
@@ -250,7 +250,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
+                        _logger.LogInformation($"FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
                     }
 
                     return filter;
@@ -267,7 +267,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
+                        _logger.LogInformation($"FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
                     }
 
                     return filter;
@@ -296,7 +296,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
+                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
                     }
 
                     return filter;
@@ -307,7 +307,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 {
                     if (tradeFrame?.Market?.MarketIdentifierCode == null)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
+                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
 
                         return true;
                     }
@@ -316,7 +316,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
                     if (filter)
                     {
-                        _logger.LogInformation($"UniverseFilter FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
+                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
                     }
 
                     return filter;
@@ -330,7 +330,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
         {
-            _logger.LogInformation($"UniverseFilter Clone called; returning a memberwise clone");
+            _logger.LogInformation($"Clone called; returning a memberwise clone");
             // we will want to keep the same universe observers here
 
             var newClone = (IUniverseCloneableRule)this.MemberwiseClone();

@@ -81,13 +81,13 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (message == null)
             {
-                _logger.LogWarning($"{nameof(RuleBreachRepository)} saving rule was passed a null message. Returning.");
+                _logger.LogWarning($"saving rule was passed a null message. Returning.");
                 return null;
             }
 
             try
             {
-                _logger.LogInformation($"{nameof(RuleBreachRepository)} saving rule breach to repository");
+                _logger.LogInformation($"saving rule breach to repository");
                 var dto = new RuleBreachDto(message);
 
                 using (var dbConnection = _dbConnectionFactory.BuildConn())
@@ -95,14 +95,14 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed saving rule breach to repository");
+                    _logger.LogInformation($"completed saving rule breach to repository");
 
                     return result;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return null;
@@ -112,20 +112,20 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                _logger.LogWarning($"{nameof(RuleBreachRepository)} get rule breach was passed a null message. Returning.");
+                _logger.LogWarning($"get rule breach was passed a null message. Returning.");
                 return null;
             }
 
             try
             {
-                _logger.LogInformation($"{nameof(RuleBreachRepository)} fetching rule breaches");
+                _logger.LogInformation($"fetching rule breaches");
 
                 using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QuerySingleAsync<RuleBreachDto>(GetRuleBreachSql, new { Id = id}))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed fetching rule breach");
+                    _logger.LogInformation($"completed fetching rule breach");
 
                     var mappedResult = Project(result);
 
@@ -134,7 +134,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             }
             catch (Exception e)
             {
-                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return null;
@@ -149,20 +149,20 @@ namespace Surveillance.DataLayer.Aurora.Rules
 
             try
             {
-                _logger.LogInformation($"{nameof(RuleBreachRepository)} checking duplicates");
+                _logger.LogInformation($"checking duplicates");
                 using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateSql, new { RuleBreachId = ruleId }))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"{nameof(RuleBreachRepository)} completed checking duplicates");
+                    _logger.LogInformation($"completed checking duplicates");
 
                     return result != 0;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"{nameof(RuleBreachRepository)} error for Create {e.Message} - {e?.InnerException?.Message}");
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return false;

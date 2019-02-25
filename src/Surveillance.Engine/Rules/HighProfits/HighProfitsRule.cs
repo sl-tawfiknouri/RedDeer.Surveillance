@@ -31,21 +31,21 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
         public void OnCompleted()
         {
-            _logger.LogInformation($"HighProfitsRule OnCompleted() event received. Passing onto high profit and high profit market close rules.");
+            _logger.LogInformation($"OnCompleted() event received. Passing onto high profit and high profit market close rules.");
             _streamRule.OnCompleted();
             _marketClosureRule.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"HighProfitsRule OnCompleted() event received", error);
+            _logger.LogError($"OnCompleted() event received", error);
             _streamRule.OnError(error);
             _marketClosureRule.OnError(error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
-            _logger.LogInformation($"HighProfitsRule OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
+            _logger.LogInformation($"OnNext() event received at {value.EventTime}. Passing onto high profit and high profit market close rules.");
 
             // if removing the market closure rule
             // ensure that the alert subscriber is also updated to remove expectation of 2x flush events

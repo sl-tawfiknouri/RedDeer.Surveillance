@@ -90,13 +90,13 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
 
             if (ruleBreach.HasBreachedRule())
             {
-                _logger.LogInformation($"CancelledOrderRule RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
+                _logger.LogInformation($"RunRule has breached parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
                 var message = new UniverseAlertEvent(Domain.Scheduling.Rules.CancelledOrders, ruleBreach, _opCtx);
                 _alertStream.Add(message);
             }
             else
             {
-                _logger.LogInformation($"CancelledOrderRule RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
+                _logger.LogInformation($"RunRule did not breach parameter conditions for {mostRecentTrade?.Instrument?.Identifiers}.");
             }
         }
 
@@ -173,22 +173,22 @@ namespace Surveillance.Engine.Rules.Rules.CancelledOrders
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Universe Genesis occurred in the Cancelled Order Rule");
+            _logger.LogInformation("Universe Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Trading Opened for exchange {exchange.MarketId} in the Cancelled Order Rule");
+            _logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Trading closed for exchange {exchange.MarketId} in the Cancelled Order Rule.");
+            _logger.LogInformation($"Trading closed for exchange {exchange.MarketId}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Universe Eschaton occurred in the Cancelled Order Rule");
+            _logger.LogInformation("Universe Eschaton occurred");
             _opCtx?.EndEvent();
         }
 

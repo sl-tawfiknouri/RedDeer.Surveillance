@@ -145,21 +145,21 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
             if (revenue == null)
             {
-                Logger.LogInformation($"High profits rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
+                Logger.LogInformation($"rule had null for revenues for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
 
                 return;
             }
 
             if (cost == null)
             {
-                Logger.LogError($"High profits rule - something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
+                Logger.LogError($"something went wrong. We have calculable revenues but not costs for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Returning.");
                 return;
             }
 
             if (revenue.Value.Value <= 0
                 || cost.Value.Value <= 0)
             {
-                Logger.LogInformation($"High profit rules had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
+                Logger.LogInformation($"had revenue of {revenue.Value.Value} and cost of {cost.Value.Value}. Returning.");
                 return;
             }
 
@@ -174,7 +174,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             if (_parameters.UseCurrencyConversions
                 && !string.IsNullOrEmpty(_parameters.HighProfitCurrencyConversionTargetCurrency))
             {
-                Logger.LogInformation($"High profit rules is set to use currency conversions and has a target conversion currency to {_parameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
+                Logger.LogInformation($"is set to use currency conversions and has a target conversion currency to {_parameters.HighProfitCurrencyConversionTargetCurrency}. Calling set exchange rate profits.");
 
                 exchangeRateProfits = SetExchangeRateProfits(liveTrades);
             }
@@ -182,7 +182,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             if (hasHighProfitAbsolute
                 || hasHighProfitPercentage)
             {
-                Logger.LogInformation($"High profits rule had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
+                Logger.LogInformation($"had a breach for {liveTrades.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. High Profit Absolute {hasHighProfitAbsolute} and High Profit Percentage {hasHighProfitPercentage}.");
 
                 WriteAlertToMessageSender(
                     activeTrades,
@@ -223,12 +223,12 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                 || allTradesInCommonCurrency
                 || string.IsNullOrWhiteSpace(targetCurrency.Value))
             {
-                Logger.LogInformation($"HighProfitStreamRule GetCostCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+                Logger.LogInformation($"GetCostCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
 
                 return _costCalculatorFactory.CostCalculator();
             }
 
-            Logger.LogInformation($"HighProfitStreamRule GetCostCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+            Logger.LogInformation($"GetCostCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
 
             return _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
@@ -244,7 +244,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                         ? _revenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
                         : _revenueCalculatorFactory.RevenueCalculator();
 
-                Logger.LogInformation($"HighProfitStreamRule GetRevenueCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+                Logger.LogInformation($"GetRevenueCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
 
                 return calculator;
             }
@@ -254,7 +254,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                     ? _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency)
                     : _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency);
 
-            Logger.LogInformation($"HighProfitStreamRule GetRevenueCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+            Logger.LogInformation($"GetRevenueCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
 
             return currencyConvertingCalculator;
         }
@@ -274,7 +274,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         {
             var security = activeTrades.FirstOrDefault(at => at?.Instrument != null)?.Instrument;
 
-            Logger.LogInformation($"High Profits Rule breach detected for {security?.Identifiers}. Writing breach to alert stream.");
+            Logger.LogInformation($"breach detected for {security?.Identifiers}. Writing breach to alert stream.");
 
             var position = new TradePosition(activeTrades.ToList());
             var breach =
@@ -316,8 +316,8 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
                 absoluteProfits.Currency.Value,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                _ruleCtx.EventException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
-                throw new InvalidOperationException("High profits rule had mismatching absolute profits currencies. Something went horribly wrong!");
+                _ruleCtx.EventException("had mismatching absolute profits currencies. Something went horribly wrong!");
+                throw new InvalidOperationException("had mismatching absolute profits currencies. Something went horribly wrong!");
             }
 
             return absoluteProfits.Value >= _parameters.HighProfitAbsoluteThreshold;
@@ -325,22 +325,22 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
         
         protected override void Genesis()
         {
-            Logger.LogInformation("Universe Genesis occurred in the High Profit Rule");
+            Logger.LogInformation("Universe Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            Logger.LogInformation($"Trading Opened for exchange {exchange.MarketId} in the High Profit Rule");
+            Logger.LogInformation($"Trading Opened for exchange {exchange.MarketId}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            Logger.LogInformation($"Trading closed for exchange {exchange.MarketId} in the High Profit Rule. Running market closure virtual profits check.");
+            Logger.LogInformation($"Trading closed for exchange {exchange.MarketId}. Running market closure virtual profits check.");
         }
 
         protected override void EndOfUniverse()
         {
-            Logger.LogInformation("Universe Eschaton occurred in the High Profit Rule");
+            Logger.LogInformation("Universe Eschaton occurred.");
 
             if (!MarketClosureRule)
             {
@@ -349,7 +349,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             
             if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
-                Logger.LogInformation($"High Profit Stream Rule deleting alerts off the message sender");
+                Logger.LogInformation($"Deleting alerts off the message sender");
                 var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 

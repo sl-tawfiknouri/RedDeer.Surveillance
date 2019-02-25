@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -60,6 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
         }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -116,7 +118,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (layeringRuleBreach != null)
             {
-                _logger.LogInformation($"LayeringRule RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
+                _logger.LogInformation($"RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
                 var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
@@ -135,8 +137,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     sellPosition.Add(nextTrade);
                     break;
                 default:
-                    _logger.LogError("Layering rule not considering an out of range order direction");
-                    _ruleCtx.EventException("Layering rule not considering an out of range order direction");
+                    _logger.LogError("not considering an out of range order direction");
+                    _ruleCtx.EventException("not considering an out of range order direction");
                     throw new ArgumentOutOfRangeException(nameof(nextTrade));
             }
         }
@@ -208,6 +210,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             return (HasRuleBreach(hasBidirectionalBreach, hasDailyVolumeBreach, hasWindowVolumeBreach, priceMovementBreach))
                 ? new LayeringRuleBreach(
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _equitiesParameters,
@@ -241,7 +244,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (!tradingHoursManager.IsValid)
             {
-                _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
+                _logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -259,7 +262,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var marketResult = UniverseEquityInterdayCache.Get(marketRequest);
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"Layering unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
+                _logger.LogInformation($"unable to fetch market data for ({mostRecentTrade.Market.MarketIdentifierCode}) for the most recent trade {mostRecentTrade?.Instrument?.Identifiers} the market data did not contain the security indicated as trading in that market");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -269,7 +272,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             if (marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded <= 0
                 || opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
-                _logger.LogInformation($"Layering unable to evaluate for {mostRecentTrade?.Instrument?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolumeOrderedOrFilled()}");
+                _logger.LogInformation($"unable to evaluate for {mostRecentTrade?.Instrument?.Identifiers} either the market daily volume data was not available or the opposing position had a bad total volume value (daily volume){marketSecurityData?.DailySummaryTimeBar?.DailyVolume.Traded} - (opposing position){opposingPosition.TotalVolumeOrderedOrFilled()}");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -310,7 +313,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var securityResult = UniverseEquityIntradayCache.GetMarketsForRange(marketDataRequest, tradingDays, RunMode);
             if (securityResult.HadMissingData)
             {
-                _logger.LogWarning($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogWarning($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -319,7 +322,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var windowVolume = securityResult.Response.Sum(sdt => sdt?.SpreadTimeBar.Volume.Traded);
             if (windowVolume <= 0)
             {
-                _logger.LogInformation($"Layering unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"unable to sum meaningful volume from market data frames for volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -327,7 +330,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (opposingPosition.TotalVolumeOrderedOrFilled() <= 0)
             {
-                _logger.LogInformation($"Layering unable to calculate opposing position volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"unable to calculate opposing position volume window in {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -377,7 +380,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogInformation($"Layering unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -392,7 +395,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var startTick = StartTick(securityDataTicks, startDate);
             if (startTick == null)
             {
-                _logger.LogInformation($"Layering unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"unable to fetch starting exchange tick data for ({startDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -401,7 +404,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             var endTick = EndTick(securityDataTicks, endDate);
             if (endTick == null)
             {
-                _logger.LogInformation($"Layering unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogInformation($"unable to fetch ending exchange tick data for ({endDate}) {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return RuleBreachDescription.False();
@@ -500,35 +503,43 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred in the Layering Rule");
+            _logger.LogInformation("Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in the Layering Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in Layering Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured in Layering Rule");
+            _logger.LogInformation("Eschaton occured");
 
             var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, null, _ruleCtx, true);
             _alertStream.Add(universeAlert);
 
             if (_hadMissingData)
             {
-                _logger.LogInformation($"LayeringRule had missing data. Updating rule context with state.");
+                _logger.LogInformation($"had missing data. Updating rule context with state.");
                 _ruleCtx.EndEvent();
             }
             else
             {
                 _ruleCtx?.EndEvent();
             }
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (LayeringRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
         }
 
         public object Clone()

@@ -11,7 +11,9 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
@@ -410,6 +412,39 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             Assert.AreEqual(result.ClusteringPositionBreach, true);
             Assert.AreEqual(result.AmountOfBreachingClusters, 1);
+        }
+
+        [Test]
+        public void Clone_Copies_FactorValue_To_New_Clone()
+        {
+            var rule = BuildRule();
+            var factor = new FactorValue(ClientOrganisationalFactors.Fund, "abcd");
+
+            var clone = rule.Clone(factor);
+
+            Assert.AreEqual(rule.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.None);
+            Assert.AreEqual(rule.OrganisationFactorValue.Value, string.Empty);
+
+            Assert.AreEqual(clone.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.Fund);
+            Assert.AreEqual(clone.OrganisationFactorValue.Value, "abcd");
+        }
+
+        private WashTradeRule BuildRule()
+        {
+            var rule = new WashTradeRule(
+                _equitiesParameters,
+                _ruleCtx,
+                _positionPairer,
+                _clustering,
+                _alertStream,
+                _currencyConverter,
+                _orderFilter,
+                _factory,
+                RuleRunMode.ValidationRun,
+                _logger,
+                _tradingLogger);
+
+            return rule;
         }
     }
 }

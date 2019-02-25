@@ -5,6 +5,7 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -45,6 +46,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
+        public IFactorValue OrganisationFactorValue { get; set; }
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -98,6 +101,14 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
 
 
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} EndOfUniverse completed for {UniverseDateTime}");
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (FixedIncomeHighVolumeIssuanceRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
         }
 
         public object Clone()

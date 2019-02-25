@@ -6,6 +6,7 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
@@ -14,6 +15,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
     public class HighProfitRuleBreach : IHighProfitRuleBreach
     {
         public HighProfitRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
             IHighProfitsRuleEquitiesParameters equitiesParameters,
@@ -27,6 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             bool marketClosureVirtualProfitComponent,
             IExchangeRateProfitBreakdown profitBreakdown)
         {
+            FactorValue = factorValue;
             Window = equitiesParameters.WindowSize;
             EquitiesParameters = equitiesParameters;
             AbsoluteProfits = absoluteProfits;
@@ -59,5 +62,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
     }
 }

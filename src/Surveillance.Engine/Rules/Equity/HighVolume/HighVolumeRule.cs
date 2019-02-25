@@ -14,6 +14,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -65,6 +66,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
+
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
             return _orderFilter.Filter(value);
@@ -104,6 +107,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             var breach =
                 new HighVolumeRuleBreach(
+                    OrganisationFactorValue,
                     _ruleCtx.SystemProcessOperationContext(),
                     _ruleCtx.CorrelationId(),
                     _equitiesParameters.WindowSize, 
@@ -115,7 +119,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     marketCapBreach,
                     tradedVolume);
 
-            _logger.LogInformation($"HighVolumeRule RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
+            _logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
             var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }
@@ -173,7 +177,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
             var marketDataRequest = new MarketDataRequest(
@@ -189,7 +193,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogWarning($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogWarning($"Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -200,7 +204,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -222,7 +226,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
             var tradingDates = _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
@@ -243,7 +247,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (marketResult.HadMissingData)
             {
-                _logger.LogTrace($"High Volume unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
+                _logger.LogTrace($"Unable to fetch market data frames for {mostRecentTrade.Market.MarketIdentifierCode} at {UniverseDateTime}.");
 
                 _hadMissingData = true;
                 return HighVolumeRuleBreach.BreachDetails.None();
@@ -261,7 +265,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (threshold <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"High Volume Rule. Daily volume threshold of {threshold} was recorded.");
+                _logger.LogInformation($"Daily volume threshold of {threshold} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -284,7 +288,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
-                _logger.LogError($"HighVolumeRule. Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
+                _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
             var marketDataRequest = new MarketDataRequest(
@@ -300,7 +304,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (securityResult.HadMissingData)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"High Volume Rule. Missing data for {marketDataRequest}.");
+                _logger.LogInformation($"Missing data for {marketDataRequest}.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -312,7 +316,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (thresholdValue <= 0)
             {
                 _hadMissingData = true;
-                _logger.LogInformation($"High Volume Rule. Market cap threshold of {thresholdValue} was recorded.");
+                _logger.LogInformation($"Market cap threshold of {thresholdValue} was recorded.");
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
@@ -342,22 +346,22 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occurred in the High Volume Rule");
+            _logger.LogInformation("Genesis occurred");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred in the High Volume Rule at {exchange?.MarketOpen}");
+            _logger.LogInformation($"Market Open ({exchange?.MarketId}) occurred {exchange?.MarketOpen}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred in the High Volume Rule at {exchange?.MarketClose}");
+            _logger.LogInformation($"Market Close ({exchange?.MarketId}) occurred {exchange?.MarketClose}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation("Eschaton occured in the High Volume Rule");
+            _logger.LogInformation("Eschaton occured");
 
             if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
@@ -372,6 +376,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             {
                 _ruleCtx?.EndEvent();
             }
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (HighVolumeRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
         }
 
         public object Clone()

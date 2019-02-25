@@ -2,6 +2,7 @@
 using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
@@ -10,6 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
     public class LayeringRuleBreach : ILayeringRuleBreach
     {
         public LayeringRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
             ILayeringRuleEquitiesParameters equitiesParameters,
@@ -21,6 +23,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             RuleBreachDescription windowVolumeTradeBreach,
             RuleBreachDescription priceMovementBreach)
         {
+            FactorValue = factorValue;
             EquitiesParameters = equitiesParameters;
             Window = window;
             Trades = trades;
@@ -48,5 +51,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
     }
 }

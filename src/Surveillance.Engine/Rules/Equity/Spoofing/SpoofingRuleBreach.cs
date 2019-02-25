@@ -4,6 +4,7 @@ using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -13,6 +14,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
     public class SpoofingRuleBreach : ISpoofingRuleBreach
     {
         public SpoofingRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
             TimeSpan window,
@@ -22,6 +24,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             Order mostRecentTrade,
             ISpoofingRuleEquitiesParameters spoofingEquitiesParameters)
         {
+            FactorValue = factorValue;
+
             Window = window;
             Security = security;
             MostRecentTrade = mostRecentTrade;
@@ -52,5 +56,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
     }
 }

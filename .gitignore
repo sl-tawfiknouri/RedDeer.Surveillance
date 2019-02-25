@@ -8,6 +8,7 @@ packages/
 src/Relay/App/Play Equity Files/
 src/Relay/App/Play Trade Files/
 src/PicklesDocumentation/
+*.feature.cs
 
 .dotnet/*
 tools/*

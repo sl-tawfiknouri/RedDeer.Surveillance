@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
@@ -11,6 +12,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
     public class WashTradeRuleBreach : IWashTradeRuleBreach
     {
         public WashTradeRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
             IWashTradeRuleEquitiesParameters equitiesParameters,
@@ -20,7 +22,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             WashTradePairingPositionBreach pairingPositionBreach,
             WashTradeClusteringPositionBreach clusteringPositionBreach)
         {
+            FactorValue = factorValue;
             EquitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
+
 
             Window = equitiesParameters.WindowSize;
             Trades = tradePosition;
@@ -49,6 +53,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
 
 
         public class WashTradeAveragePositionBreach

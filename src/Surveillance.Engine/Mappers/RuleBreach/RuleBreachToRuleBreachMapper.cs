@@ -52,6 +52,8 @@ namespace Surveillance.Engine.Rules.Mappers.RuleBreach
                     ruleBreach.Security.Cfi,
                     ruleBreach.Security.Identifiers.ReddeerEnrichmentId,
                     ruleBreach.SystemOperationId,
+                    (int?)ruleBreach?.FactorValue?.OrganisationalFactors ?? 0,
+                    ruleBreach?.FactorValue?.Value ?? string.Empty,
                     trades);
 
             return ruleBreachObj;

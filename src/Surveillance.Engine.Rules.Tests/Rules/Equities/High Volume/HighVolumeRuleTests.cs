@@ -15,6 +15,7 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
@@ -257,6 +258,21 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.High_Volume
             highVolumeRule.OnNext(Eschaton());
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored)).MustHaveHappened();
+        }
+
+        [Test]
+        public void Clone_Copies_FactorValue_To_New_Clone()
+        {
+            var rule = BuildRule();
+            var factor = new FactorValue(ClientOrganisationalFactors.Fund, "abcd");
+
+            var clone = rule.Clone(factor);
+
+            Assert.AreEqual(rule.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.None);
+            Assert.AreEqual(rule.OrganisationFactorValue.Value, string.Empty);
+
+            Assert.AreEqual(clone.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.Fund);
+            Assert.AreEqual(clone.OrganisationFactorValue.Value, "abcd");
         }
 
         private HighVolumeRule BuildRule()

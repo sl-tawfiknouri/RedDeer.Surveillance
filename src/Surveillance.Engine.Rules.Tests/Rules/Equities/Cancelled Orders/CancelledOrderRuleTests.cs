@@ -13,6 +13,7 @@ using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Tests.Helpers;
@@ -286,6 +287,34 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Cancelled_Orders
 
             A.CallTo(() => _alertStream.Add(A<IUniverseAlertEvent>.Ignored))
                 .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Clone_Copies_FactorValue_To_New_Clone()
+        {
+            var rule = BuildRule();
+            var factor = new FactorValue(ClientOrganisationalFactors.Fund, "abcd");
+
+            var clone = rule.Clone(factor);
+
+            Assert.AreEqual(rule.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.None);
+            Assert.AreEqual(rule.OrganisationFactorValue.Value, string.Empty);
+
+            Assert.AreEqual(clone.OrganisationFactorValue.OrganisationalFactors, ClientOrganisationalFactors.Fund);
+            Assert.AreEqual(clone.OrganisationFactorValue.Value, "abcd");
+        }
+
+        private CancelledOrderRule BuildRule(CancelledOrderRuleEquitiesParameters parameters = null)
+        {
+            if (parameters == null)
+            {               
+                parameters = new CancelledOrderRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), 0.5m, null, 10, 10, null, false);
+            }
+
+            var orderRule = new CancelledOrderRule(parameters, _ruleCtx, _alertStream, _orderFilter, BuildFactory(), RuleRunMode.ValidationRun,
+                _logger, _tradingHistoryLogger);
+
+            return orderRule;
         }
 
         private Order OrderFactory(OrderStatus status)

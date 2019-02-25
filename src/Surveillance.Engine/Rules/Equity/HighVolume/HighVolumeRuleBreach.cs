@@ -3,6 +3,7 @@ using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
@@ -10,6 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
     public class HighVolumeRuleBreach : IHighVolumeRuleBreach
     {
         public HighVolumeRuleBreach(
+            IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
             TimeSpan window,
@@ -21,6 +23,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             BreachDetails marketCapBreach,
             long totalOrdersTradedInWindow)
         {
+            FactorValue = factorValue;
+
             Window = window;
             Trades = trades;
             Security = security;
@@ -52,6 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         public string RuleParameterId { get; set; }
         public string SystemOperationId { get; set; }
         public string CorrelationId { get; set; }
+        public IFactorValue FactorValue { get; set; }
 
         public class BreachDetails
         {

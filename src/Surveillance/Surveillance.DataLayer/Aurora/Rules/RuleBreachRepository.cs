@@ -13,21 +13,59 @@ namespace Surveillance.DataLayer.Aurora.Rules
         private readonly IConnectionStringFactory _dbConnectionFactory;
         private readonly ILogger<RuleBreachRepository> _logger;
 
-        private const string SaveRuleBreachSql = @"INSERT IGNORE INTO RuleBreach (RuleId, CorrelationId, IsBackTest, CreatedOn, Title, Description, Venue, StartOfPeriodUnderInvestigation, EndOfPeriodUnderInvestigation, AssetCfi, ReddeerEnrichmentId, SystemOperationId) VALUES(@RuleId, @CorrelationId, @IsBackTest, @CreatedOn, @Title, @Description, @Venue, @StartOfPeriodUnderInvestigation, @EndOfPeriodUnderInvestigation, @AssetCfi, @ReddeerEnrichmentId, @SystemOperationId); SELECT LAST_INSERT_ID();";
+        private const string SaveRuleBreachSql =
+            @"INSERT IGNORE INTO RuleBreach
+                (RuleId, 
+                CorrelationId, 
+                IsBackTest, 
+                CreatedOn, 
+                Title, 
+                Description, 
+                Venue, 
+                StartOfPeriodUnderInvestigation, 
+                EndOfPeriodUnderInvestigation, 
+                AssetCfi, 
+                ReddeerEnrichmentId, 
+                SystemOperationId,
+                OrganisationalFactorType,
+                OrganisationalFactorValue)
+            VALUES(
+                @RuleId,
+                @CorrelationId,
+                @IsBackTest, 
+                @CreatedOn,
+                @Title, 
+                @Description, 
+                @Venue, 
+                @StartOfPeriodUnderInvestigation, 
+                @EndOfPeriodUnderInvestigation, 
+                @AssetCfi, 
+                @ReddeerEnrichmentId, 
+                @SystemOperationId,
+                @OrganisationalFactorType,
+                @OrganisationalFactorValue); 
+            SELECT LAST_INSERT_ID();";
 
         private const string HasDuplicateSql = @"
+            SET @RuleId = (SELECT RuleId FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorType = (SELECT OrganisationalFactorType FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+            SET @OrganisationalFactorValue = (SELECT OrganisationalFactorValue FROM RuleBreach WHERE Id = @ruleBreachId LIMIT 1);
+
             SELECT COUNT(*) FROM (
-            SELECT rbo.OrderId 
-	            FROM RuleBreach AS rb
-	            LEFT OUTER JOIN RuleBreachOrders as rbo
+	            SELECT COUNT(*) AS CNT FROM RuleBreach AS rb
+	            RIGHT OUTER JOIN RuleBreachOrders AS rbo
 	            ON rb.Id = rbo.RuleBreachId
-	            WHERE rb.Id = @ruleBreachId
-            AND NOT rbo.OrderId IN (SELECT rbo.OrderId 
-            FROM RuleBreach AS rb
-            LEFT OUTER JOIN RuleBreachOrders AS rbo
-            ON rb.Id = rbo.RuleBreachId
-            WHERE rb.RuleId = (SELECT RuleId FROM RuleBreach WHERE Id = @ruleBreachId)
-            AND Id <> @ruleBreachId)) AS DuplicatesCheck;";
+	            WHERE rb.Id <> @ruleBreachId
+	            AND rb.RuleId = @RuleId
+	            AND rb.OrganisationalFactorType = @OrganisationalFactorType
+	            AND rb.OrganisationalFactorValue = @OrganisationalFactorValue
+	            AND rbo.OrderId = ANY (
+		            SELECT rbo.OrderId FROM RuleBreach AS rb
+		            RIGHT OUTER JOIN RuleBreachOrders AS rbo
+		            ON rb.Id = rbo.RuleBreachId
+		            WHERE rb.Id = @ruleBreachId)
+		            GROUP BY rbo.RuleBreachId) AS InnerCounts
+            WHERE InnerCounts.CNT = (SELECT COUNT(*) FROM RuleBreach AS rb RIGHT OUTER JOIN RuleBreachOrders AS rbo ON rb.Id = rbo.RuleBreachId WHERE rb.Id = @ruleBreachId);";
 
         private const string GetRuleBreachSql = @"SELECT * FROM RuleBreach WHERE Id = @Id";
 
@@ -43,35 +81,28 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (message == null)
             {
-                _logger.LogWarning($"RuleBreachRepository saving rule was passed a null message. Returning.");
+                _logger.LogWarning($"saving rule was passed a null message. Returning.");
                 return null;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-
-                _logger.LogInformation($"RuleBreachRepository saving rule breach to repository");
+                _logger.LogInformation($"saving rule breach to repository");
                 var dto = new RuleBreachDto(message);
+
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QueryFirstOrDefaultAsync<long?>(SaveRuleBreachSql, dto))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed saving rule breach to repository");
+                    _logger.LogInformation($"completed saving rule breach to repository");
 
                     return result;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return null;
@@ -81,22 +112,20 @@ namespace Surveillance.DataLayer.Aurora.Rules
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                _logger.LogWarning($"RuleBreachRepository get rule breach was passed a null message. Returning.");
+                _logger.LogWarning($"get rule breach was passed a null message. Returning.");
                 return null;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
+                _logger.LogInformation($"fetching rule breaches");
 
-                _logger.LogInformation($"RuleBreachRepository fetching rule breaches");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.QuerySingleAsync<RuleBreachDto>(GetRuleBreachSql, new { Id = id}))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed fetching rule breach");
+                    _logger.LogInformation($"completed fetching rule breach");
 
                     var mappedResult = Project(result);
 
@@ -105,12 +134,7 @@ namespace Surveillance.DataLayer.Aurora.Rules
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return null;
@@ -123,30 +147,22 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 return false;
             }
 
-            var dbConnection = _dbConnectionFactory.BuildConn();
-
             try
             {
-                dbConnection.Open();
-                _logger.LogInformation($"RuleBreachRepository checking duplicates");
-
+                _logger.LogInformation($"checking duplicates");
+                using (var dbConnection = _dbConnectionFactory.BuildConn())
                 using (var conn = dbConnection.ExecuteScalarAsync<long>(HasDuplicateSql, new { RuleBreachId = ruleId }))
                 {
                     var result = await conn;
 
-                    _logger.LogInformation($"RuleBreachRepository completed checking duplicates");
+                    _logger.LogInformation($"completed checking duplicates");
 
-                    return result == 0;
+                    return result != 0;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError($"RuleBreachRepository error for Create {e.Message} - {e?.InnerException?.Message}");
-            }
-            finally
-            {
-                dbConnection.Close();
-                dbConnection.Dispose();
+                _logger.LogError($"error for Create {e.Message} - {e?.InnerException?.Message}");
             }
 
             return false;
@@ -173,6 +189,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 dto.AssetCfi, 
                 dto.ReddeerEnrichmentId,
                 dto.SystemOperationId,
+                dto.OrganisationalFactorType,
+                dto.OrganisationalFactorValue,
                 new int[0]);
         }
 
@@ -205,6 +223,9 @@ namespace Surveillance.DataLayer.Aurora.Rules
                 AssetCfi = message?.AssetCfi;
                 SystemOperationId = message?.SystemOperationId;
                 ReddeerEnrichmentId = message?.ReddeerEnrichmentId;
+
+                OrganisationalFactorType = message?.OrganisationalFactor ?? 0;
+                OrganisationalFactorValue = message?.OrganisationalFactorValue ?? string.Empty;
             }
 
             public int? Id { get; set; }
@@ -220,6 +241,8 @@ namespace Surveillance.DataLayer.Aurora.Rules
             public string AssetCfi { get; set; }
             public string ReddeerEnrichmentId { get; set; }
             public string SystemOperationId { get; set; }
+            public int OrganisationalFactorType { get; set; }
+            public string OrganisationalFactorValue { get; set; }
         }
     }
 }

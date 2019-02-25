@@ -9,6 +9,10 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules
 {
+    /// <summary>
+    /// Shared code before reaching the case queue publisher
+    /// Contains deduplication logic
+    /// </summary>
     public abstract class BaseMessageSender
     {
         private readonly IRuleBreachRepository _ruleBreachRepository;
@@ -45,12 +49,13 @@ namespace Surveillance.Engine.Rules.Rules
         {
             if (ruleBreach?.Trades?.Get() == null)
             {
-                Logger.LogInformation($"BaseMessageSender for {_messageSenderName} had null trades. Returning.");
+                Logger.LogInformation($"{_messageSenderName} had null trades. Returning.");
                 return;
             }
 
-            Logger.LogInformation($"BaseMessageSender received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+            Logger.LogInformation($"received message to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
 
+            // Save the rule breach
             var ruleBreachItem = _ruleBreachToRuleBreachMapper.RuleBreachItem(ruleBreach, description, _caseTitle);
             var ruleBreachId = await _ruleBreachRepository.Create(ruleBreachItem);
 
@@ -60,13 +65,16 @@ namespace Surveillance.Engine.Rules.Rules
                 return;
             }
 
+            // Save the rule breach orders
             var ruleBreachOrderItems = _ruleBreachToRuleBreachOrdersMapper.ProjectToOrders(ruleBreach, ruleBreachId?.ToString());
             await _ruleBreachOrdersRepository.Create(ruleBreachOrderItems);
+
+            // Check for duplicates
             var hasDuplicates = await _ruleBreachRepository.HasDuplicate(ruleBreachId?.ToString());
 
             if (hasDuplicates && !ruleBreach.IsBackTestRun)
             {
-                Logger.LogInformation($"BaseMessageSender was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
+                Logger.LogInformation($"was going to send for {_messageSenderName} | security {ruleBreach.Security.Name} | rule breach {ruleBreachId} but detected duplicate case creation");
                 return;
             }
 
@@ -74,9 +82,9 @@ namespace Surveillance.Engine.Rules.Rules
 
             try
             {
-                Logger.LogInformation($"BaseMessageSender about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
+                Logger.LogInformation($"about to send for {_messageSenderName} | security {ruleBreach.Security.Name}");
                 await _queueCasePublisher.Send(caseMessage);
-                Logger.LogInformation($"BaseMessageSender sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
+                Logger.LogInformation($"sent for {_messageSenderName} | security {ruleBreach.Security.Name}");
             }
             catch (Exception e)
             {

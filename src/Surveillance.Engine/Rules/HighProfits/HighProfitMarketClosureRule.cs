@@ -11,6 +11,7 @@ using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -80,7 +81,7 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
 
             if (securitiesBrought > securitiesSold)
             {
-                Logger.LogInformation($"HighProfitMarketClosureRule RunRuleGuard securities brought {securitiesBrought} exceeded securities sold {securitiesSold}. Proceeding to evaluate market closure rule.");
+                Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded securities sold {securitiesSold}. Proceeding to evaluate market closure rule.");
                 return true;
             }
 
@@ -89,15 +90,16 @@ namespace Surveillance.Engine.Rules.Rules.HighProfits
             var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
             _alertStream.Add(message);
 
-            Logger.LogInformation($"HighProfitMarketClosureRule RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
+            Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");
 
             return false;
         }
 
-        public override object Clone()
+        public override IUniverseCloneableRule Clone(IFactorValue factorValue)
         {
             var clone = (HighProfitMarketClosureRule)this.MemberwiseClone();
             clone.BaseClone();
+            clone.OrganisationFactorValue = factorValue;
 
             return clone;
         }

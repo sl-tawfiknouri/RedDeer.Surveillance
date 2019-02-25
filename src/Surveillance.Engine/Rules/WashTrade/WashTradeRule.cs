@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -71,6 +72,8 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
+
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
             return _orderFilter.Filter(value);
@@ -119,10 +122,11 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
             var security = liveTrades?.FirstOrDefault()?.Instrument;
 
-            _logger.LogInformation($"Wash Trade Rule incrementing alerts because of security {security?.Name} at {UniverseDateTime}");
+            _logger.LogInformation($"incrementing alerts because of security {security?.Name} at {UniverseDateTime}");
 
             var breach =
                 new WashTradeRuleBreach(
+                    OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),
                     _parameters,
@@ -210,7 +214,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
             if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount == null
                 || string.IsNullOrWhiteSpace(_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency))
             {
-                _logger.LogInformation("WashTradeRule found an average position breach and does not have an absolute limit set. Returning with average position breach");
+                _logger.LogInformation("found an average position breach and does not have an absolute limit set. Returning with average position breach");
 
                 return new WashTradeRuleBreach.WashTradeAveragePositionBreach
                     (true,
@@ -228,7 +232,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
             if (convertedCurrency == null)
             {
-                _logger.LogError($"WashTradeRule was not able to determine currency conversion - preferring to raise alert in lieu of necessary exchange rate information");
+                _logger.LogError($"was not able to determine currency conversion - preferring to raise alert in lieu of necessary exchange rate information");
 
                 return new WashTradeRuleBreach.WashTradeAveragePositionBreach
                     (true,
@@ -239,7 +243,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
             if (_parameters.AveragePositionMaximumAbsoluteValueChangeAmount < convertedCurrency.Value.Value)
             {
-                _logger.LogInformation($"WashTradeRule found an average position breach but the total change in position value exceeded the threshold of {_parameters.AveragePositionMaximumAbsoluteValueChangeAmount} ({_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency}).");
+                _logger.LogInformation($"found an average position breach but the total change in position value exceeded the threshold of {_parameters.AveragePositionMaximumAbsoluteValueChangeAmount} ({_parameters.AveragePositionMaximumAbsoluteValueChangeCurrency}).");
 
                 return WashTradeRuleBreach.WashTradeAveragePositionBreach.None();
             }
@@ -367,7 +371,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
             if (convertedCurrency == null)
             {
-                _logger.LogError($"WashTradeRule was not able to determine currency conversion. Will evaluate pairing trades on its own merits.");
+                _logger.LogError($"was not able to determine currency conversion. Will evaluate pairing trades on its own merits.");
 
                 return true;
             }
@@ -444,7 +448,7 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
         protected override void Genesis()
         {
-            _logger.LogInformation("Genesis occured in the Wash Trade Rule");
+            _logger.LogInformation("Genesis occured");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
@@ -457,8 +461,16 @@ namespace Surveillance.Engine.Rules.Rules.WashTrade
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation($"Eschaton occured in the Wash Trade Rule");
+            _logger.LogInformation($"Eschaton occured");
             RuleCtx?.EndEvent();
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue value)
+        {
+            var clone = (WashTradeRule)Clone();
+            clone.OrganisationFactorValue = value;
+
+            return clone;
         }
 
         public object Clone()

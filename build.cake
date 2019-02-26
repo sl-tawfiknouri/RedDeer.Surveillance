@@ -53,6 +53,11 @@ var publishProjects = new List<Tuple<string,string, string,string>>
     new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" )
 };
 
+var nugetPackageProjects = new List<string>
+{
+	"src/DomainV2/Domain.csproj"
+};
+
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
@@ -145,24 +150,40 @@ Task("Publish")
 	    } 
 	});
 
+Task("Pack")
+    .Does(() =>
+	{
+	    foreach (var project in nugetPackageProjects)
+	    {
+	        DotNetCorePack(project, new DotNetCorePackSettings
+	        {
+	            OutputDirectory = "/nuget"
+	        };
+	    }
+	});
+
 Task("NoPublish")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Test");
+	.IsDependentOn("Test")
+	.IsDependentOn("Pack");
 
 Task("BuildOnly")
 	.IsDependentOn("SetVersion")
-	.IsDependentOn("Build");
+	.IsDependentOn("Build")
+	.IsDependentOn("Pack");
 
 Task("PublishNoTests")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Publish");
+	.IsDependentOn("Publish")
+	.IsDependentOn("Pack");
 
 Task("Default")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test")
-	.IsDependentOn("Publish");
+	.IsDependentOn("Publish")
+	.IsDependentOn("Pack");
 
 RunTarget(target);

@@ -156,7 +156,7 @@ Task("Pack")
 
 		if (!DirectoryExists("NugetPackages"))
 		{
-			Createdirectory("NugetPackages");
+			CreateDirectory("NugetPackages");
 		}
 
 		CleanDirectory("NugetPackages");

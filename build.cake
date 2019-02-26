@@ -153,11 +153,13 @@ Task("Publish")
 Task("Pack")
     .Does(() =>
 	{
+		mkdir("NugetPackages");
+
 	    foreach (var project in nugetPackageProjects)
 	    {
 	    	var packSettings = new DotNetCorePackSettings()
 	        {
-	            OutputDirectory = ""
+	            OutputDirectory = "/NugetPackages"
 	        };
 
 	        DotNetCorePack(project, packSettings);

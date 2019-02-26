@@ -157,7 +157,7 @@ Task("Pack")
 	    {
 	    	var packSettings = new DotNetCorePackSettings()
 	        {
-	            OutputDirectory = "/nuget"
+	            OutputDirectory = ""
 	        };
 
 	        DotNetCorePack(project, packSettings);

@@ -153,7 +153,13 @@ Task("Publish")
 Task("Pack")
     .Does(() =>
 	{
-		mkdir("NugetPackages");
+
+		if (!DirectoryExists("NugetPackages"))
+		{
+			Createdirectory("NugetPackages");
+		}
+
+		CleanDirectory("NugetPackages");
 
 	    foreach (var project in nugetPackageProjects)
 	    {

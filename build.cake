@@ -155,10 +155,12 @@ Task("Pack")
 	{
 	    foreach (var project in nugetPackageProjects)
 	    {
-	        DotNetCorePack(project, new DotNetCorePackSettings)
+	    	var packSettings = new DotNetCorePackSettings()
 	        {
 	            OutputDirectory = "/nuget"
 	        };
+
+	        DotNetCorePack(project, packSettings);
 	    }
 	});
 

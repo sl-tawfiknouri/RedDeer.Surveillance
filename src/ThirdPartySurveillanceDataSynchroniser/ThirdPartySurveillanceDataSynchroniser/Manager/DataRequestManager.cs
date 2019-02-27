@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Interfaces;
 using DataSynchroniser.Api.Factset.Interfaces;
@@ -38,6 +39,7 @@ namespace DataSynchroniser.Manager
 
         public async Task Handle(string systemProcessOperationId, ISystemProcessOperationThirdPartyDataRequestContext dataRequestContext)
         {
+
             if (string.IsNullOrWhiteSpace(systemProcessOperationId))
             {
                 _logger.LogError($"{nameof(DataRequestManager)} asked to handle a systemProcessOperationId that had a null or empty id");
@@ -48,17 +50,30 @@ namespace DataSynchroniser.Manager
             _logger.LogInformation($"{nameof(DataRequestManager)} handling request with id {systemProcessOperationId}");
 
             var dataRequests = await _dataRequestRepository.DataRequestsForSystemOperation(systemProcessOperationId);
-            
-            // Equity handling
-            await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
-            await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
 
-            // Fixed income handling
-            await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+            try
+            {
+                // Equity handling
+                await _factsetSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+                await _bmllSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
 
-            await _rulePublisher.RescheduleRuleRun(systemProcessOperationId, dataRequests);
+                // Fixed income handling
+                await _markitSynchroniser.Handle(systemProcessOperationId, dataRequestContext, dataRequests);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (dataRequests != null
+                    && dataRequests.Any())
+                {
+                    await _rulePublisher.RescheduleRuleRun(systemProcessOperationId, dataRequests);
+                }
 
-            _logger.LogInformation($"{nameof(DataRequestManager)} completed handling request with id {systemProcessOperationId}");
+                _logger.LogInformation($"{nameof(DataRequestManager)} completed handling request with id {systemProcessOperationId}");
+            }
         }
     }
 }

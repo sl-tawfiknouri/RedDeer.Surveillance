@@ -189,7 +189,7 @@ Task("Pack")
         	var nupackSettings = new NuGetPackSettings() 
         	{
         		OutputDirectory = "NugetPackages"
-        	}
+        	};
 
 	        NuGetPack(project, nupackSettings);
 	    }

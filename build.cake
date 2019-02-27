@@ -55,7 +55,21 @@ var publishProjects = new List<Tuple<string,string, string,string>>
 
 var nugetPackageProjects = new List<string>
 {
-	"src/DomainV2/Domain.csproj"
+	"src/DomainV2/Domain.csproj",
+	"src/DataImport/DataImport/DataImport.csproj",
+	"src/DataSynchroniser.Api/DataSynchroniser.Api.csproj",
+	"src/DataSynchroniser.Bmll/DataSynchroniser.Api.Bmll.csproj",
+	"src/DataSynchroniser.Factset/DataSynchroniser.Api.Factset.csproj",
+	"src/DataSynchroniser.Markit/DataSynchroniser.Api.Markit.csproj",
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser/DataSynchroniser.csproj",
+	"src/PollyFacade/PollyFacade.csproj",
+	"src/Surveillance/Surveillance/Surveillance.csproj",
+	"src/Surveillance/Surveillance.DataLayer/Surveillance.DataLayer.csproj",
+	"src/Surveillance.System.Auditing/Surveillance.Auditing.csproj",
+	"src/Surveillance.Engine/Surveillance.Engine.Rules.csproj",
+	"src/Surveillance.Engine.DataCoordinator/Surveillance.Engine.DataCoordinator.csproj",
+	"src/Surveillance.Engine.RuleDistributor/Surveillance.Engine.RuleDistributor.csproj",
+	"src/Utilities/Utilities.csproj",
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -153,7 +167,6 @@ Task("Publish")
 Task("Pack")
     .Does(() =>
 	{
-
 		if (!DirectoryExists("NugetPackages"))
 		{
 			CreateDirectory("NugetPackages");

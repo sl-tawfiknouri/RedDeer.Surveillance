@@ -14,13 +14,14 @@ using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.HighVolume;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighVolume;
@@ -33,17 +34,17 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class HighVolumeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private HighVolumeRuleParameters _highVolumeRuleParameters;
+        private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
         private ICurrencyConverter _currencyConverter;
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private HighVolumeRuleFactory _highVolumeRuleFactory;
+        private EquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
 
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
@@ -112,13 +113,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var currencyLogger = new NullLogger<CurrencyConverter>();
             _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = new NullLogger<HighVolumeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
-            _highVolumeRuleFactory = new HighVolumeRuleFactory(
+            _equityRuleHighVolumeFactory = new EquityRuleHighVolumeFactory(
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
                 _tradingHoursManager,
@@ -137,7 +138,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<HighVolumeApiParameters>();
 
-            _highVolumeRuleParameters = new HighVolumeRuleParameters(
+            _highVolumeRuleEquitiesParameters = new HighVolumeRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 parameters.HighVolumePercentageDaily,
@@ -151,8 +152,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheHighVolumeRule()
         {
             var highVolumeRule =
-                _highVolumeRuleFactory.Build(
-                    _highVolumeRuleParameters,
+                _equityRuleHighVolumeFactory.Build(
+                    _highVolumeRuleEquitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     _dataRequestSubscriber,

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.Interfaces;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService;
+using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Utilities.Aws_IO.Interfaces;
 

@@ -9,13 +9,13 @@ using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
-using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.WashTrade;
-using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.WashTrades;
@@ -28,18 +28,18 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class WashTradeSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private WashTradeRuleParameters _washTradeRuleParameters;
+        private WashTradeRuleEquitiesParameters _washTradeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
         // wash trade factory and arguments
         private ICurrencyConverter _currencyConverter;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeClustering _washTradeClustering;
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private WashTradeRuleFactory _washTradeRuleFactory;
+        private EquityRuleWashTradeFactory _equityRuleWashTradeFactory;
 
         // wash trade run
         private ISystemProcessOperationRunRuleContext _ruleCtx;
@@ -66,13 +66,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _positionPairer = new WashTradePositionPairer();
             _washTradeClustering = new WashTradeClustering();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
 
-            _washTradeRuleFactory =
-                new WashTradeRuleFactory(
+            _equityRuleWashTradeFactory =
+                new EquityRuleWashTradeFactory(
                     _currencyConverter,
                     _positionPairer,
                     _washTradeClustering,
@@ -96,8 +96,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<WashTradeApiParameters>();
 
-            _washTradeRuleParameters =
-                new WashTradeRuleParameters(
+            _washTradeRuleEquitiesParameters =
+                new WashTradeRuleEquitiesParameters(
                     "0",
                     new System.TimeSpan(parameters.WindowHours, 0, 0),
                     parameters.UseAverageNetting.GetValueOrDefault(false),
@@ -122,8 +122,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheWashTradeRule()
         {
             var washTradeRule = 
-                _washTradeRuleFactory.Build(
-                    _washTradeRuleParameters,
+                _equityRuleWashTradeFactory.Build(
+                    _washTradeRuleEquitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     RuleRunMode.ForceRun);

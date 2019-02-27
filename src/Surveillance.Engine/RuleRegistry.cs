@@ -1,11 +1,11 @@
-﻿using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.Interfaces;
-using Domain.DTO;
+﻿using Domain.DTO;
 using Domain.DTO.Interfaces;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Domain.Streams;
+using RedDeer.Contracts.SurveillanceService;
+using RedDeer.Contracts.SurveillanceService.Interfaces;
 using StructureMap;
 using Surveillance.Engine.Rules.Analysis;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
@@ -18,6 +18,10 @@ using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.Factories.FixedIncome;
+using Surveillance.Engine.Rules.Factories.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers;
@@ -29,29 +33,37 @@ using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Queues.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Manager;
 using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
-using Surveillance.Engine.Rules.Rules.CancelledOrders;
-using Surveillance.Engine.Rules.Rules.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighVolume;
-using Surveillance.Engine.Rules.Rules.HighVolume.Interfaces;
-using Surveillance.Engine.Rules.Rules.Layering;
-using Surveillance.Engine.Rules.Rules.Layering.Interfaces;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
-using Surveillance.Engine.Rules.Rules.Spoofing;
-using Surveillance.Engine.Rules.Rules.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.WashTrade;
-using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Layering;
+using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
+using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
+using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
@@ -65,7 +77,11 @@ using Surveillance.Engine.Rules.Universe.Multiverse.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity;
+using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Factories;
+using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome;
+using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Utility;
 using Surveillance.Engine.Rules.Utility.Interfaces;
@@ -85,17 +101,20 @@ namespace Surveillance.Engine.Rules
             For(typeof(IUnsubscriberFactory<>)).Use(typeof(UnsubscriberFactory<>));
 
             For<IQueueRuleSubscriber>().Use<QueueRuleSubscriber>();
-            For<ISpoofingRuleFactory>().Use<SpoofingRuleFactory>();
+            For<IEquityRuleSpoofingFactory>().Use<EquityRuleSpoofingFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
             For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
 
-            For<ISpoofingSubscriber>().Use<SpoofingSubscriber>();
-            For<ICancelledOrderSubscriber>().Use<CancelledOrderSubscriber>();
-            For<IHighProfitsSubscriber>().Use<HighProfitsSubscriber>();
-            For<IHighVolumeSubscriber>().Use<HighVolumeSubscriber>();
-            For<IMarkingTheCloseSubscriber>().Use<MarkingTheCloseSubscriber>();
-            For<ILayeringSubscriber>().Use<LayeringSubscriber>();
-            For<IWashTradeSubscriber>().Use<WashTradeSubscriber>();
+            For<ISpoofingEquitySubscriber>().Use<SpoofingEquitySubscriber>();
+            For<ICancelledOrderEquitySubscriber>().Use<CancelledOrderEquitySubscriber>();
+            For<IHighProfitsEquitySubscriber>().Use<HighProfitsEquitySubscriber>();
+            For<IHighVolumeEquitySubscriber>().Use<HighVolumeEquitySubscriber>();
+            For<IMarkingTheCloseEquitySubscriber>().Use<MarkingTheCloseEquitySubscriber>();
+            For<ILayeringEquitySubscriber>().Use<LayeringEquitySubscriber>();
+            For<IWashTradeEquitySubscriber>().Use<WashTradeEquitySubscriber>();
+
+            For<IUniverseEquityOrderFilter>().Use<UniverseEquityOrderFilter>();
+            For<IUniverseFixedIncomeOrderFilter>().Use<UniverseFixedIncomeOrderFilter>();
 
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();
@@ -122,16 +141,16 @@ namespace Surveillance.Engine.Rules
             For<IThirdPartyDataRequestSerialiser>().Use<ThirdPartyDataRequestSerialiser>();
             For<IQueueDataSynchroniserRequestPublisher>().Use<QueueDataSynchroniserRequestPublisher>();
 
-            For<ISpoofingRuleParameters>().Use<SpoofingRuleParameters>();
+            For<ISpoofingRuleEquitiesParameters>().Use<SpoofingRuleEquitiesParameters>();
             For<ISpoofingRuleMessageSender>().Use<SpoofingRuleMessageSender>();
 
             For<ICancelledOrderMessageSender>().Use<CancelledOrderMessageSender>();
-            For<ICancelledOrderRuleParameters>().Use<CancelledOrderRuleParameters>();
+            For<ICancelledOrderRuleEquitiesParameters>().Use<CancelledOrderRuleEquitiesParameters>();
             For<ICancelledOrderRule>().Use<CancelledOrderRule>();
             For<ICancelledOrderRuleCachedMessageSender>().Use<CancelledOrderRuleCachedMessageSender>();
-            For<ICancelledOrderRuleFactory>().Use<CancelledOrderRuleFactory>();
+            For<IEquityRuleCancelledOrderFactory>().Use<EquityRuleCancelledOrderFactory>();
 
-            For<IHighProfitRuleFactory>().Use<HighProfitRuleFactory>();
+            For<IEquityRuleHighProfitFactory>().Use<EquityRuleHighProfitFactory>();
             For<IHighProfitMessageSender>().Use<HighProfitMessageSender>();
             For<IHighProfitRule>().Use<HighProfitsRule>();
             For<IHighProfitRuleCachedMessageSender>().Use<HighProfitRuleCachedMessageSender>();
@@ -139,16 +158,16 @@ namespace Surveillance.Engine.Rules
             For<IRevenueCalculatorFactory>().Use<RevenueCalculatorFactory>();
 
             For<IMarkingTheCloseRule>().Use<MarkingTheCloseRule>();
-            For<IMarkingTheCloseRuleFactory>().Use<MarkingTheCloseRuleFactory>();
+            For<IEquityRuleMarkingTheCloseFactory>().Use<EquityRuleMarkingTheCloseFactory>();
             For<IMarkingTheCloseMessageSender>().Use<MarkingTheCloseMessageSender>();
 
             For<ILayeringRule>().Use<LayeringRule>();
-            For<ILayeringRuleFactory>().Use<LayeringRuleFactory>();
+            For<IEquityRuleLayeringFactory>().Use<EquityRuleLayeringFactory>();
             For<ILayeringAlertSender>().Use<LayeringAlertSender>();
             For<ILayeringCachedMessageSender>().Use<LayeringCachedMessageSender>();
 
             For<IHighVolumeRule>().Use<HighVolumeRule>();
-            For<IHighVolumeRuleFactory>().Use<HighVolumeRuleFactory>();
+            For<IEquityRuleHighVolumeFactory>().Use<EquityRuleHighVolumeFactory>();
             For<IHighVolumeMessageSender>().Use<HighVolumeMessageSender>();
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
@@ -156,11 +175,29 @@ namespace Surveillance.Engine.Rules
             For<IMarketCloseMultiverseTransformer>()
                 .Use<MarketCloseMultiverseTransformer>();
 
-            For<IWashTradeRuleFactory>().Use<WashTradeRuleFactory>();
+            For<IEquityRuleWashTradeFactory>().Use<EquityRuleWashTradeFactory>();
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
             For<IWashTradeClustering>().Use<WashTradeClustering>();
+
+
+
+
+            For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
+            For<IFixedIncomeHighVolumeRule>().Use<FixedIncomeHighVolumeIssuanceRule>();
+            For<IFixedIncomeHighVolumeFactory>().Use<FixedIncomeHighVolumeFactory>();
+
+            For<IHighProfitsFixedIncomeSubscriber>().Use<HighProfitsFixedIncomeSubscriber>();
+            For<IFixedIncomeHighProfitsRule>().Use<FixedIncomeHighProfitsRule>();
+            For<IFixedIncomeHighProfitFactory>().Use<FixedIncomeHighProfitFactory>();
+
+            For<IWashTradeFixedIncomeSubscriber>().Use<WashTradeFixedIncomeSubscriber>();
+            For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
+            For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
+
+
+
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
             For<ICurrencyConverter>().Use<CurrencyConverter>();
@@ -179,7 +216,6 @@ namespace Surveillance.Engine.Rules
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();
             For<IUniversePercentageOfTimeCompletionLoggerFactory>().Use<UniversePercentageOfTimeCompletionLoggerFactory>();
             For<IUniversePercentageCompletionLoggerFactory>().Use<UniversePercentageCompletionLoggerFactory>();
-            For<IUniverseOrderFilter>().Use<UniverseOrderFilter>();
 
             For<IQueueRuleUpdatePublisher>().Use<QueueRuleUpdatePublisher>();
             For<IRuleParameterDtoIdExtractor>().Use<RuleParameterDtoIdExtractor>();

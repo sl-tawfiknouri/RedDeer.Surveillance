@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Contracts.SurveillanceService.Interfaces;
 using Domain.Contracts;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;

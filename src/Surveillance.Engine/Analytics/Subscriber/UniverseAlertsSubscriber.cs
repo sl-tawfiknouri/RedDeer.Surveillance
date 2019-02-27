@@ -3,14 +3,14 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;
-using Surveillance.Engine.Rules.Rules.CancelledOrders.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Rules.Layering.Interfaces;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose.Interfaces;
-using Surveillance.Engine.Rules.Rules.Spoofing.Interfaces;
-using Surveillance.Engine.Rules.Rules.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Analytics.Subscriber

@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
 using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -11,21 +10,19 @@ using Surveillance.Engine.Rules.Currency;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
+using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
-using Surveillance.Engine.Rules.Rules.HighProfits;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Factories.Interfaces;
-using Surveillance.Engine.Rules.Rules.HighProfits.Calculators.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factories.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Multiverse;
-using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighProfit;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -36,12 +33,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
     public sealed class HighProfitSteps
     {
         private readonly ScenarioContext _scenarioContext;
-        private HighProfitsRuleParameters _highProfitRuleParameters;
+        private HighProfitsRuleEquitiesParameters _highProfitRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
 
         private ICurrencyConverter _currencyConverter;
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -51,7 +48,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private IMarketDataCacheStrategyFactory _marketDataCacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
-        private HighProfitRuleFactory _highProfitRuleFactory;
+        private EquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
@@ -94,7 +91,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var currencyLogger = new NullLogger<CurrencyConverter>();
             _currencyConverter = new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -118,7 +115,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             _exchangeRateProfitCalculator = A.Fake<IExchangeRateProfitCalculator>();
             _marketDataCacheStrategyFactory = new MarketDataCacheStrategyFactory();
 
-            _highProfitRuleFactory = new HighProfitRuleFactory(
+            _equityRuleHighProfitFactory = new EquityRuleHighProfitFactory(
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
@@ -140,7 +137,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = ruleParameters.CreateInstance<HighProfitApiParameters>();
 
-            _highProfitRuleParameters = new HighProfitsRuleParameters(
+            _highProfitRuleEquitiesParameters = new HighProfitsRuleEquitiesParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
                 parameters.HighProfitPercentage,
@@ -159,8 +156,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             Setup();
 
             var highProfitRule =
-                _highProfitRuleFactory.Build(
-                    _highProfitRuleParameters,
+                _equityRuleHighProfitFactory.Build(
+                    _highProfitRuleEquitiesParameters,
                     _ruleCtx,
                     _ruleCtx,
                     _alertStream,

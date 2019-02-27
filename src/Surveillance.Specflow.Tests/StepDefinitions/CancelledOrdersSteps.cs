@@ -4,11 +4,12 @@ using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.CancelledOrders;
+using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders;
@@ -25,12 +26,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly ICancelledOrderRuleFactory _cancelledOrderFactory;
+        private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
 
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
-        private CancelledOrderRuleParameters _parameters;
+        private CancelledOrderRuleEquitiesParameters _parameters;
 
         public CancelledOrdersSteps(
             ScenarioContext scenarioContext,
@@ -46,9 +47,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
 
-            _cancelledOrderFactory = new CancelledOrderRuleFactory(
+            _equityRuleCancelledOrderFactory = new EquityRuleCancelledOrderFactory(
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
                 new NullLogger<CancelledOrderRule>(),
@@ -66,7 +67,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = cancelledOrderParameters.CreateInstance<CancelledOrderApiParameters>();
 
-            _parameters = new CancelledOrderRuleParameters(
+            _parameters = new CancelledOrderRuleEquitiesParameters(
                 "0",
                 new System.TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.CancelledOrderPercentagePositionThreshold,
@@ -81,7 +82,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheCancelledOrderRule()
         {
             var cancelledOrders =
-                _cancelledOrderFactory.Build(
+                _equityRuleCancelledOrderFactory.Build(
                     _parameters,
                     _ruleCtx,
                     _alertStream,

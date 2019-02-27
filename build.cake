@@ -188,8 +188,7 @@ Task("Pack")
 
         	var nupackSettings = new NuGetPackSettings() 
         	{
-        		OutputDirectory = "NugetPackages",
-        		Version = "1.0.0"
+        		OutputDirectory = "NugetPackages"
         	};
 
 	        NuGetPack(project, nupackSettings);

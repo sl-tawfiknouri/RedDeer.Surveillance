@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Reddeer.Surveillance.SurveillanceService</id>
-    <version>$version$</version>
+    <version>1.0.0</version>
     <title>Surveillance Service</title>
     <authors>Ryan Trenchard</authors>
     <owners>Red Deer</owners>

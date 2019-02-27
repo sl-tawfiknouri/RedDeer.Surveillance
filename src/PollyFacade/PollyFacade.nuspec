@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Reddeer.Surveillance.PollyFacade</id>
+    <version>$version$</version>
+    <title>Polly Facade</title>
+    <authors>Ryan Trenchard</authors>
+    <projectUrl>https://github.com/red-deer/RedDeer.Surveillance</projectUrl>
+    <description>Polly Facade</description>
+    <copyright>Copyright 2019</copyright>
+  </metadata>
+</package>

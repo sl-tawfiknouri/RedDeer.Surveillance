@@ -72,6 +72,11 @@ var nugetPackageProjects = new List<string>
 	"src/Utilities/Utilities.csproj",
 };
 
+var nuspecProjects = new List<string>
+{
+	"src/Surveillance/Surveillance/Surveillance.nuspec"
+};
+
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
@@ -174,7 +179,7 @@ Task("Pack")
 
 		CleanDirectory("NugetPackages");
 
-	    foreach (var project in nugetPackageProjects)
+	    foreach (var project in nuspecProjects)
 	    {
 	    	var packSettings = new DotNetCorePackSettings()
 	        {

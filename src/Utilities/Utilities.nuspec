@@ -2,8 +2,8 @@
 <package >
   <metadata>
     <id>Reddeer.Surveillance.Utilities</id>
-    <version>$version$</version>
-    <title>Utilities</title>
+    <version>1.0.0</version>
+    <title>Surveillance.Utilities</title>
     <authors>Ryan Trenchard</authors>
     <owners>Red Deer</owners>
     <projectUrl>https://github.com/red-deer/RedDeer.Surveillance</projectUrl>

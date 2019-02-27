@@ -2,8 +2,8 @@
 <package >
   <metadata>
     <id>Reddeer.Surveillance.PollyFacade</id>
-    <version>$version$</version>
-    <title>Polly Facade</title>
+    <version>1.0.0</version>
+    <title>Surveillance.PollyFacade</title>
     <authors>Ryan Trenchard</authors>
     <projectUrl>https://github.com/red-deer/RedDeer.Surveillance</projectUrl>
     <description>Polly Facade</description>

@@ -53,28 +53,16 @@ var publishProjects = new List<Tuple<string,string, string,string>>
     new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" )
 };
 
-var nugetPackageProjects = new List<string>
-{
-	"src/DomainV2/Domain.csproj",
-	"src/DataImport/DataImport/DataImport.csproj",
-	"src/DataSynchroniser.Api/DataSynchroniser.Api.csproj",
-	"src/DataSynchroniser.Bmll/DataSynchroniser.Api.Bmll.csproj",
-	"src/DataSynchroniser.Factset/DataSynchroniser.Api.Factset.csproj",
-	"src/DataSynchroniser.Markit/DataSynchroniser.Api.Markit.csproj",
-	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser/DataSynchroniser.csproj",
-	"src/PollyFacade/PollyFacade.csproj",
-	"src/Surveillance/Surveillance/Surveillance.csproj",
-	"src/Surveillance/Surveillance.DataLayer/Surveillance.DataLayer.csproj",
-	"src/Surveillance.System.Auditing/Surveillance.Auditing.csproj",
-	"src/Surveillance.Engine/Surveillance.Engine.Rules.csproj",
-	"src/Surveillance.Engine.DataCoordinator/Surveillance.Engine.DataCoordinator.csproj",
-	"src/Surveillance.Engine.RuleDistributor/Surveillance.Engine.RuleDistributor.csproj",
-	"src/Utilities/Utilities.csproj",
-};
-
 var nuspecProjects = new List<string>
 {
-	"src/Surveillance/Surveillance/Surveillance.nuspec"
+	"src/Surveillance/Surveillance/Surveillance.nuspec",
+	"src/DataImport/DataImport/DataImport.nuspec",
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser/DataSynchroniser.nuspec",
+	"src/DomainV2/Domain.nuspec",
+	"src/PollyFacade/PollyFacade.nuspec",
+	"src/Utilities/Utilities.nuspec",
+	"src/Surveillance.System.DataLayer/Surveillance.Auditing.DataLayer.nuspec",
+	"src/Surveillance/Surveillance.DataLayer/Surveillance.DataLayer.nuspec"
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -174,49 +162,59 @@ Task("Pack")
 	{
 		if (!DirectoryExists("NugetPackages"))
 		{
+			Information($"******* Pack Creating Directory NugetPackages");	
 			CreateDirectory("NugetPackages");
 		}
 
+		Information($"******* Pack Cleaning Directory NugetPackages");	
 		CleanDirectory("NugetPackages");
 
+		Information($"******* Pack looping through nuget package projects");
 	    foreach (var project in nuspecProjects)
 	    {
-	    	var packSettings = new DotNetCorePackSettings()
-	        {
-	            OutputDirectory = "NugetPackages"
-	        };
+		    var nuGetPackSettings = new NuGetPackSettings
+			{
+				OutputDirectory = "NugetPackages",
+				IncludeReferencedProjects = true,
+	       		ArgumentCustomization = args => args.Append("-Prop Configuration=" + "release" + " -NoDefaultExcludes")
+			};
 
-        	var nupackSettings = new NuGetPackSettings() 
-        	{
-        		OutputDirectory = "NugetPackages"
-        	};
-
-	        NuGetPack(project, nupackSettings);
+			Information($"******* Pack Called for {project}");	
+			NuGetPack(project, nuGetPackSettings);
 	    }
+
+		var packages = GetFiles("NugetPackages/*.nupkg");
+   		foreach (var pack in packages)
+   		{
+	    	var iterItem = $"NugetPackages/{pack.GetFilename().ToString()}";
+	    	Information($"******* Pack loop pushing {iterItem}");
+			NuGetPush(iterItem, new NuGetPushSettings {
+			     Source = "http://nexus.reddeer.local/repository/nuget-hosted/",
+			     ApiKey = "a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2",
+			     Verbosity = NuGetVerbosity.Detailed
+			 });
+  		}
 	});
 
 Task("NoPublish")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Test")
-	.IsDependentOn("Pack");
+	.IsDependentOn("Test");
 
 Task("BuildOnly")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Pack");
+	.IsDependentOn("Test");
 
 Task("PublishNoTests")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
-	.IsDependentOn("Publish")
-	.IsDependentOn("Pack");
+	.IsDependentOn("Publish");
 
 Task("Default")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
 	.IsDependentOn("Test")
-	.IsDependentOn("Publish")
-	.IsDependentOn("Pack");
+	.IsDependentOn("Publish");
 
 RunTarget(target);

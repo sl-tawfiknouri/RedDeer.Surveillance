@@ -144,8 +144,9 @@ namespace Surveillance.DataLayer.Api.BmllMarketData
 
                     var acceptedRequests = new[]
                     {
-                    MinuteBarRequestStatus.Completed,
-                    MinuteBarRequestStatus.Failed,
+                        MinuteBarRequestStatus.Completed,
+                        MinuteBarRequestStatus.Failed,
+                        MinuteBarRequestStatus.Requeued // agreed with test team to ignore requeuing until we do further work on the BMLL service
                     };
 
                     var completed = deserialisedResponse.Statuses.All(i => acceptedRequests.Contains(i.Status));

@@ -6,13 +6,14 @@ using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories;
-using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
+using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
-using Surveillance.Engine.Rules.Rules.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose;
@@ -29,13 +30,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
-        private readonly IMarkingTheCloseRuleFactory _markingTheCloseFactory;
+        private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
         private readonly IMarketTradingHoursManager _tradingHoursManager;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
-        private IUniverseOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilter _universeOrderFilter;
         private UniverseMarketCacheFactory _universeMarketCacheFactory;
-        private MarkingTheCloseParameters _parameters;
+        private MarkingTheCloseEquitiesParameters _equitiesParameters;
 
         public MarkingTheCloseSteps(
             ScenarioContext scenarioContext,
@@ -51,7 +52,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseOrderFilter>();
+            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
@@ -75,7 +76,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     CloseOffsetInUtc = TimeSpan.FromHours(23)
                 });
 
-            _markingTheCloseFactory = new MarkingTheCloseRuleFactory(
+            _equityRuleMarkingTheCloseFactory = new EquityRuleMarkingTheCloseFactory(
                 _universeOrderFilter,
                 _universeMarketCacheFactory,
                 _tradingHoursManager,
@@ -94,7 +95,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var parameters = markingTheCloseParameters.CreateInstance<MarkingTheCloseApiParameters>();
 
-            _parameters = new MarkingTheCloseParameters(
+            _equitiesParameters = new MarkingTheCloseEquitiesParameters(
                 "0",
                 new System.TimeSpan(parameters.WindowHours, 0, 0),
                 parameters.PercentageThresholdDailyVolume,
@@ -108,8 +109,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         public void WhenIRunTheMarkingTheCloseRule()
         {
             var cancelledOrders =
-                _markingTheCloseFactory.Build(
-                    _parameters,
+                _equityRuleMarkingTheCloseFactory.Build(
+                    _equitiesParameters,
                     _ruleCtx,
                     _alertStream,
                     RuleRunMode.ForceRun,

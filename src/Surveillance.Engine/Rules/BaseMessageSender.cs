@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Contracts.SurveillanceService;
 using Microsoft.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;

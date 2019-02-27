@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor;

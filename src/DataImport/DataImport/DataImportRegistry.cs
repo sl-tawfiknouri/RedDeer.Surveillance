@@ -1,6 +1,4 @@
-﻿using Contracts.SurveillanceService;
-using Contracts.SurveillanceService.Interfaces;
-using DataImport.Disk_IO.AllocationFile;
+﻿using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
@@ -28,6 +26,8 @@ using Domain.Streams;
 using Domain.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using RedDeer.Contracts.SurveillanceService;
+using RedDeer.Contracts.SurveillanceService.Interfaces;
 using StructureMap;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;

@@ -4,19 +4,19 @@ namespace Domain.Scheduling
 {
     public enum Rules
     {
-        [Description("Spoofing")]
+        [Description("Equities Spoofing")]
         Spoofing = 0,
-        [Description("Cancelled Orders")]
+        [Description("Equities Cancelled Orders")]
         CancelledOrders,
-        [Description("High Profits")]
+        [Description("Equities High Profits")]
         HighProfits,
-        [Description("Marking the Close")]
+        [Description("Equities Marking the Close")]
         MarkingTheClose,
-        [Description("Layering")]
+        [Description("Equities Layering")]
         Layering,
-        [Description("High Volume")]
+        [Description("Equities High Volume")]
         HighVolume,
-        [Description("Wash Trades")]
+        [Description("Equities Wash Trades")]
         WashTrade,
         [Description("Universe Filter")]
         UniverseFilter,
@@ -31,6 +31,12 @@ namespace Domain.Scheduling
         [Description("Pump And Dump")]
         PumpAndDump,
         [Description("Trash And Cash")]
-        TrashAndCash
+        TrashAndCash,
+        [Description("Fixed Income High Profits")]
+        FixedIncomeHighProfits,
+        [Description("Fixed Income High Volume Issuance")]
+        FixedIncomeHighVolumeIssuance,
+        [Description("Fixed Income Wash Trades")]
+        FixedIncomeWashTrades
     }
 }

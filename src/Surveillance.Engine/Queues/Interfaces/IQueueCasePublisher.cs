@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Contracts.SurveillanceService;
+using RedDeer.Contracts.SurveillanceService;
 
 namespace Surveillance.Engine.Rules.Queues.Interfaces
 {

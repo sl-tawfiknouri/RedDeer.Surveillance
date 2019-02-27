@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
 using Surveillance.Engine.Rules.RuleParameters.Manager;
 
 namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager

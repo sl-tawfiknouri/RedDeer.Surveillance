@@ -2,6 +2,7 @@ bin/
 obj/
 .vs/
 *.user
+*.feature.cs
 src/Relay/RedDeer.Relay.sln.DotSettings.user
 packages/
 src/Relay/App/Play Equity Files/

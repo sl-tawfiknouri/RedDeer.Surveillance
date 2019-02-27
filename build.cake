@@ -186,7 +186,12 @@ Task("Pack")
 	            OutputDirectory = "NugetPackages"
 	        };
 
-	        DotNetCorePack(project, packSettings);
+        	var nupackSettings = new NuGetPackSettings() 
+        	{
+        		OutputDirectory = "NugetPackages"
+        	}
+
+	        NuGetPack(project, nupackSettings);
 	    }
 	});
 

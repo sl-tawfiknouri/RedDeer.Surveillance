@@ -53,6 +53,18 @@ var publishProjects = new List<Tuple<string,string, string,string>>
     new Tuple<string,string,string,string> ("src/Test Harness/App", "","TestHarness.zip","netcoreapp2.0" )
 };
 
+var nuspecProjects = new List<string>
+{
+	"src/Surveillance/Surveillance/Surveillance.nuspec",
+	"src/DataImport/DataImport/DataImport.nuspec",
+	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser/DataSynchroniser.nuspec",
+	"src/DomainV2/Domain.nuspec",
+	"src/PollyFacade/PollyFacade.nuspec",
+	"src/Utilities/Utilities.nuspec",
+	"src/Surveillance.System.DataLayer/Surveillance.Auditing.DataLayer.nuspec",
+	"src/Surveillance/Surveillance.DataLayer/Surveillance.DataLayer.nuspec"
+};
+
 //////////////////////////////////////////////////////////////////////
 // TASKS
 //////////////////////////////////////////////////////////////////////
@@ -145,6 +157,45 @@ Task("Publish")
 	    } 
 	});
 
+Task("Pack")
+    .Does(() =>
+	{
+		if (!DirectoryExists("NugetPackages"))
+		{
+			Information($"******* Pack Creating Directory NugetPackages");	
+			CreateDirectory("NugetPackages");
+		}
+
+		Information($"******* Pack Cleaning Directory NugetPackages");	
+		CleanDirectory("NugetPackages");
+
+		Information($"******* Pack looping through nuget package projects");
+	    foreach (var project in nuspecProjects)
+	    {
+		    var nuGetPackSettings = new NuGetPackSettings
+			{
+				OutputDirectory = "NugetPackages",
+				IncludeReferencedProjects = true,
+	       		ArgumentCustomization = args => args.Append("-Prop Configuration=" + "release" + " -NoDefaultExcludes")
+			};
+
+			Information($"******* Pack Called for {project}");	
+			NuGetPack(project, nuGetPackSettings);
+	    }
+
+		var packages = GetFiles("NugetPackages/*.nupkg");
+   		foreach (var pack in packages)
+   		{
+	    	var iterItem = $"NugetPackages/{pack.GetFilename().ToString()}";
+	    	Information($"******* Pack loop pushing {iterItem}");
+			NuGetPush(iterItem, new NuGetPushSettings {
+			     Source = "http://nexus.reddeer.local/repository/nuget-hosted/",
+			     ApiKey = "a6ab623c-7cbc-3fc3-b9be-3236be4fdfa2",
+			     Verbosity = NuGetVerbosity.Detailed
+			 });
+  		}
+	});
+
 Task("NoPublish")
 	.IsDependentOn("SetVersion")
 	.IsDependentOn("Build")
@@ -152,7 +203,8 @@ Task("NoPublish")
 
 Task("BuildOnly")
 	.IsDependentOn("SetVersion")
-	.IsDependentOn("Build");
+	.IsDependentOn("Build")
+	.IsDependentOn("Test");
 
 Task("PublishNoTests")
 	.IsDependentOn("SetVersion")

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Reddeer.Surveillance.Utilities</id>
+    <version>1.0.0</version>
+    <title>Surveillance.Utilities</title>
+    <authors>Ryan Trenchard</authors>
+    <owners>Red Deer</owners>
+    <projectUrl>https://github.com/red-deer/RedDeer.Surveillance</projectUrl>
+    <description>Utilities for supporting surveillance. AWS, File system wrappers etc</description>
+    <copyright>Copyright 2019</copyright>
+  </metadata>
+</package>

@@ -23,9 +23,11 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         public IUniverseFilter Build(
                 RuleFilter accounts,
                 RuleFilter traders,
-                RuleFilter markets)
+                RuleFilter markets,
+                RuleFilter funds,
+                RuleFilter strategies)
         {
-            return new UniverseFilter(_unsubscriberFactory, accounts, traders, markets, _logger);
+            return new UniverseFilter(_unsubscriberFactory, accounts, traders, markets, funds, strategies, _logger);
         }
     }
 }

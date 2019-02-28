@@ -18,7 +18,6 @@ using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
-using Surveillance.Engine.Rules.Universe.Multiverse;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Factories.Equities
@@ -36,8 +35,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private IMarketDataCacheStrategyFactory _cacheStrategyFactory;
         private ILogger<HighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
-        private ILogger<MarketCloseMultiverseTransformer> _transformerLogger;
-
+       
 
         private IHighProfitsRuleEquitiesParameters _equitiesParameters;
         private ISystemProcessOperationRunRuleContext _ruleCtxStream;
@@ -59,7 +57,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _cacheStrategyFactory = A.Fake<IMarketDataCacheStrategyFactory>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
-            _transformerLogger = new NullLogger<MarketCloseMultiverseTransformer>();
 
             _equitiesParameters = A.Fake<IHighProfitsRuleEquitiesParameters>();
             _ruleCtxStream = A.Fake<ISystemProcessOperationRunRuleContext>();

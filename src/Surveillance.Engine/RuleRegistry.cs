@@ -72,8 +72,6 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
-using Surveillance.Engine.Rules.Universe.Multiverse;
-using Surveillance.Engine.Rules.Universe.Multiverse.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers;
@@ -172,8 +170,6 @@ namespace Surveillance.Engine.Rules
             For<IHighVolumeRuleCachedMessageSender>().Use<HighVolumeRuleCachedMessageSender>();
 
             For<IHighProfitStreamRule>().Use<HighProfitStreamRule>();
-            For<IMarketCloseMultiverseTransformer>()
-                .Use<MarketCloseMultiverseTransformer>();
 
             For<IEquityRuleWashTradeFactory>().Use<EquityRuleWashTradeFactory>();
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();

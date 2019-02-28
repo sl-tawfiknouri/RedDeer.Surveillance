@@ -290,5 +290,173 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
             A.CallTo(() => _observer.OnNext(eventThree)).MustNotHaveHappened();
             A.CallTo(() => _observer.OnNext(eventFour)).MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Funds()
+        {
+            var fund = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, fund, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.OrderFund = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.OrderFund = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Funds()
+        {
+            var fund = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, fund, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.OrderFund = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.OrderFund = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Funds()
+        {
+            var fund = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, fund, null, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.OrderFund = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.OrderFund = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForWhiteListTrueSubscribers_Strategies()
+        {
+            var strategy = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Include
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, null, strategy, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.OrderStrategy = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.OrderStrategy = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForBlackListTrueSubscribers_Strategies()
+        {
+            var strategy = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.Exclude
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, null, strategy, _logger);
+
+            filter.Subscribe(_observer);
+
+            var strategyOne = ((Order)null).Random();
+            strategyOne.OrderStrategy = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyOne);
+
+            var strategyTwo = ((Order)null).Random();
+            strategyTwo.OrderStrategy = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, strategyTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustNotHaveHappened();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void OnNext_CallsOnCompleted_ForNoneTrueSubscribers_Strategies()
+        {
+            var strategy  = new RuleFilter
+            {
+                Ids = new string[] { "abc" },
+                Type = RuleFilterType.None
+            };
+
+            var filter = new UniverseFilter(_unsubscriber, null, null, null, null, strategy, _logger);
+
+            filter.Subscribe(_observer);
+
+            var fundOne = ((Order)null).Random();
+            fundOne.OrderStrategy = "abc";
+            var eventOne = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundOne);
+
+            var fundTwo = ((Order)null).Random();
+            fundTwo.OrderStrategy = "def";
+            var eventTwo = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, fundTwo);
+
+            filter.OnNext(eventOne);
+            filter.OnNext(eventTwo);
+
+            A.CallTo(() => _observer.OnNext(eventOne)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => _observer.OnNext(eventTwo)).MustHaveHappenedOnceExactly();
+        }
     }
 }

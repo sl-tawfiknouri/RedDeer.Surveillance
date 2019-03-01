@@ -6,6 +6,7 @@ using System.Timers;
 using CsvHelper;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Orders.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Engine.OrderStorage.Interfaces;
 // ReSharper disable InconsistentlySynchronizedField
@@ -25,17 +26,17 @@ namespace TestHarness.Engine.OrderStorage
         private readonly string _fileStamp;
 
         private readonly IConsole _console;
-        private readonly ITradeFileCsvToOrderMapper _csvMapper;
+        private readonly IOrderFileToOrderSerialiser _orderSerialiser;
 
         public OrderFileStorageProcess(
             string storagePath,
             IConsole console,
-            ITradeFileCsvToOrderMapper csvMapper,
+            IOrderFileToOrderSerialiser orderSerialiser,
             ILogger logger)
         {
             _storagePath = storagePath ?? "GeneratedOrderFiles";
             _console = console ?? throw new ArgumentNullException(nameof(console));
-            _csvMapper = csvMapper ?? throw new ArgumentNullException(nameof(csvMapper));
+            _orderSerialiser = orderSerialiser ?? throw new ArgumentNullException(nameof(orderSerialiser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _frames = new List<Order>();
             _timerInitiated = false;
@@ -100,7 +101,7 @@ namespace TestHarness.Engine.OrderStorage
                 {
                     var filePath = Path.Combine(_storagePath, _fileStamp);
 
-                    var csvFrames = _frames.Select(_csvMapper.Map).ToList().SelectMany(x => x).ToList();
+                    var csvFrames = _frames.Select(_orderSerialiser.Map).ToList().SelectMany(x => x).ToList();
 
                     using (var writer = File.CreateText(filePath))
                     {

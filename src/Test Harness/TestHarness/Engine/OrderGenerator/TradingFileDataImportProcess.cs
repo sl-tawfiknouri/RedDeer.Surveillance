@@ -6,22 +6,24 @@ using CsvHelper;
 using Domain.Equity.TimeBars;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Orders;
+using SharedKernel.Files.Orders.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
 
 namespace TestHarness.Engine.OrderGenerator
 {
     public class TradingFileDataImportProcess : BaseTradingProcess
     {
-        private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
+        private readonly IOrderFileToOrderSerialiser _orderFileToOrderSerialiser;
         private readonly string _filePath;
 
         public TradingFileDataImportProcess(
             ILogger logger,
-            ITradeFileCsvToOrderMapper csvToDtoMapper,
+            IOrderFileToOrderSerialiser orderFileToOrderSerialiser,
             string filePath)
             : base(logger, new StubTradeStrategy())
         {
-            _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
+            _orderFileToOrderSerialiser = orderFileToOrderSerialiser ?? throw new ArgumentNullException(nameof(orderFileToOrderSerialiser));
             _filePath = filePath ?? string.Empty;
         }
 
@@ -45,11 +47,11 @@ namespace TestHarness.Engine.OrderGenerator
             {
                 var csv = new CsvReader(reader);
                 csv.Configuration.HasHeaderRecord = true;
-                var csvRecords = csv.GetRecords<TradeFileCsv>().ToList();
+                var csvRecords = csv.GetRecords<OrderFileContract>().ToList();
 
                 foreach (var record in csvRecords)
                 {
-                    var mappedRecord = _csvToDtoMapper.Map(record);
+                    var mappedRecord = _orderFileToOrderSerialiser.Map(record);
                     if (mappedRecord != null)
                     {
                         tradeOrders.Add(mappedRecord);
@@ -57,9 +59,9 @@ namespace TestHarness.Engine.OrderGenerator
                 }
             }
 
-            if (_csvToDtoMapper.FailedParseTotal > 0)
+            if (_orderFileToOrderSerialiser.FailedParseTotal > 0)
             {
-                Logger.LogError($"TradingFileDataImportProcess had {_csvToDtoMapper.FailedParseTotal} errors parsing the input CSV file {_filePath}");
+                Logger.LogError($"TradingFileDataImportProcess had {_orderFileToOrderSerialiser.FailedParseTotal} errors parsing the input CSV file {_filePath}");
             }
 
             if (!tradeOrders.Any())

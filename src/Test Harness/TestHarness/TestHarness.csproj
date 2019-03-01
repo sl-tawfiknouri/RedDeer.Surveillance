@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\DomainV2\Domain.csproj" />
+    <ProjectReference Include="..\..\SharedKernel.Files\SharedKernel.Files.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
 

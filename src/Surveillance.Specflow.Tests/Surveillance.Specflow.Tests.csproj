@@ -30,7 +30,6 @@
     </Compile>
   </ItemGroup>
 
-
   <PropertyGroup>
     <Pickles_Generate>True</Pickles_Generate>
     <Pickles_DocumentationFormat>dhtml</Pickles_DocumentationFormat>

@@ -98,49 +98,85 @@ Scenario: Marking the close raises 0 alerts for differnet days
 
 Scenario: Inside Time Window yields 1 alert
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
-         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Micron     | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
-         | Micron     | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
+         | SecurityName | OrderId | PlacedDate          | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
+         | Micron       | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
 		And With the interday market data :
 		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
-		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
 		 When I run the marking the close rule
 		 Then I will have 1 marking the close alerts
 
 
 Scenario: Outside Time Window yields 0 alert
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
-         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Micron     | 1       | 01/01/2019 23:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
-         | Micron     | 2       | 01/01/2019 23:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 2500         |
+         | SecurityName | OrderId | PlacedDate          | CancelledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 23:35:00 |               | Market | Buy       | USD      | 2500          | 2500         |
+         | Micron       | 2       | 01/01/2019 23:35:00 |               | Market | Buy       | USD      | 2500          | 2500         |
 		And With the interday market data :
 		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
-		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
 		 When I run the marking the close rule
 		 Then I will have 0 marking the close alerts
 
 Scenario: Inside PercentageThresholdDailyVolume yields 1 alert
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
-         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Micron     | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 3500         |
-         | Micron     | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 3500         |
+         | SecurityName | OrderId | PlacedDate          | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 3500         |
+         | Micron       | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 3500         |
 		And With the interday market data :
 		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
-		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
 		 When I run the marking the close rule
 		 Then I will have 1 marking the close alerts
 
 Scenario: Outside PercentageThresholdDailyVolume yields 0 alert
 		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
-         | SecurityName | OrderId | PlacedDate			| CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
-         | Micron     | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 500         |
-         | Micron     | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 500         |
+         | SecurityName | OrderId | PlacedDate          | CancelledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 500          |
+         | Micron       | 2       | 01/01/2019 22:35:00 |               | Market | Buy       | USD      |            |                  | 2500          | 500          |
 		And With the interday market data :
 		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
-		| Micron     | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
-		| Micron     | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000  | 10000       | USD      |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
 		 When I run the marking the close rule
 		 Then I will have 0 marking the close alerts
+
+Scenario: Same As PercentageThresholdDailyVolume yields 1 alert
+		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate          | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 | Market | Buy       | USD      |            |                  | 2500          | 2500         |
+         | Micron       | 2       | 01/01/2019 22:35:00 | Market | Buy       | USD      |            |                  | 2500          | 2500         |
+		And With the interday market data :
+		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		 When I run the marking the close rule
+		 Then I will have 1 marking the close alerts
+
+Scenario: Just Buy Trade yields 1 alert
+		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate          | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 | Market | Buy       | USD      | 2500          | 5000         |
+
+		And With the interday market data :
+		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		 When I run the marking the close rule
+		 Then I will have 1 marking the close alerts
+
+Scenario: Just Sell Trade yields 1 alert
+		Given I have the orders for a universe from 01/01/2019 to 01/01/2019 :
+         | SecurityName | OrderId | PlacedDate          | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Micron       | 1       | 01/01/2019 22:35:00 | Market | SELL      | USD      | 2500          | 5000         |
+     
+		And With the interday market data :
+		| SecurityName | Epoch      | OpenPrice | ClosePrice | HighIntradayPrice | LowIntradayPrice | ListedSecurities | MarketCap | DailyVolume | Currency |
+		| Micron       | 01/01/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		| Micron       | 01/02/2019 | 10        | 11         | 11.5              | 10               | 10               | 1000000   | 10000       | USD      |
+		 When I run the marking the close rule
+		 Then I will have 1 marking the close alerts

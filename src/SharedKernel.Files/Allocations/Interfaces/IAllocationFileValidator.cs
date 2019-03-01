@@ -2,7 +2,7 @@
 
 namespace SharedKernel.Files.Allocations.Interfaces
 {
-    public interface IAllocationFileCsvValidator
+    public interface IAllocationFileValidator
     {
         ValidationResult Validate(AllocationFileContract contract);
     }

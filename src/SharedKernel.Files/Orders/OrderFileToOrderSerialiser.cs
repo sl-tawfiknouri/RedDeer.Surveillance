@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Financial;
 using Domain.Trading;
+using SharedKernel.Files.Orders.Interfaces;
 
 namespace SharedKernel.Files.Orders
 {
-    public class OrderFileCsvToOrderSerialiser : ITradeFileCsvToOrderMapper
+    public class OrderFileToOrderSerialiser : IOrderFileToOrderSerialiser
     {
         public OrderFileContract[] Map(Order order)
         {

@@ -4,7 +4,7 @@ using SharedKernel.Files.Allocations.Interfaces;
 
 namespace SharedKernel.Files.Allocations
 {
-    public class AllocationFileValidator : AbstractValidator<AllocationFileContract>, IAllocationFileCsvValidator
+    public class AllocationFileValidator : AbstractValidator<AllocationFileContract>, IAllocationFileValidator
     {
         public AllocationFileValidator()
         {

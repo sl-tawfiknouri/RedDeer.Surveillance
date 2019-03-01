@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using Domain.Financial;
+using FluentValidation;
+using FluentValidation.Validators;
+using SharedKernel.Files.Orders.Interfaces;
 
 namespace SharedKernel.Files.Orders
 {
-    public class OrderFileValidator : AbstractValidator<OrderFileContract>, ITradeFileCsvValidator
+    public class OrderFileValidator : AbstractValidator<OrderFileContract>, IOrderFileValidator
     {
         public OrderFileValidator()
         {

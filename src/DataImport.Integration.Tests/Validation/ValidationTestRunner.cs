@@ -10,6 +10,7 @@ using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using SharedKernel.Files.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
@@ -319,8 +320,8 @@ namespace DataImport.Integration.Tests.Validation
                 new Configuration.Configuration(),
                 new ReddeerDirectory(),
                 new UploadTradeFileProcessor(
-                    new TradeFileCsvToOrderMapper(),
-                    new TradeFileCsvValidator(),
+                    new OrderFileToOrderSerialiser(),
+                    new OrderFileValidator(),
                     new NullLogger<UploadTradeFileProcessor>()),
                 _enrichmentService,
                 _ordersRepository,

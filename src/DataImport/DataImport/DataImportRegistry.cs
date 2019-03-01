@@ -24,6 +24,10 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
+using SharedKernel.Files.Allocations;
+using SharedKernel.Files.Allocations.Interfaces;
+using SharedKernel.Files.Orders;
+using SharedKernel.Files.Orders.Interfaces;
 using StructureMap;
 using Utilities.Aws_IO;
 using Utilities.Aws_IO.Interfaces;
@@ -61,14 +65,14 @@ namespace DataImport
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
             For<IScheduleExecutionDtoMapper>().Use<ScheduleExecutionDtoMapper>();
 
-            For<ITradeFileCsvValidator>().Use<TradeFileCsvValidator>();
-            For<ITradeFileCsvToOrderMapper>().Use<TradeFileCsvToOrderMapper>();
+            For<IOrderFileValidator>().Use<OrderFileValidator>();
+            For<IOrderFileToOrderSerialiser>().Use<OrderFileToOrderSerialiser>();
 
             For<IEnrichmentService>().Use<EnrichmentService>();
 
             For<IUploadAllocationFileMonitor>().Use<AllocationFileMonitor>();
-            For<IAllocationFileCsvValidator>().Use<AllocationFileCsvValidator>();
-            For<IAllocationFileCsvToOrderAllocationMapper>().Use<AllocationFileCsvToOrderAllocationMapper>();
+            For<IAllocationFileValidator>().Use<AllocationFileValidator>();
+            For<IAllocationFileCsvToOrderAllocationSerialiser>().Use<AllocationFileCsvToOrderAllocationSerialiser>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();

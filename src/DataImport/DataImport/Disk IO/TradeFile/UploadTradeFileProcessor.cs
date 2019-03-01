@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Files;
-using Domain.Files.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 

@@ -5,7 +5,6 @@ using System.Linq;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
-using Domain.Files;
 using Domain.Financial;
 using Domain.Trading;
 using FakeItEasy;

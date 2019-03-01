@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using DataImport.MessageBusIO.Interfaces;
 using Domain.Contracts;
-using Domain.Files.AllocationFile;
 using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;

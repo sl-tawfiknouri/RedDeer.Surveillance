@@ -7,7 +7,6 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using Domain.Contracts;
-using Domain.Files;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;

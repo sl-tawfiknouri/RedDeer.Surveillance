@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Timers;
 using CsvHelper;
-using Domain.Files.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Display.Interfaces;

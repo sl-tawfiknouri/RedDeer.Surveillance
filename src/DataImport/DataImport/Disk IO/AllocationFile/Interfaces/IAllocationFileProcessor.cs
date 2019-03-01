@@ -1,5 +1,4 @@
-﻿using Domain.Files.AllocationFile;
-using Domain.Trading;
+﻿using Domain.Trading;
 
 namespace DataImport.Disk_IO.AllocationFile.Interfaces
 {

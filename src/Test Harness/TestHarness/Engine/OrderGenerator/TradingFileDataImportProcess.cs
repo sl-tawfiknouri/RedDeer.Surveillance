@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using Domain.Equity.TimeBars;
-using Domain.Files;
-using Domain.Files.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;

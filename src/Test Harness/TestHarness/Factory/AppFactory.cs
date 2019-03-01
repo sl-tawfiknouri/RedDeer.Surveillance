@@ -1,5 +1,4 @@
-﻿using Domain.Files;
-using Domain.Scheduling;
+﻿using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Commands;

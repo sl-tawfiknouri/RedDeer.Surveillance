@@ -1,12 +1,12 @@
-﻿using Domain.Files.AllocationFile.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Validators;
+using SharedKernel.Files.Allocations.Interfaces;
 
-namespace Domain.Files.AllocationFile
+namespace SharedKernel.Files.Allocations
 {
-    public class AllocationFileCsvValidator : AbstractValidator<AllocationFileCsv>, IAllocationFileCsvValidator
+    public class AllocationFileValidator : AbstractValidator<AllocationFileContract>, IAllocationFileCsvValidator
     {
-        public AllocationFileCsvValidator()
+        public AllocationFileValidator()
         {
             RuleFor(x => x.OrderId).NotEmpty().MaximumLength(255);
             RuleFor(x => x.Fund).MaximumLength(255);

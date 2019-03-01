@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using Domain.Files.Interfaces;
-using Domain.Financial;
-using FluentValidation;
-using FluentValidation.Validators;
 
-namespace Domain.Files
+namespace SharedKernel.Files.Orders
 {
-    public class TradeFileCsvValidator : AbstractValidator<TradeFileCsv>, ITradeFileCsvValidator
+    public class OrderFileValidator : AbstractValidator<OrderFileContract>, ITradeFileCsvValidator
     {
-        public TradeFileCsvValidator()
+        public OrderFileValidator()
         {
             // Market
             RuleFor(x => x.MarketIdentifierCode)
@@ -333,29 +329,29 @@ namespace Domain.Files
             RulesForTradeOptionsProperties();
         }
 
-        private bool HasDealerOrderData(TradeFileCsv csv)
+        private bool HasDealerOrderData(OrderFileContract contract)
         {
-            if (HasOptionFieldSet(csv))
+            if (HasOptionFieldSet(contract))
             {
                 return true;
             }
 
-            return !string.IsNullOrWhiteSpace(csv.DealerOrderDealerId)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderDealerName)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderPlacedDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderBookedDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderAmendedDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderRejectedDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCancelledDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderFilledDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCounterParty)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderType)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderDirection)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderCurrency)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderLimitPrice)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderAverageFillPrice)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOrderedVolume)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderFilledVolume);
+            return !string.IsNullOrWhiteSpace(contract.DealerOrderDealerId)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderDealerName)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderPlacedDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderBookedDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderAmendedDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderRejectedDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderCancelledDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderFilledDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderCounterParty)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderType)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderDirection)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderCurrency)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderLimitPrice)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderAverageFillPrice)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderOrderedVolume)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderFilledVolume);
         }
 
         private void RulesForTradeOptionsProperties()
@@ -365,16 +361,16 @@ namespace Domain.Files
             RuleFor(x => x.DealerOrderOptionStrikePrice).NotEmpty().When(HasOptionFieldSet);
         }
 
-        private bool HasOptionFieldSet(TradeFileCsv csv)
+        private bool HasOptionFieldSet(OrderFileContract contract)
         {
-            if (csv == null)
+            if (contract == null)
             {
                 return false;
             }
 
-            return !string.IsNullOrWhiteSpace(csv.DealerOrderOptionExpirationDate)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOptionEuropeanAmerican)
-                   || !string.IsNullOrWhiteSpace(csv.DealerOrderOptionStrikePrice);
+            return !string.IsNullOrWhiteSpace(contract.DealerOrderOptionExpirationDate)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionEuropeanAmerican)
+                   || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionStrikePrice);
         }
     }
 

@@ -115,7 +115,7 @@ Task("Test")
 			NoRestore = true,
 			ResultsDirectory = "./testresults",
 			Verbosity = DotNetCoreVerbosity.Normal,
-			Logger = "trx;LogFileName=unit_tests.xml"
+			Logger = "trx"
 		};
 
 		foreach (var testProject in testProjects)

@@ -159,7 +159,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithDirectConversionMultipleRates_ReturnsExpectedResult()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var Moneys = new List<Money>
+            var monies = new List<Money>
             {
                 new Money(100, "CNY"),
                 new Money(20, "USD")
@@ -191,7 +191,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(monies, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 20);

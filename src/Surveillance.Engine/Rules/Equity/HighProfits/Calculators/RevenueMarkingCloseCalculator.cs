@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Financial;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;

@@ -120,8 +120,8 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Value} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
-                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Code} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
+                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DataSynchroniser.Api.Bmll.Bmll;
+using Domain.Core.Financial;
 using Domain.Markets;
 using NUnit.Framework;
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
 using Domain.Markets;
 using FakeItEasy;

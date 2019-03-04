@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Financial;
 using Domain.Trading;
 
 namespace Surveillance.Engine.Rules.Tests.Trades

@@ -11,6 +11,7 @@ using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
+using Domain.Core.Financial;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {

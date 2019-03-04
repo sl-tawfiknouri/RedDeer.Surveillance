@@ -1,23 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using Domain.Core.Financial.Interfaces;
 
 namespace Domain.Core.Financial
 {
-    public class InterDayHistoryStack : IInterDayHistoryStack
+    public class IntraDayHistoryStack : IIntraDayHistoryStack
     {
-        private readonly Stack<EquityInterDayTimeBarCollection> _activeStack;
-        private readonly Queue<EquityInterDayTimeBarCollection> _history;
+        private readonly Stack<EquityIntraDayTimeBarCollection> _activeStack;
+        private readonly Queue<EquityIntraDayTimeBarCollection> _history;
         private Market _market;
 
         private readonly object _lock = new object();
+        private readonly TimeSpan _activeTradeDuration;
 
-        public InterDayHistoryStack()
+        public IntraDayHistoryStack(TimeSpan activeTradeDuration)
         {
-            _activeStack = new Stack<EquityInterDayTimeBarCollection>();
-            _history = new Queue<EquityInterDayTimeBarCollection>();
+            _activeStack = new Stack<EquityIntraDayTimeBarCollection>();
+            _history = new Queue<EquityIntraDayTimeBarCollection>();
+            _activeTradeDuration = activeTradeDuration;
         }
 
-        public void Add(EquityInterDayTimeBarCollection frame, DateTime currentTime)
+        public void Add(EquityIntraDayTimeBarCollection frame, DateTime currentTime)
         {
             if (frame == null)
             {
@@ -26,7 +29,7 @@ namespace Domain.Core.Financial
 
             lock (_lock)
             {
-                if (currentTime.Date == (frame.Epoch.Date))
+                if (currentTime.Subtract((DateTime) frame.Epoch) <= _activeTradeDuration)
                 {
                     _activeStack.Push(frame);
                 }
@@ -42,12 +45,12 @@ namespace Domain.Core.Financial
             lock (_lock)
             {
                 var initialActiveStackCount = _activeStack.Count;
-                var counterPartyStack = new Stack<EquityInterDayTimeBarCollection>();
+                var counterPartyStack = new Stack<EquityIntraDayTimeBarCollection>();
 
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Date != poppedItem.Epoch.Date)
+                    if (currentTime.Subtract((DateTime) poppedItem.Epoch) > _activeTradeDuration)
                     {
                         _history.Enqueue(poppedItem);
                     }
@@ -75,12 +78,12 @@ namespace Domain.Core.Financial
         /// Does not provide access to the underlying collection via reference
         /// Instead it returns a new list with the same underlying elements
         /// </summary>
-        public Stack<EquityInterDayTimeBarCollection> ActiveMarketHistory()
+        public Stack<EquityIntraDayTimeBarCollection> ActiveMarketHistory()
         {
             lock (_lock)
             {
-                var tradeStackCopy = new Stack<EquityInterDayTimeBarCollection>(_activeStack);
-                var reverseCopyOfTradeStack = new Stack<EquityInterDayTimeBarCollection>(tradeStackCopy);
+                var tradeStackCopy = new Stack<EquityIntraDayTimeBarCollection>(_activeStack);
+                var reverseCopyOfTradeStack = new Stack<EquityIntraDayTimeBarCollection>(tradeStackCopy);
 
                 // copy twice in order to restore initial order of elements
                 return reverseCopyOfTradeStack;

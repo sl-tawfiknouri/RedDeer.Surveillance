@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Domain.Core.Financial.Interfaces;
+using Domain.Core.Financial.Cfis.Interfaces;
 
-namespace Domain.Core.Financial
+namespace Domain.Core.Financial.Cfis
 {
     public class CfiInstrumentTypeMapper : ICfiInstrumentTypeMapper
     {

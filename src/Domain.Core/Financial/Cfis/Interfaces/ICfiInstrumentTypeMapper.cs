@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Financial.Interfaces
+﻿namespace Domain.Core.Financial.Cfis.Interfaces
 {
     public interface ICfiInstrumentTypeMapper
     {

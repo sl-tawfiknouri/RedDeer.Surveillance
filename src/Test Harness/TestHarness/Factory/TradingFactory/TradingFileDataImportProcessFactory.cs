@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Files;
+using SharedKernel.Files.Orders;
 using TestHarness.Engine.OrderGenerator;
 using TestHarness.Factory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
@@ -19,7 +19,7 @@ namespace TestHarness.Factory.TradingFactory
         {
             return new TradingFileDataImportProcess(
                 _appFactory.Logger,
-                new TradeFileCsvToOrderMapper(), 
+                new OrderFileToOrderSerialiser(), 
                 filePath);
         }
     }

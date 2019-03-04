@@ -11,7 +11,6 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Factories;
 using Surveillance.Engine.Rules.Factories.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;

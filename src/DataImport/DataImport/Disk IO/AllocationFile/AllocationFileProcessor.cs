@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
-using Domain.Files.AllocationFile;
-using Domain.Files.AllocationFile.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Allocations;
+using SharedKernel.Files.Allocations.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile
 {
-    public class AllocationFileProcessor : BaseUploadFileProcessor<AllocationFileCsv, OrderAllocation>, IAllocationFileProcessor
+    public class AllocationFileProcessor : BaseUploadFileProcessor<AllocationFileContract, OrderAllocation>, IAllocationFileProcessor
     {
-        private readonly IAllocationFileCsvToOrderAllocationMapper _allocationMapper;
-        private readonly IAllocationFileCsvValidator _allocationFileValidator;
+        private readonly IAllocationFileCsvToOrderAllocationSerialiser _allocationMapper;
+        private readonly IAllocationFileValidator _allocationFileValidator;
         private readonly ILogger<AllocationFileProcessor> _logger;
 
         public AllocationFileProcessor(
-            IAllocationFileCsvToOrderAllocationMapper allocationMapper,
-            IAllocationFileCsvValidator allocationFileValidator,
+            IAllocationFileCsvToOrderAllocationSerialiser allocationMapper,
+            IAllocationFileValidator allocationFileValidator,
             ILogger<AllocationFileProcessor> logger
             )
             : base(logger, "Allocation File Processor")
@@ -29,9 +29,9 @@ namespace DataImport.Disk_IO.AllocationFile
         }
 
         protected override void MapRecord(
-            AllocationFileCsv record, 
+            AllocationFileContract record, 
             List<OrderAllocation> marketUpdates,
-            List<AllocationFileCsv> failedMarketUpdateReads)
+            List<AllocationFileContract> failedMarketUpdateReads)
         {
             Logger.LogInformation($"{UploadFileProcessorName} about to validate record {record?.RowId}");
             var validationResult = _allocationFileValidator.Validate(record);
@@ -70,7 +70,7 @@ namespace DataImport.Disk_IO.AllocationFile
             _allocationMapper.FailedParseTotal = 0;
         }
 
-        protected override AllocationFileCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override AllocationFileContract MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -79,7 +79,7 @@ namespace DataImport.Disk_IO.AllocationFile
             }
 
             Logger.LogInformation($"{UploadFileProcessorName} about to map raw record to csv dto");
-            var tradeCsv = new AllocationFileCsv
+            var tradeCsv = new AllocationFileContract
             {
                 OrderId = PreProcess(rawRecord["OrderId"]),
                 Fund = PreProcess(rawRecord["Fund"]),

@@ -7,9 +7,9 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using Domain.Contracts;
-using Domain.Files;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
@@ -106,7 +106,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void FailedRead(
             string path,
-            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
+            UploadFileProcessorResult<OrderFileContract, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
@@ -127,7 +127,7 @@ namespace DataImport.Disk_IO.TradeFile
 
         private void SuccessfulRead(
             string path,
-            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
+            UploadFileProcessorResult<OrderFileContract, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
@@ -154,7 +154,7 @@ namespace DataImport.Disk_IO.TradeFile
         }
 
         private void InsertFileUploadOrderIds(
-            UploadFileProcessorResult<TradeFileCsv, Order> csvReadResults,
+            UploadFileProcessorResult<OrderFileContract, Order> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             if (csvReadResults.SuccessfulReads == null

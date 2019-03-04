@@ -7,8 +7,8 @@ using System.IO;
 using System.Linq;
 using DataImport.MessageBusIO.Interfaces;
 using Domain.Contracts;
-using Domain.Files.AllocationFile;
 using Domain.Trading;
+using SharedKernel.Files.Allocations;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;
@@ -110,7 +110,7 @@ namespace DataImport.Disk_IO.AllocationFile
 
         private void FailedRead(
             string path,
-            UploadFileProcessorResult<AllocationFileCsv, OrderAllocation> csvReadResults,
+            UploadFileProcessorResult<AllocationFileContract, OrderAllocation> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var originatingFileName = Path.GetFileNameWithoutExtension(path);
@@ -131,7 +131,7 @@ namespace DataImport.Disk_IO.AllocationFile
 
         private void SuccessfulRead(
             string path,
-            UploadFileProcessorResult<AllocationFileCsv, OrderAllocation> csvReadResults,
+            UploadFileProcessorResult<AllocationFileContract, OrderAllocation> csvReadResults,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             Logger.LogInformation($"AllocationFileMonitor for {path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the trade upload stream");

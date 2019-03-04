@@ -146,9 +146,9 @@ namespace Surveillance.Engine.Rules.Currency
                 return null;
             }
 
-            var Money = new Money((decimal) directConversion.Rate * initialMoney.Value, targetCurrency);
+            var money = new Money((decimal) directConversion.Rate * initialMoney.Value, targetCurrency);
 
-            return Money;
+            return money;
         }
         
         private Money? TryReciprocalConversion(

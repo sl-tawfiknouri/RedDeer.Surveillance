@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 
@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfa
 {
     public interface ICostCalculator
     {
-        Task<CurrencyAmount?> CalculateCostOfPosition(
+        Task<Money?> CalculateCostOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx);

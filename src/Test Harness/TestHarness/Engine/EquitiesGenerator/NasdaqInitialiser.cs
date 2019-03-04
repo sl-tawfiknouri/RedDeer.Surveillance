@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {
@@ -49,18 +50,18 @@ namespace TestHarness.Engine.EquitiesGenerator
                         "USD",
                         raw.Symbol), 
                      new SpreadTimeBar(
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                        new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                        new Money(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                        new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
                          new Volume(volume)),
 
                      new DailySummaryTimeBar(
                          decimal.Parse(raw.Buy) * volume,
                          new IntradayPrices(
-                             new CurrencyAmount(decimal.Parse(raw.Buy), _nasdaqCurrency),
-                             new CurrencyAmount(decimal.Parse(raw.Sell), _nasdaqCurrency),
-                             new CurrencyAmount(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
-                             new CurrencyAmount(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
+                             new Money(decimal.Parse(raw.Buy), _nasdaqCurrency),
+                             new Money(decimal.Parse(raw.Sell), _nasdaqCurrency),
+                             new Money(decimal.Parse(raw.Buy) * 1.2m, _nasdaqCurrency),
+                             new Money(decimal.Parse(raw.Sell) * 0.7m, _nasdaqCurrency)),
                          volume * 3,
                          new Volume(volume),
                          DateTime.UtcNow),

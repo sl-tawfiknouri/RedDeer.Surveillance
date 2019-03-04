@@ -1,8 +1,8 @@
 ﻿using MathNet.Numerics.Distributions;
 using System;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
+using Domain.Core.Financial;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies
 {
@@ -50,9 +50,9 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newSpread =
                 new SpreadTimeBar(
-                    new CurrencyAmount(newBuy, tick.SpreadTimeBar.Bid.Currency),
-                    new CurrencyAmount(newSell, tick.SpreadTimeBar.Ask.Currency),
-                    new CurrencyAmount(newBuy, tick.SpreadTimeBar.Bid.Currency),
+                    new Money(newBuy, tick.SpreadTimeBar.Bid.Currency),
+                    new Money(newSell, tick.SpreadTimeBar.Ask.Currency),
+                    new Money(newBuy, tick.SpreadTimeBar.Bid.Currency),
                     newVolume);
 
             
@@ -60,8 +60,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newIntraday =
                 walkIntraday
-                    ? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value)
-                    : (tick.DailySummaryTimeBar.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value));
+                    ? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Code)
+                    : (tick.DailySummaryTimeBar.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Code));
 
             var newDaily = new DailySummaryTimeBar(
                 newMarketCap,
@@ -88,20 +88,20 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
             {
                 return
                     new IntradayPrices(
-                        new CurrencyAmount(newBuy, currency),
-                        new CurrencyAmount(newBuy, currency),
-                        new CurrencyAmount(newBuy, currency),
-                        new CurrencyAmount(newBuy, currency));
+                        new Money(newBuy, currency),
+                        new Money(newBuy, currency),
+                        new Money(newBuy, currency),
+                        new Money(newBuy, currency));
             }
 
             var adjustedHigh =
                 tick.DailySummaryTimeBar.IntradayPrices.High.Value.Value < newBuy
-                ? new CurrencyAmount(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
+                ? new Money(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
                 : tick.DailySummaryTimeBar.IntradayPrices.High.Value;
 
             var adjustedLow =
                 tick.DailySummaryTimeBar.IntradayPrices.Low.Value.Value < newBuy
-                ? new CurrencyAmount(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
+                ? new Money(newBuy, tick.DailySummaryTimeBar.IntradayPrices.High.Value.Currency)
                 : tick.DailySummaryTimeBar.IntradayPrices.Low.Value;
 
             var newIntraday =

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Trading;
 using FakeItEasy;
 using NUnit.Framework;

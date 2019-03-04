@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -14,12 +14,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     public class CostCurrencyConvertingCalculator : ICostCalculator
     {
         private readonly ICurrencyConverter _currencyConverter;
-        private readonly Domain.Financial.Currency _targetCurrency;
+        private readonly Domain.Core.Financial.Currency _targetCurrency;
         private readonly ILogger<CostCurrencyConvertingCalculator> _logger;
 
         public CostCurrencyConvertingCalculator(
             ICurrencyConverter currencyConverter,
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             ILogger<CostCurrencyConvertingCalculator> logger)
         {
             _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<CurrencyAmount?> CalculateCostOfPosition(
+        public async Task<Money?> CalculateCostOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                     .Where(afto => afto.OrderDirection == OrderDirections.BUY
                                    || afto.OrderDirection == OrderDirections.COVER)
                     .Select(afto => 
-                        new CurrencyAmount(
+                        new Money(
                             afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                             afto.OrderCurrency))
                     .ToList();

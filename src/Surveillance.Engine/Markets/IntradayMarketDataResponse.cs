@@ -1,6 +1,6 @@
 ﻿using System;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 
@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Markets
             return _response.HadMissingData;
         }
 
-        public CurrencyAmount? PriceOrClose()
+        public Money? PriceOrClose()
         {
             return _response?.Response?.SpreadTimeBar.Price;
         }

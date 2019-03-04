@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Financial;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using SharedKernel.Files.Orders.Interfaces;
 
@@ -59,7 +60,7 @@ namespace SharedKernel.Files.Orders
             contract.DealerOrderCounterParty = trad.DealerCounterParty;
             contract.DealerOrderType = ((int?)trad.OrderType).ToString();
             contract.DealerOrderDirection = ((int?)trad.OrderDirection).ToString();
-            contract.DealerOrderCurrency = trad.Currency.Value;
+            contract.DealerOrderCurrency = trad.Currency.Code;
             contract.DealerOrderLimitPrice = trad.LimitPrice?.Value.ToString();
             contract.DealerOrderAverageFillPrice = trad.AverageFillPrice?.Value.ToString();
             contract.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
@@ -109,7 +110,7 @@ namespace SharedKernel.Files.Orders
             contract.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             contract.OrderType = ((int?) order.OrderType).ToString();
             contract.OrderDirection = ((int?) order.OrderDirection).ToString();
-            contract.OrderCurrency = order.OrderCurrency.Value;
+            contract.OrderCurrency = order.OrderCurrency.Code;
             contract.OrderLimitPrice = order.OrderLimitPrice?.Value.ToString();
             contract.OrderAverageFillPrice = order.OrderAverageFillPrice?.Value.ToString();
             contract.OrderOrderedVolume = order.OrderOrderedVolume?.ToString();
@@ -169,10 +170,10 @@ namespace SharedKernel.Files.Orders
 
             var orderCleanDirty = MapToEnum<OrderCleanDirty>(contract.OrderCleanDirty);
 
-            var limitPrice = new CurrencyAmount(MapDecimal(contract.OrderLimitPrice), contract.OrderCurrency);
-            var averagePrice = new CurrencyAmount(MapDecimal(contract.OrderAverageFillPrice), contract.OrderCurrency);
+            var limitPrice = new Money(MapDecimal(contract.OrderLimitPrice), contract.OrderCurrency);
+            var averagePrice = new Money(MapDecimal(contract.OrderAverageFillPrice), contract.OrderCurrency);
 
-            var orderOptionStrikePrice = new CurrencyAmount(MapDecimal(contract.OrderOptionStrikePrice), contract.OrderCurrency);
+            var orderOptionStrikePrice = new Money(MapDecimal(contract.OrderOptionStrikePrice), contract.OrderCurrency);
             var orderOptionExpirationDate = MapDate(contract.OrderOptionExpirationDate);
             var orderOptionEuropeanAmerican = MapToEnum<OptionEuropeanAmerican>(contract.OrderOptionEuropeanAmerican);
 
@@ -235,8 +236,8 @@ namespace SharedKernel.Files.Orders
             var dealerOrderCurrency = new Currency(contract.DealerOrderCurrency);
             var dealerOrderSettlementCurrency = new Currency(contract.DealerOrderSettlementCurrency);
 
-            var limitPrice = new CurrencyAmount(MapDecimal(contract.DealerOrderLimitPrice), contract.DealerOrderCurrency);
-            var averagePrice = new CurrencyAmount(MapDecimal(contract.DealerOrderAverageFillPrice), contract.DealerOrderCurrency);
+            var limitPrice = new Money(MapDecimal(contract.DealerOrderLimitPrice), contract.DealerOrderCurrency);
+            var averagePrice = new Money(MapDecimal(contract.DealerOrderAverageFillPrice), contract.DealerOrderCurrency);
             var cleanDirty = MapToEnum<OrderCleanDirty>(contract.DealerOrderCleanDirty);
             var euroAmerican = MapToEnum<OptionEuropeanAmerican>(contract.DealerOrderOptionEuropeanAmerican);
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;

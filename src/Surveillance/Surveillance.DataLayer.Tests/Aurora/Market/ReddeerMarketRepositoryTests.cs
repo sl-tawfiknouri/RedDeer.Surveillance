@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Cfis;
+using Domain.Core.Financial.Cfis.Interfaces;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -61,7 +63,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private EquityIntraDayTimeBarCollection Frame()
         {
-            var stockExchange = new Domain.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var stockExchange = new Domain.Core.Financial.Markets.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
             var securityIdentifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 
@@ -77,10 +79,10 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             {
                 new EquityInstrumentIntraDayTimeBar(
                     security,
-                    new SpreadTimeBar(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP"), new Volume(1000)),
+                    new SpreadTimeBar(new Money(100, "GBP"), new Money(101, "GBP"), new Money(100.5m, "GBP"), new Volume(1000)),
                     new DailySummaryTimeBar(
                         1000000,
-                        new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
+                        new IntradayPrices(new Money(90, "GBP"), new Money(85, "GBP"), new Money(105, "GBP"), new Money(84, "GBP")),
                         1000,
                         new Volume(10000),
                         DateTime.UtcNow), 

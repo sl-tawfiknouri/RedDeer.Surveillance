@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Interfaces;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -169,8 +169,8 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.SpreadTimeBar.Price.Currency,
                     OrderCleanDirty.NONE,
                     null,
-                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new Money(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
+                    new Money(headSecurity.SpreadTimeBar.Price.Value, headSecurity.SpreadTimeBar.Price.Currency),
                     (int) tradedVolume,
                     i == 0 ? (int) tradedVolume : 0,
                     null,

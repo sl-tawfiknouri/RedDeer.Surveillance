@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;
@@ -67,13 +68,13 @@ namespace TestHarness.Engine.EquitiesGenerator
                                     sm.SecurityCurrency,
                                     sm.IssuerIdentifier), 
                                 new SpreadTimeBar(
-                                    new CurrencyAmount(
+                                    new Money(
                                         smp.Value.OpenPrice,
                                         SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
+                                    new Money(
                                         smp.Value.OpenPrice,
                                         SetCurrency(sm.SecurityCurrency)),
-                                    new CurrencyAmount(
+                                    new Money(
                                         smp.Value.OpenPrice,
                                         SetCurrency(sm.SecurityCurrency)),
                                     new Volume(volume((double)CalculateADailyVolume(smp.Value)))
@@ -81,16 +82,16 @@ namespace TestHarness.Engine.EquitiesGenerator
                                 new DailySummaryTimeBar(
                                     smp.Value.MarketCapUsd,
                                     new IntradayPrices(
-                                        new CurrencyAmount(
+                                        new Money(
                                             smp.Value.OpenPrice,
                                             SetCurrency(sm.SecurityCurrency)),
-                                        new CurrencyAmount(
+                                        new Money(
                                             smp.Value.ClosePrice,
                                             SetCurrency(sm.SecurityCurrency)),
-                                        new CurrencyAmount(
+                                        new Money(
                                             smp.Value.HighIntradayPrice,
                                             SetCurrency(sm.SecurityCurrency)),
-                                        new CurrencyAmount(
+                                        new Money(
                                             smp.Value.LowIntradayPrice,
                                             SetCurrency(sm.SecurityCurrency))),
                                     null,

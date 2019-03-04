@@ -89,11 +89,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             }
 
             if (string.Equals(
-                ruleBreach.ExchangeRateProfits.FixedCurrency.Value,
-                ruleBreach.ExchangeRateProfits.VariableCurrency.Value,
+                ruleBreach.ExchangeRateProfits.FixedCurrency.Code,
+                ruleBreach.ExchangeRateProfits.VariableCurrency.Code,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                Logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Value} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Value}");
+                Logger.LogError($"HighProfitMessageSender had two equal currencies when generating WER text {ruleBreach.ExchangeRateProfits.FixedCurrency.Code} and {ruleBreach.ExchangeRateProfits.VariableCurrency.Code}");
                 return string.Empty;
             }
 
@@ -123,7 +123,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return string.Empty;
             }
 
-            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency.Value}/{ruleBreach.ExchangeRateProfits.VariableCurrency.Value}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
+            return $" The position was acquired with a currency conversion between ({ruleBreach.ExchangeRateProfits.FixedCurrency.Code}/{ruleBreach.ExchangeRateProfits.VariableCurrency.Code}) rate at a weighted exchange rate of {costWer} and sold at a weighted exchange rate of {revenueWer}. The impact on profits from exchange rate movements was {relativePercentage}% and the absolute amount of profits due to exchange rates is ({ruleBreach.AbsoluteProfitCurrency}) {absAmount}.";
         }
     }
 }

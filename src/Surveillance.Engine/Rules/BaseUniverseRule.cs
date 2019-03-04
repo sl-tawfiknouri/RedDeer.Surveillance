@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Scheduling;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Interfaces;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -157,8 +157,8 @@ namespace TestHarness.Engine.OrderGenerator
                     headSecurity.SpreadTimeBar.Price.Currency,
                     OrderCleanDirty.NONE,
                     null,
-                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
+                    new Money(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
+                    new Money(headSecurity.SpreadTimeBar.Price.Value * 1.05m, headSecurity.SpreadTimeBar.Price.Currency),
                     (int)volumeForBreachesToTrade,
                     (int)volumeForBreachesToTrade,
                     null,
@@ -223,8 +223,8 @@ namespace TestHarness.Engine.OrderGenerator
                     securities.SpreadTimeBar.Price.Currency,
                     OrderCleanDirty.NONE,
                     null,
-                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
+                    new Money(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
+                    new Money(securities.SpreadTimeBar.Price.Value * 1.05m, securities.SpreadTimeBar.Price.Currency),
                     (int) volumeForBreachesToTrade,
                     (int) volumeForBreachesToTrade,
                     null,

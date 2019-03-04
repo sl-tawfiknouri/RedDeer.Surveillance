@@ -22,7 +22,7 @@
         public int? PairingPositionMinimumNumberOfPairedTrades { get; set; }
         public decimal? PairingPositionPercentagePriceChangeThresholdPerPair { get; set; }
         public decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; set; }
-        public decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; set; }
+        public decimal? PairingPositionMaximumAbsoluteMoney { get; set; }
         public string PairingPositionMaximumAbsoluteCurrency { get; set; }
     }
 }

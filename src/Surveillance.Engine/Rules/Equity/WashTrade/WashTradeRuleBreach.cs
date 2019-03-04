@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
+using Domain.Core.Financial;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {
@@ -62,7 +62,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 bool averagePositionRuleBreach,
                 int? averagePositionAmountOfTrades,
                 decimal? averagePositionRelativeValueChange,
-                CurrencyAmount? averagePositionAbsoluteValueChange)
+                Money? averagePositionAbsoluteValueChange)
             {
                 AveragePositionRuleBreach = averagePositionRuleBreach;
                 AveragePositionAmountOfTrades = averagePositionAmountOfTrades;
@@ -74,7 +74,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             public bool AveragePositionRuleBreach { get; }
             public int? AveragePositionAmountOfTrades { get; }
             public decimal? AveragePositionRelativeValueChange { get; }
-            public CurrencyAmount? AveragePositionAbsoluteValueChange { get; }
+            public Money? AveragePositionAbsoluteValueChange { get; }
 
             public static WashTradeAveragePositionBreach None()
             {

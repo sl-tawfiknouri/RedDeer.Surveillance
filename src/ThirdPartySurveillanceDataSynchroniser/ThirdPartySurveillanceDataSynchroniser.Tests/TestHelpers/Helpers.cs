@@ -1,4 +1,4 @@
-﻿using Domain.Financial;
+﻿using Domain.Core.Financial;
 
 namespace DataSynchroniser.Tests.TestHelpers
 {

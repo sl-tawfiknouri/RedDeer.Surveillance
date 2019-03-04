@@ -10,7 +10,7 @@ Feature: WashTrade Pairing Sensitive Parameters
 
 Background:
 	Given I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 2                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 
 
@@ -73,7 +73,7 @@ Scenario: Two trades when min number of trades threshold set to four yields zero
 	| Barclays     | 0       | 01/01/2018 09:33:00 |            |             |              |               | 01/01/2018 09:33:00 | MARKET | BUY       | GBX      |            | 100              | 1000          | 1000         |     
 	| Barclays     | 1       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 4                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts
@@ -88,7 +88,7 @@ Scenario: Four Trade For Barclays when min number of trades threshold set to fou
 	| Barclays     | 2       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	| Barclays     | 3       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 4                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
@@ -109,7 +109,7 @@ Scenario: Ten Trade For Barclays when min number of trades threshold set to four
 	| Barclays     | 8       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	| Barclays     | 9       | 01/01/2018 10:33:00 |            |             |              |               | 01/01/2018 10:33:00 | MARKET | SELL       | GBX      |            | 100              | 1000          | 1000         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 4                                          | 0.03                                                 | 0.03                                               | 10000                                        | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
@@ -287,7 +287,7 @@ Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
 	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 24           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
@@ -300,7 +300,7 @@ Scenario: Two Trade For Nvidia with next day sell outside window yields zero ale
 	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
 	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 22           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts

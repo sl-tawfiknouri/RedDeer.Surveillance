@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Bmll;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

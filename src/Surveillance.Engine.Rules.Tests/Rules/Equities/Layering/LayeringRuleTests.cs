@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -740,7 +741,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                         new SpreadTimeBar(
                             baseBuyFrame.OrderAverageFillPrice.Value, 
                             baseSellFrame.OrderAverageFillPrice.Value,
-                            new CurrencyAmount(price, baseSellFrame.OrderCurrency),
+                            new Money(price, baseSellFrame.OrderCurrency),
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,

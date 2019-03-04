@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Markets;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
@@ -332,10 +332,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
-                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, mostRecentTrade.OrderCurrency);
+                var thresholdMoney = new Money((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
+                var tradedMoney = new Money((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
-                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
+                return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdMoney, tradedMoney);
             }
 
             return HighVolumeRuleBreach.BreachDetails.None();

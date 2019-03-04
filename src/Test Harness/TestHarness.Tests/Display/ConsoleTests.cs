@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
-using Domain.Financial;
 using Domain.Trading;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Display
 {
@@ -72,8 +73,8 @@ namespace TestHarness.Tests.Display
                 new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
-                new CurrencyAmount(20.2m, "GBP"),
-                new CurrencyAmount(20.2m, "GBP"),
+                new Money(20.2m, "GBP"),
+                new Money(20.2m, "GBP"),
                 100 * vol,
                 100 * vol,
                 "trader-1",

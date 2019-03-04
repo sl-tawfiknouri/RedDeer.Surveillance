@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Domain.Financial;
+﻿using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
+using System.Collections.Generic;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {

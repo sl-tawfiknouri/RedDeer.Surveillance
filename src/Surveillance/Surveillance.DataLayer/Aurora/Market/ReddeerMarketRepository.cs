@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Cfis.Interfaces;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.Auditing.Context.Interfaces;
@@ -442,7 +443,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                 })
                             .Select(i =>
                             {
-                                var market = new Domain.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var market = new Domain.Core.Financial.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new EquityIntraDayTimeBarCollection(
                                         market,
@@ -519,7 +520,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                 })
                             .Select(i =>
                             {
-                                var market = new Domain.Financial.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var market = new Domain.Core.Financial.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new EquityInterDayTimeBarCollection(
                                         market,
@@ -634,7 +635,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketUpdateDto()
             { }
 
-            public MarketUpdateDto(Domain.Financial.Market market)
+            public MarketUpdateDto(Domain.Core.Financial.Markets.Market market)
             {
                 MarketId = market.MarketIdentifierCode;
                 MarketName = market.Name;
@@ -646,7 +647,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private EquityInstrumentIntraDayTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, Domain.Financial.Market market)
+        private EquityInstrumentIntraDayTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Financial.Markets.Market market)
         {
             if (dto == null)
             {
@@ -675,17 +676,17 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var spread =
                 new SpreadTimeBar(
-                    new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new Volume(dto.VolumeTraded.GetValueOrDefault(0)));
 
             var intradayPrices =
                 new IntradayPrices(
-                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new Money(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var dailySummary =
                 new DailySummaryTimeBar(
@@ -706,7 +707,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             return tick;
         }
 
-        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, Domain.Financial.Market market)
+        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Financial.Markets.Market market)
         {
             if (dto == null)
             {
@@ -735,10 +736,10 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var intradayPrices =
                 new IntradayPrices(
-                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new Money(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var dailySummary =
                 new DailySummaryTimeBar(
@@ -814,9 +815,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.SpreadTimeBar.Price.Currency.Value
-                    ?? entity.SpreadTimeBar.Ask.Currency.Value
-                    ?? entity.SpreadTimeBar.Bid.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Code
+                    ?? entity.SpreadTimeBar.Ask.Currency.Code
+                    ?? entity.SpreadTimeBar.Bid.Currency.Code;
 
                 Epoch = entity.TimeStamp;
                 EpochDate = entity.TimeStamp.Date;
@@ -955,10 +956,10 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.SpreadTimeBar.Price.Currency.Value
-                    ?? entity.SpreadTimeBar.Ask.Currency.Value
-                    ?? entity.SpreadTimeBar.Bid.Currency.Value
-                    ?? entity.SpreadTimeBar.Price.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Code
+                    ?? entity.SpreadTimeBar.Ask.Currency.Code
+                    ?? entity.SpreadTimeBar.Bid.Currency.Code
+                    ?? entity.SpreadTimeBar.Price.Currency.Code;
                 Epoch = entity.TimeStamp;
                 BidPrice = entity.SpreadTimeBar.Bid.Value;
                 AskPrice = entity.SpreadTimeBar.Ask.Value;

@@ -22,7 +22,6 @@
     <ProjectReference Include="..\..\DataSynchroniser.Bmll\DataSynchroniser.Api.Bmll.csproj" />
     <ProjectReference Include="..\..\DataSynchroniser.Factset\DataSynchroniser.Api.Factset.csproj" />
     <ProjectReference Include="..\..\DataSynchroniser.Markit\DataSynchroniser.Api.Markit.csproj" />
-    <ProjectReference Include="..\..\DomainV2\Domain.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
     <ProjectReference Include="..\..\Utilities\Utilities.csproj" />

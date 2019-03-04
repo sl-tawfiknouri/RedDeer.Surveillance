@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Trading;
 
 // ReSharper disable UnusedMember.Global
-
 namespace Surveillance.Engine.Rules.Trades.Interfaces
 {
     public interface ITradePosition

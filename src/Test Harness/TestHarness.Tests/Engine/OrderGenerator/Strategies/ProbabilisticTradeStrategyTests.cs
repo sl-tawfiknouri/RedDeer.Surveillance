@@ -4,12 +4,13 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Streams.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
 {
@@ -114,9 +115,9 @@ namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
                         new InstrumentIdentifiers(string.Empty, string.Empty, $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}", $"STAN-{i}"), 
                         "Standard Chartered", "CFI", "USD", "ISSUER-IDENTIFIER"), 
                     new SpreadTimeBar(
-                        new CurrencyAmount((decimal)buyPrice, "GBP"),
-                        new CurrencyAmount((decimal)sellPrice, "GBP"),
-                        new CurrencyAmount((decimal)buyPrice, "GBP"),
+                        new Money((decimal)buyPrice, "GBP"),
+                        new Money((decimal)sellPrice, "GBP"),
+                        new Money((decimal)buyPrice, "GBP"),
                         new Volume(volume)),
                     new DailySummaryTimeBar(
                         1000,

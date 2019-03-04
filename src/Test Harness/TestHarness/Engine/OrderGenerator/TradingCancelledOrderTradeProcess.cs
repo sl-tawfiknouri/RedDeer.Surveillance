@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -141,8 +141,8 @@ namespace TestHarness.Engine.OrderGenerator
                 new Currency("USD"),
                 OrderCleanDirty.CLEAN,
                 null,
-                new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
-                new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                 (int)initialBuyShare,
                 (int)initialBuyShare,
                 "trader-1",
@@ -179,8 +179,8 @@ namespace TestHarness.Engine.OrderGenerator
                     new Currency("USD"),
                     OrderCleanDirty.CLEAN,
                     null,
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     (int)splitShare,
                     (int)splitShare,
                     "trader-1",
@@ -249,8 +249,8 @@ namespace TestHarness.Engine.OrderGenerator
                     new Currency("GBP"),
                     OrderCleanDirty.NONE,
                     null,
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     i < amountToCancel ? 0 : (int)(security.DailySummaryTimeBar.DailyVolume.Traded * 0.01m),
                     0,
                     null,

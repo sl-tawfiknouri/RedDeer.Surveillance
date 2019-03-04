@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Streams.Interfaces;
 using Domain.Trading;
 using MathNet.Numerics.Distributions;
@@ -118,7 +118,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateClientFactorString();
             var dealerInstructions = "Process Asap";
-            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Value ?? string.Empty;
+            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Code ?? string.Empty;
 
             var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
             var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;
@@ -188,7 +188,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(EquityInstrumentIntraDayTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
+        private Money? CalculateLimit(EquityInstrumentIntraDayTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
@@ -200,27 +200,27 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
+                return new Money(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
             }
             else if (buyOrSell == OrderDirections.SELL)
             {
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
+                return new Money(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
             }
 
             return null;
         }
 
-        private CurrencyAmount CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
+        private Money CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
         {
             if (tick.SpreadTimeBar.Price.Value >= 0.01m)
             {
                 return tick.SpreadTimeBar.Price;
             }
 
-            return new CurrencyAmount(0.01m, tick.SpreadTimeBar.Price.Currency);
+            return new Money(0.01m, tick.SpreadTimeBar.Price.Currency);
 
         }
 

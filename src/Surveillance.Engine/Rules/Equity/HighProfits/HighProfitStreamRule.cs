@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Financial;
+using Domain.Core.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -111,14 +111,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new Domain.Core.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency =
                 liveTrades.Any()
                  && (liveTrades.All(x =>
                      string.Equals(
-                         x.OrderCurrency.Value,
-                         targetCurrency.Value,
+                         x.OrderCurrency.Code,
+                         targetCurrency.Code,
                          StringComparison.InvariantCultureIgnoreCase)));
 
             var costCalculator = GetCostCalculator(allTradesInCommonCurrency, targetCurrency);
@@ -141,7 +141,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            var revenue = revenueResponse.CurrencyAmount;
+            var revenue = revenueResponse.Money;
 
             if (revenue == null)
             {
@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new Domain.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new Domain.Core.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderDirection == OrderDirections.BUY 
                 || lt.OrderDirection == OrderDirections.COVER).ToList());
@@ -217,34 +217,34 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return exchangeRateProfits;
         }
 
-        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
+        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Currency targetCurrency)
         {
             if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
-                || string.IsNullOrWhiteSpace(targetCurrency.Value))
+                || string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
-                Logger.LogInformation($"GetCostCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+                Logger.LogInformation($"GetCostCalculator using non currency conversion one for {targetCurrency.Code} at {UniverseDateTime}");
 
                 return _costCalculatorFactory.CostCalculator();
             }
 
-            Logger.LogInformation($"GetCostCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+            Logger.LogInformation($"GetCostCalculator using currency conversion one for {targetCurrency.Code} at {UniverseDateTime}");
 
             return _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
 
-        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Financial.Currency targetCurrency)
+        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Currency targetCurrency)
         {
             if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
-                || string.IsNullOrWhiteSpace(targetCurrency.Value))
+                || string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
                 var calculator =
                     MarketClosureRule
                         ? _revenueCalculatorFactory.RevenueCalculatorMarketClosureCalculator()
                         : _revenueCalculatorFactory.RevenueCalculator();
 
-                Logger.LogInformation($"GetRevenueCalculator using non currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+                Logger.LogInformation($"GetRevenueCalculator using non currency conversion one for {targetCurrency.Code} at {UniverseDateTime}");
 
                 return calculator;
             }
@@ -254,7 +254,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     ? _revenueCalculatorFactory.RevenueCurrencyConvertingMarketClosureCalculator(targetCurrency)
                     : _revenueCalculatorFactory.RevenueCurrencyConvertingCalculator(targetCurrency);
 
-            Logger.LogInformation($"GetRevenueCalculator using currency conversion one for {targetCurrency.Value} at {UniverseDateTime}");
+            Logger.LogInformation($"GetRevenueCalculator using currency conversion one for {targetCurrency.Code} at {UniverseDateTime}");
 
             return currencyConvertingCalculator;
         }
@@ -266,7 +266,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private void WriteAlertToMessageSender(
             Stack<Order> activeTrades,
-            CurrencyAmount absoluteProfit,
+            Money absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
@@ -284,7 +284,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     _ruleCtx.CorrelationId(),
                     _equitiesParameters,
                     absoluteProfit.Value,
-                    absoluteProfit.Currency.Value,
+                    absoluteProfit.Currency.Code,
                     profitRatio,
                     security,
                     hasHighProfitAbsolute,
@@ -303,7 +303,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                && _equitiesParameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
-        private bool HasHighProfitAbsolute(CurrencyAmount absoluteProfits)
+        private bool HasHighProfitAbsolute(Money absoluteProfits)
         {
             if (_equitiesParameters.HighProfitAbsoluteThreshold == null)
             {
@@ -313,7 +313,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (_equitiesParameters.UseCurrencyConversions
                 && !string.Equals(
                 _equitiesParameters.HighProfitCurrencyConversionTargetCurrency,
-                absoluteProfits.Currency.Value,
+                absoluteProfits.Currency.Code,
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 _ruleCtx.EventException("had mismatching absolute profits currencies. Something went horribly wrong!");

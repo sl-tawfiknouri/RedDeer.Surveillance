@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces
         int? PairingPositionMinimumNumberOfPairedTrades { get; }
         decimal? PairingPositionPercentagePriceChangeThresholdPerPair { get; }
         decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
-        decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
+        decimal? PairingPositionMaximumAbsoluteMoney { get; }
         string PairingPositionMaximumAbsoluteCurrency { get; }
 
         // Parameter set three

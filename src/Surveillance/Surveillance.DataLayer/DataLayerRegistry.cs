@@ -1,5 +1,5 @@
-﻿using Domain.Financial;
-using Domain.Financial.Interfaces;
+﻿using Domain.Core.Financial.Cfis;
+using Domain.Core.Financial.Cfis.Interfaces;
 using PollyFacade.Policies;
 using PollyFacade.Policies.Interfaces;
 using StructureMap;

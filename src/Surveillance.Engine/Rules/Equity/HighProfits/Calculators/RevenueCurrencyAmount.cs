@@ -1,18 +1,18 @@
-﻿using Domain.Financial;
+﻿using Domain.Core.Financial;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
-    public class RevenueCurrencyAmount
+    public class RevenueMoney
     {
-        public RevenueCurrencyAmount(
+        public RevenueMoney(
             bool hadMissingMarketData,
-            CurrencyAmount? currencyAmount)
+            Money? money)
         {
             HadMissingMarketData = hadMissingMarketData;
-            CurrencyAmount = currencyAmount;
+            Money = money;
         }
 
         public bool HadMissingMarketData { get; }
-        public CurrencyAmount? CurrencyAmount { get; }
+        public Money? Money { get; }
     }
 }

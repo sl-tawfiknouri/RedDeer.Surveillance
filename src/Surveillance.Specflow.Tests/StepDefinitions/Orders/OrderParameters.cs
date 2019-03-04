@@ -1,5 +1,5 @@
-﻿using System;
-using Domain.Financial;
+﻿using Domain.Core.Financial;
+using System;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions.Orders
 {

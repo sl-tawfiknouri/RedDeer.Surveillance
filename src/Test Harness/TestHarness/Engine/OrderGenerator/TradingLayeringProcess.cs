@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Interfaces;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;

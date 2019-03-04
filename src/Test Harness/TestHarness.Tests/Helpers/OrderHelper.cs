@@ -1,5 +1,6 @@
 ﻿using System;
-using Domain.Financial;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 
 namespace TestHarness.Tests.Helpers
@@ -52,8 +53,8 @@ namespace TestHarness.Tests.Helpers
                 new Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
-                new CurrencyAmount(20.2m, "GBP"),
-                new CurrencyAmount(20.2m, "GBP"),
+                new Money(20.2m, "GBP"),
+                new Money(20.2m, "GBP"),
                 100 * vol,
                 100 * vol,
                 "trader-1",

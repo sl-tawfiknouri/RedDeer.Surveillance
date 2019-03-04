@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using MathNet.Numerics.Distributions;
 using Microsoft.Extensions.Logging;
@@ -204,7 +204,7 @@ namespace TestHarness.Engine.OrderGenerator
             return orders.ToArray();
         }
 
-        private Order[] SingularCancelledOrder(EquityInstrumentIntraDayTimeBar security, Market exchange)
+        private Order[] SingularCancelledOrder(EquityInstrumentIntraDayTimeBar security, Domain.Core.Financial.Markets.Market exchange)
         {
             var cancelledTradeOrderValue = DiscreteUniform.Sample(_valueOfSingularCancelledTradeThreshold, 10000000);
             var order = OrderForValue(OrderStatus.Cancelled, cancelledTradeOrderValue, security, exchange);
@@ -212,7 +212,7 @@ namespace TestHarness.Engine.OrderGenerator
             return new[] { order };
         }
 
-        private Order OrderForValue(OrderStatus status, decimal value, EquityInstrumentIntraDayTimeBar security, Market exchange)
+        private Order OrderForValue(OrderStatus status, decimal value, EquityInstrumentIntraDayTimeBar security, Domain.Core.Financial.Markets.Market exchange)
         {
             var volume = (int)((value / security.SpreadTimeBar.Ask.Value) + 1);
             var orderPosition = (OrderDirections)DiscreteUniform.Sample(0, 3);

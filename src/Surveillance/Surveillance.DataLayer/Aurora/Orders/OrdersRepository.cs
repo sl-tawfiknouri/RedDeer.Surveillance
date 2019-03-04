@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Financial;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -849,8 +850,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
             var orderDirectionResult = (OrderDirections)dto.OrderDirection.GetValueOrDefault(0);
             var orderCurrency = new Currency(dto.OrderCurrency);
-            var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
-            var averagePrice = new CurrencyAmount(dto.OrderAverageFillPrice, dto.OrderCurrency);
+            var limitPrice = new Money(dto.OrderLimitPrice, dto.OrderCurrency);
+            var averagePrice = new Money(dto.OrderAverageFillPrice, dto.OrderCurrency);
 
             var settlementCurrency = 
                 !string.IsNullOrWhiteSpace(dto.OrderSettlementCurrency)
@@ -860,13 +861,13 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
             var orderAccumulatedInterest = dto.AccumulatedInterest;
 
-            var market = new Domain.Financial.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+            var market = new Domain.Core.Financial.Markets.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
             var dealerOrders = dto.DealerOrders?.Select(tr => Project(tr, financialInstrument)).ToList() ?? new List<DealerOrder>();
 
             var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);
             var optionStrikePrice = dto.OptionStrikePrice == null
-                ? null
-                : (CurrencyAmount?) new CurrencyAmount(dto.OptionStrikePrice, dto.OrderCurrency);
+                ? (Money?)null
+                : new Money(dto.OptionStrikePrice, dto.OrderCurrency);
 
             var order = new Order(
                 financialInstrument,
@@ -925,12 +926,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             var orderLimit =
                 dto.LimitPrice != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dto.LimitPrice, dto.Currency)
-                    : null;
+                    ? new Money(dto.LimitPrice, dto.Currency)
+                    : (Money?)null;
             var orderAveragePrice =
                 dto.AverageFillPrice != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dto.AverageFillPrice, dto.Currency)
-                    : null;
+                    ? new Money(dto.AverageFillPrice, dto.Currency)
+                    : (Money?)null;
 
             var dealerOrder = new DealerOrder(
                 fi,
@@ -1041,8 +1042,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
                 OrderDirection = (int?)order.OrderDirection;
-                OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
-                OrderSettlementCurrency = order.OrderSettlementCurrency?.Value ?? string.Empty;
+                OrderCurrency = order.OrderCurrency.Code ?? string.Empty;
+                OrderSettlementCurrency = order.OrderSettlementCurrency?.Code ?? string.Empty;
                 OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
                 OrderAverageFillPrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
                 OrderOrderedVolume = order.OrderOrderedVolume;
@@ -1193,8 +1194,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderType = (int?)dealerOrder.OrderType;
                 Direction = (int?)dealerOrder.OrderDirection;
 
-                Currency = dealerOrder.Currency.Value;
-                SettlementCurrency = dealerOrder.SettlementCurrency.Value;
+                Currency = dealerOrder.Currency.Code;
+                SettlementCurrency = dealerOrder.SettlementCurrency.Code;
                 CleanDirty = (int?)dealerOrder.CleanDirty;
                 AccumulatedInterest = dealerOrder.AccumulatedInterest;
 

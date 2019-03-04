@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Markets;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
@@ -20,6 +19,7 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
+using Domain.Core.Financial;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {

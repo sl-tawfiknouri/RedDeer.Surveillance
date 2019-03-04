@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
@@ -129,8 +129,8 @@ namespace TestHarness.Engine.OrderGenerator
                     new Currency("GBP"),
                     OrderCleanDirty.NONE,
                     null,
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
-                    new CurrencyAmount(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
+                    new Money(security.SpreadTimeBar.Price.Value * 1.05m, security.SpreadTimeBar.Price.Currency),
                     (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
                     (int) (security.DailySummaryTimeBar.DailyVolume.Traded * 0.001m),
                     null,

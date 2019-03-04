@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Financial;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -91,7 +92,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         
         private Order Frame()
         {
-            var exch = new Domain.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new Domain.Core.Financial.Markets.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.UtcNow;
             var tradeDates = DateTime.UtcNow;
 
@@ -141,8 +142,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "v1",
                 "link-12345",
                 "grp-1",
-                new CurrencyAmount(100, "GBP"), 
-                new CurrencyAmount(100, "GBP"),
+                new Money(100, "GBP"), 
+                new Money(100, "GBP"),
                 1000, 
                 1000, 
                 null,
@@ -173,8 +174,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 "v1",
                 "link-12345",
                 "grp-1",
-                new CurrencyAmount(100, "GBP"),
-                new CurrencyAmount(100, "GBP"),
+                new Money(100, "GBP"),
+                new Money(100, "GBP"),
                 1000,
                 1000,
                 null,
@@ -202,8 +203,8 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
                 new Currency("USD"),
                 OrderCleanDirty.CLEAN,
                 null,
-                new CurrencyAmount(100, "GBP"), 
-                new CurrencyAmount(100, "GBP"),
+                new Money(100, "GBP"), 
+                new Money(100, "GBP"),
                 1000, 
                 1000,
                 "trader-1",

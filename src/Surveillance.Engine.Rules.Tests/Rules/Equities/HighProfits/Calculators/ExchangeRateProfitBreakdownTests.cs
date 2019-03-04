@@ -26,8 +26,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits.Calculators
                 revenuePosition,
                 2, 
                 1.5m,
-                new Domain.Financial.Currency("USD"),
-                new Domain.Financial.Currency("GBP"));
+                new Domain.Core.Financial.Currency("USD"),
+                new Domain.Core.Financial.Currency("GBP"));
 
             var x = breakdown.AbsoluteAmountDueToWer();
             var y = breakdown.RelativePercentageDueToWer();

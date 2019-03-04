@@ -2,8 +2,9 @@
 using NUnit.Framework;
 using System;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 {
@@ -37,7 +38,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "MSFT","MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(20000));
+            var spread = new SpreadTimeBar(new Money(66, "GBP"), new Money(65, "GBP"), new Money(65, "GBP"), new Volume(20000));
 
             var tick =
                 new EquityInstrumentIntraDayTimeBar(
@@ -70,7 +71,7 @@ namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
             var strategy = new MarkovEquityStrategy();
             var identifiers = new InstrumentIdentifiers(string.Empty, string.Empty, string.Empty, "MSFT", "MS12345", "MSF123456789", "MSFT", "MSF12341234", "MSFT", "MSFT", "MSFT");
             var security = new FinancialInstrument(InstrumentTypes.Equity, identifiers, "Microsoft", "CFI", "USD", "Microsoft Company");
-            var spread = new SpreadTimeBar(new CurrencyAmount(66, "GBP"), new CurrencyAmount(65, "GBP"), new CurrencyAmount(65, "GBP"), new Volume(200000));
+            var spread = new SpreadTimeBar(new Money(66, "GBP"), new Money(65, "GBP"), new Money(65, "GBP"), new Volume(200000));
 
             var tick =
                 new EquityInstrumentIntraDayTimeBar(

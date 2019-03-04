@@ -1,5 +1,6 @@
 ﻿using System;
-using Domain.Financial;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using NUnit.Framework;
 
@@ -116,7 +117,7 @@ namespace Domain.Tests.Trading
                 OrderCleanDirty.NONE,
                 null,
                 null,
-                new CurrencyAmount(100, "GBP"),
+                new Money(100, "GBP"),
                 0,
                 0,
                 "trader-one",

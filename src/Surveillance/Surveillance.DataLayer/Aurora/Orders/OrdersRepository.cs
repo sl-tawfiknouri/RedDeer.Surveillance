@@ -848,8 +848,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var orderTypeResult = (OrderTypes)dto.OrderType.GetValueOrDefault(0);
             var orderDirectionResult = (OrderDirections)dto.OrderDirection.GetValueOrDefault(0);
             var orderCurrency = new Currency(dto.OrderCurrency);
-            var limitPrice = new CurrencyAmount(dto.OrderLimitPrice, dto.OrderCurrency);
-            var averagePrice = new CurrencyAmount(dto.OrderAverageFillPrice, dto.OrderCurrency);
+            var limitPrice = new Money(dto.OrderLimitPrice, dto.OrderCurrency);
+            var averagePrice = new Money(dto.OrderAverageFillPrice, dto.OrderCurrency);
 
             var settlementCurrency = 
                 !string.IsNullOrWhiteSpace(dto.OrderSettlementCurrency)
@@ -865,7 +865,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);
             var optionStrikePrice = dto.OptionStrikePrice == null
                 ? null
-                : (CurrencyAmount?) new CurrencyAmount(dto.OptionStrikePrice, dto.OrderCurrency);
+                : (Money?) new Money(dto.OptionStrikePrice, dto.OrderCurrency);
 
             var order = new Order(
                 financialInstrument,
@@ -924,11 +924,11 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             var orderLimit =
                 dto.LimitPrice != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dto.LimitPrice, dto.Currency)
+                    ? (Money?)new Money(dto.LimitPrice, dto.Currency)
                     : null;
             var orderAveragePrice =
                 dto.AverageFillPrice != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dto.AverageFillPrice, dto.Currency)
+                    ? (Money?)new Money(dto.AverageFillPrice, dto.Currency)
                     : null;
 
             var dealerOrder = new DealerOrder(

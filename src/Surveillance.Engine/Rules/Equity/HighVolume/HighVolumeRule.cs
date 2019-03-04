@@ -331,8 +331,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
             if (tradedValue >= thresholdValue)
             {
-                var thresholdCurrencyValue = new CurrencyAmount((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
-                var tradedCurrencyValue = new CurrencyAmount((decimal)tradedValue, mostRecentTrade.OrderCurrency);
+                var thresholdCurrencyValue = new Money((decimal)thresholdValue, mostRecentTrade.OrderCurrency);
+                var tradedCurrencyValue = new Money((decimal)tradedValue, mostRecentTrade.OrderCurrency);
 
                 return new HighVolumeRuleBreach.BreachDetails(true, breachPercentage, thresholdCurrencyValue, tradedCurrencyValue);
             }

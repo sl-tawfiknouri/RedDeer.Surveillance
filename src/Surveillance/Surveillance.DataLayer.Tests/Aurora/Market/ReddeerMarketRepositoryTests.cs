@@ -75,10 +75,10 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
             {
                 new EquityInstrumentIntraDayTimeBar(
                     security,
-                    new SpreadTimeBar(new CurrencyAmount(100, "GBP"), new CurrencyAmount(101, "GBP"), new CurrencyAmount(100.5m, "GBP"), new Volume(1000)),
+                    new SpreadTimeBar(new Money(100, "GBP"), new Money(101, "GBP"), new Money(100.5m, "GBP"), new Volume(1000)),
                     new DailySummaryTimeBar(
                         1000000,
-                        new IntradayPrices(new CurrencyAmount(90, "GBP"), new CurrencyAmount(85, "GBP"), new CurrencyAmount(105, "GBP"), new CurrencyAmount(84, "GBP")),
+                        new IntradayPrices(new Money(90, "GBP"), new Money(85, "GBP"), new Money(105, "GBP"), new Money(84, "GBP")),
                         1000,
                         new Volume(10000),
                         DateTime.UtcNow), 

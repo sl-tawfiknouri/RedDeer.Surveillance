@@ -26,7 +26,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<CurrencyAmount?> CalculateCostOfPosition(
+        public async Task<Money?> CalculateCostOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                     .Where(afto => afto.OrderDirection == OrderDirections.BUY
                                    || afto.OrderDirection == OrderDirections.COVER)
                     .Select(afto => 
-                        new CurrencyAmount(
+                        new Money(
                             afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                             afto.OrderCurrency))
                     .ToList();

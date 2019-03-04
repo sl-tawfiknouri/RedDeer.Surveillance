@@ -72,8 +72,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             public BreachDetails(
                 bool hasBreach,
                 decimal? breachPercentage,
-                CurrencyAmount breachThresholdAmountCurrency,
-                CurrencyAmount breachTradedAmountCurrency)
+                Money breachThresholdAmountCurrency,
+                Money breachTradedAmountCurrency)
             {
                 HasBreach = hasBreach;
                 BreachPercentage = breachPercentage;
@@ -84,8 +84,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             public bool HasBreach { get; }
             public decimal? BreachPercentage { get; }
             public long BreachThresholdAmount { get; }
-            public CurrencyAmount BreachThresholdAmountCurrency { get; }
-            public CurrencyAmount BreachTradedAmountCurrency { get; }
+            public Money BreachThresholdAmountCurrency { get; }
+            public Money BreachTradedAmountCurrency { get; }
 
             public static BreachDetails None()
             {

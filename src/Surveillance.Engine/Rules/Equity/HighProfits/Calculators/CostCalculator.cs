@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         /// <summary>
         /// Sum the total buy in for the position
         /// </summary>
-        public async Task<CurrencyAmount?> CalculateCostOfPosition(
+        public async Task<Money?> CalculateCostOfPosition(
             IList<Order> activeFulfilledTradeOrders, 
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
@@ -41,16 +41,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                     .Where(afto => afto.OrderDirection == OrderDirections.BUY
                                    || afto.OrderDirection == OrderDirections.COVER)
                     .Select(afto => 
-                        new CurrencyAmount(
+                        new Money(
                             afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                             afto.OrderCurrency))
                     .ToList();
 
-            var currencyAmount = new CurrencyAmount(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
+            var Money = new Money(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
 
-            _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({currencyAmount.Currency}) {currencyAmount.Value}.");
+            _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({Money.Currency}) {Money.Value}.");
 
-            return currencyAmount;
+            return Money;
         }
     }
 }

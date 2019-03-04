@@ -10,7 +10,7 @@ Feature: WashTrade Pairing Non Sensitive Parameters
 
 Background:
 	Given I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 1           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
 
 
@@ -265,7 +265,7 @@ Scenario: Two Trade For Nvidia with next day sell within window yields one alert
 	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
 	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 24           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 1 wash trade alerts
@@ -278,7 +278,7 @@ Scenario: Two Trade For Nvidia with next day sell outside window yields zero ale
 	| Nvidia     | 0		| 01/01/2018 12:00:00 |            |             |              |               | 01/01/2018 12:00:00	| MARKET | BUY       | GBX      |            | 100              | 1000          | 150         |     
 	| Nvidia     | 1		| 01/02/2018 12:00:00 |            |             |              |               | 01/02/2018 12:00:00	| MARKET | SELL       | GBX      |            | 100              | 1000          | 150         |     
 	And I have the wash trade rule parameter values
-	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteCurrencyAmount | PairingPositionMaximumAbsoluteCurrency | UsePairing |
+	| WindowHours | PairingPositionMinimumNumberOfPairedTrades | PairingPositionPercentagePriceChangeThresholdPerPair | PairingPositionPercentageVolumeDifferenceThreshold | PairingPositionMaximumAbsoluteMoney | PairingPositionMaximumAbsoluteCurrency | UsePairing |
 	| 22           | 2                                          | 0.10	                                              | 0.10                                               | 1000000                                      | GBX									   | true       |
 	When I run the wash trade rule
 	Then I will have 0 wash trade alerts

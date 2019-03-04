@@ -87,15 +87,15 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             buy1.OrderDirection = OrderDirections.BUY;
             sell1.OrderDirection = OrderDirections.SELL;
-            buy1.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
+            buy1.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
 
             var buy2 = (new Order()).Random();
             var sell2 = (new Order()).Random();
 
             buy2.OrderDirection = OrderDirections.BUY;
             sell2.OrderDirection = OrderDirections.SELL;
-            sell2.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.20m, sell1.OrderAverageFillPrice.Value.Currency);
-            buy2.OrderAverageFillPrice = new CurrencyAmount(sell2.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
+            sell2.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.20m, sell1.OrderAverageFillPrice.Value.Currency);
+            buy2.OrderAverageFillPrice = new Money(sell2.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
 
             var tradeList = new List<Order> { buy1, sell1, buy2, sell2 };
 
@@ -125,23 +125,23 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
 
             buy1.OrderDirection = OrderDirections.BUY;
             sell1.OrderDirection = OrderDirections.SELL;
-            buy1.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
+            buy1.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
 
             var buy2 = (new Order()).Random();
             var sell2 = (new Order()).Random();
 
             buy2.OrderDirection = OrderDirections.BUY;
             sell2.OrderDirection = OrderDirections.SELL;
-            sell2.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.20m, sell1.OrderAverageFillPrice.Value.Currency);
-            buy2.OrderAverageFillPrice = new CurrencyAmount(sell2.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
+            sell2.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.20m, sell1.OrderAverageFillPrice.Value.Currency);
+            buy2.OrderAverageFillPrice = new Money(sell2.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
 
             var buy3 = (new Order()).Random();
             buy3.OrderDirection = OrderDirections.BUY;
-            buy3.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.30m, sell2.OrderAverageFillPrice.Value.Currency);
+            buy3.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.30m, sell2.OrderAverageFillPrice.Value.Currency);
 
             var buy4 = (new Order()).Random();
             buy4.OrderDirection = OrderDirections.BUY;
-            buy4.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.35m, sell2.OrderAverageFillPrice.Value.Currency);
+            buy4.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.35m, sell2.OrderAverageFillPrice.Value.Currency);
 
             var buy5 = (new Order()).Random();
             var sell5 = (new Order()).Random();
@@ -157,12 +157,12 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             sell8.OrderDirection = OrderDirections.SELL;
             sell9.OrderDirection = OrderDirections.SELL;
 
-            sell5.OrderAverageFillPrice = new CurrencyAmount(sell1.OrderAverageFillPrice.Value.Value * 1.40m, sell1.OrderAverageFillPrice.Value.Currency);
-            sell6.OrderAverageFillPrice = new CurrencyAmount(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
-            sell7.OrderAverageFillPrice = new CurrencyAmount(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
-            sell8.OrderAverageFillPrice = new CurrencyAmount(sell5.OrderAverageFillPrice.Value.Value * 0.99m, sell1.OrderAverageFillPrice.Value.Currency);
-            sell9.OrderAverageFillPrice = new CurrencyAmount(sell5.OrderAverageFillPrice.Value.Value, sell1.OrderAverageFillPrice.Value.Currency);
-            buy5.OrderAverageFillPrice = new CurrencyAmount(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
+            sell5.OrderAverageFillPrice = new Money(sell1.OrderAverageFillPrice.Value.Value * 1.40m, sell1.OrderAverageFillPrice.Value.Currency);
+            sell6.OrderAverageFillPrice = new Money(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
+            sell7.OrderAverageFillPrice = new Money(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell1.OrderAverageFillPrice.Value.Currency);
+            sell8.OrderAverageFillPrice = new Money(sell5.OrderAverageFillPrice.Value.Value * 0.99m, sell1.OrderAverageFillPrice.Value.Currency);
+            sell9.OrderAverageFillPrice = new Money(sell5.OrderAverageFillPrice.Value.Value, sell1.OrderAverageFillPrice.Value.Currency);
+            buy5.OrderAverageFillPrice = new Money(sell5.OrderAverageFillPrice.Value.Value * 1.01m, sell2.OrderAverageFillPrice.Value.Currency);
 
             var tradeList = new List<Order> { buy1, sell1, buy2, sell2, buy3, buy4, buy5, sell5, sell6, sell7, sell8, sell9 };
 

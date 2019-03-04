@@ -30,29 +30,29 @@ namespace Surveillance.Engine.Rules.Currency
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<CurrencyAmount?> Convert(
-            IReadOnlyCollection<CurrencyAmount> currencyAmounts,
+        public async Task<Money?> Convert(
+            IReadOnlyCollection<Money> Moneys,
             Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            if (currencyAmounts == null
-                || !currencyAmounts.Any())
+            if (Moneys == null
+                || !Moneys.Any())
             {
                 _logger.LogInformation($"CurrencyConverter received null or empty currency amounts. Returning 0 currency amount in target currency of {targetCurrency} for rule {ruleCtx?.Id()}");
-                return new CurrencyAmount(0, targetCurrency);
+                return new Money(0, targetCurrency);
             }
 
             if (string.IsNullOrWhiteSpace(targetCurrency.Value))
             {
                 _logger.LogError($"CurrencyConverter asked to convert to a null or empty currency");
-                return currencyAmounts.Aggregate((i, o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
+                return Moneys.Aggregate((i, o) => new Money(i.Value + o.Value, i.Currency));
             }
 
-            if (currencyAmounts.All(ca => Equals(ca.Currency, targetCurrency)))
+            if (Moneys.All(ca => Equals(ca.Currency, targetCurrency)))
             {
                 _logger.LogInformation($"CurrencyConverter inferred all currency amounts matched the target currency. Aggregating trades and returning.");
-                return currencyAmounts.Aggregate((i,o) => new CurrencyAmount(i.Value + o.Value, i.Currency));
+                return Moneys.Aggregate((i,o) => new Money(i.Value + o.Value, i.Currency));
             }
 
             _logger.LogInformation($"CurrencyConverter about to fetch exchange rates on {dayOfConversion}");
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Currency
             }
 
             var convertedToTargetCurrency =
-                currencyAmounts
+                Moneys
                     .Select(currency => Convert(rates, currency, targetCurrency, dayOfConversion, ruleCtx))
                     .ToList();
 
@@ -78,12 +78,12 @@ namespace Surveillance.Engine.Rules.Currency
                 .Sum(cc => cc.Value);
 
             _logger.LogInformation($"CurrencyConverter returning {totalInConvertedCurrency} ({targetCurrency})");
-            return new CurrencyAmount(totalInConvertedCurrency, targetCurrency);
+            return new Money(totalInConvertedCurrency, targetCurrency);
         }
 
-        private CurrencyAmount? Convert(
+        private Money? Convert(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            CurrencyAmount initial,
+            Money initial,
             Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
@@ -130,9 +130,9 @@ namespace Surveillance.Engine.Rules.Currency
             return indirectConversion;
         }
 
-        private CurrencyAmount? TryDirectConversion(
+        private Money? TryDirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            CurrencyAmount initial,
+            Money initial,
             Domain.Financial.Currency targetCurrency)
         {
             var directConversion = exchangeRates
@@ -145,14 +145,14 @@ namespace Surveillance.Engine.Rules.Currency
                 return null;
             }
 
-            var currencyAmount = new CurrencyAmount((decimal) directConversion.Rate * initial.Value, targetCurrency);
+            var Money = new Money((decimal) directConversion.Rate * initial.Value, targetCurrency);
 
-            return currencyAmount;
+            return Money;
         }
         
-        private CurrencyAmount? TryReciprocalConversion(
+        private Money? TryReciprocalConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            CurrencyAmount initial,
+            Money initial,
             Domain.Financial.Currency targetCurrency)
         {
             var reciprocalConversion = exchangeRates
@@ -171,12 +171,12 @@ namespace Surveillance.Engine.Rules.Currency
                     ? (decimal)1 / (decimal)reciprocalConversion.Rate
                     : 0;
 
-            return new CurrencyAmount(reciprocalRate * initial.Value, targetCurrency);
+            return new Money(reciprocalRate * initial.Value, targetCurrency);
         }
 
-        private CurrencyAmount? TryIndirectConversion(
+        private Money? TryIndirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            CurrencyAmount initial,
+            Money initial,
             Domain.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
@@ -216,7 +216,7 @@ namespace Surveillance.Engine.Rules.Currency
             }
 
             var variableCurrencyInitial =
-                new CurrencyAmount(
+                new Money(
                     initial.Value * (decimal)sharedVariableRateInitial.Rate,
                     sharedVariableRateInitial.VariableCurrency);
 
@@ -227,7 +227,7 @@ namespace Surveillance.Engine.Rules.Currency
                 : 0;
 
             var fixedTargetCurrencyInitial =
-                new CurrencyAmount(
+                new Money(
                     variableCurrencyInitial.Value * reciprocalExchangeRate,
                     targetCurrency);
 

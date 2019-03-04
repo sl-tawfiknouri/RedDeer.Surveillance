@@ -3,6 +3,6 @@
     public interface IQueryableMarketDataResponse
     {
         bool HadMissingData();
-        CurrencyAmount? PriceOrClose();
+        Money? PriceOrClose();
     }
 }

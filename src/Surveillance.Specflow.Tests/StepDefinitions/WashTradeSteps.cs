@@ -110,7 +110,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     parameters.PairingPositionMinimumNumberOfPairedTrades,
                     parameters.PairingPositionPercentagePriceChangeThresholdPerPair,
                     parameters.PairingPositionPercentageVolumeDifferenceThreshold,
-                    parameters.PairingPositionMaximumAbsoluteCurrencyAmount,
+                    parameters.PairingPositionMaximumAbsoluteMoney,
                     parameters.PairingPositionMaximumAbsoluteCurrency,
                     parameters.ClusteringPositionMinimumNumberOfTrades,
                     parameters.ClusteringPercentageValueDifferenceThreshold,

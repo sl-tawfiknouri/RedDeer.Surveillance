@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         }
 
         [Test]
-        public async Task Convert_NullCurrencyAmounts_ReturnsNotNull()
+        public async Task Convert_NullMoneys_ReturnsNotNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
 
@@ -55,12 +55,12 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         }
 
         [Test]
-        public async Task Convert_EmptyCurrencyAmounts_ReturnsNotNull()
+        public async Task Convert_EmptyMoneys_ReturnsNotNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>();
+            var Moneys = new List<Money>();
 
-            var result = await converter.Convert(currencyAmounts, _currency, _conversionTime, _ruleCtx);
+            var result = await converter.Convert(Moneys, _currency, _conversionTime, _ruleCtx);
             
             Assert.IsNotNull(result);
         }
@@ -69,13 +69,13 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_InSameCurrencyAsTarget_DoesNotCallExchangeRateApi()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(10, "CNY")
+                new Money(10, "CNY")
             };
             var targetCurrency = new Domain.Financial.Currency("CNY");
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, DateTime.UtcNow, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, DateTime.UtcNow, _ruleCtx);
 
             Assert.AreEqual(conversion.Value.Value, 10);
             Assert.AreEqual(conversion.Value.Currency.Value, "CNY");
@@ -87,14 +87,14 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_NullRatesResult_ReturnsNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY")
+                new Money(100, "CNY")
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNull(conversion);
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappened();
@@ -104,9 +104,9 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_EmptyRatesResult_ReturnsNull()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY")
+                new Money(100, "CNY")
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
@@ -114,7 +114,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(new Dictionary<DateTime, IReadOnlyCollection<ExchangeRateDto>>());
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNull(conversion);
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
@@ -124,9 +124,9 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithDirectConversion_ReturnsExpectedResult()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY")
+                new Money(100, "CNY")
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
@@ -146,7 +146,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -158,10 +158,10 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithDirectConversionMultipleRates_ReturnsExpectedResult()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY"),
-                new CurrencyAmount(20, "USD")
+                new Money(100, "CNY"),
+                new Money(20, "USD")
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
@@ -190,7 +190,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 20);
@@ -202,10 +202,10 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithDirectConversionMultipleRatesButOneIsMissing_ReturnsExpectedResult()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY"),
-                new CurrencyAmount(20, "USD")
+                new Money(100, "CNY"),
+                new Money(20, "USD")
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
@@ -226,7 +226,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -238,9 +238,9 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithReciprocalConversion_ReturnsExpectedResult()
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY"),
+                new Money(100, "CNY"),
             };
             var targetCurrency = new Domain.Financial.Currency("GBP");
             var targetDate = new DateTime(2018, 01, 01);
@@ -261,7 +261,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
@@ -276,9 +276,9 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public async Task Convert_WithIndirectConversionRateSetOneRates_ReturnsExpectedResult(decimal rate1, decimal rate2, decimal expected)
         {
             var converter = new CurrencyConverter(_apiRepository, _logger);
-            var currencyAmounts = new List<CurrencyAmount>
+            var Moneys = new List<Money>
             {
-                new CurrencyAmount(100, "CNY")
+                new Money(100, "CNY")
             };
             var targetCurrency = new Domain.Financial.Currency("EUR");
             var targetDate = new DateTime(2018, 01, 01);
@@ -307,7 +307,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate))
                 .Returns(rates);
 
-            var conversion = await converter.Convert(currencyAmounts, targetCurrency, targetDate, _ruleCtx);
+            var conversion = await converter.Convert(Moneys, targetCurrency, targetDate, _ruleCtx);
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, expected);

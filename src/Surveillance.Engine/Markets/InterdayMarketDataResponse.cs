@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Markets
             return _response.HadMissingData;
         }
 
-        public CurrencyAmount? PriceOrClose()
+        public Money? PriceOrClose()
         {
             return _response?.Response?.DailySummaryTimeBar?.IntradayPrices?.Close;
         }

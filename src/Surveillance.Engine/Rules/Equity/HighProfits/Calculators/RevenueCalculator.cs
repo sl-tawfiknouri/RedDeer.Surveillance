@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         /// <summary>
         /// Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
-        public async Task<RevenueCurrencyAmount> CalculateRevenueOfPosition(
+        public async Task<RevenueMoney> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 Logger.LogInformation($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning realised profits only.");
 
                 // fully traded out position; return its value
-                return new RevenueCurrencyAmount(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue);
             }
 
             // has a virtual position; calculate its value
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Was going to calculate a virtual position but could not find security information from the active fulfilled trade orders.");
 
-                return new RevenueCurrencyAmount(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue);
             }
 
             var marketDataRequest = 
@@ -74,32 +74,32 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null market data request. Returning null.");
 
-                return new RevenueCurrencyAmount(false, null);
+                return new RevenueMoney(false, null);
             }
 
             var marketDataResult = marketCacheStrategy.Query(marketDataRequest);
             if (marketDataResult.HadMissingData())
             {
                 Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had missing market data so will be calculating the inferred virtual profits instead.");
-                return new RevenueCurrencyAmount(true, null);
+                return new RevenueMoney(true, null);
             }
 
             var virtualRevenue = (marketDataResult.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Value ?? string.Empty);
+            var Money = new Money(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Value ?? string.Empty);
 
             if (realisedRevenue == null)
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({currencyAmount.Currency}) {currencyAmount.Value}.");
-                return new RevenueCurrencyAmount(false, currencyAmount);
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({Money.Currency}) {Money.Value}.");
+                return new RevenueMoney(false, Money);
 
             }
 
-            var totalCurrencyAmounts = realisedRevenue + currencyAmount;
+            var totalMoneys = realisedRevenue + Money;
 
-            return new RevenueCurrencyAmount(false, totalCurrencyAmounts);
+            return new RevenueMoney(false, totalMoneys);
         }
 
-        private CurrencyAmount? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
+        private Money? CalculateRealisedRevenue(IList<Order> activeFulfilledTradeOrders)
         {
             if (!activeFulfilledTradeOrders?.Any() ?? true)
             {
@@ -111,7 +111,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 .Where(afto => afto.OrderDirection == OrderDirections.SELL
                                || afto.OrderDirection == OrderDirections.SHORT)
                 .Select(afto =>
-                    new CurrencyAmount(
+                    new Money(
                         afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                         afto.OrderCurrency))
                 .ToList();
@@ -121,7 +121,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 return null;
             }
 
-            var summedCurrency = filledOrders.Aggregate((x, y) => new CurrencyAmount(x.Value + y.Value, x.Currency));
+            var summedCurrency = filledOrders.Aggregate((x, y) => new Money(x.Value + y.Value, x.Currency));
 
             return summedCurrency;
         }

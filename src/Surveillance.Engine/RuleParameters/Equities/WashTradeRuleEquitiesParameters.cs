@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? pairingPositionMinimumNumberOfPairedTrades,
             decimal? pairingPositionPercentagePriceChangeThresholdPerPair,
             decimal? pairingPositionPercentageVolumeDifferenceThreshold,
-            decimal? pairingPositionMaximumAbsoluteCurrencyAmount,
+            decimal? pairingPositionMaximumAbsoluteMoney,
             string pairingPositionMaximumAbsoluteCurrency,
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
             PairingPositionPercentagePriceChangeThresholdPerPair = pairingPositionPercentagePriceChangeThresholdPerPair;
             PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
-            PairingPositionMaximumAbsoluteCurrencyAmount = pairingPositionMaximumAbsoluteCurrencyAmount;
+            PairingPositionMaximumAbsoluteMoney = pairingPositionMaximumAbsoluteMoney;
             PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
 
             ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             int? pairingPositionMinimumNumberOfPairedTrades,
             decimal? pairingPositionPercentagePriceChangeThresholdPerPair,
             decimal? pairingPositionPercentageVolumeDifferenceThreshold,
-            decimal? pairingPositionMaximumAbsoluteCurrencyAmount,
+            decimal? pairingPositionMaximumAbsoluteMoney,
             string pairingPositionMaximumAbsoluteCurrency,
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
@@ -101,7 +101,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
             PairingPositionPercentagePriceChangeThresholdPerPair = pairingPositionPercentagePriceChangeThresholdPerPair;
             PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
-            PairingPositionMaximumAbsoluteCurrencyAmount = pairingPositionMaximumAbsoluteCurrencyAmount;
+            PairingPositionMaximumAbsoluteMoney = pairingPositionMaximumAbsoluteMoney;
             PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
 
             ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
@@ -137,7 +137,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public int? PairingPositionMinimumNumberOfPairedTrades { get; }
         public decimal? PairingPositionPercentagePriceChangeThresholdPerPair { get; }
         public decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
-        public decimal? PairingPositionMaximumAbsoluteCurrencyAmount { get; }
+        public decimal? PairingPositionMaximumAbsoluteMoney { get; }
         public string PairingPositionMaximumAbsoluteCurrency { get; }
         
         // Clustering (k-means) parameters

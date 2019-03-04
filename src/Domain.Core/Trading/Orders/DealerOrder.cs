@@ -31,8 +31,8 @@ namespace Domain.Trading
             string dealerOrderVersion,
             string dealerOrderVersionLinkId,
             string dealerOrderGroupId,
-            CurrencyAmount? limitPrice,
-            CurrencyAmount? averageFillPrice,
+            Money? limitPrice,
+            Money? averageFillPrice,
             long? orderedVolume,
             long? filledVolume,
             decimal? optionStrikePrice,
@@ -98,8 +98,8 @@ namespace Domain.Trading
         public string DealerOrderVersionLinkId { get; }
         public string DealerOrderGroupId { get; }
         
-        public CurrencyAmount? LimitPrice { get; }
-        public CurrencyAmount? AverageFillPrice { get; }
+        public Money? LimitPrice { get; }
+        public Money? AverageFillPrice { get; }
         public long? OrderedVolume { get; }
         public long? FilledVolume { get; }
 

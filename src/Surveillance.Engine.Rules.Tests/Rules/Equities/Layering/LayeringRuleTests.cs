@@ -739,7 +739,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                         new SpreadTimeBar(
                             baseBuyFrame.OrderAverageFillPrice.Value, 
                             baseSellFrame.OrderAverageFillPrice.Value,
-                            new CurrencyAmount(price, baseSellFrame.OrderCurrency),
+                            new Money(price, baseSellFrame.OrderCurrency),
                             new Volume(2000)),
                         new DailySummaryTimeBar(
                             1000,

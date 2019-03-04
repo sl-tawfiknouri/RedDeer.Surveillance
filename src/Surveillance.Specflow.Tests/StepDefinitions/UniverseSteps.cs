@@ -150,9 +150,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             }
 
             var security = _securitySelection.Securities[marketDataParam.SecurityName];
-            var bid = MapToCurrencyAmount(marketDataParam.Bid, marketDataParam.Currency);
-            var ask = MapToCurrencyAmount(marketDataParam.Ask, marketDataParam.Currency);
-            var price = MapToCurrencyAmount(marketDataParam.Price, marketDataParam.Currency);
+            var bid = MapToMoney(marketDataParam.Bid, marketDataParam.Currency);
+            var ask = MapToMoney(marketDataParam.Ask, marketDataParam.Currency);
+            var price = MapToMoney(marketDataParam.Price, marketDataParam.Currency);
             var volume = new Volume(marketDataParam.Volume.GetValueOrDefault(0));
 
             var intradayPrices = new SpreadTimeBar(bid.Value, ask.Value, price.Value, volume);
@@ -224,10 +224,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             }
 
             var security = _securitySelection.Securities[marketDataParam.SecurityName];
-            var open = MapToCurrencyAmount(marketDataParam.Open, marketDataParam.Currency);
-            var close = MapToCurrencyAmount(marketDataParam.Close, marketDataParam.Currency);
-            var high = MapToCurrencyAmount(marketDataParam.High, marketDataParam.Currency);
-            var low = MapToCurrencyAmount(marketDataParam.Low, marketDataParam.Currency);
+            var open = MapToMoney(marketDataParam.Open, marketDataParam.Currency);
+            var close = MapToMoney(marketDataParam.Close, marketDataParam.Currency);
+            var high = MapToMoney(marketDataParam.High, marketDataParam.Currency);
+            var low = MapToMoney(marketDataParam.Low, marketDataParam.Currency);
             var intradayPrices = new IntradayPrices(open, close, high, low);
 
             var dailySummary = new DailySummaryTimeBar(
@@ -250,11 +250,11 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             return universeEvent;
         }
 
-        private CurrencyAmount? MapToCurrencyAmount(decimal? dec, string currency)
+        private Money? MapToMoney(decimal? dec, string currency)
         {
             return
                 dec != null
-                    ? (CurrencyAmount?)new CurrencyAmount(dec, currency)
+                    ? (Money?)new Money(dec, currency)
                     : null;
         }
 
@@ -276,13 +276,13 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
 
             var orderLimitPrice =
                 orderParam.LimitPrice != null
-                ? new CurrencyAmount(orderParam.LimitPrice, orderParam.Currency) 
-                : (CurrencyAmount?)null;
+                ? new Money(orderParam.LimitPrice, orderParam.Currency) 
+                : (Money?)null;
 
             var orderAveragePrice =
                 orderParam.AverageFillPrice != null
-                ? new CurrencyAmount(orderParam.AverageFillPrice, orderParam.Currency)
-                : (CurrencyAmount?)null;
+                ? new Money(orderParam.AverageFillPrice, orderParam.Currency)
+                : (Money?)null;
 
             var order = new Order(
                 security.Instrument,

@@ -174,9 +174,9 @@ namespace Domain.Equity.TimeBars
             Volume spreadVolume)
         {
             return new SpreadTimeBar(
-                new CurrencyAmount(spreadAsk, csv.Currency),
-                new CurrencyAmount(spreadBid, csv.Currency),
-                new CurrencyAmount(spreadPrice, csv.Currency),
+                new Money(spreadAsk, csv.Currency),
+                new Money(spreadBid, csv.Currency),
+                new Money(spreadPrice, csv.Currency),
                 spreadVolume);
         }
 
@@ -189,22 +189,22 @@ namespace Domain.Equity.TimeBars
         {
             var openPrice =
                 open != 0
-                ? (CurrencyAmount?)new CurrencyAmount(open, csv.Currency)
+                ? (Money?)new Money(open, csv.Currency)
                 : null;
 
             var closePrice =
                 close != 0
-                ? (CurrencyAmount?)new CurrencyAmount(close, csv.Currency)
+                ? (Money?)new Money(close, csv.Currency)
                 : null;
 
             var highPrice =
                 high != 0
-                ? (CurrencyAmount?)new CurrencyAmount(high, csv.Currency)
+                ? (Money?)new Money(high, csv.Currency)
                 : null;
 
             var lowPrice =
                 low != 0
-                ? (CurrencyAmount?)new CurrencyAmount(low, csv.Currency)
+                ? (Money?)new Money(low, csv.Currency)
                 : null;
 
             var intradayPrices = new IntradayPrices(

@@ -6,9 +6,9 @@
     public struct SpreadTimeBar
     {
         public SpreadTimeBar(
-            CurrencyAmount bid,
-            CurrencyAmount ask,
-            CurrencyAmount price,
+            Money bid,
+            Money ask,
+            Money price,
             Volume volume)
         {
             Bid = bid;
@@ -20,17 +20,17 @@
         /// <summary>
         /// Last buy price
         /// </summary>
-        public CurrencyAmount Bid { get; }
+        public Money Bid { get; }
 
         /// <summary>
         /// Last sell price
         /// </summary>
-        public CurrencyAmount Ask { get; }
+        public Money Ask { get; }
 
         /// <summary>
         /// The price the market resolved to
         /// </summary>
-        public CurrencyAmount Price { get; }
+        public Money Price { get; }
 
         /// <summary>
         /// The volume of the security traded since the last time bar

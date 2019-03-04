@@ -54,9 +54,9 @@ namespace Surveillance.Engine.Rules.Tests.Markets
             var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
                     new Volume(1000)),
                 new DailySummaryTimeBar(
                     10000,
@@ -117,9 +117,9 @@ namespace Surveillance.Engine.Rules.Tests.Markets
             var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
                     new Volume(1000)),
                 new DailySummaryTimeBar(
                     10000,
@@ -179,9 +179,9 @@ namespace Surveillance.Engine.Rules.Tests.Markets
             var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
                     new Volume(1000)),
                 new DailySummaryTimeBar(
                     1000,
@@ -240,9 +240,9 @@ namespace Surveillance.Engine.Rules.Tests.Markets
             var securityTick = new EquityInstrumentIntraDayTimeBar(
                 security,
                 new SpreadTimeBar(
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
-                    new CurrencyAmount(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
+                    new Money(0, "gbp"),
                     new Volume(1000)),
                 new DailySummaryTimeBar(
                     1000,

@@ -44,8 +44,8 @@ namespace Domain.Trading
             OrderCleanDirty orderCleanDirty,
             decimal? orderAccumulatedInterest,
 
-            CurrencyAmount? orderLimitPrice,
-            CurrencyAmount? orderAverageFillPrice,
+            Money? orderLimitPrice,
+            Money? orderAverageFillPrice,
             long? orderOrderedVolume,
             long? orderFilledVolume,
             string orderTraderId,
@@ -53,7 +53,7 @@ namespace Domain.Trading
             string orderClearingAgent,
             string orderDealingInstructions,
 
-            CurrencyAmount? orderOptionStrikePrice,
+            Money? orderOptionStrikePrice,
             DateTime? orderOptionExpirationDate,
             OptionEuropeanAmerican orderOptionEuropeanAmerican,
             
@@ -118,7 +118,7 @@ namespace Domain.Trading
         public string OrderGroupId { get; set; }
 
         // Options
-        public CurrencyAmount? OrderOptionStrikePrice { get; set; }
+        public Money? OrderOptionStrikePrice { get; set; }
         public DateTime? OrderOptionExpirationDate { get; set; }
         public OptionEuropeanAmerican OrderOptionEuropeanAmerican { get; set; }
 
@@ -133,8 +133,8 @@ namespace Domain.Trading
         public OrderCleanDirty? OrderCleanDirty { get; set; }
         public decimal? OrderAccumulatedInterest { get; set; }
 
-        public CurrencyAmount? OrderLimitPrice { get; set; }
-        public CurrencyAmount? OrderAverageFillPrice { get; set; }
+        public Money? OrderLimitPrice { get; set; }
+        public Money? OrderAverageFillPrice { get; set; }
 
 
         public string OrderTraderId { get; set; }

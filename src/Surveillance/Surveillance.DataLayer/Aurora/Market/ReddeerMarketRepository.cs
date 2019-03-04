@@ -673,17 +673,17 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var spread =
                 new SpreadTimeBar(
-                    new CurrencyAmount(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.BidPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.AskPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.MarketPrice.GetValueOrDefault(0), dto.SecurityCurrency),
                     new Volume(dto.VolumeTraded.GetValueOrDefault(0)));
 
             var intradayPrices =
                 new IntradayPrices(
-                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new Money(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var dailySummary =
                 new DailySummaryTimeBar(
@@ -733,10 +733,10 @@ namespace Surveillance.DataLayer.Aurora.Market
 
             var intradayPrices =
                 new IntradayPrices(
-                    new CurrencyAmount(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
-                    new CurrencyAmount(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
+                    new Money(dto.OpenPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.ClosePrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.HighIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency),
+                    new Money(dto.LowIntradayPrice.GetValueOrDefault(0), dto.SecurityCurrency));
 
             var dailySummary =
                 new DailySummaryTimeBar(

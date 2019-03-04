@@ -1,16 +1,16 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
-    public class RevenueCurrencyAmount
+    public class RevenueMoney
     {
-        public RevenueCurrencyAmount(
+        public RevenueMoney(
             bool hadMissingMarketData,
-            CurrencyAmount? currencyAmount)
+            Money? Money)
         {
             HadMissingMarketData = hadMissingMarketData;
-            CurrencyAmount = currencyAmount;
+            Money = Money;
         }
 
         public bool HadMissingMarketData { get; }
-        public CurrencyAmount? CurrencyAmount { get; }
+        public Money? Money { get; }
     }
 }

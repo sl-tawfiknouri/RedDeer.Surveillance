@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         /// <summary>
         /// Take realised profits and then for any remaining amount use virtual profits
         /// </summary>
-        public async Task<RevenueCurrencyAmount> CalculateRevenueOfPosition(
+        public async Task<RevenueMoney> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
                 // fully traded out position; return its value
-                return new RevenueCurrencyAmount(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue);
             }
 
             // has a virtual position; calculate its value
@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             if (security == null)
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Could not find a security so just returning the realised revenue.");
-                return new RevenueCurrencyAmount(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue);
 
             }
 
@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             if (marketDataRequest == null)
             {
                 Logger.LogInformation($"RevenueCurrencyConvertingCalculator CalculateRevenueOfPosition had no virtual position. Total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Returning the realised revenue only.");
-                return new RevenueCurrencyAmount(false, null);
+                return new RevenueMoney(false, null);
 
             }
 
@@ -88,12 +88,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             {
                 Logger.LogInformation($"Revenue currency converting calculator calculating for inferred virtual profits due to missing market data");
 
-                return new RevenueCurrencyAmount(true, null);
+                return new RevenueMoney(true, null);
             }
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var currencyAmount = new CurrencyAmount(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Value ?? string.Empty);
-            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { currencyAmount }, _targetCurrency, universeDateTime, ctx);
+            var Money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Value ?? string.Empty);
+            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { Money }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
@@ -105,21 +105,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             if (realisedRevenue == null)
             {
                 Logger.LogInformation($"Revenue currency converting calculator could not calculate realised revenues, returning realised revenues.");
-                return new RevenueCurrencyAmount(false, convertedVirtualRevenues);
+                return new RevenueMoney(false, convertedVirtualRevenues);
             }
 
             if (convertedVirtualRevenues == null)
             {
                 Logger.LogInformation($"Revenue currency converting calculator could not calculate virtual revenues. Returning virtual revenues.");
-                return new RevenueCurrencyAmount(false, realisedRevenue);
+                return new RevenueMoney(false, realisedRevenue);
             }
 
-            var totalCurrencyAmounts = realisedRevenue + convertedVirtualRevenues;
+            var totalMoneys = realisedRevenue + convertedVirtualRevenues;
 
-            return new RevenueCurrencyAmount(false, totalCurrencyAmounts);
+            return new RevenueMoney(false, totalMoneys);
         }
 
-        private async Task<CurrencyAmount?> CalculateRealisedRevenue
+        private async Task<Money?> CalculateRealisedRevenue
             (IList<Order> activeFulfilledTradeOrders,
             Domain.Financial.Currency targetCurrency,
             DateTime universeDateTime,
@@ -135,7 +135,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                 .Where(afto => afto.OrderDirection == OrderDirections.SELL
                                || afto.OrderDirection == OrderDirections.SHORT)
                 .Select(afto =>
-                    new CurrencyAmount(
+                    new Money(
                         afto.OrderFilledVolume.GetValueOrDefault(0) * afto.OrderAverageFillPrice.GetValueOrDefault().Value,
                         afto.OrderCurrency))
                 .ToList();

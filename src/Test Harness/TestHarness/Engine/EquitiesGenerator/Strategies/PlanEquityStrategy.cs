@@ -83,11 +83,11 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
         private SpreadTimeBar AdjustSpreadCalculation(decimal adjustmentFactor, EquityInstrumentIntraDayTimeBar precedingTick, EquityInstrumentIntraDayTimeBar tick)
         {
             var adjustedBid =
-                new CurrencyAmount(precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Bid.Currency);
+                new Money(precedingTick.SpreadTimeBar.Bid.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Bid.Currency);
             var adjustedAsk =
-                new CurrencyAmount(precedingTick.SpreadTimeBar.Ask.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Ask.Currency);
+                new Money(precedingTick.SpreadTimeBar.Ask.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Ask.Currency);
             var adjustedPrice =
-                new CurrencyAmount(precedingTick.SpreadTimeBar.Price.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Price.Currency);
+                new Money(precedingTick.SpreadTimeBar.Price.Value * adjustmentFactor, precedingTick.SpreadTimeBar.Price.Currency);
 
             return new SpreadTimeBar(adjustedBid, adjustedAsk, adjustedPrice, tick.SpreadTimeBar.Volume);
         }

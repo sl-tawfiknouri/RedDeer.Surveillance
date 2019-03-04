@@ -6,10 +6,10 @@
     public class IntradayPrices
     {
         public IntradayPrices(
-            CurrencyAmount? open,
-            CurrencyAmount? close,
-            CurrencyAmount? high,
-            CurrencyAmount? low)
+            Money? open,
+            Money? close,
+            Money? high,
+            Money? low)
         {
             Open = open;
             Close = close;
@@ -20,21 +20,21 @@
         /// <summary>
         /// Opening trading price
         /// </summary>
-        public CurrencyAmount? Open { get; }
+        public Money? Open { get; }
 
         /// <summary>
         /// Closing trading price
         /// </summary>
-        public CurrencyAmount? Close { get; }
+        public Money? Close { get; }
 
         /// <summary>
         /// Intraday high trading price
         /// </summary>
-        public CurrencyAmount? High { get; }
+        public Money? High { get; }
 
         /// <summary>
         /// Intraday low trading price
         /// </summary>
-        public CurrencyAmount? Low { get; }
+        public Money? Low { get; }
     }
 }

@@ -140,7 +140,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            var revenue = revenueResponse.CurrencyAmount;
+            var revenue = revenueResponse.Money;
 
             if (revenue == null)
             {
@@ -265,7 +265,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private void WriteAlertToMessageSender(
             Stack<Order> activeTrades,
-            CurrencyAmount absoluteProfit,
+            Money absoluteProfit,
             decimal profitRatio,
             bool hasHighProfitAbsolute,
             bool hasHighProfitPercentage,
@@ -302,7 +302,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                && _equitiesParameters.HighProfitPercentageThreshold.Value <= profitRatio;
         }
 
-        private bool HasHighProfitAbsolute(CurrencyAmount absoluteProfits)
+        private bool HasHighProfitAbsolute(Money absoluteProfits)
         {
             if (_equitiesParameters.HighProfitAbsoluteThreshold == null)
             {

@@ -97,7 +97,7 @@ namespace TestHarness.Engine.OrderGenerator
 
             var priceOffset = (100 + (remainingSpoofedOrders)) / 100m;
             var limitPriceValue = security.SpreadTimeBar.Bid.Value * priceOffset;
-            var limitPrice = new CurrencyAmount(limitPriceValue, security.SpreadTimeBar.Bid.Currency);
+            var limitPrice = new Money(limitPriceValue, security.SpreadTimeBar.Bid.Currency);
 
             var individualTradeVolumeLimit = (100 / totalSpoofedOrders);
             var volumeTarget = (100 + DiscreteUniform.Sample(0, individualTradeVolumeLimit)) / 100m;

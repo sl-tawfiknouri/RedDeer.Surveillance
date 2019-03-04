@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 bool averagePositionRuleBreach,
                 int? averagePositionAmountOfTrades,
                 decimal? averagePositionRelativeValueChange,
-                CurrencyAmount? averagePositionAbsoluteValueChange)
+                Money? averagePositionAbsoluteValueChange)
             {
                 AveragePositionRuleBreach = averagePositionRuleBreach;
                 AveragePositionAmountOfTrades = averagePositionAmountOfTrades;
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             public bool AveragePositionRuleBreach { get; }
             public int? AveragePositionAmountOfTrades { get; }
             public decimal? AveragePositionRelativeValueChange { get; }
-            public CurrencyAmount? AveragePositionAbsoluteValueChange { get; }
+            public Money? AveragePositionAbsoluteValueChange { get; }
 
             public static WashTradeAveragePositionBreach None()
             {

@@ -187,7 +187,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             return tradeOrderType;
         }
 
-        private CurrencyAmount? CalculateLimit(EquityInstrumentIntraDayTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
+        private Money? CalculateLimit(EquityInstrumentIntraDayTimeBar tick, OrderDirections buyOrSell, OrderTypes tradeOrderType)
         {
             if (tradeOrderType != OrderTypes.LIMIT)
             {
@@ -199,27 +199,27 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Bid.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
+                return new Money(adjustedPrice, tick.SpreadTimeBar.Bid.Currency);
             }
             else if (buyOrSell == OrderDirections.SELL)
             {
                 var price = (decimal)Normal.Sample((double)tick.SpreadTimeBar.Ask.Value, _limitStandardDeviation);
                 var adjustedPrice = Math.Max(0, Math.Round(price, 2));
 
-                return new CurrencyAmount(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
+                return new Money(adjustedPrice, tick.SpreadTimeBar.Ask.Currency);
             }
 
             return null;
         }
 
-        private CurrencyAmount CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
+        private Money CalculateExecutedPrice(EquityInstrumentIntraDayTimeBar tick)
         {
             if (tick.SpreadTimeBar.Price.Value >= 0.01m)
             {
                 return tick.SpreadTimeBar.Price;
             }
 
-            return new CurrencyAmount(0.01m, tick.SpreadTimeBar.Price.Currency);
+            return new Money(0.01m, tick.SpreadTimeBar.Price.Currency);
 
         }
 

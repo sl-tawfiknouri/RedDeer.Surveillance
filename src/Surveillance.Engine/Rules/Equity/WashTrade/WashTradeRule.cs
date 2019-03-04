@@ -224,10 +224,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
             var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
-            var absCurrencyAmount = new CurrencyAmount(absDifference, currency?.Value ?? string.Empty);
+            var absMoney = new Money(absDifference, currency?.Value ?? string.Empty);
 
             var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
-            var convertedCurrency = await _currencyConverter.Convert(new[] {absCurrencyAmount}, targetCurrency, UniverseDateTime, RuleCtx);
+            var convertedCurrency = await _currencyConverter.Convert(new[] {absMoney}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
             {
@@ -267,7 +267,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
             }
 
-            var tradingWithinThreshold = await CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(activeTrades);
+            var tradingWithinThreshold = await CheckAbsoluteMoneyIsBelowMaximumThreshold(activeTrades);
 
             if (!tradingWithinThreshold)
             {
@@ -337,9 +337,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             return results;
         }
 
-        private async Task<bool> CheckAbsoluteCurrencyAmountIsBelowMaximumThreshold(List<Order> activeTrades)
+        private async Task<bool> CheckAbsoluteMoneyIsBelowMaximumThreshold(List<Order> activeTrades)
         {
-            if (_equitiesParameters.PairingPositionMaximumAbsoluteCurrencyAmount == null
+            if (_equitiesParameters.PairingPositionMaximumAbsoluteMoney == null
                 || string.IsNullOrWhiteSpace(_equitiesParameters.PairingPositionMaximumAbsoluteCurrency))
             {
                 return true;
@@ -363,10 +363,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
             var currency = new Domain.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Value ?? string.Empty);
-            var absCurrencyAmount = new CurrencyAmount(absDifference, currency);
+            var absMoney = new Money(absDifference, currency);
 
             var targetCurrency = new Domain.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
-            var convertedCurrency = await _currencyConverter.Convert(new[] { absCurrencyAmount }, targetCurrency, UniverseDateTime, RuleCtx);
+            var convertedCurrency = await _currencyConverter.Convert(new[] { absMoney }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
             {
@@ -375,7 +375,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 return true;
             }
 
-            if (convertedCurrency?.Value > _equitiesParameters.PairingPositionMaximumAbsoluteCurrencyAmount.GetValueOrDefault(0))
+            if (convertedCurrency?.Value > _equitiesParameters.PairingPositionMaximumAbsoluteMoney.GetValueOrDefault(0))
             {
                 return false;
             }

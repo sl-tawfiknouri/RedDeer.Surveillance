@@ -9,7 +9,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfa
 {
     public interface IRevenueCalculator
     {
-        Task<RevenueCurrencyAmount> CalculateRevenueOfPosition(
+        Task<RevenueMoney> CalculateRevenueOfPosition(
             IList<Order> activeFulfilledTradeOrders,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx,

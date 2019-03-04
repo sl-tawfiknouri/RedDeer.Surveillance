@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Equity.TimeBars;
 using Domain.Trading;

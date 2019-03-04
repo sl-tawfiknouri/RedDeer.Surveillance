@@ -75,8 +75,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.HighProfits
                     new TradePosition(new List<Order>()),
                     10m,
                     1m,
-                    new Domain.Financial.Currency("USD"),
-                    new Domain.Financial.Currency("GBP"));
+                    new Domain.Core.Financial.Currency("USD"),
+                    new Domain.Core.Financial.Currency("GBP"));
 
             var breach =
                 new HighProfitRuleBreach(

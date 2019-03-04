@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.RuleParameters.Equities;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -167,8 +168,8 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 filledDate,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Financial.Currency("GBP"), 
-                new Domain.Financial.Currency("GBP"),
+                new Domain.Core.Financial.Currency("GBP"), 
+                new Domain.Core.Financial.Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(1000, "GBP"),

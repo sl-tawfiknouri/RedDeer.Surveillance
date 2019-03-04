@@ -47,11 +47,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                             afto.OrderCurrency))
                     .ToList();
 
-            var Money = new Money(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
+            var money = new Money(purchaseOrders.Sum(po => po.Value), purchaseOrders.FirstOrDefault().Currency);
 
-            _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({Money.Currency}) {Money.Value}.");
+            _logger.LogInformation($"CostCalculator CalculateCostOfPosition had calculated costs for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} at {universeDateTime} as ({money.Currency}) {money.Value}.");
 
-            return Money;
+            return money;
         }
     }
 }

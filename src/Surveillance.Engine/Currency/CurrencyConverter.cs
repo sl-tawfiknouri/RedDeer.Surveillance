@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Core.Financial;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.Auditing.Context.Interfaces;
@@ -32,7 +33,7 @@ namespace Surveillance.Engine.Rules.Currency
 
         public async Task<Money?> Convert(
             IReadOnlyCollection<Money> Moneys,
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -43,7 +44,7 @@ namespace Surveillance.Engine.Rules.Currency
                 return new Money(0, targetCurrency);
             }
 
-            if (string.IsNullOrWhiteSpace(targetCurrency.Value))
+            if (string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
                 _logger.LogError($"CurrencyConverter asked to convert to a null or empty currency");
                 return Moneys.Aggregate((i, o) => new Money(i.Value + o.Value, i.Currency));
@@ -61,8 +62,8 @@ namespace Surveillance.Engine.Rules.Currency
             if (rates == null
                 || !rates.Any())
             {
-                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()} due to missing rates");
-                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Value} on {dayOfConversion.ToShortDateString()} due to missing rates");
+                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
+                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
 
                 return null;
             }
@@ -84,7 +85,7 @@ namespace Surveillance.Engine.Rules.Currency
         private Money? Convert(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             Money initial,
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -133,12 +134,12 @@ namespace Surveillance.Engine.Rules.Currency
         private Money? TryDirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             Money initial,
-            Domain.Financial.Currency targetCurrency)
+            Domain.Core.Financial.Currency targetCurrency)
         {
             var directConversion = exchangeRates
                 .FirstOrDefault(er =>
                     string.Equals(er.FixedCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase)
-                    && string.Equals(er.VariableCurrency, targetCurrency.Value, StringComparison.InvariantCultureIgnoreCase));
+                    && string.Equals(er.VariableCurrency, targetCurrency.Code, StringComparison.InvariantCultureIgnoreCase));
 
             if (directConversion == null)
             {
@@ -153,11 +154,11 @@ namespace Surveillance.Engine.Rules.Currency
         private Money? TryReciprocalConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             Money initial,
-            Domain.Financial.Currency targetCurrency)
+            Domain.Core.Financial.Currency targetCurrency)
         {
             var reciprocalConversion = exchangeRates
                 .FirstOrDefault(er =>
-                    string.Equals(er.FixedCurrency, targetCurrency.Value, StringComparison.InvariantCultureIgnoreCase)
+                    string.Equals(er.FixedCurrency, targetCurrency.Code, StringComparison.InvariantCultureIgnoreCase)
                     && string.Equals(er.VariableCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase));
 
             if (reciprocalConversion == null)
@@ -177,7 +178,7 @@ namespace Surveillance.Engine.Rules.Currency
         private Money? TryIndirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
             Money initial,
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
@@ -191,9 +192,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -208,9 +209,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -236,13 +237,13 @@ namespace Surveillance.Engine.Rules.Currency
 
         private List<ExchangeRateDto> GetExchangeRates(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Domain.Financial.Currency targetCurrency)
+            Domain.Core.Financial.Currency targetCurrency)
         {
             return exchangeRates
                 .Where(er =>
                     string.Equals(
                         er.FixedCurrency,
-                        targetCurrency.Value,
+                        targetCurrency.Code,
                         StringComparison.InvariantCultureIgnoreCase))
                 .ToList();
         }

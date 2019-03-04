@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Enums;
+using Domain.Core.Extensions;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace Domain.Trading
 {

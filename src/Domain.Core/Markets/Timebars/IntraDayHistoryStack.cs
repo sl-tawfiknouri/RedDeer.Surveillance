@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Domain.Core.Financial.Interfaces;
+using Domain.Core.Financial.Markets;
+using Domain.Equity.TimeBars;
 
 namespace Domain.Core.Financial
 {

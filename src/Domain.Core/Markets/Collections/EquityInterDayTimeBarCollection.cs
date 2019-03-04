@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Core.Financial.Markets;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Equity.TimeBars
@@ -13,7 +14,7 @@ namespace Domain.Equity.TimeBars
     public class EquityInterDayTimeBarCollection
     {
         public EquityInterDayTimeBarCollection(
-            Financial.Market exchange,
+            Market exchange,
             DateTime epoch,
             IReadOnlyCollection<EquityInstrumentInterDayTimeBar> securities)
         {
@@ -25,7 +26,7 @@ namespace Domain.Equity.TimeBars
         /// <summary>
         /// The exchange the data update is issued by
         /// </summary>
-        public Financial.Market Exchange { get; }
+        public Market Exchange { get; }
 
         /// <summary>
         /// The securities with updated data

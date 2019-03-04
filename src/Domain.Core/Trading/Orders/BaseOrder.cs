@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Financial;
 using Domain.Trading.Interfaces;
 
 namespace Domain.Trading
@@ -36,35 +37,35 @@ namespace Domain.Trading
         {
             if (CancelledDate != null)
             {
-                return Financial.OrderStatus.Cancelled;
+                return Core.Financial.OrderStatus.Cancelled;
             }
 
             if (RejectedDate != null)
             {
-                return Financial.OrderStatus.Rejected;
+                return Core.Financial.OrderStatus.Rejected;
             }
 
             if (FilledDate != null)
             {
-                return Financial.OrderStatus.Filled;
+                return Core.Financial.OrderStatus.Filled;
             }
 
             if (AmendedDate != null)
             {
-                return Financial.OrderStatus.Amended;
+                return Core.Financial.OrderStatus.Amended;
             }
 
             if (BookedDate != null)
             {
-                return Financial.OrderStatus.Booked;
+                return Core.Financial.OrderStatus.Booked;
             }
 
             if (PlacedDate != null)
             {
-                return Financial.OrderStatus.Placed;
+                return Core.Financial.OrderStatus.Placed;
             }
 
-            return Financial.OrderStatus.Unknown;
+            return Core.Financial.OrderStatus.Unknown;
         }
     }
 }

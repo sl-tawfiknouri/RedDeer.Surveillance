@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Domain.Core.Financial;
+using Domain.Core.Financial.Interfaces;
+using System;
 using System.Linq;
 
 namespace Domain.Trading

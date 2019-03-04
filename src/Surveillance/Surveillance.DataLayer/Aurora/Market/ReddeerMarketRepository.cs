@@ -815,9 +815,9 @@ namespace Surveillance.DataLayer.Aurora.Market
                 Cfi = entity.Security?.Cfi;
                 IssuerIdentifier = entity.Security?.IssuerIdentifier;
                 SecurityCurrency =
-                    entity.SpreadTimeBar.Price.Currency.Value
-                    ?? entity.SpreadTimeBar.Ask.Currency.Value
-                    ?? entity.SpreadTimeBar.Bid.Currency.Value;
+                    entity.SpreadTimeBar.Price.Currency.Code
+                    ?? entity.SpreadTimeBar.Ask.Currency.Code
+                    ?? entity.SpreadTimeBar.Bid.Currency.Code;
 
                 Epoch = entity.TimeStamp;
                 EpochDate = entity.TimeStamp.Date;

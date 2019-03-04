@@ -1,4 +1,6 @@
-﻿using PollyFacade.Policies;
+﻿using Domain.Core.Financial.Cfis;
+using Domain.Core.Financial.Cfis.Interfaces;
+using PollyFacade.Policies;
 using PollyFacade.Policies.Interfaces;
 using StructureMap;
 using Surveillance.DataLayer.Api.BmllMarketData;

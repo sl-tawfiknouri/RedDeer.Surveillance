@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -1041,8 +1042,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 LifeCycleStatus = (int?)order.OrderStatus();
                 OrderType = (int?)order.OrderType;
                 OrderDirection = (int?)order.OrderDirection;
-                OrderCurrency = order.OrderCurrency.Value ?? string.Empty;
-                OrderSettlementCurrency = order.OrderSettlementCurrency?.Value ?? string.Empty;
+                OrderCurrency = order.OrderCurrency.Code ?? string.Empty;
+                OrderSettlementCurrency = order.OrderSettlementCurrency?.Code ?? string.Empty;
                 OrderLimitPrice = order.OrderLimitPrice.GetValueOrDefault().Value;
                 OrderAverageFillPrice = order.OrderAverageFillPrice.GetValueOrDefault().Value;
                 OrderOrderedVolume = order.OrderOrderedVolume;
@@ -1193,8 +1194,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
                 OrderType = (int?)dealerOrder.OrderType;
                 Direction = (int?)dealerOrder.OrderDirection;
 
-                Currency = dealerOrder.Currency.Value;
-                SettlementCurrency = dealerOrder.SettlementCurrency.Value;
+                Currency = dealerOrder.Currency.Code;
+                SettlementCurrency = dealerOrder.SettlementCurrency.Code;
                 CleanDirty = (int?)dealerOrder.CleanDirty;
                 AccumulatedInterest = dealerOrder.AccumulatedInterest;
 

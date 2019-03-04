@@ -29,6 +29,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Accounts = RuleFilter.None();
             Traders = RuleFilter.None();
             Markets = RuleFilter.None();
+            Funds = RuleFilter.None();
+            Strategies = RuleFilter.None();
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
@@ -44,6 +46,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
+            RuleFilter funds,
+            RuleFilter strategies,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
@@ -58,6 +62,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
+            Funds = funds ?? RuleFilter.None();
+            Strategies = strategies ?? RuleFilter.None();
 
             Factors = factors ?? new ClientOrganisationalFactors[0];
             AggregateNonFactorableIntoOwnCategory = aggregateNonFactorableIntoOwnCategory;
@@ -87,6 +93,8 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
+        public RuleFilter Funds { get; set; }
+        public RuleFilter Strategies { get; set; }
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }

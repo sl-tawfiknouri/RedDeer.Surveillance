@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 _logger.LogInformation($"LayeringSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
-                var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(layering);
 
                 return filteredUniverse;

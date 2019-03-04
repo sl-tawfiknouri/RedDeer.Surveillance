@@ -5,6 +5,7 @@ using System.Linq;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
+using Domain.Core.Financial;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -57,8 +58,8 @@ namespace DataImport.Integration.Tests.Validation
                             && a.FilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
                             && a.OrderType == OrderTypes.LIMIT
                             && a.OrderDirection == OrderDirections.SELL
-                            && a.OrderCurrency.Value == "GBP"
-                            && a.OrderSettlementCurrency.Value.Value == "USD"
+                            && a.OrderCurrency.Code == "GBP"
+                            && a.OrderSettlementCurrency.Value.Code == "USD"
                             && a.OrderCleanDirty == OrderCleanDirty.CLEAN
                             && a.OrderAccumulatedInterest == 1
                             && a.OrderLimitPrice.Value.Value == 54.768m
@@ -87,7 +88,7 @@ namespace DataImport.Integration.Tests.Validation
                             && a.DealerOrders.First().OrderType == OrderTypes.MARKET
                             && a.DealerOrders.First().OrderDirection == OrderDirections.BUY
                             && a.DealerOrders.First().Currency.Code == "GBP"
-                            && a.DealerOrders.First().SettlementCurrency.Value == "CNY"
+                            && a.DealerOrders.First().SettlementCurrency.Code == "CNY"
                             && a.DealerOrders.First().CleanDirty == OrderCleanDirty.CLEAN
                             && a.DealerOrders.First().AccumulatedInterest == 1
                             && a.DealerOrders.First().LimitPrice.Value.Value == 10m
@@ -121,8 +122,8 @@ namespace DataImport.Integration.Tests.Validation
                              && a.FilledDate == new DateTime(2018, 01, 12, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
-                             && a.OrderCurrency.Value == "GBP"
-                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCurrency.Code == "GBP"
+                             && a.OrderSettlementCurrency.Value.Code == "USD"
                              && a.OrderCleanDirty == OrderCleanDirty.CLEAN
                              && a.OrderAccumulatedInterest == 2
                              && a.OrderLimitPrice.Value.Value == 54.768m
@@ -161,8 +162,8 @@ namespace DataImport.Integration.Tests.Validation
                              && a.FilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
-                             && a.OrderCurrency.Value == "GBP"
-                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCurrency.Code == "GBP"
+                             && a.OrderSettlementCurrency.Value.Code == "USD"
                              && a.OrderCleanDirty == OrderCleanDirty.CLEAN
                              && a.OrderAccumulatedInterest == 3
                              && a.OrderLimitPrice.Value.Value == 54.768m
@@ -201,8 +202,8 @@ namespace DataImport.Integration.Tests.Validation
                              && a.FilledDate == new DateTime(2018, 01, 15, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
-                             && a.OrderCurrency.Value == "GBP"
-                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCurrency.Code == "GBP"
+                             && a.OrderSettlementCurrency.Value.Code == "USD"
                              && a.OrderCleanDirty == OrderCleanDirty.DIRTY
                              && a.OrderAccumulatedInterest == 4
                              && a.OrderLimitPrice.Value.Value == 54.768m
@@ -240,8 +241,8 @@ namespace DataImport.Integration.Tests.Validation
                              && a.FilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
-                             && a.OrderCurrency.Value == "GBP"
-                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCurrency.Code == "GBP"
+                             && a.OrderSettlementCurrency.Value.Code == "USD"
                              && a.OrderCleanDirty == OrderCleanDirty.DIRTY
                              && a.OrderAccumulatedInterest == 5
                              && a.OrderLimitPrice.Value.Value == 54.768m
@@ -279,8 +280,8 @@ namespace DataImport.Integration.Tests.Validation
                              && a.FilledDate == new DateTime(2018, 01, 16, 9, 0, 0)
                              && a.OrderType == OrderTypes.LIMIT
                              && a.OrderDirection == OrderDirections.SELL
-                             && a.OrderCurrency.Value == "GBP"
-                             && a.OrderSettlementCurrency.Value.Value == "USD"
+                             && a.OrderCurrency.Code == "GBP"
+                             && a.OrderSettlementCurrency.Value.Code == "USD"
                              && a.OrderCleanDirty == OrderCleanDirty.DIRTY
                              && a.OrderAccumulatedInterest == 6
                              && a.OrderLimitPrice.Value.Value == 54.768m

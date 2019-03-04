@@ -21,6 +21,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private readonly RuleFilter _accounts;
         private readonly RuleFilter _traders;
         private readonly RuleFilter _markets;
+        private readonly RuleFilter _funds;
+        private readonly RuleFilter _strategies;
         private readonly ILogger<UniverseFilter> _logger;
 
         public UniverseFilter(
@@ -28,6 +30,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
+            RuleFilter funds,
+            RuleFilter strategies,
             ILogger<UniverseFilter> logger)
         {
             _universeUnsubscriberFactory =
@@ -37,9 +41,12 @@ namespace Surveillance.Engine.Rules.Universe.Filter
             _accounts = accounts;
             _traders = traders;
             _markets = markets;
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _funds = funds;
+            _strategies = strategies;
 
             _universeObservers = new ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>>();
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
@@ -100,111 +107,21 @@ namespace Surveillance.Engine.Rules.Universe.Filter
                 return;
             }
 
+            if (FilterOnFund(value))
+            {
+                return;
+            }
+
+            if (FilterOnStrategy(value))
+            {
+                return;
+            }
+
             _logger.LogInformation($"is not filtering event at {value.EventTime} with type {value.StateChange}");
             foreach (var obs in _universeObservers)
             {
                 obs.Value?.OnNext(value);
             }
-        }
-
-        private bool FilterOnAccount(IUniverseEvent value)
-        {
-            if (_accounts == null)
-            {
-                return false;
-            }
-
-            if (_accounts.Type == RuleFilterType.None)
-            {
-                return false;
-            }
-
-            if (value == null)
-            {
-                return false;
-            }
-
-            if (value.StateChange != UniverseStateEvent.Order
-                && value.StateChange != UniverseStateEvent.OrderPlaced)
-            {
-                return false;
-            }
-
-            var frame = (Order)value.UnderlyingEvent;
-
-            if (frame == null)
-            {
-                return false;
-            }
-
-            var filterResult = false;
-
-            switch (_accounts.Type)
-            {
-                case RuleFilterType.Include:
-                    filterResult = !_accounts.Ids.Contains(frame.OrderClientAccountAttributionId, StringComparer.InvariantCultureIgnoreCase);
-                    break;
-                case RuleFilterType.Exclude:
-                    filterResult = _accounts.Ids.Contains(frame.OrderClientAccountAttributionId, StringComparer.InvariantCultureIgnoreCase);
-                    break;
-            }
-
-            if (filterResult)
-            {
-                _logger.LogInformation($"FilterOnAccount filtering out order with id {frame.ReddeerOrderId}");
-            }
-
-            return filterResult;
-        }
-
-        private bool FilterOnTraders(IUniverseEvent value)
-        {
-            if (_traders == null)
-            {
-                return false;
-            }
-
-            if (_traders.Type == RuleFilterType.None)
-            {
-                return false;
-            }
-
-            if (value == null)
-            {
-                return false;
-            }
-
-            if (value.StateChange != UniverseStateEvent.Order
-                && value.StateChange != UniverseStateEvent.OrderPlaced)
-            {
-                return false;
-            }
-
-            var frame = (Order)value.UnderlyingEvent;
-
-            if (frame == null)
-            {
-                return false;
-            }
-
-            var filterResult = false;
-
-            switch (_traders.Type)
-            {
-                case RuleFilterType.Include:
-                    filterResult = !_traders.Ids.Contains(frame.OrderTraderId, StringComparer.InvariantCultureIgnoreCase);
-                    break;
-                case RuleFilterType.Exclude:
-                    filterResult = _traders.Ids.Contains(frame.OrderTraderId, StringComparer.InvariantCultureIgnoreCase);
-                    break;
-            }
-
-            if (filterResult)
-            {
-                _logger.LogInformation($"FilterOnTraders filtering out order with id {frame.ReddeerOrderId}");
-            }
-
-            return filterResult;
         }
 
         private bool FilterOnMarkets(IUniverseEvent value)
@@ -233,99 +150,130 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (value.StateChange == UniverseStateEvent.EquityIntradayTick)
             {
-                var exchFrame = (EquityIntraDayTimeBarCollection)value.UnderlyingEvent;
-                if (exchFrame == null)
-                {
-                    return false;
-                }
-
-                if (_markets.Type == RuleFilterType.Include)
-                {
-                    if (exchFrame?.Exchange?.MarketIdentifierCode == null)
-                    {
-                        return true;
-                    }
-
-                    var filter = !_markets.Ids.Contains(exchFrame.Exchange.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
-
-                    if (filter)
-                    {
-                        _logger.LogInformation($"FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
-                    }
-
-                    return filter;
-                }
-
-                if (_markets.Type == RuleFilterType.Exclude)
-                {
-                    if (exchFrame?.Exchange?.MarketIdentifierCode == null)
-                    {
-                        return false;
-                    }
-
-                    var filter = _markets.Ids.Contains(exchFrame.Exchange.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
-
-                    if (filter)
-                    {
-                        _logger.LogInformation($"FilterOnTraders filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
-                    }
-
-                    return filter;
-                }
-
-                return false;
+                return FilterOnMarketIntradayTick(value);
             }
 
             if (value.StateChange == UniverseStateEvent.Order
                 || value.StateChange == UniverseStateEvent.OrderPlaced)
             {
-                var tradeFrame = (Order)value.UnderlyingEvent;
-                if (tradeFrame == null)
+                return FilterOnOrderAttribute(value, _markets, i => i?.Market?.MarketIdentifierCode, "market");
+            }
+
+            return false;
+        }
+
+        private bool FilterOnMarketIntradayTick(IUniverseEvent value)
+        {
+            var exchFrame = (EquityIntraDayTimeBarCollection)value.UnderlyingEvent;
+            if (exchFrame == null)
+            {
+                return false;
+            }
+
+            if (_markets.Type == RuleFilterType.Include)
+            {
+                if (exchFrame?.Exchange?.MarketIdentifierCode == null)
+                {
+                    return true;
+                }
+
+                var filter = !_markets.Ids.Contains(exchFrame.Exchange.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
+
+                if (filter)
+                {
+                    _logger.LogInformation($"filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
+                }
+
+                return filter;
+            }
+
+            if (_markets.Type == RuleFilterType.Exclude)
+            {
+                if (exchFrame?.Exchange?.MarketIdentifierCode == null)
                 {
                     return false;
                 }
 
-                if (_markets.Type == RuleFilterType.Include)
+                var filter = _markets.Ids.Contains(exchFrame.Exchange.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
+
+                if (filter)
                 {
-                    if (tradeFrame?.Market?.MarketIdentifierCode == null)
-                    {
-                        return false;
-                    }
-
-                    var filter = !_markets.Ids.Contains(tradeFrame.Market.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
-
-                    if (filter)
-                    {
-                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
-                    }
-
-                    return filter;
-
+                    _logger.LogInformation($"filtering out stock tick with id {exchFrame.Exchange.MarketIdentifierCode} at {exchFrame.Epoch}");
                 }
 
-                if (_markets.Type == RuleFilterType.Exclude)
-                {
-                    if (tradeFrame?.Market?.MarketIdentifierCode == null)
-                    {
-                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
-
-                        return true;
-                    }
-
-                    var filter = _markets.Ids.Contains(tradeFrame.Market.MarketIdentifierCode, StringComparer.InvariantCultureIgnoreCase);
-
-                    if (filter)
-                    {
-                        _logger.LogInformation($"FilterOnMarkets filtering out order with reddeer id of {tradeFrame.ReddeerOrderId}");
-                    }
-
-                    return filter;
-                }
-
-                return false;
+                return filter;
             }
 
             return false;
+        }
+
+        private bool FilterOnAccount(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _accounts, i => i.OrderClientAccountAttributionId, "Accounts");
+        }
+
+        private bool FilterOnTraders(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _traders, i => i.OrderTraderId, "Trader");
+        }
+        private bool FilterOnFund(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _funds, i => i.OrderFund, "fund");
+        }
+
+        private bool FilterOnStrategy(IUniverseEvent value)
+        {
+            return FilterOnOrderAttribute(value, _strategies, i => i.OrderStrategy, "strategy");
+        }
+
+        private bool FilterOnOrderAttribute(IUniverseEvent value, RuleFilter filter, Func<Order, string> propertyLens, string filterName)
+        {
+            if (filter == null)
+            {
+                return false;
+            }
+
+            if (filter.Type == RuleFilterType.None)
+            {
+                return false;
+            }
+
+            if (value == null)
+            {
+                return false;
+            }
+
+            if (value.StateChange != UniverseStateEvent.Order
+                && value.StateChange != UniverseStateEvent.OrderPlaced)
+            {
+                return false;
+            }
+
+            var frame = (Order)value.UnderlyingEvent;
+
+            if (frame == null)
+            {
+                return false;
+            }
+
+            var filterResult = false;
+
+            switch (filter.Type)
+            {
+                case RuleFilterType.Include:
+                    filterResult = !filter.Ids.Contains(propertyLens(frame), StringComparer.InvariantCultureIgnoreCase);
+                    break;
+                case RuleFilterType.Exclude:
+                    filterResult = filter.Ids.Contains(propertyLens(frame), StringComparer.InvariantCultureIgnoreCase);
+                    break;
+            }
+
+            if (filterResult)
+            {
+                _logger.LogInformation($"{filterName} filtering out order with id {frame.ReddeerOrderId}");
+            }
+
+            return filterResult;
         }
 
         public IUniverseCloneableRule Clone(IFactorValue factor)

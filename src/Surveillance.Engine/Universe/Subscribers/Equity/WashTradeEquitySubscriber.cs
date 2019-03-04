@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 _logger.LogInformation($"WashTradeSubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
 
-                var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets);
+                var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(washTrade);
 
                 return filteredUniverse;

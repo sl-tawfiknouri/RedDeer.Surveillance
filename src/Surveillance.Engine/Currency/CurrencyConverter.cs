@@ -32,13 +32,13 @@ namespace Surveillance.Engine.Rules.Currency
         }
 
         public async Task<Money?> Convert(
-            IReadOnlyCollection<Money> Moneys,
+            IReadOnlyCollection<Money> monies,
             Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            if (Moneys == null
-                || !Moneys.Any())
+            if (monies == null
+                || !monies.Any())
             {
                 _logger.LogInformation($"CurrencyConverter received null or empty currency amounts. Returning 0 currency amount in target currency of {targetCurrency} for rule {ruleCtx?.Id()}");
                 return new Money(0, targetCurrency);
@@ -47,13 +47,13 @@ namespace Surveillance.Engine.Rules.Currency
             if (string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
                 _logger.LogError($"CurrencyConverter asked to convert to a null or empty currency");
-                return Moneys.Aggregate((i, o) => new Money(i.Value + o.Value, i.Currency));
+                return monies.Aggregate((i, o) => new Money(i.Value + o.Value, i.Currency));
             }
 
-            if (Moneys.All(ca => Equals(ca.Currency, targetCurrency)))
+            if (monies.All(ca => Equals(ca.Currency, targetCurrency)))
             {
                 _logger.LogInformation($"CurrencyConverter inferred all currency amounts matched the target currency. Aggregating trades and returning.");
-                return Moneys.Aggregate((i,o) => new Money(i.Value + o.Value, i.Currency));
+                return monies.Aggregate((i,o) => new Money(i.Value + o.Value, i.Currency));
             }
 
             _logger.LogInformation($"CurrencyConverter about to fetch exchange rates on {dayOfConversion}");
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Currency
             }
 
             var convertedToTargetCurrency =
-                Moneys
+                monies
                     .Select(currency => Convert(rates, currency, targetCurrency, dayOfConversion, ruleCtx))
                     .ToList();
 

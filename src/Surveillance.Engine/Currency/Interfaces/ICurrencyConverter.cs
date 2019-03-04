@@ -8,6 +8,10 @@ namespace Surveillance.Engine.Rules.Currency.Interfaces
 {
     public interface ICurrencyConverter
     {
-        Task<Money?> Convert(IReadOnlyCollection<Money> Moneys, Domain.Core.Financial.Currency targetCurrency, DateTime dayOfConversion, ISystemProcessOperationRunRuleContext ruleCtx);
+        Task<Money?> Convert(
+            IReadOnlyCollection<Money> monies,
+            Domain.Core.Financial.Currency targetCurrency,
+            DateTime dayOfConversion,
+            ISystemProcessOperationRunRuleContext ruleCtx);
     }
 }

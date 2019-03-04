@@ -84,61 +84,61 @@ namespace Surveillance.Engine.Rules.Currency
 
         private Money? Convert(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Money initial,
+            Money initialMoney,
             Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            if (Equals(initial.Currency, targetCurrency))
+            if (Equals(initialMoney.Currency, targetCurrency))
             {
-                _logger.LogInformation($"CurrencyConverter asked to convert {initial.Currency} to {targetCurrency} and found they were the same. Returning initial amount.");
-                return initial;
+                _logger.LogInformation($"CurrencyConverter asked to convert {initialMoney.Currency} to {targetCurrency} and found they were the same. Returning initial amount.");
+                return initialMoney;
             }
 
             // direct exchange rate i.e. we want to do USD to GBP and we have USD / GBP
-            var directConversion = TryDirectConversion(exchangeRates, initial, targetCurrency);
+            var directConversion = TryDirectConversion(exchangeRates, initialMoney, targetCurrency);
 
             if (directConversion != null)
             {
-                _logger.LogInformation($"CurrencyConverter managed to directly convert {initial.Currency} {initial.Value} to {targetCurrency} {directConversion.Value.Value}.");
+                _logger.LogInformation($"CurrencyConverter managed to directly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {directConversion.Value.Value}.");
                 return directConversion;
             }
 
-            _logger.LogInformation($"CurrencyConverter failed to directly convert {initial.Currency} to {targetCurrency}. Trying reciprocal conversion.");
+            _logger.LogInformation($"CurrencyConverter failed to directly convert {initialMoney.Currency} to {targetCurrency}. Trying reciprocal conversion.");
             // reciprocal exchange rate i.e. we want to do USD to GBP but we have GBP / USD
-            var reciprocalConversion = TryReciprocalConversion(exchangeRates, initial, targetCurrency);
+            var reciprocalConversion = TryReciprocalConversion(exchangeRates, initialMoney, targetCurrency);
 
             if (reciprocalConversion != null)
             {
-                _logger.LogInformation($"CurrencyConverter managed to reciprocally convert {initial.Currency} {initial.Value} to {targetCurrency} {reciprocalConversion.Value.Value}.");
+                _logger.LogInformation($"CurrencyConverter managed to reciprocally convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {reciprocalConversion.Value.Value}.");
                 return reciprocalConversion;
             }
 
-            _logger.LogInformation($"CurrencyConverter failed to reciprocally convert {initial.Currency} to {targetCurrency}. Trying indirect conversion.");
+            _logger.LogInformation($"CurrencyConverter failed to reciprocally convert {initialMoney.Currency} to {targetCurrency}. Trying indirect conversion.");
             // implicit exchange rate i.e. we want to do EUR to GBP but we have EUR / USD and GBP / USD
-            var indirectConversion = TryIndirectConversion(exchangeRates, initial, targetCurrency, dayOfConversion, ruleCtx);
+            var indirectConversion = TryIndirectConversion(exchangeRates, initialMoney, targetCurrency, dayOfConversion, ruleCtx);
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Code} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
-                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
+                ruleCtx.EventException($"Currency Converter was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
 
-            _logger.LogInformation($"CurrencyConverter managed to indirectly convert {initial.Currency} {initial.Value} to {targetCurrency} {indirectConversion.Value.Value}.");
+            _logger.LogInformation($"CurrencyConverter managed to indirectly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {indirectConversion.Value.Value}.");
 
             return indirectConversion;
         }
 
         private Money? TryDirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Money initial,
+            Money initialMoney,
             Domain.Core.Financial.Currency targetCurrency)
         {
             var directConversion = exchangeRates
                 .FirstOrDefault(er =>
-                    string.Equals(er.FixedCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase)
+                    string.Equals(er.FixedCurrency, initialMoney.Currency.Code, StringComparison.InvariantCultureIgnoreCase)
                     && string.Equals(er.VariableCurrency, targetCurrency.Code, StringComparison.InvariantCultureIgnoreCase));
 
             if (directConversion == null)
@@ -146,20 +146,20 @@ namespace Surveillance.Engine.Rules.Currency
                 return null;
             }
 
-            var Money = new Money((decimal) directConversion.Rate * initial.Value, targetCurrency);
+            var Money = new Money((decimal) directConversion.Rate * initialMoney.Value, targetCurrency);
 
             return Money;
         }
         
         private Money? TryReciprocalConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Money initial,
+            Money initialMoney,
             Domain.Core.Financial.Currency targetCurrency)
         {
             var reciprocalConversion = exchangeRates
                 .FirstOrDefault(er =>
                     string.Equals(er.FixedCurrency, targetCurrency.Code, StringComparison.InvariantCultureIgnoreCase)
-                    && string.Equals(er.VariableCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase));
+                    && string.Equals(er.VariableCurrency, initialMoney.Currency.Code, StringComparison.InvariantCultureIgnoreCase));
 
             if (reciprocalConversion == null)
             {
@@ -172,17 +172,17 @@ namespace Surveillance.Engine.Rules.Currency
                     ? (decimal)1 / (decimal)reciprocalConversion.Rate
                     : 0;
 
-            return new Money(reciprocalRate * initial.Value, targetCurrency);
+            return new Money(reciprocalRate * initialMoney.Value, targetCurrency);
         }
 
         private Money? TryIndirectConversion(
             IReadOnlyCollection<ExchangeRateDto> exchangeRates,
-            Money initial,
+            Money initialMoney,
             Domain.Core.Financial.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            var initialExchangeRate = GetExchangeRates(exchangeRates, initial.Currency);
+            var initialExchangeRate = GetExchangeRates(exchangeRates, initialMoney.Currency);
             var targetExchangeRate = GetExchangeRates(exchangeRates, targetCurrency);
 
             var sharedVariableRateInitial = initialExchangeRate
@@ -192,9 +192,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -209,16 +209,16 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
 
             var variableCurrencyInitial =
                 new Money(
-                    initial.Value * (decimal)sharedVariableRateInitial.Rate,
+                    initialMoney.Value * (decimal)sharedVariableRateInitial.Rate,
                     sharedVariableRateInitial.VariableCurrency);
 
             var reciprocalExchangeRate =

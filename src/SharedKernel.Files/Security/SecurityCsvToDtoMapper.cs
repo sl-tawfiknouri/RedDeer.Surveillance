@@ -189,23 +189,23 @@ namespace Domain.Equity.TimeBars
         {
             var openPrice =
                 open != 0
-                ? (Money?)new Money(open, csv.Currency)
-                : null;
+                ? new Money(open, csv.Currency)
+                : (Money?)null;
 
             var closePrice =
                 close != 0
-                ? (Money?)new Money(close, csv.Currency)
-                : null;
+                ? new Money(close, csv.Currency)
+                : (Money?)null;
 
             var highPrice =
                 high != 0
-                ? (Money?)new Money(high, csv.Currency)
-                : null;
+                ? new Money(high, csv.Currency)
+                : (Money?)null;
 
             var lowPrice =
                 low != 0
-                ? (Money?)new Money(low, csv.Currency)
-                : null;
+                ? new Money(low, csv.Currency)
+                : (Money?)null;
 
             var intradayPrices = new IntradayPrices(
                 openPrice,

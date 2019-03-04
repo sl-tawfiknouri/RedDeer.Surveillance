@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
     <ProjectReference Include="..\Surveillance.System.DataLayer\Surveillance.Auditing.DataLayer.csproj" />
   </ItemGroup>
 

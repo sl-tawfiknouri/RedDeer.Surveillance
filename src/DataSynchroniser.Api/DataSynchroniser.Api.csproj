@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SharedKernel.Contracts\SharedKernel.Contracts.csproj" />
     <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
   </ItemGroup>
 

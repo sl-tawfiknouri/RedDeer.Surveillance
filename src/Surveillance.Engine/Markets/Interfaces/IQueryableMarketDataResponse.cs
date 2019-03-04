@@ -1,4 +1,6 @@
-﻿namespace Surveillance.Engine.Rules.Markets.Interfaces
+﻿using Domain.Core.Financial;
+
+namespace Surveillance.Engine.Rules.Markets.Interfaces
 {
     public interface IQueryableMarketDataResponse
     {

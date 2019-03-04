@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;

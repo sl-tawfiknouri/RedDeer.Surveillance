@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Interfaces;
 using Domain.Equity.TimeBars;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;

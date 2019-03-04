@@ -7,6 +7,7 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
+using Domain.Core.Financial;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 {

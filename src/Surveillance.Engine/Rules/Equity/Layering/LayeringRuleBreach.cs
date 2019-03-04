@@ -4,6 +4,7 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
+using Domain.Core.Financial;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {

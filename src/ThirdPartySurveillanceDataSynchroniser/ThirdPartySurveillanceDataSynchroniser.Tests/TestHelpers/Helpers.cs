@@ -1,4 +1,6 @@
-﻿namespace DataSynchroniser.Tests.TestHelpers
+﻿using Domain.Core.Financial;
+
+namespace DataSynchroniser.Tests.TestHelpers
 {
     public static class Helpers
     {

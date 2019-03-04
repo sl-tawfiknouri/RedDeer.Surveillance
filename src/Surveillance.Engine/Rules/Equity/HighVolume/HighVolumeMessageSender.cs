@@ -67,10 +67,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             {
                 var marketCapPercentage = Math.Ceiling(ruleBreach.EquitiesParameters.HighVolumePercentageMarketCap.GetValueOrDefault(0) * 100);
                 var marketCapBreachPercentage = Math.Ceiling(ruleBreach.MarketCapBreach.BreachPercentage.GetValueOrDefault(0) * 100);
-                var tradedAmount = Math.Round(ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);
-                var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);
+                var tradedAmount = Math.Round(ruleBreach.MarketCapBreach.BreachTradedMoney.Value, 2, MidpointRounding.AwayFromZero);
+                var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdMoney.Value, 2, MidpointRounding.AwayFromZero);
 
-                marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Currency.Code}) {tradedAmount} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Currency.Code}) {thresholdAmount}.";
+                marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedMoney.Currency.Code}) {tradedAmount} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdMoney.Currency.Code}) {thresholdAmount}.";
             }
 
             description = $"{description}{dailyDescription}{windowDescription}{marketCapDescription}";

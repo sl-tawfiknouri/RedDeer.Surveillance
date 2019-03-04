@@ -86,16 +86,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             }
 
             var virtualRevenue = (marketDataResult.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var Money = new Money(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Code ?? string.Empty);
+            var money = new Money(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Code ?? string.Empty);
 
             if (realisedRevenue == null)
             {
-                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({Money.Currency}) {Money.Value}.");
-                return new RevenueMoney(false, Money);
+                Logger.LogWarning($"RevenueCalculator CalculateRevenueOfPosition at {universeDateTime} had a fully traded out position with a total purchase volume of {totalPurchaseVolume} and total sale volume of {totalSaleVolume}. Had a null value for realised revenue so returning virtual revenue only of ({money.Currency}) {money.Value}.");
+                return new RevenueMoney(false, money);
 
             }
 
-            var totalMoneys = realisedRevenue + Money;
+            var totalMoneys = realisedRevenue + money;
 
             return new RevenueMoney(false, totalMoneys);
         }

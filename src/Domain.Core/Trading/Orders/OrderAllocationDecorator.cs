@@ -32,7 +32,7 @@ namespace Domain.Trading
                 order.OrderDirection,
                 order.OrderCurrency,
                 order.OrderSettlementCurrency,
-                order.OrderCleanDirty.GetValueOrDefault(Financial.OrderCleanDirty.NONE),
+                order.OrderCleanDirty.GetValueOrDefault(Core.Financial.OrderCleanDirty.NONE),
                 order.OrderAccumulatedInterest,
                 order.OrderLimitPrice,
                 order.OrderAverageFillPrice,

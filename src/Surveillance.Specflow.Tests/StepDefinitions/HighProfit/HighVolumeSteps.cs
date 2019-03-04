@@ -25,10 +25,11 @@ using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.HighVolume;
+using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 {
     [Binding]
     public sealed class HighVolumeSteps

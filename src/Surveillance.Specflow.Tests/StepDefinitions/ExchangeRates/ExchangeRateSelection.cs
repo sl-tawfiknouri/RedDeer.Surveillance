@@ -4,7 +4,7 @@ using FakeItEasy;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
 {
     public class ExchangeRateSelection
     {

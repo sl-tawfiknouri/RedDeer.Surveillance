@@ -16,11 +16,11 @@ using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose;
+using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
 {
     [Binding]
     public sealed class MarkingTheCloseSteps

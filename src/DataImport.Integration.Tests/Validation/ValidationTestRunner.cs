@@ -86,7 +86,7 @@ namespace DataImport.Integration.Tests.Validation
                             && a.DealerOrders.First().DealerCounterParty == "Barclays Capital"
                             && a.DealerOrders.First().OrderType == OrderTypes.MARKET
                             && a.DealerOrders.First().OrderDirection == OrderDirections.BUY
-                            && a.DealerOrders.First().Currency.Value == "GBP"
+                            && a.DealerOrders.First().Currency.Code == "GBP"
                             && a.DealerOrders.First().SettlementCurrency.Value == "CNY"
                             && a.DealerOrders.First().CleanDirty == OrderCleanDirty.CLEAN
                             && a.DealerOrders.First().AccumulatedInterest == 1

@@ -283,7 +283,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     _ruleCtx.CorrelationId(),
                     _equitiesParameters,
                     absoluteProfit.Value,
-                    absoluteProfit.Currency.Value,
+                    absoluteProfit.Currency.Code,
                     profitRatio,
                     security,
                     hasHighProfitAbsolute,
@@ -312,7 +312,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (_equitiesParameters.UseCurrencyConversions
                 && !string.Equals(
                 _equitiesParameters.HighProfitCurrencyConversionTargetCurrency,
-                absoluteProfits.Currency.Value,
+                absoluteProfits.Currency.Code,
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 _ruleCtx.EventException("had mismatching absolute profits currencies. Something went horribly wrong!");

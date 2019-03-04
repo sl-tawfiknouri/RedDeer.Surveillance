@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             var conversion = await converter.Convert(Moneys, targetCurrency, DateTime.UtcNow, _ruleCtx);
 
             Assert.AreEqual(conversion.Value.Value, 10);
-            Assert.AreEqual(conversion.Value.Currency.Value, "CNY");
+            Assert.AreEqual(conversion.Value.Currency.Code, "CNY");
 
             A.CallTo(() => _apiRepository.Get(A<DateTime>.Ignored, A<DateTime>.Ignored)).MustNotHaveHappened();
         }
@@ -150,7 +150,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
-            Assert.AreEqual(conversion.Value.Currency.Value, "GBP");
+            Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
@@ -194,7 +194,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 20);
-            Assert.AreEqual(conversion.Value.Currency.Value, "GBP");
+            Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
@@ -230,7 +230,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
-            Assert.AreEqual(conversion.Value.Currency.Value, "GBP");
+            Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
@@ -265,7 +265,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, 10);
-            Assert.AreEqual(conversion.Value.Currency.Value, "GBP");
+            Assert.AreEqual(conversion.Value.Currency.Code, "GBP");
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
 
@@ -311,7 +311,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             Assert.IsNotNull(conversion);
             Assert.AreEqual(conversion.Value.Value, expected);
-            Assert.AreEqual(conversion.Value.Currency.Value, "EUR");
+            Assert.AreEqual(conversion.Value.Currency.Code, "EUR");
             A.CallTo(() => _apiRepository.Get(targetDate, targetDate)).MustHaveHappenedOnceExactly();
         }
     }

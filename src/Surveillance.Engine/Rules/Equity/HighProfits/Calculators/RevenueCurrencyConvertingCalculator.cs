@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             }
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var Money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Value ?? string.Empty);
+            var Money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Code ?? string.Empty);
             var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { Money }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null

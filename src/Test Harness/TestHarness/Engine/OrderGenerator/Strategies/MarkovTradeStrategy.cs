@@ -118,7 +118,7 @@ namespace TestHarness.Engine.OrderGenerator.Strategies
             var orderSubmittedOn = tick.TimeStamp;
             var traderId = GenerateClientFactorString();
             var dealerInstructions = "Process Asap";
-            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Value ?? string.Empty;
+            var orderCurrency = tick?.SpreadTimeBar.Price.Currency.Code ?? string.Empty;
 
             var cancelledDate = orderStatus == OrderStatus.Cancelled ? (DateTime?) orderSubmittedOn : null;
             var filledDate = orderStatus == OrderStatus.Filled ? (DateTime?)orderSubmittedOn : null;

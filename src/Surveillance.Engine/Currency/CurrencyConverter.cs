@@ -119,8 +119,8 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
-                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Value} to {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Value} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
+                ruleCtx.EventException($"Currency Converter was unable to convert {initial.Currency.Code} to {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }
@@ -137,7 +137,7 @@ namespace Surveillance.Engine.Rules.Currency
         {
             var directConversion = exchangeRates
                 .FirstOrDefault(er =>
-                    string.Equals(er.FixedCurrency, initial.Currency.Value, StringComparison.InvariantCultureIgnoreCase)
+                    string.Equals(er.FixedCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase)
                     && string.Equals(er.VariableCurrency, targetCurrency.Value, StringComparison.InvariantCultureIgnoreCase));
 
             if (directConversion == null)
@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.Currency
             var reciprocalConversion = exchangeRates
                 .FirstOrDefault(er =>
                     string.Equals(er.FixedCurrency, targetCurrency.Value, StringComparison.InvariantCultureIgnoreCase)
-                    && string.Equals(er.VariableCurrency, initial.Currency.Value, StringComparison.InvariantCultureIgnoreCase));
+                    && string.Equals(er.VariableCurrency, initial.Currency.Code, StringComparison.InvariantCultureIgnoreCase));
 
             if (reciprocalConversion == null)
             {
@@ -191,9 +191,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }
@@ -208,9 +208,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
+                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Value} and {targetCurrency.Value} on {dayOfConversion}");
+                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initial.Currency.Code} and {targetCurrency.Value} on {dayOfConversion}");
 
                 return null;
             }

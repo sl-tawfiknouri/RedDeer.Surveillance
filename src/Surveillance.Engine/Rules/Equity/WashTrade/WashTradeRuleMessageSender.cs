@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     Math.Round(breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Value, 2,
                         MidpointRounding.AwayFromZero);
 
-                averagePosition = $"{averagePosition} The absolute value change of the traders position in {breach.Security.Name} changed by ({breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Currency.Value}){absoluteChange} against a maximum position value change of ({breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency}){breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount}.";
+                averagePosition = $"{averagePosition} The absolute value change of the traders position in {breach.Security.Name} changed by ({breach.AveragePositionBreach.AveragePositionAbsoluteValueChange.Value.Currency.Code}){absoluteChange} against a maximum position value change of ({breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency}){breach.EquitiesParameters.AveragePositionMaximumAbsoluteValueChangeAmount}.";
             }
 
             return averagePosition;

@@ -70,7 +70,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 var tradedAmount = Math.Round(ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);
                 var thresholdAmount = Math.Round(ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Value, 2, MidpointRounding.AwayFromZero);
 
-                marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Currency.Value}) {tradedAmount} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Currency.Value}) {thresholdAmount}.";
+                marketCapDescription = $" Percentage of market capitalisation breach has occured. A limit of {marketCapPercentage}% was exceeded by trading {marketCapBreachPercentage}% of market capitalisation.  ({ruleBreach.MarketCapBreach.BreachTradedAmountCurrency.Currency.Code}) {tradedAmount} was traded against a breach threshold value of ({ruleBreach.MarketCapBreach.BreachThresholdAmountCurrency.Currency.Code}) {thresholdAmount}.";
             }
 
             description = $"{description}{dailyDescription}{windowDescription}{marketCapDescription}";

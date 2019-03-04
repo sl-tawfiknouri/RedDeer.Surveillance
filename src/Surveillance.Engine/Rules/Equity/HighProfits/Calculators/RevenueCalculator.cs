@@ -85,7 +85,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             }
 
             var virtualRevenue = (marketDataResult.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var Money = new Money(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Value ?? string.Empty);
+            var Money = new Money(virtualRevenue, marketDataResult.PriceOrClose()?.Currency.Code ?? string.Empty);
 
             if (realisedRevenue == null)
             {

@@ -60,8 +60,8 @@ namespace TestHarness.Engine.EquitiesGenerator.Strategies
 
             var newIntraday =
                 walkIntraday
-                    ? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value)
-                    : (tick.DailySummaryTimeBar.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Value));
+                    ? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Code)
+                    : (tick.DailySummaryTimeBar.IntradayPrices ?? BuildIntraday(tick, newBuy, tick.SpreadTimeBar.Bid.Currency.Code));
 
             var newDaily = new DailySummaryTimeBar(
                 newMarketCap,

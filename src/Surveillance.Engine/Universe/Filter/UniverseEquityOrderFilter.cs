@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Financial.Cfis;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;

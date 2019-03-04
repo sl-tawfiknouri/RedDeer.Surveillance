@@ -1,5 +1,4 @@
 ﻿using DataSynchroniser.Api.Factset.Filters.Interfaces;
-using Domain.Financial.Cfis;
 using Domain.Markets;
 
 namespace DataSynchroniser.Api.Factset.Filters

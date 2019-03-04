@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using Domain.Equity.TimeBars;
 
-namespace Domain.Financial.Interfaces
+namespace Domain.Core.Financial.Interfaces
 {
     public interface IIntraDayHistoryStack
     {

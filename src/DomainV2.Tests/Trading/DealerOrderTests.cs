@@ -1,6 +1,4 @@
 ﻿using System;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Domain.Trading;
 using FakeItEasy;
 using NUnit.Framework;

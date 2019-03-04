@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Domain.Enums;
-using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;

@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Financial;
 using Domain.Trading;
 
 namespace TestHarness.Tests.Helpers

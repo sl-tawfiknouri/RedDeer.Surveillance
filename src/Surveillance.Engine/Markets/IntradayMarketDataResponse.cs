@@ -1,6 +1,5 @@
 ﻿using System;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 

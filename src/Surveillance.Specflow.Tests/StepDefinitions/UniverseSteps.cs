@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;

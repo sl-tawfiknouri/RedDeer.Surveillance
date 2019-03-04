@@ -1,6 +1,4 @@
-﻿using Domain.Financial;
-
-namespace Surveillance.DataLayer.Aurora.Market
+﻿namespace Surveillance.DataLayer.Aurora.Market
 {
     public class MarketDataPair
     {

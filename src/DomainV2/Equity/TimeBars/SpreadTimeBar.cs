@@ -1,6 +1,4 @@
-﻿using Domain.Financial;
-
-namespace Domain.Equity.TimeBars
+﻿namespace Domain.Equity.TimeBars
 {
     /// <summary>
     /// bid / ask / market clearing price

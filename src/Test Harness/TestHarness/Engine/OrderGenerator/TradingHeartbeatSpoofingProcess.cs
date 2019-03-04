@@ -3,7 +3,6 @@ using TestHarness.Engine.Heartbeat.Interfaces;
 using MathNet.Numerics.Distributions;
 using System.Linq;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;

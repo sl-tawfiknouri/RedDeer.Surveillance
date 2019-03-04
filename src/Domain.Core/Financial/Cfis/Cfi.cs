@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Domain.Financial.Cfis
+namespace Domain.Core.Financial.Cfis
 {
     /// <summary>
     /// Categories cfi by first two characters (category and group)

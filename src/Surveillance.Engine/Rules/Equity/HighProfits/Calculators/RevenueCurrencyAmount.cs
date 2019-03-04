@@ -1,6 +1,4 @@
-﻿using Domain.Financial;
-
-namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
     public class RevenueCurrencyAmount
     {

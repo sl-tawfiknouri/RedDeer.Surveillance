@@ -6,7 +6,6 @@ using CsvHelper;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Equity.TimeBars;
 using Domain.Equity.TimeBars.Interfaces;
-using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

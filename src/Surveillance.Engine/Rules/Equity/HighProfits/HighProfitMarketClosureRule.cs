@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Domain.Financial;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;

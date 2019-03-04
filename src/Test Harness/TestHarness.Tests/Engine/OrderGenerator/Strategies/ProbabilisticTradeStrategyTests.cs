@@ -4,7 +4,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Streams.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;

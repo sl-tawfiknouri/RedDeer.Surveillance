@@ -1,4 +1,4 @@
-﻿namespace Domain.Financial
+﻿namespace Domain.Core.Financial
 {
     public struct CurrencyAmount
     {

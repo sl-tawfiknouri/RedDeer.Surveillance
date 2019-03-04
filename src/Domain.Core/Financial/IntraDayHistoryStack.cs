@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.Equity.TimeBars;
-using Domain.Financial.Interfaces;
+using Domain.Core.Financial.Interfaces;
 
-namespace Domain.Financial
+namespace Domain.Core.Financial
 {
     public class IntraDayHistoryStack : IIntraDayHistoryStack
     {
@@ -31,7 +28,7 @@ namespace Domain.Financial
 
             lock (_lock)
             {
-                if (currentTime.Subtract(frame.Epoch) <= _activeTradeDuration)
+                if (currentTime.Subtract((DateTime) frame.Epoch) <= _activeTradeDuration)
                 {
                     _activeStack.Push(frame);
                 }
@@ -52,7 +49,7 @@ namespace Domain.Financial
                 while (initialActiveStackCount > 0)
                 {
                     var poppedItem = _activeStack.Pop();
-                    if (currentTime.Subtract(poppedItem.Epoch) > _activeTradeDuration)
+                    if (currentTime.Subtract((DateTime) poppedItem.Epoch) > _activeTradeDuration)
                     {
                         _history.Enqueue(poppedItem);
                     }

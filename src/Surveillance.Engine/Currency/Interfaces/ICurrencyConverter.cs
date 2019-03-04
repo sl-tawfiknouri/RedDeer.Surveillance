@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Financial;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces

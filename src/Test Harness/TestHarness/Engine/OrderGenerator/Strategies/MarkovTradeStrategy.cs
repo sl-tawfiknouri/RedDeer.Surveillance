@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Streams.Interfaces;
 using Domain.Trading;
 using MathNet.Numerics.Distributions;

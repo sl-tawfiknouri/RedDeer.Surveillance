@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Financial;
 using Domain.Trading;
 
 namespace Surveillance.Engine.Rules.Trades.Interfaces

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;

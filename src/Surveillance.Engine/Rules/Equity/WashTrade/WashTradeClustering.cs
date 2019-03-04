@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Accord.MachineLearning;
 using Accord.Math.Distances;
-using Domain.Financial;
 using Domain.Trading;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;

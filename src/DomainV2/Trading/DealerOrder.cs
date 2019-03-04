@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 
 namespace Domain.Trading
 {

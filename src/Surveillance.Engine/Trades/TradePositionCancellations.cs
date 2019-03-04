@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain.Financial;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Trades.Interfaces;

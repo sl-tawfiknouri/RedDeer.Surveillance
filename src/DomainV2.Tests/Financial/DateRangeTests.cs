@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Financial;
 using NUnit.Framework;
 
 namespace Domain.Tests.Financial

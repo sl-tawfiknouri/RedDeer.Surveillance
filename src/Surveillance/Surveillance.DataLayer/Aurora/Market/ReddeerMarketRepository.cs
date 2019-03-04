@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
-using Domain.Financial.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.Auditing.Context.Interfaces;

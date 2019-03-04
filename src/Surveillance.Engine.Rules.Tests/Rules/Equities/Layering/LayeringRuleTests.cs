@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Equity.TimeBars;
-using Domain.Financial;
 using Domain.Trading;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

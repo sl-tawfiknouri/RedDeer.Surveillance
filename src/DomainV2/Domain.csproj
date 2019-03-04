@@ -13,4 +13,8 @@
     <PackageReference Include="RedDeer.Contracts.SurveillanceService" Version="1.28.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Core\Domain.Core.csproj" />
+  </ItemGroup>
+
 </Project>

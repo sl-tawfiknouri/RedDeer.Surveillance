@@ -1,5 +1,4 @@
 ﻿using DataSynchroniser.Api.Factset.Filters;
-using Domain.Financial;
 using Domain.Markets;
 using NUnit.Framework;
 

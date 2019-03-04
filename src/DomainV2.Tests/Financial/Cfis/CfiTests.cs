@@ -1,5 +1,4 @@
-﻿using Domain.Financial.Cfis;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Domain.Tests.Financial.Cfis
 {

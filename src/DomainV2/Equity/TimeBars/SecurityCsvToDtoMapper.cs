@@ -1,6 +1,5 @@
 ﻿using System;
 using Domain.Equity.TimeBars.Interfaces;
-using Domain.Financial;
 using Microsoft.Extensions.Logging;
 
 namespace Domain.Equity.TimeBars

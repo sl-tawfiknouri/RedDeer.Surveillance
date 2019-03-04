@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Financial;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

@@ -8,8 +8,8 @@ namespace Surveillance.Engine.Rules.Currency.Interfaces
     public interface IExchangeRates
     {
         Task<ExchangeRateDto> GetRate(
-            Domain.Financial.Currency fixedCurrency,
-            Domain.Financial.Currency variableCurrency,
+            Domain.Core.Financial.Currency fixedCurrency,
+            Domain.Core.Financial.Currency variableCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx);
     }

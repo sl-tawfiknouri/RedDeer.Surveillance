@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
 using Domain.Markets;
 using Surveillance.Engine.Rules.Rules;

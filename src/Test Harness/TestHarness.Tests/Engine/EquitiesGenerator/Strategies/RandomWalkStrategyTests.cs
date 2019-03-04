@@ -3,6 +3,8 @@ using NUnit.Framework;
 using System;
 using Domain.Equity.TimeBars;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 {

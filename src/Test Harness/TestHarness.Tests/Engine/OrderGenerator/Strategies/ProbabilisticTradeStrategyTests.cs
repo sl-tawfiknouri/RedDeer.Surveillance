@@ -9,6 +9,8 @@ using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
 {

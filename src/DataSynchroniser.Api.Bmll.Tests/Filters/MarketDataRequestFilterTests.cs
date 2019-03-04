@@ -1,4 +1,5 @@
 ﻿using DataSynchroniser.Api.Bmll.Filters;
+using Domain.Core.Financial;
 using Domain.Markets;
 using NUnit.Framework;
 

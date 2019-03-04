@@ -2,6 +2,8 @@
 using System;
 using System.Linq;
 using Domain.Trading;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 
 namespace TestHarness.Tests.Display
 {

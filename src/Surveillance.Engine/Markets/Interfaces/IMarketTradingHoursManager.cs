@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Core.Financial;
+using System;
 using System.Collections.Generic;
 
 namespace Surveillance.Engine.Rules.Markets.Interfaces

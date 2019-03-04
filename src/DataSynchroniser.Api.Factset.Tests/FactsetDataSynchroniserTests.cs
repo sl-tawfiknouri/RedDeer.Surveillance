@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
+using Domain.Core.Financial;
 using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

@@ -14,7 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainV2\Domain.csproj" />
+    <ProjectReference Include="..\Domain.Core\Domain.Core.csproj" />
+    <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\SharedKernel.Contracts\SharedKernel.Contracts.csproj" />
+    <ProjectReference Include="..\SharedKernel.Files\SharedKernel.Files.csproj" />
   </ItemGroup>
 
 </Project>

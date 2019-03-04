@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainV2\Domain.csproj" />
     <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
   </ItemGroup>
 

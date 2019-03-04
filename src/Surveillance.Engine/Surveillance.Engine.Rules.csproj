@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainV2\Domain.csproj" />
     <ProjectReference Include="..\Surveillance.Engine.Interfaces\Surveillance.Engine.Interfaces.csproj" />
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>

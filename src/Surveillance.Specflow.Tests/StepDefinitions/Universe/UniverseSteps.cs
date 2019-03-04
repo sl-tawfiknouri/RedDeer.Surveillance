@@ -1,5 +1,4 @@
-﻿using Surveillance.Specflow.Tests.StepDefinitions.Orders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Equity.TimeBars;
@@ -10,10 +9,11 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Surveillance.Specflow.Tests.StepDefinitions.InterdayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
+using Surveillance.Specflow.Tests.StepDefinitions.Orders;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 {
     [Binding]
     public sealed class UniverseSteps
@@ -121,7 +121,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Universe(
+                new Engine.Rules.Universe.Universe(
                     new Order[0],
                     new EquityIntraDayTimeBarCollection[0],
                     new EquityInterDayTimeBarCollection[0],
@@ -203,7 +203,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             var orderedUniverse = otherEvents.OrderBy(x => x, comparer).ToList();
 
             _universeSelectionState.SelectedUniverse =
-                new Universe(
+                new Engine.Rules.Universe.Universe(
                     new Order[0],
                     new EquityIntraDayTimeBarCollection[0],
                     new EquityInterDayTimeBarCollection[0],
@@ -324,9 +324,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             return universeEvent;
         }
 
-        private Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
+        private Engine.Rules.Universe.Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)
         {
-            return new Universe(
+            return new Engine.Rules.Universe.Universe(
                 new Order[0],
                 new EquityIntraDayTimeBarCollection[0],
                 new EquityInterDayTimeBarCollection[0],

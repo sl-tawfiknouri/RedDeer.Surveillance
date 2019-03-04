@@ -1,4 +1,4 @@
-﻿namespace Surveillance.Specflow.Tests.StepDefinitions.FixedIncome
+﻿namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighVolume
 {
     public class FixedIncomeHighVolumeIssuanceApiParameters
     {

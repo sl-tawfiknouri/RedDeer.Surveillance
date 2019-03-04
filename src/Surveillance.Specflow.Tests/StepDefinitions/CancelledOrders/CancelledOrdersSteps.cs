@@ -12,11 +12,11 @@ using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders;
+using Surveillance.Specflow.Tests.StepDefinitions.Universe;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.CancelledOrders
 {
     [Binding]
     public class CancelledOrdersSteps

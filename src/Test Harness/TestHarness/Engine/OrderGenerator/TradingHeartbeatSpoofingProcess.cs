@@ -6,6 +6,7 @@ using Domain.Equity.TimeBars;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using Domain.Core.Financial;
 
 namespace TestHarness.Engine.OrderGenerator
 {

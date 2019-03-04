@@ -2,6 +2,7 @@
 using System;
 using Domain.Equity.TimeBars;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
+using Domain.Core.Financial;
 
 namespace TestHarness.Engine.EquitiesGenerator.Strategies
 {

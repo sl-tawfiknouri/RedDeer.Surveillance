@@ -103,9 +103,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.Files", "Share
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Core", "Domain.Core\Domain.Core.csproj", "{D26273B1-FF4D-43D3-8F67-8035F939FB47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Surveillance", "Domain.Surveillance\Domain.Surveillance.csproj", "{3EF93BF4-7AD5-47BF-89C2-D2BDB523EDB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Surveillance", "Domain.Surveillance\Domain.Surveillance.csproj", "{3EF93BF4-7AD5-47BF-89C2-D2BDB523EDB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedKernel.Contracts", "SharedKernel.Contracts\SharedKernel.Contracts.csproj", "{E29E7F22-7F70-44BD-86DC-22350FEA427D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.Contracts", "SharedKernel.Contracts\SharedKernel.Contracts.csproj", "{E29E7F22-7F70-44BD-86DC-22350FEA427D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;

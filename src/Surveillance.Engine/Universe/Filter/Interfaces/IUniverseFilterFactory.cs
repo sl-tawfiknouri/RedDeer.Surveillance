@@ -7,6 +7,8 @@ namespace Surveillance.Engine.Rules.Universe.Filter.Interfaces
         IUniverseFilter Build(
             RuleFilter accounts,
             RuleFilter traders,
-            RuleFilter markets);
+            RuleFilter markets,
+            RuleFilter funds,
+            RuleFilter strategies);
     }
 }

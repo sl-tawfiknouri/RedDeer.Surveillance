@@ -866,8 +866,8 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);
             var optionStrikePrice = dto.OptionStrikePrice == null
-                ? null
-                : (Money?) new Money(dto.OptionStrikePrice, dto.OrderCurrency);
+                ? (Money?)null
+                : new Money(dto.OptionStrikePrice, dto.OrderCurrency);
 
             var order = new Order(
                 financialInstrument,
@@ -926,12 +926,12 @@ namespace Surveillance.DataLayer.Aurora.Orders
 
             var orderLimit =
                 dto.LimitPrice != null
-                    ? (Money?)new Money(dto.LimitPrice, dto.Currency)
-                    : null;
+                    ? new Money(dto.LimitPrice, dto.Currency)
+                    : (Money?)null;
             var orderAveragePrice =
                 dto.AverageFillPrice != null
-                    ? (Money?)new Money(dto.AverageFillPrice, dto.Currency)
-                    : null;
+                    ? new Money(dto.AverageFillPrice, dto.Currency)
+                    : (Money?)null;
 
             var dealerOrder = new DealerOrder(
                 fi,

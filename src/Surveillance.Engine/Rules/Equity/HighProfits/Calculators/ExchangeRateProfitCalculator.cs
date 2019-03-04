@@ -27,29 +27,29 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            Domain.Financial.Currency variableCurrency, 
+            Domain.Core.Financial.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
-            if (string.IsNullOrEmpty(variableCurrency.Value))
+            if (string.IsNullOrEmpty(variableCurrency.Code))
             {
                 _logger.LogInformation($"ExchangeRateProfitCalculator ExchangeRateMovement had a null or empty variable currency. Returning null.");
                 return null;
             }
 
-            var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Value))?.OrderCurrency;
+            var orderCurrency = positionCost.Get().FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Code))?.OrderCurrency;
 
-            if (string.Equals(orderCurrency?.Value, variableCurrency.Value, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(orderCurrency?.Code, variableCurrency.Code, StringComparison.InvariantCultureIgnoreCase))
             {
                 _logger.LogInformation($"ExchangeRateProfitCalculator ExchangeRateMovement could not find an order currency. Returning null.");
                 return null;
             }
 
-            if (string.IsNullOrWhiteSpace(orderCurrency.GetValueOrDefault().Value))
+            if (string.IsNullOrWhiteSpace(orderCurrency.GetValueOrDefault().Code))
             {
                 orderCurrency =
                     positionRevenue
                         .Get()
-                        .FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Value))
+                        .FirstOrDefault(pos => !string.IsNullOrWhiteSpace(pos.OrderCurrency.Code))
                         ?.OrderCurrency;
             }
 

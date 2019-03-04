@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Core.Financial;
 using Domain.Markets;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
         protected readonly IMarketTradingHoursManager TradingHoursManager;
-        private readonly Domain.Financial.Currency _targetCurrency;
+        private readonly Domain.Core.Financial.Currency _targetCurrency;
         private readonly ICurrencyConverter _currencyConverter;
         protected readonly ILogger Logger;
 
         public RevenueCurrencyConvertingCalculator(
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
@@ -92,8 +93,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             }
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
-            var Money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Code ?? string.Empty);
-            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { Money }, _targetCurrency, universeDateTime, ctx);
+            var money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Code ?? string.Empty);
+            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { money }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
@@ -121,7 +122,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
         private async Task<Money?> CalculateRealisedRevenue
             (IList<Order> activeFulfilledTradeOrders,
-            Domain.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {

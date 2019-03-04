@@ -1,9 +1,9 @@
-﻿namespace Domain.Files
+﻿namespace SharedKernel.Files.Orders
 {
     /// <summary>
     /// Version 0.3 of the Trade File
     /// </summary>
-    public class TradeFileCsv
+    public class OrderFileContract
     {
         /* MARKET IDENTIFICATION */
         public string MarketType { get; set; }

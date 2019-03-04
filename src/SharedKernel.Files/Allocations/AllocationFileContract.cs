@@ -1,9 +1,9 @@
-﻿namespace Domain.Files.AllocationFile
+﻿namespace SharedKernel.Files.Allocations
 {
     /// <summary>
     /// Version 0.1 of the Allocation File
     /// </summary>
-    public class AllocationFileCsv
+    public class AllocationFileContract
     {
         // Foreign Key to Orders via the client provided order id
         public string OrderId { get; set; }

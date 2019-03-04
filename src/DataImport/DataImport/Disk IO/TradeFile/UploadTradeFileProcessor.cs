@@ -3,40 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Files;
-using Domain.Files.Interfaces;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Orders;
+using SharedKernel.Files.Orders.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile
 {
-    public class UploadTradeFileProcessor : BaseUploadFileProcessor<TradeFileCsv, Order>, IUploadTradeFileProcessor
+    public class UploadTradeFileProcessor : BaseUploadFileProcessor<OrderFileContract, Order>, IUploadTradeFileProcessor
     {
-        private readonly ITradeFileCsvToOrderMapper _csvToDtoMapper;
-        private readonly ITradeFileCsvValidator _tradeFileCsvValidator;
+        private readonly IOrderFileToOrderSerialiser _orderFileSerialiser;
+        private readonly IOrderFileValidator _orderFileValidator;
 
         public UploadTradeFileProcessor(
-            ITradeFileCsvToOrderMapper csvToDtoMapper,
-            ITradeFileCsvValidator tradeFileCsvValidator,
+            IOrderFileToOrderSerialiser csvToDtoMapper,
+            IOrderFileValidator tradeFileCsvValidator,
             ILogger<UploadTradeFileProcessor> logger)
             : base(logger, "Upload Trade File Processor")
         {
-            _csvToDtoMapper = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
-            _tradeFileCsvValidator = tradeFileCsvValidator ?? throw new ArgumentNullException(nameof(tradeFileCsvValidator));
+            _orderFileSerialiser = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
+            _orderFileValidator = tradeFileCsvValidator ?? throw new ArgumentNullException(nameof(tradeFileCsvValidator));
         }
 
         protected override void MapRecord(
-            TradeFileCsv record,
+            OrderFileContract record,
             List<Order> marketUpdates,
-            List<TradeFileCsv> failedMarketUpdateReads)
+            List<OrderFileContract> failedMarketUpdateReads)
         {
             Logger.LogInformation($"Upload Trade File Processor about to validate record {record?.RowId}");
-            var validationResult = _tradeFileCsvValidator.Validate(record);
+            var validationResult = _orderFileValidator.Validate(record);
             
             if (!validationResult.IsValid)
             {
                 Logger.LogInformation($"Upload Trade File Processor was unable to validate {record?.RowId}");
-                _csvToDtoMapper.FailedParseTotal += 1;
+                _orderFileSerialiser.FailedParseTotal += 1;
                 failedMarketUpdateReads.Add(record);
 
                 if (validationResult.Errors.Any())
@@ -48,7 +48,7 @@ namespace DataImport.Disk_IO.TradeFile
                 return;
             }
 
-            var mappedRecord = _csvToDtoMapper.Map(record);
+            var mappedRecord = _orderFileSerialiser.Map(record);
             if (mappedRecord != null)
             {
                 Logger.LogInformation($"Upload Trade File Processor successfully validated and mapped record {record?.RowId}");
@@ -59,15 +59,15 @@ namespace DataImport.Disk_IO.TradeFile
 
         protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
         {
-            if (_csvToDtoMapper.FailedParseTotal > 0)
+            if (_orderFileSerialiser.FailedParseTotal > 0)
             {
-                Logger.LogError($"{UploadFileProcessorName} had {_csvToDtoMapper.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
+                Logger.LogError($"{UploadFileProcessorName} had {_orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
             }
 
-            _csvToDtoMapper.FailedParseTotal = 0;
+            _orderFileSerialiser.FailedParseTotal = 0;
         }
 
-        protected override TradeFileCsv MapToCsvDto(CsvReader rawRecord, int rowId)
+        protected override OrderFileContract MapToCsvDto(CsvReader rawRecord, int rowId)
         {
             if (rawRecord == null)
             {
@@ -76,7 +76,7 @@ namespace DataImport.Disk_IO.TradeFile
             }
 
             Logger.LogInformation($"Upload Trade File Processor about to map raw record to csv dto");
-            var tradeCsv = new TradeFileCsv
+            var tradeCsv = new OrderFileContract
             {
                 MarketType = PreProcess(rawRecord["MarketType"]),
                 MarketIdentifierCode = PreProcess(rawRecord["MarketIdentifierCode"]),

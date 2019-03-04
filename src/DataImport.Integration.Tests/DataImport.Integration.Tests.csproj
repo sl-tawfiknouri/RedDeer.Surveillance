@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataImport\DataImport\DataImport.csproj" />
+    <ProjectReference Include="..\SharedKernel.Files\SharedKernel.Files.csproj" />
   </ItemGroup>
 
 </Project>

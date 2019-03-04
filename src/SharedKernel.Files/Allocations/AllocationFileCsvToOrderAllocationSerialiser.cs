@@ -1,34 +1,34 @@
 ﻿using System;
-using Domain.Files.AllocationFile.Interfaces;
 using Domain.Trading;
+using SharedKernel.Files.Allocations.Interfaces;
 
-namespace Domain.Files.AllocationFile
+namespace SharedKernel.Files.Allocations
 {
-    public class AllocationFileCsvToOrderAllocationMapper : IAllocationFileCsvToOrderAllocationMapper
+    public class AllocationFileCsvToOrderAllocationSerialiser : IAllocationFileCsvToOrderAllocationSerialiser
     {
         public int FailedParseTotal { get; set; }
 
-        public OrderAllocation Map(AllocationFileCsv csv)
+        public OrderAllocation Map(AllocationFileContract contract)
         {
-            if (csv == null)
+            if (contract == null)
             {
                 FailedParseTotal += 1;
                 return null;
             }
 
-            return MapAllocation(csv);    
+            return MapAllocation(contract);    
         }
 
-        private OrderAllocation MapAllocation(AllocationFileCsv csv)
+        private OrderAllocation MapAllocation(AllocationFileContract contract)
         {
-            var orderFilledVolume = MapLong(csv.OrderFilledVolume);
+            var orderFilledVolume = MapLong(contract.OrderFilledVolume);
 
             var allocation = new OrderAllocation(
                 null,
-                csv.OrderId,
-                csv.Fund,
-                csv.Strategy,
-                csv.ClientAccountId,
+                contract.OrderId,
+                contract.Fund,
+                contract.Strategy,
+                contract.ClientAccountId,
                 orderFilledVolume.GetValueOrDefault(0),
                 DateTime.UtcNow);
 

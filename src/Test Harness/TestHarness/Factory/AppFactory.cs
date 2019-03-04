@@ -1,7 +1,7 @@
-﻿using Domain.Files;
-using Domain.Scheduling;
+﻿using Domain.Scheduling;
 using Domain.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Orders;
 using TestHarness.Commands;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Engine.Heartbeat;
@@ -66,7 +66,7 @@ namespace TestHarness.Factory
             TradingCancelledOrdersFactory = new TradingCancelledFactory(this);
             EquitiesFileDataImportProcessFactory = new EquitiesFileDataImportProcessFactory(Logger);
             EquitiesFileStorageProcessFactory = new EquitiesFileStorageProcessFactory(Logger);
-            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new TradeFileCsvToOrderMapper(), Logger);
+            OrderFileStorageProcessFactory = new OrderFileStorageProcessFactory(Console, new OrderFileToOrderSerialiser(), Logger);
             LayeringProcessFactory = new TradingLayeringFactory.TradingLayeringFactory(Logger);
             TradingCancelled2Factory = new TradingCancelled2Factory(Logger);
             TradingHighVolumeFactory = new TradingHighVolumeFactory(Logger);

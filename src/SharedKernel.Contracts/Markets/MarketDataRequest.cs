@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Core.Financial;
+using System;
 
 namespace Domain.Markets
 {

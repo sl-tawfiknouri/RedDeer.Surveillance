@@ -35,7 +35,7 @@ namespace Domain.Equity.TimeBars
                 MarketCap = equityInstrumentIntraDayTimeBar.DailySummaryTimeBar.MarketCap?.ToString(),
                 ListedSecurities = equityInstrumentIntraDayTimeBar.DailySummaryTimeBar.ListedSecurities?.ToString(),
 
-                Currency = equityInstrumentIntraDayTimeBar.SpreadTimeBar.Price.Currency.Value,
+                Currency = equityInstrumentIntraDayTimeBar.SpreadTimeBar.Price.Currency.Code,
                 
                 // Spread
                 Ask = equityInstrumentIntraDayTimeBar.SpreadTimeBar.Ask.Value.ToString(),

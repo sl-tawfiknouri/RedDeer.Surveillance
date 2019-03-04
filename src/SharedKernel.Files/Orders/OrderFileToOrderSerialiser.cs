@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using Domain.Trading;
 using SharedKernel.Files.Orders.Interfaces;
 
@@ -58,7 +60,7 @@ namespace SharedKernel.Files.Orders
             contract.DealerOrderCounterParty = trad.DealerCounterParty;
             contract.DealerOrderType = ((int?)trad.OrderType).ToString();
             contract.DealerOrderDirection = ((int?)trad.OrderDirection).ToString();
-            contract.DealerOrderCurrency = trad.Currency.Value;
+            contract.DealerOrderCurrency = trad.Currency.Code;
             contract.DealerOrderLimitPrice = trad.LimitPrice?.Value.ToString();
             contract.DealerOrderAverageFillPrice = trad.AverageFillPrice?.Value.ToString();
             contract.DealerOrderOrderedVolume = trad.OrderedVolume?.ToString();
@@ -108,7 +110,7 @@ namespace SharedKernel.Files.Orders
             contract.OrderFilledDate = order.FilledDate?.ToString("yyyy-MM-ddTHH:mm:ss");
             contract.OrderType = ((int?) order.OrderType).ToString();
             contract.OrderDirection = ((int?) order.OrderDirection).ToString();
-            contract.OrderCurrency = order.OrderCurrency.Value;
+            contract.OrderCurrency = order.OrderCurrency.Code;
             contract.OrderLimitPrice = order.OrderLimitPrice?.Value.ToString();
             contract.OrderAverageFillPrice = order.OrderAverageFillPrice?.Value.ToString();
             contract.OrderOrderedVolume = order.OrderOrderedVolume?.ToString();

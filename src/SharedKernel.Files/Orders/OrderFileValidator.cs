@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using Domain.Core.Financial;
+using Domain.Core.Financial.Markets;
 using FluentValidation;
 using FluentValidation.Validators;
 using SharedKernel.Files.Orders.Interfaces;

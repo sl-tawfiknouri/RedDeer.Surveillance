@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Domain.Core.Financial;
 using Domain.Markets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         private IDataLayerConfiguration _configuration;
         private ILogger<TradePositionWeightedAverageExchangeRateCalculator> _calculatorLogger;
         private IExchangeRates _exchangeRates;
-        private Domain.Financial.Currency _currency;
+        private Domain.Core.Financial.Currency _currency;
 
         [SetUp]
         public void Setup()
@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateCalculator>>();
             _exchangeRates = A.Fake<IExchangeRates>();
-            _currency = new Domain.Financial.Currency("GBX");
+            _currency = new Domain.Core.Financial.Currency("GBX");
 
             _configuration = A.Fake<IDataLayerConfiguration>();
             _configuration.ClientServiceUrl = "http://localhost:8080";
@@ -76,7 +76,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             pos1.OrderOrderedVolume = null;
             var position = new TradePosition(new List<Order> { pos1 });
 
-            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Financial.Currency("GBP"), _ruleCtx);
+            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Core.Financial.Currency("GBP"), _ruleCtx);
 
             Assert.AreEqual(werResult, 0);
         }
@@ -84,7 +84,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_One_Order_With_One_Fill_Volume_()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Financial.Currency>.Ignored, A<Domain.Financial.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Currency>.Ignored, A<Domain.Core.Financial.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP"});
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
@@ -94,7 +94,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             pos1.OrderOrderedVolume = 1;
             var position = new TradePosition(new List<Order> { pos1 });
 
-            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Financial.Currency("GBP"), _ruleCtx);
+            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Core.Financial.Currency("GBP"), _ruleCtx);
 
             Assert.AreEqual(werResult, 1);
         }
@@ -102,10 +102,10 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Two_Fill_Volume_()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Financial.Currency>.Ignored, A<Domain.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Currency>.Ignored, A<Domain.Core.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Financial.Currency>.Ignored, A<Domain.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Currency>.Ignored, A<Domain.Core.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 3, VariableCurrency = "GBP" });
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
@@ -126,7 +126,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             var position = new TradePosition(new List<Order> { pos1, pos2 });
 
-            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Financial.Currency("GBP"), _ruleCtx);
+            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Core.Financial.Currency("GBP"), _ruleCtx);
 
             Assert.AreEqual(werResult, 2);
         }
@@ -134,10 +134,10 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Unbalanced_Fill()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Financial.Currency>.Ignored, A<Domain.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Currency>.Ignored, A<Domain.Core.Financial.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Financial.Currency>.Ignored, A<Domain.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Currency>.Ignored, A<Domain.Core.Financial.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 4, VariableCurrency = "GBP" });
 
             var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
 
             var position = new TradePosition(new List<Order> { pos1, pos2 });
 
-            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Financial.Currency("GBP"), _ruleCtx);
+            var werResult = await calculator.WeightedExchangeRate(position, new Domain.Core.Financial.Currency("GBP"), _ruleCtx);
 
             Assert.AreEqual(Math.Round(werResult, 2), 2);
         }
@@ -188,7 +188,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
                 tradeThree
             });
 
-            var usd = new Domain.Financial.Currency("usd");
+            var usd = new Domain.Core.Financial.Currency("usd");
 
             var wer = await calculator.WeightedExchangeRate(
                 position,

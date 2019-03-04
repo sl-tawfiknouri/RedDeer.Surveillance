@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial;
 using Domain.Trading;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;

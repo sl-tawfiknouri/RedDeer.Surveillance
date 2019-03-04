@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Core.Financial;
 using Domain.Equity.TimeBars;
 using Domain.Scheduling;
 using Domain.Trading;

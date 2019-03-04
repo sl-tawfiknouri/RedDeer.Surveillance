@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Domain.Core.Financial;
 using Domain.Core.Financial.Cfis;
 using Domain.Core.Financial.Cfis.Interfaces;
+using Domain.Core.Financial.Markets;
 using Domain.Equity.TimeBars;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

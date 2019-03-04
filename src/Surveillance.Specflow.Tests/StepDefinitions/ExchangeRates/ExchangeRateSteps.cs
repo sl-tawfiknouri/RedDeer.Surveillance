@@ -4,11 +4,10 @@ using System.Linq;
 using FakeItEasy;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
-using Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.ExchangeRates
 {
     [Binding]
     public sealed class ExchangeRateSteps

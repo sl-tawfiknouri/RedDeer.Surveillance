@@ -1,6 +1,6 @@
 ﻿using Surveillance.Engine.Rules.Universe.Interfaces;
 
-namespace Surveillance.Specflow.Tests.StepDefinitions
+namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 {
     public class UniverseSelectionState
     {

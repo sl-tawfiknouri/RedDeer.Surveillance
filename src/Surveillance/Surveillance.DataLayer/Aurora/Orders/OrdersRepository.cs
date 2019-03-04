@@ -859,7 +859,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
             var orderAccumulatedInterest = dto.AccumulatedInterest;
 
-            var market = new Domain.Financial.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+            var market = new Domain.Core.Financial.Markets.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
             var dealerOrders = dto.DealerOrders?.Select(tr => Project(tr, financialInstrument)).ToList() ?? new List<DealerOrder>();
 
             var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);

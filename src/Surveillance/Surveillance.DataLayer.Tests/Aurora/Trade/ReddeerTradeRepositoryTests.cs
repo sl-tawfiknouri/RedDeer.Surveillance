@@ -90,7 +90,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         
         private Order Frame()
         {
-            var exch = new Domain.Financial.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new Domain.Core.Financial.Markets.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.UtcNow;
             var tradeDates = DateTime.UtcNow;
 

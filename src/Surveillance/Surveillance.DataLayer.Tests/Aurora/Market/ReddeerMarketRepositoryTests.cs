@@ -59,7 +59,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private EquityIntraDayTimeBarCollection Frame()
         {
-            var stockExchange = new Domain.Financial.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var stockExchange = new Domain.Core.Financial.Markets.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
             var securityIdentifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 

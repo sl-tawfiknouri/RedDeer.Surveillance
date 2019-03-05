@@ -2,6 +2,6 @@
 {
     public interface IPortfolioFactory
     {
-        Portfolio Build();
+        IPortfolio Build();
     }
 }

@@ -8,7 +8,7 @@ namespace Domain.Core.Trading
     /// <summary>
     /// Aggregate root (DDD)
     /// </summary>
-    public class Portfolio
+    public class Portfolio : IPortfolio
     {
         public Portfolio(Holdings holding, OrderLedger ledger)
         {

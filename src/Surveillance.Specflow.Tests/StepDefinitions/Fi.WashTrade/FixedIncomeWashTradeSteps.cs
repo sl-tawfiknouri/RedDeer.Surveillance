@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories;
 using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -34,6 +35,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
         private IClusteringService _clusteringService;
+        private IPortfolioFactory _portfolioFactory;
 
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
@@ -51,6 +53,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
+            _portfolioFactory = new PortfolioFactory();
             _clusteringService = new ClusteringService();
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
@@ -104,6 +107,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
                 RuleRunMode.ForceRun,
                 _alertStream,
                 _clusteringService,
+                _portfolioFactory,
                 new NullLogger<FixedIncomeWashTradeRule>(),
                 new NullLogger<TradingHistoryStack>());
 

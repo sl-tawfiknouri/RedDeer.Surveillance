@@ -4,7 +4,7 @@ namespace Domain.Core.Trading.Factories
 {
     public class PortfolioFactory : IPortfolioFactory
     {
-        public Portfolio Build()
+        public IPortfolio Build()
         {
             return new Portfolio(
                 new Holdings(

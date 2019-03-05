@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -26,6 +27,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private IUniverseAlertStream _alertStream;
         private IClusteringService _clusteringService;
+        private IPortfolioFactory _portfolioFactory;
         private ILogger<FixedIncomeHighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingStackLogger;
 
@@ -38,6 +40,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _clusteringService = A.Fake<IClusteringService>();
+            _portfolioFactory = A.Fake<IPortfolioFactory>();
             _logger = new NullLogger<FixedIncomeHighProfitsRule>();
             _tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }
@@ -55,6 +58,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
                     _runMode,
                     _alertStream,
                     _clusteringService,
+                    _portfolioFactory,
                     null,
                     _tradingStackLogger));
         }

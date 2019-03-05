@@ -21,6 +21,7 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial;
 using Surveillance.Engine.Rules.Rules.Shared;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {

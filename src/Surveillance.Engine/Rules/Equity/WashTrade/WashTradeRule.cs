@@ -20,6 +20,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial;
 using Surveillance.Engine.Rules.Rules.Shared;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {

@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
-                $"{nameof(FixedIncomeWashTradeRule)}",
+                $"",
                 ruleCtx,
                 marketCacheFactory,
                 runMode,
@@ -60,51 +60,51 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} RunRule called at {UniverseDateTime}");
+            _logger.LogInformation($"RunRule called at {UniverseDateTime}");
 
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} RunRule completed for {UniverseDateTime}");
+            _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} RunInitialSubmissionRule called at {UniverseDateTime}");
+            _logger.LogInformation($"RunInitialSubmissionRule called at {UniverseDateTime}");
 
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} RunInitialSubmissionRule completed for {UniverseDateTime}");
+            _logger.LogInformation($"RunInitialSubmissionRule completed for {UniverseDateTime}");
         }
 
         protected override void Genesis()
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Genesis called at {UniverseDateTime}");
+            _logger.LogInformation($"Genesis called at {UniverseDateTime}");
 
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Genesis completed for {UniverseDateTime}");
+            _logger.LogInformation($"Genesis completed for {UniverseDateTime}");
         }
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} MarketOpen called at {UniverseDateTime}");
+            _logger.LogInformation($"MarketOpen called at {UniverseDateTime}");
 
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} MarketOpen completed for {UniverseDateTime}");
+            _logger.LogInformation($"MarketOpen completed for {UniverseDateTime}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} MarketClose called at {UniverseDateTime}");
+            _logger.LogInformation($"MarketClose called at {UniverseDateTime}");
 
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} MarketClose completed for {UniverseDateTime}");
+            _logger.LogInformation($"MarketClose completed for {UniverseDateTime}");
         }
 
         protected override void EndOfUniverse()
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} EndOfUniverse called at {UniverseDateTime}");
+            _logger.LogInformation($"EndOfUniverse called at {UniverseDateTime}");
 
             RuleCtx?.EndEvent();
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} EndOfUniverse completed for {UniverseDateTime}");
+            _logger.LogInformation($"EndOfUniverse completed for {UniverseDateTime}");
         }
 
         public IUniverseCloneableRule Clone(IFactorValue factor)
@@ -117,12 +117,12 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         public object Clone()
         {
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Clone called at {UniverseDateTime}");
+            _logger.LogInformation($"Clone called at {UniverseDateTime}");
 
             var clone = (FixedIncomeWashTradeRule)this.MemberwiseClone();
             clone.BaseClone();
 
-            _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Clone completed for {UniverseDateTime}");
+            _logger.LogInformation($"Clone completed for {UniverseDateTime}");
 
             return clone;
         }

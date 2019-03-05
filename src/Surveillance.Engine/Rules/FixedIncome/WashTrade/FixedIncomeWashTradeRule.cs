@@ -84,18 +84,18 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         protected override void MarketOpen(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"MarketOpen called at {UniverseDateTime}");
+            _logger.LogInformation($"MarketOpen called at {UniverseDateTime} for {exchange.MarketId}");
 
 
-            _logger.LogInformation($"MarketOpen completed for {UniverseDateTime}");
+            _logger.LogInformation($"MarketOpen completed for {UniverseDateTime} for {exchange.MarketId}");
         }
 
         protected override void MarketClose(MarketOpenClose exchange)
         {
-            _logger.LogInformation($"MarketClose called at {UniverseDateTime}");
+            _logger.LogInformation($"MarketClose called at {UniverseDateTime} for {exchange.MarketId}");
 
 
-            _logger.LogInformation($"MarketClose completed for {UniverseDateTime}");
+            _logger.LogInformation($"MarketClose completed for {UniverseDateTime} for {exchange.MarketId}");
         }
 
         protected override void EndOfUniverse()

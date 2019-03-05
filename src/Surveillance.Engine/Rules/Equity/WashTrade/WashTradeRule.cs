@@ -19,6 +19,7 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial;
+using Surveillance.Engine.Rules.Rules.Shared;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {

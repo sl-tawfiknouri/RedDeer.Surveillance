@@ -1,4 +1,5 @@
-﻿using Domain.DTO;
+﻿using Domain.Core.Trading.Factories;
+using Domain.DTO;
 using Domain.DTO.Interfaces;
 using Domain.Equity.Streams.Interfaces;
 using Domain.Scheduling;
@@ -192,7 +193,7 @@ namespace Surveillance.Engine.Rules
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
             For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
 
-
+            For<IPortfolioFactory>().Use<PortfolioFactory>();
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -21,6 +22,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IClusteringService _clusteringService;
+        private readonly IPortfolioFactory _portfolioFactory;
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
 
         public FixedIncomeWashTradeRule(
@@ -31,6 +33,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             IClusteringService clusteringService,
+            IPortfolioFactory portfolioFactory,
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -48,6 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
+            _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -79,8 +83,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 return;
             }
 
-
-
+            var portfolio = _portfolioFactory.Build();
 
         }
 

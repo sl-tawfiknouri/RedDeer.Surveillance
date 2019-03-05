@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Domain.Core.Financial;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain.Core.Trading
 {
@@ -10,5 +12,10 @@ namespace Domain.Core.Trading
         }
 
         public IReadOnlyCollection<Holding> Holding { get; }
+
+        public Holding GetHolding(FinancialInstrument instrument)
+        {
+            return Holding?.FirstOrDefault(i => Equals(i.Instrument?.Identifiers, instrument?.Identifiers));
+        }
     }
 }

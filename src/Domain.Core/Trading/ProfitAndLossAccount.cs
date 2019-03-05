@@ -1,6 +1,6 @@
 ﻿namespace Domain.Core.Trading
 {
-    public class Account
+    public class ProfitAndLossAccount
     {
         public decimal Revenue()
         {

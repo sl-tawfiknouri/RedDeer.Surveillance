@@ -8,7 +8,7 @@ namespace Domain.Core.Trading
     /// </summary>
     public class Portfolio
     {
-        public Portfolio(Holdings holding, OrderLedger ledger, Account accounts)
+        public Portfolio(Holdings holding, OrderLedger ledger, ProfitAndLossAccount accounts)
         {
             Holdings = holding ?? throw new ArgumentNullException(nameof(holding));
             Ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
@@ -19,7 +19,7 @@ namespace Domain.Core.Trading
 
         public OrderLedger Ledger { get; }
 
-        public Account Accounts { get; }
+        public ProfitAndLossAccount Accounts { get; }
 
         public void Add(Order order)
         {

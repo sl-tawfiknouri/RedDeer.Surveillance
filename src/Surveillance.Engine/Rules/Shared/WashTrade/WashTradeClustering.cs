@@ -6,11 +6,9 @@ using Accord.Math.Distances;
 using Domain.Core.Financial;
 using Domain.Trading;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared;
-using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
     public class WashTradeClustering : IWashTradeClustering
     {

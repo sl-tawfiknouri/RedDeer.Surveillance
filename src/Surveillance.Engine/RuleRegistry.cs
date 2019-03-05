@@ -64,6 +64,7 @@ using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;

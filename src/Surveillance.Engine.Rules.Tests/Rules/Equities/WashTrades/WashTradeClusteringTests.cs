@@ -2,6 +2,7 @@
 using Domain.Trading;
 using NUnit.Framework;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades

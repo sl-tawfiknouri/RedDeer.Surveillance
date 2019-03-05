@@ -177,9 +177,7 @@ namespace Surveillance.Engine.Rules
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
-            For<IClusteringService>().Use<ClusteringService>();
-
-
+            For<IClusteringService>().Use<ClusteringService>().Singleton();
 
 
             For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();

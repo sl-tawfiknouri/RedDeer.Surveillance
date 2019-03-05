@@ -62,8 +62,26 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         {
             _logger.LogInformation($"RunRule called at {UniverseDateTime}");
 
+            if (_parameters.PerformClusteringPositionAnalysis)
+            {
+
+            }
 
             _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
+        }
+
+        private void ClusteringAnalysis(ITradingHistoryStack tradingHistory)
+        {
+            var activeTrades = tradingHistory.ActiveTradeHistory();
+
+            if (activeTrades.Count == 0)
+            {
+                return;
+            }
+
+
+
+
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 

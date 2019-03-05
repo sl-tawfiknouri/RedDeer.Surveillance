@@ -496,7 +496,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return endTick;
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on when their status last changed in the layering rule
         }

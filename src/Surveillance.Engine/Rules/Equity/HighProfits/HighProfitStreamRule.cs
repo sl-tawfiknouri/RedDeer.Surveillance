@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             if (!RunRuleGuard(history))
             {

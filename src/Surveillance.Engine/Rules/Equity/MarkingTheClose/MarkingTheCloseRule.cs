@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             if (!_processingMarketClose
                 || _latestMarketClosure == null)

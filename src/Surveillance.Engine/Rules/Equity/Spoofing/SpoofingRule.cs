@@ -205,7 +205,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // spoofing rule does not monitor by last status changed
         }

@@ -232,7 +232,7 @@ namespace Surveillance.Engine.Rules.Rules
 
             TradingHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);
 
-            RunRule(updatedHistory);
+            RunPostOrderEvent(updatedHistory);
         }
 
         private void MarketOpened(IUniverseEvent universeEvent)
@@ -281,7 +281,7 @@ namespace Surveillance.Engine.Rules.Rules
                     {
                         history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
                     }
-                    RunRule(history.Value);
+                    RunPostOrderEvent(history.Value);
                 }
             }
         }
@@ -312,7 +312,7 @@ namespace Surveillance.Engine.Rules.Rules
                     {
                         history.Value.ArchiveExpiredActiveItems(currentTimeInUniverse.Value);
                     }
-                    RunRule(history.Value);
+                    RunPostOrderEvent(history.Value);
                 }
             }
         }
@@ -322,7 +322,7 @@ namespace Surveillance.Engine.Rules.Rules
         /// This is done on the basis of status changed on i.e. the last state and the time of
         /// that state change is used to drive run rule.
         /// </summary>
-        protected abstract void RunRule(ITradingHistoryStack history);
+        protected abstract void RunPostOrderEvent(ITradingHistoryStack history);
 
         /// <summary>
         /// We have some rules such as spoofing and layering that are HFT and need to be based off

@@ -54,7 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunRule called at {UniverseDateTime}");
 

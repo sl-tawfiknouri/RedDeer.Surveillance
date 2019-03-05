@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     {
         private ICurrencyConverter _currencyConverter;
         private IWashTradePositionPairer _positionPairer;
-        private IWashTradeClustering _clustering;
+        private IClusteringService _clustering;
         private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
         private ILogger<WashTradeRule> _logger;
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             _currencyConverter = A.Fake<ICurrencyConverter>();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
-            _clustering = A.Fake<IWashTradeClustering>();
+            _clustering = A.Fake<IClusteringService>();
             _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();

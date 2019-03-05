@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         private readonly ILogger _logger;
         private readonly IWashTradeRuleEquitiesParameters _equitiesParameters;
         private readonly IWashTradePositionPairer _positionPairer;
-        private readonly IWashTradeClustering _clustering;
+        private readonly IClusteringService _clustering;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradePositionPairer positionPairer,
-            IWashTradeClustering clustering,
+            IClusteringService clustering,
             IUniverseAlertStream alertStream,
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,

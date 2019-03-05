@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         private ICurrencyConverter _currencyConverter;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
-        private IWashTradeClustering _clustering;
+        private IClusteringService _clustering;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             _currencyConverter = A.Fake<ICurrencyConverter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
-            _clustering = new WashTradeClustering();
+            _clustering = new ClusteringService();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
             _logger = A.Fake<ILogger>();

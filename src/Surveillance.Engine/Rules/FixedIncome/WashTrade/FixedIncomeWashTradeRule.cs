@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IFactorValue OrganisationFactorValue { get; set; }
+        public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
@@ -98,8 +98,17 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         {
             _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} EndOfUniverse called at {UniverseDateTime}");
 
+            RuleCtx?.EndEvent();
 
             _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} EndOfUniverse completed for {UniverseDateTime}");
+        }
+
+        public IUniverseCloneableRule Clone(IFactorValue factor)
+        {
+            var clone = (FixedIncomeWashTradeRule)Clone();
+            clone.OrganisationFactorValue = factor;
+
+            return clone;
         }
 
         public object Clone()
@@ -110,14 +119,6 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             clone.BaseClone();
 
             _logger.LogInformation($"{nameof(FixedIncomeWashTradeRule)} Clone completed for {UniverseDateTime}");
-
-            return clone;
-        }
-
-        public IUniverseCloneableRule Clone(IFactorValue factor)
-        {
-            var clone = (FixedIncomeWashTradeRule)Clone();
-            clone.OrganisationFactorValue = factor;
 
             return clone;
         }

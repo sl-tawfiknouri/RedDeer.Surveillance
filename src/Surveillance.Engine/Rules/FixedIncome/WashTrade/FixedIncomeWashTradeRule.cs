@@ -6,6 +6,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -19,6 +20,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         private readonly IWashTradeRuleFixedIncomeParameters _parameters;
         private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
         private readonly IUniverseAlertStream _alertStream;
+        private readonly IClusteringService _clusteringService;
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
 
         public FixedIncomeWashTradeRule(
@@ -28,6 +30,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
+            IClusteringService clusteringService,
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -44,6 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
+            _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

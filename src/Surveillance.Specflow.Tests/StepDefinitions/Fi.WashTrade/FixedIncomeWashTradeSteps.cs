@@ -11,6 +11,8 @@ using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.Universe;
@@ -31,6 +33,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
         private IUniverseFixedIncomeOrderFilter _orderFilter;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
+        private IClusteringService _clusteringService;
 
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
@@ -48,6 +51,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
+            _clusteringService = new ClusteringService();
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
@@ -99,6 +103,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
                 _interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,
                 _alertStream,
+                _clusteringService,
                 new NullLogger<FixedIncomeWashTradeRule>(),
                 new NullLogger<TradingHistoryStack>());
 

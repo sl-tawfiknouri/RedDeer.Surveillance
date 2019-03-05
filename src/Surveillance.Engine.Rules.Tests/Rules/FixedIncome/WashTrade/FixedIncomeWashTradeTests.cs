@@ -10,6 +10,7 @@ using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -24,6 +25,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private IUniverseAlertStream _alertStream;
+        private IClusteringService _clusteringService;
         private ILogger<FixedIncomeHighProfitsRule> _logger;
         private ILogger<TradingHistoryStack> _tradingStackLogger;
 
@@ -35,6 +37,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _alertStream = A.Fake<IUniverseAlertStream>();
+            _clusteringService = A.Fake<IClusteringService>();
             _logger = new NullLogger<FixedIncomeHighProfitsRule>();
             _tradingStackLogger = new NullLogger<TradingHistoryStack>();
         }
@@ -51,6 +54,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
                     _marketCacheFactory,
                     _runMode,
                     _alertStream,
+                    _clusteringService,
                     null,
                     _tradingStackLogger));
         }

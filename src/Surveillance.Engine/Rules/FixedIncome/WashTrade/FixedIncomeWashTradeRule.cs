@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             if (_parameters.PerformClusteringPositionAnalysis)
             {
-
+                ClusteringAnalysis(history);
             }
 
             _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
@@ -84,6 +84,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             }
 
             var portfolio = _portfolioFactory.Build();
+            portfolio.Add(activeTrades);
 
         }
 

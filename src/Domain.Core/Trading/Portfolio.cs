@@ -1,5 +1,7 @@
 ﻿using Domain.Trading;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain.Core.Trading
 {
@@ -30,6 +32,18 @@ namespace Domain.Core.Trading
             // calculate balance sheet in class
 
             return null;
+        }
+
+        public void Add(IReadOnlyCollection<Order> orders)
+        {
+            if (orders == null
+                || !orders.Any())
+            {
+                return;
+            }
+
+            foreach (var order in orders)
+                Add(order);
         }
 
         public void Add(Order order)

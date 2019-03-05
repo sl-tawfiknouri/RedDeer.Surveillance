@@ -42,7 +42,8 @@ var testProjects = new []
 	"src/ThirdPartySurveillanceDataSynchroniser/ThirdPartySurveillanceDataSynchroniser.Tests/DataSynchroniser.Tests.csproj" ,
 	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",
 	"src/DomainV2.Tests/Domain.Tests.csproj",
-	"src/Utilities.Tests/Utilities.Tests.csproj"
+	"src/Utilities.Tests/Utilities.Tests.csproj",
+	"src/Domain.Core.Tests/Domain.Core.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>

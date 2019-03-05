@@ -6,8 +6,8 @@ namespace Domain.Core.Trading
 {
     public interface IPortfolio
     {
-        Holdings Holdings { get; }
-        OrderLedger Ledger { get; }
+        IHoldings Holdings { get; }
+        IOrderLedger Ledger { get; }
 
         ProfitAndLossStatement Accounts(DateTime from, TimeSpan fors);
         BalanceSheetStatement BalanceSheets();

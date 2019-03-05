@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Domain.Core.Trading
 {
-    public class Holdings
+    public class Holdings : IHoldings
     {
         public Holdings(IReadOnlyCollection<Holding> holding)
         {

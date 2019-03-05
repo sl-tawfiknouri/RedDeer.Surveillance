@@ -86,6 +86,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             var portfolio = _portfolioFactory.Build();
             portfolio.Add(activeTrades);
 
+            var clusters = _clusteringService.Cluster(portfolio.Ledger.FullLedger());
+
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

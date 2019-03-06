@@ -24,6 +24,19 @@ namespace Domain.Core.Trading
         public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span)
         {
             var orders = Ledger.LedgerEntries(from, span);
+
+            return ProfitAndLossForOrders(orders);
+        }
+
+        public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossTotal()
+        {
+            var orders = Ledger.FullLedger();
+
+            return ProfitAndLossForOrders(orders);
+        }
+
+        private IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossForOrders(IReadOnlyCollection<Order> orders)
+        {
             var ordersByCurrency = orders.GroupBy(i => i.OrderCurrency);
 
             var profitAndLossAccounts =

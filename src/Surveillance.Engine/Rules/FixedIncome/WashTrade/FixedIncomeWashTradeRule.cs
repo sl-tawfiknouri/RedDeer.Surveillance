@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Domain.Core.Trading.Factories;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -7,6 +8,7 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -87,6 +89,42 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             portfolio.Add(activeTrades);
 
             var clusters = _clusteringService.Cluster(portfolio.Ledger.FullLedger());
+
+            if (clusters == null
+                || !clusters.Any())
+            {
+                return;
+            }
+
+            foreach (var cluster in clusters)
+            {
+                AnalyseCluster(cluster);
+            }
+        }
+
+        private void AnalyseCluster(PositionClusterCentroid centroid)
+        {
+            if (centroid == null)
+            {
+                return;
+            }
+
+            var combinedPortfolio = _portfolioFactory.Build();
+            combinedPortfolio.Add(centroid.Buys.Get().ToList());
+            combinedPortfolio.Add(centroid.Sells.Get().ToList());
+
+            if (combinedPortfolio.Ledger.FullLedger().Count < _parameters.ClusteringPositionMinimumNumberOfTrades)
+            {
+                return;
+            }
+
+            var sellsPortfolio = _portfolioFactory.Build();
+            sellsPortfolio.Add(centroid.Sells.Get().ToList());
+
+            var buysPortfolio = _portfolioFactory.Build();
+            buysPortfolio.Add(centroid.Buys.Get().ToList());
+
+
 
         }
 

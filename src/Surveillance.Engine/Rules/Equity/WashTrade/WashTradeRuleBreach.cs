@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {
     public class WashTradeRuleBreach : IWashTradeRuleBreach
     {
         public WashTradeRuleBreach(
+            TimeSpan windowSize,
             IFactorValue factorValue,
             ISystemProcessOperationContext operationContext,
             string correlationId,
-            IWashTradeRuleEquitiesParameters equitiesParameters,
+            IWashTradeRuleParameters equitiesParameters,
             ITradePosition tradePosition,
             FinancialInstrument security,
             WashTradeAveragePositionBreach averagePositionBreach,
@@ -26,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             EquitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
 
 
-            Window = equitiesParameters.WindowSize;
+            Window = windowSize;
             Trades = tradePosition;
             Security = security;
 
@@ -39,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             CorrelationId = correlationId;
         }
 
-        public IWashTradeRuleEquitiesParameters EquitiesParameters { get; }
+        public IWashTradeRuleParameters EquitiesParameters { get; }
 
         public TimeSpan Window { get; }
         public ITradePosition Trades { get; }

@@ -129,6 +129,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
+                    _equitiesParameters.WindowSize,
                     OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),

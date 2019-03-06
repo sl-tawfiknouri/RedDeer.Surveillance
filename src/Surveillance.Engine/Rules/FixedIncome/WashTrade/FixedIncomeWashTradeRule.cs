@@ -5,9 +5,11 @@ using Domain.Core.Trading.Factories;
 using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
@@ -75,20 +77,46 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     history.ActiveTradeHistory().Peek(),
                     history.ActiveTradeHistory().ToList());
 
-            if (_parameters.PerformClusteringPositionAnalysis)
+            var clusteringAnalysis = ClusteringAnalysis(filteredOrders);
+
+            if (clusteringAnalysis == null
+                || !clusteringAnalysis.ClusteringPositionBreach)
             {
-                ClusteringAnalysis(filteredOrders);
+                return;
             }
+
+            var security = filteredOrders?.FirstOrDefault()?.Instrument;
+
+            var breach =
+                new WashTradeRuleBreach(
+                    _parameters.WindowSize,
+                    OrganisationFactorValue,
+                    RuleCtx.SystemProcessOperationContext(),
+                    RuleCtx.CorrelationId(),
+                    _parameters,
+                    new TradePosition(filteredOrders),
+                    security,
+                    null,
+                    null,
+                    clusteringAnalysis);
+
+            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);
+            _alertStream.Add(universeAlert);
 
             _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
         }
 
-        private void ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
+        private WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
         {
+            if (!_parameters.PerformClusteringPositionAnalysis)
+            {
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+            }
+
             if (tradingHistory == null
                 || !tradingHistory.Any())
             {
-                return;
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
 
             var portfolio = _portfolioFactory.Build();
@@ -99,10 +127,17 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             if (clusters == null
                 || !clusters.Any())
             {
-                return;
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
             }
 
-            var washTradingClusters = clusters.Where(AnalyseCluster).ToList();
+            var washTradingClusters = clusters.Where(AnalyseCluster).Select(i => i.CentroidPrice).ToList();
+
+            if (!washTradingClusters.Any())
+            {
+                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+            }
+
+            return new WashTradeRuleBreach.WashTradeClusteringPositionBreach(true, washTradingClusters.Count, washTradingClusters);
         }
 
         private bool AnalyseCluster(PositionClusterCentroid centroid)

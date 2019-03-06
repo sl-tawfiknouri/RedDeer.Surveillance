@@ -1,6 +1,6 @@
 ﻿namespace Surveillance.Engine.Rules.RuleParameters.Interfaces
 {
-    public interface IWashTradeRuleParameters
+    public interface IWashTradeRuleParameters: IRuleParameter
     {
         bool PerformAveragePositionAnalysis { get; }
         bool PerformPairingPositionAnalysis { get; }

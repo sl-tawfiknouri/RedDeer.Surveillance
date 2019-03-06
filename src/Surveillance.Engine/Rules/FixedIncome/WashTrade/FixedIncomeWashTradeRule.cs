@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
                 Domain.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
-                $"",
+                $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleCtx,
                 marketCacheFactory,
                 runMode,

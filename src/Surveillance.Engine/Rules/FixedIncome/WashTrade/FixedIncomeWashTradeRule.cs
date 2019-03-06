@@ -85,7 +85,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         private void ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
         {
-            if (tradingHistory.Count == 0)
+            if (tradingHistory == null
+                || !tradingHistory.Any())
             {
                 return;
             }

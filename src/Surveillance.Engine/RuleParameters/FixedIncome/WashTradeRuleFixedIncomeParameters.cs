@@ -79,5 +79,21 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+
+
+
+        // Removing from wash trade parameter interface soon
+        public bool PerformPairingPositionAnalysis => false;
+
+        public int? PairingPositionMinimumNumberOfPairedTrades => null;
+
+        public decimal? PairingPositionPercentagePriceChangeThresholdPerPair => null;
+
+        public decimal? PairingPositionPercentageVolumeDifferenceThreshold => null;
+
+        public decimal? PairingPositionMaximumAbsoluteMoney => null;
+
+        public string PairingPositionMaximumAbsoluteCurrency => null;
     }
 }

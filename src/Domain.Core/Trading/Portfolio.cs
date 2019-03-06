@@ -21,7 +21,9 @@ namespace Domain.Core.Trading
 
         public IOrderLedger Ledger { get; }
 
-        public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span)
+        public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(
+            DateTime from,
+            TimeSpan span)
         {
             var orders = Ledger.LedgerEntries(from, span);
 
@@ -53,7 +55,9 @@ namespace Domain.Core.Trading
             return profitAndLossAccounts;
         }
 
-        private ProfitAndLossStatement ProfitAndLossStatement(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
+        private ProfitAndLossStatement ProfitAndLossStatement(
+            IReadOnlyCollection<Order> orders,
+            Currency denominatedCurrency)
         {
             var revenues = Revenues(orders, denominatedCurrency);
             var costs = Costs(orders, denominatedCurrency);
@@ -61,7 +65,9 @@ namespace Domain.Core.Trading
             return new ProfitAndLossStatement(denominatedCurrency, revenues, costs);
         }
 
-        private Money Revenues(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
+        private Money Revenues(
+            IReadOnlyCollection<Order> orders,
+            Currency denominatedCurrency)
         {
             return ValueTradedInDirections(
                 orders,
@@ -69,7 +75,9 @@ namespace Domain.Core.Trading
                 denominatedCurrency);
         }
 
-        private Money Costs(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
+        private Money Costs(
+            IReadOnlyCollection<Order> orders,
+            Currency denominatedCurrency)
         {
             return ValueTradedInDirections(
                 orders,
@@ -77,7 +85,10 @@ namespace Domain.Core.Trading
                 denominatedCurrency);
         }
 
-        private Money ValueTradedInDirections(IReadOnlyCollection<Order> orders, IReadOnlyCollection<OrderDirections> directions, Currency denominatedCurrency)
+        private Money ValueTradedInDirections(
+            IReadOnlyCollection<Order> orders,
+            IReadOnlyCollection<OrderDirections> directions,
+            Currency denominatedCurrency)
         {
             if (orders == null
                 || !orders.Any()

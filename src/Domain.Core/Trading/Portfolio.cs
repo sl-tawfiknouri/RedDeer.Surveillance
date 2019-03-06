@@ -21,34 +21,51 @@ namespace Domain.Core.Trading
 
         public IOrderLedger Ledger { get; }
 
-        public ProfitAndLossStatement ProfitAndLoss(DateTime from, TimeSpan span)
+        public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span)
         {
             var orders = Ledger.LedgerEntries(from, span);
+            var ordersByCurrency = orders.GroupBy(i => i.OrderCurrency);
 
-            var revenues = Revenues(orders);
-            var costs = Costs(orders);
+            var profitAndLossAccounts =
+                ordersByCurrency
+                .Select(i => ProfitAndLossStatement(i.ToList(), i.Key))
+                .ToList();
 
-            return new ProfitAndLossStatement(revenues, costs);
+            return profitAndLossAccounts;
         }
 
-        private Money Revenues(IReadOnlyCollection<Order> orders)
+        private ProfitAndLossStatement ProfitAndLossStatement(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
         {
-            return ValueTradedInDirections(orders, new[] { OrderDirections.SELL, OrderDirections.SHORT });
+            var revenues = Revenues(orders, denominatedCurrency);
+            var costs = Costs(orders, denominatedCurrency);
+
+            return new ProfitAndLossStatement(denominatedCurrency, revenues, costs);
         }
 
-        private Money Costs(IReadOnlyCollection<Order> orders)
+        private Money Revenues(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
         {
-            return ValueTradedInDirections(orders, new[] { OrderDirections.BUY, OrderDirections.COVER });
+            return ValueTradedInDirections(
+                orders,
+                new[] { OrderDirections.SELL, OrderDirections.SHORT },
+                denominatedCurrency);
         }
 
-        private Money ValueTradedInDirections(IReadOnlyCollection<Order> orders, IReadOnlyCollection<OrderDirections> directions)
+        private Money Costs(IReadOnlyCollection<Order> orders, Currency denominatedCurrency)
+        {
+            return ValueTradedInDirections(
+                orders,
+                new[] { OrderDirections.BUY, OrderDirections.COVER },
+                denominatedCurrency);
+        }
+
+        private Money ValueTradedInDirections(IReadOnlyCollection<Order> orders, IReadOnlyCollection<OrderDirections> directions, Currency denominatedCurrency)
         {
             if (orders == null
                 || !orders.Any()
                 || directions == null
                 || !directions.Any())
             {
-                return new Money(0, "GBX");
+                return new Money(0, denominatedCurrency);
             }
 
             var order =
@@ -58,7 +75,7 @@ namespace Domain.Core.Trading
 
             var costs = order.Sum(i => (i.OrderAverageFillPrice?.Value ?? 0) * i.OrderFilledVolume);
 
-            return new Money(costs, "GBX");
+            return new Money(costs, denominatedCurrency);
         }
 
         public BalanceSheetStatement BalanceSheets()

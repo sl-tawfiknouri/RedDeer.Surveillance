@@ -4,12 +4,14 @@ namespace Domain.Core.Trading
 {
     public class ProfitAndLossStatement
     {
-        public ProfitAndLossStatement(Money revenue, Money costs)
+        public ProfitAndLossStatement(Currency denomination, Money revenue, Money costs)
         {
+            Denomination = denomination;
             Revenue = revenue;
             Costs = costs;
         }
 
+        public Currency Denomination { get; }
         public Money Revenue { get; }
         public Money Costs { get; }
 

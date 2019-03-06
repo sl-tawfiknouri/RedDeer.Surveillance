@@ -73,7 +73,7 @@ namespace Domain.Core.Tests.Trading
         }
 
         [Test]
-        public void Accounts_ForTwoOrders_YieldsZerodFigures()
+        public void Accounts_ForTwoOrders_Yields200Profits()
         {
             var portfolio = BuildPortfolioConcrete();
             var startDate = new DateTime(2018, 01, 01);
@@ -99,6 +99,36 @@ namespace Domain.Core.Tests.Trading
             Assert.AreEqual(profitAndLoss.Revenue.Value, 1200);
             Assert.AreEqual(profitAndLoss.Profits().Value, 200);
         }
+
+        [Test]
+        public void Accounts_ForTwoOrders_YieldsZerodFigures()
+        {
+            var portfolio = BuildPortfolioConcrete();
+            var startDate = new DateTime(2018, 01, 01);
+
+            var order1 = A.Fake<Order>();
+            order1.PlacedDate = startDate;
+            order1.OrderDirection = Financial.OrderDirections.BUY;
+            order1.OrderAverageFillPrice = new Financial.Money(10, "GBX");
+            order1.OrderFilledVolume = 100;
+
+            var order2 = A.Fake<Order>();
+            order2.PlacedDate = startDate;
+            order2.OrderDirection = Financial.OrderDirections.SELL;
+            order2.OrderAverageFillPrice = new Financial.Money(20, "GBX");
+            order2.OrderFilledVolume = 50;
+
+            portfolio.Add(order1);
+            portfolio.Add(order2);
+
+            var profitAndLoss = portfolio.ProfitAndLoss(startDate, TimeSpan.FromMinutes(1));
+
+            Assert.AreEqual(profitAndLoss.Costs.Value, 1000);
+            Assert.AreEqual(profitAndLoss.Revenue.Value, 1000);
+            Assert.AreEqual(profitAndLoss.Profits().Value, 0);
+        }
+
+
 
         private Portfolio BuildPortfolio()
         {

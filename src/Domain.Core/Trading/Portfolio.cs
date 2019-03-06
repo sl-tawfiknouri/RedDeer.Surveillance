@@ -23,8 +23,8 @@ namespace Domain.Core.Trading
 
         public ProfitAndLossStatement ProfitAndLoss(DateTime from, TimeSpan span)
         {
-            // calculate P&L in class
             var orders = Ledger.LedgerEntries(from, span);
+
             var revenues = Revenues(orders);
             var costs = Costs(orders);
 
@@ -33,35 +33,27 @@ namespace Domain.Core.Trading
 
         private Money Revenues(IReadOnlyCollection<Order> orders)
         {
-            if (orders == null
-                || !orders.Any())
-            {
-                return new Money(0, "GBX");
-            }
-
-            var order = 
-                orders
-                .Where(i => 
-                    i.OrderDirection == OrderDirections.SELL || i.OrderDirection == OrderDirections.SHORT)
-                .ToList();
-
-            var revenues = order.Sum(i => (i.OrderAverageFillPrice?.Value ?? 0) * i.OrderFilledVolume);
-
-            return new Money(revenues, "GBX");
+            return ValueTradedInDirections(orders, new[] { OrderDirections.SELL, OrderDirections.SHORT });
         }
 
         private Money Costs(IReadOnlyCollection<Order> orders)
         {
+            return ValueTradedInDirections(orders, new[] { OrderDirections.BUY, OrderDirections.COVER });
+        }
+
+        private Money ValueTradedInDirections(IReadOnlyCollection<Order> orders, IReadOnlyCollection<OrderDirections> directions)
+        {
             if (orders == null
-                || !orders.Any())
+                || !orders.Any()
+                || directions == null
+                || !directions.Any())
             {
                 return new Money(0, "GBX");
             }
 
             var order =
                 orders
-                .Where(i =>
-                    i.OrderDirection == OrderDirections.BUY || i.OrderDirection == OrderDirections.COVER)
+                .Where(i => directions.Contains(i.OrderDirection))
                 .ToList();
 
             var costs = order.Sum(i => (i.OrderAverageFillPrice?.Value ?? 0) * i.OrderFilledVolume);

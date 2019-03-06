@@ -96,36 +96,48 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 return;
             }
 
-            foreach (var cluster in clusters)
-            {
-                AnalyseCluster(cluster);
-            }
+            var washTradingClusters = clusters.Where(AnalyseCluster).ToList();
         }
 
-        private void AnalyseCluster(PositionClusterCentroid centroid)
+        private bool AnalyseCluster(PositionClusterCentroid centroid)
         {
             if (centroid == null)
             {
-                return;
+                return false;
             }
 
-            var combinedPortfolio = _portfolioFactory.Build();
-            combinedPortfolio.Add(centroid.Buys.Get().ToList());
-            combinedPortfolio.Add(centroid.Sells.Get().ToList());
+            var clusterPorfolio = _portfolioFactory.Build();
+            clusterPorfolio.Add(centroid.Buys.Get().ToList());
+            clusterPorfolio.Add(centroid.Sells.Get().ToList());
 
-            if (combinedPortfolio.Ledger.FullLedger().Count < _parameters.ClusteringPositionMinimumNumberOfTrades)
+            if (clusterPorfolio.Ledger.FullLedger().Count < _parameters.ClusteringPositionMinimumNumberOfTrades)
             {
-                return;
+                return false;
             }
 
-            var sellsPortfolio = _portfolioFactory.Build();
-            sellsPortfolio.Add(centroid.Sells.Get().ToList());
+            foreach (var profitAndLoss in clusterPorfolio.ProfitAndLossTotal())
+            {
+                if (profitAndLoss.Costs.Value == 0
+                    || profitAndLoss.Revenue.Value == 0)
+                {
+                    continue;
+                }
 
-            var buysPortfolio = _portfolioFactory.Build();
-            buysPortfolio.Add(centroid.Buys.Get().ToList());
+                var largerValue = Math.Max(profitAndLoss.Costs.Value, profitAndLoss.Revenue.Value);
+                var smallerValue = Math.Min(profitAndLoss.Costs.Value, profitAndLoss.Revenue.Value);
 
+                var offset = largerValue * _parameters.ClusteringPercentageValueDifferenceThreshold.GetValueOrDefault(0);
+                var lowerBoundary = largerValue - offset;
+                var upperBoundary = largerValue + offset;
 
+                if (smallerValue >= lowerBoundary
+                    && smallerValue <= upperBoundary)
+                {
+                    return true;
+                }
+            }
 
+            return false;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

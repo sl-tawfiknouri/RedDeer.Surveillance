@@ -16,6 +16,11 @@ namespace Domain.Core.Trading
 
         public void Add(Order order)
         {
+            if (order == null)
+            {
+                return;
+            }
+
             _ledger.Add(order);
         }
 

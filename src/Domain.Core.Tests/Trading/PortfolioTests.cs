@@ -4,6 +4,7 @@ using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain.Core.Tests.Trading
 {
@@ -67,9 +68,14 @@ namespace Domain.Core.Tests.Trading
             var profitAndLoss = portfolio.ProfitAndLoss(DateTime.UtcNow, TimeSpan.FromMinutes(1));
 
             Assert.IsNotNull(profitAndLoss);
-            Assert.AreEqual(0, profitAndLoss.Costs.Value);
-            Assert.AreEqual(0, profitAndLoss.Revenue.Value);
-            Assert.AreEqual(0, profitAndLoss.Profits().Value);
+            Assert.IsNotEmpty(profitAndLoss);
+            Assert.AreEqual(1, profitAndLoss.Count);
+
+            var emptyProfitAndLoss = profitAndLoss.FirstOrDefault();
+
+            Assert.AreEqual(0, emptyProfitAndLoss.Costs.Value);
+            Assert.AreEqual(0, emptyProfitAndLoss.Revenue.Value);
+            Assert.AreEqual(0, emptyProfitAndLoss.Profits().Value);
         }
 
         [Test]
@@ -82,12 +88,14 @@ namespace Domain.Core.Tests.Trading
             order1.PlacedDate = startDate;
             order1.OrderDirection = Financial.OrderDirections.BUY;
             order1.OrderAverageFillPrice = new Financial.Money(10, "GBX");
+            order1.OrderCurrency = new Financial.Currency("GBX");
             order1.OrderFilledVolume = 100;
 
             var order2 = A.Fake<Order>();
             order2.PlacedDate = startDate;
             order2.OrderDirection = Financial.OrderDirections.SELL;
             order2.OrderAverageFillPrice = new Financial.Money(12, "GBX");
+            order2.OrderCurrency = new Financial.Currency("GBX");
             order2.OrderFilledVolume = 100;
 
             portfolio.Add(order1);
@@ -95,9 +103,15 @@ namespace Domain.Core.Tests.Trading
 
             var profitAndLoss = portfolio.ProfitAndLoss(startDate, TimeSpan.FromMinutes(1));
 
-            Assert.AreEqual(profitAndLoss.Costs.Value, 1000);
-            Assert.AreEqual(profitAndLoss.Revenue.Value, 1200);
-            Assert.AreEqual(profitAndLoss.Profits().Value, 200);
+            Assert.IsNotNull(profitAndLoss);
+            Assert.IsNotEmpty(profitAndLoss);
+            Assert.AreEqual(1, profitAndLoss.Count);
+
+            var orderProfitAndLoss = profitAndLoss.FirstOrDefault();
+
+            Assert.AreEqual(orderProfitAndLoss.Costs.Value, 1000);
+            Assert.AreEqual(orderProfitAndLoss.Revenue.Value, 1200);
+            Assert.AreEqual(orderProfitAndLoss.Profits().Value, 200);
         }
 
         [Test]
@@ -110,12 +124,14 @@ namespace Domain.Core.Tests.Trading
             order1.PlacedDate = startDate;
             order1.OrderDirection = Financial.OrderDirections.BUY;
             order1.OrderAverageFillPrice = new Financial.Money(10, "GBX");
+            order1.OrderCurrency = new Financial.Currency("GBX");
             order1.OrderFilledVolume = 100;
 
             var order2 = A.Fake<Order>();
             order2.PlacedDate = startDate;
             order2.OrderDirection = Financial.OrderDirections.SELL;
             order2.OrderAverageFillPrice = new Financial.Money(20, "GBX");
+            order2.OrderCurrency = new Financial.Currency("GBX");
             order2.OrderFilledVolume = 50;
 
             portfolio.Add(order1);
@@ -123,12 +139,16 @@ namespace Domain.Core.Tests.Trading
 
             var profitAndLoss = portfolio.ProfitAndLoss(startDate, TimeSpan.FromMinutes(1));
 
-            Assert.AreEqual(profitAndLoss.Costs.Value, 1000);
-            Assert.AreEqual(profitAndLoss.Revenue.Value, 1000);
-            Assert.AreEqual(profitAndLoss.Profits().Value, 0);
+            Assert.IsNotNull(profitAndLoss);
+            Assert.IsNotEmpty(profitAndLoss);
+            Assert.AreEqual(1, profitAndLoss.Count);
+
+            var orderProfitAndLoss = profitAndLoss.FirstOrDefault();
+
+            Assert.AreEqual(orderProfitAndLoss.Costs.Value, 1000);
+            Assert.AreEqual(orderProfitAndLoss.Revenue.Value, 1000);
+            Assert.AreEqual(orderProfitAndLoss.Profits().Value, 0);
         }
-
-
 
         private Portfolio BuildPortfolio()
         {

@@ -19,5 +19,10 @@ namespace Domain.Core.Trading
         {
             return Revenue - Costs;
         }
+
+        public static ProfitAndLossStatement Empty()
+        {
+            return new ProfitAndLossStatement(new Currency("GBP"), new Money(0, "GBP"), new Money(0, "GBP"));
+        }
     }
 }

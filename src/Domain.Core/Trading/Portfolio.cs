@@ -31,6 +31,12 @@ namespace Domain.Core.Trading
                 .Select(i => ProfitAndLossStatement(i.ToList(), i.Key))
                 .ToList();
 
+            if (profitAndLossAccounts == null
+                || !profitAndLossAccounts.Any())
+            {
+                profitAndLossAccounts.Add(Trading.ProfitAndLossStatement.Empty());
+            }
+
             return profitAndLossAccounts;
         }
 

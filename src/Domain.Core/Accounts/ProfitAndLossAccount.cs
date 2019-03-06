@@ -20,6 +20,17 @@ namespace Domain.Core.Trading
             return Revenue - Costs;
         }
 
+        public decimal? PercentageProfits()
+        {
+            if (Revenue.Value == 0
+                || Costs.Value == 0)
+            {
+                return null;
+            }
+
+            return (Revenue.Value / Costs.Value) - 1;
+        }
+
         public static ProfitAndLossStatement Empty()
         {
             return new ProfitAndLossStatement(new Currency("GBP"), new Money(0, "GBP"), new Money(0, "GBP"));

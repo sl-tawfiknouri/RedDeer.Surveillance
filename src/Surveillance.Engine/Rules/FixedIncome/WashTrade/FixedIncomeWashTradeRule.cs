@@ -71,7 +71,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
-            _logger.LogInformation($"RunRule called at {UniverseDateTime}");
+            _logger.LogInformation($"RunPostOrderEvent called at {UniverseDateTime}");
 
             var filteredOrders =
                 FilterByClientAccount(
@@ -79,9 +79,11 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     history.ActiveTradeHistory().ToList());
 
             var clusteringAnalysis = ClusteringAnalysis(filteredOrders);
+            var averageNettingAnalysis = NettingTrades(filteredOrders);
 
-            if (clusteringAnalysis == null
-                || !clusteringAnalysis.ClusteringPositionBreach)
+            if ((clusteringAnalysis == null || !clusteringAnalysis.ClusteringPositionBreach)
+                &&
+                (averageNettingAnalysis == null || !averageNettingAnalysis.AveragePositionRuleBreach))
             {
                 return;
             }
@@ -97,14 +99,60 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     _parameters,
                     new TradePosition(filteredOrders),
                     security,
-                    WashTradeAveragePositionBreach.None(),
+                    averageNettingAnalysis,
                     WashTradePairingPositionBreach.None(),
                     clusteringAnalysis);
 
             var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);
             _alertStream.Add(universeAlert);
 
-            _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
+            _logger.LogInformation($"RunPostOrderEvent completed for {UniverseDateTime}");
+        }
+
+        /// <summary>
+        /// See if trades net out to near zero i.e. large amount of churn
+        /// </summary>
+        public WashTradeAveragePositionBreach NettingTrades(IReadOnlyCollection<Order> tradingHistory)
+        {
+            if (!_parameters.PerformAveragePositionAnalysis)
+            {
+                return WashTradeAveragePositionBreach.None();
+            }
+
+            if (tradingHistory == null
+                || !tradingHistory.Any())
+            {
+                return WashTradeAveragePositionBreach.None();
+            }
+
+            if (tradingHistory.Count < _parameters.AveragePositionMinimumNumberOfTrades)
+            {
+                return WashTradeAveragePositionBreach.None();
+            }
+
+            var portfolio = _portfolioFactory.Build();
+            portfolio.Add(tradingHistory);
+
+            foreach (var profitAndLoss in portfolio.ProfitAndLossTotal())
+            {
+                if (profitAndLoss.PercentageProfits() == null)
+                {
+                    continue;
+                }
+
+                if (Math.Abs(profitAndLoss.PercentageProfits().GetValueOrDefault(0)) > _parameters.AveragePositionMaximumPositionValueChange.GetValueOrDefault(0))
+                {
+                    return WashTradeAveragePositionBreach.None();
+                }
+
+                return new WashTradeAveragePositionBreach
+                    (true,
+                     tradingHistory.Count,
+                     profitAndLoss.PercentageProfits(),
+                    null);
+            }
+
+            return WashTradeAveragePositionBreach.None();
         }
 
         private WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)

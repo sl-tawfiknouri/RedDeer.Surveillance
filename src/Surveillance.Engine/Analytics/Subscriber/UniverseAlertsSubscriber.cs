@@ -89,17 +89,17 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
         public void OnCompleted()
         {
-            _logger.LogInformation($"UniverseAlertsSubscriber received the OnCompleted() event from the stream");
+            _logger.LogInformation($"received the OnCompleted() event from the stream");
         }
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"UniverseAlertsSubscriber received the OnError() event from the stream {error.Message} {error.InnerException?.Message}");
+            _logger.LogError($"received the OnError() event from the stream {error.Message} {error.InnerException?.Message}");
         }
 
         public void OnNext(IUniverseAlertEvent value)
         {
-            _logger.LogInformation($"UniverseAlertsSubscriber received on the OnNext() event from the alerts stream. Rule {value.Rule} operation context {value.Context?.Id()}");
+            _logger.LogInformation($"received on the OnNext() event from the alerts stream. Rule {value.Rule} operation context {value.Context?.Id()}");
 
             switch (value.Rule)
             {
@@ -128,7 +128,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                     FixedIncomeWashTrade(value);
                     break;
                 default:
-                    _logger.LogError($"UniverseAlertsSubscriber met a rule type it did not identify {value.Rule}. This should be explicitly addressed.");
+                    _logger.LogError($"met a rule type it did not identify {value.Rule}. This should be explicitly addressed.");
                     break;
             }
         }
@@ -143,16 +143,16 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (ICancelledOrderRuleBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber cancelled orders adding alert to cancelled order message sender");
+            _logger.LogInformation($"cancelled orders adding alert to cancelled order message sender");
             _cancelledOrderMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber cancelled orders incrementing raw alert count by 1");
+            _logger.LogInformation($"cancelled orders incrementing raw alert count by 1");
             Analytics.CancelledOrderAlertsRaw += 1;
         }
 
         private void CancelledOrdersFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber cancelled orders flushing alerts");
+            _logger.LogInformation($"cancelled orders flushing alerts");
             Analytics.CancelledOrderAlertsAdjusted += _cancelledOrderMessageSender.Flush();
         }
 
@@ -173,7 +173,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
             if (alert.IsRemoveEvent)
             {
-                _logger.LogInformation($"UniverseAlertSubscriber high profits noted alert is duplicated and removing it");
+                _logger.LogInformation($"high profits noted alert is duplicated and removing it");
                 _highProfitMessageSender.Remove((ITradePosition)alert.UnderlyingAlert);
                 return;
             }
@@ -181,10 +181,10 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (IHighProfitRuleBreach) alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber high profits adding alert to high profits message sender");
+            _logger.LogInformation($"high profits adding alert to high profits message sender");
             _highProfitMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber high profits incrementing raw alert count by 1");
+            _logger.LogInformation($"high profits incrementing raw alert count by 1");
             Analytics.HighProfitAlertsRaw += 1;
         }
 
@@ -195,7 +195,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 return;
             }
 
-            _logger.LogInformation($"UniverseAlertSubscriber high profits flushing alerts");
+            _logger.LogInformation($"high profits flushing alerts");
             Analytics.HighProfitAlertsAdjusted += _highProfitMessageSender.Flush();
         }
 
@@ -215,16 +215,16 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (IHighVolumeRuleBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber high volume adding alert to high volume message sender");
+            _logger.LogInformation($"high volume adding alert to high volume message sender");
             _highVolumeMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber high volume incrementing raw alert count by 1");
+            _logger.LogInformation($"high volume incrementing raw alert count by 1");
             Analytics.HighVolumeAlertsRaw += 1;
         }
 
         private void HighVolumeFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber high volume flushing alerts");
+            _logger.LogInformation($"high volume flushing alerts");
             Analytics.HighVolumeAlertsAdjusted += _highVolumeMessageSender.Flush();
         }
 
@@ -238,16 +238,16 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (ILayeringRuleBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber layering adding alert to layering message sender");
+            _logger.LogInformation($"layering adding alert to layering message sender");
             _layeringCachedMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber layering incrementing raw alert count by 1");
+            _logger.LogInformation($"layering incrementing raw alert count by 1");
             Analytics.LayeringAlertsRaw += 1;
         }
 
         private void LayeringFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber layering flushing alerts");
+            _logger.LogInformation($"layering flushing alerts");
             Analytics.LayeringAlertsAdjusted += _layeringCachedMessageSender.Flush();
         }
         
@@ -261,17 +261,17 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (IMarkingTheCloseBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber marking the close adding alert to marking the close message sender");
+            _logger.LogInformation($"marking the close adding alert to marking the close message sender");
             _markingTheCloseMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber marking the close incrementing raw and adjusted alert count by 1");
+            _logger.LogInformation($"marking the close incrementing raw and adjusted alert count by 1");
             Analytics.MarkingTheCloseAlertsRaw += 1;
             Analytics.MarkingTheCloseAlertsAdjusted += 1;
         }
 
         private void MarkingTheCloseFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber marking the close flush event (does nothing) as it sends immediately");
+            _logger.LogInformation($"marking the close flush event (does nothing) as it sends immediately");
         }
 
         private void Spoofing(IUniverseAlertEvent alert)
@@ -284,17 +284,17 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (ISpoofingRuleBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber spoofing adding alert to spoofing message sender");
+            _logger.LogInformation($"spoofing adding alert to spoofing message sender");
             _spoofingMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber spoofing incrementing raw and adjusted alert count by 1");
+            _logger.LogInformation($"spoofing incrementing raw and adjusted alert count by 1");
             Analytics.SpoofingAlertsRaw += 1;
             Analytics.SpoofingAlertsAdjusted += 1;
         }
 
         private void SpoofingFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber spoofing flush event (does nothing) as it sends immediately");
+            _logger.LogInformation($"spoofing flush event (does nothing) as it sends immediately");
         }
 
         private void EquityWashTrade(IUniverseAlertEvent alert)
@@ -307,16 +307,16 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             var ruleBreach = (IWashTradeRuleBreach)alert.UnderlyingAlert;
             SetIsBackTest(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber wash trade adding alert to the wash trade message sender");
+            _logger.LogInformation($"Equity wash trade adding alert to the wash trade message sender");
             _equityWashTradeMessageSender.Send(ruleBreach);
 
-            _logger.LogInformation($"UniverseAlertSubscriber wash trade incrementing raw alert count by 1");
+            _logger.LogInformation($"Equity wash trade incrementing raw alert count by 1");
             Analytics.WashTradeAlertsRaw += 1;
         }
 
         private void EquityWashTradeFlush()
         {
-            _logger.LogInformation($"UniverseAlertSubscriber wash trade flushing alerts");
+            _logger.LogInformation($"Equity wash trade flushing alerts");
             Analytics.WashTradeAlertsAdjusted += _equityWashTradeMessageSender.Flush();
         }
 
@@ -353,12 +353,12 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             ruleBreach.IsBackTestRun = _isBackTest;
 
             if (_isBackTest)
-                _logger.LogInformation($"UniverseAlertSubscriber noting that alert is part of a back test and setting property");
+                _logger.LogInformation($"noting that alert is part of a back test and setting property");
         }
 
         public void Flush()
         {
-            _logger?.LogInformation($"UniverseAlertsSubscriber flush initiated.");
+            _logger?.LogInformation($"flush initiated.");
 
             EquityWashTradeFlush();
             FixedIncomeWashTradeFlush();
@@ -372,7 +372,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
             CancelledOrdersFlush();
 
-            _logger?.LogInformation($"UniverseAlertsSubscriber flush completed.");
+            _logger?.LogInformation($"flush completed.");
         }
 
         public AlertAnalytics Analytics { get; }

@@ -9,7 +9,7 @@ namespace Domain.Core.Trading
         IHoldings Holdings { get; }
         IOrderLedger Ledger { get; }
 
-        ProfitAndLossStatement Accounts(DateTime from, TimeSpan fors);
+        ProfitAndLossStatement ProfitAndLoss(DateTime from, TimeSpan span);
         BalanceSheetStatement BalanceSheets();
 
         void Add(IReadOnlyCollection<Order> orders);

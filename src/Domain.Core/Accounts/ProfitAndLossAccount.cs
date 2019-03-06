@@ -1,20 +1,21 @@
-﻿namespace Domain.Core.Trading
+﻿using Domain.Core.Financial;
+
+namespace Domain.Core.Trading
 {
     public class ProfitAndLossStatement
     {
-        public decimal Revenue()
+        public ProfitAndLossStatement(Money revenue, Money costs)
         {
-            return 0;
+            Revenue = revenue;
+            Costs = costs;
         }
 
-        public decimal Costs()
-        {
-            return 0;
-        }
+        public Money Revenue { get; }
+        public Money Costs { get; }
 
-        public decimal Profits()
+        public Money Profits()
         {
-            return 0;
+            return Revenue - Costs;
         }
     }
 }

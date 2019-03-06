@@ -334,13 +334,13 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _fixedIncomeWashTradeMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"Fixed income wash trade incrementing raw alert count by 1");
-            Analytics.WashTradeAlertsRaw += 1;
+            Analytics.FixedIncomeWashTradeAlertsRaw += 1;
         }
 
         private void FixedIncomeWashTradeFlush()
         {
             _logger.LogInformation($"Fixed income wash trade flushing alerts");
-            Analytics.WashTradeAlertsAdjusted += _fixedIncomeWashTradeMessageSender.Flush();
+            Analytics.FixedIncomeWashTradeAlertsAdjusted += _fixedIncomeWashTradeMessageSender.Flush();
         }
 
         private void SetIsBackTest(IRuleBreach ruleBreach)

@@ -16,6 +16,10 @@
         public int MarkingTheCloseAlertsRaw { get; set; }
         public int SpoofingAlertsRaw { get; set; }
         public int WashTradeAlertsRaw { get; set; }
+
+        public int FixedIncomeWashTradeAlertsRaw { get; set; }
+        public int FixedIncomeHighVolumeIssuanceAlertsRaw { get; set; }
+        public int FixedIncomeHighProfitAlertsRaw { get; set; }
         // end raw alerts
 
         // de duplicated alerts
@@ -26,6 +30,10 @@
         public int MarkingTheCloseAlertsAdjusted { get; set; }
         public int SpoofingAlertsAdjusted { get; set; }
         public int WashTradeAlertsAdjusted { get; set; }
+
+        public int FixedIncomeWashTradeAlertsAdjusted { get; set; }
+        public int FixedIncomeHighVolumeIssuanceAlertsAdjusted { get; set; }
+        public int FixedIncomeHighProfitAlertsAdjusted { get; set; }
         // end de duplicated alerts
     }
 }

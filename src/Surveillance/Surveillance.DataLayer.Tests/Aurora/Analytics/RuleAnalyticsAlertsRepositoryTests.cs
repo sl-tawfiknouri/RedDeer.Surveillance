@@ -39,7 +39,13 @@ namespace Surveillance.DataLayer.Tests.Aurora.Analytics
                 SpoofingAlertsRaw = 0,
                 SpoofingAlertsAdjusted = 0,
                 WashTradeAlertsRaw = 3,
-                WashTradeAlertsAdjusted = 1
+                WashTradeAlertsAdjusted = 1,
+                FixedIncomeHighProfitAlertsAdjusted = 10,
+                FixedIncomeHighProfitAlertsRaw = 11,
+                FixedIncomeHighVolumeIssuanceAlertsAdjusted = 9,
+                FixedIncomeHighVolumeIssuanceAlertsRaw = 10,
+                FixedIncomeWashTradeAlertsRaw = 5,
+                FixedIncomeWashTradeAlertsAdjusted = 4
             };
 
             var config = new DataLayerConfiguration

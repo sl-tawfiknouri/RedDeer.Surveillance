@@ -29,7 +29,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ILayeringCachedMessageSender _layeringCachedMessageSender;
         private readonly IMarkingTheCloseMessageSender _markingTheCloseMessageSender;
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
-        private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
+        private readonly IWashTradeCachedMessageSender _equityWashTradeMessageSender;
+        private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
@@ -44,7 +45,8 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             ILayeringCachedMessageSender layeringMessageSender,
             IMarkingTheCloseMessageSender markingTheCloseMessageSender,
             ISpoofingRuleMessageSender spoofingMessageSender,
-            IWashTradeCachedMessageSender washTradeMessageSender,
+            IWashTradeCachedMessageSender equityWashTradeMessageSender,
+            IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _isBackTest = isBackTest;
@@ -73,9 +75,13 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                 spoofingMessageSender
                 ?? throw new ArgumentNullException(nameof(spoofingMessageSender));
 
-            _washTradeMessageSender =
-                washTradeMessageSender
-                ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
+            _equityWashTradeMessageSender =
+                equityWashTradeMessageSender
+                ?? throw new ArgumentNullException(nameof(equityWashTradeMessageSender));
+
+            _fixedIncomeWashTradeMessageSender =
+                fixedIncomeWashTradeMessageSender
+                ?? throw new ArgumentNullException(nameof(fixedIncomeWashTradeMessageSender));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Analytics = new AlertAnalytics {SystemProcessOperationId = opCtxId};
@@ -116,7 +122,10 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
                     Spoofing(value);
                     break;
                 case Domain.Scheduling.Rules.WashTrade:
-                    WashTrade(value);
+                    EquityWashTrade(value);
+                    break;
+                case Domain.Scheduling.Rules.FixedIncomeWashTrades:
+                    FixedIncomeWashTrade(value);
                     break;
                 default:
                     _logger.LogError($"UniverseAlertsSubscriber met a rule type it did not identify {value.Rule}. This should be explicitly addressed.");
@@ -288,7 +297,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             _logger.LogInformation($"UniverseAlertSubscriber spoofing flush event (does nothing) as it sends immediately");
         }
 
-        private void WashTrade(IUniverseAlertEvent alert)
+        private void EquityWashTrade(IUniverseAlertEvent alert)
         {
             if (alert.IsFlushEvent)
             {
@@ -299,18 +308,40 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             SetIsBackTest(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber wash trade adding alert to the wash trade message sender");
-            _washTradeMessageSender.Send(ruleBreach);
+            _equityWashTradeMessageSender.Send(ruleBreach);
 
             _logger.LogInformation($"UniverseAlertSubscriber wash trade incrementing raw alert count by 1");
             Analytics.WashTradeAlertsRaw += 1;
         }
 
-        private void WashTradeFlush()
+        private void EquityWashTradeFlush()
         {
             _logger.LogInformation($"UniverseAlertSubscriber wash trade flushing alerts");
-            Analytics.WashTradeAlertsAdjusted += _washTradeMessageSender.Flush();
+            Analytics.WashTradeAlertsAdjusted += _equityWashTradeMessageSender.Flush();
         }
 
+        private void FixedIncomeWashTrade(IUniverseAlertEvent alert)
+        {
+            if (alert.IsFlushEvent)
+            {
+                return;
+            }
+
+            var ruleBreach = (IWashTradeRuleBreach)alert.UnderlyingAlert;
+            SetIsBackTest(ruleBreach);
+
+            _logger.LogInformation($"Fixed income wash trade adding alert to the wash trade message sender");
+            _fixedIncomeWashTradeMessageSender.Send(ruleBreach);
+
+            _logger.LogInformation($"Fixed income wash trade incrementing raw alert count by 1");
+            Analytics.WashTradeAlertsRaw += 1;
+        }
+
+        private void FixedIncomeWashTradeFlush()
+        {
+            _logger.LogInformation($"Fixed income wash trade flushing alerts");
+            Analytics.WashTradeAlertsAdjusted += _fixedIncomeWashTradeMessageSender.Flush();
+        }
 
         private void SetIsBackTest(IRuleBreach ruleBreach)
         {
@@ -329,9 +360,10 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         {
             _logger?.LogInformation($"UniverseAlertsSubscriber flush initiated.");
 
-            WashTradeFlush();
+            EquityWashTradeFlush();
+            FixedIncomeWashTradeFlush();
+            
             SpoofingFlush();
-
             MarkingTheCloseFlush();
             LayeringFlush();
 

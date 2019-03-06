@@ -19,6 +19,7 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
+using static Surveillance.Engine.Rules.Rules.Equity.WashTrade.WashTradeRuleBreach;
 
 namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 {
@@ -96,8 +97,8 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     _parameters,
                     new TradePosition(filteredOrders),
                     security,
-                    null,
-                    null,
+                    WashTradeAveragePositionBreach.None(),
+                    WashTradePairingPositionBreach.None(),
                     clusteringAnalysis);
 
             var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);
@@ -106,17 +107,17 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
         }
 
-        private WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
+        private WashTradeClusteringPositionBreach ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
         {
             if (!_parameters.PerformClusteringPositionAnalysis)
             {
-                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+                return WashTradeClusteringPositionBreach.None();
             }
 
             if (tradingHistory == null
                 || !tradingHistory.Any())
             {
-                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+                return WashTradeClusteringPositionBreach.None();
             }
 
             var portfolio = _portfolioFactory.Build();
@@ -127,17 +128,17 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             if (clusters == null
                 || !clusters.Any())
             {
-                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+                return WashTradeClusteringPositionBreach.None();
             }
 
             var washTradingClusters = clusters.Where(AnalyseCluster).Select(i => i.CentroidPrice).ToList();
 
             if (!washTradingClusters.Any())
             {
-                return WashTradeRuleBreach.WashTradeClusteringPositionBreach.None();
+                return WashTradeClusteringPositionBreach.None();
             }
 
-            return new WashTradeRuleBreach.WashTradeClusteringPositionBreach(true, washTradingClusters.Count, washTradingClusters);
+            return new WashTradeClusteringPositionBreach(true, washTradingClusters.Count, washTradingClusters);
         }
 
         private bool AnalyseCluster(PositionClusterCentroid centroid)

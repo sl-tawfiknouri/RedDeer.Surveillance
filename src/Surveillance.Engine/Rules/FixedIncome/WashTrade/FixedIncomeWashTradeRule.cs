@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Trading.Factories;
+using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -68,25 +70,28 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
         {
             _logger.LogInformation($"RunRule called at {UniverseDateTime}");
 
+            var filteredOrders =
+                FilterByClientAccount(
+                    history.ActiveTradeHistory().Peek(),
+                    history.ActiveTradeHistory().ToList());
+
             if (_parameters.PerformClusteringPositionAnalysis)
             {
-                ClusteringAnalysis(history);
+                ClusteringAnalysis(filteredOrders);
             }
 
             _logger.LogInformation($"RunRule completed for {UniverseDateTime}");
         }
 
-        private void ClusteringAnalysis(ITradingHistoryStack tradingHistory)
+        private void ClusteringAnalysis(IReadOnlyCollection<Order> tradingHistory)
         {
-            var activeTrades = tradingHistory.ActiveTradeHistory();
-
-            if (activeTrades.Count == 0)
+            if (tradingHistory.Count == 0)
             {
                 return;
             }
 
             var portfolio = _portfolioFactory.Build();
-            portfolio.Add(activeTrades);
+            portfolio.Add(tradingHistory);
 
             var clusters = _clusteringService.Cluster(portfolio.Ledger.FullLedger());
 
@@ -138,6 +143,33 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             }
 
             return false;
+        }
+
+        private List<Order> FilterByClientAccount(Order mostRecentFrame, List<Order> frames)
+        {
+            if (frames == null)
+            {
+                return new List<Order>();
+            }
+
+            var liveTrades =
+                frames
+                    .Where(at => at.OrderStatus() == Domain.Core.Financial.OrderStatus.Filled)
+                    .Where(at => at.OrderAverageFillPrice != null)
+                    .ToList();
+
+            if (!string.IsNullOrWhiteSpace(mostRecentFrame?.OrderClientAccountAttributionId))
+            {
+                liveTrades = liveTrades
+                    .Where(lt =>
+                        string.Equals(
+                            lt.OrderClientAccountAttributionId,
+                            mostRecentFrame.OrderClientAccountAttributionId,
+                            StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
+            }
+
+            return liveTrades;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

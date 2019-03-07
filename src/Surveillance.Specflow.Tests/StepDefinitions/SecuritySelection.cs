@@ -1,5 +1,4 @@
-﻿using Domain.Core.Financial;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Markets;
 

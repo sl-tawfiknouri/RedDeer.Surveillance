@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -8,6 +9,7 @@ using Surveillance.Engine.Rules.RuleParameters.FixedIncome.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -17,6 +19,8 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
     {
         private readonly IUniverseFixedIncomeOrderFilter _filter;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
+        private readonly IClusteringService _clusteringService;
+        private readonly IPortfolioFactory _portfolioFactory;
 
         private readonly ILogger<FixedIncomeWashTradeRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
@@ -24,11 +28,15 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         public FixedIncomeWashTradeFactory(
             IUniverseFixedIncomeOrderFilter filter,
             IUniverseMarketCacheFactory marketCacheFactory,
+            IClusteringService clusteringService,
+            IPortfolioFactory portfolioFactory,
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
             _filter = filter ?? throw new ArgumentNullException(nameof(filter));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+            _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
+            _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingLogger = tradingLogger ?? throw new ArgumentNullException(nameof(tradingLogger));
         }
@@ -46,6 +54,8 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
                 _marketCacheFactory,
                 runMode,
                 alertStream,
+                _clusteringService,
+                _portfolioFactory,
                 _logger,
                 _tradingLogger);
         }

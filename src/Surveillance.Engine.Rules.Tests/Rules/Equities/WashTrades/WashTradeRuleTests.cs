@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Core.Financial;
 using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -16,6 +15,8 @@ using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -30,7 +31,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         private ICurrencyConverter _currencyConverter;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
-        private IWashTradeClustering _clustering;
+        private IClusteringService _clustering;
         private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
@@ -48,7 +49,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             _currencyConverter = A.Fake<ICurrencyConverter>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
-            _clustering = new WashTradeClustering();
+            _clustering = new ClusteringService();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
             _logger = A.Fake<ILogger>();

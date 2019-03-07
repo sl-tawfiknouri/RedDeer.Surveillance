@@ -15,7 +15,6 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
 using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
@@ -205,7 +204,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // spoofing rule does not monitor by last status changed
         }

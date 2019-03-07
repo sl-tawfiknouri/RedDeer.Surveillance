@@ -1,7 +1,6 @@
-﻿using Domain.Core.Financial;
-using Domain.Core.Trading.Orders;
+﻿using Domain.Core.Trading.Orders;
 using NUnit.Framework;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;
 
 namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
@@ -12,7 +11,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Test]
         public void Clustering_ReturnsEmpty_ForNullArgs()
         {
-            var clustering = new WashTradeClustering();
+            var clustering = new ClusteringService();
 
             var cluster = clustering.Cluster(null);
 
@@ -24,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [Explicit]
         public void Clustering_TwoFrames()
         {
-            var clustering = new WashTradeClustering();
+            var clustering = new ClusteringService();
             var frame1 = (new Order()).Random(10);
             var frame2 = (new Order()).Random(11);
             var frame3 = (new Order()).Random(12);

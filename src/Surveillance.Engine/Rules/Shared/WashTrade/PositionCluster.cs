@@ -1,6 +1,6 @@
 ﻿using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
     public class PositionCluster
     {

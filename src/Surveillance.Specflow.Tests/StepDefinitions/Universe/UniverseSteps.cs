@@ -9,7 +9,6 @@ using Surveillance.Specflow.Tests.StepDefinitions.IntradayTrade;
 using Surveillance.Specflow.Tests.StepDefinitions.Orders;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets.Collections;

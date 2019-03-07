@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Cfis;
 using Domain.Core.Financial.Cfis.Interfaces;

@@ -1,5 +1,4 @@
-﻿using Domain.Core.Financial;
-using Domain.Core.Financial.Money;
+﻿using Domain.Core.Financial.Money;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {

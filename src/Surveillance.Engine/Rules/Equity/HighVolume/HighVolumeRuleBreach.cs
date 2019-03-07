@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Surveillance.Auditing.Context.Interfaces;

@@ -16,7 +16,6 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
 using Domain.Core.Trading.Orders;
 using SharedKernel.Contracts.Markets;
 
@@ -73,7 +72,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             if (!_processingMarketClose
                 || _latestMarketClosure == null)

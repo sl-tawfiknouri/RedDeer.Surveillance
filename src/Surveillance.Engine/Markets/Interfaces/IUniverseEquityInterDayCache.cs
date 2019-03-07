@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Core.Dates;
-using Domain.Core.Financial;
 using Domain.Core.Markets.Collections;
 using Domain.Core.Markets.Timebars;
 using SharedKernel.Contracts.Markets;

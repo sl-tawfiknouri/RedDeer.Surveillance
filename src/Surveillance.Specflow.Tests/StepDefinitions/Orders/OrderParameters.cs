@@ -1,5 +1,4 @@
-﻿using Domain.Core.Financial;
-using System;
+﻿using System;
 using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions.Orders

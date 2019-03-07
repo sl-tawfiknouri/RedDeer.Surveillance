@@ -1,4 +1,5 @@
-﻿using Domain.Surveillance.Scheduling;
+﻿using Domain.Core.Trading.Factories;
+using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
 using Domain.Surveillance.Streams;
 using Domain.Surveillance.Streams.Interfaces;
@@ -64,6 +65,8 @@ using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance.Interfaces;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe;
@@ -175,9 +178,7 @@ namespace Surveillance.Engine.Rules
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
             For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
-            For<IWashTradeClustering>().Use<WashTradeClustering>();
-
-
+            For<IClusteringService>().Use<ClusteringService>().Singleton();
 
 
             For<IHighVolumeFixedIncomeSubscriber>().Use<HighVolumeFixedIncomeSubscriber>();
@@ -192,7 +193,7 @@ namespace Surveillance.Engine.Rules
             For<IFixedIncomeWashTradeRule>().Use<FixedIncomeWashTradeRule>();
             For<IFixedIncomeWashTradeFactory>().Use<FixedIncomeWashTradeFactory>();
 
-
+            For<IPortfolioFactory>().Use<PortfolioFactory>();
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();

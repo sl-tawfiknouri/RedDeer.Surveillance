@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;

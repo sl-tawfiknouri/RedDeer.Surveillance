@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Domain.Core.Trading.Orders;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces
 {
-    public interface IWashTradeClustering
+    public interface IClusteringService
     {
         IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<Order> frames);
     }

@@ -17,9 +17,10 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {
@@ -36,7 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         private readonly ILogger _logger;
         private readonly IWashTradeRuleEquitiesParameters _equitiesParameters;
         private readonly IWashTradePositionPairer _positionPairer;
-        private readonly IWashTradeClustering _clustering;
+        private readonly IClusteringService _clustering;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -45,7 +46,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IWashTradePositionPairer positionPairer,
-            IWashTradeClustering clustering,
+            IClusteringService clustering,
             IUniverseAlertStream alertStream,
             ICurrencyConverter currencyConverter,
             IUniverseOrderFilter orderFilter,
@@ -80,7 +81,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var activeTrades = history.ActiveTradeHistory();
 
@@ -127,6 +128,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 
             var breach =
                 new WashTradeRuleBreach(
+                    _equitiesParameters.WindowSize,
                     OrganisationFactorValue,
                     RuleCtx.SystemProcessOperationContext(),
                     RuleCtx.CorrelationId(),

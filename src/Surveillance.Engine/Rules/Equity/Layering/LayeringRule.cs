@@ -16,7 +16,6 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
 using Domain.Core.Markets.Timebars;
 using Domain.Core.Trading.Orders;
 using SharedKernel.Contracts.Markets;
@@ -496,7 +495,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             return endTick;
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             // we don't analyse rules based on when their status last changed in the layering rule
         }

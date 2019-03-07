@@ -20,6 +20,12 @@
             Currency = new Currency(currency ?? string.Empty);
         }
 
+        public Money(decimal? value, Currency currency)
+        {
+            Value = value.GetValueOrDefault(0);
+            Currency = currency;
+        }
+
         public decimal Value { get; set; }
         public Currency Currency { get; set; }
 

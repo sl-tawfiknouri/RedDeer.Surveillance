@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -74,7 +73,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 

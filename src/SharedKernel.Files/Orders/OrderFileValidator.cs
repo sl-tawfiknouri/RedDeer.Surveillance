@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using Domain.Core.Financial;
 using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using FluentValidation;

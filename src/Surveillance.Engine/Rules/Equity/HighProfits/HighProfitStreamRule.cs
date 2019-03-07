@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Money;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
@@ -94,7 +93,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
             if (!RunRuleGuard(history))
             {

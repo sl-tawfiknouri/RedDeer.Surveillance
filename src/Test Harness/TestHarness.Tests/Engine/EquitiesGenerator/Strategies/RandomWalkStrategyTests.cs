@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using System;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;

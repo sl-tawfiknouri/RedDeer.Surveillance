@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Surveillance.Scheduling;
+using Domain.Core.Trading.Factories;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.Auditing.Context.Interfaces;
@@ -11,6 +12,8 @@ using Surveillance.Engine.Rules.RuleParameters.FixedIncome;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Specflow.Tests.StepDefinitions.Universe;
@@ -31,6 +34,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
         private IUniverseFixedIncomeOrderFilter _orderFilter;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
+        private IClusteringService _clusteringService;
+        private IPortfolioFactory _portfolioFactory;
 
         private UniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
 
@@ -48,6 +53,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
+            _portfolioFactory = new PortfolioFactory();
+            _clusteringService = new ClusteringService();
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
@@ -68,6 +75,14 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
             _parameters = new WashTradeRuleFixedIncomeParameters(
                 "0",
                 TimeSpan.FromHours(parameters.WindowHours),
+                parameters.PerformAveragePositionAnalysis,
+                parameters.PerformClusteringPositionAnalysis,
+                parameters.AveragePositionMinimumNumberOfTrades,
+                parameters.AveragePositionMaximumPositionValueChange,
+                parameters.AveragePositionMaximumAbsoluteValueChangeAmount,
+                parameters.AveragePositionMaximumAbsoluteValueChangeCurrency,
+                parameters.ClusteringPositionMinimumNumberOfTrades,
+                parameters.ClusteringPercentageValueDifferenceThreshold,
                 RuleFilter.None(),
                 RuleFilter.None(),
                 RuleFilter.None(),
@@ -91,6 +106,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
                 _interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,
                 _alertStream,
+                _clusteringService,
+                _portfolioFactory,
                 new NullLogger<FixedIncomeWashTradeRule>(),
                 new NullLogger<TradingHistoryStack>());
 

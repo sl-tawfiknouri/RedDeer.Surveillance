@@ -11,6 +11,14 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         public WashTradeRuleFixedIncomeParameters(
             string id,
             TimeSpan windowSize,
+            bool performAveragePositionAnalysis,
+            bool performClusteringPositionAnalysis,
+            int? averagePositionMinimumNumberOfTrades,
+            decimal? averagePositionMaximumPositionValueChange,
+            decimal? averagePositionMaximumAbsoluteValueChangeAmount,
+            string averagePositionMaximumAbsoluteValueChangeCurrency,
+            int? clusteringPositionMinimumNumberOfTrades,
+            decimal? clusteringPercentageValueDifferenceThreshold,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
@@ -21,6 +29,17 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
         {
             Id = id ?? string.Empty;
             WindowSize = windowSize;
+
+            PerformAveragePositionAnalysis = performAveragePositionAnalysis;
+            PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
+            AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
+            AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
+            AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
+            AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
+
+            ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
+            ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
+            
             Accounts = accounts ?? RuleFilter.None();
             Traders = traders ?? RuleFilter.None();
             Markets = markets ?? RuleFilter.None();
@@ -32,12 +51,24 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public string Id { get; }
         public TimeSpan WindowSize { get; }
+        
+        public bool PerformAveragePositionAnalysis { get; }
+        public bool PerformClusteringPositionAnalysis { get; }
+
+        public int? AveragePositionMinimumNumberOfTrades { get; }
+        public decimal? AveragePositionMaximumPositionValueChange { get; }
+        public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
+        public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
+
+        public int? ClusteringPositionMinimumNumberOfTrades { get; }
+        public decimal? ClusteringPercentageValueDifferenceThreshold { get; }
+
         public RuleFilter Accounts { get; set; }
         public RuleFilter Traders { get; set; }
         public RuleFilter Markets { get; set; }
         public RuleFilter Funds { get; set; }
         public RuleFilter Strategies { get; set; }
-
+        
         public bool HasFilters()
         {
             return
@@ -48,5 +79,21 @@ namespace Surveillance.Engine.Rules.RuleParameters.FixedIncome
 
         public IReadOnlyCollection<ClientOrganisationalFactors> Factors { get; set; }
         public bool AggregateNonFactorableIntoOwnCategory { get; set; }
+
+
+
+
+        // Removing from wash trade parameter interface soon
+        public bool PerformPairingPositionAnalysis => false;
+
+        public int? PairingPositionMinimumNumberOfPairedTrades => null;
+
+        public decimal? PairingPositionPercentagePriceChangeThresholdPerPair => null;
+
+        public decimal? PairingPositionPercentageVolumeDifferenceThreshold => null;
+
+        public decimal? PairingPositionMaximumAbsoluteMoney => null;
+
+        public string PairingPositionMaximumAbsoluteCurrency => null;
     }
 }

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Accord.MachineLearning;
 using Accord.Math.Distances;
-using Domain.Core.Financial;
 using Domain.Core.Trading.Orders;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
-    public class WashTradeClustering : IWashTradeClustering
+    public class ClusteringService : IClusteringService
     {
         public IReadOnlyCollection<PositionClusterCentroid> Cluster(IReadOnlyCollection<Order> frames)
         {

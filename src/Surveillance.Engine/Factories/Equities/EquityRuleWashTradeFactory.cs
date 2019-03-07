@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 
@@ -18,7 +19,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     {
         private readonly ICurrencyConverter _currencyConverter;
         private readonly IWashTradePositionPairer _positionPairer;
-        private readonly IWashTradeClustering _clustering;
+        private readonly IClusteringService _clustering;
         private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
@@ -29,7 +30,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         public EquityRuleWashTradeFactory(
             ICurrencyConverter currencyConverter,
             IWashTradePositionPairer positionPairer,
-            IWashTradeClustering clustering,
+            IClusteringService clustering,
             IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger,

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Domain.Core.Extensions;
-using Domain.Core.Financial;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;

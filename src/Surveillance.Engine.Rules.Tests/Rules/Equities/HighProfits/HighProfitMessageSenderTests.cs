@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
 using FakeItEasy;

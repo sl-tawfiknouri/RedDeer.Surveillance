@@ -21,6 +21,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
         private readonly IMarkingTheCloseMessageSender _markingTheCloseMessageSender;
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
+        private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         public UniverseAlertStreamSubscriberFactory(
@@ -31,6 +32,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
             IMarkingTheCloseMessageSender markingTheCloseMessageSender,
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender washTradeMessageSender,
+            IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _cancelledOrderMessageSender =
@@ -61,6 +63,10 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
                 washTradeMessageSender
                 ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
 
+            _fixedIncomeWashTradeMessageSender =
+                fixedIncomeWashTradeMessageSender
+                ?? throw new ArgumentNullException(nameof(washTradeMessageSender));
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -76,6 +82,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
                 _markingTheCloseMessageSender,
                 _spoofingMessageSender,
                 _washTradeMessageSender,
+                _fixedIncomeWashTradeMessageSender,
                 _logger);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;

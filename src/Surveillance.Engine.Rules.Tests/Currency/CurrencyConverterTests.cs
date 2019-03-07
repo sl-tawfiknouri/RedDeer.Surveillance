@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Money;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;

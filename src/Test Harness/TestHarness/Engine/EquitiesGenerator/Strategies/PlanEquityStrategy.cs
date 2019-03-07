@@ -1,5 +1,4 @@
 ﻿using System;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets.Timebars;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;

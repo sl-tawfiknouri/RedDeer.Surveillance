@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
-using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
 using Domain.Core.Markets;

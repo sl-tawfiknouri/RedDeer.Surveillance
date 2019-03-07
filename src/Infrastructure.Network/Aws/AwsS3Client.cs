@@ -33,10 +33,10 @@ namespace Infrastructure.Network.Aws
                     VersionId = versionId
                 };
 
-                _logger.LogInformation($"AwsS3Client fetching object with key {key}, versionId {versionId} from bucket {bucketName}.");
+                _logger.LogInformation($"fetching object with key {key}, versionId {versionId} from bucket {bucketName}.");
                 var result = await _s3Client.GetObjectAsync(getObjectRequest, cts.Token);
 
-                _logger.LogInformation($"AwsS3Client fetched object with key {key}, versionId {versionId} from bucket {bucketName}. Now writing to disk at {targetFile}");
+                _logger.LogInformation($"fetched object with key {key}, versionId {versionId} from bucket {bucketName}. Now writing to disk at {targetFile}");
                 await result.WriteResponseStreamToFileAsync(targetFile, false, cts.Token);
 
                 return true;

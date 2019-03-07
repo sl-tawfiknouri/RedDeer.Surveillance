@@ -7,6 +7,6 @@ namespace Domain.Surveillance.Rules
     {
         IReadOnlyCollection<Scheduling.Rules> LiveRules();
         bool RuleIsLive(Scheduling.Rules rule);
-        IReadOnlyCollection<Scheduling.Rules> UnliveRules();
+        IReadOnlyCollection<Scheduling.Rules> UnLiveRules();
     }
 }

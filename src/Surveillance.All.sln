@@ -109,6 +109,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network", "Infrastructure.Network\Infrastructure.Network.csproj", "{BE55D7F8-C613-4A28-8DB1-ECAA02652268}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Surveillance.Tests", "Domain.Surveillance.Tests\Domain.Surveillance.Tests.csproj", "{E664279E-9D1C-4A55-A061-C2C1074F2651}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -283,6 +285,10 @@ Global
 		{BE55D7F8-C613-4A28-8DB1-ECAA02652268}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE55D7F8-C613-4A28-8DB1-ECAA02652268}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE55D7F8-C613-4A28-8DB1-ECAA02652268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E664279E-9D1C-4A55-A061-C2C1074F2651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E664279E-9D1C-4A55-A061-C2C1074F2651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E664279E-9D1C-4A55-A061-C2C1074F2651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E664279E-9D1C-4A55-A061-C2C1074F2651}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -330,6 +336,7 @@ Global
 		{22DC6964-A96C-44C6-B577-4CE991AA6A93} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{09F6221A-96F5-4856-9CA3-B8688DD0B167} = {5214A434-9675-426D-BD03-A34FE2F963E5}
 		{BE55D7F8-C613-4A28-8DB1-ECAA02652268} = {5214A434-9675-426D-BD03-A34FE2F963E5}
+		{E664279E-9D1C-4A55-A061-C2C1074F2651} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

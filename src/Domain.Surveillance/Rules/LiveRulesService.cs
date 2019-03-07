@@ -29,7 +29,7 @@ namespace Domain.Surveillance.Rules
             return _liveRules;
         }
 
-        public IReadOnlyCollection<Scheduling.Rules> UnliveRules()
+        public IReadOnlyCollection<Scheduling.Rules> UnLiveRules()
         {
             var rules = Enum.GetValues(typeof(Scheduling.Rules));
             var castRules = rules.Cast<Scheduling.Rules>().ToList();

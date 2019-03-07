@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Queues
         {
             if (string.IsNullOrWhiteSpace(ruleRunId))
             {
-                _logger.LogError($"QueueDataSynchroniserRequestPublisher received a null or empty rule run id");
+                _logger.LogError($"received a null or empty rule run id");
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"QueueDataSynchroniserRequestPublisher encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.");
+                _logger.LogError($"encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.");
             }
         }
     }

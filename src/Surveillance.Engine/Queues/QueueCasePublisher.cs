@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Queues
         {
             if (message == null)
             {
-                _logger.LogWarning("QueueCasePublisher tried to send a null case message. Did not send to AWS.");
+                _logger.LogWarning("tried to send a null case message. Did not send to AWS.");
                 return;
             }
 
@@ -41,13 +41,13 @@ namespace Surveillance.Engine.Rules.Queues
 
             try
             {
-                _logger.LogInformation($"QueueCasePublisher Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
+                _logger.LogInformation($"Send | about to dispatch case {message.RuleBreachId} (id) to AWS queue");
                   await _awsQueueClient.SendToQueue(_awsConfiguration.CaseMessageQueueName, caseMessage, messageBusCts.Token);
-                _logger.LogInformation($"QueueCasePublisher Send | now dispatched case with id {message.RuleBreachId}");
+                _logger.LogInformation($"Send | now dispatched case with id {message.RuleBreachId}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception in QueueCasePublisher sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message}");
+                _logger.LogError($"Exception sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}");
             }
         }
     }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
-using Domain.Equity.TimeBars.Interfaces;
+using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Security;
+using SharedKernel.Files.Security.Interfaces;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 
 namespace TestHarness.Engine.EquitiesStorage

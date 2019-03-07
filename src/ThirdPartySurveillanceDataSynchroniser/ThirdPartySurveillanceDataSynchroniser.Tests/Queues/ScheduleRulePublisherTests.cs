@@ -1,12 +1,12 @@
 ﻿using System;
 using DataSynchroniser.Queues;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.Tests.Queues
 {

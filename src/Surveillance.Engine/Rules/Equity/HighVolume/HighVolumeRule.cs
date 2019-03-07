@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial;
-using Domain.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -48,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             ILogger<TradingHistoryStack> tradingHistoryLogger) 
             : base(
                 equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.HighVolume,
+                Domain.Surveillance.Scheduling.Rules.HighVolume,
                 EquityRuleHighVolumeFactory.Version,
                 "High Volume Rule",
                 opCtx,
@@ -120,7 +121,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                     tradedVolume);
 
             _logger.LogInformation($"RunRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Daily Breach {dailyBreach?.HasBreach} | Window Breach {windowBreach?.HasBreach} | Market Cap Breach {marketCapBreach?.HasBreach}. Passing to alert stream.");
-            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, breach, _ruleCtx);
+            var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, breach, _ruleCtx);
             _alertStream.Add(message);
         }
 
@@ -366,7 +367,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 // delete event
-                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighVolume, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

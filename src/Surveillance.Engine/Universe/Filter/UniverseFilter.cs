@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.Rules;
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
-        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.UniverseFilter;
+        public Domain.Surveillance.Scheduling.Rules Rule { get; } = Domain.Surveillance.Scheduling.Rules.UniverseFilter;
         public string Version { get; } = Versioner.Version(0, 0);
 
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)

@@ -1,4 +1,4 @@
-﻿using Domain.Trading;
+﻿using Domain.Core.Trading.Orders;
 
 namespace SharedKernel.Files.Allocations.Interfaces
 {

@@ -1,11 +1,11 @@
-﻿using Domain.DTO;
-using Domain.DTO.Interfaces;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
-using Domain.Streams;
+﻿using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Domain.Surveillance.Streams;
+using Domain.Surveillance.Streams.Interfaces;
 using RedDeer.Contracts.SurveillanceService;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
+using SharedKernel.Contracts.Queues;
+using SharedKernel.Contracts.Queues.Interfaces;
 using StructureMap;
 using Surveillance.Engine.Rules.Analysis;
 using Surveillance.Engine.Rules.Analysis.Interfaces;

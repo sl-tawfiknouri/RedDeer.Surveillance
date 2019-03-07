@@ -1,7 +1,8 @@
-﻿using Domain.Equity.TimeBars.Interfaces;
+﻿using Domain.Core.Markets.Timebars;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Security.Interfaces;
 
-namespace Domain.Equity.TimeBars
+namespace SharedKernel.Files.Security
 {
     public class DtoToSecurityCsvMapper : IDtoToSecurityCsvMapper
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
-using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
+using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {

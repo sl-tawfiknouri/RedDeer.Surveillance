@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces
 {

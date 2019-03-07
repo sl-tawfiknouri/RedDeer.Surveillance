@@ -1,9 +1,9 @@
 ﻿using System;
 using Dapper;
+using Infrastructure.Network.Aws.Interfaces;
 using MySql.Data.MySqlClient;
 using TestHarness.Display.Interfaces;
 using TestHarness.Repository.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace TestHarness.Repository
 {

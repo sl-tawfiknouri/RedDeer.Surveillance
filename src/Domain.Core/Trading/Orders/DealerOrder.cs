@@ -1,9 +1,10 @@
-﻿using Domain.Core.Financial;
-using Domain.Core.Financial.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Assets.Interfaces;
+using Domain.Core.Financial.Money;
 
-namespace Domain.Trading
+namespace Domain.Core.Trading.Orders
 {
     public class DealerOrder : BaseOrder
     {

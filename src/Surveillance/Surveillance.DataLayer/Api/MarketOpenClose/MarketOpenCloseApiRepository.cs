@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using Surveillance.DataLayer.Api.MarketOpenClose.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.MarketOpenClose
 {

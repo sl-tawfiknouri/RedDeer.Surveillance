@@ -1,7 +1,9 @@
 ﻿using System;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Tests.Helpers
 {
@@ -39,8 +41,8 @@ namespace Surveillance.Engine.Rules.Tests.Helpers
                 null,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Currency("GBP"),
-                new Domain.Core.Financial.Currency("GBP"),
+                new Domain.Core.Financial.Money.Currency("GBP"),
+                new Domain.Core.Financial.Money.Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(price.GetValueOrDefault(20), "GBP"),

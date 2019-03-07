@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 
 namespace Surveillance.Engine.DataCoordinator.Queues.Interfaces
 {

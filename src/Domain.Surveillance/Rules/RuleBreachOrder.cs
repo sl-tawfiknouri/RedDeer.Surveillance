@@ -1,4 +1,4 @@
-﻿namespace Domain.Trading
+﻿namespace Domain.Surveillance.Rules
 {
     public class RuleBreachOrder
     {

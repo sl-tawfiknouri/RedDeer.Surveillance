@@ -1,5 +1,5 @@
-﻿using Domain.Equity.TimeBars;
-using Domain.Streams.Interfaces;
+﻿using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator.Strategies.Interfaces
 {

@@ -16,7 +16,6 @@
     <ProjectReference Include="..\..\Surveillance.Engine.RuleDistributor\Surveillance.Engine.RuleDistributor.csproj" />
     <ProjectReference Include="..\..\Surveillance.Engine\Surveillance.Engine.Rules.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
-    <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 

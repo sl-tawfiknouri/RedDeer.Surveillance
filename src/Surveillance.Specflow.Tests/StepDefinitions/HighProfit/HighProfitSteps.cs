@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

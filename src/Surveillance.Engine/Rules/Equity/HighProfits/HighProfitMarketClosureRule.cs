@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Domain.Core.Financial;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -87,7 +88,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
             var position = new TradePosition(activeWindow.ToList());
 
-            var message = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
+            var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, position, _ruleCtx) { IsRemoveEvent = true };
             _alertStream.Add(message);
 
             Logger.LogInformation($"RunRuleGuard securities brought {securitiesBrought} exceeded or equalled securities sold {securitiesSold}. Not proceeding to evaluate market closure rule.");

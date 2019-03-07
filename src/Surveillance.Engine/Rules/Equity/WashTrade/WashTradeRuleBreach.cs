@@ -6,6 +6,8 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Trading;
+using Domain.Surveillance.Rules;
 
 namespace Surveillance.DataLayer.Aurora.Rules.Interfaces
 {

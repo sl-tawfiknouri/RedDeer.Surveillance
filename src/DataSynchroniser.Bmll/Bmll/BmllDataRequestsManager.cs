@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
-using Domain.Markets;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using PollyFacade.Policies.Interfaces;
+using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Bmll
 {

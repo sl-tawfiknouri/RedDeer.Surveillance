@@ -1,7 +1,7 @@
-﻿using Domain.DTO.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using SharedKernel.Contracts.Queues.Interfaces;
 
-namespace Domain.DTO
+namespace SharedKernel.Contracts.Queues
 {
     public class ThirdPartyDataRequestSerialiser : IThirdPartyDataRequestSerialiser
     {

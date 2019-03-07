@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Financial;
+using Domain.Core.Financial.Money;
 
 namespace Surveillance.Engine.Rules.Markets.Interfaces
 {

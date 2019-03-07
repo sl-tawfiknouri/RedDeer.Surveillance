@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.FixedIncomeWashTrades,
+                Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleCtx,

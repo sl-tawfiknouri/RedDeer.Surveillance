@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Trading.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Interfaces;

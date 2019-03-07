@@ -8,7 +8,7 @@ namespace Surveillance.Engine.Rules.Currency.Interfaces
     {
         Task<decimal> WeightedExchangeRate(
             ITradePosition position,
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx);
     }
 }

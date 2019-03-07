@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Contracts;
 using FakeItEasy;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
+using SharedKernel.Contracts.Queues;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Tests.Queues
 {

@@ -1,13 +1,13 @@
 ﻿using System;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Queues;
 using Surveillance.Engine.Rules.Utility.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.Scheduler
 {

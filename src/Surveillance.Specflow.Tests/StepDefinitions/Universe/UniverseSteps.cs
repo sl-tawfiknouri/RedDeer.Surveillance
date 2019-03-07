@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
 using Surveillance.Engine.Rules.Universe;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
@@ -12,6 +10,11 @@ using Surveillance.Specflow.Tests.StepDefinitions.Orders;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
 {

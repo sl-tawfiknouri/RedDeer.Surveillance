@@ -2,10 +2,10 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
-using Utilities.HttpClient.Interfaces;
 
-namespace Utilities.HttpClient
+namespace Infrastructure.Network.HttpClient
 {
     public class HttpClientFactory : IHttpClientFactory
     {

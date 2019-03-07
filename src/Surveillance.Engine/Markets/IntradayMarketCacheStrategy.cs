@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Markets;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Markets

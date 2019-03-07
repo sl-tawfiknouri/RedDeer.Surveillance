@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Distributor.Interfaces

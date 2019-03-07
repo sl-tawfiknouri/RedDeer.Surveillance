@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Surveillance.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Subscriber
         public void InitiateTimeLogger_LogsWhenExpected_3HourRun()
         {
             var timeCompletionLogger = new UniversePercentageOfTimeCompletionLogger(_logger);
-            var scheduledExecution = new Domain.Scheduling.ScheduledExecution
+            var scheduledExecution = new ScheduledExecution
             {
                 TimeSeriesInitiation = DateTimeOffset.Now,
                 TimeSeriesTermination = DateTimeOffset.Now.AddMinutes(100)

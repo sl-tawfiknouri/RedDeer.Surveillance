@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using DataSynchroniser.Api.Bmll.Filters.Interfaces;
 using DataSynchroniser.Api.Bmll.Interfaces;
-using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll

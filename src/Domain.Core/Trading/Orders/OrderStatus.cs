@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Domain.Core.Financial
+namespace Domain.Core.Trading.Orders
 {
     public enum OrderStatus
     {

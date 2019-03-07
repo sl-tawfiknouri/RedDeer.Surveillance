@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Firefly.Service.Data.BMLL.Shared.Commands;
 using Firefly.Service.Data.BMLL.Shared.Emuns;
 using Firefly.Service.Data.BMLL.Shared.Requests;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PollyFacade.Policies.Interfaces;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.BmllMarketData
 {

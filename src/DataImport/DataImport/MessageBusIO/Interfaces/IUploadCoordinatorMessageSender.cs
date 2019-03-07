@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Contracts;
+using SharedKernel.Contracts.Queues;
 
 namespace DataImport.MessageBusIO.Interfaces
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Equity.Streams.Interfaces;
+using Domain.Surveillance.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

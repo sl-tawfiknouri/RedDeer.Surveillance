@@ -22,9 +22,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
     <ProjectReference Include="..\..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\..\Infrastructure.Network\Infrastructure.Network.csproj" />
     <ProjectReference Include="..\..\PollyFacade\PollyFacade.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
-    <ProjectReference Include="..\..\Utilities\Utilities.csproj" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>

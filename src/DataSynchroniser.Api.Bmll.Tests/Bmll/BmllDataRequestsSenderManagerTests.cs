@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Bmll.Bmll;
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
-using Domain.Markets;
 using FakeItEasy;
 using Firefly.Service.Data.BMLL.Shared.Dtos;
 using Firefly.Service.Data.BMLL.Shared.Requests;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PollyFacade.Policies.Interfaces;
+using SharedKernel.Contracts.Markets;
 using Surveillance.DataLayer.Api.BmllMarketData;
 using Surveillance.DataLayer.Api.BmllMarketData.Interfaces;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Trading
+namespace Domain.Core.Trading.Orders
 {
     public class OrderAllocationDecorator : Order
     {
@@ -32,7 +32,7 @@ namespace Domain.Trading
                 order.OrderDirection,
                 order.OrderCurrency,
                 order.OrderSettlementCurrency,
-                order.OrderCleanDirty.GetValueOrDefault(Core.Financial.OrderCleanDirty.NONE),
+                order.OrderCleanDirty.GetValueOrDefault(Orders.OrderCleanDirty.NONE),
                 order.OrderAccumulatedInterest,
                 order.OrderLimitPrice,
                 order.OrderAverageFillPrice,

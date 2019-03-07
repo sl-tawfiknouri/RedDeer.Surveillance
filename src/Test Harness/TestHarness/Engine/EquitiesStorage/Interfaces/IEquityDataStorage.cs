@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams.Interfaces;
 
 namespace TestHarness.Engine.EquitiesStorage.Interfaces
 {

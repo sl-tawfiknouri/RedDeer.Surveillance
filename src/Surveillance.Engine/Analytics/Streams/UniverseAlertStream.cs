@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Equity.Streams.Interfaces;
+using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 

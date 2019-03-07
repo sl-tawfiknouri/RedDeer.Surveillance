@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Queues.Interfaces;
-using Domain.DTO.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Queues.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.Queues
 {

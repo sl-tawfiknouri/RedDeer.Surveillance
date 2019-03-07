@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Streams
+namespace Domain.Surveillance.Streams
 {
     public interface IPublishingStream<T> : IObservable<T> 
     {

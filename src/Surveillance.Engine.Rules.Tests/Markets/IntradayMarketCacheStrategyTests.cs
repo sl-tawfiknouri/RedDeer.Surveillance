@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Markets;
 using FakeItEasy;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Engine.Rules.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 

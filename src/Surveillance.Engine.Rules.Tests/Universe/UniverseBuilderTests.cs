@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars;
-using Domain.Scheduling;
-using Domain.Trading;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

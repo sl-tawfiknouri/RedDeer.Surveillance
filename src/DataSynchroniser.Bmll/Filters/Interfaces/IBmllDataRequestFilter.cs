@@ -1,4 +1,4 @@
-﻿using Domain.Markets;
+﻿using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Filters.Interfaces
 {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -19,6 +18,8 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
 {
@@ -54,7 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.WashTrade,
+                Domain.Surveillance.Scheduling.Rules.WashTrade,
                 EquityRuleWashTradeFactory.Version,
                 "Wash Trade Rule",
                 ruleCtx,
@@ -136,7 +137,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     pairingPositionsCheck,
                     clusteringPositionCheck);
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.WashTrade, breach, RuleCtx);
+            var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.WashTrade, breach, RuleCtx);
             _alertStream.Add(universeAlert);
         }
 
@@ -227,7 +228,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var currency = activeTrades.FirstOrDefault()?.OrderCurrency;
             var absMoney = new Money(absDifference, currency?.Code ?? string.Empty);
 
-            var targetCurrency = new Domain.Core.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] {absMoney}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
@@ -363,10 +364,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             }
 
             var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Core.Financial.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Code ?? string.Empty);
+            var currency = new Domain.Core.Financial.Money.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Code ?? string.Empty);
             var absMoney = new Money(absDifference, currency);
 
-            var targetCurrency = new Domain.Core.Financial.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
+            var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
             var convertedCurrency = await _currencyConverter.Convert(new[] { absMoney }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)

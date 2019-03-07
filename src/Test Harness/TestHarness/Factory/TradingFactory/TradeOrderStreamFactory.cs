@@ -1,6 +1,6 @@
-﻿using Domain.Streams;
-using Domain.Streams.Interfaces;
-using Domain.Trading;
+﻿using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Streams;
+using Domain.Surveillance.Streams.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.TradingFactory.Interfaces;

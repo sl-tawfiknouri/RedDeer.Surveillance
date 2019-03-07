@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Extensions;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
 
-namespace Domain.Trading
+namespace Domain.Core.Trading.Orders
 {
     /// <summary>
     /// This is the Order from within the firm originating the order

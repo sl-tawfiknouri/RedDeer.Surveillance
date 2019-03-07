@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -8,6 +7,8 @@ using Surveillance.Engine.Rules.Rules.Equity.Spoofing.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 {

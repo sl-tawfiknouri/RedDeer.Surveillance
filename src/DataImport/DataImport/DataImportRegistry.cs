@@ -12,14 +12,14 @@ using DataImport.S3_IO;
 using DataImport.S3_IO.Interfaces;
 using DataImport.Services;
 using DataImport.Services.Interfaces;
-using Domain.Equity.Streams;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
-using Domain.Equity.TimeBars.Interfaces;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
-using Domain.Streams;
-using Domain.Streams.Interfaces;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Domain.Surveillance.Streams;
+using Domain.Surveillance.Streams.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
+using Infrastructure.Network.Disk;
+using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService;
@@ -28,11 +28,9 @@ using SharedKernel.Files.Allocations;
 using SharedKernel.Files.Allocations.Interfaces;
 using SharedKernel.Files.Orders;
 using SharedKernel.Files.Orders.Interfaces;
+using SharedKernel.Files.Security;
+using SharedKernel.Files.Security.Interfaces;
 using StructureMap;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
-using Utilities.Disk_IO;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport
 {

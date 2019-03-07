@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
 using MathNet.Numerics.Distributions;
 using RedDeer.Contracts.SurveillanceService.Api.Markets;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityPrices;

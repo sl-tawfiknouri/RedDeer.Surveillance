@@ -6,7 +6,7 @@ namespace Surveillance.Engine.Rules.Analytics.Streams
     public class UniverseAlertEvent : IUniverseAlertEvent
     {
         public UniverseAlertEvent(
-            Domain.Scheduling.Rules rule, 
+            Domain.Surveillance.Scheduling.Rules rule, 
             object underlyingAlert,
             ISystemProcessOperationRunRuleContext context,
             bool isFlushEvent = false,
@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Analytics.Streams
             IsDeleteEvent = isDeleteEvent;
         }
 
-        public Domain.Scheduling.Rules Rule { get; }
+        public Domain.Surveillance.Scheduling.Rules Rule { get; }
         public bool IsFlushEvent { get; set; }
         public bool IsDeleteEvent { get; set; }
         public bool IsRemoveEvent { get; set; }

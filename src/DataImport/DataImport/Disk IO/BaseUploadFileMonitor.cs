@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataImport.Disk_IO.Interfaces;
+using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO
 {

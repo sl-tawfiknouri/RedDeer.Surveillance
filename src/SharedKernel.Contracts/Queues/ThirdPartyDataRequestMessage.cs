@@ -1,4 +1,4 @@
-﻿namespace Domain.DTO
+﻿namespace SharedKernel.Contracts.Queues
 {
     public class ThirdPartyDataRequestMessage
     {

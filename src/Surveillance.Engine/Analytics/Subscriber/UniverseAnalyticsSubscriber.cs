@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Analytics;
 using Surveillance.Engine.Rules.Analytics.Subscriber.Interfaces;

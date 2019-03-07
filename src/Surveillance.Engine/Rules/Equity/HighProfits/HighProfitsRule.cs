@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             _marketClosureRule.OnNext(value);
         }
 
-        public Domain.Scheduling.Rules Rule { get; } = Domain.Scheduling.Rules.HighProfits;
+        public Domain.Surveillance.Scheduling.Rules Rule { get; } = Domain.Surveillance.Scheduling.Rules.HighProfits;
         public string Version { get; } = EquityRuleHighProfitFactory.Version;
 
         public IUniverseCloneableRule Clone(IFactorValue factor)

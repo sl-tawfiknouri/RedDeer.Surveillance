@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.Auditing.Context.Interfaces;
 

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.DTO;
-using Domain.DTO.Interfaces;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Queues;
+using SharedKernel.Contracts.Queues.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.Rules.Queues
 {

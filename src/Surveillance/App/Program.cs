@@ -5,6 +5,7 @@ using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
 using DasMulli.Win32.ServiceUtils;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using RedDeer.Surveillance.App.Interfaces;
@@ -22,7 +23,7 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
-using Utilities.Aws_IO.Interfaces;
+
 // ReSharper disable UnusedParameter.Local
 
 namespace RedDeer.Surveillance.App

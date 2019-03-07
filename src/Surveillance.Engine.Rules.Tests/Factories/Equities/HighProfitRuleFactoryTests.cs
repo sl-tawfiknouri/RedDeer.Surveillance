@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Streams.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

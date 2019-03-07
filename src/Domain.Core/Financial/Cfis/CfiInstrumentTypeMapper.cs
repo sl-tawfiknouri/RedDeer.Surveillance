@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Cfis.Interfaces;
 
 namespace Domain.Core.Financial.Cfis

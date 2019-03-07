@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
@@ -861,7 +863,7 @@ namespace Surveillance.DataLayer.Aurora.Orders
             var orderCleanDirty = (OrderCleanDirty)dto.CleanDirty.GetValueOrDefault(0);
             var orderAccumulatedInterest = dto.AccumulatedInterest;
 
-            var market = new Domain.Core.Financial.Markets.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
+            var market = new Domain.Core.Markets.Market(dto.MarketId, dto.MarketIdentifierCode, dto.MarketName, result);
             var dealerOrders = dto.DealerOrders?.Select(tr => Project(tr, financialInstrument)).ToList() ?? new List<DealerOrder>();
 
             var optionEuropeanAmerican = (OptionEuropeanAmerican) dto.OptionEuropeanAmerican.GetValueOrDefault(0);

@@ -1,5 +1,8 @@
 ﻿using Domain.Core.Financial.Cfis;
 using Domain.Core.Financial.Cfis.Interfaces;
+using Infrastructure.Network.Aws_IO;
+using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.HttpClient.Interfaces;
 using PollyFacade.Policies;
 using PollyFacade.Policies.Interfaces;
 using StructureMap;
@@ -29,10 +32,7 @@ using Surveillance.DataLayer.Aurora.Orders;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
-using Utilities.HttpClient;
-using Utilities.HttpClient.Interfaces;
+using Infrastructure.Network.HttpClient;
 
 namespace Surveillance.DataLayer
 {

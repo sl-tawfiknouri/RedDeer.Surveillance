@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Utilities.Aws_IO.Interfaces
+namespace Infrastructure.Network.Aws_IO.Interfaces
 {
     public interface IAwsS3Client
     {

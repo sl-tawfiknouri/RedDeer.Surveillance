@@ -1,7 +1,7 @@
-﻿using Domain.Core.Financial;
-using System;
+﻿using System;
+using Domain.Core.Financial.Assets;
 
-namespace Domain.Markets
+namespace SharedKernel.Contracts.Markets
 {
     public class MarketDataRequest
     {

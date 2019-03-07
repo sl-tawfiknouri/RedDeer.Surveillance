@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws_IO;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.RuleDistributor.Distributor.Interfaces;
 using Surveillance.Engine.RuleDistributor.Queues.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.RuleDistributor.Queues
 {

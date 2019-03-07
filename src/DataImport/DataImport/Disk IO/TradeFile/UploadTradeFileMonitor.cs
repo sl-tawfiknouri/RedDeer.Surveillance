@@ -6,15 +6,15 @@ using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
-using Domain.Contracts;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
+using Infrastructure.Network.Disk_IO.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Queues;
 using SharedKernel.Files.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.TradeFile
 {

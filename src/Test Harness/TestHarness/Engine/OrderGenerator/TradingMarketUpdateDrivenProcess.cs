@@ -1,5 +1,5 @@
-﻿using Domain.Equity.TimeBars;
-using Domain.Trading;
+﻿using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 

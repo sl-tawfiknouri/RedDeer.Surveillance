@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Utilities.Aws_IO.Interfaces;
 
-namespace Utilities.Aws_IO
+namespace Infrastructure.Network.Aws_IO
 {
     public class AwsS3Client : IAwsS3Client
     {

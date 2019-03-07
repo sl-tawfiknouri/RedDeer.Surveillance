@@ -6,15 +6,16 @@ using DataImport.Disk_IO.TradeFile;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
+using Infrastructure.Network.Disk_IO;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using SharedKernel.Files.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Utilities.Disk_IO;
 
 namespace DataImport.Integration.Tests.Validation
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Core.Financial
+namespace Domain.Core.Dates
 {
     public class DateRange
     {

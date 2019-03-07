@@ -1,4 +1,4 @@
-﻿namespace Utilities.Aws_IO
+﻿namespace Infrastructure.Network.Aws_IO
 {
     public class AwsResusableCancellationToken
     {

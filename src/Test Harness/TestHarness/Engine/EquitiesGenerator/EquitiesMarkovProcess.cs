@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;

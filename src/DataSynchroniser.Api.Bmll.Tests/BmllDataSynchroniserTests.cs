@@ -2,10 +2,10 @@
 using DataSynchroniser.Api.Bmll.Bmll.Interfaces;
 using DataSynchroniser.Api.Bmll.Filters;
 using DataSynchroniser.Api.Bmll.Filters.Interfaces;
-using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace DataSynchroniser.Api.Bmll.Tests

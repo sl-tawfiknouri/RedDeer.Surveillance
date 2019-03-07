@@ -1,9 +1,8 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
-using Domain.Equity.Streams;
-using Domain.Equity.TimeBars;
-using Domain.Streams;
+using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.EquitiesGenerator;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;

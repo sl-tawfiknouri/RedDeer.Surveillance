@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -168,8 +170,8 @@ namespace Surveillance.Engine.Rules.Tests.Trades
                 filledDate,
                 OrderTypes.MARKET,
                 OrderDirections.BUY,
-                new Domain.Core.Financial.Currency("GBP"), 
-                new Domain.Core.Financial.Currency("GBP"),
+                new Domain.Core.Financial.Money.Currency("GBP"), 
+                new Domain.Core.Financial.Money.Currency("GBP"),
                 OrderCleanDirty.NONE,
                 null,
                 new Money(1000, "GBP"),

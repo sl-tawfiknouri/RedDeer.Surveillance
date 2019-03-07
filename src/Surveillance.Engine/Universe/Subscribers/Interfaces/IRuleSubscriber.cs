@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;

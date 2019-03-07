@@ -1,6 +1,7 @@
 ﻿using System;
 using Domain.Core.Financial;
-using Domain.Equity.TimeBars;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets.Timebars;
 using TestHarness.Engine.EquitiesGenerator.Strategies.Interfaces;
 using TestHarness.Engine.Plans;
 

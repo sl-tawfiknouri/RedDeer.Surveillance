@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using SharedKernel.Files.Allocations.Interfaces;
 
 namespace SharedKernel.Files.Allocations

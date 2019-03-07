@@ -1,4 +1,5 @@
 ﻿using System;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,6 @@ using Surveillance.Engine.DataCoordinator;
 using Surveillance.Engine.DataCoordinator.Configuration.Interfaces;
 using Surveillance.Engine.RuleDistributor;
 using Surveillance.Engine.Rules;
-using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.Surveillance.App
 {

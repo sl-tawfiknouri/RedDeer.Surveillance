@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Domain.DTO;
-using Domain.DTO.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Aws_IO;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using SharedKernel.Contracts.Queues;
+using SharedKernel.Contracts.Queues.Interfaces;
 using Surveillance.DataLayer.Configuration;
 using Surveillance.Engine.Rules.Queues;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.Rules.Tests.MessageBusIO
 {

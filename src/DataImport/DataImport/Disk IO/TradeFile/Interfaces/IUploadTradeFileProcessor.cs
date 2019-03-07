@@ -1,4 +1,4 @@
-﻿using Domain.Trading;
+﻿using Domain.Core.Trading.Orders;
 using SharedKernel.Files.Orders;
 
 namespace DataImport.Disk_IO.TradeFile.Interfaces

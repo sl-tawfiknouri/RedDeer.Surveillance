@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using PollyFacade.Policies.Interfaces;
@@ -10,7 +11,6 @@ using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData;
 using Surveillance.DataLayer.Configuration.Interfaces;
 using Surveillance.DataLayer.Tests.Helpers;
-using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Tests.Api.FactsetMarketData
 {

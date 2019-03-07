@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Financial
+﻿namespace Domain.Core.Financial.Assets
 {
     public enum OptionEuropeanAmerican
     {

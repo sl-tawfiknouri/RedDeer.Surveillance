@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

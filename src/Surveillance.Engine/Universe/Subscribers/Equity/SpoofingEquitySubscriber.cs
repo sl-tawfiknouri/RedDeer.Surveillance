@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
+using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
@@ -17,7 +18,6 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
-using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Scheduling.Rules.Spoofing)
+            if (!execution.Rules?.Select(ab => ab.Rule)?.ToList().Contains(Domain.Surveillance.Scheduling.Rules.Spoofing)
                 ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
@@ -115,10 +115,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.Spoofing.GetDescription(),
+                    Domain.Surveillance.Scheduling.Rules.Spoofing.GetDescription(),
                     EquityRuleSpoofingFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.Spoofing,
+                    (int)Domain.Surveillance.Scheduling.Rules.Spoofing,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

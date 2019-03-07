@@ -1,8 +1,8 @@
-﻿using Domain.Core.Financial.Markets;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Domain.Core.Markets.Timebars;
 
-namespace Domain.Equity.TimeBars
+namespace Domain.Core.Markets.Collections
 {
     /// <summary>
     /// An aggregation of security time bars

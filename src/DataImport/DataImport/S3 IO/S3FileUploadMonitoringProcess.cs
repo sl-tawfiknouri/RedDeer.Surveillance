@@ -7,9 +7,9 @@ using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
+using Infrastructure.Network.Aws_IO;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataImport.S3_IO
 {

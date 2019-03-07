@@ -3,14 +3,17 @@ using MathNet.Numerics.Distributions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Domain.Equity.TimeBars;
-using Domain.Streams.Interfaces;
-using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Streams.Interfaces;
 
 namespace TestHarness.Tests.Engine.OrderGenerator.Strategies
 {

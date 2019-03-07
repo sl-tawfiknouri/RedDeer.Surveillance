@@ -1,10 +1,12 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars.Interfaces;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Timebars;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Security.Interfaces;
 
-namespace Domain.Equity.TimeBars
+namespace SharedKernel.Files.Security
 {
     public class SecurityCsvToDtoMapper : ISecurityCsvToDtoMapper
     {

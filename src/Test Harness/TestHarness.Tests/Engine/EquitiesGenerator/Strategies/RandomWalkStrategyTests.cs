@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using Domain.Equity.TimeBars;
 using TestHarness.Engine.EquitiesGenerator.Strategies;
 using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Timebars;
 
 namespace TestHarness.Tests.Engine.EquitiesGenerator.Strategies
 {

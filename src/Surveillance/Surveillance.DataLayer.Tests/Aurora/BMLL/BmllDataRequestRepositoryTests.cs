@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 using Surveillance.DataLayer.Aurora;
 using Surveillance.DataLayer.Aurora.BMLL;
 using Surveillance.DataLayer.Configuration.Interfaces;

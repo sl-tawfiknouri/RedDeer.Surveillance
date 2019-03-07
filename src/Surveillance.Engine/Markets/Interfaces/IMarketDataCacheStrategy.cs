@@ -1,4 +1,4 @@
-﻿using Domain.Markets;
+﻿using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Markets.Interfaces
 {

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.TimeBars;
-using Domain.Markets;
-using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -20,6 +17,9 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
 using Domain.Core.Financial;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
+using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 {
@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.WindowSize ?? TimeSpan.FromMinutes(20),
-                Domain.Scheduling.Rules.Layering,
+                Domain.Surveillance.Scheduling.Rules.Layering,
                 EquityRuleLayeringFactory.Version,
                 "Layering Rule",
                 opCtx,
@@ -119,7 +119,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             if (layeringRuleBreach != null)
             {
                 _logger.LogInformation($"RunInitialSubmissionRule had a breach for {mostRecentTrade?.Instrument?.Identifiers}. Passing to alert stream.");
-                var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
+                var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, layeringRuleBreach, _ruleCtx);
                 _alertStream.Add(universeAlert);
             }
         }
@@ -520,7 +520,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         {
             _logger.LogInformation("Eschaton occured");
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.Layering, null, _ruleCtx, true);
+            var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Layering, null, _ruleCtx, true);
             _alertStream.Add(universeAlert);
 
             if (_hadMissingData)

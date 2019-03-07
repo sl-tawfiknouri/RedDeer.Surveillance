@@ -3,13 +3,13 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using PollyFacade.Policies.Interfaces;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.FactsetMarketData
 {

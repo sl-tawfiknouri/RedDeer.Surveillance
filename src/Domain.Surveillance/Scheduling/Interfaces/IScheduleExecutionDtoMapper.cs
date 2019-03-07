@@ -1,4 +1,4 @@
-﻿namespace Domain.Scheduling.Interfaces
+﻿namespace Domain.Surveillance.Scheduling.Interfaces
 {
     public interface IScheduleExecutionDtoMapper
     {

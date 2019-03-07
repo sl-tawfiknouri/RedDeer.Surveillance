@@ -1,5 +1,7 @@
-﻿using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+﻿using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws_IO;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
 using TestHarness.Commands;
@@ -32,8 +34,6 @@ using TestHarness.Repository.Api;
 using TestHarness.Repository.Api.Interfaces;
 using TestHarness.Repository.Aurora;
 using TestHarness.Repository.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace TestHarness.Factory
 {

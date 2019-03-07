@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Factset.Interfaces;
-using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.DataLayer.Aurora.Market.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Factset

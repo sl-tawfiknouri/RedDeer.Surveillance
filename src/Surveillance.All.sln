@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Utilities\Utilities.csproj", "{37E48D27-2C7A-4E19-9F5F-62E8A3ECA3F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network", "Utilities\Infrastructure.Network.csproj", "{37E48D27-2C7A-4E19-9F5F-62E8A3ECA3F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.App", "Surveillance\App\Surveillance.App.csproj", "{7FF64A54-B10E-4EF4-8E53-3FB0B4C5F95E}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.DataLayer.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Tests", "Surveillance\Surveillance.Tests\Surveillance.Tests.csproj", "{C09EC5C7-6732-48BD-BC49-BE2E1A54CFDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities.Tests", "Utilities.Tests\Utilities.Tests.csproj", "{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network.Tests", "Utilities.Tests\Infrastructure.Network.Tests.csproj", "{4221F5C3-0DDA-42D0-AF9D-02A9B1ACF978}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{E546D723-A50D-4D86-9E51-555F19A503AC}"
 	ProjectSection(SolutionItems) = preProject
@@ -79,7 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mar Engine", "Mar Engine", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Harness", "Test Harness", "{BD399509-342E-47C3-A2AE-DFF418E01CF7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{5214A434-9675-426D-BD03-A34FE2F963E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{5214A434-9675-426D-BD03-A34FE2F963E5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Engine.DataCoordinator.Tests", "Surveillance.Engine.DataCoordinator.Tests\Surveillance.Engine.DataCoordinator.Tests.csproj", "{5A54ED4B-2635-444F-8955-607EF8A6329D}"
 EndProject
@@ -106,6 +106,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Surveillance", "Domain.Surveillance\Domain.Surveillance.csproj", "{3EF93BF4-7AD5-47BF-89C2-D2BDB523EDB4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.Contracts", "SharedKernel.Contracts\SharedKernel.Contracts.csproj", "{E29E7F22-7F70-44BD-86DC-22350FEA427D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Core.Tests", "Domain.Core.Tests\Domain.Core.Tests.csproj", "{22DC6964-A96C-44C6-B577-4CE991AA6A93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -277,6 +279,10 @@ Global
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -323,6 +329,7 @@ Global
 		{D26273B1-FF4D-43D3-8F67-8035F939FB47} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{3EF93BF4-7AD5-47BF-89C2-D2BDB523EDB4} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
+		{22DC6964-A96C-44C6-B577-4CE991AA6A93} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

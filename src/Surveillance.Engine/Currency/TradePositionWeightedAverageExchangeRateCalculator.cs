@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Currency
 
         public async Task<decimal> WeightedExchangeRate(
             ITradePosition position,
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (position == null

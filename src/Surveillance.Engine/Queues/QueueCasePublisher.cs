@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.Rules.Queues
 {

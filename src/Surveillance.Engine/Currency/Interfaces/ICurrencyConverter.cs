@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Money;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces
@@ -10,7 +11,7 @@ namespace Surveillance.Engine.Rules.Currency.Interfaces
     {
         Task<Money?> Convert(
             IReadOnlyCollection<Money> monies,
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             DateTime dayOfConversion,
             ISystemProcessOperationRunRuleContext ruleCtx);
     }

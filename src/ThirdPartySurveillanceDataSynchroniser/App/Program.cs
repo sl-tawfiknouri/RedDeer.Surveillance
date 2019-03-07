@@ -9,6 +9,7 @@ using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
@@ -19,7 +20,6 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace DataSynchroniser.App

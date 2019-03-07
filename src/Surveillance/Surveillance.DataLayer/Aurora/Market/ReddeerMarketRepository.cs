@@ -4,9 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Cfis.Interfaces;
-using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.SecurityEnrichment;
 using Surveillance.Auditing.Context.Interfaces;
@@ -443,7 +446,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                 })
                             .Select(i =>
                             {
-                                var market = new Domain.Core.Financial.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var market = new Domain.Core.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new EquityIntraDayTimeBarCollection(
                                         market,
@@ -520,7 +523,7 @@ namespace Surveillance.DataLayer.Aurora.Market
                                 })
                             .Select(i =>
                             {
-                                var market = new Domain.Core.Financial.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
+                                var market = new Domain.Core.Markets.Market(i.Key1, i.Key4, i.Key2, MarketTypes.STOCKEXCHANGE);
                                 var frame =
                                     new EquityInterDayTimeBarCollection(
                                         market,
@@ -635,7 +638,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             public MarketUpdateDto()
             { }
 
-            public MarketUpdateDto(Domain.Core.Financial.Markets.Market market)
+            public MarketUpdateDto(Domain.Core.Markets.Market market)
             {
                 MarketId = market.MarketIdentifierCode;
                 MarketName = market.Name;
@@ -647,7 +650,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             // ReSharper restore MemberCanBePrivate.Local
         }
 
-        private EquityInstrumentIntraDayTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Financial.Markets.Market market)
+        private EquityInstrumentIntraDayTimeBar ProjectToSecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Markets.Market market)
         {
             if (dto == null)
             {
@@ -707,7 +710,7 @@ namespace Surveillance.DataLayer.Aurora.Market
             return tick;
         }
 
-        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Financial.Markets.Market market)
+        private EquityInstrumentInterDayTimeBar ProjectToInterDaySecurity(MarketStockExchangeSecuritiesDto dto, Domain.Core.Markets.Market market)
         {
             if (dto == null)
             {

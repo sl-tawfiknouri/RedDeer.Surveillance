@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
+using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
@@ -17,7 +18,6 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome.Interfaces;
-using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
 {
@@ -50,7 +50,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Scheduling.Rules.FixedIncomeWashTrades) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule).Contains(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -107,10 +107,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             IWashTradeRuleFixedIncomeParameters param)
         {
             var ctx = opCtx.CreateAndStartRuleRunContext(
-                Domain.Scheduling.Rules.FixedIncomeWashTrades.GetDescription(),
+                Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades.GetDescription(),
                 FixedIncomeWashTradeFactory.Version,
                 param.Id,
-                (int)Domain.Scheduling.Rules.FixedIncomeWashTrades,
+                (int)Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades,
                 execution.IsBackTest,
                 execution.TimeSeriesInitiation.DateTime,
                 execution.TimeSeriesTermination.DateTime,

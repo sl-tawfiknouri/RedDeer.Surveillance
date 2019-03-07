@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Utilities.Disk_IO.Interfaces;
+using Infrastructure.Network.Disk_IO.Interfaces;
 
-namespace Utilities.Disk_IO
+namespace Infrastructure.Network.Disk_IO
 {
     public class ReddeerDirectory : IReddeerDirectory
     {

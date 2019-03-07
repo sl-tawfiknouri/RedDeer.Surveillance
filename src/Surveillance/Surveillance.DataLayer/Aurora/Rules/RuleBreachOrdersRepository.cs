@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Domain.Trading;
+using Domain.Surveillance.Rules;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Interfaces;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;

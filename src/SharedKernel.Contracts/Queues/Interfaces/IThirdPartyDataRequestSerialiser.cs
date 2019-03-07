@@ -1,4 +1,4 @@
-﻿namespace Domain.DTO.Interfaces
+﻿namespace SharedKernel.Contracts.Queues.Interfaces
 {
     public interface IThirdPartyDataRequestSerialiser
     {

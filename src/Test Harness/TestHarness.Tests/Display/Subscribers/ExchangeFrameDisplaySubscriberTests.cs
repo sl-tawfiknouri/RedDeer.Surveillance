@@ -1,7 +1,7 @@
 ﻿using FakeItEasy;
 using NUnit.Framework;
 using System;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 

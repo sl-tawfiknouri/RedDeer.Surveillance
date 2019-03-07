@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.MessageBusIO.Interfaces;
-using Domain.Contracts;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
-using Utilities.Aws_IO.Interfaces;
+using SharedKernel.Contracts.Queues;
 
 namespace DataImport.MessageBusIO
 {

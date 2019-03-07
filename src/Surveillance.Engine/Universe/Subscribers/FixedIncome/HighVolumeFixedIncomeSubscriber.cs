@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Extensions;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.FixedIncomeHighVolumeIssuance) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Surveillance.Scheduling.Rules.FixedIncomeHighVolumeIssuance) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -112,10 +112,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.FixedIncome
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.FixedIncomeHighVolumeIssuance.GetDescription(),
+                    Domain.Surveillance.Scheduling.Rules.FixedIncomeHighVolumeIssuance.GetDescription(),
                     FixedIncomeHighVolumeFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.FixedIncomeHighVolumeIssuance,
+                    (int)Domain.Surveillance.Scheduling.Rules.FixedIncomeHighVolumeIssuance,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

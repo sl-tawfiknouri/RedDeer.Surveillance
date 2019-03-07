@@ -1,6 +1,6 @@
 ﻿using DataSynchroniser.Api.Bmll.Filters.Interfaces;
 using Domain.Core.Financial.Cfis;
-using Domain.Markets;
+using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Filters
 {

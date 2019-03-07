@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
 using Surveillance.DataLayer.Aurora.Interfaces;
 

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using DataSynchroniser.Api.Factset.Factset.Interfaces;
 using DataSynchroniser.Api.Factset.Filters.Interfaces;
 using DataSynchroniser.Api.Factset.Interfaces;
-using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace DataSynchroniser.Api.Factset

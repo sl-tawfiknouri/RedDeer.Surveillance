@@ -1,4 +1,4 @@
-﻿namespace Utilities.HttpClient.Interfaces
+﻿namespace Infrastructure.Network.HttpClient.Interfaces
 {
     public interface IHttpClientFactory
     {

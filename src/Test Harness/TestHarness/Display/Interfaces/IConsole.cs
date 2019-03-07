@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
 
 // ReSharper disable UnusedMember.Global
 

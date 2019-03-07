@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Queues
 {

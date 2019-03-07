@@ -1,4 +1,4 @@
-﻿namespace Domain.Equity.TimeBars
+﻿namespace SharedKernel.Files.Security
 {
     public class FinancialInstrumentTimeBarCsv
     {

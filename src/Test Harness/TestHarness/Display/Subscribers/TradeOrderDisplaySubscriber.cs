@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers

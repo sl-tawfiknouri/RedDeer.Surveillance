@@ -1,4 +1,5 @@
-﻿using Domain.Scheduling.Interfaces;
+﻿using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;
@@ -17,7 +18,6 @@ using TestHarness.Factory.TradingSpoofingV2Factory.Interfaces;
 using TestHarness.Repository.Api.Interfaces;
 using TestHarness.Repository.Interfaces;
 using TestHarness.State.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace TestHarness.Factory.Interfaces
 {

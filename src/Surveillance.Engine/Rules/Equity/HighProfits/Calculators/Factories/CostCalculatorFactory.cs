@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factori
             return new CostCalculator(_logger);
         }
 
-        public ICostCalculator CurrencyConvertingCalculator(Domain.Core.Financial.Currency currency)
+        public ICostCalculator CurrencyConvertingCalculator(Domain.Core.Financial.Money.Currency currency)
         {
             return new CostCurrencyConvertingCalculator(_currencyConverter, currency, _currencyLogger);
         }

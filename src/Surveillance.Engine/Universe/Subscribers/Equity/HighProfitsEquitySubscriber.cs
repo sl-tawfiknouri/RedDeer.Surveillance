@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
+using Infrastructure.Network.Extensions;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
@@ -16,7 +17,6 @@ using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Equity.Interfaces;
-using Utilities.Extensions;
 
 namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 {
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IUniverseAlertStream alertStream)
         {
-            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Scheduling.Rules.HighProfits) ?? true)
+            if (!execution.Rules?.Select(ru => ru.Rule)?.Contains(Domain.Surveillance.Scheduling.Rules.HighProfits) ?? true)
             {
                 return new IObserver<IUniverseEvent>[0];
             }
@@ -108,10 +108,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         {
             var ruleCtxStream = opCtx
                     .CreateAndStartRuleRunContext(
-                        Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                        Domain.Surveillance.Scheduling.Rules.HighProfits.GetDescription(),
                         EquityRuleHighProfitFactory.Version,
                         param.Id,
-                        (int)Domain.Scheduling.Rules.HighProfits,
+                        (int)Domain.Surveillance.Scheduling.Rules.HighProfits,
                         execution.IsBackTest,
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime,
@@ -120,10 +120,10 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var ruleCtxMarketClosure = opCtx
                 .CreateAndStartRuleRunContext(
-                    Domain.Scheduling.Rules.HighProfits.GetDescription(),
+                    Domain.Surveillance.Scheduling.Rules.HighProfits.GetDescription(),
                     EquityRuleHighProfitFactory.Version,
                     param.Id,
-                    (int)Domain.Scheduling.Rules.HighProfits,
+                    (int)Domain.Surveillance.Scheduling.Rules.HighProfits,
                     execution.IsBackTest,
                     execution.TimeSeriesInitiation.DateTime,
                     execution.TimeSeriesTermination.DateTime,

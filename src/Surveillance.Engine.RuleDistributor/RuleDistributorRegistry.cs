@@ -1,5 +1,5 @@
-﻿using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+﻿using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;

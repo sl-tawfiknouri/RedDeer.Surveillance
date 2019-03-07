@@ -97,25 +97,25 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
             switch (value.Rule)
             {
-                case Domain.Scheduling.Rules.CancelledOrders:
+                case Domain.Surveillance.Scheduling.Rules.CancelledOrders:
                     CancelledOrders(value);
                     break;
-                case Domain.Scheduling.Rules.HighProfits:
+                case Domain.Surveillance.Scheduling.Rules.HighProfits:
                     HighProfits(value);
                     break;
-                case Domain.Scheduling.Rules.HighVolume:
+                case Domain.Surveillance.Scheduling.Rules.HighVolume:
                     HighVolume(value);
                     break;
-                case Domain.Scheduling.Rules.Layering:
+                case Domain.Surveillance.Scheduling.Rules.Layering:
                     Layering(value);
                     break;
-                case Domain.Scheduling.Rules.MarkingTheClose:
+                case Domain.Surveillance.Scheduling.Rules.MarkingTheClose:
                     MarkingTheClose(value);
                     break;
-                case Domain.Scheduling.Rules.Spoofing:
+                case Domain.Surveillance.Scheduling.Rules.Spoofing:
                     Spoofing(value);
                     break;
-                case Domain.Scheduling.Rules.WashTrade:
+                case Domain.Surveillance.Scheduling.Rules.WashTrade:
                     WashTrade(value);
                     break;
                 default:

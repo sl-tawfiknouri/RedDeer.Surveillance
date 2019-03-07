@@ -8,6 +8,7 @@ using DasMulli.Win32.ServiceUtils;
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;
@@ -18,7 +19,6 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 // ReSharper disable UnusedParameter.Local
 namespace RedDeer.DataImport.DataImport.App

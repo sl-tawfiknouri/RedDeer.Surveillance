@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Financial.Markets
+﻿namespace Domain.Core.Markets
 {
     public class Market
     {

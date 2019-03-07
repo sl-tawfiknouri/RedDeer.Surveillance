@@ -3,6 +3,7 @@ using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
+using Infrastructure.Network.Aws_IO.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,6 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.App
 {

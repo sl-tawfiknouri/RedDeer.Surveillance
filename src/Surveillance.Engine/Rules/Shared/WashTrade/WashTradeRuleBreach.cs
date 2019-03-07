@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Surveillance.Auditing.Context.Interfaces;
-using Surveillance.Engine.Rules.Rules.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Trades.Interfaces;
 using Domain.Core.Financial.Assets;
-using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Domain.Core.Financial.Money;
+using Surveillance.Auditing.Context.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Interfaces;
+using Surveillance.Engine.Rules.Rules.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Trades.Interfaces;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
     public class WashTradeRuleBreach : IWashTradeRuleBreach
     {

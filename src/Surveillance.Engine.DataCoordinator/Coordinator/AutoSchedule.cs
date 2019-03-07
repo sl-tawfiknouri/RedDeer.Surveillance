@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.Surveillance.Rules;
+using Domain.Surveillance.Rules.Interfaces;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;

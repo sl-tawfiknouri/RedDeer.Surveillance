@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
 using Domain.Surveillance.Streams;
@@ -39,8 +40,8 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
@@ -224,7 +225,7 @@ namespace Surveillance.Engine.Rules
 
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
             For<IRuleParameterManager>().Use<RuleParameterManager>();
-            For<IRuleParameterLeadingTimespanCalculator>().Use<RuleParameterLeadingTimespanCalculator>();
+            For<IRuleParameterLeadingTimespanService>().Use<RuleParameterLeadingTimespanService>();
 
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();

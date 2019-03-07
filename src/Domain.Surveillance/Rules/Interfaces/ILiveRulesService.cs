@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Surveillance.Scheduling;
 
-namespace Domain.Surveillance.Rules
+namespace Domain.Surveillance.Rules.Interfaces
 {
     public interface ILiveRulesService
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
     public class WashTradeCachedMessageSender : IWashTradeCachedMessageSender
     {

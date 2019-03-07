@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Domain.Core.Trading.Orders;
 
-namespace Domain.Core.Trading
+namespace Domain.Core.Trading.Interfaces
 {
     public interface IOrderLedger
     {

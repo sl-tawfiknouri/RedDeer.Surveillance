@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

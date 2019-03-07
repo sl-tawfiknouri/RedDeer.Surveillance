@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -19,7 +20,7 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using static Surveillance.Engine.Rules.Rules.Equity.WashTrade.WashTradeRuleBreach;
+using static Surveillance.Engine.Rules.Rules.Shared.WashTrade.WashTradeRuleBreach;
 
 namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 {

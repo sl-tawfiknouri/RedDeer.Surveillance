@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces
 {
     public interface IWashTradeRuleMessageSender
     {

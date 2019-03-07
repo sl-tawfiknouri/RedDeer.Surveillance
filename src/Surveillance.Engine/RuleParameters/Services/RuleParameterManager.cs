@@ -6,9 +6,9 @@ using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Manager
+namespace Surveillance.Engine.Rules.RuleParameters.Services
 {
     public class RuleParameterManager : IRuleParameterManager
     {

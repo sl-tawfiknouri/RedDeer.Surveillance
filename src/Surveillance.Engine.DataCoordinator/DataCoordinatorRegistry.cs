@@ -1,4 +1,5 @@
 ﻿using Domain.Surveillance.Rules;
+using Domain.Surveillance.Rules.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;

@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Rules.Interfaces;
 using Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
+using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 
-namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
+namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
 {
     public class WashTradeRuleMessageSender : BaseMessageSender, IWashTradeRuleMessageSender
     {

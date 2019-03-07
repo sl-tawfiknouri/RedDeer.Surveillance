@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Infrastructure.Network.Tests.Disk_IO
+namespace Infrastructure.Network.Tests.Disk
 {
     [TestFixture]
     public class ReddeerDirectoryTests

@@ -30,18 +30,18 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             if (ruleBreach == null)
             {
                 // ReSharper disable once InconsistentlySynchronizedField
-                _logger.LogInformation($"Wash Trade Rule Cached Message Sender received a rule breach. Returning.");
+                _logger.LogInformation($"received a rule breach. Returning.");
                 return;
             }
 
             lock (_lock)
             {
-                _logger.LogInformation($"Wash Trade Rule Cached Message Sender received rule breach for {ruleBreach.Security.Identifiers}");
+                _logger.LogInformation($"received rule breach for {ruleBreach.Security.Identifiers}");
 
                 var duplicates = _messages.Where(msg => msg.Trades.PositionIsSubsetOf(ruleBreach.Trades)).ToList();
                 _messages = _messages.Except(duplicates).ToList();
 
-                _logger.LogInformation($"Wash Trade Rule Cached Message Sender de duplicated {_messages.Count} alerts when processing {ruleBreach.Security.Identifiers}.");
+                _logger.LogInformation($"deduplicated {_messages.Count} alerts when processing {ruleBreach.Security.Identifiers}.");
 
                 _messages.Add(ruleBreach);
             }
@@ -54,11 +54,11 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
         {
             lock (_lock)
             {
-                _logger.LogInformation($"Wash Trade Rule Cached Message Sender dispatching {_messages.Count} rule breaches to message bus");
+                _logger.LogInformation($"dispatching {_messages.Count} rule breaches to message bus");
 
                 foreach (var msg in _messages)
                 {
-                    _logger.LogInformation($"Wash Trade Rule Cached Message Sender dispatching message for {msg.Security?.Identifiers}");
+                    _logger.LogInformation($"dispatching message for {msg.Security?.Identifiers}");
                     _messageSender.Send(msg);
                 }
 

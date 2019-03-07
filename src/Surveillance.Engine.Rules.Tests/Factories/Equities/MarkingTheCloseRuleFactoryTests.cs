@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     {
         private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private ILogger<MarkingTheCloseRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _logger = new NullLogger<MarkingTheCloseRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
@@ -50,14 +50,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_OrderFilter_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(null, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(null, _factory, _tradingHoursService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, null, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, null, _tradingHoursService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
@@ -71,20 +71,20 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursManager, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursService, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_TradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursManager, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursService, _logger, null));
         }
 
         [Test]
         public void Build_Returns_Non_Null_Result()
         {
-            var factory = new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleMarkingTheCloseFactory(_orderFilter, _factory, _tradingHoursService, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun, _dataRequestSubscriber);
 

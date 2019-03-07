@@ -18,20 +18,20 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     {
         private readonly IUniverseEquityOrderFilter _orderFilter;
         private readonly IUniverseMarketCacheFactory _factory;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILogger<MarkingTheCloseRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleMarkingTheCloseFactory(
             IUniverseEquityOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
         }
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 ruleCtx,
                 _orderFilter, 
                 _factory,
-                _tradingHoursManager,
+                _tradingHoursService,
                 dataRequestSubscriber,
                 runMode,
                 _logger,

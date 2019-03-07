@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         private IUniverseOrderFilter _orderFilter;
 
         private IMarketOpenCloseApiCachingDecoratorRepository _tradingHoursRepository;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private IRuleRunDataRequestRepository _ruleRunRepository;
         private IStubRuleRunDataRequestRepository _stubRuleRunRepository;
         private ILogger<UniverseMarketCacheFactory> _factoryLogger;
@@ -66,7 +66,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
             _stubRuleRunRepository = A.Fake<IStubRuleRunDataRequestRepository>();
             _factoryLogger = A.Fake<ILogger<UniverseMarketCacheFactory>>();
             _factory = new UniverseMarketCacheFactory(_stubRuleRunRepository, _ruleRunRepository, _factoryLogger);
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
             _tradingHoursRepository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
             A.CallTo(() => _tradingHoursRepository.Get())
@@ -95,27 +95,27 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void Constructor_NullParametersConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(null, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullLoggerConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, null, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, null, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void Constructor_NullRuleContextConsidered_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, null, RuleRunMode.ValidationRun, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, null, RuleRunMode.ValidationRun, _tradingLogger));
         }
 
         [Test]
         public void EndOfUniverse_RecordUpdateAlertAndEndEvent()
         {
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var eschaton = new UniverseEvent(UniverseStateEvent.Eschaton, DateTime.UtcNow, new object());
 
             rule.OnNext(eschaton);
@@ -126,9 +126,9 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_RaisesAlertInEschaton_WhenBidirectionalTrade()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -152,8 +152,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_NoRaisedAlertInEschaton_WhenBidirectionalTradeAndExceedsDailyThreshold_ButNoMarketData()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -177,8 +177,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_ButNoMarketData()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -202,8 +202,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsDailyThreshold_AndHasMarketData()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.PlacedDate = new DateTime(2018, 01, 01, 12, 0, 0);
@@ -254,14 +254,14 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsDailyThreshold_AndHasMarketData()
         {
-            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(_equitiesParameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
             tradeBuy.FilledDate = tradeBuy.PlacedDate.Value.AddMinutes(1);
             tradeSell.OrderDirection = OrderDirections.SELL;
             tradeSell.FilledDate = tradeSell.PlacedDate.Value.AddMinutes(1);
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
 
             tradeBuy.OrderFilledVolume = 100;
             tradeSell.OrderFilledVolume = 100;
@@ -309,7 +309,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesExceedsWindowThreshold_AndHasMarketData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -362,9 +362,9 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndHasMarketData()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -412,8 +412,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotExceedsWindowThreshold_AndNoMarketData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, 0.1m, null, null, false);
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -466,9 +466,9 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesNotCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
 
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -531,8 +531,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -594,9 +594,9 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         [Test]
         public void RunRule_DoesRaiseAlertInEschaton_WhenBidirectionalTradeAndDoesCausePriceMovement_AndHasMarketDataWithReverseBuySellOrder()
         {
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -659,8 +659,8 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
         public void RunRule_DoesNotRaiseAlertInEschaton_WhenBidirectionalTradeAndNoPriceMovementData()
         {
             var parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
-            _tradingHoursManager = new MarketTradingHoursManager(_tradingHoursRepository, new NullLogger<MarketTradingHoursManager>());
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            _tradingHoursService = new MarketTradingHoursService(_tradingHoursRepository, new NullLogger<MarketTradingHoursService>());
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
             var tradeBuy = ((Order)null).Random();
             var tradeSell = ((Order)null).Random();
             tradeBuy.OrderDirection = OrderDirections.BUY;
@@ -722,7 +722,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.Layering
                 parameters = new LayeringRuleEquitiesParameters("id", TimeSpan.FromMinutes(30), null, null, true, null, false);
             }
 
-            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursManager, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
+            var rule = new LayeringRule(parameters, _alertStream, _orderFilter, _logger, _factory, _tradingHoursService, _ruleCtx, RuleRunMode.ValidationRun, _tradingLogger);
 
             return rule;
         }

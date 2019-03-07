@@ -207,7 +207,7 @@ namespace Surveillance.Engine.Rules
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
             For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
-            For<IMarketTradingHoursManager>().Use<MarketTradingHoursManager>();
+            For<IMarketTradingHoursService>().Use<MarketTradingHoursService>();
             For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
 
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();

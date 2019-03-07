@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger _logger;
 
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             IUniverseAlertStream alertStream,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<IHighVolumeRule> logger,
@@ -61,7 +61,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -174,7 +174,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
@@ -223,13 +223,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
         private HighVolumeRuleBreach.BreachDetails WindowVolumeCheck(Order mostRecentTrade, long tradedVolume)
         {
-            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");
             }
 
-            var tradingDates = _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+            var tradingDates = _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                 tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
                 tradingHours.ClosingInUtcForDay(UniverseDateTime),
                 mostRecentTrade.Market?.MarketIdentifierCode);
@@ -285,7 +285,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
                 return HighVolumeRuleBreach.BreachDetails.None();
             }
 
-            var tradingHours = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market?.MarketIdentifierCode);
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"Request for trading hours was invalid. MIC - {mostRecentTrade.Market?.MarketIdentifierCode}");

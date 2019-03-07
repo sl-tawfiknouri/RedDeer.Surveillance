@@ -41,7 +41,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -63,10 +63,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
         private void Setup()
         {
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("XLON"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("XLON"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(16),
@@ -76,7 +76,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 });
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("NASDAQ"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("NASDAQ"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(23),
@@ -106,7 +106,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
             _revenueCalculatorFactory =
                 new RevenueCalculatorFactory(
-                    _tradingHoursManager,
+                    _tradingHoursService,
                     new CurrencyConverterService(
                         _exchangeRateSelection.ExchangeRateRepository,
                         new NullLogger<CurrencyConverterService>()),

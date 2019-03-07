@@ -16,7 +16,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
-        protected readonly IMarketTradingHoursManager TradingHoursManager;
+        protected readonly IMarketTradingHoursService TradingHoursService;
         private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
         private readonly ICurrencyConverterService _currencyConverterService;
         protected readonly ILogger Logger;
@@ -24,12 +24,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         public RevenueCurrencyConvertingCalculator(
             Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverterService currencyConverterService,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
         {
             _targetCurrency = targetCurrency;
             _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
-            TradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            TradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -183,7 +183,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
+            var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

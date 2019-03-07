@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
     public class LayeringRule : BaseUniverseRule, ILayeringRule
     {
         private readonly ILogger _logger;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             IUniverseOrderFilter orderFilter,
             ILogger logger,
             IUniverseMarketCacheFactory factory,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             ISystemProcessOperationRunRuleContext opCtx,
             RuleRunMode runMode,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
         {
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _ruleCtx = opCtx ?? throw new ArgumentNullException(nameof(opCtx));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -239,7 +239,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             ITradePosition opposingPosition,
             Order mostRecentTrade)
         {
-            var tradingHoursManager = _tradingHoursManager.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
+            var tradingHoursManager = _tradingHoursService.GetTradingHoursForMic(mostRecentTrade.Market.MarketIdentifierCode);
 
             if (!tradingHoursManager.IsValid)
             {
@@ -304,7 +304,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     _ruleCtx?.Id());
 
             var tradingDays =
-                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);
@@ -370,7 +370,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
                     _ruleCtx?.Id());
 
             var tradingDays =
-                _tradingHoursManager.GetTradingDaysWithinRangeAdjustedToTime(
+                _tradingHoursService.GetTradingDaysWithinRangeAdjustedToTime(
                     UniverseDateTime.Subtract(WindowSize),
                     UniverseDateTime,
                     mostRecentTrade.Market.MarketIdentifierCode);

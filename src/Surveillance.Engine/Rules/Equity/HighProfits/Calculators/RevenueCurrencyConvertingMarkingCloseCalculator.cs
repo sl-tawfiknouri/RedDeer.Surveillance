@@ -13,12 +13,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         public RevenueCurrencyConvertingMarkingCloseCalculator(
             Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverterService currencyConverterService,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
             : base(
                 targetCurrency,
                 currencyConverterService,
-                tradingHoursManager,
+                tradingHoursService,
                 logger)
         { }
 
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
+            var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingMarkingCloseCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

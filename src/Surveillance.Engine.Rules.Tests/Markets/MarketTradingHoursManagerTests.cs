@@ -13,13 +13,13 @@ namespace Surveillance.Engine.Rules.Tests.Markets
     public class MarketTradingHoursManagerTests
     {
         private IMarketOpenCloseApiCachingDecoratorRepository _marketOpenCloseRepository;
-        private ILogger<MarketTradingHoursManager> _logger;
+        private ILogger<MarketTradingHoursService> _logger;
 
         [SetUp]
         public void Setup()
         {
             _marketOpenCloseRepository = A.Fake<IMarketOpenCloseApiCachingDecoratorRepository>();
-            _logger = new NullLogger<MarketTradingHoursManager>();
+            _logger = new NullLogger<MarketTradingHoursService>();
         }
 
         [Test]
@@ -185,9 +185,9 @@ namespace Surveillance.Engine.Rules.Tests.Markets
         }
 
 
-        private MarketTradingHoursManager Build()
+        private MarketTradingHoursService Build()
         {
-            return new MarketTradingHoursManager(_marketOpenCloseRepository, _logger);
+            return new MarketTradingHoursService(_marketOpenCloseRepository, _logger);
         }
     }
 }

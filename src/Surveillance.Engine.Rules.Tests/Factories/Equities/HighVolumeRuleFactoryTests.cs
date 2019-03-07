@@ -21,7 +21,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     {
         private IUniverseEquityOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private ILogger<IHighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
@@ -35,7 +35,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _logger = A.Fake<ILogger<IHighVolumeRule>>();
             _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
@@ -49,14 +49,14 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Order_Filter_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(null, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(null, _factory, _tradingHoursService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Market_Cache_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, null, _tradingHoursManager, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, null, _tradingHoursService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
@@ -70,20 +70,20 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursService, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_Trading_History_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursService, _logger, null));
         }
 
         [Test]
         public void Build_Has_Non_Null_Response()
         {
-            var factory = new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursManager, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleHighVolumeFactory(_orderFilter, _factory, _tradingHoursService, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_equitiesParameters, _opCtx, _alertStream, _dataRequestSubscriber, RuleRunMode.ForceRun);
 

@@ -41,7 +41,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -105,7 +105,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                     }
                 });
 
-            _tradingHoursManager = new MarketTradingHoursManager(repository, new NullLogger<MarketTradingHoursManager>());          
+            _tradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());          
 
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
@@ -123,7 +123,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _equityRuleHighVolumeFactory = new EquityRuleHighVolumeFactory(
                 _universeOrderFilter,
                 _interdayUniverseMarketCacheFactory,
-                _tradingHoursManager,
+                _tradingHoursService,
                 _logger,
                 _tradingLogger);
         }

@@ -17,7 +17,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
     {
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IExchangeRateApiCachingDecoratorRepository _apiRepository;
-        private ILogger<CurrencyConverter> _logger;
+        private ILogger<CurrencyConverterService> _logger;
         private Domain.Core.Financial.Money.Currency _currency;
         private DateTime _conversionTime;
 
@@ -26,7 +26,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         {
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _apiRepository = A.Fake<IExchangeRateApiCachingDecoratorRepository>();
-            _logger = A.Fake<ILogger<CurrencyConverter>>();
+            _logger = A.Fake<ILogger<CurrencyConverterService>>();
             _currency = new Domain.Core.Financial.Money.Currency("USD");
             _conversionTime = new DateTime(2017, 8, 31);
         }
@@ -35,20 +35,20 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public void Constructor_ThrowsForNull_Repository()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CurrencyConverter(null, _logger));
+            Assert.Throws<ArgumentNullException>(() => new CurrencyConverterService(null, _logger));
         }
 
         [Test]
         public void Constructor_ThrowsForNull_Logger()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new CurrencyConverter(_apiRepository, null));
+            Assert.Throws<ArgumentNullException>(() => new CurrencyConverterService(_apiRepository, null));
         }
 
         [Test]
         public async Task Convert_NullMoneys_ReturnsNotNull()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
 
             var result = await converter.Convert(null, _currency, _conversionTime, _ruleCtx);
 
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_EmptyMoneys_ReturnsNotNull()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>();
 
             var result = await converter.Convert(Moneys, _currency, _conversionTime, _ruleCtx);
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_InSameCurrencyAsTarget_DoesNotCallExchangeRateApi()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(10, "CNY")
@@ -87,7 +87,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_NullRatesResult_ReturnsNull()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY")
@@ -104,7 +104,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_EmptyRatesResult_ReturnsNull()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY")
@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_WithDirectConversion_ReturnsExpectedResult()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY")
@@ -158,7 +158,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_WithDirectConversionMultipleRates_ReturnsExpectedResult()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var monies = new List<Money>
             {
                 new Money(100, "CNY"),
@@ -202,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_WithDirectConversionMultipleRatesButOneIsMissing_ReturnsExpectedResult()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY"),
@@ -238,7 +238,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task Convert_WithReciprocalConversion_ReturnsExpectedResult()
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY"),
@@ -276,7 +276,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [TestCase(1, 0.5, 200)]
         public async Task Convert_WithIndirectConversionRateSetOneRates_ReturnsExpectedResult(decimal rate1, decimal rate2, decimal expected)
         {
-            var converter = new CurrencyConverter(_apiRepository, _logger);
+            var converter = new CurrencyConverterService(_apiRepository, _logger);
             var Moneys = new List<Money>
             {
                 new Money(100, "CNY")

@@ -4,7 +4,7 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces
 {
-    public interface ITradePositionWeightedAverageExchangeRateCalculator
+    public interface ITradePositionWeightedAverageExchangeRateService
     {
         Task<decimal> WeightedExchangeRate(
             ITradePosition position,

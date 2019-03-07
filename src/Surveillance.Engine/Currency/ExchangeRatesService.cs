@@ -17,14 +17,14 @@ namespace Surveillance.Engine.Rules.Currency
     /// In other words, this is the price of a unit of Euro in US dollars.
     /// Here, EUR is called the "Fixed currency", while USD is called the "Variable currency".
     /// </summary>
-    public class ExchangeRates : IExchangeRates
+    public class ExchangeRatesService : IExchangeRatesService
     {
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
-        private readonly ILogger<ExchangeRates> _logger;
+        private readonly ILogger<ExchangeRatesService> _logger;
 
-        public ExchangeRates(
+        public ExchangeRatesService(
             IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
-            ILogger<ExchangeRates> logger)
+            ILogger<ExchangeRatesService> logger)
         {
             _exchangeRateApiRepository =
                 exchangeRateApiRepository

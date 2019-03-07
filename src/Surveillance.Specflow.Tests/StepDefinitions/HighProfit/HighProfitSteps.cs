@@ -38,7 +38,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
 
-        private ICurrencyConverter _currencyConverter;
+        private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
@@ -90,8 +90,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
+            var currencyLogger = new NullLogger<CurrencyConverterService>();
+            _currencyConverterService = new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
             _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
@@ -100,16 +100,16 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
-                new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverter>()),
+                new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverterService>()),
                 new NullLogger<CostCalculator>(),
                 new NullLogger<CostCurrencyConvertingCalculator>());
 
             _revenueCalculatorFactory =
                 new RevenueCalculatorFactory(
                     _tradingHoursManager,
-                    new CurrencyConverter(
+                    new CurrencyConverterService(
                         _exchangeRateSelection.ExchangeRateRepository,
-                        new NullLogger<CurrencyConverter>()),
+                        new NullLogger<CurrencyConverterService>()),
                     new NullLogger<RevenueCurrencyConvertingCalculator>(),
                     new NullLogger<RevenueCalculator>());
 

@@ -197,9 +197,9 @@ namespace Surveillance.Engine.Rules
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
-            For<ICurrencyConverter>().Use<CurrencyConverter>();
-            For<IExchangeRates>().Use<ExchangeRates>();
-            For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
+            For<ICurrencyConverterService>().Use<CurrencyConverterService>();
+            For<IExchangeRatesService>().Use<ExchangeRatesService>();
+            For<ITradePositionWeightedAverageExchangeRateService>().Use<TradePositionWeightedAverageExchangeRateService>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IRuleProjector>().Use<RuleProjector>();

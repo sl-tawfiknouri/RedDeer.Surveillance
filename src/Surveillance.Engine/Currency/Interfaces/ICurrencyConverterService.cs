@@ -6,7 +6,7 @@ using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces
 {
-    public interface ICurrencyConverter
+    public interface ICurrencyConverterService
     {
         Task<Money?> Convert(
             IReadOnlyCollection<Money> monies,

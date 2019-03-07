@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
     public class WashTradeRuleTests
     {
 
-        private ICurrencyConverter _currencyConverter;
+        private ICurrencyConverterService _currencyConverterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
         private IClusteringService _clustering;
@@ -46,7 +46,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         [SetUp]
         public void Setup()
         {
-            _currencyConverter = A.Fake<ICurrencyConverter>();
+            _currencyConverterService = A.Fake<ICurrencyConverterService>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _clustering = new ClusteringService();
@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -101,7 +101,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -124,7 +124,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -148,7 +148,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -182,7 +182,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -217,7 +217,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -262,7 +262,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -303,7 +303,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -360,7 +360,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,
@@ -437,7 +437,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
                 _positionPairer,
                 _clustering,
                 _alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 RuleRunMode.ValidationRun,

@@ -18,17 +18,17 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     {
         protected readonly IMarketTradingHoursManager TradingHoursManager;
         private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         protected readonly ILogger Logger;
 
         public RevenueCurrencyConvertingCalculator(
             Domain.Core.Financial.Money.Currency targetCurrency,
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
         {
             _targetCurrency = targetCurrency;
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             TradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -95,7 +95,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
             var money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Code ?? string.Empty);
-            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { money }, _targetCurrency, universeDateTime, ctx);
+            var convertedVirtualRevenues = await _currencyConverterService.Convert(new[] { money }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
@@ -142,7 +142,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                         afto.OrderCurrency))
                 .ToList();
 
-            var conversion = await _currencyConverter.Convert(filledOrders, targetCurrency, universeDateTime, ruleCtx);
+            var conversion = await _currencyConverterService.Convert(filledOrders, targetCurrency, universeDateTime, ruleCtx);
 
             return conversion;
         }

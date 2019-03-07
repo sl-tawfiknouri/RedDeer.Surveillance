@@ -9,16 +9,16 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency
 {
-    public class TradePositionWeightedAverageExchangeRateCalculator : ITradePositionWeightedAverageExchangeRateCalculator
+    public class TradePositionWeightedAverageExchangeRateService : ITradePositionWeightedAverageExchangeRateService
     {
-        private readonly IExchangeRates _exchangeRates;
-        private readonly ILogger<TradePositionWeightedAverageExchangeRateCalculator> _logger;
+        private readonly IExchangeRatesService _exchangeRatesService;
+        private readonly ILogger<TradePositionWeightedAverageExchangeRateService> _logger;
 
-        public TradePositionWeightedAverageExchangeRateCalculator(
-            IExchangeRates exchangeRates,
-            ILogger<TradePositionWeightedAverageExchangeRateCalculator> logger)
+        public TradePositionWeightedAverageExchangeRateService(
+            IExchangeRatesService exchangeRatesService,
+            ILogger<TradePositionWeightedAverageExchangeRateService> logger)
         {
-            _exchangeRates = exchangeRates ?? throw new ArgumentNullException(nameof(exchangeRates));
+            _exchangeRatesService = exchangeRatesService ?? throw new ArgumentNullException(nameof(exchangeRatesService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Currency
 
                 var weight = (decimal)order.OrderFilledVolume.GetValueOrDefault(0) / (decimal)totalVolume;
 
-                var rate = await _exchangeRates.GetRate(
+                var rate = await _exchangeRatesService.GetRate(
                     order.OrderCurrency,
                     targetCurrency,
                     order.MostRecentDateEvent(),

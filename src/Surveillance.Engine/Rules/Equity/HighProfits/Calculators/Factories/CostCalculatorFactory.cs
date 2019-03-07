@@ -8,16 +8,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factori
 {
     public class CostCalculatorFactory : ICostCalculatorFactory
     {
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly ILogger<CostCalculator> _logger;
         private readonly ILogger<CostCurrencyConvertingCalculator> _currencyLogger;
 
         public CostCalculatorFactory(
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             ILogger<CostCalculator> logger, 
             ILogger<CostCurrencyConvertingCalculator> currencyLogger)
         {
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _currencyLogger = currencyLogger ?? throw new ArgumentNullException(nameof(currencyLogger));
         }
@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators.Factori
 
         public ICostCalculator CurrencyConvertingCalculator(Domain.Core.Financial.Money.Currency currency)
         {
-            return new CostCurrencyConvertingCalculator(_currencyConverter, currency, _currencyLogger);
+            return new CostCurrencyConvertingCalculator(_currencyConverterService, currency, _currencyLogger);
         }
     }
 }

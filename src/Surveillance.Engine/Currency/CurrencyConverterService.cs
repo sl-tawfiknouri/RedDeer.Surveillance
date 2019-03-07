@@ -15,14 +15,14 @@ namespace Surveillance.Engine.Rules.Currency
     /// <summary>
     /// Performs similar work to exchange rates but also converts the underlying currency amounts
     /// </summary>
-    public class CurrencyConverter : ICurrencyConverter
+    public class CurrencyConverterService : ICurrencyConverterService
     {
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
-        private readonly ILogger<CurrencyConverter> _logger;
+        private readonly ILogger<CurrencyConverterService> _logger;
 
-        public CurrencyConverter(
+        public CurrencyConverterService(
             IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
-            ILogger<CurrencyConverter> logger)
+            ILogger<CurrencyConverterService> logger)
         {
             _exchangeRateApiRepository =
                 exchangeRateApiRepository

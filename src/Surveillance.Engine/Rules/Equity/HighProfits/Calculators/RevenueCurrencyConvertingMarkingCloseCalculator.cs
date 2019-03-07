@@ -12,12 +12,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(
             Domain.Core.Financial.Money.Currency targetCurrency,
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
             : base(
                 targetCurrency,
-                currencyConverter,
+                currencyConverterService,
                 tradingHoursManager,
                 logger)
         { }

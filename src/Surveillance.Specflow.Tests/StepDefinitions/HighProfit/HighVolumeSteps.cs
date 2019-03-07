@@ -38,7 +38,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
-        private ICurrencyConverter _currencyConverter;
+        private ICurrencyConverterService _currencyConverterService;
         private IUniverseEquityOrderFilter _universeOrderFilter;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursManager _tradingHoursManager;
@@ -112,8 +112,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
+            var currencyLogger = new NullLogger<CurrencyConverterService>();
+            _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
             _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
             _logger = new NullLogger<HighVolumeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();

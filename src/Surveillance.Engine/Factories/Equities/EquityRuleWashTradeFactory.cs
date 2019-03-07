@@ -17,7 +17,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleWashTradeFactory : IEquityRuleWashTradeFactory
     {
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IClusteringService _clustering;
         private readonly IUniverseEquityOrderFilter _orderFilter;
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         public static string Version { get; } = Versioner.Version(1, 0);
 
         public EquityRuleWashTradeFactory(
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             IWashTradePositionPairer positionPairer,
             IClusteringService clustering,
             IUniverseEquityOrderFilter orderFilter,
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             ILogger<WashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -67,7 +67,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _positionPairer,
                 _clustering,
                 alertStream,
-                _currencyConverter,
+                _currencyConverterService,
                 _orderFilter,
                 _factory,
                 runMode,

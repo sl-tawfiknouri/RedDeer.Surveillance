@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Currency
             if (position == null
                 || position.TotalVolume() == 0)
             {
-                _logger.LogInformation($"Weighted Exchange Rate Calculator asked to calculate WER for either null position or position with 0 volume. Returning 0");
+                _logger.LogInformation($"asked to calculate WER for either null position or position with 0 volume. Returning 0");
                 return 0;
             }
 
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Currency
                 if (item == null)
                     continue;
 
-                _logger.LogInformation($"Weighted Exchange Rate Calculator had a sub component with {item.Weight} and {item.XRate}");
+                _logger.LogInformation($"had a sub component with {item.Weight} and {item.XRate}");
             }
 
             var weightedAverage = weightedRates.Sum(wr => wr.Weight * wr.XRate);

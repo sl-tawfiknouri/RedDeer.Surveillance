@@ -39,23 +39,23 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
 
         public void OnCompleted()
         {
-            _logger.LogInformation($"UniverseAnalyticsSubscriber received the OnCompleted() event from the analytics stream");
+            _logger.LogInformation($"received the OnCompleted() event from the analytics stream");
         }
 
         public void OnError(Exception error)
         {
-            _logger.LogError($"UniverseAnalyticsSubscriber received the OnError() event from the analytics stream", error);
+            _logger.LogError($"received the OnError() event from the analytics stream", error);
         }
 
         public void OnNext(IUniverseEvent value)
         {
             if (value == null)
             {
-                _logger.LogWarning($"UniverseAnalyticsSubscriber received a null analytics stream event.");
+                _logger.LogWarning($"received a null analytics stream event.");
                 return;
             }
 
-            _logger.LogInformation($"UniverseAnalyticsSubscriber received an analytics event of type {value.StateChange} at {value.EventTime} universe time.");
+            _logger.LogInformation($"received an analytics event of type {value.StateChange} at {value.EventTime} universe time.");
 
             switch (value.StateChange)
             {
@@ -166,7 +166,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             Analytics.UniqueMarketsTradedOnCount = _marketIds.Count;
             Analytics.UniqueSecuritiesCount = _securityIds.Count;
 
-            _logger.LogInformation($"UniverseAnalyticsSubscriber received eschaton event considering there to be {Analytics.EschatonEventCount} eschaton events; {Analytics.UniqueTradersCount} unique traders; {Analytics.UniqueMarketsTradedOnCount} unique markets traded on; and {Analytics.UniqueSecuritiesCount} unique securities");
+            _logger.LogInformation($"received eschaton event considering there to be {Analytics.EschatonEventCount} eschaton events; {Analytics.UniqueTradersCount} unique traders; {Analytics.UniqueMarketsTradedOnCount} unique markets traded on; and {Analytics.UniqueSecuritiesCount} unique securities");
         }
     }
 }

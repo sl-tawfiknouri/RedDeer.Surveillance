@@ -40,30 +40,30 @@ namespace Surveillance.Engine.Rules.Currency
             if (monies == null
                 || !monies.Any())
             {
-                _logger.LogInformation($"CurrencyConverter received null or empty currency amounts. Returning 0 currency amount in target currency of {targetCurrency} for rule {ruleCtx?.Id()}");
+                _logger.LogInformation($"received null or empty currency amounts. Returning 0 currency amount in target currency of {targetCurrency} for rule {ruleCtx?.Id()}");
                 return new Money(0, targetCurrency);
             }
 
             if (string.IsNullOrWhiteSpace(targetCurrency.Code))
             {
-                _logger.LogError($"CurrencyConverter asked to convert to a null or empty currency");
+                _logger.LogError($"asked to convert to a null or empty currency");
                 return monies.Aggregate((i, o) => new Money(i.Value + o.Value, i.Currency));
             }
 
             if (monies.All(ca => Equals(ca.Currency, targetCurrency)))
             {
-                _logger.LogInformation($"CurrencyConverter inferred all currency amounts matched the target currency. Aggregating trades and returning.");
+                _logger.LogInformation($"inferred all currency amounts matched the target currency. Aggregating trades and returning.");
                 return monies.Aggregate((i,o) => new Money(i.Value + o.Value, i.Currency));
             }
 
-            _logger.LogInformation($"CurrencyConverter about to fetch exchange rates on {dayOfConversion}");
+            _logger.LogInformation($"about to fetch exchange rates on {dayOfConversion}");
             var rates = await ExchangeRates(dayOfConversion, ruleCtx);
 
             if (rates == null
                 || !rates.Any())
             {
-                _logger.LogError($"Currency Converter unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
-                ruleCtx.EventException($"Currency Converter unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
+                _logger.LogError($"unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
+                ruleCtx.EventException($"unable to change rates to {targetCurrency.Code} on {dayOfConversion.ToShortDateString()} due to missing rates");
 
                 return null;
             }
@@ -78,7 +78,7 @@ namespace Surveillance.Engine.Rules.Currency
                 .Select(cc => cc.Value)
                 .Sum(cc => cc.Value);
 
-            _logger.LogInformation($"CurrencyConverter returning {totalInConvertedCurrency} ({targetCurrency})");
+            _logger.LogInformation($"returning {totalInConvertedCurrency} ({targetCurrency})");
             return new Money(totalInConvertedCurrency, targetCurrency);
         }
 
@@ -91,7 +91,7 @@ namespace Surveillance.Engine.Rules.Currency
         {
             if (Equals(initialMoney.Currency, targetCurrency))
             {
-                _logger.LogInformation($"CurrencyConverter asked to convert {initialMoney.Currency} to {targetCurrency} and found they were the same. Returning initial amount.");
+                _logger.LogInformation($"asked to convert {initialMoney.Currency} to {targetCurrency} and found they were the same. Returning initial amount.");
                 return initialMoney;
             }
 
@@ -100,33 +100,33 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (directConversion != null)
             {
-                _logger.LogInformation($"CurrencyConverter managed to directly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {directConversion.Value.Value}.");
+                _logger.LogInformation($"managed to directly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {directConversion.Value.Value}.");
                 return directConversion;
             }
 
-            _logger.LogInformation($"CurrencyConverter failed to directly convert {initialMoney.Currency} to {targetCurrency}. Trying reciprocal conversion.");
+            _logger.LogInformation($"failed to directly convert {initialMoney.Currency} to {targetCurrency}. Trying reciprocal conversion.");
             // reciprocal exchange rate i.e. we want to do USD to GBP but we have GBP / USD
             var reciprocalConversion = TryReciprocalConversion(exchangeRates, initialMoney, targetCurrency);
 
             if (reciprocalConversion != null)
             {
-                _logger.LogInformation($"CurrencyConverter managed to reciprocally convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {reciprocalConversion.Value.Value}.");
+                _logger.LogInformation($"managed to reciprocally convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {reciprocalConversion.Value.Value}.");
                 return reciprocalConversion;
             }
 
-            _logger.LogInformation($"CurrencyConverter failed to reciprocally convert {initialMoney.Currency} to {targetCurrency}. Trying indirect conversion.");
+            _logger.LogInformation($"failed to reciprocally convert {initialMoney.Currency} to {targetCurrency}. Trying indirect conversion.");
             // implicit exchange rate i.e. we want to do EUR to GBP but we have EUR / USD and GBP / USD
             var indirectConversion = TryIndirectConversion(exchangeRates, initialMoney, targetCurrency, dayOfConversion, ruleCtx);
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Currency Converter was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
-                ruleCtx.EventException($"Currency Converter was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion} after attempting an indirect conversion. Returning null.");
+                ruleCtx.EventException($"was unable to convert {initialMoney.Currency.Code} to {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
 
-            _logger.LogInformation($"CurrencyConverter managed to indirectly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {indirectConversion.Value.Value}.");
+            _logger.LogInformation($"managed to indirectly convert {initialMoney.Currency} {initialMoney.Value} to {targetCurrency} {indirectConversion.Value.Value}.");
 
             return indirectConversion;
         }
@@ -192,9 +192,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -209,9 +209,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Currency Converter could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"could not find a shared common currency using a one step approach for {initialMoney.Currency.Code} and {targetCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -267,16 +267,16 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (offset > 14)
             {
-                _logger.LogError($"High Profit Rule could not find an exchange rate in a 14 day date range around {dayOfRate}.");
-                ruleCtx.EventException($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate}.");
+                _logger.LogError($"could not find an exchange rate in a 14 day date range around {dayOfRate}.");
+                ruleCtx.EventException($"could not find an exchange rate in the date range around {dayOfRate}.");
 
                 return new ExchangeRateDto[0];
             }
 
             if (!exchRate.TryGetValue(cycleDate, out var rates))
             {
-                _logger.LogError($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
-                ruleCtx.EventException($"High Profit Rule could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
+                _logger.LogError($"could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
+                ruleCtx.EventException($"could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
 
                 return new ExchangeRateDto[0];
             }

@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Analytics.Streams
                 return;
             }
 
-            _logger.LogInformation($"UniverseAlertStream received a new alert for rule {alertEvent.Rule}. Part of rule run {alertEvent.Context?.Id()}");
+            _logger.LogInformation($"received a new alert for rule {alertEvent.Rule}. Part of rule run {alertEvent.Context?.Id()}");
 
             foreach (var sub in _observers)
                 sub.Value?.OnNext(alertEvent);
@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Analytics.Streams
 
             if (!_observers.ContainsKey(observer))
             {
-                _logger.LogInformation($"UniverseAlertStream added a new observer {observer}");
+                _logger.LogInformation($"added a new observer {observer}");
                 _observers.TryAdd(observer, observer);
             }
 

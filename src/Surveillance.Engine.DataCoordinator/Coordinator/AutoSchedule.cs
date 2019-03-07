@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Surveillance.Rules;
 using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
@@ -14,15 +15,18 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
     {
         private readonly IOrdersRepository _ordersRepository;
         private readonly IQueueScheduleRulePublisher _publisher;
+        private readonly ILiveRulesService _liveRulesService;
         private readonly ILogger<AutoSchedule> _logger;
 
         public AutoSchedule(
             IOrdersRepository ordersRepository,
             IQueueScheduleRulePublisher publisher,
+            ILiveRulesService liveRulesService,
             ILogger<AutoSchedule> logger)
         {
             _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
+            _liveRulesService = liveRulesService ?? throw new ArgumentNullException(nameof(liveRulesService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -86,27 +90,11 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
         private List<RuleIdentifier> GetAllRules()
         {
-            var allRules = Enum.GetValues(typeof(Rules));
-            var allRulesList = new List<Rules>();
-
-            foreach (var item in allRules)
-            {
-                var rule = (Rules)item;
-                if (rule == Rules.UniverseFilter
-                    || rule == Rules.Layering
-                    || rule == Rules.Spoofing
-                    || rule == Rules.FrontRunning
-                    || rule == Rules.PaintingTheTape
-                    || rule == Rules.ImproperMatchedOrders
-                    || rule == Rules.CrossAssetManipulation
-                    || rule == Rules.PumpAndDump
-                    || rule == Rules.TrashAndCash)
-                    continue;
-
-                allRulesList.Add(rule);
-            }
-
-            return allRulesList.Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] }).ToList();
+            return 
+                _liveRulesService
+                    .LiveRules()
+                    .Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] })
+                    .ToList();
         }
     }
 }

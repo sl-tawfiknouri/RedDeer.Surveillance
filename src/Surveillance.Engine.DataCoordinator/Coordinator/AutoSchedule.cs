@@ -34,7 +34,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
         {
             try
             {
-                _logger?.LogInformation($"AutoSchedule about to scan for auto scheduling.");
+                _logger?.LogInformation($"about to scan for auto scheduling.");
 
                 var orders = await _ordersRepository.LiveUnscheduledOrders();
                 var filteredOrders = orders?.Where(i => i?.PlacedDate != null)?.ToList();
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
                 if (filteredOrders == null
                     || !filteredOrders.Any())
                 {
-                    _logger?.LogInformation($"AutoSchedule found no orders requiring scheduling. Exiting.");
+                    _logger?.LogInformation($"found no orders requiring scheduling. Exiting.");
                     return;
                 }
 
@@ -51,23 +51,23 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
                 if (initiationDate == null)
                 {
-                    _logger?.LogInformation($"AutoSchedule found no orders requiring scheduling with valid date sets. Exiting.");
+                    _logger?.LogInformation($"found no orders requiring scheduling with valid date sets. Exiting.");
                     return;
                 }
 
-                _logger?.LogInformation($"AutoSchedule found orders requiring scheduling. Constructing schedule.");
+                _logger?.LogInformation($"found orders requiring scheduling. Constructing schedule.");
                 var schedule = BuildSchedule(initiationDate.Value, terminationDate);
 
-                _logger?.LogInformation($"AutoSchedule about to dispatch schedule to the queue");
+                _logger?.LogInformation($"about to dispatch schedule to the queue");
                 await _publisher.Send(schedule);
-                _logger?.LogInformation($"AutoSchedule finished dispatched schedule to the queue");
+                _logger?.LogInformation($"finished dispatched schedule to the queue");
 
                 await _ordersRepository.SetOrdersScheduled(filteredOrders);
-                _logger?.LogInformation($"AutoSchedule finished updating orders with scheduled status. Completing.");
+                _logger?.LogInformation($"finished updating orders with scheduled status. Completing.");
             }
             catch (Exception e)
             {
-                _logger?.LogError($"Autoschedule exception {e.Message}");
+                _logger?.LogError($"exception {e.Message}");
             }
         }
 

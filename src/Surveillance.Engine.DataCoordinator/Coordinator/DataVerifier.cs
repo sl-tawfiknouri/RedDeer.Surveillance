@@ -32,36 +32,36 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
 
         public async Task Scan()
         {
-            _logger.LogInformation($"DataVerifier Scanning");
+            _logger.LogInformation($"Scanning");
 
-            _logger.LogInformation($"DataVerifier livening completed order sets");
+            _logger.LogInformation($"livening completed order sets");
             await _ordersRepository.LivenCompletedOrderSets();
-            _logger.LogInformation($"DataVerifier completed livening order sets");
+            _logger.LogInformation($"completed livening order sets");
 
             var stalenessIndicator = DateTime.UtcNow.AddHours(-1);
 
-            _logger.LogInformation($"DataVerifier fetching stale orders unlivened and older then {stalenessIndicator}");
+            _logger.LogInformation($"fetching stale orders unlivened and older then {stalenessIndicator}");
             var staleOrders = await _ordersRepository.StaleOrders(stalenessIndicator);
             var staleOrderAllocations = await _orderAllocationsRepository.GetStaleOrderAllocations(stalenessIndicator);
-            _logger.LogInformation($"DataVerifier completed fetching stale orders unlivened and older then {stalenessIndicator}");
+            _logger.LogInformation($"completed fetching stale orders unlivened and older then {stalenessIndicator}");
 
             if (staleOrders?.Any() ?? false)
             {
-                _logger.LogError($"DataVerifier scan found {staleOrders.Count} orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
+                _logger.LogError($"scan found {staleOrders.Count} orders without corresponding order allocations. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var order in staleOrders)
-                    _logger.LogError($"DataVerifier scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations. CLIENTSERVICES");
+                    _logger.LogError($"scan found order {order.OrderId} last updated on {order.CreatedDate} which did not have any allocations. CLIENTSERVICES");
             }
 
             if (staleOrderAllocations?.Any() ?? false)
             {
-                _logger.LogError($"DataVerifier scan found {staleOrderAllocations.Count} order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
+                _logger.LogError($"scan found {staleOrderAllocations.Count} order allocations without corresponding orders. About to print out their order ids and creation dates. CLIENTSERVICES");
 
                 foreach (var allocation in staleOrderAllocations)
-                    _logger.LogError($"DataVerifier scan found order allocation for order {allocation.OrderId} last updated on {allocation.CreatedDate} which did not have any order data. CLIENTSERVICES");
+                    _logger.LogError($"scan found order allocation for order {allocation.OrderId} last updated on {allocation.CreatedDate} which did not have any order data. CLIENTSERVICES");
             }
 
-            _logger.LogInformation($"DataVerifier completed scanning");
+            _logger.LogInformation($"completed scanning");
         }
     }
 }

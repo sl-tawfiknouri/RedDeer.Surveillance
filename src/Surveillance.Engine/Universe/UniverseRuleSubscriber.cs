@@ -82,7 +82,7 @@ namespace Surveillance.Engine.Rules.Universe
             if (execution == null
                 || player == null)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} received null execution or player. Returning");
+                _logger.LogInformation($"received null execution or player. Returning");
                 return new string[0];
             }
 
@@ -118,31 +118,31 @@ namespace Surveillance.Engine.Rules.Universe
 
             foreach (var sub in highVolumeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighVolumeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in washTradeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(WashTradeRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(WashTradeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highProfitSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(HighProfitsRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in cancelledSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(CancelledOrderRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in markingTheCloseSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(MarkingTheCloseRule)}");
                 player.Subscribe(sub);
             }
 
@@ -150,19 +150,19 @@ namespace Surveillance.Engine.Rules.Universe
 
             foreach (var sub in washTradeFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeWashTradeRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highVolumeFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighVolumeIssuanceRule)}");
                 player.Subscribe(sub);
             }
 
             foreach (var sub in highProfitFixedIncomeSubscriptions)
             {
-                _logger.LogInformation($"{nameof(UniverseRuleSubscriber)} Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(FixedIncomeHighProfitsRule)}");
                 player.Subscribe(sub);
             }
 

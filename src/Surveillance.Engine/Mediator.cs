@@ -20,16 +20,16 @@ namespace Surveillance.Engine.Rules
 
         public void Initiate()
         {
-            _logger?.LogInformation("Surveillance.Engine.Rules.Mediator initiating");
+            _logger?.LogInformation("initiating");
             _ruleSubscriber.Initiate();
-            _logger?.LogInformation("Surveillance.Engine.Rules.Mediator initiation complete");
+            _logger?.LogInformation("initiation complete");
         }
 
         public void Terminate()
         {
-            _logger?.LogInformation("Surveillance.Engine.Rules.Mediator terminating");
+            _logger?.LogInformation("terminating");
             _ruleSubscriber.Terminate();
-            _logger?.LogInformation("Surveillance.Engine.Rules.Mediator termination complete");
+            _logger?.LogInformation("termination complete");
         }
     }
 }

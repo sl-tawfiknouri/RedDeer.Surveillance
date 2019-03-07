@@ -15,17 +15,17 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleSpoofingFactory : IEquityRuleSpoofingFactory
     {
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<SpoofingRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleSpoofingFactory(IUniverseMarketCacheFactory factory,
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             ILogger<SpoofingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 spoofingEquitiesParameters,
                 ruleCtx,
                 alertStream,
-                _orderFilter,
+                _orderFilterService,
                 _factory,
                 runMode,
                 _logger,

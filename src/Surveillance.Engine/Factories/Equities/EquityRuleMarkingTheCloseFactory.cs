@@ -16,20 +16,20 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleMarkingTheCloseFactory : IEquityRuleMarkingTheCloseFactory
     {
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILogger<MarkingTheCloseRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleMarkingTheCloseFactory(
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursService tradingHoursService,
             ILogger<MarkingTheCloseRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 equitiesParameters,
                 alertStream,
                 ruleCtx,
-                _orderFilter, 
+                _orderFilterService, 
                 _factory,
                 _tradingHoursService,
                 dataRequestSubscriber,

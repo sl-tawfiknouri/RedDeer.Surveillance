@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         private readonly ICurrencyConverterService _currencyConverterService;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IClusteringService _clustering;
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -31,7 +31,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             ICurrencyConverterService currencyConverterService,
             IWashTradePositionPairer positionPairer,
             IClusteringService clustering,
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _clustering,
                 alertStream,
                 _currencyConverterService,
-                _orderFilter,
+                _orderFilterService,
                 _factory,
                 runMode,
                 _logger,

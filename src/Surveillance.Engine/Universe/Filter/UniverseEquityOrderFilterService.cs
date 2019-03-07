@@ -7,11 +7,11 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Filter
 {
-    public class UniverseEquityOrderFilter : IUniverseEquityOrderFilter
+    public class UniverseEquityOrderFilterService : IUniverseEquityOrderFilterService
     {
-        private readonly ILogger<UniverseEquityOrderFilter> _logger;
+        private readonly ILogger<UniverseEquityOrderFilterService> _logger;
 
-        public UniverseEquityOrderFilter(ILogger<UniverseEquityOrderFilter> logger)
+        public UniverseEquityOrderFilterService(ILogger<UniverseEquityOrderFilterService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -34,7 +34,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (order == null)
             {
-                _logger.LogError($"{nameof(UniverseEquityOrderFilter)} encountered an unexpected type for the underlying value of a trade event. Not filtering.");
+                _logger.LogError($"encountered an unexpected type for the underlying value of a trade event. Not filtering.");
                 return universeEvent;
             }
 
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (string.IsNullOrWhiteSpace(cfi))
             {
-                _logger.LogError($"{nameof(UniverseEquityOrderFilter)}  tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
+                _logger.LogError($"tried to process a cfi that was either null or empty for {order.Instrument.Identifiers}. Filtered out unidentifiable instrument.");
                 return null;
             }
 
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
             if (filter)
             {
-                _logger.LogInformation($"{nameof(UniverseEquityOrderFilter)}  filtering out cfi of {cfi} as it did not have a leading character of e");
+                _logger.LogInformation($"filtering out cfi of {cfi} as it did not have a leading character of e");
                 return null;
             }
 

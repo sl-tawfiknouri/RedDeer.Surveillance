@@ -32,7 +32,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
 
         private FixedIncomeWashTradeRule _rule;
 
-        private IUniverseFixedIncomeOrderFilter _orderFilter;
+        private IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
         private IClusteringService _clusteringService;
@@ -50,7 +50,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
 
         private void Setup()
         {
-            _orderFilter = A.Fake<IUniverseFixedIncomeOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
@@ -102,7 +102,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.WashTrade
 
             var rule = new FixedIncomeWashTradeRule(
                 _parameters,
-                _orderFilter,
+                _orderFilterService,
                 _ruleCtx,
                 _interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,

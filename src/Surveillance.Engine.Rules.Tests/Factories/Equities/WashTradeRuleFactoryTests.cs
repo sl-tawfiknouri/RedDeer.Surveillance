@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         private ICurrencyConverterService _currencyConverterService;
         private IWashTradePositionPairer _positionPairer;
         private IClusteringService _clustering;
-        private IUniverseEquityOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilterService _orderFilterService;
         private IUniverseMarketCacheFactory _factory;
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             _currencyConverterService = A.Fake<ICurrencyConverterService>();
             _positionPairer = A.Fake<IWashTradePositionPairer>();
             _clustering = A.Fake<IClusteringService>();
-            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     null,
                     _positionPairer, 
                     _clustering,
-                    _orderFilter,
+                    _orderFilterService,
                     _factory,
                     _logger,
                     _tradingHistoryLogger));
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _currencyConverterService,
                     null,
                     _clustering,
-                    _orderFilter,
+                    _orderFilterService,
                     _factory,
                     _logger,
                     _tradingHistoryLogger));
@@ -88,7 +88,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _currencyConverterService,
                     _positionPairer,
                     null,
-                    _orderFilter,
+                    _orderFilterService,
                     _factory,
                     _logger,
                     _tradingHistoryLogger));
@@ -118,7 +118,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _currencyConverterService,
                     _positionPairer,
                     _clustering,
-                    _orderFilter,
+                    _orderFilterService,
                     null,
                     _logger,
                     _tradingHistoryLogger));
@@ -133,7 +133,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _currencyConverterService,
                     _positionPairer,
                     _clustering,
-                    _orderFilter,
+                    _orderFilterService,
                     _factory,
                     null,
                     _tradingHistoryLogger));
@@ -148,7 +148,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _currencyConverterService,
                     _positionPairer,
                     _clustering,
-                    _orderFilter,
+                    _orderFilterService,
                     _factory,
                     _logger,
                     null));
@@ -161,7 +161,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _currencyConverterService,
                 _positionPairer,
                 _clustering,
-                _orderFilter,
+                _orderFilterService,
                 _factory,
                 _logger,
                 _tradingHistoryLogger);
@@ -176,7 +176,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _currencyConverterService,
                 _positionPairer,
                 _clustering,
-                _orderFilter,
+                _orderFilterService,
                 _factory,
                 _logger,
                 _tradingHistoryLogger);
@@ -191,7 +191,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _currencyConverterService,
                 _positionPairer,
                 _clustering,
-                _orderFilter,
+                _orderFilterService,
                 _factory,
                 _logger,
                 _tradingHistoryLogger);

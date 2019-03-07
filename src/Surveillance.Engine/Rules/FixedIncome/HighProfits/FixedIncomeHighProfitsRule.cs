@@ -17,13 +17,13 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
     public class FixedIncomeHighProfitsRule : BaseUniverseRule, IFixedIncomeHighProfitsRule
     {
         private readonly IHighProfitsRuleFixedIncomeParameters _parameters;
-        private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
+        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
 
         public FixedIncomeHighProfitsRule(
             IHighProfitsRuleFixedIncomeParameters parameters,
-            IUniverseFixedIncomeOrderFilter orderFilter,
+            IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 tradingStackLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(_parameters));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return _orderFilterService.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

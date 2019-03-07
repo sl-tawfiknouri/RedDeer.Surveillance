@@ -17,7 +17,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class CancelledOrderRuleFactoryTests
     {
-        private IUniverseEquityOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilterService _orderFilterService;
         private IUniverseMarketCacheFactory _factory;
         private ILogger<CancelledOrderRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         [SetUp]
         public void Setup()
         {
-            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = A.Fake<ILogger<CancelledOrderRule>>();
             _tradingHistoryLogger = A.Fake<ILogger<TradingHistoryStack>>();
@@ -50,20 +50,20 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Factory_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilter, null, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilterService, null, _logger, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Logger_Null_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilter, _factory, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleCancelledOrderFactory(_orderFilterService, _factory, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Build_Returns_A_Cancelled_Order_Rule()
         {
-            var factory = new EquityRuleCancelledOrderFactory(_orderFilter, _factory, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleCancelledOrderFactory(_orderFilterService, _factory, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_parameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 

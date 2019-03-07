@@ -115,8 +115,8 @@ namespace Surveillance.Engine.Rules
             For<ILayeringEquitySubscriber>().Use<LayeringEquitySubscriber>();
             For<IWashTradeEquitySubscriber>().Use<WashTradeEquitySubscriber>();
 
-            For<IUniverseEquityOrderFilter>().Use<UniverseEquityOrderFilter>();
-            For<IUniverseFixedIncomeOrderFilter>().Use<UniverseFixedIncomeOrderFilter>();
+            For<IUniverseEquityOrderFilterService>().Use<UniverseEquityOrderFilterService>();
+            For<IUniverseFixedIncomeOrderFilterService>().Use<UniverseFixedIncomeOrderFilterService>();
 
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();

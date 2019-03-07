@@ -34,7 +34,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private UniverseMarketCacheFactory _universeMarketCacheFactory;
         private MarkingTheCloseEquitiesParameters _equitiesParameters;
 
@@ -52,7 +52,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
@@ -77,7 +77,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
                 });
 
             _equityRuleMarkingTheCloseFactory = new EquityRuleMarkingTheCloseFactory(
-                _universeOrderFilter,
+                _universeOrderFilterService,
                 _universeMarketCacheFactory,
                 _tradingHoursService,
                 new NullLogger<MarkingTheCloseRule>(),

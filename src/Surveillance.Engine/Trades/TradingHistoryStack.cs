@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Trades
         {
             if (order == null)
             {
-                _logger.LogInformation($"TradingHistoryStack add received a null frame at {currentTime}");
+                _logger.LogInformation($"add received a null frame at {currentTime}");
                 return;
             }
 
@@ -44,12 +44,12 @@ namespace Surveillance.Engine.Rules.Trades
             {
                 if (currentTime.Subtract(_getFrameTime(order)) <= _activeTradeDuration)
                 {
-                    _logger.LogTrace($"TradingHistoryStack adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}");
+                    _logger.LogTrace($"adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}");
                     _activeStack.Push(order);
                 }
                 else
                 {
-                    _logger.LogTrace($"TradingHistoryStack adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}. Found it was outdated for an active trade duration of {_activeTradeDuration} so adding it to history");
+                    _logger.LogTrace($"adding reddeer-order-id {order?.ReddeerOrderId} at {currentTime}. Found it was outdated for an active trade duration of {_activeTradeDuration} so adding it to history");
                     _history.Enqueue(order);
                 }
             }
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Trades
 
                     if (currentTime.Subtract(_getFrameTime(poppedItem)) > _activeTradeDuration)
                     {
-                        _logger.LogTrace($"TradingHistoryStack archiving for {currentTime} and duration of {_activeTradeDuration}. Order with reddeer-order-id of {poppedItem.ReddeerOrderId} archived.");
+                        _logger.LogTrace($"archiving for {currentTime} and duration of {_activeTradeDuration}. Order with reddeer-order-id of {poppedItem.ReddeerOrderId} archived.");
 
                         _history.Enqueue(poppedItem);
                     }

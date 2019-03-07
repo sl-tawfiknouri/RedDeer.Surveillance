@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighProfits
     {
         private RuleRunMode _runMode = RuleRunMode.ForceRun;
         private IHighProfitsRuleFixedIncomeParameters _parameters;
-        private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
+        private IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private IUniverseAlertStream _alertStream;
@@ -29,7 +29,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.HighProfits
         [SetUp]
         public void Setup()
         {
-            _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
+            _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             _parameters = A.Fake<IHighProfitsRuleFixedIncomeParameters>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();

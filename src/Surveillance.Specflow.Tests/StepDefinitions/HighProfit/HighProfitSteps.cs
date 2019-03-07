@@ -39,7 +39,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private ExchangeRateSelection _exchangeRateSelection;
 
         private ICurrencyConverterService _currencyConverterService;
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
         private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -92,7 +92,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
             var currencyLogger = new NullLogger<CurrencyConverterService>();
             _currencyConverterService = new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -120,7 +120,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _universeOrderFilter,
+                _universeOrderFilterService,
                 _interdayUniverseMarketCacheFactory,
                 _marketDataCacheStrategyFactory,
                 _logger,

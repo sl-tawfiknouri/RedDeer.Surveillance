@@ -18,7 +18,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     [TestFixture]
     public class SpoofingRuleFactoryTests
     {
-        private IUniverseEquityOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilterService _orderFilterService;
         private IUniverseMarketCacheFactory _factory;
         private ILogger<SpoofingRule> _logger;
         private ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -30,7 +30,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         [SetUp]
         public void Setup()
         {
-            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<SpoofingRule>();
             _tradingHistoryLogger = new NullLogger<TradingHistoryStack>();
@@ -44,7 +44,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Factory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(null, _orderFilter, _logger, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(null, _orderFilterService, _logger, _tradingHistoryLogger));
         }
 
         [Test]
@@ -58,20 +58,20 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilter, null, _tradingHistoryLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilterService, null, _tradingHistoryLogger));
         }
 
         [Test]
         public void Constructor_Null_TradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilter, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleSpoofingFactory(_factory, _orderFilterService, _logger, null));
         }
 
         [Test]
         public void Build_Returns_Non_Null_Rule()
         {
-            var factory = new EquityRuleSpoofingFactory(_factory, _orderFilter, _logger, _tradingHistoryLogger);
+            var factory = new EquityRuleSpoofingFactory(_factory, _orderFilterService, _logger, _tradingHistoryLogger);
 
             var result = factory.Build(_spoofingEquitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 

@@ -20,7 +20,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleHighProfitFactory : IEquityRuleHighProfitFactory
     {
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly ICostCalculatorFactory _costCalculatorFactory;
         private readonly IRevenueCalculatorFactory _revenueCalculatorFactory;
         private readonly IExchangeRateProfitCalculator _exchangeRateProfitCalculator;
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             ICostCalculatorFactory costCalculatorFactory,
             IRevenueCalculatorFactory revenueCalculatorFactory,
             IExchangeRateProfitCalculator exchangeRateProfitCalculator,
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             IMarketDataCacheStrategyFactory cacheStrategyFactory,
             ILogger<HighProfitsRule> logger,
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _cacheStrategyFactory = cacheStrategyFactory ?? throw new ArgumentNullException(nameof(cacheStrategyFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
         }
 
         public IHighProfitRule Build(
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _orderFilter,
+                _orderFilterService,
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,
@@ -83,7 +83,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _orderFilter,
+                _orderFilterService,
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 dataRequestSubscriber,

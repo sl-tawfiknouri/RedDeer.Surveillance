@@ -17,20 +17,20 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleHighVolumeFactory : IEquityRuleHighVolumeFactory
     {
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly ILogger<IHighVolumeRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleHighVolumeFactory(
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
             IMarketTradingHoursService tradingHoursService,
             ILogger<IHighVolumeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             RuleRunMode runMode)
         {
 
-            return new HighVolumeRule(equitiesParameters, opCtx, alertStream, _orderFilter, _factory, _tradingHoursService, dataRequestSubscriber, runMode, _logger, _tradingHistoryLogger);
+            return new HighVolumeRule(equitiesParameters, opCtx, alertStream, _orderFilterService, _factory, _tradingHoursService, dataRequestSubscriber, runMode, _logger, _tradingHistoryLogger);
         }
 
         public static string Version => Versioner.Version(1, 0);

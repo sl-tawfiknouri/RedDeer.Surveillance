@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
     public class FixedIncomeWashTradeRule : BaseUniverseRule, IFixedIncomeWashTradeRule
     {
         private readonly IWashTradeRuleFixedIncomeParameters _parameters;
-        private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
+        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IClusteringService _clusteringService;
         private readonly IPortfolioFactory _portfolioFactory;
@@ -35,7 +35,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         public FixedIncomeWashTradeRule(
             IWashTradeRuleFixedIncomeParameters parameters,
-            IUniverseFixedIncomeOrderFilter orderFilter,
+            IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -56,7 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 tradingStackLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
             _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
@@ -67,7 +67,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return _orderFilterService.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

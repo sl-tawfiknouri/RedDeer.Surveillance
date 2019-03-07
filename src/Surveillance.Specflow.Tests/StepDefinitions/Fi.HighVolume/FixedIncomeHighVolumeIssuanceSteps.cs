@@ -29,7 +29,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighVolume
 
         private FixedIncomeHighProfitsRule _rule;
 
-        private IUniverseFixedIncomeOrderFilter _orderFilter;
+        private IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
 
@@ -45,7 +45,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighVolume
 
         private void Setup()
         {
-            _orderFilter = A.Fake<IUniverseFixedIncomeOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
@@ -87,7 +87,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Fi.HighVolume
 
             var rule = new FixedIncomeHighVolumeIssuanceRule(
                 _parameters,
-                _orderFilter,
+                _orderFilterService,
                 _ruleCtx,
                 _interdayUniverseMarketCacheFactory,
                 RuleRunMode.ForceRun,

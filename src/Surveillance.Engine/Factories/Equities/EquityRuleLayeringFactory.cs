@@ -16,20 +16,20 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleLayeringFactory : IEquityRuleLayeringFactory
     {
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger<EquityRuleLayeringFactory> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleLayeringFactory(
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IMarketTradingHoursService tradingHoursService,
             IUniverseMarketCacheFactory factory,
             ILogger<EquityRuleLayeringFactory> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             return new LayeringRule(
                 equitiesParameters,
                 alertStream,
-                _orderFilter,
+                _orderFilterService,
                 _logger,
                 _factory,
                 _tradingHoursService,

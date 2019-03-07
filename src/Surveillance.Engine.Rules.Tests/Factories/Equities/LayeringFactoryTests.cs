@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     {
         private IMarketTradingHoursService _tradingHoursService;
         private IUniverseMarketCacheFactory _factory;
-        private IUniverseEquityOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilterService _orderFilterService;
         private ILogger<EquityRuleLayeringFactory> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
 
@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
-            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _logger = A.Fake<ILogger<EquityRuleLayeringFactory>>();
             _tradingLogger = A.Fake<ILogger<TradingHistoryStack>>();
 
@@ -52,34 +52,34 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Constructor_ConsidersNullMarketTradingHoursManager_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, null, _factory, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, null, _factory, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullUniverseMarketCacheFactory_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursService, null, _logger, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, null, _logger, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursService, _factory, null, _tradingLogger));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, null, _tradingLogger));
         }
 
         [Test]
         public void Constructor_ConsidersNullTradingHistoryLogger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilter, _tradingHoursService, _factory, _logger, null));
+            Assert.Throws<ArgumentNullException>(() => new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, _logger, null));
         }
 
         [Test]
         public void Build_Returns_Non_Null_Layering_Rule()
         {
-            var ruleFactory = new EquityRuleLayeringFactory(_orderFilter, _tradingHoursService, _factory, _logger, _tradingLogger);
+            var ruleFactory = new EquityRuleLayeringFactory(_orderFilterService, _tradingHoursService, _factory, _logger, _tradingLogger);
 
             var result = ruleFactory.Build(_equitiesParameters, _ruleCtx, _alertStream, RuleRunMode.ForceRun);
 

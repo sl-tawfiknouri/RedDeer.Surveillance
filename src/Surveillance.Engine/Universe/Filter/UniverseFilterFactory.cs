@@ -10,24 +10,24 @@ namespace Surveillance.Engine.Rules.Universe.Filter
     public class UniverseFilterFactory : IUniverseFilterFactory
     {
         private readonly IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
-        private readonly ILogger<UniverseFilter> _logger;
+        private readonly ILogger<UniverseFilterService> _logger;
 
         public UniverseFilterFactory(
             IUnsubscriberFactory<IUniverseEvent> unsubscriberFactory,
-            ILogger<UniverseFilter> logger)
+            ILogger<UniverseFilterService> logger)
         {
             _unsubscriberFactory = unsubscriberFactory ?? throw new ArgumentNullException(nameof(unsubscriberFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IUniverseFilter Build(
+        public IUniverseFilterService Build(
                 RuleFilter accounts,
                 RuleFilter traders,
                 RuleFilter markets,
                 RuleFilter funds,
                 RuleFilter strategies)
         {
-            return new UniverseFilter(_unsubscriberFactory, accounts, traders, markets, funds, strategies, _logger);
+            return new UniverseFilterService(_unsubscriberFactory, accounts, traders, markets, funds, strategies, _logger);
         }
     }
 }

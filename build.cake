@@ -43,7 +43,8 @@ var testProjects = new []
 	"src/Surveillance.Specflow.Tests/Surveillance.Specflow.Tests.csproj",
 	"src/DomainV2.Tests/Domain.Tests.csproj",
 	"src/Infrastructure.Network.Tests/Infrastructure.Network.Tests.csproj",
-	"src/Domain.Core.Tests/Domain.Core.Tests.csproj"
+	"src/Domain.Core.Tests/Domain.Core.Tests.csproj",
+	"src/Domain.Surveillance.Tests/Domain.Surveillance.Tests.csproj"
 };
 
 var publishProjects = new List<Tuple<string,string, string,string>>

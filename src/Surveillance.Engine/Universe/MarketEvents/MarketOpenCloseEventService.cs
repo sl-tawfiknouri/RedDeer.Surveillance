@@ -9,14 +9,14 @@ using Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.MarketEvents
 {
-    public class MarketOpenCloseEventManager : IMarketOpenCloseEventManager
+    public class MarketOpenCloseEventService : IMarketOpenCloseEventService
     {
         private readonly IMarketOpenCloseApiCachingDecoratorRepository _marketOpenCloseRepository;
-        private readonly ILogger<MarketOpenCloseEventManager> _logger;
+        private readonly ILogger<MarketOpenCloseEventService> _logger;
 
-        public MarketOpenCloseEventManager(
+        public MarketOpenCloseEventService(
             IMarketOpenCloseApiCachingDecoratorRepository marketOpenCloseRepository,
-            ILogger<MarketOpenCloseEventManager> logger)
+            ILogger<MarketOpenCloseEventService> logger)
         {
             _marketOpenCloseRepository =
                 marketOpenCloseRepository
@@ -26,7 +26,7 @@ namespace Surveillance.Engine.Rules.Universe.MarketEvents
 
         public async Task<IReadOnlyCollection<IUniverseEvent>> AllOpenCloseEvents(DateTime start, DateTime end)
         {
-            _logger.LogInformation($"MarketOpenCloseEventManager fetching market events from {start} to {end}");
+            _logger.LogInformation($"fetching market events from {start} to {end}");
 
             var markets = await _marketOpenCloseRepository.Get();
             var exchangeMarkets = markets.Select(m => new ExchangeMarket(m)).ToList();
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Universe.MarketEvents
 
             var response = OpenCloseEvents(exchangeMarkets, extendedStart, extendedEnd);
 
-            _logger.LogInformation($"MarketOpenCloseEventManager completed fetching market events from {start} to {end} and found {response?.Count} market open/close events");
+            _logger.LogInformation($"completed fetching market events from {start} to {end} and found {response?.Count} market open/close events");
 
             return response;
         }

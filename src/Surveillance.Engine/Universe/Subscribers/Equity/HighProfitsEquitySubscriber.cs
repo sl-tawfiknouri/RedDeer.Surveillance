@@ -24,7 +24,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
     {
         private readonly IEquityRuleHighProfitFactory _equityRuleHighProfitFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
-        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
+        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly ILogger _logger;
 
@@ -32,13 +32,13 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             IEquityRuleHighProfitFactory equityRuleHighProfitFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
-            IOrganisationalFactorBrokerFactory brokerFactor,
+            IOrganisationalFactorBrokerServiceFactory brokerServiceFactor,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _equityRuleHighProfitFactory = equityRuleHighProfitFactory ?? throw new ArgumentNullException(nameof(equityRuleHighProfitFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            _brokerFactory = brokerFactor ?? throw new ArgumentNullException(nameof(brokerFactor));
+            _brokerServiceFactory = brokerServiceFactor ?? throw new ArgumentNullException(nameof(brokerServiceFactor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -82,7 +82,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 {
                     var cloneableRule = SubscribeParameters(execution, opCtx, alertStream, dataRequestSubscriber, param);
                     var broker =
-                        _brokerFactory.Build(
+                        _brokerServiceFactory.Build(
                             cloneableRule,
                             param.Factors,
                             param.AggregateNonFactorableIntoOwnCategory);

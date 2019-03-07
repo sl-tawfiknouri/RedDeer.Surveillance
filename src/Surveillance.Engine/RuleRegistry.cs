@@ -105,7 +105,7 @@ namespace Surveillance.Engine.Rules
             For<IQueueRuleSubscriber>().Use<QueueRuleSubscriber>();
             For<IEquityRuleSpoofingFactory>().Use<EquityRuleSpoofingFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
-            For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
+            For<IOrganisationalFactorBrokerServiceFactory>().Use<OrganisationalFactorBrokerServiceFactory>();
 
             For<ISpoofingEquitySubscriber>().Use<SpoofingEquitySubscriber>();
             For<ICancelledOrderEquitySubscriber>().Use<CancelledOrderEquitySubscriber>();
@@ -130,7 +130,7 @@ namespace Surveillance.Engine.Rules
             For<IUniverseAlertStreamFactory>().Use<UniverseAlertStreamFactory>();
             For<IUniverseAlertStreamSubscriberFactory>().Use<UniverseAlertStreamSubscriberFactory>();
 
-            For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
+            For<IMarketOpenCloseEventService>().Use<MarketOpenCloseEventService>();
             For<IClientOrganisationalFactorMapper>().Use<ClientOrganisationalFactorMapper>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();

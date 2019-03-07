@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Universe
         private readonly IOrdersRepository _auroraOrdersRepository;
         private readonly IOrdersToAllocatedOrdersProjector _allocateOrdersProjector;
         private readonly IReddeerMarketRepository _auroraMarketRepository;
-        private readonly IMarketOpenCloseEventManager _marketManager;
+        private readonly IMarketOpenCloseEventService _marketService;
         private readonly IUniverseSortComparer _universeSorter;
         private readonly ILogger<UniverseBuilder> _logger;
 
@@ -31,14 +31,14 @@ namespace Surveillance.Engine.Rules.Universe
             IOrdersRepository auroraOrdersRepository,
             IOrdersToAllocatedOrdersProjector allocateOrdersProjector,
             IReddeerMarketRepository auroraMarketRepository,
-            IMarketOpenCloseEventManager marketManager,
+            IMarketOpenCloseEventService marketService,
             IUniverseSortComparer universeSorter,
             ILogger<UniverseBuilder> logger)
         {
             _auroraOrdersRepository = auroraOrdersRepository ?? throw new ArgumentNullException(nameof(auroraOrdersRepository));
             _allocateOrdersProjector = allocateOrdersProjector ?? throw new ArgumentNullException(nameof(allocateOrdersProjector));
             _auroraMarketRepository = auroraMarketRepository ?? throw new ArgumentNullException(nameof(auroraMarketRepository));
-            _marketManager = marketManager ?? throw new ArgumentNullException(nameof(marketManager));
+            _marketService = marketService ?? throw new ArgumentNullException(nameof(marketService));
             _universeSorter = universeSorter ?? throw new ArgumentNullException(nameof(universeSorter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -147,7 +147,7 @@ namespace Surveillance.Engine.Rules.Universe
                     .ToArray();
 
             var marketEvents =
-                await _marketManager
+                await _marketService
                     .AllOpenCloseEvents(
                         execution.TimeSeriesInitiation.DateTime,
                         execution.TimeSeriesTermination.DateTime);

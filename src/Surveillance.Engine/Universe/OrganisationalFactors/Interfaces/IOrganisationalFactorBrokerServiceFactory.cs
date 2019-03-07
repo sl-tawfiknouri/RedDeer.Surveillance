@@ -4,9 +4,9 @@ using Surveillance.Engine.Rules.Rules.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces
 {
-    public interface IOrganisationalFactorBrokerFactory
+    public interface IOrganisationalFactorBrokerServiceFactory
     {
-        IOrganisationalFactorBroker Build(
+        IOrganisationalFactorBrokerService Build(
             IUniverseCloneableRule cloneableRule,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory);

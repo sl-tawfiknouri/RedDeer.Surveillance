@@ -107,8 +107,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Surveillance", "Doma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedKernel.Contracts", "SharedKernel.Contracts\SharedKernel.Contracts.csproj", "{E29E7F22-7F70-44BD-86DC-22350FEA427D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Core.Tests", "Domain.Core.Tests\Domain.Core.Tests.csproj", "{22DC6964-A96C-44C6-B577-4CE991AA6A93}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -279,10 +277,6 @@ Global
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22DC6964-A96C-44C6-B577-4CE991AA6A93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -329,7 +323,6 @@ Global
 		{D26273B1-FF4D-43D3-8F67-8035F939FB47} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{3EF93BF4-7AD5-47BF-89C2-D2BDB523EDB4} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 		{E29E7F22-7F70-44BD-86DC-22350FEA427D} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
-		{22DC6964-A96C-44C6-B577-4CE991AA6A93} = {B0E584E1-8A18-41BB-8B55-C899FE558A94}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

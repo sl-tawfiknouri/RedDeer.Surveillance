@@ -1,4 +1,4 @@
-﻿namespace Domain.Contracts
+﻿namespace SharedKernel.Contracts.Queues
 {
     public class AutoScheduleMessage
     {

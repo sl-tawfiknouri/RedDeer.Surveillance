@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Domain.Scheduling
+namespace Domain.Surveillance.Scheduling
 {
     public class RuleIdentifier
     {

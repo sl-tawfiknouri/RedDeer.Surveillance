@@ -1,7 +1,7 @@
 ﻿using DataSynchroniser.Api.Bmll.Filters;
-using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Bmll.Tests.Filters
 {

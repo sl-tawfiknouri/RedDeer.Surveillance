@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Trading.Factories;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
                 parameters?.WindowSize ?? TimeSpan.FromDays(1),
-                Domain.Scheduling.Rules.FixedIncomeWashTrades,
+                Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades,
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeWashTradeRule)}",
                 ruleCtx,
@@ -103,7 +103,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     WashTradePairingPositionBreach.None(),
                     clusteringAnalysis);
 
-            var universeAlert = new UniverseAlertEvent(Domain.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);
+            var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);
             _alertStream.Add(universeAlert);
 
             _logger.LogInformation($"RunPostOrderEvent completed for {UniverseDateTime}");
@@ -239,7 +239,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
             var liveTrades =
                 frames
-                    .Where(at => at.OrderStatus() == Domain.Core.Financial.OrderStatus.Filled)
+                    .Where(at => at.OrderStatus() == OrderStatus.Filled)
                     .Where(at => at.OrderAverageFillPrice != null)
                     .ToList();
 

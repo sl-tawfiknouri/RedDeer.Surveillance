@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.Streams.Interfaces;
+using Domain.Surveillance.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Universe;

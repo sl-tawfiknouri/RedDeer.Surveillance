@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 

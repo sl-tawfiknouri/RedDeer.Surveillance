@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+
 // ReSharper disable UnusedMember.Global
 
-namespace Utilities.Disk_IO.Interfaces
+namespace Infrastructure.Network.Disk.Interfaces
 {
     public interface IReddeerDirectory
     {

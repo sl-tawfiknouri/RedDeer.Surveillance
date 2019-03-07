@@ -3,15 +3,15 @@ using DataSynchroniser.Manager;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Queues;
 using DataSynchroniser.Queues.Interfaces;
-using Domain.DTO;
-using Domain.DTO.Interfaces;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using SharedKernel.Contracts.Queues;
+using SharedKernel.Contracts.Queues.Interfaces;
 using StructureMap;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser
 {

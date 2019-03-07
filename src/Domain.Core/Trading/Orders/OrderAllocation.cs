@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Trading
+namespace Domain.Core.Trading.Orders
 {
     public class OrderAllocation
     {

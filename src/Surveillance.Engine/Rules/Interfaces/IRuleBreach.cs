@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Interfaces

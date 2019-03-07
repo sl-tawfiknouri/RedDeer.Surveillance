@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
-using Domain.Streams.Interfaces;
-using Domain.Trading;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Streams.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 
 namespace TestHarness.Engine.OrderGenerator

@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Core.Trading
+﻿namespace Domain.Core.Trading
 {
     public class BalanceSheetAccountService
     {

@@ -1,8 +1,7 @@
-﻿using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using System;
+﻿using System;
+using Domain.Core.Financial.Assets;
 
-namespace Domain.Equity.TimeBars
+namespace Domain.Core.Markets.Timebars
 {
     /// <summary>
     /// Intraday update for financial instrument trading data

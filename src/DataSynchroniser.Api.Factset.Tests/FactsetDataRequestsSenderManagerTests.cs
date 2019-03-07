@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using DataSynchroniser.Api.Factset.Factset;
-using Domain.Markets;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.FactsetSecurityDaily;
+using SharedKernel.Contracts.Markets;
 using Surveillance.DataLayer.Api.FactsetMarketData.Interfaces;
 
 namespace DataSynchroniser.Api.Factset.Tests

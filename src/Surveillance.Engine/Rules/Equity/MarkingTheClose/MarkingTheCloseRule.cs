@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Markets;
-using Domain.Trading;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -18,7 +16,8 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
+using Domain.Core.Trading.Orders;
+using SharedKernel.Contracts.Markets;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {
@@ -48,7 +47,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.Window ?? TimeSpan.FromMinutes(30),
-                Domain.Scheduling.Rules.MarkingTheClose,
+                Domain.Surveillance.Scheduling.Rules.MarkingTheClose,
                 EquityRuleMarkingTheCloseFactory.Version,
                 "Marking The Close",
                 ruleCtx,
@@ -141,7 +140,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
                 windowVolumeBreach ?? new VolumeBreach());
 
             _logger.LogInformation($"had a breach for {marketSecurities.FirstOrDefault()?.Instrument?.Identifiers} at {UniverseDateTime}. Adding to alert stream.");
-            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.MarkingTheClose, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -328,7 +327,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             {
                 // delete event
                 _logger.LogInformation("had missing data at eschaton. Recording to op ctx.");
-                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.MarkingTheClose, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

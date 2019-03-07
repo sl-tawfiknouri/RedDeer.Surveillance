@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
 using TestHarness.Display.Interfaces;
 
 namespace TestHarness.Display.Subscribers

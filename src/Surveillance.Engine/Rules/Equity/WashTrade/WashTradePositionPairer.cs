@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Trades;
 

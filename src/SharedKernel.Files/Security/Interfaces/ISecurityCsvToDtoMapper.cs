@@ -1,4 +1,6 @@
-﻿namespace Domain.Equity.TimeBars.Interfaces
+﻿using Domain.Core.Markets.Timebars;
+
+namespace SharedKernel.Files.Security.Interfaces
 {
     public interface ISecurityCsvToDtoMapper
     {

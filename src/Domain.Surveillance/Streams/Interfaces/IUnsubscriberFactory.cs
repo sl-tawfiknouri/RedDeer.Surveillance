@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Streams;
 
-namespace Domain.Equity.Streams.Interfaces
+namespace Domain.Surveillance.Streams.Interfaces
 {
     public interface IUnsubscriberFactory<T>
     {

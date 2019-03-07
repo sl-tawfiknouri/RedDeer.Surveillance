@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Streams.Interfaces;
+using Domain.Surveillance.Streams.Interfaces;
 
-namespace Domain.Streams
+namespace Domain.Surveillance.Streams
 {
     public class OrderAllocationStream<T> : IOrderAllocationStream<T>
     {

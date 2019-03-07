@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
         public async Task<ExchangeRateProfitBreakdown> ExchangeRateMovement(
             ITradePosition positionCost,
             ITradePosition positionRevenue,
-            Domain.Core.Financial.Currency variableCurrency, 
+            Domain.Core.Financial.Money.Currency variableCurrency, 
             ISystemProcessOperationRunRuleContext ruleCtx)
         {
             if (string.IsNullOrEmpty(variableCurrency.Code))

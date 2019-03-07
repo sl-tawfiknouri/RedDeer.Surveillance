@@ -1,4 +1,4 @@
-﻿namespace Domain.Markets
+﻿namespace SharedKernel.Contracts.Markets
 {
     public class MarketDataResponse<T> where T : class
     {

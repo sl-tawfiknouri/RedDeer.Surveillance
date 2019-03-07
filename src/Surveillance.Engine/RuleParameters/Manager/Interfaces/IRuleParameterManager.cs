@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
 namespace Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces

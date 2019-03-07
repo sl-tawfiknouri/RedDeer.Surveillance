@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Core.Financial;
-using Domain.Equity.TimeBars;
-using Domain.Markets;
+using Domain.Core.Dates;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Engine.Rules.Rules;
 
 namespace Surveillance.Engine.Rules.Markets.Interfaces

@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Equity.TimeBars;
-using Domain.Markets;
+using Domain.Core.Markets.Timebars;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Engine.Rules.Markets;
 
 namespace Surveillance.Engine.Rules.Tests.Markets

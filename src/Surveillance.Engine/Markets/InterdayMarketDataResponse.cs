@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Equity.TimeBars;
-using Domain.Markets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets.Timebars;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Markets

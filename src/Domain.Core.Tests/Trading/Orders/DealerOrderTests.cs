@@ -1,7 +1,8 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Interfaces;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Assets.Interfaces;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using NUnit.Framework;
 

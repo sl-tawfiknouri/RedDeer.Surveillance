@@ -1,10 +1,11 @@
 ﻿using Domain.Core.Trading;
-using Domain.Trading;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 
 namespace Domain.Core.Tests.Trading
 {
@@ -86,16 +87,16 @@ namespace Domain.Core.Tests.Trading
 
             var order1 = A.Fake<Order>();
             order1.PlacedDate = startDate;
-            order1.OrderDirection = Financial.OrderDirections.BUY;
-            order1.OrderAverageFillPrice = new Financial.Money(10, "GBX");
-            order1.OrderCurrency = new Financial.Currency("GBX");
+            order1.OrderDirection = OrderDirections.BUY;
+            order1.OrderAverageFillPrice = new Money(10, "GBX");
+            order1.OrderCurrency = new Currency("GBX");
             order1.OrderFilledVolume = 100;
 
             var order2 = A.Fake<Order>();
             order2.PlacedDate = startDate;
-            order2.OrderDirection = Financial.OrderDirections.SELL;
-            order2.OrderAverageFillPrice = new Financial.Money(12, "GBX");
-            order2.OrderCurrency = new Financial.Currency("GBX");
+            order2.OrderDirection = OrderDirections.SELL;
+            order2.OrderAverageFillPrice = new Money(12, "GBX");
+            order2.OrderCurrency = new Currency("GBX");
             order2.OrderFilledVolume = 100;
 
             portfolio.Add(order1);
@@ -122,16 +123,16 @@ namespace Domain.Core.Tests.Trading
 
             var order1 = A.Fake<Order>();
             order1.PlacedDate = startDate;
-            order1.OrderDirection = Financial.OrderDirections.BUY;
-            order1.OrderAverageFillPrice = new Financial.Money(10, "GBX");
-            order1.OrderCurrency = new Financial.Currency("GBX");
+            order1.OrderDirection = OrderDirections.BUY;
+            order1.OrderAverageFillPrice = new Money(10, "GBX");
+            order1.OrderCurrency = new Currency("GBX");
             order1.OrderFilledVolume = 100;
 
             var order2 = A.Fake<Order>();
             order2.PlacedDate = startDate;
-            order2.OrderDirection = Financial.OrderDirections.SELL;
-            order2.OrderAverageFillPrice = new Financial.Money(20, "GBX");
-            order2.OrderCurrency = new Financial.Currency("GBX");
+            order2.OrderDirection = OrderDirections.SELL;
+            order2.OrderAverageFillPrice = new Money(20, "GBX");
+            order2.OrderCurrency = new Currency("GBX");
             order2.OrderFilledVolume = 50;
 
             portfolio.Add(order1);

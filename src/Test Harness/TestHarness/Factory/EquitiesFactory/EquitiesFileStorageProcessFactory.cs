@@ -1,6 +1,6 @@
 ﻿using System;
-using Domain.Equity.TimeBars;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Files.Security;
 using TestHarness.Engine.EquitiesStorage;
 using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

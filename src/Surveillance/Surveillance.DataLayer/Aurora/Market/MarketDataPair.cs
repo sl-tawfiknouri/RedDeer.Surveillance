@@ -1,10 +1,10 @@
-﻿using Domain.Core.Financial;
+﻿using Domain.Core.Financial.Assets;
 
 namespace Surveillance.DataLayer.Aurora.Market
 {
     public class MarketDataPair
     {
-        public Domain.Core.Financial.Markets.Market Exchange { get; set; }
+        public Domain.Core.Markets.Market Exchange { get; set; }
         public FinancialInstrument Security { get; set; }
     }
 }

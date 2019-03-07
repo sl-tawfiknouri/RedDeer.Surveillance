@@ -1,7 +1,5 @@
-﻿using Domain.Core.Financial;
-using Domain.Trading;
+﻿using Domain.Core.Trading.Orders;
 using NUnit.Framework;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Tests.Helpers;
 

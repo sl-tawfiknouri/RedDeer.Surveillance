@@ -5,12 +5,12 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Tests.Disk_IO
 {

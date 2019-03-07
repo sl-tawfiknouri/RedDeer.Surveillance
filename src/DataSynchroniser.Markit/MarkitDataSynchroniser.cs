@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataSynchroniser.Api.Markit.Interfaces;
-using Domain.Markets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 
 namespace DataSynchroniser.Api.Markit

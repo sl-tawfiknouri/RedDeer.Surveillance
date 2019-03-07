@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Equity.TimeBars;
-using Domain.Trading;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Universe.Interfaces
 {

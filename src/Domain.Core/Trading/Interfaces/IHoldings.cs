@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
 
 namespace Domain.Core.Trading
 {

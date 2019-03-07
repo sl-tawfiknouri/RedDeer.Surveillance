@@ -1,13 +1,13 @@
 ﻿using System.Threading;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Aws.Interfaces;
 using NUnit.Framework;
 using TestHarness.Commands;
 using TestHarness.Configuration.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Factory.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace TestHarness.Tests.Commands
 {

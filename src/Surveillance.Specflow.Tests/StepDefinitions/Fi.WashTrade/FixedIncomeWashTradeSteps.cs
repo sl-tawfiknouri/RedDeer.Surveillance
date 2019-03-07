@@ -1,6 +1,6 @@
 ﻿using System;
+using Domain.Surveillance.Scheduling;
 using Domain.Core.Trading.Factories;
-using Domain.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.Auditing.Context.Interfaces;

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Cfis;
 using Domain.Core.Financial.Cfis.Interfaces;
-using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -63,7 +65,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Market
 
         private EquityIntraDayTimeBarCollection Frame()
         {
-            var stockExchange = new Domain.Core.Financial.Markets.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+            var stockExchange = new Domain.Core.Markets.Market("1", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
 
             var securityIdentifiers = new InstrumentIdentifiers(string.Empty, string.Empty, "stan", "stan", "st12345", "sta123456789", "stan", "sta12345", "stan", "stan", "STAN");
 

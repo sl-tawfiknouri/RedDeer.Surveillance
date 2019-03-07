@@ -1,7 +1,7 @@
 ﻿using DataSynchroniser.Api.Factset.Filters;
-using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using NUnit.Framework;
+using SharedKernel.Contracts.Markets;
 
 namespace DataSynchroniser.Api.Factset.Tests.Filters
 {

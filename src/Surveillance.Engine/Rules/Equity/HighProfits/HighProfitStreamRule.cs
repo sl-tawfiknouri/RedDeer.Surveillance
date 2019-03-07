@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -57,7 +57,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
                 equitiesParameters?.WindowSize ?? TimeSpan.FromHours(8),
-                Domain.Scheduling.Rules.HighProfits,
+                Domain.Surveillance.Scheduling.Rules.HighProfits,
                 EquityRuleHighProfitFactory.Version,
                 "High Profit Rule",
                 ruleCtx,
@@ -111,7 +111,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                 return;
             }
 
-            var targetCurrency = new Domain.Core.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
 
             var allTradesInCommonCurrency =
                 liveTrades.Any()
@@ -196,7 +196,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
 
         private IExchangeRateProfitBreakdown SetExchangeRateProfits(List<Order> liveTrades)
         {
-            var currency = new Domain.Core.Financial.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
+            var currency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.HighProfitCurrencyConversionTargetCurrency);
             var buys = new TradePosition(liveTrades.Where(lt =>
                 lt.OrderDirection == OrderDirections.BUY 
                 || lt.OrderDirection == OrderDirections.COVER).ToList());
@@ -217,7 +217,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return exchangeRateProfits;
         }
 
-        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Currency targetCurrency)
+        private ICostCalculator GetCostCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Money.Currency targetCurrency)
         {
             if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
@@ -233,7 +233,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             return _costCalculatorFactory.CurrencyConvertingCalculator(targetCurrency);
         }
 
-        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Currency targetCurrency)
+        private IRevenueCalculator GetRevenueCalculator(bool allTradesInCommonCurrency, Domain.Core.Financial.Money.Currency targetCurrency)
         {
             if (!_equitiesParameters.UseCurrencyConversions
                 || allTradesInCommonCurrency
@@ -293,7 +293,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
                     MarketClosureRule,
                     breakdown);
 
-            var alertEvent = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, breach, _ruleCtx);
+            var alertEvent = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, breach, _ruleCtx);
             _alertStream.Add(alertEvent);
         }
 
@@ -350,7 +350,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits
             if (_hasMissingData && RunMode == RuleRunMode.ValidationRun)
             {
                 Logger.LogInformation($"Deleting alerts off the message sender");
-                var alert = new UniverseAlertEvent(Domain.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.HighProfits, null, _ruleCtx, false, true);
                 _alertStream.Add(alert);
 
                 _dataRequestSubscriber.SubmitRequest();

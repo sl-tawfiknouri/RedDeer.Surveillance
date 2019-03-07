@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using Infrastructure.Network.Disk;
 using NUnit.Framework;
-using Utilities.Disk_IO;
+
 // ReSharper disable StringLiteralTypo
 
-namespace Utilities.Tests.Disk_IO
+namespace Infrastructure.Network.Tests.Disk
 {
     [TestFixture]
     public class ReddeerDirectoryTests

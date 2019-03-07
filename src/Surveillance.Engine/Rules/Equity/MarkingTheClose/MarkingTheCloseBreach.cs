@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trading;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Trading.Orders;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
 {

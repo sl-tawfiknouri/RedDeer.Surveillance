@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Financial.Interfaces
+﻿namespace Domain.Core.Financial.Assets.Interfaces
 {
     public interface IFinancialInstrument
     {

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Trading.Orders;
 using SharedKernel.Files.Orders.Interfaces;
 
 namespace SharedKernel.Files.Orders

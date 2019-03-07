@@ -1,6 +1,6 @@
-﻿using Surveillance.Auditing.DataLayer.Interfaces;
+﻿using Infrastructure.Network.Aws.Interfaces;
+using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.Configuration
 {

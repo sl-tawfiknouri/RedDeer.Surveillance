@@ -1,7 +1,7 @@
-﻿using Domain.Trading;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Orders;
 
 namespace Domain.Core.Trading
 {

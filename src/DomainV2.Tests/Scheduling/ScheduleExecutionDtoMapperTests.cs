@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Scheduling;
+using Domain.Surveillance.Scheduling;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -58,15 +58,15 @@ namespace Domain.Tests.Scheduling
         {
             var mapper = new ScheduleExecutionDtoMapper(_logger);
 
-            var initialDto = new Domain.Scheduling.ScheduledExecution()
+            var initialDto = new Surveillance.Scheduling.ScheduledExecution()
             {
                 CorrelationId = "Correlation-12345",
                 IsBackTest = true,
                 TimeSeriesInitiation = new DateTimeOffset(),
                 TimeSeriesTermination = new DateTimeOffset(),
-                Rules = new List<Domain.Scheduling.RuleIdentifier>
+                Rules = new List<Surveillance.Scheduling.RuleIdentifier>
                 {
-                    new Domain.Scheduling.RuleIdentifier
+                    new Surveillance.Scheduling.RuleIdentifier
                     {
                         Ids = new [] {"back test-2"},
                         Rule = Rules.Layering

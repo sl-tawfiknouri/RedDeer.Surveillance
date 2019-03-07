@@ -3,15 +3,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Manager.Interfaces;
 using DataSynchroniser.Queues;
-using Domain.DTO;
-using Domain.DTO.Interfaces;
 using FakeItEasy;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SharedKernel.Contracts.Queues;
+using SharedKernel.Contracts.Queues.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.Tests.Queues
 {

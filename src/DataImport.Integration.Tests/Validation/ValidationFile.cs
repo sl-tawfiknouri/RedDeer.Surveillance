@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 
 namespace DataImport.Integration.Tests.Validation
 {

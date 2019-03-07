@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;

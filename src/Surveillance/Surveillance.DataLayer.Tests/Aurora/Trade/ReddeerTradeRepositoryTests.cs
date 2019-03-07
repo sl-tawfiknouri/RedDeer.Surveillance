@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -92,7 +93,7 @@ namespace Surveillance.DataLayer.Tests.Aurora.Trade
         
         private Order Frame()
         {
-            var exch = new Domain.Core.Financial.Markets.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
+            var exch = new Domain.Core.Markets.Market("1","XLON", "LSE", MarketTypes.STOCKEXCHANGE);
             var orderDates = DateTime.UtcNow;
             var tradeDates = DateTime.UtcNow;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
+using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams.Interfaces;
 
-namespace Domain.Equity.Streams
+namespace Domain.Surveillance.Streams
 {
     /// <summary>
     /// An observable stream of stock exchange time bars

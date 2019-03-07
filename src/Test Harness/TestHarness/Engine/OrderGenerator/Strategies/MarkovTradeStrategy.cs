@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Core.Financial;
-using Domain.Equity.TimeBars;
-using Domain.Streams.Interfaces;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
+using Domain.Core.Trading.Orders;
+using Domain.Surveillance.Streams.Interfaces;
 using MathNet.Numerics.Distributions;
 using Microsoft.Extensions.Logging;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;

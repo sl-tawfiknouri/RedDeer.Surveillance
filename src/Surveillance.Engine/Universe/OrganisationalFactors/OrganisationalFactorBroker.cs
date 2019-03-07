@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
@@ -286,7 +286,7 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
             }
         }
 
-        public Domain.Scheduling.Rules Rule => _cloneSource.Rule;
+        public Domain.Surveillance.Scheduling.Rules Rule => _cloneSource.Rule;
         public string Version => _cloneSource.Version;
     }
 }

@@ -6,15 +6,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataImport.MessageBusIO.Interfaces;
-using Domain.Contracts;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
+using Infrastructure.Network.Disk.Interfaces;
+using SharedKernel.Contracts.Queues;
 using SharedKernel.Files.Allocations;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
-using Utilities.Disk_IO.Interfaces;
 
 namespace DataImport.Disk_IO.AllocationFile
 {

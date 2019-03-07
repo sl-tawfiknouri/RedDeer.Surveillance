@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataSynchroniser.Queues.Interfaces;
-using Domain.Markets;
-using Domain.Scheduling;
-using Domain.Scheduling.Interfaces;
+using Domain.Surveillance.Scheduling;
+using Domain.Surveillance.Scheduling.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;
 using Surveillance.Auditing.DataLayer.Repositories.Interfaces;
 using Surveillance.DataLayer.Aurora.BMLL.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace DataSynchroniser.Queues
 {

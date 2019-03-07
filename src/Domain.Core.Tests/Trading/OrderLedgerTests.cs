@@ -1,8 +1,8 @@
 ﻿using Domain.Core.Trading;
-using Domain.Trading;
 using FakeItEasy;
 using NUnit.Framework;
 using System;
+using Domain.Core.Trading.Orders;
 
 namespace Domain.Core.Tests.Trading
 {

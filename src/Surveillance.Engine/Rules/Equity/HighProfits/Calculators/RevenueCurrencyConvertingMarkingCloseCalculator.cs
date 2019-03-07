@@ -1,7 +1,7 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Markets;
+using Domain.Core.Financial.Assets;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -11,7 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     public class RevenueCurrencyConvertingMarkingCloseCalculator : RevenueCurrencyConvertingCalculator
     {
         public RevenueCurrencyConvertingMarkingCloseCalculator(
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)

@@ -1,8 +1,7 @@
 ﻿using System;
-using Domain.Core.Financial;
-using Domain.Trading.Interfaces;
+using Domain.Core.Trading.Orders.Interfaces;
 
-namespace Domain.Trading
+namespace Domain.Core.Trading.Orders
 {
     public abstract class BaseOrder : IBaseOrder
     {
@@ -37,35 +36,35 @@ namespace Domain.Trading
         {
             if (CancelledDate != null)
             {
-                return Core.Financial.OrderStatus.Cancelled;
+                return Orders.OrderStatus.Cancelled;
             }
 
             if (RejectedDate != null)
             {
-                return Core.Financial.OrderStatus.Rejected;
+                return Orders.OrderStatus.Rejected;
             }
 
             if (FilledDate != null)
             {
-                return Core.Financial.OrderStatus.Filled;
+                return Orders.OrderStatus.Filled;
             }
 
             if (AmendedDate != null)
             {
-                return Core.Financial.OrderStatus.Amended;
+                return Orders.OrderStatus.Amended;
             }
 
             if (BookedDate != null)
             {
-                return Core.Financial.OrderStatus.Booked;
+                return Orders.OrderStatus.Booked;
             }
 
             if (PlacedDate != null)
             {
-                return Core.Financial.OrderStatus.Placed;
+                return Orders.OrderStatus.Placed;
             }
 
-            return Core.Financial.OrderStatus.Unknown;
+            return Orders.OrderStatus.Unknown;
         }
     }
 }

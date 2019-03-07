@@ -1,9 +1,8 @@
-﻿using Domain.Core.Financial.Markets;
-using Domain.Equity.TimeBars;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Domain.Core.Markets.Collections;
 
-namespace Domain.Core.Financial.Interfaces
+namespace Domain.Core.Markets.Interfaces
 {
     public interface IIntraDayHistoryStack
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
 using DataImport.Disk_IO.TradeFile.Interfaces;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
 using SharedKernel.Files.Orders.Interfaces;

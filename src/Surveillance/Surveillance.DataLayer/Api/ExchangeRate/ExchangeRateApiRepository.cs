@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Infrastructure.Network.HttpClient.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RedDeer.Contracts.SurveillanceService.Api.ExchangeRate;
 using Surveillance.DataLayer.Api.ExchangeRate.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.HttpClient.Interfaces;
 
 namespace Surveillance.DataLayer.Api.ExchangeRate
 {

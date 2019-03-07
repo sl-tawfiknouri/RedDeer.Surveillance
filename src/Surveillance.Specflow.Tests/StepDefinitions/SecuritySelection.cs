@@ -1,6 +1,6 @@
-﻿using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Markets;
 
 namespace Surveillance.Specflow.Tests.StepDefinitions
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain.Scheduling
+namespace Domain.Surveillance.Scheduling
 {
     /// <summary>
     /// DTO type for messages

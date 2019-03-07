@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Equity.TimeBars;
 using TestHarness.Engine.EquitiesGenerator.Interfaces;
-using Domain.Core.Financial;
-using Domain.Core.Financial.Markets;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Markets;
+using Domain.Core.Markets.Collections;
+using Domain.Core.Markets.Timebars;
 
 namespace TestHarness.Engine.EquitiesGenerator
 {

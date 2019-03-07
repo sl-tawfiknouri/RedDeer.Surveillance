@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 
 namespace TestHarness.Engine.OrderStorage.Interfaces
 {

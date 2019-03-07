@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
-using Surveillance.Engine.Rules.Rules.Shared;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces

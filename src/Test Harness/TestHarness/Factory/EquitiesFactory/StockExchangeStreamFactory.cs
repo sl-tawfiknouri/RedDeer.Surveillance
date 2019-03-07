@@ -1,7 +1,6 @@
-﻿using Domain.Equity.Streams;
-using Domain.Equity.Streams.Interfaces;
-using Domain.Equity.TimeBars;
-using Domain.Streams;
+﻿using Domain.Core.Markets.Collections;
+using Domain.Surveillance.Streams;
+using Domain.Surveillance.Streams.Interfaces;
 using TestHarness.Display.Interfaces;
 using TestHarness.Display.Subscribers;
 using TestHarness.Factory.EquitiesFactory.Interfaces;

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Trading;
+using Domain.Surveillance.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 
 namespace Surveillance.Engine.Rules.Mappers.RuleBreach.Interfaces

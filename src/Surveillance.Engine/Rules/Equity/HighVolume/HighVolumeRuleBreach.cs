@@ -1,5 +1,6 @@
 ﻿using System;
-using Domain.Core.Financial;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume.Interfaces;

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Core.Financial;
-using Domain.Trading;
+using Domain.Core.Trading.Orders;
 
 // ReSharper disable UnusedMember.Global
 namespace Surveillance.Engine.Rules.Trades.Interfaces

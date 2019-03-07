@@ -2,6 +2,7 @@
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +17,6 @@ using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer;
 using Surveillance.DataLayer.Configuration.Interfaces;
-using Utilities.Aws_IO.Interfaces;
 
 namespace RedDeer.DataImport.DataImport.App
 {

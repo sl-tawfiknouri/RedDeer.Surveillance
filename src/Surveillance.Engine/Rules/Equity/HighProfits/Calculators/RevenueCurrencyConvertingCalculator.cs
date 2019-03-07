@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.Core.Financial;
-using Domain.Markets;
-using Domain.Trading;
+using Domain.Core.Financial.Assets;
+using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Currency.Interfaces;
 using Surveillance.Engine.Rules.Markets.Interfaces;
@@ -16,12 +17,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
         protected readonly IMarketTradingHoursManager TradingHoursManager;
-        private readonly Domain.Core.Financial.Currency _targetCurrency;
+        private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
         private readonly ICurrencyConverter _currencyConverter;
         protected readonly ILogger Logger;
 
         public RevenueCurrencyConvertingCalculator(
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             ICurrencyConverter currencyConverter,
             IMarketTradingHoursManager tradingHoursManager,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
@@ -122,7 +123,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
         private async Task<Money?> CalculateRealisedRevenue
             (IList<Order> activeFulfilledTradeOrders,
-            Domain.Core.Financial.Currency targetCurrency,
+            Domain.Core.Financial.Money.Currency targetCurrency,
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ruleCtx)
         {

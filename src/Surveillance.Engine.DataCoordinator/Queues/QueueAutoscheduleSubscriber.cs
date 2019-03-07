@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Contracts;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
+using SharedKernel.Contracts.Queues;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.DataCoordinator.Coordinator.Interfaces;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
-using Utilities.Aws_IO;
-using Utilities.Aws_IO.Interfaces;
 
 namespace Surveillance.Engine.DataCoordinator.Queues
 {

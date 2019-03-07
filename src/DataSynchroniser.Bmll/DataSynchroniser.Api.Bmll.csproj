@@ -14,7 +14,6 @@
     <ProjectReference Include="..\DataSynchroniser.Api\DataSynchroniser.Api.csproj" />
     <ProjectReference Include="..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
-    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

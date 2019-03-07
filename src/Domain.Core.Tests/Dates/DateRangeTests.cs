@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Core.Financial;
+using Domain.Core.Dates;
 using NUnit.Framework;
 
 namespace Domain.Tests.Financial

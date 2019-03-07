@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Network.Aws_IO.Interfaces
+namespace Infrastructure.Network.Aws.Interfaces
 {
     public interface IAwsQueueClient
     {

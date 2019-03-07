@@ -1,5 +1,5 @@
 ﻿using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using TestHarness.Commands.Interfaces;
 using TestHarness.Configuration.Interfaces;

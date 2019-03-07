@@ -8,7 +8,7 @@ using DasMulli.Win32.ServiceUtils;
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;

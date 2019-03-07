@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DataSynchroniser.Queues.Interfaces;
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.DataLayer.Processes.Interfaces;

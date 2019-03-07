@@ -2,7 +2,7 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace Infrastructure.Network.Disk_IO.Interfaces
+namespace Infrastructure.Network.Disk.Interfaces
 {
     public interface IReddeerDirectory
     {

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using DataImport.MessageBusIO.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Interfaces;
 using SharedKernel.Contracts.Queues;

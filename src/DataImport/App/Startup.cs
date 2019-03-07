@@ -2,7 +2,7 @@
 using DataImport;
 using DataImport.Configuration;
 using DataImport.Configuration.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

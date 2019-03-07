@@ -9,7 +9,7 @@ using Domain.Core.Financial;
 using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Orders;
 using FakeItEasy;
-using Infrastructure.Network.Disk_IO;
+using Infrastructure.Network.Disk;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using SharedKernel.Files.Orders;

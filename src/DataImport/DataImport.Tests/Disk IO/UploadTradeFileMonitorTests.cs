@@ -5,7 +5,7 @@ using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using FakeItEasy;
-using Infrastructure.Network.Disk_IO.Interfaces;
+using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;

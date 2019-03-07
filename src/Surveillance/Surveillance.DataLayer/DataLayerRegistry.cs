@@ -1,7 +1,7 @@
 ﻿using Domain.Core.Financial.Cfis;
 using Domain.Core.Financial.Cfis.Interfaces;
-using Infrastructure.Network.Aws_IO;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Infrastructure.Network.HttpClient.Interfaces;
 using PollyFacade.Policies;
 using PollyFacade.Policies.Interfaces;

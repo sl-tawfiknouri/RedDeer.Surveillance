@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Engine.DataCoordinator.Queues.Interfaces;
 

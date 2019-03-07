@@ -5,10 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Network.Aws_IO
+namespace Infrastructure.Network.Aws
 {
     public class AwsQueueClient : IAwsQueueClient
     {

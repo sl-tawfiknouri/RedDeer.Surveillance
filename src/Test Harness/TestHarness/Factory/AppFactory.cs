@@ -1,7 +1,7 @@
 ﻿using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
-using Infrastructure.Network.Aws_IO;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
 using TestHarness.Commands;

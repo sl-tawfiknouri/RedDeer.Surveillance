@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Surveillance.Scheduling.Interfaces;
 using FakeItEasy;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Surveillance.Auditing.Context.Interfaces;

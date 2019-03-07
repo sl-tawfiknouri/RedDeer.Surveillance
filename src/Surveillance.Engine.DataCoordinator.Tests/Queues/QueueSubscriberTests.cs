@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FakeItEasy;
-using Infrastructure.Network.Aws_IO;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;

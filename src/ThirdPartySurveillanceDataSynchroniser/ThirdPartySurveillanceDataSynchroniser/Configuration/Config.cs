@@ -1,4 +1,4 @@
-﻿using Infrastructure.Network.Aws_IO.Interfaces;
+﻿using Infrastructure.Network.Aws.Interfaces;
 using Surveillance.Auditing.DataLayer.Interfaces;
 using Surveillance.DataLayer.Configuration.Interfaces;
 

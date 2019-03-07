@@ -9,7 +9,7 @@ using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using StructureMap;

@@ -3,7 +3,7 @@ using DataSynchroniser.Api.Bmll;
 using DataSynchroniser.Api.Factset;
 using DataSynchroniser.Api.Markit;
 using DataSynchroniser.Configuration;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -5,7 +5,7 @@ using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
 using DasMulli.Win32.ServiceUtils;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using RedDeer.Surveillance.App.Interfaces;

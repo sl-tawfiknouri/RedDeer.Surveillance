@@ -2,7 +2,7 @@
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
 using FakeItEasy;
-using Infrastructure.Network.Aws_IO.Interfaces;
+using Infrastructure.Network.Aws.Interfaces;
 using NUnit.Framework;
 using TestHarness.Commands;
 using TestHarness.Configuration.Interfaces;

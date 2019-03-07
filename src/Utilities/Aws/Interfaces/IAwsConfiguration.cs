@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Network.Aws_IO.Interfaces
+﻿namespace Infrastructure.Network.Aws.Interfaces
 {
     public interface IAwsConfiguration
     {

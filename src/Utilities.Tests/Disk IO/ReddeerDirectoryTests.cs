@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Infrastructure.Network.Disk_IO;
+using Infrastructure.Network.Disk;
 using NUnit.Framework;
 
 // ReSharper disable StringLiteralTypo

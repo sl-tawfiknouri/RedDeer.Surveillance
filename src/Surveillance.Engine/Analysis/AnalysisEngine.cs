@@ -37,7 +37,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
         private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
-        private readonly IRuleParameterManager _ruleParameterManager;
+        private readonly IRuleParameterService _ruleParameterService;
         private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
         
         private readonly ILogger<AnalysisEngine> _logger;
@@ -54,7 +54,7 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleAnalyticsUniverseRepository ruleAnalyticsRepository,
             IRuleAnalyticsAlertsRepository alertsRepository,
             IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
-            IRuleParameterManager ruleParameterManager,
+            IRuleParameterService ruleParameterService,
             IRuleParameterLeadingTimespanService leadingTimespanService,
             ILogger<AnalysisEngine> logger)
         {
@@ -74,7 +74,7 @@ namespace Surveillance.Engine.Rules.Analysis
             _dataRequestSubscriberFactory = dataRequestSubscriberFactory ?? throw new ArgumentNullException(nameof(dataRequestSubscriberFactory));
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
-            _ruleParameterManager = ruleParameterManager ?? throw new ArgumentNullException(nameof(ruleParameterManager));
+            _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
             _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Analysis
 
             _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
 
-            var ruleParameters = await _ruleParameterManager.RuleParameters(execution);
+            var ruleParameters = await _ruleParameterService.RuleParameters(execution);
             execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();

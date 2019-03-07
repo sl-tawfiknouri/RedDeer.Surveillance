@@ -224,7 +224,7 @@ namespace Surveillance.Engine.Rules
             For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
 
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
-            For<IRuleParameterManager>().Use<RuleParameterManager>();
+            For<IRuleParameterService>().Use<RuleParameterService>();
             For<IRuleParameterLeadingTimespanService>().Use<RuleParameterLeadingTimespanService>();
 
 

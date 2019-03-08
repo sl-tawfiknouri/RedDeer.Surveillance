@@ -47,7 +47,7 @@ namespace Surveillance.Engine.Rules.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}");
+                _logger.LogError($"Exception sending message '{caseMessage}' to bus on queue {_awsConfiguration.CaseMessageQueueName}. Error was {e.Message} {e.InnerException?.Message}", e);
             }
         }
     }

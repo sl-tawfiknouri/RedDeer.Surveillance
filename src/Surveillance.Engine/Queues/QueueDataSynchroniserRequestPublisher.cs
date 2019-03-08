@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.");
+                _logger.LogError($"encountered an error {e.Message} {e.InnerException?.Message} when sending rule run id {ruleRunId} to the data requests queue.", e);
             }
         }
     }

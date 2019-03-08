@@ -17,10 +17,10 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleWashTradeFactory : IEquityRuleWashTradeFactory
     {
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IClusteringService _clustering;
-        private readonly IUniverseEquityOrderFilter _orderFilter;
+        private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ILogger _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
@@ -28,18 +28,18 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         public static string Version { get; } = Versioner.Version(1, 0);
 
         public EquityRuleWashTradeFactory(
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             IWashTradePositionPairer positionPairer,
             IClusteringService clustering,
-            IUniverseEquityOrderFilter orderFilter,
+            IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
             ILogger<WashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
@@ -67,8 +67,8 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _positionPairer,
                 _clustering,
                 alertStream,
-                _currencyConverter,
-                _orderFilter,
+                _currencyConverterService,
+                _orderFilterService,
                 _factory,
                 runMode,
                 _logger,

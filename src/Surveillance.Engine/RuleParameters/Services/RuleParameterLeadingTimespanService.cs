@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Manager
+namespace Surveillance.Engine.Rules.RuleParameters.Services
 {
-    public class RuleParameterLeadingTimespanCalculator : IRuleParameterLeadingTimespanCalculator
+    public class RuleParameterLeadingTimespanService : IRuleParameterLeadingTimespanService
     {
         public TimeSpan LeadingTimespan(RuleParameterDto dto)
         {

@@ -31,7 +31,7 @@ namespace Surveillance.Engine.Rules.Universe
         {
             if (universe == null)
             {
-                _logger.LogError($"UniversePlayer added to play null universe. Returning.");
+                _logger.LogError($"added to play null universe. Returning.");
                 return;
             }
 
@@ -43,13 +43,13 @@ namespace Surveillance.Engine.Rules.Universe
             if (_universeObservers == null
                 || !_universeObservers.Any())
             {
-                _logger.LogError($"UniversePlayer play universe to null or empty observers. Returning");
+                _logger.LogError($"play universe to null or empty observers. Returning");
 
                 // does a tree fall in an empty forest? no
                 return;
             }
 
-            _logger.LogInformation($"UniversePlayer play universe about to distribute all universe events to all observers");
+            _logger.LogInformation($"play universe about to distribute all universe events to all observers");
             foreach (var item in universe.UniverseEvents)
             {
                 foreach (var obs in _universeObservers)
@@ -64,15 +64,9 @@ namespace Surveillance.Engine.Rules.Universe
         /// </summary>
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
-            if (observer == null)
-            {
-                _logger.LogError($"UniversePlayer asked to subscribe a null observer");
-                return null;
-            }
-
             if (!_universeObservers.ContainsKey(observer))
             {
-                _logger.LogInformation($"UniversePlayer subscribing a new observer");
+                _logger.LogInformation($"subscribing a new observer");
                 _universeObservers.TryAdd(observer, observer);
             }
 

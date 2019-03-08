@@ -1,6 +1,6 @@
 ﻿using Domain.Core.Financial.Money;
 
-namespace Domain.Core.Trading
+namespace Domain.Core.Accounts
 {
     public class ProfitAndLossStatement
     {

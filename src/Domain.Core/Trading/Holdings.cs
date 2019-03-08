@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Financial.Assets;
+using Domain.Core.Trading.Interfaces;
 
 namespace Domain.Core.Trading
 {

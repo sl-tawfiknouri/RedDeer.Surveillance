@@ -1,9 +1,9 @@
 ﻿using System;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces
+namespace Surveillance.Engine.Rules.RuleParameters.Services.Interfaces
 {
-    public interface IRuleParameterLeadingTimespanCalculator
+    public interface IRuleParameterLeadingTimespanService
     {
         TimeSpan LeadingTimespan(RuleParameterDto dto);
     }

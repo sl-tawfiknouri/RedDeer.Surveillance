@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -22,7 +23,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
     {
         private RuleRunMode _runMode = RuleRunMode.ForceRun;
         private IWashTradeRuleFixedIncomeParameters _parameters;
-        private IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFile;
+        private IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFile;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseMarketCacheFactory _marketCacheFactory;
         private IUniverseAlertStream _alertStream;
@@ -35,7 +36,7 @@ namespace Surveillance.Engine.Rules.Tests.Rules.FixedIncome.WashTrade
         public void Setup()
         {
             _parameters = A.Fake<IWashTradeRuleFixedIncomeParameters>();
-            _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilter>();
+            _fixedIncomeOrderFile = A.Fake<IUniverseFixedIncomeOrderFilterService>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _marketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _alertStream = A.Fake<IUniverseAlertStream>();

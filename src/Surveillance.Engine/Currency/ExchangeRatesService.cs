@@ -17,14 +17,14 @@ namespace Surveillance.Engine.Rules.Currency
     /// In other words, this is the price of a unit of Euro in US dollars.
     /// Here, EUR is called the "Fixed currency", while USD is called the "Variable currency".
     /// </summary>
-    public class ExchangeRates : IExchangeRates
+    public class ExchangeRatesService : IExchangeRatesService
     {
         private readonly IExchangeRateApiCachingDecoratorRepository _exchangeRateApiRepository;
-        private readonly ILogger<ExchangeRates> _logger;
+        private readonly ILogger<ExchangeRatesService> _logger;
 
-        public ExchangeRates(
+        public ExchangeRatesService(
             IExchangeRateApiCachingDecoratorRepository exchangeRateApiRepository,
-            ILogger<ExchangeRates> logger)
+            ILogger<ExchangeRatesService> logger)
         {
             _exchangeRateApiRepository =
                 exchangeRateApiRepository
@@ -46,7 +46,7 @@ namespace Surveillance.Engine.Rules.Currency
             if (string.IsNullOrWhiteSpace(fixedCurrency.Code)
                 || string.IsNullOrWhiteSpace(variableCurrency.Code))
             {
-                _logger.LogError($"ExchangeRate was asked to convert two currencies. Once of which was null or empty {fixedCurrency} {variableCurrency}");
+                _logger.LogError($"was asked to convert two currencies. Once of which was null or empty {fixedCurrency} {variableCurrency}");
                 return null;
             }
 
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Currency
                     Rate = 1
                 };
 
-                _logger.LogInformation($"ExchangeRate was asked to convert two currencies but they were equal. Returning a rate of 1 for {fixedCurrency} and {variableCurrency}");
+                _logger.LogInformation($"was asked to convert two currencies but they were equal. Returning a rate of 1 for {fixedCurrency} and {variableCurrency}");
 
                 return noConversionRate;
             }
@@ -70,15 +70,15 @@ namespace Surveillance.Engine.Rules.Currency
             if (rates == null
                 || !rates.Any())
             {
-                _logger.LogError($"ExchangeRates unable to find any rates on {dayOfConversion.ToShortDateString()}");
-                ruleCtx.EventException($"ExchangeRates unable to change rates from {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion.ToShortDateString()}");
+                _logger.LogError($"unable to find any rates on {dayOfConversion.ToShortDateString()}");
+                ruleCtx.EventException($"unable to change rates from {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion.ToShortDateString()}");
 
                 return null;
             }
 
             var rate = Convert(rates, fixedCurrency, variableCurrency, dayOfConversion, ruleCtx);
 
-            _logger.LogInformation($"ExchangeRate was asked to convert two currencies {fixedCurrency} and {variableCurrency} on {dayOfConversion}. Returning {rate.Rate} as the exchange rate");
+            _logger.LogInformation($"was asked to convert two currencies {fixedCurrency} and {variableCurrency} on {dayOfConversion}. Returning {rate.Rate} as the exchange rate");
 
             return rate;
         }
@@ -95,7 +95,7 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (directConversion != null)
             {
-                _logger.LogInformation($"ExchangeRates was able to directly convert {fixedCurrency} to {variableCurrency} at rate of {directConversion.Rate} on {directConversion.DateTime}");
+                _logger.LogInformation($"was able to directly convert {fixedCurrency} to {variableCurrency} at rate of {directConversion.Rate} on {directConversion.DateTime}");
 
                 return directConversion;
             }
@@ -105,7 +105,7 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (reciprocalConversion != null)
             {
-                _logger.LogInformation($"ExchangeRates was able to reciprocally convert {fixedCurrency} to {variableCurrency} at rate of {reciprocalConversion.Rate} on {reciprocalConversion.DateTime}");
+                _logger.LogInformation($"was able to reciprocally convert {fixedCurrency} to {variableCurrency} at rate of {reciprocalConversion.Rate} on {reciprocalConversion.DateTime}");
 
                 return reciprocalConversion;
             }
@@ -115,13 +115,13 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (indirectConversion == null)
             {
-                _logger.LogError($"Exchange Rates was unable to convert {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion}");
-                ruleCtx.EventException($"Exchange Rates was unable to convert {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"was unable to convert {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"was unable to convert {fixedCurrency.Code} to {variableCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
 
-            _logger.LogInformation($"ExchangeRates was able to indirectly convert {fixedCurrency} to {variableCurrency} at rate of {indirectConversion.Rate} on {indirectConversion.DateTime}");
+            _logger.LogInformation($"was able to indirectly convert {fixedCurrency} to {variableCurrency} at rate of {indirectConversion.Rate} on {indirectConversion.DateTime}");
 
             return indirectConversion;
         }
@@ -186,9 +186,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateInitial == null)
             {
-                _logger.LogError($"Exchange Rates could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Exchange Rates could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -203,9 +203,9 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (sharedVariableRateTarget == null)
             {
-                _logger.LogError($"Exchange Rates could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
+                _logger.LogError($"could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
 
-                ruleCtx.EventException($"Exchange Rates could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
+                ruleCtx.EventException($"could not find a shared common currency using a one step approach for {fixedCurrency.Code} and {variableCurrency.Code} on {dayOfConversion}");
 
                 return null;
             }
@@ -259,16 +259,16 @@ namespace Surveillance.Engine.Rules.Currency
 
             if (offset > 14)
             {
-                _logger.LogError($"Exchange Rates could not find an exchange rate in the date range around {dayOfRate}.");
-                ruleCtx.EventException($"Exchange Rates could not find an exchange rate in the date range around {dayOfRate}.");
+                _logger.LogError($"could not find an exchange rate in the date range around {dayOfRate}.");
+                ruleCtx.EventException($"could not find an exchange rate in the date range around {dayOfRate}.");
 
                 return new ExchangeRateDto[0];
             }
 
             if (!exchRate.TryGetValue(cycleDate, out var rates))
             {
-                _logger.LogError($"Exchange Rates could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
-                ruleCtx.EventException($"Exchange Rates could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
+                _logger.LogError($"could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
+                ruleCtx.EventException($"could not find an exchange rate in the date range around {dayOfRate} in the dictionary.");
 
                 return new ExchangeRateDto[0];
             }

@@ -31,10 +31,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IEquityRuleMarkingTheCloseFactory _equityRuleMarkingTheCloseFactory;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
 
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private UniverseMarketCacheFactory _universeMarketCacheFactory;
         private MarkingTheCloseEquitiesParameters _equitiesParameters;
 
@@ -52,12 +52,12 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
 
             _alertStream = A.Fake<IUniverseAlertStream>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("XLON"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("XLON"))
                 .Returns(new TradingHours
                 {
                     IsValid = true,
@@ -67,7 +67,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
                 });
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("NASDAQ"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("NASDAQ"))
                 .Returns(new TradingHours
                 {
                     IsValid = true,
@@ -77,9 +77,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.MarkingTheClose
                 });
 
             _equityRuleMarkingTheCloseFactory = new EquityRuleMarkingTheCloseFactory(
-                _universeOrderFilter,
+                _universeOrderFilterService,
                 _universeMarketCacheFactory,
-                _tradingHoursManager,
+                _tradingHoursService,
                 new NullLogger<MarkingTheCloseRule>(),
                 new NullLogger<TradingHistoryStack>());
         }

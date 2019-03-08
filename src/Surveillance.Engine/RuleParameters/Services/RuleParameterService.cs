@@ -6,18 +6,18 @@ using Domain.Surveillance.Scheduling;
 using Microsoft.Extensions.Logging;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.DataLayer.Api.RuleParameter.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Manager
+namespace Surveillance.Engine.Rules.RuleParameters.Services
 {
-    public class RuleParameterManager : IRuleParameterManager
+    public class RuleParameterService : IRuleParameterService
     {
         private readonly IRuleParameterApiRepository _ruleParameterApiRepository;
-        private readonly ILogger<RuleParameterManager> _logger;
+        private readonly ILogger<RuleParameterService> _logger;
 
-        public RuleParameterManager(
+        public RuleParameterService(
             IRuleParameterApiRepository ruleParameterApiRepository,
-            ILogger<RuleParameterManager> logger)
+            ILogger<RuleParameterService> logger)
         {
             _ruleParameterApiRepository = ruleParameterApiRepository ?? throw new ArgumentNullException(nameof(ruleParameterApiRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -25,11 +25,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Manager
 
         public async Task<RuleParameterDto> RuleParameters(ScheduledExecution execution)
         {
-            _logger.LogInformation($"RuleParameterManager fetching rule parameters");
+            _logger.LogInformation($"fetching rule parameters");
 
             if (!execution.IsBackTest)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules noted not a back test run. Fetching all dtos.");
+                _logger.LogInformation($"Subscribe Rules noted not a back test run. Fetching all dtos.");
                 return await _ruleParameterApiRepository.Get();
             }
 
@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Manager
             var ruleDtos = new List<RuleParameterDto>();
             foreach (var id in ids)
             {
-                _logger.LogInformation($"UniverseRuleSubscriber Subscribe Rules fetching rule dto for {id}");
+                _logger.LogInformation($"Subscribe Rules fetching rule dto for {id}");
                 var apiResult = await _ruleParameterApiRepository.Get(id);
 
                 if (apiResult != null)
@@ -47,13 +47,13 @@ namespace Surveillance.Engine.Rules.RuleParameters.Manager
 
             if (!ruleDtos.Any())
             {
-                _logger.LogError($"UniverseRuleSubscriber Subscribe Rules did not find any matching rule dtos");
+                _logger.LogError($"Subscribe Rules did not find any matching rule dtos");
                 return new RuleParameterDto();
             }
 
             if (ruleDtos.Count != ids.Count)
             {
-                _logger.LogError($"UniverseRuleSubscriber Subscribe Rules did not finding a matching amount of ids to rule dtos");
+                _logger.LogError($"Subscribe Rules did not finding a matching amount of ids to rule dtos");
             }
 
             if (ruleDtos.Count == 1)
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Manager
             var allHighVolumes = ruleDtos.SelectMany(ru => ru.HighVolumes).ToArray();
             var allWashTrades = ruleDtos.SelectMany(ru => ru.WashTrades).ToArray();
 
-            _logger.LogInformation($"RuleParameterManager has fetched the rule parameters");
+            _logger.LogInformation($"has fetched the rule parameters");
 
             return new RuleParameterDto
             {

@@ -34,10 +34,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
         private UniverseSelectionState _universeSelectionState;
 
         // wash trade factory and arguments
-        private ICurrencyConverter _currencyConverter;
+        private ICurrencyConverterService _currencyConverterService;
         private IWashTradePositionPairer _positionPairer;
         private IClusteringService _washTradeClustering;
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
         private ILogger<WashTradeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -63,22 +63,22 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
                             { new DateTime(2018, 01, 01), new ExchangeRateDto[] { exchangeRateDto }}
                         });
 
-            var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
+            var currencyLogger = new NullLogger<CurrencyConverterService>();
+            _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
 
             _positionPairer = new WashTradePositionPairer();
             _washTradeClustering = new ClusteringService();
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
             _logger = new NullLogger<WashTradeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
 
             _equityRuleWashTradeFactory =
                 new EquityRuleWashTradeFactory(
-                    _currencyConverter,
+                    _currencyConverterService,
                     _positionPairer,
                     _washTradeClustering,
-                    _universeOrderFilter,
+                    _universeOrderFilterService,
                     _universeMarketCacheFactory,
                     _logger,
                     _tradingLogger);

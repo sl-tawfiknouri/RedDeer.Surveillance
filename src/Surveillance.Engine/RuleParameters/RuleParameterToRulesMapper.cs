@@ -38,7 +38,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty spoofing dtos");
+                _logger.LogInformation($"asked to map null or empty spoofing dtos");
                 return null;
             }
 
@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty cancelled order dtos");
+                _logger.LogInformation($"asked to map null or empty cancelled order dtos");
                 return null;
             }
 
@@ -92,7 +92,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty high profits dtos");
+                _logger.LogInformation($"asked to map null or empty high profits dtos");
                 return null;
             }
 
@@ -120,7 +120,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty marking the close dtos");
+                _logger.LogInformation($"asked to map null or empty marking the close dtos");
                 return null;
             }
 
@@ -147,7 +147,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty layering dtos");
+                _logger.LogInformation($"asked to map null or empty layering dtos");
                 return null;
             }
 
@@ -175,7 +175,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty high volume dtos");
+                _logger.LogInformation($"asked to map null or empty high volume dtos");
                 return null;
             }
 
@@ -203,7 +203,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"RuleParameterToRulesMapper asked to map null or empty wash trade dtos");
+                _logger.LogInformation($"asked to map null or empty wash trade dtos");
                 return null;
             }
 
@@ -242,7 +242,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeWashTradeRuleParameterDto)}");
+                _logger.LogInformation($"asked to map null or empty {nameof(FixedIncomeWashTradeRuleParameterDto)}");
                 return null;
             }
 
@@ -274,7 +274,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeHighProfitRuleParameterDto)}");
+                _logger.LogInformation($"asked to map null or empty {nameof(FixedIncomeHighProfitRuleParameterDto)}");
                 return null;
             }
 
@@ -298,7 +298,7 @@ namespace Surveillance.Engine.Rules.RuleParameters
             if (dtos == null
                 || !dtos.Any())
             {
-                _logger.LogInformation($"{nameof(RuleParameterToRulesMapper)} asked to map null or empty {nameof(FixedIncomeHighVolumeIssuanceRuleParameterDto)}");
+                _logger.LogInformation($"asked to map null or empty {nameof(FixedIncomeHighVolumeIssuanceRuleParameterDto)}");
                 return null;
             }
 

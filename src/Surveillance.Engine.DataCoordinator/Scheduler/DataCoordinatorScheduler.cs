@@ -52,14 +52,14 @@ namespace Surveillance.Engine.DataCoordinator.Scheduler
         {
             try
             {
-                _logger.LogInformation($"DataCoordinatorScheduler heart beat. Scanning data verifier and auto scheduler");
+                _logger.LogInformation($"heart beat. Scanning data verifier and auto scheduler");
                 _dataVerifier.Scan().Wait();
                 _autoScheduler.Scan().Wait();
-                _logger.LogInformation($"DataCoordinatorScheduler heart beat complete");
+                _logger.LogInformation($"heart beat complete");
             }
             catch (Exception a)
             {
-                _logger.LogError($"DataCoordinatorScheduler encountered an exception {a.Message}");
+                _logger.LogError($"encountered an exception {a.Message}");
             }
         }
     }

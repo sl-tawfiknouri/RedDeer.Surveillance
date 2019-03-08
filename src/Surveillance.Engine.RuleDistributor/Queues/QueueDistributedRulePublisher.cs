@@ -34,7 +34,7 @@ namespace Surveillance.Engine.RuleDistributor.Queues
             var serialisedDistributedExecution =
                 _messageBusSerialiser.SerialiseScheduledExecution(distributedExecution);
 
-            _logger.LogInformation($"QueueDistributedRulePublisher - dispatching distribute message to queue - {serialisedDistributedExecution}");
+            _logger.LogInformation($"dispatching distribute message to queue - {serialisedDistributedExecution}");
 
             _messageBusCts = _messageBusCts ?? new CancellationTokenSource();
 

@@ -13,16 +13,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
     public class CostCurrencyConvertingCalculator : ICostCalculator
     {
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
         private readonly ILogger<CostCurrencyConvertingCalculator> _logger;
 
         public CostCurrencyConvertingCalculator(
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             Domain.Core.Financial.Money.Currency targetCurrency,
             ILogger<CostCurrencyConvertingCalculator> logger)
         {
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _targetCurrency = targetCurrency;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                             afto.OrderCurrency))
                     .ToList();
 
-            var adjustedToCurrencyPurchaseOrders = await _currencyConverter.Convert(purchaseOrders, _targetCurrency, universeDateTime, ctx);
+            var adjustedToCurrencyPurchaseOrders = await _currencyConverterService.Convert(purchaseOrders, _targetCurrency, universeDateTime, ctx);
 
             _logger.LogInformation($"CostCurrencyConvertingCalculator CalculateCostOfPosition calculated for {activeFulfilledTradeOrders.FirstOrDefault()?.Instrument?.Identifiers} a cost of ({adjustedToCurrencyPurchaseOrders?.Currency}) {adjustedToCurrencyPurchaseOrders?.Value}");
 

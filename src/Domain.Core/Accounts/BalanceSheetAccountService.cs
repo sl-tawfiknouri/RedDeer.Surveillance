@@ -1,4 +1,4 @@
-﻿namespace Domain.Core.Trading
+﻿namespace Domain.Core.Accounts
 {
     public class BalanceSheetAccountService
     {

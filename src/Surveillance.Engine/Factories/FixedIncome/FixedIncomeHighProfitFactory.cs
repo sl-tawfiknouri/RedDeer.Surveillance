@@ -15,18 +15,18 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
 {
     public class FixedIncomeHighProfitFactory : IFixedIncomeHighProfitFactory
     {
-        private readonly IUniverseFixedIncomeOrderFilter _fixedIncomeOrderFilter;
+        private readonly IUniverseFixedIncomeOrderFilterService _fixedIncomeOrderFilterService;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly ILogger<FixedIncomeHighProfitsRule> _logger;
         private readonly ILogger<TradingHistoryStack> _stackLogger;
 
         public FixedIncomeHighProfitFactory(
-            IUniverseFixedIncomeOrderFilter fixedIncomeOrderFilter,
+            IUniverseFixedIncomeOrderFilterService fixedIncomeOrderFilterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<FixedIncomeHighProfitsRule> logger, 
             ILogger<TradingHistoryStack> stackLogger)
         {
-            _fixedIncomeOrderFilter = fixedIncomeOrderFilter ?? throw new ArgumentNullException(nameof(fixedIncomeOrderFilter));
+            _fixedIncomeOrderFilterService = fixedIncomeOrderFilterService ?? throw new ArgumentNullException(nameof(fixedIncomeOrderFilterService));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _stackLogger = stackLogger ?? throw new ArgumentNullException(nameof(stackLogger));
@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         {
             return new FixedIncomeHighProfitsRule(
                 parameters,
-                _fixedIncomeOrderFilter,
+                _fixedIncomeOrderFilterService,
                 ruleCtx,
                 _marketCacheFactory,
                 runMode,

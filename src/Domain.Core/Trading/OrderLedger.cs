@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Interfaces;
 using Domain.Core.Trading.Orders;
 
 namespace Domain.Core.Trading

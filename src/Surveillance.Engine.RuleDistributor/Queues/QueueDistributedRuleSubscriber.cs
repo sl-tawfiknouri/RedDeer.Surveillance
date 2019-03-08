@@ -44,7 +44,7 @@ namespace Surveillance.Engine.RuleDistributor.Queues
 
         public void Initiate()
         {
-            _logger.LogInformation($"ReddeerDistributedRuleScheduler initiating");
+            _logger.LogInformation($"initiating");
             _messageBusCts?.Cancel();
             _messageBusCts = new CancellationTokenSource();
             _token = new AwsResusableCancellationToken();
@@ -55,12 +55,12 @@ namespace Surveillance.Engine.RuleDistributor.Queues
                 _messageBusCts.Token,
                 _token);
 
-            _logger.LogInformation($"ReddeerDistributedRuleScheduler completed initiating");
+            _logger.LogInformation($"completed initiating");
         }
 
         public void Terminate()
         {
-            _logger.LogInformation($"ReddeerDistributedRuleScheduler sent terminate signal to cancellation token reading message bus");
+            _logger.LogInformation($"sent terminate signal to cancellation token reading message bus");
             _messageBusCts?.Cancel();
             _messageBusCts = null;
         }
@@ -71,14 +71,14 @@ namespace Surveillance.Engine.RuleDistributor.Queues
             {
                 var opCtx = _systemProcessContext.CreateAndStartOperationContext();
 
-                _logger.LogInformation($"ReddeerDistributedRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
+                _logger.LogInformation($"read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduledRuleQueueName} for operation {opCtx.Id}");
 
                 var execution = _messageBusSerialiser.DeserialisedScheduledExecution(messageBody);
 
                 if (execution == null)
                 {
-                    _logger.LogError($"ReddeerDistributedRuleScheduler was unable to deserialise the message {messageId}");
-                    opCtx.EndEventWithError($"ReddeerDistributedRuleScheduler was unable to deserialise the message {messageId}");
+                    _logger.LogError($"was unable to deserialise the message {messageId}");
+                    opCtx.EndEventWithError($"was unable to deserialise the message {messageId}");
                     return;
                 }
 
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.RuleDistributor.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerDistributedRuleScheduler execute non distributed message encountered a top level exception.", e);
+                _logger.LogError($"execute non distributed message encountered a top level exception. {e.Message} {e.InnerException?.Message}", e);
             }
         }
     }

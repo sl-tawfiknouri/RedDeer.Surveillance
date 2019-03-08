@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
         private IOrdersRepository _auroraOrdersRepository;
         private IOrdersToAllocatedOrdersProjector _orderAllocationProjector;
         private IReddeerMarketRepository _auroraMarketRepository;
-        private IMarketOpenCloseEventManager _marketManager;
+        private IMarketOpenCloseEventService _marketService;
         private ISystemProcessOperationContext _opCtx;
         private IUniverseSortComparer _sortComparer;
         private ILogger<UniverseBuilder> _logger;
@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
             _auroraOrdersRepository = A.Fake<IOrdersRepository>();
             _orderAllocationProjector = A.Fake<IOrdersToAllocatedOrdersProjector>();
             _auroraMarketRepository = A.Fake<IReddeerMarketRepository>();
-            _marketManager = A.Fake<IMarketOpenCloseEventManager>();
+            _marketService = A.Fake<IMarketOpenCloseEventService>();
             _opCtx = A.Fake<ISystemProcessOperationContext>();
             _sortComparer = A.Fake<IUniverseSortComparer>();
             _logger = A.Fake<ILogger<UniverseBuilder>>();
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     _auroraOrdersRepository,
                     _orderAllocationProjector,
                     _auroraMarketRepository,
-                    _marketManager,
+                    _marketService,
                     _sortComparer,
                     _logger);
 
@@ -72,7 +72,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     _auroraOrdersRepository,
                     _orderAllocationProjector,
                     _auroraMarketRepository,
-                    _marketManager,
+                    _marketService,
                     _sortComparer,
                     _logger);
 
@@ -101,7 +101,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     _auroraOrdersRepository,
                     _orderAllocationProjector,
                     _auroraMarketRepository,
-                    _marketManager,
+                    _marketService,
                     _sortComparer,
                     _logger);
 
@@ -141,7 +141,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     _auroraOrdersRepository,
                     _orderAllocationProjector,
                     _auroraMarketRepository,
-                    _marketManager,
+                    _marketService,
                     _sortComparer,
                     _logger);
 
@@ -164,7 +164,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     new MarketOpenClose("xlon", timeSeriesTermination, timeSeriesTermination))
             };
 
-            A.CallTo(() => _marketManager.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
+            A.CallTo(() => _marketService.AllOpenCloseEvents(timeSeriesInitiation, timeSeriesTermination))
                 .Returns(marketOpenClose);
 
             var result = await builder.Summon(schedule, _opCtx);
@@ -186,7 +186,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe
                     _auroraOrdersRepository,
                     _orderAllocationProjector,
                     _auroraMarketRepository,
-                    _marketManager,
+                    _marketService,
                     _sortComparer,
                     _logger);
 

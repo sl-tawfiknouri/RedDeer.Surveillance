@@ -26,20 +26,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
-        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
+        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger _logger;
 
         public SpoofingEquitySubscriber(
             IEquityRuleSpoofingFactory equityRuleSpoofingFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
-            IOrganisationalFactorBrokerFactory brokerFactory,
+            IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<UniverseRuleSubscriber> logger)
         {
             _equityRuleSpoofingFactory = equityRuleSpoofingFactory ?? throw new ArgumentNullException(nameof(equityRuleSpoofingFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
+            _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
@@ -90,7 +90,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 {
                     var paramSubscriptions = SubscribeForParams(execution, opCtx, alertStream, param);
                     var broker =
-                        _brokerFactory.Build(
+                        _brokerServiceFactory.Build(
                             paramSubscriptions,
                             param.Factors,
                             param.AggregateNonFactorableIntoOwnCategory);

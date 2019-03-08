@@ -6,7 +6,7 @@ using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using NUnit.Framework;
 
-namespace Domain.Tests.Trading
+namespace Domain.Core.Tests.Trading.Orders
 {
     public class DealerOrderTests
     {

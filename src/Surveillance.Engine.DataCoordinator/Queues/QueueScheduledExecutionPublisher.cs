@@ -32,7 +32,7 @@ namespace Surveillance.Engine.DataCoordinator.Queues
         {
             if (message == null)
             {
-                _logger.LogWarning($"QueueScheduleRulePublisher was asked to send a null message. Will not be sending anything.");
+                _logger.LogWarning($"was asked to send a null message. Will not be sending anything.");
                 return;
             }
 
@@ -41,13 +41,13 @@ namespace Surveillance.Engine.DataCoordinator.Queues
 
             try
             {
-                _logger.LogInformation($"QueueScheduleRulePublisher dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
+                _logger.LogInformation($"dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
                 await _awsQueueClient.SendToQueue(_awsConfiguration.ScheduledRuleQueueName, serialisedMessage, messageBusCts.Token);
-                _logger.LogInformation($"QueueScheduleRulePublisher finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
+                _logger.LogInformation($"finished dispatching to {_awsConfiguration.ScheduledRuleQueueName}");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception in QueueScheduleRulePublisher sending message '{message}' to bus on queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
+                _logger.LogError($"Exception sending message '{message}' to bus on queue {_awsConfiguration.ScheduledRuleQueueName}. Error was {e.Message}");
             }
         }
     }

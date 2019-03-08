@@ -2,7 +2,7 @@
 using Domain.Core.Dates;
 using NUnit.Framework;
 
-namespace Domain.Tests.Financial
+namespace Domain.Core.Tests.Dates
 {
     [TestFixture]
     public class DateRangeTests

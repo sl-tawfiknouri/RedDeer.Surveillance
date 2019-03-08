@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Accounts;
 using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Interfaces;
 using Domain.Core.Trading.Orders;
 
 namespace Domain.Core.Trading
@@ -49,7 +51,7 @@ namespace Domain.Core.Trading
             if (profitAndLossAccounts == null
                 || !profitAndLossAccounts.Any())
             {
-                profitAndLossAccounts.Add(Trading.ProfitAndLossStatement.Empty());
+                profitAndLossAccounts.Add(Accounts.ProfitAndLossStatement.Empty());
             }
 
             return profitAndLossAccounts;

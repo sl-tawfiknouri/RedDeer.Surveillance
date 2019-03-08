@@ -17,13 +17,13 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
     public class FixedIncomeHighVolumeIssuanceRule : BaseUniverseRule, IFixedIncomeHighVolumeRule
     {
         private readonly IHighVolumeIssuanceRuleFixedIncomeParameters _parameters;
-        private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
+        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ILogger<FixedIncomeHighVolumeIssuanceRule> _logger;
 
         public FixedIncomeHighVolumeIssuanceRule(
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
-            IUniverseFixedIncomeOrderFilter orderFilter,
+            IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
                 tradingStackLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -51,7 +51,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return _orderFilterService.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

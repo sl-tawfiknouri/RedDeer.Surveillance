@@ -5,7 +5,7 @@ using Surveillance.Auditing.Context.Interfaces;
 
 namespace Surveillance.Engine.Rules.Currency.Interfaces
 {
-    public interface IExchangeRates
+    public interface IExchangeRatesService
     {
         Task<ExchangeRateDto> GetRate(
             Domain.Core.Financial.Money.Currency fixedCurrency,

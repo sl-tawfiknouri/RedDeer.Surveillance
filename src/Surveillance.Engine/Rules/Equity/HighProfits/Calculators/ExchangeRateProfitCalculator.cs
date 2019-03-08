@@ -11,16 +11,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
     public class ExchangeRateProfitCalculator : IExchangeRateProfitCalculator
     {
-        private readonly ITradePositionWeightedAverageExchangeRateCalculator _werExchangeRateCalculator;
+        private readonly ITradePositionWeightedAverageExchangeRateService _werExchangeRateService;
         private readonly ILogger<ExchangeRateProfitCalculator> _logger;
 
         public ExchangeRateProfitCalculator(
-            ITradePositionWeightedAverageExchangeRateCalculator werExchangeRateCalculator,
+            ITradePositionWeightedAverageExchangeRateService werExchangeRateService,
             ILogger<ExchangeRateProfitCalculator> logger)
         {
-            _werExchangeRateCalculator =
-                werExchangeRateCalculator
-                ?? throw new ArgumentNullException(nameof(werExchangeRateCalculator));
+            _werExchangeRateService =
+                werExchangeRateService
+                ?? throw new ArgumentNullException(nameof(werExchangeRateService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -53,8 +53,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                         ?.OrderCurrency;
             }
 
-            var costRates = await _werExchangeRateCalculator.WeightedExchangeRate(positionCost, variableCurrency, ruleCtx);
-            var revenueRates =  await _werExchangeRateCalculator.WeightedExchangeRate(positionRevenue, variableCurrency, ruleCtx);
+            var costRates = await _werExchangeRateService.WeightedExchangeRate(positionCost, variableCurrency, ruleCtx);
+            var revenueRates =  await _werExchangeRateService.WeightedExchangeRate(positionRevenue, variableCurrency, ruleCtx);
 
             var breakdown = new ExchangeRateProfitBreakdown(
                 positionCost,

@@ -12,12 +12,12 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
     [TestFixture]
     public class UniverseOrderFilterTests
     {
-        private ILogger<UniverseEquityOrderFilter> _logger;
+        private ILogger<UniverseEquityOrderFilterService> _logger;
 
         [SetUp]
         public void Setup()
         {
-            _logger = A.Fake<ILogger<UniverseEquityOrderFilter>>();
+            _logger = A.Fake<ILogger<UniverseEquityOrderFilterService>>();
         }
 
         [TestCase("d")]
@@ -28,7 +28,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [TestCase(null)]
         public void Filter_FiltersOutCredit_Cfi(string nonEquityCfi)
         {
-            var orderFilter = new UniverseEquityOrderFilter(_logger);
+            var orderFilter = new UniverseEquityOrderFilterService(_logger);
             var order = ((Order) null).Random();
             var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
             order.Instrument.Cfi = nonEquityCfi;
@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [TestCase("eNt")]
         public void Filter_DoesNotFiltersOutEquity_Cfi(string equityCfi)
         {
-            var orderFilter = new UniverseEquityOrderFilter(_logger);
+            var orderFilter = new UniverseEquityOrderFilterService(_logger);
             var order = ((Order)null).Random();
             var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, order);
             order.Instrument.Cfi = equityCfi;
@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Tests.Universe.Filter
         [Test]
         public void Filter_NonOrderEvent_ReturnsEvent()
         {
-            var orderFilter = new UniverseEquityOrderFilter(_logger);
+            var orderFilter = new UniverseEquityOrderFilterService(_logger);
             var universeEvent = new UniverseEvent(UniverseStateEvent.Order, DateTime.UtcNow, "not-an-order");
 
             var filteredEvent = orderFilter.Filter(universeEvent);

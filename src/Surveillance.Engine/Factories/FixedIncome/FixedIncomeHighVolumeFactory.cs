@@ -15,19 +15,19 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
 {
     public class FixedIncomeHighVolumeFactory : IFixedIncomeHighVolumeFactory
     {
-        private readonly IUniverseFixedIncomeOrderFilter _filter;
+        private readonly IUniverseFixedIncomeOrderFilterService _filterService;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
 
         private readonly ILogger<FixedIncomeHighVolumeIssuanceRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
 
         public FixedIncomeHighVolumeFactory(
-            IUniverseFixedIncomeOrderFilter filter,
+            IUniverseFixedIncomeOrderFilterService filterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
-            _filter = filter ?? throw new ArgumentNullException(nameof(filter));
+            _filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(_marketCacheFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingLogger = tradingLogger ?? throw new ArgumentNullException(nameof(tradingLogger));
@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         {
             return new FixedIncomeHighVolumeIssuanceRule(
                 parameters,
-                _filter,
+                _filterService,
                 opCtx,
                 _marketCacheFactory,
                 runMode,

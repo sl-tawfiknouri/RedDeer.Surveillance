@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Domain.Surveillance.Rules;
+using Domain.Surveillance.Rules.Interfaces;
+using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using StructureMap;
 using Surveillance.Engine.DataCoordinator.Coordinator;
@@ -25,6 +27,7 @@ namespace Surveillance.Engine.DataCoordinator
             For<IAutoSchedule>().Use<AutoSchedule>();
             For<IDataVerifier>().Use<DataVerifier>();
             For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();
+            For<IActiveRulesService>().Use<ActiveRulesService>();
         }
     }
 }

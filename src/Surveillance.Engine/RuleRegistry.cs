@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
 using Domain.Surveillance.Streams;
@@ -39,8 +40,8 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Filter;
 using Surveillance.Engine.Rules.RuleParameters.Filter.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
@@ -104,7 +105,7 @@ namespace Surveillance.Engine.Rules
             For<IQueueRuleSubscriber>().Use<QueueRuleSubscriber>();
             For<IEquityRuleSpoofingFactory>().Use<EquityRuleSpoofingFactory>();
             For<IUniversePlayerFactory>().Use<UniversePlayerFactory>();
-            For<IOrganisationalFactorBrokerFactory>().Use<OrganisationalFactorBrokerFactory>();
+            For<IOrganisationalFactorBrokerServiceFactory>().Use<OrganisationalFactorBrokerServiceFactory>();
 
             For<ISpoofingEquitySubscriber>().Use<SpoofingEquitySubscriber>();
             For<ICancelledOrderEquitySubscriber>().Use<CancelledOrderEquitySubscriber>();
@@ -114,8 +115,8 @@ namespace Surveillance.Engine.Rules
             For<ILayeringEquitySubscriber>().Use<LayeringEquitySubscriber>();
             For<IWashTradeEquitySubscriber>().Use<WashTradeEquitySubscriber>();
 
-            For<IUniverseEquityOrderFilter>().Use<UniverseEquityOrderFilter>();
-            For<IUniverseFixedIncomeOrderFilter>().Use<UniverseFixedIncomeOrderFilter>();
+            For<IUniverseEquityOrderFilterService>().Use<UniverseEquityOrderFilterService>();
+            For<IUniverseFixedIncomeOrderFilterService>().Use<UniverseFixedIncomeOrderFilterService>();
 
             For<IUniverse>().Use<Universe.Universe>();
             For<IUniverseBuilder>().Use<UniverseBuilder>();
@@ -129,7 +130,7 @@ namespace Surveillance.Engine.Rules
             For<IUniverseAlertStreamFactory>().Use<UniverseAlertStreamFactory>();
             For<IUniverseAlertStreamSubscriberFactory>().Use<UniverseAlertStreamSubscriberFactory>();
 
-            For<IMarketOpenCloseEventManager>().Use<MarketOpenCloseEventManager>();
+            For<IMarketOpenCloseEventService>().Use<MarketOpenCloseEventService>();
             For<IClientOrganisationalFactorMapper>().Use<ClientOrganisationalFactorMapper>();
 
             For<IScheduledExecutionMessageBusSerialiser>().Use<ScheduledExecutionMessageBusSerialiser>();
@@ -197,9 +198,9 @@ namespace Surveillance.Engine.Rules
 
 
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();
-            For<ICurrencyConverter>().Use<CurrencyConverter>();
-            For<IExchangeRates>().Use<ExchangeRates>();
-            For<ITradePositionWeightedAverageExchangeRateCalculator>().Use<TradePositionWeightedAverageExchangeRateCalculator>();
+            For<ICurrencyConverterService>().Use<CurrencyConverterService>();
+            For<IExchangeRatesService>().Use<ExchangeRatesService>();
+            For<ITradePositionWeightedAverageExchangeRateService>().Use<TradePositionWeightedAverageExchangeRateService>();
 
             For<IApiHeartbeat>().Use<ApiHeartbeat>();
             For<IRuleProjector>().Use<RuleProjector>();
@@ -207,7 +208,7 @@ namespace Surveillance.Engine.Rules
             For<IUniversePercentageCompletionLogger>().Use<UniversePercentageCompletionLogger>();
             For<IUniversePercentageOfEventCompletionLogger>().Use<UniversePercentageOfEventCompletionLogger>();
             For<IUniverseMarketCacheFactory>().Use<UniverseMarketCacheFactory>();
-            For<IMarketTradingHoursManager>().Use<MarketTradingHoursManager>();
+            For<IMarketTradingHoursService>().Use<MarketTradingHoursService>();
             For<IUniversePercentageOfTimeCompletionLogger>().Use<UniversePercentageOfTimeCompletionLogger>();
 
             For<IUniversePercentageOfEventCompletionLoggerFactory>().Use<UniversePercentageOfEventCompletionLoggerFactory>();
@@ -223,8 +224,8 @@ namespace Surveillance.Engine.Rules
             For<IUniverseDataRequestsSubscriberFactory>().Use<UniverseDataRequestsSubscriberFactory>();
 
             For<IMarketDataCacheStrategyFactory>().Use<MarketDataCacheStrategyFactory>();
-            For<IRuleParameterManager>().Use<RuleParameterManager>();
-            For<IRuleParameterLeadingTimespanCalculator>().Use<RuleParameterLeadingTimespanCalculator>();
+            For<IRuleParameterService>().Use<RuleParameterService>();
+            For<IRuleParameterLeadingTimespanService>().Use<RuleParameterLeadingTimespanService>();
 
 
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();

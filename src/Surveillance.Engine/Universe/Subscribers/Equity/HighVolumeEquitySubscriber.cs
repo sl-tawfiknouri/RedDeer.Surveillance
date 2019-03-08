@@ -26,20 +26,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IEquityRuleHighVolumeFactory _equityRuleHighVolumeFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
-        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
+        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<HighVolumeEquitySubscriber> _logger;
 
         public HighVolumeEquitySubscriber(
             IEquityRuleHighVolumeFactory equityRuleHighVolumeFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
-            IOrganisationalFactorBrokerFactory brokerFactory,
+            IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<HighVolumeEquitySubscriber> logger)
         {
             _equityRuleHighVolumeFactory = equityRuleHighVolumeFactory ?? throw new ArgumentNullException(nameof(equityRuleHighVolumeFactory));
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
-            _brokerFactory = brokerFactory ?? throw new ArgumentNullException(nameof(brokerFactory));
+            _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -86,7 +86,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 {
                     var paramSubscriptions = SubscribeToParams(execution, opCtx, alertStream, dataRequestSubscriber, param);
                     var broker =
-                        _brokerFactory.Build(
+                        _brokerServiceFactory.Build(
                             paramSubscriptions,
                             param.Factors,
                             param.AggregateNonFactorableIntoOwnCategory);

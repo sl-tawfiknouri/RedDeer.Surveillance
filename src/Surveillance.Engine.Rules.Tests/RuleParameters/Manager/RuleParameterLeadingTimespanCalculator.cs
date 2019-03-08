@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter.Equities;
-using Surveillance.Engine.Rules.RuleParameters.Manager;
+using Surveillance.Engine.Rules.RuleParameters.Services;
 
 namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
 {
@@ -12,7 +12,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Zero_For_Null()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
 
             var result = calculator.LeadingTimespan(null);
 
@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Zero_For_Null_Collections()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto();
 
             var result = calculator.LeadingTimespan(dto);
@@ -33,7 +33,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_Cancelled()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 CancelledOrders = new CancelledOrderRuleParameterDto[]
@@ -53,7 +53,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_HighProfit()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 HighProfits = new HighProfitsRuleParameterDto[]
@@ -73,7 +73,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_MarkingTheClose()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 MarkingTheCloses = new MarkingTheCloseRuleParameterDto[]
@@ -93,7 +93,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_Spoofing()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 Spoofings = new SpoofingRuleParameterDto[]
@@ -113,7 +113,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_Layering()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 Layerings = new LayeringRuleParameterDto[]
@@ -133,7 +133,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_HighVolume()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 HighVolumes = new HighVolumeRuleParameterDto[]
@@ -153,7 +153,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_Only_WashTrade()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 WashTrades = new WashTradeRuleParameterDto[]
@@ -173,7 +173,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_TwoAlternatives_WashTrade()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 WashTrades = new WashTradeRuleParameterDto[]
@@ -202,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.RuleParameters.Manager
         [Test]
         public void LeadingTimespan_Returns_Value_When_TwoAlternatives_WashTrade_And_HighVolume()
         {
-            var calculator = new RuleParameterLeadingTimespanCalculator();
+            var calculator = new RuleParameterLeadingTimespanService();
             var dto = new RuleParameterDto
             {
                 WashTrades = new WashTradeRuleParameterDto[]

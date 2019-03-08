@@ -1,5 +1,6 @@
 ﻿using System;
 using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -17,7 +18,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
 {
     public class FixedIncomeWashTradeFactory : IFixedIncomeWashTradeFactory
     {
-        private readonly IUniverseFixedIncomeOrderFilter _filter;
+        private readonly IUniverseFixedIncomeOrderFilterService _filterService;
         private readonly IUniverseMarketCacheFactory _marketCacheFactory;
         private readonly IClusteringService _clusteringService;
         private readonly IPortfolioFactory _portfolioFactory;
@@ -26,14 +27,14 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         private readonly ILogger<TradingHistoryStack> _tradingLogger;
 
         public FixedIncomeWashTradeFactory(
-            IUniverseFixedIncomeOrderFilter filter,
+            IUniverseFixedIncomeOrderFilterService filterService,
             IUniverseMarketCacheFactory marketCacheFactory,
             IClusteringService clusteringService,
             IPortfolioFactory portfolioFactory,
             ILogger<FixedIncomeWashTradeRule> logger,
             ILogger<TradingHistoryStack> tradingLogger)
         {
-            _filter = filter ?? throw new ArgumentNullException(nameof(filter));
+            _filterService = filterService ?? throw new ArgumentNullException(nameof(filterService));
             _marketCacheFactory = marketCacheFactory ?? throw new ArgumentNullException(nameof(marketCacheFactory));
             _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
             _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
@@ -49,7 +50,7 @@ namespace Surveillance.Engine.Rules.Factories.FixedIncome
         {
             return new FixedIncomeWashTradeRule(
                 parameters,
-                _filter,
+                _filterService,
                 ruleCtx,
                 _marketCacheFactory,
                 runMode,

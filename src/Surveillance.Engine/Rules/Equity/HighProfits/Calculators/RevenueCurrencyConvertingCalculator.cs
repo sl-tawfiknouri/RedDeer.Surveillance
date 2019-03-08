@@ -16,20 +16,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 {
     public class RevenueCurrencyConvertingCalculator : IRevenueCalculator
     {
-        protected readonly IMarketTradingHoursManager TradingHoursManager;
+        protected readonly IMarketTradingHoursService TradingHoursService;
         private readonly Domain.Core.Financial.Money.Currency _targetCurrency;
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         protected readonly ILogger Logger;
 
         public RevenueCurrencyConvertingCalculator(
             Domain.Core.Financial.Money.Currency targetCurrency,
-            ICurrencyConverter currencyConverter,
-            IMarketTradingHoursManager tradingHoursManager,
+            ICurrencyConverterService currencyConverterService,
+            IMarketTradingHoursService tradingHoursService,
             ILogger<RevenueCurrencyConvertingCalculator> logger)
         {
             _targetCurrency = targetCurrency;
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
-            TradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
+            TradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -95,7 +95,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
 
             var virtualRevenue = (marketResponse.PriceOrClose()?.Value ?? 0) * sizeOfVirtualPosition;
             var money = new Money(virtualRevenue, marketResponse.PriceOrClose()?.Currency.Code ?? string.Empty);
-            var convertedVirtualRevenues = await _currencyConverter.Convert(new[] { money }, _targetCurrency, universeDateTime, ctx);
+            var convertedVirtualRevenues = await _currencyConverterService.Convert(new[] { money }, _targetCurrency, universeDateTime, ctx);
 
             if (realisedRevenue == null
                 && convertedVirtualRevenues == null)
@@ -142,7 +142,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
                         afto.OrderCurrency))
                 .ToList();
 
-            var conversion = await _currencyConverter.Convert(filledOrders, targetCurrency, universeDateTime, ruleCtx);
+            var conversion = await _currencyConverterService.Convert(filledOrders, targetCurrency, universeDateTime, ruleCtx);
 
             return conversion;
         }
@@ -183,7 +183,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighProfits.Calculators
             DateTime universeDateTime,
             ISystemProcessOperationRunRuleContext ctx)
         {
-            var tradingHours = TradingHoursManager.GetTradingHoursForMic(mic);
+            var tradingHours = TradingHoursService.GetTradingHoursForMic(mic);
             if (!tradingHours.IsValid)
             {
                 Logger.LogError($"RevenueCurrencyConvertingCalculator was not able to get meaningful trading hours for the mic {mic}. Unable to proceed with currency conversions.");

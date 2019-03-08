@@ -39,7 +39,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         private readonly IWashTradePositionPairer _positionPairer;
         private readonly IClusteringService _clustering;
         private readonly IUniverseAlertStream _alertStream;
-        private readonly ICurrencyConverter _currencyConverter;
+        private readonly ICurrencyConverterService _currencyConverterService;
         private readonly IUniverseOrderFilter _orderFilter;
 
         public WashTradeRule(
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             IWashTradePositionPairer positionPairer,
             IClusteringService clustering,
             IUniverseAlertStream alertStream,
-            ICurrencyConverter currencyConverter,
+            ICurrencyConverterService currencyConverterService,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
@@ -68,7 +68,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
             _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
-            _currencyConverter = currencyConverter ?? throw new ArgumentNullException(nameof(currencyConverter));
+            _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -231,7 +231,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var absMoney = new Money(absDifference, currency?.Code ?? string.Empty);
 
             var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
-            var convertedCurrency = await _currencyConverter.Convert(new[] {absMoney}, targetCurrency, UniverseDateTime, RuleCtx);
+            var convertedCurrency = await _currencyConverterService.Convert(new[] {absMoney}, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
             {
@@ -370,7 +370,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             var absMoney = new Money(absDifference, currency);
 
             var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
-            var convertedCurrency = await _currencyConverter.Convert(new[] { absMoney }, targetCurrency, UniverseDateTime, RuleCtx);
+            var convertedCurrency = await _currencyConverterService.Convert(new[] { absMoney }, targetCurrency, UniverseDateTime, RuleCtx);
 
             if (convertedCurrency == null)
             {

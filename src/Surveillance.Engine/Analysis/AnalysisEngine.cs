@@ -12,7 +12,7 @@ using Surveillance.Engine.Rules.Analytics.Subscriber.Factory.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.Queues.Interfaces;
-using Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Services.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.Subscribers.Interfaces;
 
@@ -37,8 +37,8 @@ namespace Surveillance.Engine.Rules.Analysis
 
         private readonly IQueueRuleUpdatePublisher _queueRuleUpdatePublisher;
 
-        private readonly IRuleParameterManager _ruleParameterManager;
-        private readonly IRuleParameterLeadingTimespanCalculator _leadingTimespanCalculator;
+        private readonly IRuleParameterService _ruleParameterService;
+        private readonly IRuleParameterLeadingTimespanService _leadingTimespanService;
         
         private readonly ILogger<AnalysisEngine> _logger;
 
@@ -54,8 +54,8 @@ namespace Surveillance.Engine.Rules.Analysis
             IRuleAnalyticsUniverseRepository ruleAnalyticsRepository,
             IRuleAnalyticsAlertsRepository alertsRepository,
             IQueueRuleUpdatePublisher queueRuleUpdatePublisher,
-            IRuleParameterManager ruleParameterManager,
-            IRuleParameterLeadingTimespanCalculator leadingTimespanCalculator,
+            IRuleParameterService ruleParameterService,
+            IRuleParameterLeadingTimespanService leadingTimespanService,
             ILogger<AnalysisEngine> logger)
         {
             _universeBuilder = universeBuilder ?? throw new ArgumentNullException(nameof(universeBuilder));
@@ -74,8 +74,8 @@ namespace Surveillance.Engine.Rules.Analysis
             _dataRequestSubscriberFactory = dataRequestSubscriberFactory ?? throw new ArgumentNullException(nameof(dataRequestSubscriberFactory));
             _universeCompletionLogger = universeCompletionLogger ?? throw new ArgumentNullException(nameof(universeCompletionLogger));
 
-            _ruleParameterManager = ruleParameterManager ?? throw new ArgumentNullException(nameof(ruleParameterManager));
-            _leadingTimespanCalculator = leadingTimespanCalculator ?? throw new ArgumentNullException(nameof(leadingTimespanCalculator));
+            _ruleParameterService = ruleParameterService ?? throw new ArgumentNullException(nameof(ruleParameterService));
+            _leadingTimespanService = leadingTimespanService ?? throw new ArgumentNullException(nameof(leadingTimespanService));
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -86,15 +86,15 @@ namespace Surveillance.Engine.Rules.Analysis
             if (execution?.Rules == null
                 || !execution.Rules.Any())
             {
-                _logger.LogError($"{nameof(AnalysisEngine)} was executing a schedule that did not specify any rules to run");
-                opCtx.EndEventWithError($"{nameof(AnalysisEngine)} was executing a schedule that did not specify any rules to run");
+                _logger.LogError($"was executing a schedule that did not specify any rules to run");
+                opCtx.EndEventWithError($"was executing a schedule that did not specify any rules to run");
                 return;
             }
 
-            _logger.LogInformation($"{nameof(AnalysisEngine)} START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            _logger.LogInformation($"START OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
 
-            var ruleParameters = await _ruleParameterManager.RuleParameters(execution);
-            execution.LeadingTimespan = _leadingTimespanCalculator.LeadingTimespan(ruleParameters);
+            var ruleParameters = await _ruleParameterService.RuleParameters(execution);
+            execution.LeadingTimespan = _leadingTimespanService.LeadingTimespan(ruleParameters);
             var universe = await _universeBuilder.Summon(execution, opCtx);
             var player = _universePlayerFactory.Build();
 
@@ -114,16 +114,16 @@ namespace Surveillance.Engine.Rules.Analysis
             var universeAnalyticsSubscriber = _analyticsSubscriber.Build(opCtx.Id);
             player.Subscribe(universeAnalyticsSubscriber);
 
-            _logger.LogInformation($"{nameof(AnalysisEngine)} START PLAYING UNIVERSE TO SUBSCRIBERS");
+            _logger.LogInformation($"START PLAYING UNIVERSE TO SUBSCRIBERS");
             player.Play(universe);
-            _logger.LogInformation($"{nameof(AnalysisEngine)} STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
+            _logger.LogInformation($"STOPPED PLAYING UNIVERSE TO SUBSCRIBERS");
 
             universeAlertSubscriber.Flush();
             await _ruleAnalyticsRepository.Create(universeAnalyticsSubscriber.Analytics);
             await _alertsRepository.Create(universeAlertSubscriber.Analytics);
 
             SetOperationContextEndState(dataRequestSubscriber, opCtx);
-            _logger.LogInformation($"{nameof(AnalysisEngine)} END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
+            _logger.LogInformation($"END OF UNIVERSE EXECUTION FOR {execution.CorrelationId}");
 
             await RuleRunUpdateMessageSend(execution, ids);
         }

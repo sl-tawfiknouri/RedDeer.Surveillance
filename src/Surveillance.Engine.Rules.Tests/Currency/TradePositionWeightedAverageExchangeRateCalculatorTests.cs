@@ -22,21 +22,21 @@ namespace Surveillance.Engine.Rules.Tests.Currency
     public class TradePositionWeightedAverageExchangeRateCalculatorTests
     {
         private ILogger<ExchangeRateApiRepository> _logger;
-        private ILogger<ExchangeRates> _loggerExchRate;
+        private ILogger<ExchangeRatesService> _loggerExchRate;
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IDataLayerConfiguration _configuration;
-        private ILogger<TradePositionWeightedAverageExchangeRateCalculator> _calculatorLogger;
-        private IExchangeRates _exchangeRates;
+        private ILogger<TradePositionWeightedAverageExchangeRateService> _calculatorLogger;
+        private IExchangeRatesService _exchangeRatesService;
         private Domain.Core.Financial.Money.Currency _currency;
 
         [SetUp]
         public void Setup()
         {
             _logger = A.Fake<ILogger<ExchangeRateApiRepository>>();
-            _loggerExchRate = A.Fake<ILogger<ExchangeRates>>();
+            _loggerExchRate = A.Fake<ILogger<ExchangeRatesService>>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
-            _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateCalculator>>();
-            _exchangeRates = A.Fake<IExchangeRates>();
+            _calculatorLogger = A.Fake<ILogger<TradePositionWeightedAverageExchangeRateService>>();
+            _exchangeRatesService = A.Fake<IExchangeRatesService>();
             _currency = new Domain.Core.Financial.Money.Currency("GBX");
 
             _configuration = A.Fake<IDataLayerConfiguration>();
@@ -48,20 +48,20 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         public void Constructor_Null_Exchange_Rates_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateCalculator(null, _calculatorLogger));
+            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateService(null, _calculatorLogger));
         }
 
         [Test]
         public void Constructor_Null_Logger_Throws_Exception()
         {
             // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, null));
+            Assert.Throws<ArgumentNullException>(() => new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, null));
         }
 
         [Test]
         public async Task WeightedExchangeRate_With_Null_Position_Returns_Zero()
         {
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, _calculatorLogger);
 
              await calculator.WeightedExchangeRate(null, _currency, _ruleCtx);
         }
@@ -69,7 +69,7 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_One_Order_With_Zero_Fill_Volume()
         {
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, _calculatorLogger);
 
             var pos1 = (new Order()).Random();
             pos1.OrderFilledVolume = null;
@@ -84,10 +84,10 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_One_Order_With_One_Fill_Volume_()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
+            A.CallTo(() => _exchangeRatesService.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, A<DateTime>.Ignored, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP"});
 
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, _calculatorLogger);
 
             var pos1 = (new Order()).Random();
             pos1.OrderFilledVolume = 1;
@@ -102,13 +102,13 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Two_Fill_Volume_()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRatesService.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRatesService.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 3, VariableCurrency = "GBP" });
 
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, _calculatorLogger);
 
             var pos1 = (new Order()).Random();
             pos1.OrderFilledVolume = 1;
@@ -134,13 +134,13 @@ namespace Surveillance.Engine.Rules.Tests.Currency
         [Test]
         public async Task WeightedExchangeRate_Two_Order_With_Unbalanced_Fill()
         {
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
+            A.CallTo(() => _exchangeRatesService.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date, _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 1, VariableCurrency = "GBP" });
 
-            A.CallTo(() => _exchangeRates.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
+            A.CallTo(() => _exchangeRatesService.GetRate(A<Domain.Core.Financial.Money.Currency>.Ignored, A<Domain.Core.Financial.Money.Currency>.Ignored, DateTime.UtcNow.Date.AddDays(1), _ruleCtx))
                 .Returns(new ExchangeRateDto { DateTime = DateTime.UtcNow, FixedCurrency = "GBP", Name = "abc", Rate = 4, VariableCurrency = "GBP" });
 
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(_exchangeRates, _calculatorLogger);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(_exchangeRatesService, _calculatorLogger);
 
             var pos1 = (new Order()).Random();
             pos1.OrderFilledVolume = 20;
@@ -170,8 +170,8 @@ namespace Surveillance.Engine.Rules.Tests.Currency
             var clientFactory = new HttpClientFactory(new NullLogger<HttpClientFactory>());
             var repo = new ExchangeRateApiRepository(_configuration, clientFactory, _logger);
             var repoDecorator = new ExchangeRateApiCachingDecoratorRepository(repo);
-            var exchangeRates = new ExchangeRates(repoDecorator, _loggerExchRate);
-            var calculator = new TradePositionWeightedAverageExchangeRateCalculator(exchangeRates, _calculatorLogger);
+            var exchangeRates = new ExchangeRatesService(repoDecorator, _loggerExchRate);
+            var calculator = new TradePositionWeightedAverageExchangeRateService(exchangeRates, _calculatorLogger);
 
             var tradeOne = (new Order()).Random();
             var tradeTwo = (new Order()).Random();

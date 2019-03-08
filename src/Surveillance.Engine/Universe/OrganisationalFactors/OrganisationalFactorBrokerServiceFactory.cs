@@ -7,21 +7,21 @@ using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 {
-    public class OrganisationalFactorBrokerFactory : IOrganisationalFactorBrokerFactory
+    public class OrganisationalFactorBrokerServiceFactory : IOrganisationalFactorBrokerServiceFactory
     {
-        private readonly ILogger<OrganisationalFactorBroker> _logger;
+        private readonly ILogger<OrganisationalFactorBrokerService> _logger;
 
-        public OrganisationalFactorBrokerFactory(ILogger<OrganisationalFactorBroker> logger)
+        public OrganisationalFactorBrokerServiceFactory(ILogger<OrganisationalFactorBrokerService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IOrganisationalFactorBroker Build(
+        public IOrganisationalFactorBrokerService Build(
             IUniverseCloneableRule cloneableRule,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory)
         {
-            return new OrganisationalFactorBroker(cloneableRule, factors, aggregateNonFactorableIntoOwnCategory, _logger);
+            return new OrganisationalFactorBrokerService(cloneableRule, factors, aggregateNonFactorableIntoOwnCategory, _logger);
         }
     }
 }

@@ -24,18 +24,18 @@ namespace Surveillance.Engine.DataCoordinator
 
         public void Initiate()
         {
-            _logger?.LogInformation("DataCoordinator Mediator Initiating");
+            _logger?.LogInformation("Initiating");
             _dataScheduler.Initialise();
             _queueSubscriber.Initiate();
-            _logger?.LogInformation("DataCoordinator Mediator Initiation Completed");
+            _logger?.LogInformation("Initiation Completed");
         }
 
         public void Terminate()
         {
-            _logger?.LogInformation("DataCoordinator Mediator Terminating");
+            _logger?.LogInformation("Terminating");
             _dataScheduler.Terminate();
             _queueSubscriber.Terminate();
-            _logger?.LogInformation("DataCoordinator Mediator Termination Completed");
+            _logger?.LogInformation("Termination Completed");
         }
     }
 }

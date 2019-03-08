@@ -9,14 +9,14 @@ using Surveillance.Engine.Rules.Markets.Interfaces;
 
 namespace Surveillance.Engine.Rules.Markets
 {
-    public class MarketTradingHoursManager : IMarketTradingHoursManager
+    public class MarketTradingHoursService : IMarketTradingHoursService
     {
         private readonly IMarketOpenCloseApiCachingDecoratorRepository _repository;
-        private readonly ILogger<MarketTradingHoursManager> _logger;
+        private readonly ILogger<MarketTradingHoursService> _logger;
 
-        public MarketTradingHoursManager(
+        public MarketTradingHoursService(
             IMarketOpenCloseApiCachingDecoratorRepository repository,
-            ILogger<MarketTradingHoursManager> logger)
+            ILogger<MarketTradingHoursService> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -163,7 +163,7 @@ namespace Surveillance.Engine.Rules.Markets
         {
             if (string.IsNullOrWhiteSpace(marketIdentifierCode))
             {
-                _logger.LogInformation($"MarketTradingHoursManager received a null or empty MIC {marketIdentifierCode}");
+                _logger.LogInformation($"received a null or empty MIC {marketIdentifierCode}");
                 return null;
             }
 
@@ -174,12 +174,12 @@ namespace Surveillance.Engine.Rules.Markets
 
             if (exchange == null)
             {
-                _logger.LogError($"MarketTradingHoursManager could not find a match for {marketIdentifierCode}");
+                _logger.LogError($"could not find a match for {marketIdentifierCode}");
 
                 return null;               
             }
 
-            _logger.LogInformation($"MarketTradingHoursManager found a match for {marketIdentifierCode}");
+            _logger.LogInformation($"found a match for {marketIdentifierCode}");
 
             return exchange;
         }

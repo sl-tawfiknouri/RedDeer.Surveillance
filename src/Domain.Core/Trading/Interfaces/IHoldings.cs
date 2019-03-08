@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Domain.Core.Financial.Assets;
 
-namespace Domain.Core.Trading
+namespace Domain.Core.Trading.Interfaces
 {
     public interface IHoldings
     {

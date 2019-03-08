@@ -38,10 +38,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private HighVolumeRuleEquitiesParameters _highVolumeRuleEquitiesParameters;
         private UniverseSelectionState _universeSelectionState;
 
-        private ICurrencyConverter _currencyConverter;
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private ICurrencyConverterService _currencyConverterService;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ILogger<HighVolumeRule> _logger;
         private ILogger<TradingHistoryStack> _tradingLogger;
@@ -105,25 +105,25 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                     }
                 });
 
-            _tradingHoursManager = new MarketTradingHoursManager(repository, new NullLogger<MarketTradingHoursManager>());          
+            _tradingHoursService = new MarketTradingHoursService(repository, new NullLogger<MarketTradingHoursService>());          
 
             _interdayUniverseMarketCacheFactory = new UniverseMarketCacheFactory(
                 new StubRuleRunDataRequestRepository(),
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(exchangeRateApiRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            var currencyLogger = new NullLogger<CurrencyConverterService>();
+            _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _logger = new NullLogger<HighVolumeRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
             _equityRuleHighVolumeFactory = new EquityRuleHighVolumeFactory(
-                _universeOrderFilter,
+                _universeOrderFilterService,
                 _interdayUniverseMarketCacheFactory,
-                _tradingHoursManager,
+                _tradingHoursService,
                 _logger,
                 _tradingLogger);
         }

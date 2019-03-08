@@ -2,7 +2,7 @@
 
 namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces
 {
-    public interface IOrganisationalFactorBroker : IUniverseRule
+    public interface IOrganisationalFactorBrokerService : IUniverseRule
     {
     }
 }

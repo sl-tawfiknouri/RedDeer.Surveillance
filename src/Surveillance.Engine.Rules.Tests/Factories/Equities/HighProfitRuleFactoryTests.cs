@@ -26,7 +26,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     public class HighProfitRuleFactoryTests
     {
         private IUniversePercentageCompletionLoggerFactory _percentageCompleteFactory;
-        private IUniverseEquityOrderFilter _orderFilter;
+        private IUniverseEquityOrderFilterService _orderFilterService;
         private IUnsubscriberFactory<IUniverseEvent> _unsubscriberFactory;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -48,7 +48,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Setup()
         {
             _percentageCompleteFactory = A.Fake<IUniversePercentageCompletionLoggerFactory>();
-            _orderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _unsubscriberFactory = A.Fake<IUnsubscriberFactory<IUniverseEvent>>();
             _costCalculatorFactory = A.Fake<ICostCalculatorFactory>();
             _revenueCalculatorFactory = A.Fake<IRevenueCalculatorFactory>();
@@ -75,7 +75,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     null,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
@@ -91,7 +91,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _costCalculatorFactory,
                     null,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
@@ -107,7 +107,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     null,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
@@ -139,7 +139,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     null,
                     _cacheStrategyFactory,
                     _logger,
@@ -155,7 +155,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     null,
                     _logger,
@@ -171,7 +171,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     _costCalculatorFactory,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     null,
@@ -187,7 +187,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                     null,
                     _revenueCalculatorFactory,
                     _exchangeRateProfitCalculator,
-                    _orderFilter,
+                    _orderFilterService,
                     _marketCacheFactory,
                     _cacheStrategyFactory,
                     _logger,
@@ -202,7 +202,7 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _orderFilter,
+                _orderFilterService,
                 _marketCacheFactory,
                 _cacheStrategyFactory,
                 _logger,

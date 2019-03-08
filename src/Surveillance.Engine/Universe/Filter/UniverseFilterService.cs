@@ -13,7 +13,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.Filter
 {
-    public class UniverseFilter : IUniverseFilter
+    public class UniverseFilterService : IUniverseFilterService
     {
         private readonly IUnsubscriberFactory<IUniverseEvent> _universeUnsubscriberFactory;
         private readonly ConcurrentDictionary<IObserver<IUniverseEvent>, IObserver<IUniverseEvent>> _universeObservers;
@@ -23,16 +23,16 @@ namespace Surveillance.Engine.Rules.Universe.Filter
         private readonly RuleFilter _markets;
         private readonly RuleFilter _funds;
         private readonly RuleFilter _strategies;
-        private readonly ILogger<UniverseFilter> _logger;
+        private readonly ILogger<UniverseFilterService> _logger;
 
-        public UniverseFilter(
+        public UniverseFilterService(
             IUnsubscriberFactory<IUniverseEvent> universeUnsubscriberFactory,
             RuleFilter accounts,
             RuleFilter traders,
             RuleFilter markets,
             RuleFilter funds,
             RuleFilter strategies,
-            ILogger<UniverseFilter> logger)
+            ILogger<UniverseFilterService> logger)
         {
             _universeUnsubscriberFactory =
                 universeUnsubscriberFactory
@@ -55,12 +55,6 @@ namespace Surveillance.Engine.Rules.Universe.Filter
 
         public IDisposable Subscribe(IObserver<IUniverseEvent> observer)
         {
-            if (observer == null)
-            {
-                _logger.LogError($"subscribe received a null observer");
-                return null;
-            }
-
             if (!_universeObservers.ContainsKey(observer))
             {
                 _logger.LogInformation($"subscribing a new observer");

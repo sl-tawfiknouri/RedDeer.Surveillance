@@ -71,7 +71,7 @@ namespace Surveillance.Engine.Rules.Queues
 
             try
             {
-                _logger.LogInformation($"ReddeerRuleScheduler read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
+                _logger.LogInformation($"read message {messageId} with body {messageBody} from {_awsConfiguration.ScheduleRuleDistributedWorkQueueName}");
 
                 await BlockOnApisDown(opCtx);
 
@@ -79,17 +79,17 @@ namespace Surveillance.Engine.Rules.Queues
 
                 if (execution == null)
                 {
-                    _logger.LogError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
-                    opCtx.EndEventWithError($"ReddeerRuleScheduler was unable to deserialise the message {messageId}");
+                    _logger.LogError($"was unable to deserialise the message {messageId}");
+                    opCtx.EndEventWithError($"was unable to deserialise the message {messageId}");
                     return;
                 }
 
-                _logger.LogInformation($"ReddeerRuleScheduler about to execute message {messageBody}");
+                _logger.LogInformation($"about to execute message {messageBody}");
 
                 var scheduleRuleValid = ValidateScheduleRule(execution);
                 if (!scheduleRuleValid)
                 {
-                    opCtx.EndEventWithError("ReddeerRuleScheduler did not like the scheduled execution passed through. Check error logs.");
+                    opCtx.EndEventWithError("did not like the scheduled execution passed through. Check error logs.");
                     return;
                 }
 
@@ -97,7 +97,7 @@ namespace Surveillance.Engine.Rules.Queues
             }
             catch (Exception e)
             {
-                _logger.LogError($"ReddeerRuleScheduler caught exception in execute distributed message for {messageBody}", e);
+                _logger.LogError($"caught exception in execute distributed message for {messageBody}", e);
                 opCtx.EndEventWithError(e.Message);
             }
         }
@@ -108,17 +108,17 @@ namespace Surveillance.Engine.Rules.Queues
 
             if (!servicesRunning)
             {
-                _logger.LogWarning("Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+                _logger.LogWarning("asked to executed distributed message but was unable to reach api services");
                 // set status here
                 opCtx.UpdateEventState(OperationState.BlockedClientServiceDown);
-                opCtx.EventError($"Reddeer Rule Scheduler asked to executed distributed message but was unable to reach api services");
+                opCtx.EventError($"asked to executed distributed message but was unable to reach api services");
             }
 
             int servicesDownMinutes = 0;
             var exitClientServiceBlock = servicesRunning;
             while (!exitClientServiceBlock)
             {
-                _logger.LogInformation($"ReddeerRuleScheduler APIs down on heartbeat requests. Sleeping for 30 seconds.");
+                _logger.LogInformation($"APIs down on heartbeat requests. Sleeping for 30 seconds.");
 
                 Thread.Sleep(30 * 1000);
                 var apiHeartBeat = _apiHeartbeat.HeartsBeating();
@@ -127,14 +127,14 @@ namespace Surveillance.Engine.Rules.Queues
 
                 if (servicesDownMinutes == 15)
                 {
-                    _logger.LogError("Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
-                    opCtx.EventError($"Reddeer Rule Scheduler has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                    _logger.LogError("has been trying to process a message for 15 minutes but the api services on the client service have been down");
+                    opCtx.EventError($"has been trying to process a message for 15 minutes but the api services on the client service have been down");
                 }
             }
 
             if (!servicesRunning)
             {
-                _logger.LogWarning("Reddeer Rule Scheduler was unable to reach api services but is now able to");
+                _logger.LogWarning("was unable to reach api services but is now able to");
                 opCtx.UpdateEventState(OperationState.InProcess);
             }
         }
@@ -143,25 +143,25 @@ namespace Surveillance.Engine.Rules.Queues
         {
             if (execution == null)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a null scheduled execution. Returning.");
+                _logger?.LogError($"had a null scheduled execution. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation before 2015. Returning.");
+                _logger?.LogError($"had a time series initiation before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesTermination.DateTime.Year < 2015)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series termination before 2015. Returning.");
+                _logger?.LogError($"had a time series termination before 2015. Returning.");
                 return false;
             }
 
             if (execution.TimeSeriesInitiation > execution.TimeSeriesTermination)
             {
-                _logger?.LogError($"ReddeerRuleScheduler had a time series initiation that exceeded the time series termination.");
+                _logger?.LogError($"had a time series initiation that exceeded the time series termination.");
                 return false;
             }
 

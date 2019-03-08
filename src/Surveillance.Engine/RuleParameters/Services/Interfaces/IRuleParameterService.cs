@@ -2,9 +2,9 @@
 using Domain.Surveillance.Scheduling;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 
-namespace Surveillance.Engine.Rules.RuleParameters.Manager.Interfaces
+namespace Surveillance.Engine.Rules.RuleParameters.Services.Interfaces
 {
-    public interface IRuleParameterManager
+    public interface IRuleParameterService
     {
         Task<RuleParameterDto> RuleParameters(ScheduledExecution execution);
     }

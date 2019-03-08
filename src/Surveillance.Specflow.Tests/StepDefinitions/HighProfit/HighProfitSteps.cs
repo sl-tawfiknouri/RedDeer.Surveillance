@@ -38,10 +38,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
         private UniverseSelectionState _universeSelectionState;
         private ExchangeRateSelection _exchangeRateSelection;
 
-        private ICurrencyConverter _currencyConverter;
-        private IUniverseEquityOrderFilter _universeOrderFilter;
+        private ICurrencyConverterService _currencyConverterService;
+        private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _interdayUniverseMarketCacheFactory;
-        private IMarketTradingHoursManager _tradingHoursManager;
+        private IMarketTradingHoursService _tradingHoursService;
         private IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private ICostCalculatorFactory _costCalculatorFactory;
         private IRevenueCalculatorFactory _revenueCalculatorFactory;
@@ -63,10 +63,10 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
 
         private void Setup()
         {
-            _tradingHoursManager = A.Fake<IMarketTradingHoursManager>();
+            _tradingHoursService = A.Fake<IMarketTradingHoursService>();
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("XLON"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("XLON"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(16),
@@ -76,7 +76,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 });
 
             A
-                .CallTo(() => _tradingHoursManager.GetTradingHoursForMic("NASDAQ"))
+                .CallTo(() => _tradingHoursService.GetTradingHoursForMic("NASDAQ"))
                 .Returns(new TradingHours
                 {
                     CloseOffsetInUtc = TimeSpan.FromHours(23),
@@ -90,9 +90,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 new StubRuleRunDataRequestRepository(),
                 new NullLogger<UniverseMarketCacheFactory>());
 
-            var currencyLogger = new NullLogger<CurrencyConverter>();
-            _currencyConverter = new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
-            _universeOrderFilter = A.Fake<IUniverseEquityOrderFilter>();
+            var currencyLogger = new NullLogger<CurrencyConverterService>();
+            _currencyConverterService = new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, currencyLogger);
+            _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _logger = new NullLogger<HighProfitsRule>();
             _tradingLogger = new NullLogger<TradingHistoryStack>();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
@@ -100,16 +100,16 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
             _dataRequestSubscriber = A.Fake<IUniverseDataRequestsSubscriber>();
 
             _costCalculatorFactory = new CostCalculatorFactory(
-                new CurrencyConverter(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverter>()),
+                new CurrencyConverterService(_exchangeRateSelection.ExchangeRateRepository, new NullLogger<CurrencyConverterService>()),
                 new NullLogger<CostCalculator>(),
                 new NullLogger<CostCurrencyConvertingCalculator>());
 
             _revenueCalculatorFactory =
                 new RevenueCalculatorFactory(
-                    _tradingHoursManager,
-                    new CurrencyConverter(
+                    _tradingHoursService,
+                    new CurrencyConverterService(
                         _exchangeRateSelection.ExchangeRateRepository,
-                        new NullLogger<CurrencyConverter>()),
+                        new NullLogger<CurrencyConverterService>()),
                     new NullLogger<RevenueCurrencyConvertingCalculator>(),
                     new NullLogger<RevenueCalculator>());
 
@@ -120,7 +120,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.HighProfit
                 _costCalculatorFactory,
                 _revenueCalculatorFactory,
                 _exchangeRateProfitCalculator,
-                _universeOrderFilter,
+                _universeOrderFilterService,
                 _interdayUniverseMarketCacheFactory,
                 _marketDataCacheStrategyFactory,
                 _logger,

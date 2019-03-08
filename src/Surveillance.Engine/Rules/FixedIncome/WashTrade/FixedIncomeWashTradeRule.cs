@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Core.Trading.Factories;
+using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -19,14 +20,14 @@ using Surveillance.Engine.Rules.Trades.Interfaces;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
 using Surveillance.Engine.Rules.Universe.Interfaces;
 using Surveillance.Engine.Rules.Universe.MarketEvents;
-using static Surveillance.Engine.Rules.Rules.Equity.WashTrade.WashTradeRuleBreach;
+using static Surveillance.Engine.Rules.Rules.Shared.WashTrade.WashTradeRuleBreach;
 
 namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 {
     public class FixedIncomeWashTradeRule : BaseUniverseRule, IFixedIncomeWashTradeRule
     {
         private readonly IWashTradeRuleFixedIncomeParameters _parameters;
-        private readonly IUniverseFixedIncomeOrderFilter _orderFilter;
+        private readonly IUniverseFixedIncomeOrderFilterService _orderFilterService;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IClusteringService _clusteringService;
         private readonly IPortfolioFactory _portfolioFactory;
@@ -34,7 +35,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         public FixedIncomeWashTradeRule(
             IWashTradeRuleFixedIncomeParameters parameters,
-            IUniverseFixedIncomeOrderFilter orderFilter,
+            IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseMarketCacheFactory marketCacheFactory,
             RuleRunMode runMode,
@@ -55,7 +56,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                 tradingStackLogger)
         {
             _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _clusteringService = clusteringService ?? throw new ArgumentNullException(nameof(clusteringService));
             _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
@@ -66,7 +67,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
 
         protected override IUniverseEvent Filter(IUniverseEvent value)
         {
-            return _orderFilter.Filter(value);
+            return _orderFilterService.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

@@ -5,7 +5,7 @@ using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using NUnit.Framework;
 
-namespace Domain.Tests.Trading
+namespace Domain.Core.Tests.Trading.Orders
 {
     [TestFixture]
     public class OrderAllocationDecoratorTests

@@ -5,7 +5,7 @@ using Surveillance.Engine.Rules.Universe.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.MarketEvents.Interfaces
 {
-    public interface IMarketOpenCloseEventManager
+    public interface IMarketOpenCloseEventService
     {
         Task<IReadOnlyCollection<IUniverseEvent>> AllOpenCloseEvents(DateTime start, DateTime end);
     }

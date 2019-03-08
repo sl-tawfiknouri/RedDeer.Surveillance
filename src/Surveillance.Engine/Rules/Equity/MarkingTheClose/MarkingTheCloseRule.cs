@@ -27,7 +27,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseOrderFilter _orderFilter;
-        private readonly IMarketTradingHoursManager _tradingHoursManager;
+        private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly ILogger _logger;
         private volatile bool _processingMarketClose;
@@ -40,7 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             ISystemProcessOperationRunRuleContext ruleCtx,
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
-            IMarketTradingHoursManager tradingHoursManager,
+            IMarketTradingHoursService tradingHoursService,
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             RuleRunMode runMode,
             ILogger<MarkingTheCloseRule> logger,
@@ -60,7 +60,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _tradingHoursManager = tradingHoursManager ?? throw new ArgumentNullException(nameof(tradingHoursManager));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
             _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

@@ -11,7 +11,7 @@ using Surveillance.Engine.Rules.Universe.OrganisationalFactors.Interfaces;
 
 namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
 {
-    public class OrganisationalFactorBroker : IOrganisationalFactorBroker
+    public class OrganisationalFactorBrokerService : IOrganisationalFactorBrokerService
     {
         private readonly object _traderLock = new object();
         private readonly object _strategyLock = new object();
@@ -30,13 +30,13 @@ namespace Surveillance.Engine.Rules.Universe.OrganisationalFactors
         private readonly IDictionary<string, IUniverseRule> _fundFactors;
         private readonly IDictionary<string, IUniverseRule> _strategyFactors;
 
-        private readonly ILogger<OrganisationalFactorBroker> _logger;
+        private readonly ILogger<OrganisationalFactorBrokerService> _logger;
 
-        public OrganisationalFactorBroker(
+        public OrganisationalFactorBrokerService(
             IUniverseCloneableRule cloneSource,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
             bool aggregateNonFactorableIntoOwnCategory,
-            ILogger<OrganisationalFactorBroker> logger)
+            ILogger<OrganisationalFactorBrokerService> logger)
         {
             _cloneSource = cloneSource ?? throw new ArgumentNullException(nameof(cloneSource));
             _noneFactor = _cloneSource.Clone(new FactorValue(ClientOrganisationalFactors.None, string.Empty));

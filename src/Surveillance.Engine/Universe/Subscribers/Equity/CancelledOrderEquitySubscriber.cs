@@ -26,20 +26,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IEquityRuleCancelledOrderFactory _equityRuleCancelledOrderFactory;
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
-        private readonly IOrganisationalFactorBrokerFactory _brokerFactory;
+        private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
         private readonly ILogger<CancelledOrderEquitySubscriber> _logger;
 
         public CancelledOrderEquitySubscriber(
             IEquityRuleCancelledOrderFactory equityRuleCancelledOrderFactory,
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
-            IOrganisationalFactorBrokerFactory brokerFactory,
+            IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
             ILogger<CancelledOrderEquitySubscriber> logger)
         {
             _equityRuleCancelledOrderFactory = equityRuleCancelledOrderFactory;
             _ruleParameterMapper = ruleParameterMapper;
             _universeFilterFactory = universeFilterFactory;
-            _brokerFactory = brokerFactory;
+            _brokerServiceFactory = brokerServiceFactory;
             _logger = logger;
         }
 
@@ -81,7 +81,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 foreach (var param in cancelledOrderParameters)
                 {
                     var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
-                    var broker = _brokerFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
+                    var broker = _brokerServiceFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
                     subscriptions.Add(broker);
                 }
             }

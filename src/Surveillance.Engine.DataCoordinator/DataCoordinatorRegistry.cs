@@ -27,7 +27,7 @@ namespace Surveillance.Engine.DataCoordinator
             For<IAutoSchedule>().Use<AutoSchedule>();
             For<IDataVerifier>().Use<DataVerifier>();
             For<IDataCoordinatorScheduler>().Use<DataCoordinatorScheduler>();
-            For<ILiveRulesService>().Use<LiveRulesService>();
+            For<IActiveRulesService>().Use<ActiveRulesService>();
         }
     }
 }

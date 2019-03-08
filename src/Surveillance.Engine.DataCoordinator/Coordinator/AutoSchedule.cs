@@ -16,18 +16,18 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
     {
         private readonly IOrdersRepository _ordersRepository;
         private readonly IQueueScheduleRulePublisher _publisher;
-        private readonly ILiveRulesService _liveRulesService;
+        private readonly IActiveRulesService _activeRulesService;
         private readonly ILogger<AutoSchedule> _logger;
 
         public AutoSchedule(
             IOrdersRepository ordersRepository,
             IQueueScheduleRulePublisher publisher,
-            ILiveRulesService liveRulesService,
+            IActiveRulesService activeRulesService,
             ILogger<AutoSchedule> logger)
         {
             _ordersRepository = ordersRepository ?? throw new ArgumentNullException(nameof(ordersRepository));
             _publisher = publisher ?? throw new ArgumentNullException(nameof(publisher));
-            _liveRulesService = liveRulesService ?? throw new ArgumentNullException(nameof(liveRulesService));
+            _activeRulesService = activeRulesService ?? throw new ArgumentNullException(nameof(activeRulesService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -92,8 +92,8 @@ namespace Surveillance.Engine.DataCoordinator.Coordinator
         private List<RuleIdentifier> GetAllRules()
         {
             return 
-                _liveRulesService
-                    .LiveRules()
+                _activeRulesService
+                    .EnabledRules()
                     .Select(arl => new RuleIdentifier { Rule = arl, Ids = new string[0] })
                     .ToList();
         }

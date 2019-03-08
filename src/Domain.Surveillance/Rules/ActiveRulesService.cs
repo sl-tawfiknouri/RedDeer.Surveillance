@@ -5,9 +5,9 @@ using Domain.Surveillance.Rules.Interfaces;
 
 namespace Domain.Surveillance.Rules
 {
-    public class LiveRulesService : ILiveRulesService
+    public class ActiveRulesService : IActiveRulesService
     {
-        private readonly IReadOnlyCollection<Scheduling.Rules> _liveRules =
+        private readonly IReadOnlyCollection<Scheduling.Rules> _enabledRules =
             new List<Scheduling.Rules>
             {
                 Scheduling.Rules.HighVolume,
@@ -20,23 +20,23 @@ namespace Domain.Surveillance.Rules
                 Scheduling.Rules.FixedIncomeHighVolumeIssuance
             };
 
-        public bool RuleIsLive(Scheduling.Rules rule)
+        public bool RuleIsEnabled(Scheduling.Rules rule)
         {
-            return _liveRules.Contains(rule);
+            return _enabledRules.Contains(rule);
         }
 
-        public IReadOnlyCollection<Scheduling.Rules> LiveRules()
+        public IReadOnlyCollection<Scheduling.Rules> EnabledRules()
         {
-            return _liveRules;
+            return _enabledRules;
         }
 
-        public IReadOnlyCollection<Scheduling.Rules> UnLiveRules()
+        public IReadOnlyCollection<Scheduling.Rules> DisabledRules()
         {
             var rules = Enum.GetValues(typeof(Scheduling.Rules));
             var castRules = rules.Cast<Scheduling.Rules>().ToList();
             var ruleList = new List<Scheduling.Rules>(castRules);
 
-            return ruleList.Where(i => !_liveRules.Contains(i)).ToList();
+            return ruleList.Where(i => !_enabledRules.Contains(i)).ToList();
         }
     }
 }

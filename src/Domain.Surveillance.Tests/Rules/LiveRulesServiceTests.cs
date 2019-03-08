@@ -17,9 +17,9 @@ namespace Domain.Surveillance.Tests.Rules
         [TestCase(Scheduling.Rules.PumpAndDump, false)]
         public void RuleIsLive_LiveRule_IsTrue(Scheduling.Rules rule, bool expectation)
         {
-            var liveRulesService = new LiveRulesService();
+            var liveRulesService = new ActiveRulesService();
 
-            var result = liveRulesService.RuleIsLive(rule);
+            var result = liveRulesService.RuleIsEnabled(rule);
 
             Assert.AreEqual(expectation, result);
         }
@@ -27,9 +27,9 @@ namespace Domain.Surveillance.Tests.Rules
         [Test]
         public void LiveRules_Contains_ExpectedRules()
         {
-            var liveRulesService = new LiveRulesService();
+            var liveRulesService = new ActiveRulesService();
 
-            var result = liveRulesService.LiveRules();
+            var result = liveRulesService.EnabledRules();
 
             Assert.IsTrue(result.Contains(Scheduling.Rules.HighVolume));
             Assert.IsTrue(result.Contains(Scheduling.Rules.FixedIncomeWashTrades));
@@ -47,9 +47,9 @@ namespace Domain.Surveillance.Tests.Rules
         [Test]
         public void UnLiveRules_Contains_ExpectedRules()
         {
-            var liveRulesService = new LiveRulesService();
+            var liveRulesService = new ActiveRulesService();
 
-            var result = liveRulesService.UnLiveRules();
+            var result = liveRulesService.DisabledRules();
 
             Assert.IsTrue(result.Contains(Scheduling.Rules.UniverseFilter));
             Assert.IsTrue(result.Contains(Scheduling.Rules.PumpAndDump));

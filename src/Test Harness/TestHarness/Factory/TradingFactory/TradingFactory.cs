@@ -8,7 +8,9 @@ using TestHarness.Engine.OrderGenerator;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderGenerator.Strategies;
 using TestHarness.Engine.OrderGenerator.Strategies.Interfaces;
+using TestHarness.Factory.EquitiesFactory.Interfaces;
 using TestHarness.Factory.TradingFactory.Interfaces;
+using ICompleteSelector = TestHarness.Factory.TradingFactory.Interfaces.ICompleteSelector;
 
 namespace TestHarness.Factory.TradingFactory
 {
@@ -21,7 +23,7 @@ namespace TestHarness.Factory.TradingFactory
         ITradingFactoryHeartbeatOrMarketUpdateSelector,
         ITradingFactoryHeartbeatSelector,
         ITradingFactoryVolumeStrategySelector,
-         ITradingFactoryFilterStrategySelector,
+        ITradingFactoryFilterStrategySelector,
         ICompleteSelector
     {
         private readonly ILogger _logger;
@@ -36,10 +38,13 @@ namespace TestHarness.Factory.TradingFactory
         // volume strategy
         private ITradeVolumeStrategy _volumeStrategy;
 
+        private IStockExchangeStreamFactory _streamFactory;
         private IReadOnlyCollection<string> _sedolFilter;
+        private bool _inclusive;
 
-        public TradingFactory(ILogger logger)
+        public TradingFactory(IStockExchangeStreamFactory streamFactory, ILogger logger)
         {
+            _streamFactory = streamFactory ?? throw new ArgumentNullException(nameof(streamFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -88,9 +93,10 @@ namespace TestHarness.Factory.TradingFactory
         }
 
         // Sedol filter selector
-        public ICompleteSelector FilterSedol(IReadOnlyCollection<string> sedols)
+        public ICompleteSelector FilterSedol(IReadOnlyCollection<string> sedols, bool inclusive)
         {
             _sedolFilter = sedols ?? new List<string>();
+            _inclusive = inclusive;
             return this;
         }
 
@@ -109,7 +115,7 @@ namespace TestHarness.Factory.TradingFactory
 
                 if (_sedolFilter?.Any() ?? false)
                 {
-                    process = new OrderDataGeneratorSedolFilteringDecorator(process, _sedolFilter);
+                    process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
                 }
 
                 return process;
@@ -122,7 +128,7 @@ namespace TestHarness.Factory.TradingFactory
 
                 if (_sedolFilter?.Any() ?? false)
                 {
-                    process = new OrderDataGeneratorSedolFilteringDecorator(process, _sedolFilter);
+                    process = new OrderDataGeneratorSedolFilteringDecorator(_streamFactory, process, _sedolFilter, _inclusive);
                 }
 
                 return process;

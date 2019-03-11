@@ -195,7 +195,7 @@ namespace TestHarness.Commands
                     .Create()
                     .MarketUpdate()
                     .TradingFixedVolume(10)
-                    .FilterSedol(Ftse100SedolList())
+                    .FilterSedol(Ftse100SedolList(), true)
                     .Finish();
 
             var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);

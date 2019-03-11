@@ -197,7 +197,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .Create()
                         .MarketUpdate()
                         .TradingNormalDistributionVolume(4)
-                        .FilterSedol(sedols)
+                        .FilterSedol(sedols, false)
                         .Finish();
 
                 var cancelledProcess =

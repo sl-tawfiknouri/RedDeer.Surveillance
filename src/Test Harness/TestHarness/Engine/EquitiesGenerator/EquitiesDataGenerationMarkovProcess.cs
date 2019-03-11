@@ -77,7 +77,6 @@ namespace TestHarness.Engine.EquitiesGenerator
                 foreach (var frame in framesToGenerateFor)
                 {
                     _activeFrame = frame;
-                    _stream.Add(_activeFrame);
                     AdvanceFrames(market, frame);
                 }
             }

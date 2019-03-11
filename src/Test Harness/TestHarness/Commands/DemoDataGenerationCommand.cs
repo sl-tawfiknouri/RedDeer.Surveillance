@@ -196,7 +196,7 @@ namespace TestHarness.Commands
                 .TradingFactory
                 .Create()
                 .MarketUpdate()
-                .TradingFixedVolume(13);
+                .TradingFixedVolume(15);
 
             ICompleteSelector completeSelector;
             if (applyFtseFilter)

@@ -194,7 +194,7 @@ namespace TestHarness.Commands
                     .TradingFactory
                     .Create()
                     .MarketUpdate()
-                    .TradingNormalDistributionVolume(4)
+                    .TradingFixedVolume(10)
                     .FilterSedol(Ftse100SedolList())
                     .Finish();
 

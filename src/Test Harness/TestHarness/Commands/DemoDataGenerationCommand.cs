@@ -9,6 +9,7 @@ using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderStorage.Interfaces;
 using TestHarness.Factory.Interfaces;
+using TestHarness.Factory.TradingFactory.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -74,6 +75,7 @@ namespace TestHarness.Commands
             var trade = splitCmd.Skip(3).FirstOrDefault();
             var saveMarketCsv = splitCmd.Skip(4).FirstOrDefault();
             var saveTradeCsv = splitCmd.Skip(5).FirstOrDefault();
+            var filterFtse100 = splitCmd.Skip(6).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
@@ -88,6 +90,7 @@ namespace TestHarness.Commands
                 string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
                 || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
 
+            var applyFtseFilter = string.Equals(filterFtse100, "filter-ftse-100", StringComparison.InvariantCultureIgnoreCase);
 
             if (!fromSuccess)
             {
@@ -189,15 +192,23 @@ namespace TestHarness.Commands
                     .TradeOrderStreamFactory
                     .CreateDisplayable(console);
 
-            _tradingProcess =
-                _appFactory
-                    .TradingFactory
-                    .Create()
-                    .MarketUpdate()
-                    .TradingFixedVolume(10)
-                    .FilterSedol(Ftse100SedolList(), true)
-                    .Finish();
+            var filterStep = _appFactory
+                .TradingFactory
+                .Create()
+                .MarketUpdate()
+                .TradingFixedVolume(13);
 
+            ICompleteSelector completeSelector;
+            if (applyFtseFilter)
+            {
+                completeSelector = filterStep.FilterSedol(Ftse100SedolList(), true);
+            }
+            else
+            {
+                completeSelector = filterStep.FilterNone();
+            }
+
+            _tradingProcess = completeSelector.Finish();
             var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
 
             _equitiesFileStorageProcess = _appFactory

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -194,7 +195,7 @@ namespace TestHarness.Commands
                     .Create()
                     .MarketUpdate()
                     .TradingNormalDistributionVolume(4)
-                    .FilterNone()
+                    .FilterSedol(Ftse100SedolList())
                     .Finish();
 
             var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
@@ -232,6 +233,121 @@ namespace TestHarness.Commands
         {
             _tradingProcess?.TerminateTrading();
             _equityProcess?.TerminateWalk();
+        }
+
+        // restrict test harness demo data to ftse 100 companies
+        private IReadOnlyCollection<string> Ftse100SedolList()
+        {
+            return new List<string>
+            {
+                "B1YW440",
+                "0673123",
+                "B02J639",
+                "B1XZS82",
+                "0045614",
+                "0053673",
+                "0989529",
+                "BVYVFW2",
+                "0216238",
+                "0263494",
+                "3134865",
+                "0081180",
+                "B02L3W3",
+                "BH0P3Z9",
+                "0798059",
+                "0287580",
+                "0136701",
+                "3091357",
+                "B0744B3",
+                "3174300",
+
+                "3121522",
+                "B033F22",
+                "B9895B7",
+                "BD6K457",
+                "0182704",
+                "BYZWX76",
+                "0242493",
+                "0237400",
+                "BY9D0Y1",
+                "B7KR2P8",
+                "B71N6K8",
+                "B19NLV4",
+                "BFYFZP5",
+                "B2QPKJ1",
+                "0925288",
+                "B4T3BW6",
+                "B5VQMV6",
+                "0405207",
+                "B1VZ0M2",
+                "B0LCW08",
+
+
+                "BVZHXQ9",
+                "0540528",
+                "0454492",
+                "BMJ6DW5",
+                "BHJYC05",
+                "3163836",
+                "B5M6XQ7",
+                "3398649",
+                "BZ4BQC7",
+                "3319521",
+                "BYW0PQ6",
+                "0560399",
+                "0870612",
+                "B0SWJX3",
+                "3127489",
+                "BZ1G432",
+                "BD8YWM0",
+                "B1CRLC4",
+                "0604316",
+                "BDR05C0",
+
+                "3208986",
+                "B7FC076",
+                "B3MBS74",
+                "BWXC0Z1",
+                "0677608",
+                "0682538",
+                "0709954",
+                "B03MLX2",
+                "B03MM40",
+                "B24CGK7",
+                "B2B0DG9",
+                "B082RF1",
+                "BGDT3G2",
+                "0718875",
+                "B63H849",
+                "B7T7721",
+                "BKKMKR2",
+                "B8C3BL0",
+                "B019KW7",
+                "0240549",
+
+
+                "BLDYK61",
+                "B5ZN1N8",
+                "B1FH8J7",
+                "0922320",
+                "0822011",
+                "B1WY233",
+                "B1RR840",
+                "BWFGQN1",
+                "0790873",
+                "0766937",
+                "0408284",
+                "BF8Q6K6",
+                "0878230",
+                "0884709",
+                "B11LJN4",
+                "B10RZP7",
+                "B39J2M4",
+                "BH4HKS3",
+                "B1KJJ40",
+                "B5N0P84",
+                "B8KF9B4"
+            };
         }
     }
 }

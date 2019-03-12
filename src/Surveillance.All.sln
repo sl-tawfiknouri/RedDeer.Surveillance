@@ -109,7 +109,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Network", "Infrastructure.Network\Infrastructure.Network.csproj", "{BE55D7F8-C613-4A28-8DB1-ECAA02652268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Surveillance.Tests", "Domain.Surveillance.Tests\Domain.Surveillance.Tests.csproj", "{E664279E-9D1C-4A55-A061-C2C1074F2651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Surveillance.Tests", "Domain.Surveillance.Tests\Domain.Surveillance.Tests.csproj", "{E664279E-9D1C-4A55-A061-C2C1074F2651}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

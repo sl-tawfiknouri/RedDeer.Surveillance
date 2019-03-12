@@ -14,25 +14,33 @@ namespace Domain.Core.Tests.Trading
     public class PortfolioTests
     {
         private IPortfolioExposure _portfolioExposure;
+        private ITradingExposure _tradingExposure;
         private IOrderLedger _orderLedger;
 
         [SetUp]
         public void Setup()
         {
             _portfolioExposure = A.Fake<IPortfolioExposure>();
+            _tradingExposure = A.Fake<ITradingExposure>();
             _orderLedger = A.Fake<IOrderLedger>();
         }
 
         [Test]
         public void Constructor_HasNullHolding_ThrowsException()
         {
-            Assert.Throws<ArgumentNullException>(() => new Portfolio(null, _orderLedger));
+            Assert.Throws<ArgumentNullException>(() => new Portfolio(null, _tradingExposure, _orderLedger));
+        }
+
+        [Test]
+        public void Constructor_HasNullTradingExposure_ThrowsException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Portfolio(_portfolioExposure, null, _orderLedger));
         }
 
         [Test]
         public void Constructor_HasNullOrderLedger_ThrowsException()
         {
-            Assert.Throws<ArgumentNullException>(() => new Portfolio(_portfolioExposure, null));
+            Assert.Throws<ArgumentNullException>(() => new Portfolio(_portfolioExposure, _tradingExposure, null));
         }
 
         [Test]
@@ -154,12 +162,12 @@ namespace Domain.Core.Tests.Trading
 
         private Portfolio BuildPortfolio()
         {
-            return new Portfolio(_portfolioExposure, _orderLedger);
+            return new Portfolio(_portfolioExposure, _tradingExposure, _orderLedger);
         }
 
         private Portfolio BuildPortfolioConcrete()
         {
-            return new Portfolio(new PortfolioExposure(new List<SecurityExposure>()), new OrderLedger());
+            return new Portfolio(new PortfolioExposure(new List<SecurityExposure>()), new TradingExposure(),  new OrderLedger());
         }
     }
 }

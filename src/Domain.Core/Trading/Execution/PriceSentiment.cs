@@ -4,6 +4,7 @@
     {
         Neutral,
         Positive,
-        Negative
+        Negative,
+        Mixed
     }
 }

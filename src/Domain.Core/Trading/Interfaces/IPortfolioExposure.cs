@@ -7,6 +7,6 @@ namespace Domain.Core.Trading.Interfaces
     {
         IReadOnlyCollection<SecurityExposure> SecurityExposure { get; }
 
-        SecurityExposure GetHolding(FinancialInstrument instrument);
+        SecurityExposure GetExposure(FinancialInstrument instrument);
     }
 }

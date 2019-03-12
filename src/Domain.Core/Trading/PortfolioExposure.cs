@@ -14,7 +14,7 @@ namespace Domain.Core.Trading
 
         public IReadOnlyCollection<SecurityExposure> SecurityExposure { get; }
 
-        public SecurityExposure GetHolding(FinancialInstrument instrument)
+        public SecurityExposure GetExposure(FinancialInstrument instrument)
         {
             return SecurityExposure?.FirstOrDefault(i => Equals(i.Instrument?.Identifiers, instrument?.Identifiers));
         }

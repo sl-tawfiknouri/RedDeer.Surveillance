@@ -81,7 +81,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
                 if (orderEvent == null)
                     continue;
 
-                eventList.Add(orderEvent);
+                foreach (var universeEvent in orderEvent)
+                    eventList.Add(universeEvent);
             }
 
             eventList.Add(eschaton);
@@ -261,7 +262,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
                     : null;
         }
 
-        private IUniverseEvent MapRowToOrderEvent(OrderParameters orderParam)
+        private IUniverseEvent[] MapRowToOrderEvent(OrderParameters orderParam)
         {
             if (orderParam == null)
             {
@@ -321,9 +322,14 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Universe
                 OptionEuropeanAmerican.NONE,
                 null);
 
-            var universeEvent = new UniverseEvent(UniverseStateEvent.Order, order.MostRecentDateEvent(), order);
+            var universeEventOrder = new UniverseEvent(UniverseStateEvent.Order, order.MostRecentDateEvent(), order);
+            var universeEventOrderPlaced = new UniverseEvent(UniverseStateEvent.OrderPlaced, order.PlacedDate.GetValueOrDefault(), order);
 
-            return universeEvent;
+            return new[]
+            {
+                universeEventOrder,
+                universeEventOrderPlaced
+            };
         }
 
         private Engine.Rules.Universe.Universe Build(IReadOnlyCollection<IUniverseEvent> universeEvents)

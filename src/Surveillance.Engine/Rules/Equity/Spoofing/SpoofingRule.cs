@@ -131,33 +131,30 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var hasBreachedSpoofingRule = false;
             var hasTradesInWindow = tradeWindow.Any();
 
-            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
-            while (hasTradesInWindow)
+            if (!tradeWindow.Any())
             {
-                if (!tradeWindow.Any())
-                {
-                    // ReSharper disable once RedundantAssignment
-                    hasTradesInWindow = false;
-                    break;
-                }
-
-                var nextTrade = tradeWindow.Pop();
-
-                AddToPositions(buyPosition, sellPosition, nextTrade);
-
-                if (!opposingPosition.HighCancellationRatioByPositionSize() &&
-                    !opposingPosition.HighCancellationRatioByTradeCount())
-                {
-                    continue;
-                }
-
-                var adjustedFulfilledOrders =
-                    (tradingPosition.VolumeInStatus(OrderStatus.Filled)
-                     * _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal);
-
-                var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
-                hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
+                // ReSharper disable once RedundantAssignment
+                hasTradesInWindow = false;
+                return false;
             }
+
+            foreach (var trade in tradeWindow.ToList())
+            {
+                AddToPositions(buyPosition, sellPosition, trade);
+            }
+
+            if (!opposingPosition.HighCancellationRatioByPositionSize() &&
+                !opposingPosition.HighCancellationRatioByTradeCount())
+            {
+                return false;
+            }
+
+            var adjustedFulfilledOrders =
+                (tradingPosition.VolumeInStatus(OrderStatus.Filled)
+                 * _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal);
+
+            var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
+            hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
 
             return hasBreachedSpoofingRule;
         }

@@ -31,6 +31,14 @@ Scenario: Two order universe with cancellations yields one alerts
          When I run the spoofing rule
 		 Then I will have 1 spoofing alerts
 
+Scenario: Two order universe with cancellations yields zero alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Buy       | GBX      |            |                  | 100           |              |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 |Market | Sell       | GBX      |            |                  | 100           |  110         |
+         When I run the spoofing rule
+		 Then I will have 0 spoofing alerts
+
 Scenario: Ten order universe with cancellations yields one alerts
 		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
          | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | LimitPrice | AverageFillPrice | OrderedVolume | FilledVolume |
@@ -65,4 +73,3 @@ Scenario: Eleven order universe with cancellations yields zero alerts
          | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Sell      | GBX      |            |                  | 100           |  100         |
          When I run the spoofing rule
 		 Then I will have 0 spoofing alerts
-

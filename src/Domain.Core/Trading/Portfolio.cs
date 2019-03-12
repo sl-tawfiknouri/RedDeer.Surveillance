@@ -23,8 +23,19 @@ namespace Domain.Core.Trading
             Ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
         }
 
+        /// <summary>
+        /// Assets that the portfolio is exposed to i.e. holdings
+        /// </summary>
         public IPortfolioExposure PortfolioExposure { get; }
+
+        /// <summary>
+        /// Assets that the portfolio is altering its exposure to
+        /// </summary>
         public ITradingExposure TradingExposure { get; }
+
+        /// <summary>
+        /// History of order activity for the portfolio
+        /// </summary>
         public IOrderLedger Ledger { get; }
 
         public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(

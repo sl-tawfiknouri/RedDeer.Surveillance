@@ -3,9 +3,9 @@ using Domain.Core.Financial.Money;
 
 namespace Domain.Core.Trading
 {
-    public class Holding
+    public class SecurityExposure
     {
-        public Holding(
+        public SecurityExposure(
             FinancialInstrument instrument,
             Money averagePricePaid,
             Money totalPricePaid,

@@ -9,8 +9,8 @@ namespace Domain.Core.Trading.Factories
         public IPortfolio Build()
         {
             return new Portfolio(
-                new Holdings(
-                    new List<Holding>()),
+                new PortfolioExposure(
+                    new List<SecurityExposure>()),
                 new OrderLedger());
         }
     }

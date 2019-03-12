@@ -13,13 +13,13 @@ namespace Domain.Core.Tests.Trading
     [TestFixture]
     public class PortfolioTests
     {
-        private IHoldings _holdings;
+        private IPortfolioExposure _portfolioExposure;
         private IOrderLedger _orderLedger;
 
         [SetUp]
         public void Setup()
         {
-            _holdings = A.Fake<IHoldings>();
+            _portfolioExposure = A.Fake<IPortfolioExposure>();
             _orderLedger = A.Fake<IOrderLedger>();
         }
 
@@ -32,7 +32,7 @@ namespace Domain.Core.Tests.Trading
         [Test]
         public void Constructor_HasNullOrderLedger_ThrowsException()
         {
-            Assert.Throws<ArgumentNullException>(() => new Portfolio(_holdings, null));
+            Assert.Throws<ArgumentNullException>(() => new Portfolio(_portfolioExposure, null));
         }
 
         [Test]
@@ -154,12 +154,12 @@ namespace Domain.Core.Tests.Trading
 
         private Portfolio BuildPortfolio()
         {
-            return new Portfolio(_holdings, _orderLedger);
+            return new Portfolio(_portfolioExposure, _orderLedger);
         }
 
         private Portfolio BuildPortfolioConcrete()
         {
-            return new Portfolio(new Holdings(new List<Holding>()), new OrderLedger());
+            return new Portfolio(new PortfolioExposure(new List<SecurityExposure>()), new OrderLedger());
         }
     }
 }

@@ -13,13 +13,13 @@ namespace Domain.Core.Trading
     /// </summary>
     public class Portfolio : IPortfolio
     {
-        public Portfolio(IHoldings holding, IOrderLedger ledger)
+        public Portfolio(IPortfolioExposure portfolioExposure, IOrderLedger ledger)
         {
-            Holdings = holding ?? throw new ArgumentNullException(nameof(holding));
+            PortfolioExposure = portfolioExposure ?? throw new ArgumentNullException(nameof(portfolioExposure));
             Ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
         }
 
-        public IHoldings Holdings { get; }
+        public IPortfolioExposure PortfolioExposure { get; }
 
         public IOrderLedger Ledger { get; }
 

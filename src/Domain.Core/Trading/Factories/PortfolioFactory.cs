@@ -11,6 +11,7 @@ namespace Domain.Core.Trading.Factories
             return new Portfolio(
                 new PortfolioExposure(
                     new List<SecurityExposure>()),
+                new TradingExposure(),
                 new OrderLedger());
         }
     }

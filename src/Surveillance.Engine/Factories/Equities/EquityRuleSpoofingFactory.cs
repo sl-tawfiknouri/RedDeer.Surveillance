@@ -48,6 +48,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _tradingHistoryLogger);
         }
 
-        public static string Version => Versioner.Version(2, 0);
+        public static string Version => Versioner.Version(3, 0);
     }
 }

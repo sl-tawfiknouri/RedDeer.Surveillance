@@ -167,7 +167,7 @@ namespace Domain.Core.Tests.Trading
 
         private Portfolio BuildPortfolioConcrete()
         {
-            return new Portfolio(new PortfolioExposure(new List<SecurityExposure>()), new TradingExposure(),  new OrderLedger());
+            return new Portfolio(new PortfolioExposure(new List<SecurityExposure>()), new TradingExposure(new SecurityExposure[0]),  new OrderLedger());
         }
     }
 }

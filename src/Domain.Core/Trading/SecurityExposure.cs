@@ -1,5 +1,6 @@
 ﻿using Domain.Core.Financial.Assets;
 using Domain.Core.Financial.Money;
+using Domain.Core.Trading.Execution.Interfaces;
 
 namespace Domain.Core.Trading
 {
@@ -11,7 +12,8 @@ namespace Domain.Core.Trading
             Money totalPricePaid,
             Money averagePriceSold,
             Money totalPriceSold,
-            long size)
+            long size,
+            IJudgement judgement)
         {
             Instrument = instrument;
             AveragePricePaid = averagePricePaid;
@@ -19,6 +21,7 @@ namespace Domain.Core.Trading
             AveragePriceSold = averagePriceSold;
             TotalPriceSold = totalPricePaid;
             Size = size;
+            Judgement = judgement;
         }
 
         public FinancialInstrument Instrument { get; }
@@ -27,5 +30,7 @@ namespace Domain.Core.Trading
         public Money AveragePriceSold { get; }
         public Money TotalPriceSold { get; }
         public long Size { get; }
+
+        public IJudgement Judgement { get; }
     }
 }

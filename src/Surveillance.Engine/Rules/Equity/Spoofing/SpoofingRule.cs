@@ -56,6 +56,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
+        }
+
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
@@ -197,11 +202,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 
             var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);
-        }
-
-        protected override IUniverseEvent Filter(IUniverseEvent value)
-        {
-            return _orderFilter.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

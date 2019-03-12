@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
 using Surveillance.Auditing.Context.Interfaces;
@@ -52,6 +53,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Spoofing
                 new EquityRuleSpoofingFactory(
                     universeMarketCacheFactory,
                     new UniverseEquityOrderFilterService(new NullLogger<UniverseEquityOrderFilterService>()),
+                    new PortfolioFactory(), 
                     new NullLogger<SpoofingRule>(),
                     new NullLogger<TradingHistoryStack>());
         }

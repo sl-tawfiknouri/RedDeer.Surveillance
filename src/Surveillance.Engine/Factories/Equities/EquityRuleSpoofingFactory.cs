@@ -1,4 +1,5 @@
 ﻿using System;
+using Domain.Core.Trading.Factories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -17,16 +18,19 @@ namespace Surveillance.Engine.Rules.Factories.Equities
     {
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
+        private readonly IPortfolioFactory _portfolioFactory;
         private readonly ILogger<SpoofingRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
         public EquityRuleSpoofingFactory(IUniverseMarketCacheFactory factory,
             IUniverseEquityOrderFilterService orderFilterService,
+            IPortfolioFactory portfolioFactory,
             ILogger<SpoofingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
             _orderFilterService = orderFilterService ?? throw new ArgumentNullException(nameof(orderFilterService));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
         }
@@ -44,6 +48,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _orderFilterService,
                 _factory,
                 runMode,
+                _portfolioFactory,
                 _logger,
                 _tradingHistoryLogger);
         }

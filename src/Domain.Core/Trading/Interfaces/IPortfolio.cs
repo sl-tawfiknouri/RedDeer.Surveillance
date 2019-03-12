@@ -8,6 +8,8 @@ namespace Domain.Core.Trading.Interfaces
     public interface IPortfolio
     {
         IPortfolioExposure PortfolioExposure { get; }
+        ITradingExposure TradingExposure { get; }
+
         IOrderLedger Ledger { get; }
 
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossTotal();

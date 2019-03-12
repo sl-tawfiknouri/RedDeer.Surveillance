@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Factories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -25,6 +26,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IPortfolioFactory _portfolioFactory;
         private readonly ILogger _logger;
 
         public SpoofingRule(
@@ -34,6 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
+            IPortfolioFactory portfolioFactory,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -51,6 +54,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
@@ -63,20 +67,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
-            var tradeWindow = history?.ActiveTradeHistory();
+            var activeTrades = history?.ActiveTradeHistory();
+            var portfolio = _portfolioFactory.Build();
+            portfolio.Add(activeTrades);
 
-            if (tradeWindow == null
-                || !tradeWindow.Any())
+            if (!portfolio.TradingExposure.SecurityExposure.Any())
             {
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.OrderDirection == tradeWindow.First().OrderDirection))
+            if (activeTrades.All(trades => trades.OrderDirection == activeTrades.First().OrderDirection))
             {
                 return;
             }
 
-            var mostRecentTrade = tradeWindow.Pop();
+            var mostRecentTrade = activeTrades.Pop();
 
             if (mostRecentTrade.OrderStatus() != OrderStatus.Filled)
             {
@@ -112,7 +117,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     ? buyPosition
                     : sellPosition;
 
-            var hasBreachedSpoofingRule = CheckPositionForSpoofs(tradeWindow, buyPosition, sellPosition, tradingPosition, opposingPosition);
+            var hasBreachedSpoofingRule = CheckPositionForSpoofs(activeTrades, buyPosition, sellPosition, tradingPosition, opposingPosition);
 
             if (hasBreachedSpoofingRule)
             {

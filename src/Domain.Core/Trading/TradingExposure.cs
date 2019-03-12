@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Domain.Core.Trading.Execution.Interfaces;
 using Domain.Core.Trading.Interfaces;
 
 namespace Domain.Core.Trading

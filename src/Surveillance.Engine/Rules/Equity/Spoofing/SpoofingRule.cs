@@ -113,20 +113,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 return;
             }
 
-            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Filled);
-            var opposingVolume = unalignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
-
-            if (alignedVolume <= 0
-                || opposingVolume <= 0)
+            if (!CancellationVolumeOverThreshold(alignedSentimentPortfolio, unalignedSentimentPortfolio))
             {
-                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by volumes traded/cancelled");
-                return;
-            }
-
-            var scaleOfSpoofExceedingReal = (decimal)opposingVolume / (decimal)alignedVolume;
-            if (scaleOfSpoofExceedingReal < _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal)
-            {
-                _logger.LogInformation($"Order under analysis had high cancellations but did not exceed the spoofing scale");
                 return;
             }
 
@@ -156,7 +144,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             return opposingSentimentPortfolio;
         }
 
-        private bool UnalignedPortfolioOverCancellationThreshold(IPortfolio unalignedSentimentPortfolio)
+        private bool UnalignedPortfolioOverCancellationThreshold(
+            IPortfolio unalignedSentimentPortfolio)
         {
             var percentageByOrderBreach =
                 _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByOrder(OrderStatus.Cancelled);
@@ -165,6 +154,25 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByVolume(OrderStatus.Cancelled);
 
             return percentageByOrderBreach || percentageByVolumeBreach;
+        }
+
+        private bool CancellationVolumeOverThreshold(
+            IPortfolio alignedSentimentPortfolio,
+            IPortfolio unalignedSentimentPortfolio)
+        {
+            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Filled);
+            var opposingVolume = unalignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
+
+            if (alignedVolume <= 0
+                || opposingVolume <= 0)
+            {
+                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by volumes traded/cancelled");
+                return false;
+            }
+
+            var scaleOfSpoofExceedingReal = (decimal)opposingVolume / (decimal)alignedVolume;
+
+            return scaleOfSpoofExceedingReal >= _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal;
         }
 
         private void RecordRuleBreach(

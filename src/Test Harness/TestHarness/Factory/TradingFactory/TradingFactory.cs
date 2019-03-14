@@ -93,14 +93,14 @@ namespace TestHarness.Factory.TradingFactory
         }
 
         // Sedol filter selector
-        public ICompleteSelector FilterSedol(IReadOnlyCollection<string> sedols, bool inclusive)
+        public ICompleteSelector SetFilterSedol(IReadOnlyCollection<string> sedols, bool inclusive)
         {
             _sedolFilter = sedols ?? new List<string>();
             _inclusive = inclusive;
             return this;
         }
 
-        public ICompleteSelector FilterNone()
+        public ICompleteSelector SetFilterNone()
         {
             _sedolFilter = new List<string>();
             return this;

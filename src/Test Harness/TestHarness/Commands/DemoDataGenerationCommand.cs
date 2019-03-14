@@ -201,11 +201,11 @@ namespace TestHarness.Commands
             ICompleteSelector completeSelector;
             if (applyFtseFilter)
             {
-                completeSelector = filterStep.FilterSedol(Ftse100SedolList(), true);
+                completeSelector = filterStep.SetFilterSedol(Ftse100SedolList(), true);
             }
             else
             {
-                completeSelector = filterStep.FilterNone();
+                completeSelector = filterStep.SetFilterNone();
             }
 
             _tradingProcess = completeSelector.Finish();

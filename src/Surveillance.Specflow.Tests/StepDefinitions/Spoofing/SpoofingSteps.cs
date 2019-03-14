@@ -1,4 +1,6 @@
 ﻿using System;
+using Domain.Core.Trading.Execution;
+using Domain.Core.Trading.Execution.Interfaces;
 using Domain.Core.Trading.Factories;
 using FakeItEasy;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -33,6 +35,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Spoofing
         private readonly IUniverseAlertStream _alertStream;
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IEquityRuleSpoofingFactory _equityRuleSpoofingFactory;
+        private readonly IOrderAnalysisService _orderAnalysisService;
 
         public SpoofingSteps(
             ScenarioContext scenarioContext,
@@ -40,7 +43,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Spoofing
         {
             _scenarioContext = scenarioContext ?? throw new ArgumentNullException(nameof(scenarioContext));
             _universeSelectionState = universeSelectionState ?? throw new ArgumentNullException(nameof(universeSelectionState));
-
+            _orderAnalysisService = new OrderAnalysisService();
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
 
@@ -53,7 +56,8 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Spoofing
                 new EquityRuleSpoofingFactory(
                     universeMarketCacheFactory,
                     new UniverseEquityOrderFilterService(new NullLogger<UniverseEquityOrderFilterService>()),
-                    new PortfolioFactory(), 
+                    new PortfolioFactory(),
+                    _orderAnalysisService,
                     new NullLogger<SpoofingRule>(),
                     new NullLogger<TradingHistoryStack>());
         }

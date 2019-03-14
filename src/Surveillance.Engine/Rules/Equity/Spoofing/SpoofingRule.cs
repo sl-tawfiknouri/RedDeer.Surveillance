@@ -4,6 +4,7 @@ using System.Linq;
 using Domain.Core.Trading.Execution;
 using Domain.Core.Trading.Execution.Interfaces;
 using Domain.Core.Trading.Factories.Interfaces;
+using Domain.Core.Trading.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -121,9 +122,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var opposingSentimentPortfolio = _portfolioFactory.Build();
             opposingSentimentPortfolio.Add(opposingSentiment.Select(i => i.Order).ToList());
 
+            var percentageByOrderBreach =
+                _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByOrder(OrderStatus.Cancelled);
 
-            var percentageByOrderBreach = _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByOrder();
-            var percentageByVolumeBreach = _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByVolume();
+            var percentageByVolumeBreach =
+                _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByVolume(OrderStatus.Cancelled);
 
             if (!percentageByOrderBreach
                 && !percentageByVolumeBreach)
@@ -132,9 +135,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 return;
             }
 
-            // compare these two...if one is substantially larger than the other
-            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus();
-            var opposingVolume = opposingSentimentPortfolio.Ledger.VolumeInLedgerWithStatus();
+            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Filled);
+            var opposingVolume = opposingSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
 
             if (alignedVolume <= 0
                 || opposingVolume <= 0)
@@ -143,48 +145,55 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 return;
             }
 
-            
-
-
-
-
-            var mostRecentTrade = activeTrades.Pop();
-
-            var buyPosition =
-                new TradePositionCancellations(
-                    new List<Order>(),
-                    _equitiesParameters.CancellationThreshold,
-                    _equitiesParameters.CancellationThreshold,
-                    _logger);
-
-            var sellPosition =
-                new TradePositionCancellations(
-                    new List<Order>(),
-                    _equitiesParameters.CancellationThreshold,
-                    _equitiesParameters.CancellationThreshold,
-                    _logger);
-
-            AddToPositions(buyPosition, sellPosition, mostRecentTrade);
-
-            var tradingPosition =
-               (mostRecentTrade.OrderDirection == OrderDirections.BUY
-                || mostRecentTrade.OrderDirection == OrderDirections.COVER)
-                    ? buyPosition
-                    : sellPosition;
-
-            var opposingPosition =
-                (mostRecentTrade.OrderDirection == OrderDirections.SELL
-                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
-                    ? buyPosition
-                    : sellPosition;
-
-            var hasBreachedSpoofingRule = CheckPositionForSpoofs(activeTrades, buyPosition, sellPosition, tradingPosition, opposingPosition);
-
-            if (hasBreachedSpoofingRule)
+            var scaleOfSpoofExceedingReal = (decimal)opposingVolume / (decimal)alignedVolume;
+            if (scaleOfSpoofExceedingReal < _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal)
             {
-                _logger.LogInformation($"RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
-                RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
+                _logger.LogInformation($"Order under analysis had high cancellations but did not exceed the spoofing scale");
+                return;
             }
+
+            _logger.LogInformation($"Rule breach for {lastTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
+            RecordRuleBreach(lastTrade, alignedSentimentPortfolio, opposingSentimentPortfolio);
+
+            // O L D    C O D E
+
+            //var mostRecentTrade = activeTrades.Pop();
+
+            //var buyPosition =
+            //    new TradePositionCancellations(
+            //        new List<Order>(),
+            //        _equitiesParameters.CancellationThreshold,
+            //        _equitiesParameters.CancellationThreshold,
+            //        _logger);
+
+            //var sellPosition =
+            //    new TradePositionCancellations(
+            //        new List<Order>(),
+            //        _equitiesParameters.CancellationThreshold,
+            //        _equitiesParameters.CancellationThreshold,
+            //        _logger);
+
+            //AddToPositions(buyPosition, sellPosition, mostRecentTrade);
+
+            //var tradingPosition =
+            //   (mostRecentTrade.OrderDirection == OrderDirections.BUY
+            //    || mostRecentTrade.OrderDirection == OrderDirections.COVER)
+            //        ? buyPosition
+            //        : sellPosition;
+
+            //var opposingPosition =
+            //    (mostRecentTrade.OrderDirection == OrderDirections.SELL
+            //     || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
+            //        ? buyPosition
+            //        : sellPosition;
+
+            //var hasBreachedSpoofingRule = CheckPositionForSpoofs(activeTrades, buyPosition, sellPosition, tradingPosition, opposingPosition);
+
+            //if (hasBreachedSpoofingRule)
+            //{
+            //    _logger.LogInformation($"RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
+            //    RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
+            //}
         }
         
         private bool CheckPositionForSpoofs(
@@ -245,11 +254,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         }
 
         private void RecordRuleBreach(
-            Order mostRecentTrade,
-            ITradePosition tradingPosition,
-            ITradePosition opposingPosition)
+            Order lastTrade,
+            IPortfolio alignedSentiment,
+            IPortfolio opposingSentiment)
         {
-            _logger.LogInformation($"detected for {mostRecentTrade.Instrument?.Identifiers}");
+            _logger.LogInformation($"rule breach detected for {lastTrade.Instrument?.Identifiers}");
+
+            var tradingPosition = new TradePosition(alignedSentiment.Ledger.FullLedger().ToList());
+            var opposingPosition = new TradePosition(opposingSentiment.Ledger.FullLedger().ToList());
 
             var ruleBreach =
                 new SpoofingRuleBreach(
@@ -259,8 +271,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     _equitiesParameters.WindowSize,
                     tradingPosition,
                     opposingPosition,
-                    mostRecentTrade.Instrument, 
-                    mostRecentTrade,
+                    lastTrade.Instrument, 
+                    lastTrade,
                     _equitiesParameters);
 
             var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);

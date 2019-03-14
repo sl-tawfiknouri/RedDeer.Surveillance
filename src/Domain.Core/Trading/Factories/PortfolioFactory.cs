@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Domain.Core.Trading.Factories.Interfaces;
+﻿using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Core.Trading.Interfaces;
 
 namespace Domain.Core.Trading.Factories
@@ -9,9 +8,6 @@ namespace Domain.Core.Trading.Factories
         public IPortfolio Build()
         {
             return new Portfolio(
-                new PortfolioExposure(
-                    new List<SecurityExposure>()),
-                new TradingExposure(new SecurityExposure[0], new OrderLedger()),
                 new OrderLedger());
         }
     }

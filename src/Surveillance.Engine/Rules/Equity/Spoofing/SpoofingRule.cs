@@ -146,46 +146,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
 
             _logger.LogInformation($"Rule breach for {lastTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
             RecordRuleBreach(lastTrade, alignedSentimentPortfolio, opposingSentimentPortfolio);
-
-            // O L D    C O D E
-
-            //var mostRecentTrade = activeTrades.Pop();
-
-            //var buyPosition =
-            //    new TradePositionCancellations(
-            //        new List<Order>(),
-            //        _equitiesParameters.CancellationThreshold,
-            //        _equitiesParameters.CancellationThreshold,
-            //        _logger);
-
-            //var sellPosition =
-            //    new TradePositionCancellations(
-            //        new List<Order>(),
-            //        _equitiesParameters.CancellationThreshold,
-            //        _equitiesParameters.CancellationThreshold,
-            //        _logger);
-
-            //AddToPositions(buyPosition, sellPosition, mostRecentTrade);
-
-            //var tradingPosition =
-            //   (mostRecentTrade.OrderDirection == OrderDirections.BUY
-            //    || mostRecentTrade.OrderDirection == OrderDirections.COVER)
-            //        ? buyPosition
-            //        : sellPosition;
-
-            //var opposingPosition =
-            //    (mostRecentTrade.OrderDirection == OrderDirections.SELL
-            //     || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
-            //        ? buyPosition
-            //        : sellPosition;
-
-            //var hasBreachedSpoofingRule = CheckPositionForSpoofs(activeTrades, buyPosition, sellPosition, tradingPosition, opposingPosition);
-
-            //if (hasBreachedSpoofingRule)
-            //{
-            //    _logger.LogInformation($"RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
-            //    RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
-            //}
         }
         
         private bool CheckPositionForSpoofs(

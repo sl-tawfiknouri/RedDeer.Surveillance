@@ -84,7 +84,7 @@ namespace Domain.Core.Trading.Execution
             return new OrderAnalysis(order, ResolveSentiment(order));
         }
 
-        public IReadOnlyCollection<IOrderAnalysis> OpposingSentiment(IReadOnlyCollection<OrderAnalysis> orders, PriceSentiment sentiment)
+        public IReadOnlyCollection<IOrderAnalysis> OpposingSentiment(IReadOnlyCollection<IOrderAnalysis> orders, PriceSentiment sentiment)
         {
             if (sentiment == PriceSentiment.Neutral
                 || sentiment == PriceSentiment.Mixed)

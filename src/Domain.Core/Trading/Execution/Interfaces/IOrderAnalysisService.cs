@@ -11,6 +11,6 @@ namespace Domain.Core.Trading.Execution.Interfaces
         IOrderAnalysis AnalyseOrder(Order order);
         IReadOnlyCollection<IOrderAnalysis> AnalyseOrder(IReadOnlyCollection<Order> orders);
 
-        IReadOnlyCollection<IOrderAnalysis> OpposingSentiment(IReadOnlyCollection<OrderAnalysis> orders, PriceSentiment sentiment);
+        IReadOnlyCollection<IOrderAnalysis> OpposingSentiment(IReadOnlyCollection<IOrderAnalysis> orders, PriceSentiment sentiment);
     }
 }

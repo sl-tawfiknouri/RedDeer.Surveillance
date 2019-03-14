@@ -112,10 +112,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             }
 
             var analysedOrders = _analysisService.AnalyseOrder(otherTrades);
-            var partitionBySentiment = analysedOrders.GroupBy(i => i.Sentiment);
+            var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
+            var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
 
-
+            // should aligned sentiment just be executed trades only? I think so
+            // what we want is the cancellation ratio of the opposing sentiment orders
+            // so a portfolio method for percentage cancelled? yup
             
+            // so this gives us relative size =)
+            // now just check for in line with sentiment...
+         
+
+
+
 
 
 

@@ -92,6 +92,11 @@ namespace Domain.Core.Trading.Execution
                 return new IOrderAnalysis[0];
             }
 
+            if (orders == null)
+            {
+                return new IOrderAnalysis[0];
+            }
+
             if (sentiment == PriceSentiment.Positive)
             {
                 return orders.Where(i => _negativeSentiments.Contains(i.Order.OrderDirection)).ToList();

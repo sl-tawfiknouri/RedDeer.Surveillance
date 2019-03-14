@@ -115,18 +115,35 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
             var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
 
-            // should aligned sentiment just be executed trades only? I think so
-            // what we want is the cancellation ratio of the opposing sentiment orders
-            // so a portfolio method for percentage cancelled? yup
+            var alignedSentimentPortfolio = _portfolioFactory.Build();
+            alignedSentimentPortfolio.Add(alignedSentiment.Select(i => i.Order).ToList());
+
+            var opposingSentimentPortfolio = _portfolioFactory.Build();
+            opposingSentimentPortfolio.Add(opposingSentiment.Select(i => i.Order).ToList());
+
+
+            var percentageByOrderBreach = _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByOrder();
+            var percentageByVolumeBreach = _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByVolume();
+
+            if (!percentageByOrderBreach
+                && !percentageByVolumeBreach)
+            {
+                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by cancellation ratios");
+                return;
+            }
+
+            // compare these two...if one is substantially larger than the other
+            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus();
+            var opposingVolume = opposingSentimentPortfolio.Ledger.VolumeInLedgerWithStatus();
+
+            if (alignedVolume <= 0
+                || opposingVolume <= 0)
+            {
+                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by volumes traded/cancelled");
+                return;
+            }
+
             
-            // so this gives us relative size =)
-            // now just check for in line with sentiment...
-         
-
-
-
-
-
 
 
 

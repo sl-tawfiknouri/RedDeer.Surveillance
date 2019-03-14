@@ -41,5 +41,53 @@ namespace Domain.Core.Trading
 
             return orders;
         }
+
+        public long VolumeInLedger()
+        {
+            return _ledger.Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
+        }
+
+        public long VolumeInLedgerWithStatus(OrderStatus orderStatus)
+        {
+            return _ledger.Where(i => i.OrderStatus() == orderStatus).Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
+        }
+
+        public decimal PercentageInStatusByOrder(OrderStatus orderStatus)
+        {
+            var ledgerTotal = (decimal)_ledger.Count;
+            if (ledgerTotal == 0)
+            {
+                return 0;
+            }
+
+            var inStatus = (decimal)_ledger.Count(i => i.OrderStatus() == orderStatus);
+            if (inStatus == 0)
+            {
+                return 0;
+            }
+
+            var percentage = inStatus / ledgerTotal;
+
+            return Math.Round(percentage, 2, MidpointRounding.AwayFromZero);
+        }
+
+        public decimal PercentageInStatusByVolume(OrderStatus orderStatus)
+        {
+            var ledgerTotal = (decimal)_ledger.Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
+            if (ledgerTotal == 0)
+            {
+                return 0;
+            }
+
+            var inStatus = (decimal)_ledger.Where(i => i.OrderStatus() == orderStatus).Sum(i => i.OrderFilledVolume ?? i.OrderOrderedVolume ?? 0);
+            if (inStatus == 0)
+            {
+                return 0;
+            }
+
+            var percentage = inStatus / ledgerTotal;
+
+            return Math.Round(percentage, 2, MidpointRounding.AwayFromZero);
+        }
     }
 }

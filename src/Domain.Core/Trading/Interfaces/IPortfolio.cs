@@ -11,7 +11,6 @@ namespace Domain.Core.Trading.Interfaces
         ITradingExposure TradingExposure { get; }
 
         IOrderLedger Ledger { get; }
-
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossTotal();
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span);
 

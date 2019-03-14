@@ -148,63 +148,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             RecordRuleBreach(lastTrade, alignedSentimentPortfolio, opposingSentimentPortfolio);
         }
         
-        private bool CheckPositionForSpoofs(
-            Stack<Order> tradeWindow,
-            ITradePositionCancellations buyPosition,
-            ITradePositionCancellations sellPosition,
-            ITradePositionCancellations tradingPosition,
-            ITradePositionCancellations opposingPosition)
-        {
-            var hasBreachedSpoofingRule = false;
-            var hasTradesInWindow = tradeWindow.Any();
-
-            if (!tradeWindow.Any())
-            {
-                // ReSharper disable once RedundantAssignment
-                hasTradesInWindow = false;
-                return false;
-            }
-
-            foreach (var trade in tradeWindow.ToList())
-            {
-                AddToPositions(buyPosition, sellPosition, trade);
-            }
-
-            if (!opposingPosition.HighCancellationRatioByPositionSize() &&
-                !opposingPosition.HighCancellationRatioByTradeCount())
-            {
-                return false;
-            }
-
-            var adjustedFulfilledOrders =
-                (tradingPosition.VolumeInStatus(OrderStatus.Filled)
-                 * _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal);
-
-            var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
-            hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
-
-            return hasBreachedSpoofingRule;
-        }
-
-        private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, Order nextTrade)
-        {
-            switch (nextTrade.OrderDirection)
-            {
-                case OrderDirections.BUY:
-                case OrderDirections.COVER:
-                    buyPosition.Add(nextTrade);
-                    break;
-                case OrderDirections.SELL:
-                case OrderDirections.SHORT:
-                    sellPosition.Add(nextTrade);
-                    break;
-                default:
-                    _logger.LogError("not considering an out of range order direction");
-                    _ruleCtx.EventException("not considering an out of range order direction");
-                    throw new ArgumentOutOfRangeException(nameof(nextTrade));
-            }
-        }
-
         private void RecordRuleBreach(
             Order lastTrade,
             IPortfolio alignedSentiment,

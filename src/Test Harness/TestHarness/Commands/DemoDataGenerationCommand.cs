@@ -81,16 +81,16 @@ namespace TestHarness.Commands
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
             var marketSuccess = !string.IsNullOrWhiteSpace(market);
             var tradeSuccess =
-                string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(trade, "notrades", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(trade, "trades", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(trade, "notrades", StringComparison.OrdinalIgnoreCase);
             var saveMarketCsvSuccess =
-                string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(saveMarketCsv, "marketcsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.OrdinalIgnoreCase);
             var saveTradeCsvSuccess =
-                string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(saveTradeCsv, "tradecsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(saveTradeCsv, "notradecsv", StringComparison.OrdinalIgnoreCase);
 
-            var applyFtseFilter = string.Equals(filterFtse100, "filter-ftse-100", StringComparison.InvariantCultureIgnoreCase);
+            var applyFtseFilter = string.Equals(filterFtse100, "filter-ftse-100", StringComparison.OrdinalIgnoreCase);
 
             if (!fromSuccess)
             {
@@ -169,7 +169,7 @@ namespace TestHarness.Commands
             }
 
             var marketData = marketApiResult.FirstOrDefault(ap =>
-                string.Equals(ap.Code, market, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(ap.Code, market, StringComparison.OrdinalIgnoreCase));
 
             if (marketData == null)
             {
@@ -222,17 +222,17 @@ namespace TestHarness.Commands
                 .Build(tradeDirectory);
 
 
-            if (string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(trade, "trades", StringComparison.OrdinalIgnoreCase))
             {
                 _tradingProcess.InitiateTrading(equityStream, tradeStream);
             }
 
-            if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.OrdinalIgnoreCase))
             {
                 _equitiesFileStorageProcess.Initiate(equityStream);
             }
 
-            if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.OrdinalIgnoreCase))
             {
                 tradeStream.Subscribe(_orderFileStorageProcess);
             }

@@ -102,6 +102,7 @@ namespace TestHarness.Factory.TradingFactory
 
         public ICompleteSelector FilterNone()
         {
+            _sedolFilter = new List<string>();
             return this;
         }
 

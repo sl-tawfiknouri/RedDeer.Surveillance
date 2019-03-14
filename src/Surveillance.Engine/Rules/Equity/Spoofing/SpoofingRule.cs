@@ -83,14 +83,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 return;
             }
 
-            var exposure = portfolio.TradingExposure.ExposureToInstrument(lastTrade.Instrument);
-            if (exposure == null
-                || !exposure.HasExposure)
-            {
-                _logger.LogInformation($"Portfolio not exposed to {lastTrade.Instrument.Identifiers.ToString()} at {UniverseDateTime}");
-                return;
-            }
-
             if (lastTrade.OrderStatus() != OrderStatus.Filled)
             {
                 _logger.LogInformation($"Order under analysis was not in filled state, exiting spoofing rule");
@@ -112,7 +104,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                 return;
             }
 
-            var analysedOrders = _analysisService.AnalyseOrder(otherTrades);
+            var analysedOrders = _analysisService.AnalyseOrder(activeTrades);
             var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
             var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
 

@@ -101,8 +101,8 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                     case Rules.UniverseFilter:
                         break;
                     case Rules.Spoofing:
-                        // var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
-                        // await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
+                        var spoofingRuleRuns = parameters.Spoofings?.Select(co => co as IIdentifiableRule)?.ToList();
+                        await ScheduleRuleRuns(execution, spoofingRuleRuns, rule, ruleCtx);
                         break;
                     case Rules.Layering:
                         // var layeringRuleRuns = parameters.Layerings?.Select(co => co as IIdentifiableRule)?.ToList();

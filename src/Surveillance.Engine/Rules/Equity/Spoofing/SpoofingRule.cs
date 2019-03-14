@@ -105,30 +105,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             }
 
             var analysedOrders = _analysisService.AnalyseOrder(activeTrades);
-            var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
-            var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
+            var alignedSentimentPortfolio = AlignedSentimentPortfolio(analysedOrders, lastTradeSentiment);
+            var unalignedSentimentPortfolio = UnalignedSentimentPortfolio(analysedOrders, lastTradeSentiment);
 
-            var alignedSentimentPortfolio = _portfolioFactory.Build();
-            alignedSentimentPortfolio.Add(alignedSentiment.Select(i => i.Order).ToList());
-
-            var opposingSentimentPortfolio = _portfolioFactory.Build();
-            opposingSentimentPortfolio.Add(opposingSentiment.Select(i => i.Order).ToList());
-
-            var percentageByOrderBreach =
-                _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByOrder(OrderStatus.Cancelled);
-
-            var percentageByVolumeBreach =
-                _equitiesParameters.CancellationThreshold <= opposingSentimentPortfolio.Ledger.PercentageInStatusByVolume(OrderStatus.Cancelled);
-
-            if (!percentageByOrderBreach
-                && !percentageByVolumeBreach)
+            if (!UnalignedPortfolioOverCancellationThreshold(unalignedSentimentPortfolio))
             {
-                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by cancellation ratios");
                 return;
             }
 
             var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Filled);
-            var opposingVolume = opposingSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
+            var opposingVolume = unalignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
 
             if (alignedVolume <= 0
                 || opposingVolume <= 0)
@@ -145,9 +131,42 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             }
 
             _logger.LogInformation($"Rule breach for {lastTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
-            RecordRuleBreach(lastTrade, alignedSentimentPortfolio, opposingSentimentPortfolio);
+            RecordRuleBreach(lastTrade, alignedSentimentPortfolio, unalignedSentimentPortfolio);
         }
-        
+
+        private IPortfolio AlignedSentimentPortfolio(
+            IReadOnlyCollection<IOrderAnalysis> analysedOrders,
+            PriceSentiment lastTradeSentiment)
+        {
+            var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
+            var alignedSentimentPortfolio = _portfolioFactory.Build();
+            alignedSentimentPortfolio.Add(alignedSentiment.Select(i => i.Order).ToList());
+
+            return alignedSentimentPortfolio;
+        }
+
+        private IPortfolio UnalignedSentimentPortfolio(
+            IReadOnlyCollection<IOrderAnalysis> analysedOrders,
+            PriceSentiment lastTradeSentiment)
+        {
+            var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
+            var opposingSentimentPortfolio = _portfolioFactory.Build();
+            opposingSentimentPortfolio.Add(opposingSentiment.Select(i => i.Order).ToList());
+
+            return opposingSentimentPortfolio;
+        }
+
+        private bool UnalignedPortfolioOverCancellationThreshold(IPortfolio unalignedSentimentPortfolio)
+        {
+            var percentageByOrderBreach =
+                _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByOrder(OrderStatus.Cancelled);
+
+            var percentageByVolumeBreach =
+                _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByVolume(OrderStatus.Cancelled);
+
+            return percentageByOrderBreach || percentageByVolumeBreach;
+        }
+
         private void RecordRuleBreach(
             Order lastTrade,
             IPortfolio alignedSentiment,

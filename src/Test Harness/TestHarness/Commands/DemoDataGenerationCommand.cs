@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using TestHarness.Engine.EquitiesStorage.Interfaces;
 using TestHarness.Engine.OrderGenerator.Interfaces;
 using TestHarness.Engine.OrderStorage.Interfaces;
 using TestHarness.Factory.Interfaces;
+using TestHarness.Factory.TradingFactory.Interfaces;
 
 namespace TestHarness.Commands
 {
@@ -73,20 +75,22 @@ namespace TestHarness.Commands
             var trade = splitCmd.Skip(3).FirstOrDefault();
             var saveMarketCsv = splitCmd.Skip(4).FirstOrDefault();
             var saveTradeCsv = splitCmd.Skip(5).FirstOrDefault();
+            var filterFtse100 = splitCmd.Skip(6).FirstOrDefault();
 
             var fromSuccess = DateTime.TryParse(rawFromDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var fromDate);
             var toSuccess = DateTime.TryParse(rawToDate, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var toDate);
             var marketSuccess = !string.IsNullOrWhiteSpace(market);
             var tradeSuccess =
-                string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(trade, "notrades", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(trade, "trades", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(trade, "notrades", StringComparison.OrdinalIgnoreCase);
             var saveMarketCsvSuccess =
-                string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(saveMarketCsv, "marketcsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(saveMarketCsv, "nomarketcsv", StringComparison.OrdinalIgnoreCase);
             var saveTradeCsvSuccess =
-                string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase)
-                || string.Equals(saveTradeCsv, "notradecsv", StringComparison.InvariantCultureIgnoreCase);
+                string.Equals(saveTradeCsv, "tradecsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(saveTradeCsv, "notradecsv", StringComparison.OrdinalIgnoreCase);
 
+            var applyFtseFilter = string.Equals(filterFtse100, "filter-ftse-100", StringComparison.OrdinalIgnoreCase);
 
             if (!fromSuccess)
             {
@@ -165,7 +169,7 @@ namespace TestHarness.Commands
             }
 
             var marketData = marketApiResult.FirstOrDefault(ap =>
-                string.Equals(ap.Code, market, StringComparison.InvariantCultureIgnoreCase));
+                string.Equals(ap.Code, market, StringComparison.OrdinalIgnoreCase));
 
             if (marketData == null)
             {
@@ -188,15 +192,23 @@ namespace TestHarness.Commands
                     .TradeOrderStreamFactory
                     .CreateDisplayable(console);
 
-            _tradingProcess =
-                _appFactory
-                    .TradingFactory
-                    .Create()
-                    .MarketUpdate()
-                    .TradingNormalDistributionVolume(4)
-                    .FilterNone()
-                    .Finish();
+            var filterStep = _appFactory
+                .TradingFactory
+                .Create()
+                .MarketUpdate()
+                .TradingNormalDistributionVolume(5);
 
+            ICompleteSelector completeSelector;
+            if (applyFtseFilter)
+            {
+                completeSelector = filterStep.SetFilterSedol(Ftse100SedolList(), true);
+            }
+            else
+            {
+                completeSelector = filterStep.SetFilterNone();
+            }
+
+            _tradingProcess = completeSelector.Finish();
             var equitiesDirectory = Path.Combine(Directory.GetCurrentDirectory(), FileDirectory);
 
             _equitiesFileStorageProcess = _appFactory
@@ -210,17 +222,17 @@ namespace TestHarness.Commands
                 .Build(tradeDirectory);
 
 
-            if (string.Equals(trade, "trades", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(trade, "trades", StringComparison.OrdinalIgnoreCase))
             {
                 _tradingProcess.InitiateTrading(equityStream, tradeStream);
             }
 
-            if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(saveMarketCsv, "marketcsv", StringComparison.OrdinalIgnoreCase))
             {
                 _equitiesFileStorageProcess.Initiate(equityStream);
             }
 
-            if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(saveTradeCsv, "tradecsv", StringComparison.OrdinalIgnoreCase))
             {
                 tradeStream.Subscribe(_orderFileStorageProcess);
             }
@@ -232,6 +244,121 @@ namespace TestHarness.Commands
         {
             _tradingProcess?.TerminateTrading();
             _equityProcess?.TerminateWalk();
+        }
+
+        // restrict test harness demo data to ftse 100 companies
+        private IReadOnlyCollection<string> Ftse100SedolList()
+        {
+            return new List<string>
+            {
+                "B1YW440",
+                "0673123",
+                "B02J639",
+                "B1XZS82",
+                "0045614",
+                "0053673",
+                "0989529",
+                "BVYVFW2",
+                "0216238",
+                "0263494",
+                "3134865",
+                "0081180",
+                "B02L3W3",
+                "BH0P3Z9",
+                "0798059",
+                "0287580",
+                "0136701",
+                "3091357",
+                "B0744B3",
+                "3174300",
+
+                "3121522",
+                "B033F22",
+                "B9895B7",
+                "BD6K457",
+                "0182704",
+                "BYZWX76",
+                "0242493",
+                "0237400",
+                "BY9D0Y1",
+                "B7KR2P8",
+                "B71N6K8",
+                "B19NLV4",
+                "BFYFZP5",
+                "B2QPKJ1",
+                "0925288",
+                "B4T3BW6",
+                "B5VQMV6",
+                "0405207",
+                "B1VZ0M2",
+                "B0LCW08",
+
+
+                "BVZHXQ9",
+                "0540528",
+                "0454492",
+                "BMJ6DW5",
+                "BHJYC05",
+                "3163836",
+                "B5M6XQ7",
+                "3398649",
+                "BZ4BQC7",
+                "3319521",
+                "BYW0PQ6",
+                "0560399",
+                "0870612",
+                "B0SWJX3",
+                "3127489",
+                "BZ1G432",
+                "BD8YWM0",
+                "B1CRLC4",
+                "0604316",
+                "BDR05C0",
+
+                "3208986",
+                "B7FC076",
+                "B3MBS74",
+                "BWXC0Z1",
+                "0677608",
+                "0682538",
+                "0709954",
+                "B03MLX2",
+                "B03MM40",
+                "B24CGK7",
+                "B2B0DG9",
+                "B082RF1",
+                "BGDT3G2",
+                "0718875",
+                "B63H849",
+                "B7T7721",
+                "BKKMKR2",
+                "B8C3BL0",
+                "B019KW7",
+                "0240549",
+
+
+                "BLDYK61",
+                "B5ZN1N8",
+                "B1FH8J7",
+                "0922320",
+                "0822011",
+                "B1WY233",
+                "B1RR840",
+                "BWFGQN1",
+                "0790873",
+                "0766937",
+                "0408284",
+                "BF8Q6K6",
+                "0878230",
+                "0884709",
+                "B11LJN4",
+                "B10RZP7",
+                "B39J2M4",
+                "BH4HKS3",
+                "B1KJJ40",
+                "B5N0P84",
+                "B8KF9B4"
+            };
         }
     }
 }

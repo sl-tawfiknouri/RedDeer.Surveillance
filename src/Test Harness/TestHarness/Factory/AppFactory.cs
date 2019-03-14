@@ -59,7 +59,7 @@ namespace TestHarness.Factory
             EquitiesProcessFactory = new EquitiesProcessFactory(Logger);
             StockExchangeStreamFactory = new StockExchangeStreamFactory();
             EquitiesDataGenerationProcessFactory = new EquitiesDataGenerationProcessFactory(Logger);
-            TradingFactory = new TradingFactory.TradingFactory(Logger);
+            TradingFactory = new TradingFactory.TradingFactory(StockExchangeStreamFactory, Logger);
             TradeOrderStreamFactory = new TradeOrderStreamFactory();
             TradingSpoofingFactory = new TradingSpoofingProcessFactory(this);
             TradingFileDataImportProcessFactory = new TradingFileDataImportProcessFactory(this);

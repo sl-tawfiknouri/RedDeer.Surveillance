@@ -13,6 +13,7 @@ namespace Domain.Core.Trading
             Money averagePriceSold,
             Money totalPriceSold,
             long size,
+            bool hasExposure,
             IJudgement judgement)
         {
             Instrument = instrument;
@@ -21,6 +22,7 @@ namespace Domain.Core.Trading
             AveragePriceSold = averagePriceSold;
             TotalPriceSold = totalPricePaid;
             Size = size;
+            HasExposure = hasExposure;
             Judgement = judgement;
         }
 
@@ -30,6 +32,7 @@ namespace Domain.Core.Trading
         public Money AveragePriceSold { get; }
         public Money TotalPriceSold { get; }
         public long Size { get; }
+        public bool HasExposure { get; }
 
         public IJudgement Judgement { get; }
     }

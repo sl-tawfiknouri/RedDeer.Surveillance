@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Domain.Core.Financial.Assets;
 using Domain.Core.Trading.Interfaces;
 
 namespace Domain.Core.Trading
@@ -14,5 +16,10 @@ namespace Domain.Core.Trading
 
         public IOrderLedger OrderLedger { get; }
         public IReadOnlyCollection<SecurityExposure> SecurityExposure { get; }
+
+        public SecurityExposure ExposureToInstrument(FinancialInstrument instrument)
+        {
+            return SecurityExposure?.FirstOrDefault(i => Equals(i.Instrument, instrument));
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Domain.Core.Financial.Assets;
 
 namespace Domain.Core.Trading.Interfaces
 {
@@ -6,5 +7,6 @@ namespace Domain.Core.Trading.Interfaces
     {
         IOrderLedger OrderLedger { get; }
         IReadOnlyCollection<SecurityExposure> SecurityExposure { get; }
+        SecurityExposure ExposureToInstrument(FinancialInstrument instrument);
     }
 }

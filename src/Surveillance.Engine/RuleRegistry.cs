@@ -1,4 +1,6 @@
-﻿using Domain.Core.Trading.Factories;
+﻿using Domain.Core.Trading.Execution;
+using Domain.Core.Trading.Execution.Interfaces;
+using Domain.Core.Trading.Factories;
 using Domain.Core.Trading.Factories.Interfaces;
 using Domain.Surveillance.Scheduling;
 using Domain.Surveillance.Scheduling.Interfaces;
@@ -227,9 +229,10 @@ namespace Surveillance.Engine.Rules
             For<IRuleParameterService>().Use<RuleParameterService>();
             For<IRuleParameterLeadingTimespanService>().Use<RuleParameterLeadingTimespanService>();
 
-
             For<IRuleBreachToRuleBreachOrdersMapper>().Use<RuleBreachToRuleBreachOrdersMapper>();
             For<IRuleBreachToRuleBreachMapper>().Use<RuleBreachToRuleBreachMapper>();
+
+            For<IOrderAnalysisService>().Use<OrderAnalysisService>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
         }

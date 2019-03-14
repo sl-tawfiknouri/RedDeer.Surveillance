@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Execution;
+using Domain.Core.Trading.Execution.Interfaces;
 using Domain.Core.Trading.Factories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -27,6 +29,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly IPortfolioFactory _portfolioFactory;
+        private readonly IOrderAnalysisService _analysisService;
         private readonly ILogger _logger;
 
         public SpoofingRule(
@@ -37,6 +40,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IPortfolioFactory portfolioFactory,
+            IOrderAnalysisService analysisService,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -55,6 +59,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
+            _analysisService = analysisService ?? throw new ArgumentNullException(nameof(analysisService));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
@@ -71,23 +76,53 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             var portfolio = _portfolioFactory.Build();
             portfolio.Add(activeTrades);
 
-            if (!portfolio.TradingExposure.SecurityExposure.Any())
+            var lastTrade = history?.ActiveTradeHistory()?.Peek();
+            if (lastTrade == null)
             {
                 return;
             }
 
-            if (activeTrades.All(trades => trades.OrderDirection == activeTrades.First().OrderDirection))
+            var exposure = portfolio.TradingExposure.ExposureToInstrument(lastTrade.Instrument);
+            if (exposure == null
+                || !exposure.HasExposure)
             {
+                _logger.LogInformation($"Portfolio not exposed to {lastTrade.Instrument.Identifiers.ToString()} at {UniverseDateTime}");
                 return;
             }
+
+            if (lastTrade.OrderStatus() != OrderStatus.Filled)
+            {
+                _logger.LogInformation($"Order under analysis was not in filled state, exiting spoofing rule");
+                return;
+            }
+            
+            var lastTradeSentiment = _analysisService.ResolveSentiment(lastTrade);
+            var otherTrades = activeTrades.Where(i => i != lastTrade).ToList();
+            var orderLedgerSentiment = _analysisService.ResolveSentiment(otherTrades);
+
+            if (lastTradeSentiment == orderLedgerSentiment)
+            {
+                _logger.LogInformation($"Order under analysis was consistent with a priori pricing sentiment");
+                return;
+            }
+            else if (lastTradeSentiment == PriceSentiment.Neutral)
+            {
+                _logger.LogInformation($"Order under analysis was considered price neutral on sentiment");
+                return;
+            }
+
+            var analysedOrders = _analysisService.AnalyseOrder(otherTrades);
+            var partitionBySentiment = analysedOrders.GroupBy(i => i.Sentiment);
+
+
+            
+
+
+
+
+
 
             var mostRecentTrade = activeTrades.Pop();
-
-            if (mostRecentTrade.OrderStatus() != OrderStatus.Filled)
-            {
-                // we need to start from a filled order
-                return;
-            }
 
             var buyPosition =
                 new TradePositionCancellations(

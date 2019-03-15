@@ -15,6 +15,7 @@ namespace Domain.Surveillance.Rules
                 Scheduling.Rules.HighProfits,
                 Scheduling.Rules.MarkingTheClose,
                 Scheduling.Rules.WashTrade,
+                Scheduling.Rules.Spoofing,
                 Scheduling.Rules.FixedIncomeWashTrades,
                 Scheduling.Rules.FixedIncomeHighProfits,
                 Scheduling.Rules.FixedIncomeHighVolumeIssuance

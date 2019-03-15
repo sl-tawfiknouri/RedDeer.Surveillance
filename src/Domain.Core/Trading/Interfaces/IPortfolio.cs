@@ -7,9 +7,7 @@ namespace Domain.Core.Trading.Interfaces
 {
     public interface IPortfolio
     {
-        IHoldings Holdings { get; }
         IOrderLedger Ledger { get; }
-
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLossTotal();
         IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(DateTime from, TimeSpan span);
 

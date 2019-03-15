@@ -12,6 +12,7 @@ using Surveillance.Engine.Rules.Rules.Equity.CancelledOrders;
 using Surveillance.Engine.Rules.Rules.Equity.HighProfits;
 using Surveillance.Engine.Rules.Rules.Equity.HighVolume;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
+using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits;
 using Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance;
@@ -103,6 +104,9 @@ namespace Surveillance.Engine.Rules.Universe
             var markingTheCloseSubscriptions =
                 _markingTheCloseEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
+            var spoofingSubscriptions =
+                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
+
             // FIXED INCOME
 
             var washTradeFixedIncomeSubscriptions =
@@ -146,6 +150,12 @@ namespace Surveillance.Engine.Rules.Universe
                 player.Subscribe(sub);
             }
 
+            foreach (var sub in spoofingSubscriptions)
+            {
+                _logger.LogInformation($"Subscribe Rules subscribing a {nameof(SpoofingRule)}");
+                player.Subscribe(sub);
+            }
+
             // FIXED INCOME
 
             foreach (var sub in washTradeFixedIncomeSubscriptions)
@@ -181,14 +191,9 @@ namespace Surveillance.Engine.Rules.Universe
             IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ISystemProcessOperationContext opCtx)
         {
-            var spoofingSubscriptions = 
-                _spoofingEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
 
             var layeringSubscriptions =
                 _layeringEquitySubscriber.CollateSubscriptions(execution, ruleParameters, opCtx, dataRequestSubscriber, alertStream);
-
-            foreach (var sub in spoofingSubscriptions)
-                player.Subscribe(sub);
 
             foreach (var sub in layeringSubscriptions)
                 player.Subscribe(sub);

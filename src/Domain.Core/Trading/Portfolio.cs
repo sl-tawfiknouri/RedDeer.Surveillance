@@ -13,14 +13,14 @@ namespace Domain.Core.Trading
     /// </summary>
     public class Portfolio : IPortfolio
     {
-        public Portfolio(IHoldings holding, IOrderLedger ledger)
+        public Portfolio(IOrderLedger ledger)
         {
-            Holdings = holding ?? throw new ArgumentNullException(nameof(holding));
             Ledger = ledger ?? throw new ArgumentNullException(nameof(ledger));
         }
 
-        public IHoldings Holdings { get; }
-
+        /// <summary>
+        /// History of order activity for the portfolio
+        /// </summary>
         public IOrderLedger Ledger { get; }
 
         public IReadOnlyCollection<ProfitAndLossStatement> ProfitAndLoss(

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Execution;
+using Domain.Core.Trading.Execution.Interfaces;
+using Domain.Core.Trading.Factories.Interfaces;
+using Domain.Core.Trading.Interfaces;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
@@ -25,6 +29,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
+        private readonly IPortfolioFactory _portfolioFactory;
+        private readonly IOrderAnalysisService _analysisService;
         private readonly ILogger _logger;
 
         public SpoofingRule(
@@ -34,6 +40,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             IUniverseOrderFilter orderFilter,
             IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
+            IPortfolioFactory portfolioFactory,
+            IOrderAnalysisService analysisService,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
             : base(
@@ -51,137 +59,131 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
+            _portfolioFactory = portfolioFactory ?? throw new ArgumentNullException(nameof(portfolioFactory));
+            _analysisService = analysisService ?? throw new ArgumentNullException(nameof(analysisService));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; } = FactorValue.None;
 
+        protected override IUniverseEvent Filter(IUniverseEvent value)
+        {
+            return _orderFilter.Filter(value);
+        }
+
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
-            var tradeWindow = history?.ActiveTradeHistory();
+            var activeTrades = history?.ActiveTradeHistory();
+            var portfolio = _portfolioFactory.Build();
+            portfolio.Add(activeTrades);
 
-            if (tradeWindow == null
-                || !tradeWindow.Any())
+            var lastTrade = history?.ActiveTradeHistory()?.Peek();
+            if (lastTrade == null)
             {
                 return;
             }
 
-            if (tradeWindow.All(trades => trades.OrderDirection == tradeWindow.First().OrderDirection))
+            if (lastTrade.OrderStatus() != OrderStatus.Filled)
+            {
+                _logger.LogInformation($"Order under analysis was not in filled state, exiting spoofing rule");
+                return;
+            }
+            
+            var lastTradeSentiment = _analysisService.ResolveSentiment(lastTrade);
+            var otherTrades = activeTrades.Where(i => i != lastTrade).ToList();
+            var orderLedgerSentiment = _analysisService.ResolveSentiment(otherTrades);
+
+            if (lastTradeSentiment == orderLedgerSentiment)
+            {
+                _logger.LogInformation($"Order under analysis was consistent with a priori pricing sentiment");
+                return;
+            }
+            else if (lastTradeSentiment == PriceSentiment.Neutral)
+            {
+                _logger.LogInformation($"Order under analysis was considered price neutral on sentiment");
+                return;
+            }
+
+            var analysedOrders = _analysisService.AnalyseOrder(activeTrades);
+            var alignedSentimentPortfolio = AlignedSentimentPortfolio(analysedOrders, lastTradeSentiment);
+            var unalignedSentimentPortfolio = UnalignedSentimentPortfolio(analysedOrders, lastTradeSentiment);
+
+            if (!UnalignedPortfolioOverCancellationThreshold(unalignedSentimentPortfolio))
             {
                 return;
             }
 
-            var mostRecentTrade = tradeWindow.Pop();
-
-            if (mostRecentTrade.OrderStatus() != OrderStatus.Filled)
+            if (!CancellationVolumeOverThreshold(alignedSentimentPortfolio, unalignedSentimentPortfolio))
             {
-                // we need to start from a filled order
                 return;
             }
 
-            var buyPosition =
-                new TradePositionCancellations(
-                    new List<Order>(),
-                    _equitiesParameters.CancellationThreshold,
-                    _equitiesParameters.CancellationThreshold,
-                    _logger);
-
-            var sellPosition =
-                new TradePositionCancellations(
-                    new List<Order>(),
-                    _equitiesParameters.CancellationThreshold,
-                    _equitiesParameters.CancellationThreshold,
-                    _logger);
-
-            AddToPositions(buyPosition, sellPosition, mostRecentTrade);
-
-            var tradingPosition =
-               (mostRecentTrade.OrderDirection == OrderDirections.BUY
-                || mostRecentTrade.OrderDirection == OrderDirections.COVER)
-                    ? buyPosition
-                    : sellPosition;
-
-            var opposingPosition =
-                (mostRecentTrade.OrderDirection == OrderDirections.SELL
-                 || mostRecentTrade.OrderDirection == OrderDirections.SHORT)
-                    ? buyPosition
-                    : sellPosition;
-
-            var hasBreachedSpoofingRule = CheckPositionForSpoofs(tradeWindow, buyPosition, sellPosition, tradingPosition, opposingPosition);
-
-            if (hasBreachedSpoofingRule)
-            {
-                _logger.LogInformation($"RunInitialSubmissionRule had a rule breach for {mostRecentTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
-                RecordRuleBreach(mostRecentTrade, tradingPosition, opposingPosition);
-            }
-        }
-        
-        private bool CheckPositionForSpoofs(
-            Stack<Order> tradeWindow,
-            ITradePositionCancellations buyPosition,
-            ITradePositionCancellations sellPosition,
-            ITradePositionCancellations tradingPosition,
-            ITradePositionCancellations opposingPosition)
-        {
-            var hasBreachedSpoofingRule = false;
-            var hasTradesInWindow = tradeWindow.Any();
-
-            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
-            while (hasTradesInWindow)
-            {
-                if (!tradeWindow.Any())
-                {
-                    // ReSharper disable once RedundantAssignment
-                    hasTradesInWindow = false;
-                    break;
-                }
-
-                var nextTrade = tradeWindow.Pop();
-
-                AddToPositions(buyPosition, sellPosition, nextTrade);
-
-                if (!opposingPosition.HighCancellationRatioByPositionSize() &&
-                    !opposingPosition.HighCancellationRatioByTradeCount())
-                {
-                    continue;
-                }
-
-                var adjustedFulfilledOrders =
-                    (tradingPosition.VolumeInStatus(OrderStatus.Filled)
-                     * _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal);
-
-                var opposedOrders = opposingPosition.VolumeInStatus(OrderStatus.Cancelled);
-                hasBreachedSpoofingRule = hasBreachedSpoofingRule || adjustedFulfilledOrders <= opposedOrders;
-            }
-
-            return hasBreachedSpoofingRule;
+            _logger.LogInformation($"Rule breach for {lastTrade?.Instrument?.Identifiers} at {UniverseDateTime}. Passing to alert stream.");
+            RecordRuleBreach(lastTrade, alignedSentimentPortfolio, unalignedSentimentPortfolio);
         }
 
-        private void AddToPositions(ITradePositionCancellations buyPosition, ITradePositionCancellations sellPosition, Order nextTrade)
+        private IPortfolio AlignedSentimentPortfolio(
+            IReadOnlyCollection<IOrderAnalysis> analysedOrders,
+            PriceSentiment lastTradeSentiment)
         {
-            switch (nextTrade.OrderDirection)
+            var alignedSentiment = analysedOrders.Where(i => i.Sentiment == lastTradeSentiment).ToList();
+            var alignedSentimentPortfolio = _portfolioFactory.Build();
+            alignedSentimentPortfolio.Add(alignedSentiment.Select(i => i.Order).ToList());
+
+            return alignedSentimentPortfolio;
+        }
+
+        private IPortfolio UnalignedSentimentPortfolio(
+            IReadOnlyCollection<IOrderAnalysis> analysedOrders,
+            PriceSentiment lastTradeSentiment)
+        {
+            var opposingSentiment = _analysisService.OpposingSentiment(analysedOrders, lastTradeSentiment);
+            var opposingSentimentPortfolio = _portfolioFactory.Build();
+            opposingSentimentPortfolio.Add(opposingSentiment.Select(i => i.Order).ToList());
+
+            return opposingSentimentPortfolio;
+        }
+
+        private bool UnalignedPortfolioOverCancellationThreshold(
+            IPortfolio unalignedSentimentPortfolio)
+        {
+            var percentageByOrderBreach =
+                _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByOrder(OrderStatus.Cancelled);
+
+            var percentageByVolumeBreach =
+                _equitiesParameters.CancellationThreshold <= unalignedSentimentPortfolio.Ledger.PercentageInStatusByVolume(OrderStatus.Cancelled);
+
+            return percentageByOrderBreach || percentageByVolumeBreach;
+        }
+
+        private bool CancellationVolumeOverThreshold(
+            IPortfolio alignedSentimentPortfolio,
+            IPortfolio unalignedSentimentPortfolio)
+        {
+            var alignedVolume = alignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Filled);
+            var opposingVolume = unalignedSentimentPortfolio.Ledger.VolumeInLedgerWithStatus(OrderStatus.Cancelled);
+
+            if (alignedVolume <= 0
+                || opposingVolume <= 0)
             {
-                case OrderDirections.BUY:
-                case OrderDirections.COVER:
-                    buyPosition.Add(nextTrade);
-                    break;
-                case OrderDirections.SELL:
-                case OrderDirections.SHORT:
-                    sellPosition.Add(nextTrade);
-                    break;
-                default:
-                    _logger.LogError("not considering an out of range order direction");
-                    _ruleCtx.EventException("not considering an out of range order direction");
-                    throw new ArgumentOutOfRangeException(nameof(nextTrade));
+                _logger.LogInformation($"Order under analysis was considered to not be in breach of spoofing by volumes traded/cancelled");
+                return false;
             }
+
+            var scaleOfSpoofExceedingReal = (decimal)opposingVolume / (decimal)alignedVolume;
+
+            return scaleOfSpoofExceedingReal >= _equitiesParameters.RelativeSizeMultipleForSpoofExceedingReal;
         }
 
         private void RecordRuleBreach(
-            Order mostRecentTrade,
-            ITradePosition tradingPosition,
-            ITradePosition opposingPosition)
+            Order lastTrade,
+            IPortfolio alignedSentiment,
+            IPortfolio opposingSentiment)
         {
-            _logger.LogInformation($"detected for {mostRecentTrade.Instrument?.Identifiers}");
+            _logger.LogInformation($"rule breach detected for {lastTrade.Instrument?.Identifiers}");
+
+            var tradingPosition = new TradePosition(alignedSentiment.Ledger.FullLedger().ToList());
+            var opposingPosition = new TradePosition(opposingSentiment.Ledger.FullLedger().ToList());
 
             var ruleBreach =
                 new SpoofingRuleBreach(
@@ -191,17 +193,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Spoofing
                     _equitiesParameters.WindowSize,
                     tradingPosition,
                     opposingPosition,
-                    mostRecentTrade.Instrument, 
-                    mostRecentTrade,
+                    lastTrade.Instrument, 
+                    lastTrade,
                     _equitiesParameters);
 
             var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Spoofing, ruleBreach, _ruleCtx);
             _alertStream.Add(alert);
-        }
-
-        protected override IUniverseEvent Filter(IUniverseEvent value)
-        {
-            return _orderFilter.Filter(value);
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

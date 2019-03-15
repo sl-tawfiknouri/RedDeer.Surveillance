@@ -196,7 +196,7 @@ namespace TestHarness.Commands.Market_Abuse_Commands
                         .Create()
                         .MarketUpdate()
                         .TradingNormalDistributionVolume(4)
-                        .FilterSedol(sedols)
+                        .SetFilterSedol(sedols, false)
                         .Finish();
 
                 var layeringProcess =

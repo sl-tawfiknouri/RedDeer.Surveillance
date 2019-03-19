@@ -73,3 +73,67 @@ Scenario: Eleven order universe with cancellations yields zero alerts
          | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Sell      | GBX      |            |                  | 100           |  100         |
          When I run the spoofing rule
 		 Then I will have 0 spoofing alerts
+
+Scenario: Out of Time window yields No alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Buy       | GBX      | 100           | 100          |
+         | Barclays     | 1       | 02/01/2019 | 02/01/2019    |            | Market | Sell      | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 0 spoofing alerts
+
+Scenario: Inside Time window yields One alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Buy       | GBX      | 100           | 200          |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Sell      | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 1 spoofing alerts
+
+Scenario: Outside Cancellation Threshold yields No alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Buy       | GBX      | 100           | 10           |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Sell      | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 0 spoofing alerts
+
+Scenario: Inside Cancellation Threshold yields one alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Buy       | GBX      | 100           | 100          |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 |Market | Sell       | GBX      | 100           |  100         |
+         When I run the spoofing rule
+		 Then I will have 1 spoofing alerts
+
+Scenario: Outside RelativeSizeMultipleForSpoofExceedingReal yields No alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Buy       | GBX      | 100           | 1            |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Sell      | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 0 spoofing alerts
+
+Scenario: Inside RelativeSizeMultipleForSpoofExceedingReal yields One alerts
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Buy       | GBX      | 100           | 200          |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Sell      | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 1 spoofing alerts
+
+Scenario: Trades with short and cover yields One alerts 
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Short     | GBX      | 100           | 200          |
+         | Barclays     | 1       | 01/01/2019 |               | 01/01/2019 | Market | Cover     | GBX      | 100           | 100          |
+         When I run the spoofing rule
+		 Then I will have 1 spoofing alerts
+
+
+Scenario: Single Cancelled Trade yields No alerts 
+		 Given I have the orders for a universe from 01/01/2019 to 01/05/2019 :
+         | SecurityName | OrderId | PlacedDate | CancelledDate | FilledDate | Type   | Direction | Currency | OrderedVolume | FilledVolume |
+         | Barclays     | 1       | 01/01/2019 | 01/01/2019    |            | Market | Short     | GBX      | 100           | 200          |
+         When I run the spoofing rule
+		 Then I will have 0 spoofing alerts

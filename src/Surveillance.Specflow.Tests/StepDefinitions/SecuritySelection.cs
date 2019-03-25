@@ -19,6 +19,7 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                 { "AMD", Amd() },
                 { "Nvidia", Nvidia() },
                 { "Micron", Micron() },
+                { "UKGovtBond", UKGovtBond() },
             };
         }
 
@@ -50,6 +51,40 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     "Vodafone plc");
 
             var market = Xlon();
+
+            return new SecurityMarketPair
+            {
+                Instrument = financialInstrument,
+                Market = market
+            };
+        }
+
+        private SecurityMarketPair UKGovtBond()
+        {
+            var identifiers =
+                new InstrumentIdentifiers(
+                    "UKGovtBond",
+                     "RD01D",
+                    "RD01D",
+                    "UNITED KINGDOM OF GREAT BRITAI  0%32",
+                     string.Empty,
+                    "GB00B3D4VD98",
+                    "BBG0000VN0M0",
+                    "G924502U1",
+                   "UKTI 1.25 11/22/32 3MO Govt",
+                     string.Empty,                  
+                    "UKTI 1.25 11/22/32 3MO Govt");
+
+            var financialInstrument =
+                new FinancialInstrument(
+                    InstrumentTypes.Bond,
+                    identifiers,
+                    "UKGovtBond",
+                    "dbftfb",
+                    "GBX",
+                    "Government of United Kingdom");
+
+            var market = RDFI();
 
             return new SecurityMarketPair
             {
@@ -129,6 +164,11 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
         private Market Xlon()
         {
             return new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
+        }
+
+        private Market RDFI()
+        {
+            return new Market("0", "RDFI", "RDFI", MarketTypes.RDFI);
         }
 
         private SecurityMarketPair Amd()

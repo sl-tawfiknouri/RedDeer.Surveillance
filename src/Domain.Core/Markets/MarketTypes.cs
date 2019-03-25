@@ -7,6 +7,6 @@
         OTC,
         MTF,
         DarkPool,
-        DealerBooks
+        DealerBooks        
     }
 }

@@ -84,13 +84,14 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
                     "GBX",
                     "Government of United Kingdom");
 
-            var market = RDFI();
+            var market = OTC();
 
             return new SecurityMarketPair
             {
                 Instrument = financialInstrument,
                 Market = market
             };
+
         }
 
         private SecurityMarketPair Barclays()
@@ -166,9 +167,9 @@ namespace Surveillance.Specflow.Tests.StepDefinitions
             return new Market("0", "XLON", "London Stock Exchange", MarketTypes.STOCKEXCHANGE);
         }
 
-        private Market RDFI()
+        private Market OTC()
         {
-            return new Market("0", "RDFI", "RDFI", MarketTypes.RDFI);
+            return new Market("0", "OTC", "OTC", MarketTypes.OTC);
         }
 
         private SecurityMarketPair Amd()

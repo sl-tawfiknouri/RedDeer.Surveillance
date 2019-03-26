@@ -10,30 +10,18 @@ namespace Surveillance.Api.App.Infrastructure
     {
         public SurveillanceQuery(
             ISurveillanceAuthorisation authorisation,
-           // IHttpContextAccessor ctx,
+            IHttpContextAccessor ctx,
             IActiveRulesService ruleService)
         {
-            //if (!authorisation.CanReadApi(ctx.HttpContext.User))
-            //{
-            //    return;
-            //}          
+            if (!authorisation.CanReadApi(ctx.HttpContext.User))
+            {
+                return;
+            }          
 
             Field<ListGraphType<RulesTypeEnumGraphType>>(
                 "rules",
                 "The category of the rule",
                 resolve: context => ruleService.EnabledRules());
         }
-
-        //public SurveillanceQuery(
-        //    IActiveRulesService ruleService,
-        //    IDataLoaderContextAccessor dataAccessor,
-        //    IHttpContextAccessor ctx,
-        //    ISurveillanceAuthorisation authorisation)
-        //{
-        //    if (!authorisation.CanReadApi(ctx.HttpContext.User))
-        //    {
-        //        return;
-        //    }          
-        //}
     }
 }

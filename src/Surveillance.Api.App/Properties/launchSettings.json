@@ -11,6 +11,7 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
+      "commandLineArgs": "--register-service",
       "launchBrowser": true,
       "launchUrl": "ui/playground",
       "environmentVariables": {

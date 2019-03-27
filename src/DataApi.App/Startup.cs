@@ -96,14 +96,12 @@ namespace Surveillance.Api.App
                     var environment = Configuration.GetValue<string>("Environment");
                     var client = Configuration.GetValue<string>("Customer");
                     var clientIssuer = new ComponentName(environment, client, domainManifest.ClientService);
-                    var surveillanceIssuer = new ComponentName(environment, client, domainManifest.Surveillance);
                     var serialiser = new ComponentNameSerialiserService();
 
                     var serialisedClientIssuer = serialiser.Serialise(clientIssuer);
-                    var serialisedSurveillanceIssuer = serialiser.Serialise(surveillanceIssuer);
 
-                    var validIssuers = new[] { serialisedClientIssuer, serialisedSurveillanceIssuer };
-                    var validAudiences = new[] { serialisedClientIssuer, serialisedSurveillanceIssuer };
+                    var validIssuers = new[] { serialisedClientIssuer };
+                    var validAudiences = new[] { serialisedClientIssuer };
 
                     var issuerSigningKeys = new List<SecurityKey>();
                     var secretKey = Configuration.GetValue<string>("Secret-Key-Jwt");

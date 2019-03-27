@@ -43,6 +43,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain.Core\Domain.Core.csproj" />
     <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
+    <ProjectReference Include="..\Infrastructure.Network\Infrastructure.Network.csproj" />
   </ItemGroup>
 
   <ItemGroup>

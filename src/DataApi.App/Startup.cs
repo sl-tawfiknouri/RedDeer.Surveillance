@@ -48,16 +48,40 @@ namespace Surveillance.Api.App
             services.AddOptions();
             services.AddMemoryCache();
             services.AddHttpContextAccessor();
-                        
-            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
-            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            AddRateLimiting(services);
+            AddJwtAuth(services);
+            AddSurveillanceAuth(services);
 
             services.AddScoped<SurveillanceSchema>();
             services.AddScoped<IClaimsManifest, ClaimsManifest>();
 
+            services.AddSingleton<IActiveRulesService, ActiveRulesService>();
+            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+
+            services
+                .AddGraphQL(o =>
+                {
+                    o.ExposeExceptions = _environment.IsDevelopment();
+                    o.EnableMetrics = true;
+                })
+                .AddGraphTypes(ServiceLifetime.Scoped)
+                .AddDataLoader();
+        }
+
+        private void AddSurveillanceAuth(IServiceCollection services)
+        {
+            if (_environment.IsDevelopment())
+            {
+                services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
+            }
+            else
+            {
+                services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
+            }
+        }
+
+        private void AddJwtAuth(IServiceCollection services)
+        {
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -128,27 +152,15 @@ namespace Surveillance.Api.App
                         }
                     };
                 });
+        }
 
-            if (_environment.IsDevelopment())
-            {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
-            }
-            else
-            {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
-            }
-
-            services.AddSingleton<IActiveRulesService, ActiveRulesService>();
-            services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-
-            services
-                .AddGraphQL(o =>
-                {
-                    o.ExposeExceptions = _environment.IsDevelopment();
-                    o.EnableMetrics = true;
-                })
-                .AddGraphTypes(ServiceLifetime.Scoped)
-                .AddDataLoader();
+        private void AddRateLimiting(IServiceCollection services)
+        {
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -60,7 +60,8 @@ namespace Surveillance.Api.App
         private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
         {
             var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
-            var config = new DynamoDbConfigurationProvider(logger);
+            var environmentService = new EnvironmentService();
+            var config = new DynamoDbConfigurationProvider(environmentService, logger);
 
             return config.Build();
         }

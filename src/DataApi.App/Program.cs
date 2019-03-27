@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Amazon.DynamoDBv2;
 using DasMulli.Win32.ServiceUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -59,9 +61,15 @@ namespace Surveillance.Api.App
 
         private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
         {
-            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
+            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
+            {
+                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            });
             var environmentService = new EnvironmentService();
-            var config = new DynamoDbConfigurationProvider(environmentService, logger);
+            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
+
+            var config = new DynamoDbConfigurationProvider(environmentService, client, logger);
 
             return config.Build();
         }

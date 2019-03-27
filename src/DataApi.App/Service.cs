@@ -29,7 +29,7 @@ namespace Surveillance.Api.App
             _webHost = WebHost.CreateDefaultBuilder(startupArguments)
                 .UseStartup<Startup>()
                 .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls("http://*:9065/")
+                .UseUrls("http://*:9084/")
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

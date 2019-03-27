@@ -7,6 +7,7 @@ using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
 using Surveillance.Api.App.Configuration.Interfaces;
+using Infrastructure.Network.Extensions;
 
 // ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Api.App.Configuration
@@ -80,6 +81,8 @@ namespace Surveillance.Api.App.Configuration
             try
             {
                 var response = _client.QueryAsync(query).Result;
+                response.HttpStatusCode.EnsureSuccessStatusCode();
+
                 var casedAttributes = new Dictionary<string, string>();
 
                 if (response.Items.Any())

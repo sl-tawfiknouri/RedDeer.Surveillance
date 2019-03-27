@@ -1,16 +1,22 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using Amazon.DynamoDBv2;
 using DasMulli.Win32.ServiceUtils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Web;
+using Surveillance.Api.App.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace Surveillance.Api.App
 {
     public class Service : IWin32Service
     {
-        private readonly ILogger _logger;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly CancellationTokenSource _cts;
 
         private IWebHost _webHost;
@@ -19,24 +25,14 @@ namespace Surveillance.Api.App
 
         public Service(ILogger<Service> logger)
         {
-            _logger = logger;
             _cts = new CancellationTokenSource();
         }
 
         public void Start(string[] startupArguments, ServiceStoppedCallback serviceStoppedCallback)
         {
-            _logger.LogInformation("Service Starting.");
-            _webHost = WebHost.CreateDefaultBuilder(startupArguments)
-                .UseStartup<Startup>()
-                .UseDefaultServiceProvider(options => options.ValidateScopes = false)
-                .UseUrls("http://*:9084/")
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog()
-                .Build();
+            Logger.Log(NLog.LogLevel.Info, "Service Starting.");
+
+            _webHost = CreateWebHostBuilder(startupArguments).Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
@@ -52,22 +48,49 @@ namespace Surveillance.Api.App
                     }
                 });
 
-            _logger.LogInformation("WebHost Starting.");
+            Logger.Log(NLog.LogLevel.Info, "WebHost Starting.");
             _webHost.Start();
-            _logger.LogInformation("WebHost Started.");
+            Logger.Log(NLog.LogLevel.Info, "WebHost Started.");
 
-            _logger.LogInformation("Service Started.");
+            Logger.Log(NLog.LogLevel.Info, "Service Started.");
+        }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        WebHost
+            .CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(i => i.AddInMemoryCollection(GetDynamoDbConfig()))
+            .UseStartup<Startup>()
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+            })
+            .UseNLog();
+
+        private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
+        {
+            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
+            {
+                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
+                ProxyCredentials = CredentialCache.DefaultCredentials
+            });
+            var environmentService = new EnvironmentService();
+            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
+
+            var config = new DynamoDbConfigurationProvider(environmentService, client, logger);
+
+            return config.Build();
         }
 
         public void Stop()
         {
-            _logger.LogInformation("Service Stopping.");
+            Logger.Log(NLog.LogLevel.Info, "Service Stopping.");
 
             _stopRequestedByWindows = true;
             _webHost.Dispose();
             _cts.Cancel();
 
-            _logger.LogInformation("Service Stop.");
+            Logger.Log(NLog.LogLevel.Info, "Service Stop.");
         }
     }
 }

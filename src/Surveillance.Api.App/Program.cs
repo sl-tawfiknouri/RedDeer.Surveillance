@@ -8,14 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Amazon.DynamoDBv2;
 using DasMulli.Win32.ServiceUtils;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using NLog;
-using NLog.Web;
 using Surveillance.Api.App.Configuration;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Surveillance.Api.App
 {
@@ -37,7 +31,6 @@ namespace Surveillance.Api.App
             try
             {
                 SetSysLogOffIfService(args);
-                CreateWebHostBuilder(args).Build().Run();
                 ProcessArguments(args);
             }
             catch (Exception ex)
@@ -46,18 +39,6 @@ namespace Surveillance.Api.App
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost
-                .CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration(i => i.AddInMemoryCollection(GetDynamoDbConfig()))
-                .UseStartup<Startup>()
-                .ConfigureLogging(logging =>
-                {
-                    logging.ClearProviders();
-                    logging.SetMinimumLevel(LogLevel.Trace);
-                })
-                .UseNLog();
 
         private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
         {

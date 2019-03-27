@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
                 return string.Empty;
             }
 
-            var preamble = $"Wash trade rule breach. Traded ({breach.Security?.Name} ({breach?.Security?.Identifiers.ToString()}).";
+            var preamble = $"Wash trade rule breach. Traded {breach.Security?.Name}.";
 
             var positionAverage = string.Empty;
             var positionPaired = string.Empty;

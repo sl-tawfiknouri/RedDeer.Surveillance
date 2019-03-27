@@ -42,7 +42,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.HighVolume
 
         private string BuildDescription(IHighVolumeRuleBreach ruleBreach)
         {
-            var description = $"High Volume rule breach detected for {ruleBreach.Security?.Name} ({ruleBreach.Security?.Identifiers}).";
+            var description = $"High Volume rule breach detected for {ruleBreach.Security?.Name}.";
             var dailyDescription = string.Empty;
             var windowDescription = string.Empty;
             var marketCapDescription = string.Empty;

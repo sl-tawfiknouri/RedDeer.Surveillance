@@ -95,7 +95,7 @@ namespace Surveillance.Api.App
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ClockSkew = TimeSpan.FromMinutes(15),
+                        ClockSkew = TimeSpan.FromMinutes(1),
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
                         ValidateIssuer = true,

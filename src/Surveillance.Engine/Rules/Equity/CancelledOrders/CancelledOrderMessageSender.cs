@@ -64,7 +64,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.CancelledOrders
             var positionSizeSegment = PositionSizeText(parameters, ruleBreach, percentagePositionCancelled);
             var orderRatioSegment = OrderRatioText(parameters, ruleBreach, tradeCountCancelled);
 
-            var description = $"Cancelled Order Rule Breach. Traded ({anyOrder?.OrderDirection.GetDescription()}) security {anyOrder?.Instrument?.Name} ({anyOrder?.Instrument?.Identifiers}) with excessive cancellations in {parameters.WindowSize.TotalMinutes} minute time period.{positionSizeSegment}{orderRatioSegment}";
+            var description = $"Cancelled Order Rule Breach. Traded ({anyOrder?.OrderDirection.GetDescription()}) security {anyOrder?.Instrument?.Name} with excessive cancellations in {parameters.WindowSize.TotalMinutes} minute time period.{positionSizeSegment}{orderRatioSegment}";
 
             return description;
         }

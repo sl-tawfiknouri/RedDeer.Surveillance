@@ -6,6 +6,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Amazon.EC2;
 using Amazon.EC2.Model;
+using Surveillance.Api.App.Configuration.Interfaces;
 
 // ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Api.App.Configuration
@@ -17,14 +18,16 @@ namespace Surveillance.Api.App.Configuration
         private IDictionary<string, string> _dynamoConfig;
         private bool _hasAttemptedToFetchEc2Data;
         private readonly object _lock = new object();
+        private readonly IEnvironmentService _environmentService;
 
         public static bool IsEc2Instance { get; private set; }
         public static bool IsUnitTest { get; private set; }
         public NLog.Logger Logger { get; }
 
-        public DynamoDbConfigurationProvider(NLog.Logger logger)
+        public DynamoDbConfigurationProvider(IEnvironmentService environmentService, NLog.Logger logger)
         {
             _dynamoConfig = new Dictionary<string, string>();
+            _environmentService = environmentService ?? throw new ArgumentNullException(nameof(environmentService));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,14 +40,8 @@ namespace Surveillance.Api.App.Configuration
                     return _dynamoConfig;
                 }
 
-                IsUnitTest = AppDomain
-                    .CurrentDomain
-                    .GetAssemblies()
-                    .Any(a => a.FullName.ToLowerInvariant().StartsWith("nunit.framework"));
-
-                IsEc2Instance =
-                    IsUnitTest == false &&
-                    Amazon.Util.EC2InstanceMetadata.InstanceId != null;
+                IsUnitTest = _environmentService.IsUnitTest();
+                IsEc2Instance = _environmentService.IsEc2Instance();
 
                 if (IsEc2Instance)
                 {

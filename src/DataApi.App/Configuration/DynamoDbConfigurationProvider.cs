@@ -19,15 +19,20 @@ namespace Surveillance.Api.App.Configuration
         private bool _hasAttemptedToFetchEc2Data;
         private readonly object _lock = new object();
         private readonly IEnvironmentService _environmentService;
+        private readonly IAmazonDynamoDB _client;
 
         public static bool IsEc2Instance { get; private set; }
         public static bool IsUnitTest { get; private set; }
         public NLog.Logger Logger { get; }
 
-        public DynamoDbConfigurationProvider(IEnvironmentService environmentService, NLog.Logger logger)
+        public DynamoDbConfigurationProvider(
+            IEnvironmentService environmentService,
+            IAmazonDynamoDB client,
+            NLog.Logger logger)
         {
             _dynamoConfig = new Dictionary<string, string>();
             _environmentService = environmentService ?? throw new ArgumentNullException(nameof(environmentService));
+            _client = client ?? throw new ArgumentNullException(nameof(client));
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -58,12 +63,6 @@ namespace Surveillance.Api.App.Configuration
 
         private IDictionary<string, string> FetchEc2Data(string environmentClientId)
         {
-            var client = new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-            {
-                RegionEndpoint = Amazon.RegionEndpoint.EUWest1,
-                ProxyCredentials = CredentialCache.DefaultCredentials
-            });
-
             var query = new QueryRequest
             {
                 TableName = DynamoDbTable,
@@ -80,7 +79,7 @@ namespace Surveillance.Api.App.Configuration
 
             try
             {
-                var response = client.QueryAsync(query).Result;
+                var response = _client.QueryAsync(query).Result;
                 var casedAttributes = new Dictionary<string, string>();
 
                 if (response.Items.Any())

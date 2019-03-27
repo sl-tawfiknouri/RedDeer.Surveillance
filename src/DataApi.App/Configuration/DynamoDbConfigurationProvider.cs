@@ -10,27 +10,29 @@ using Amazon.EC2.Model;
 // ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Api.App.Configuration
 {
-    public class Configuration
+    public class DynamoDbConfigurationProvider
     {
         private const string DynamoDbTable = "reddeer-config";
 
         private IDictionary<string, string> _dynamoConfig;
-        private bool _hasFetchedEc2Data;
+        private bool _hasAttemptedToFetchEc2Data;
         private readonly object _lock = new object();
 
         public static bool IsEc2Instance { get; private set; }
         public static bool IsUnitTest { get; private set; }
+        public NLog.Logger Logger { get; }
 
-        public Configuration()
+        public DynamoDbConfigurationProvider(NLog.Logger logger)
         {
             _dynamoConfig = new Dictionary<string, string>();
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IEnumerable<KeyValuePair<string, string>> Build()
         {
             lock (_lock)
             {
-                if (_hasFetchedEc2Data)
+                if (_hasAttemptedToFetchEc2Data)
                 {
                     return _dynamoConfig;
                 }
@@ -51,7 +53,7 @@ namespace Surveillance.Api.App.Configuration
                     _dynamoConfig = FetchEc2Data(dynamoDbConfigKey);
                 }
 
-                _hasFetchedEc2Data = true;
+                _hasAttemptedToFetchEc2Data = true;
 
                 return _dynamoConfig;
             }
@@ -79,11 +81,10 @@ namespace Surveillance.Api.App.Configuration
                 }
             };
 
-            var attributes = new Dictionary<string, string>();
-
             try
             {
                 var response = client.QueryAsync(query).Result;
+                var casedAttributes = new Dictionary<string, string>();
 
                 if (response.Items.Any())
                 {
@@ -91,22 +92,21 @@ namespace Surveillance.Api.App.Configuration
                     {
                         if (!string.IsNullOrWhiteSpace(item.Value.S))
                         {
-                            attributes[item.Key] = item.Value.S;
+                            casedAttributes[item.Key.ToLower()] = item.Value.S;
                         }
                     }
                 }
 
-                _hasFetchedEc2Data = true;
-                var casedAttributes = attributes.ToDictionary(i => i.Key?.ToLower(), i => i.Value);
+                _hasAttemptedToFetchEc2Data = true;
 
                 return casedAttributes;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                _hasFetchedEc2Data = true;
+                _hasAttemptedToFetchEc2Data = true;
+                Logger.Log(NLog.LogLevel.Error, $"Configuration encountered an exception on fetching from EC2 {e.Message} {e.InnerException?.Message}");
+                return new Dictionary<string, string>();
             }
-
-            return new Dictionary<string, string>();
         }
 
         private string GetTag(string name)

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
+using Surveillance.Api.App.Configuration;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Surveillance.Api.App
@@ -58,7 +59,8 @@ namespace Surveillance.Api.App
 
         private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()
         {
-            var config = new Configuration.Configuration();
+            var logger = LogManager.GetLogger(nameof(DynamoDbConfigurationProvider));
+            var config = new DynamoDbConfigurationProvider(logger);
 
             return config.Build();
         }

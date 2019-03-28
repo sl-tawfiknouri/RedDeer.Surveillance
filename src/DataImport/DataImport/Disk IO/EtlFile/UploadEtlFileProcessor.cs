@@ -13,16 +13,16 @@ namespace DataImport.Disk_IO.EtlFile
     public class UploadEtlFileProcessor : BaseUploadOrderFileProcessor, IUploadEtlFileProcessor
     {
         private readonly IOrderFileToOrderSerialiser _orderFileSerialiser;
-        private readonly IOrderFileValidator _orderFileValidator;
+        private readonly IEtlFileValidator _etlFileValidator;
         
         public UploadEtlFileProcessor(
             IOrderFileToOrderSerialiser orderFileSerialiser,
-            IOrderFileValidator orderFileValidator,
+            IEtlFileValidator etlFileValidator,
             ILogger logger)
             : base(logger)
         {
             _orderFileSerialiser = orderFileSerialiser ?? throw new ArgumentNullException(nameof(orderFileSerialiser));
-            _orderFileValidator = orderFileValidator ?? throw new ArgumentNullException(nameof(orderFileValidator));
+            _etlFileValidator = etlFileValidator ?? throw new ArgumentNullException(nameof(etlFileValidator));
         }
 
         protected override void MapRecord(
@@ -31,7 +31,7 @@ namespace DataImport.Disk_IO.EtlFile
             List<OrderFileContract> failedMarketUpdateReads)
         {
             Logger.LogInformation($"About to validate record {record?.RowId}");
-            var validationResult = _orderFileValidator.Validate(record);
+            var validationResult = _etlFileValidator.Validate(record);
 
             if (!validationResult.IsValid)
             {

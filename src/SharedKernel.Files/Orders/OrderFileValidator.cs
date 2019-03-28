@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Globalization;
 using Domain.Core.Markets;
 using Domain.Core.Trading.Orders;
 using FluentValidation;
-using FluentValidation.Validators;
 using SharedKernel.Files.Orders.Interfaces;
+using SharedKernel.Files.PropertyValidators;
 
 namespace SharedKernel.Files.Orders
 {
@@ -376,133 +375,6 @@ namespace SharedKernel.Files.Orders
             return !string.IsNullOrWhiteSpace(contract.DealerOrderOptionExpirationDate)
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionEuropeanAmerican)
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionStrikePrice);
-        }
-    }
-
-    public class LongParseableValidator : PropertyValidator
-    {
-        public LongParseableValidator(string longPropertyName) : base($"Property had a value but could not be parsed to long {longPropertyName}")
-        { }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var prop = context.PropertyValue as string;
-
-            if (string.IsNullOrWhiteSpace(prop))
-            {
-                return true;
-            }
-
-            return long.TryParse(prop, out var result);
-        }
-    }
-
-    public class NonZeroLongParseableValidator : PropertyValidator
-    {
-        public NonZeroLongParseableValidator(string longPropertyName) : base($"Property had a value but could not be parsed to long {longPropertyName}")
-        { }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var prop = context.PropertyValue as string;
-
-            if (string.IsNullOrWhiteSpace(prop))
-            {
-                return true;
-            }
-
-            var parseResult = long.TryParse(prop, out var result);
-
-            if (!parseResult)
-            {
-                return false;
-            }
-
-            return result != 0;
-        }
-    }
-
-    public class DecimalParseableValidator : PropertyValidator
-    {
-        public DecimalParseableValidator(string decimalPropertyName) : base($"Property had a value but could not be parsed to decimal {decimalPropertyName}")
-        { }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var prop = context.PropertyValue as string;
-
-            if (string.IsNullOrWhiteSpace(prop))
-            {
-                return true;
-            }
-
-            return decimal.TryParse(prop, out var result);
-        }
-    }
-
-    public class EnumParseableValidator<T> : PropertyValidator where T: struct, IConvertible
-    {
-        public EnumParseableValidator(string enumPropertyName) : base($"Property out of enum range {enumPropertyName}")
-        { }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var prop = context.PropertyValue as string;
-
-            if (!Enum.TryParse(prop, out T result))
-            {
-                context.MessageFormatter.AppendArgument("MarketType", typeof(T));
-
-                return false;
-            }
-
-            return true;
-        }
-    }
-
-    public class DateParseableValidator : PropertyValidator
-    {
-        public DateParseableValidator(string errorMessage) : base(errorMessage)
-        {
-        }
-
-        protected override bool IsValid(PropertyValidatorContext context)
-        {
-            var prop = context.PropertyValue as string;
-
-            if (string.IsNullOrWhiteSpace(prop))
-            {
-                return true;
-            }
-            
-            var hasDateOnlyFormat = DateTime.TryParseExact(prop, "yyyy-MM-dd", null, DateTimeStyles.None, out var dateOnlyResult);
-
-            if (hasDateOnlyFormat && dateOnlyResult.Year >= 2010)
-            {
-                return true;
-            }
-
-            if (hasDateOnlyFormat && dateOnlyResult.Year < 2010)
-            {
-                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
-                return false;
-            }
-
-            var hasDateAndTimeFormat = DateTime.TryParseExact(prop, "yyyy-MM-ddTHH:mm:ss", null, DateTimeStyles.None, out var dateAndTimeResult);
-
-            if (hasDateAndTimeFormat && dateAndTimeResult.Year >= 2010)
-            {
-                return true;
-            }
-
-            if (hasDateAndTimeFormat && dateAndTimeResult.Year < 2010)
-            {
-                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
-                return false;
-            }
-
-            context.MessageFormatter.AppendArgument(context.PropertyName, prop);
-            return false;
         }
     }
 }

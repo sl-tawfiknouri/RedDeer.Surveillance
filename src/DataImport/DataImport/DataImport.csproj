@@ -22,8 +22,4 @@
     <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Disk IO\EtlFile\" />
-  </ItemGroup>
-
 </Project>

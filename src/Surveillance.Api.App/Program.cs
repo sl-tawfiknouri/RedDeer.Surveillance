@@ -30,6 +30,8 @@ namespace Surveillance.Api.App
         {
             try
             {
+                Logger.Info($"{nameof(Program)} has initiated for Surveillance Api App");
+
                 SetSysLogOffIfService(args);
                 ProcessArguments(args);
             }

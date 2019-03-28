@@ -10,7 +10,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ubuntu-x64</RuntimeIdentifier>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <Content Remove="nlog.Release.config" />
   </ItemGroup>

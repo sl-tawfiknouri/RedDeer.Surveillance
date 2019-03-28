@@ -1,7 +1,7 @@
 ﻿using System;
 using DataImport.Configuration.Interfaces;
+using DataImport.Disk_IO.Shared.Interfaces;
 using DataImport.Disk_IO.TradeFile;
-using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using FakeItEasy;

@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.Interfaces;
-using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.Disk_IO.Shared.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using Domain.Core.Trading.Orders;

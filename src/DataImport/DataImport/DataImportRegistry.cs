@@ -1,8 +1,9 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
+using DataImport.Disk_IO.Shared;
+using DataImport.Disk_IO.Shared.Interfaces;
 using DataImport.Disk_IO.TradeFile;
-using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.File_Scanner;
 using DataImport.File_Scanner.Interfaces;
 using DataImport.Interfaces;

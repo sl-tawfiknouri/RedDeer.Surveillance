@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using CsvHelper;
-using DataImport.Disk_IO.TradeFile.Interfaces;
+using DataImport.Disk_IO.Shared.Interfaces;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
 using SharedKernel.Files.Orders.Interfaces;
 
-namespace DataImport.Disk_IO.TradeFile
+namespace DataImport.Disk_IO.Shared
 {
     public class UploadTradeFileProcessor : BaseUploadFileProcessor<OrderFileContract, Order>, IUploadTradeFileProcessor
     {

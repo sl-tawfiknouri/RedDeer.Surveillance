@@ -33,6 +33,10 @@ namespace DataImport.Disk_IO.EtlFile
             Logger.LogInformation($"About to validate record {record?.RowId}");
             var validationResult = _etlFileValidator.Validate(record);
 
+            /*
+             * DO THIS BIT DIFFERENTLY
+             */
+
             if (!validationResult.IsValid)
             {
                 Logger.LogInformation($"Processor was unable to validate {record?.RowId}");

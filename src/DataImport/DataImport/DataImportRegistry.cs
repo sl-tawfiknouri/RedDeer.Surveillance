@@ -79,6 +79,7 @@ namespace DataImport
 
             For<IUploadEtlFileMonitor>().Use<UploadEtlFileMonitor>();
             For<IUploadEtlFileProcessor>().Use<UploadEtlFileProcessor>();
+            For<IEtlFileValidator>().Use<EtlFileValidator>();
                 
             For<IFileScanner>().Use<FileScanner>();
             For<IFileScannerScheduler>().Use<FileScannerScheduler>();

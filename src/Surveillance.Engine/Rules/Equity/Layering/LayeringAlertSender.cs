@@ -41,7 +41,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
 
         private string BuildDescription(ILayeringRuleBreach breach)
         {
-            return $"Layering rule breach detected for {breach.Security.Name} ({breach.Security.Identifiers}).{breach.BidirectionalTradeBreach.Description}{breach.DailyVolumeTradeBreach.Description}{breach.WindowVolumeTradeBreach.Description}{breach.PriceMovementBreach.Description}";
+            return $"Layering rule breach detected for {breach.Security.Name}.{breach.BidirectionalTradeBreach.Description}{breach.DailyVolumeTradeBreach.Description}{breach.WindowVolumeTradeBreach.Description}{breach.PriceMovementBreach.Description}";
         }
     }
 }

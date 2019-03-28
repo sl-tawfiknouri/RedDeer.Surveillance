@@ -43,7 +43,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose
         private string BuildDescription(IMarkingTheCloseBreach ruleBreach)
         {
             var header =
-                $"Marking the close rule breach detected for {ruleBreach.Security.Name} ({ruleBreach.Security.Identifiers}) traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. ";
+                $"Marking the close rule breach detected for {ruleBreach.Security.Name} traded on {ruleBreach.MarketClose.MarketId} which closed at {ruleBreach.MarketClose.MarketClose.ToShortTimeString()}. ";
 
             if ((ruleBreach.WindowBreach?.HasBuyVolumeBreach ?? false)
                 || (ruleBreach.WindowBreach?.HasSellVolumeBreach ?? false))

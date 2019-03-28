@@ -1,7 +1,7 @@
 ﻿using Domain.Core.Trading.Orders;
 using SharedKernel.Files.Orders;
 
-namespace DataImport.Disk_IO.Shared.Interfaces
+namespace DataImport.Disk_IO.TradeFile.Interfaces
 {
     public interface IUploadTradeFileProcessor 
     {

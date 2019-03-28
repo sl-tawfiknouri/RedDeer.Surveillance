@@ -1,70 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CsvHelper;
-using DataImport.Disk_IO.Shared.Interfaces;
+﻿using CsvHelper;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
-using SharedKernel.Files.Orders.Interfaces;
 
 namespace DataImport.Disk_IO.Shared
 {
-    public class UploadTradeFileProcessor : BaseUploadFileProcessor<OrderFileContract, Order>, IUploadTradeFileProcessor
+    public abstract class BaseUploadOrderFileProcessor : BaseUploadFileProcessor<OrderFileContract, Order>
     {
-        private readonly IOrderFileToOrderSerialiser _orderFileSerialiser;
-        private readonly IOrderFileValidator _orderFileValidator;
-
-        public UploadTradeFileProcessor(
-            IOrderFileToOrderSerialiser csvToDtoMapper,
-            IOrderFileValidator tradeFileCsvValidator,
-            ILogger<UploadTradeFileProcessor> logger)
+        protected BaseUploadOrderFileProcessor(
+            ILogger logger)
             : base(logger, "Upload Trade File Processor")
         {
-            _orderFileSerialiser = csvToDtoMapper ?? throw new ArgumentNullException(nameof(csvToDtoMapper));
-            _orderFileValidator = tradeFileCsvValidator ?? throw new ArgumentNullException(nameof(tradeFileCsvValidator));
-        }
-
-        protected override void MapRecord(
-            OrderFileContract record,
-            List<Order> marketUpdates,
-            List<OrderFileContract> failedMarketUpdateReads)
-        {
-            Logger.LogInformation($"Upload Trade File Processor about to validate record {record?.RowId}");
-            var validationResult = _orderFileValidator.Validate(record);
-            
-            if (!validationResult.IsValid)
-            {
-                Logger.LogInformation($"Upload Trade File Processor was unable to validate {record?.RowId}");
-                _orderFileSerialiser.FailedParseTotal += 1;
-                failedMarketUpdateReads.Add(record);
-
-                if (validationResult.Errors.Any())
-                {
-                    var consolidatedErrorMessage = validationResult.Errors.Aggregate(string.Empty, (a, b) => a + " " + b.ErrorMessage);
-                    Logger.LogWarning(consolidatedErrorMessage);
-                }
-
-                return;
-            }
-
-            var mappedRecord = _orderFileSerialiser.Map(record);
-            if (mappedRecord != null)
-            {
-                Logger.LogInformation($"Upload Trade File Processor successfully validated and mapped record {record?.RowId}");
-                marketUpdates.Add(mappedRecord);
-            }
-            Logger.LogInformation($"Upload Trade File Processor did not successfully map record {record?.RowId}");
-        }
-
-        protected override void CheckAndLogFailedParsesFromDtoMapper(string path)
-        {
-            if (_orderFileSerialiser.FailedParseTotal > 0)
-            {
-                Logger.LogError($"{UploadFileProcessorName} had {_orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
-            }
-
-            _orderFileSerialiser.FailedParseTotal = 0;
         }
 
         protected override OrderFileContract MapToCsvDto(CsvReader rawRecord, int rowId)
@@ -104,20 +50,20 @@ namespace DataImport.Disk_IO.Shared
                 InstrumentUnderlyingLei = PreProcess(rawRecord["InstrumentUnderlyingLei"]),
                 InstrumentUnderlyingExchangeSymbol = PreProcess(rawRecord["InstrumentUnderlyingExchangeSymbol"]),
                 InstrumentUnderlyingBloombergTicker = PreProcess(rawRecord["InstrumentUnderlyingBloombergTicker"]),
-                
+
 
                 OrderId = PreProcess(rawRecord["OrderId"]),
                 OrderVersion = PreProcess(rawRecord["OrderVersion"]),
                 OrderVersionLinkId = PreProcess(rawRecord["OrderVersionLinkId"]),
                 OrderGroupId = PreProcess(rawRecord["OrderGroupId"]),
-                
+
                 OrderPlacedDate = PreProcess(rawRecord["OrderPlacedDate"]),
                 OrderBookedDate = PreProcess(rawRecord["OrderBookedDate"]),
                 OrderAmendedDate = PreProcess(rawRecord["OrderAmendedDate"]),
                 OrderRejectedDate = PreProcess(rawRecord["OrderRejectedDate"]),
                 OrderCancelledDate = PreProcess(rawRecord["OrderCancelledDate"]),
                 OrderFilledDate = PreProcess(rawRecord["OrderFilledDate"]),
-                
+
                 OrderType = PreProcess(rawRecord["OrderType"]),
                 OrderDirection = PreProcess(rawRecord["OrderDirection"]),
                 OrderCurrency = PreProcess(rawRecord["OrderCurrency"]),
@@ -134,11 +80,11 @@ namespace DataImport.Disk_IO.Shared
                 OrderTraderName = PreProcess(rawRecord["OrderTraderName"]),
                 OrderClearingAgent = PreProcess(rawRecord["OrderClearingAgent"]),
                 OrderDealingInstructions = PreProcess(rawRecord["OrderDealingInstructions"]),
-                
+
                 OrderOptionStrikePrice = PreProcess(rawRecord["OrderOptionStrikePrice"]),
                 OrderOptionExpirationDate = PreProcess(rawRecord["OrderOptionExpirationDate"]),
                 OrderOptionEuropeanAmerican = PreProcess(rawRecord["OrderOptionEuropeanAmerican"]),
-                
+
 
                 DealerOrderId = PreProcess(rawRecord["DealerOrderId"]),
                 DealerOrderVersion = PreProcess(rawRecord["DealerOrderVersion"]),

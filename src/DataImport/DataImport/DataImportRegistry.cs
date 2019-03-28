@@ -3,9 +3,8 @@ using DataImport.Disk_IO.AllocationFile.Interfaces;
 using DataImport.Disk_IO.EtlFile;
 using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
-using DataImport.Disk_IO.Shared;
-using DataImport.Disk_IO.Shared.Interfaces;
 using DataImport.Disk_IO.TradeFile;
+using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.File_Scanner;
 using DataImport.File_Scanner.Interfaces;
 using DataImport.Interfaces;
@@ -79,7 +78,8 @@ namespace DataImport
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
 
             For<IUploadEtlFileMonitor>().Use<UploadEtlFileMonitor>();
-
+            For<IUploadEtlFileProcessor>().Use<UploadEtlFileProcessor>();
+                
             For<IFileScanner>().Use<FileScanner>();
             For<IFileScannerScheduler>().Use<FileScannerScheduler>();
         }

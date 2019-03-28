@@ -9,7 +9,6 @@ using Amazon.EC2.Model;
 using Surveillance.Api.App.Configuration.Interfaces;
 using Infrastructure.Network.Extensions;
 
-// ReSharper disable InconsistentlySynchronizedField
 namespace Surveillance.Api.App.Configuration
 {
     public class DynamoDbConfigurationProvider

@@ -11,6 +11,9 @@
         string DataImportAllocationFileUploadDirectoryPath { get; }
         string DataImportAllocationFileFtpDirectoryPath { get; }
 
+        string DataImportEtlFileUploadDirectoryPath { get; }
+        string DataImportEtlFileFtpDirectoryPath { get; }
+
         string DataImportS3UploadQueueName { get; }
 
         bool AutoSchedule { get; }

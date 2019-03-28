@@ -60,7 +60,9 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
                 DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),
                 DataImportAllocationFileUploadDirectoryPath = GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
-                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder)
+                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFileUploadDirectoryPath = GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
+                DataImportEtlFileFtpDirectoryPath = GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder)
             };
 
             return networkConfiguration;

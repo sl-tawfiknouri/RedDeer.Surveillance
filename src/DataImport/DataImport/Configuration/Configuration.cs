@@ -17,6 +17,9 @@ namespace DataImport.Configuration
         public string DataImportAllocationFileUploadDirectoryPath { get; set; }
         public string DataImportAllocationFileFtpDirectoryPath { get; set; }
 
+        public string DataImportEtlFileFtpDirectoryPath { get; set; }
+        public string DataImportEtlFileUploadDirectoryPath { get; set; }
+
         public bool AutoSchedule { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
     

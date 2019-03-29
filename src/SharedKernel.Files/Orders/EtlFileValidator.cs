@@ -15,10 +15,6 @@ namespace SharedKernel.Files.Orders
                 .NotEmpty()
                 .WithMessage("Market Identifier Code must not be empty");
 
-            RuleFor(x => x.MarketName)
-                .NotEmpty()
-                .WithMessage("Market Name must not be empty");
-
             // Instrument
             RulesForSufficientInstrumentIdentificationCodes();
             RulesForIdentificationCodes();
@@ -39,8 +35,7 @@ namespace SharedKernel.Files.Orders
             RuleFor(x => x).Must(x =>
                 !string.IsNullOrWhiteSpace(x.InstrumentIsin)
                 || !string.IsNullOrWhiteSpace(x.InstrumentSedol)
-                || !string.IsNullOrWhiteSpace(x.InstrumentFigi)
-                || !string.IsNullOrWhiteSpace(x.InstrumentCusip));
+                || !string.IsNullOrWhiteSpace(x.InstrumentFigi));
         }
 
         private void RulesForIdentificationCodes()
@@ -159,60 +154,6 @@ namespace SharedKernel.Files.Orders
             RuleFor(x => x.OrderRejectedDate).SetValidator(new DateParseableValidator("OrderRejectedDate"));
             RuleFor(x => x.OrderCancelledDate).SetValidator(new DateParseableValidator("OrderCancelledDate"));
             RuleFor(x => x.OrderFilledDate).SetValidator(new DateParseableValidator("OrderFilledDate"));
-
-            RuleFor(x => x).Custom((i, o) =>
-            {
-                if (string.IsNullOrWhiteSpace(i.OrderFilledDate))
-                {
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(i.OrderFilledVolume))
-                {
-                    o.AddFailure("OrderFilledVolume", "Order Filled Volume must have a value when there is an order filled date.");
-                    return;
-                }
-
-                var parsedVol = long.TryParse(i.OrderFilledVolume, out var ofv);
-
-                if (!parsedVol)
-                {
-                    o.AddFailure("OrderFilledVolume", "Order Filled Volume could not be parsed to a long.");
-                    return;
-                }
-
-                if (ofv < 1)
-                {
-                    o.AddFailure("OrderFilledVolume", "Order Filled Volume was below 1 which is invalid when we have an order fill date.");
-                }
-            });
-
-            RuleFor(x => x).Custom((i, o) =>
-            {
-                if (string.IsNullOrWhiteSpace(i.OrderFilledDate))
-                {
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(i.OrderAverageFillPrice))
-                {
-                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price must have a value when there is an order filled date.");
-                    return;
-                }
-
-                var parsedPrice = decimal.TryParse(i.OrderAverageFillPrice, out var ofv);
-                if (!parsedPrice)
-                {
-                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price could not be parsed to a decimal.");
-                    return;
-                }
-
-                if (ofv == 0)
-                {
-                    o.AddFailure("OrderAverageFillPrice", "Order Average Fill Price was 0 which is invalid when we have an order fill date.");
-                }
-            });
-
             RuleFor(x => x.OrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("OrderOrderedVolume"));
 
             RuleFor(x => x.OrderDirection)
@@ -274,70 +215,10 @@ namespace SharedKernel.Files.Orders
             RuleFor(x => x.DealerOrderCancelledDate).SetValidator(new DateParseableValidator("DealerOrderCancelledDate")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderRejectedDate).SetValidator(new DateParseableValidator("DealerOrderRejectedDate")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderFilledDate).SetValidator(new DateParseableValidator("DealerOrderFilledDate")).When(HasDealerOrderData);
-
-            RuleFor(x => x).Custom((i, o) =>
-            {
-                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledDate))
-                {
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledVolume))
-                {
-                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume must have a value when there is an order filled date.");
-                    return;
-                }
-
-                var parsedVol = long.TryParse(i.DealerOrderFilledVolume, out var ofv);
-
-                if (!parsedVol)
-                {
-                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume could not be parsed to a long.");
-                    return;
-                }
-
-                if (ofv < 1)
-                {
-                    o.AddFailure("DealerOrderFilledVolume", "Dealer Order Filled Volume was below 1 which is invalid when we have an dealer order fill date.");
-                }
-            });
-
-            RuleFor(x => x).Custom((i, o) =>
-            {
-                if (string.IsNullOrWhiteSpace(i.DealerOrderFilledDate))
-                {
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(i.DealerOrderAverageFillPrice))
-                {
-                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price must have a value when there is an order filled date.");
-                    return;
-                }
-
-                var parsedPrice = decimal.TryParse(i.DealerOrderAverageFillPrice, out var ofv);
-                if (!parsedPrice)
-                {
-                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price could not be parsed to a decimal.");
-                    return;
-                }
-
-                if (ofv == 0)
-                {
-                    o.AddFailure("DealerOrderAverageFillPrice", "Dealer Order Average Fill Price was 0 which is invalid when we have an order fill date.");
-                }
-            });
-
-            RulesForTradeOptionsProperties();
         }
 
         private bool HasDealerOrderData(OrderFileContract contract)
         {
-            if (HasOptionFieldSet(contract))
-            {
-                return true;
-            }
-
             return !string.IsNullOrWhiteSpace(contract.DealerOrderDealerId)
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderDealerName)
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderPlacedDate)
@@ -355,25 +236,5 @@ namespace SharedKernel.Files.Orders
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderOrderedVolume)
                    || !string.IsNullOrWhiteSpace(contract.DealerOrderFilledVolume);
         }
-
-        private void RulesForTradeOptionsProperties()
-        {
-            RuleFor(x => x.DealerOrderOptionExpirationDate).NotEmpty().When(HasOptionFieldSet);
-            RuleFor(x => x.DealerOrderOptionEuropeanAmerican).NotEmpty().When(HasOptionFieldSet);
-            RuleFor(x => x.DealerOrderOptionStrikePrice).NotEmpty().When(HasOptionFieldSet);
-        }
-
-        private bool HasOptionFieldSet(OrderFileContract contract)
-        {
-            if (contract == null)
-            {
-                return false;
-            }
-
-            return !string.IsNullOrWhiteSpace(contract.DealerOrderOptionExpirationDate)
-                   || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionEuropeanAmerican)
-                   || !string.IsNullOrWhiteSpace(contract.DealerOrderOptionStrikePrice);
-        }
-
     }
 }

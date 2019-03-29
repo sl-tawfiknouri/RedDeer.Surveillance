@@ -107,7 +107,7 @@ namespace DataImport.S3_IO
                             _configuration.DataImportAllocationFileUploadDirectoryPath);
                         paf.Wait();
                         break;
-                    case "surveillance-etl":
+                    case "surveillance-etl-order":
                         await ProcessEtlFile(
                             dto,
                             _configuration.DataImportEtlFileFtpDirectoryPath,

@@ -62,7 +62,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportAllocationFileUploadDirectoryPath = GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
                 DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
                 DataImportEtlFileUploadDirectoryPath = GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
-                DataImportEtlFileFtpDirectoryPath = GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder)
+                DataImportEtlFileFtpDirectoryPath = GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFailureNotifications = GetSetting("DataImportEtlFailureNotifications", configurationBuilder)
             };
 
             return networkConfiguration;

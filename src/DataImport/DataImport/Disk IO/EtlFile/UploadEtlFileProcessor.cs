@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Shared;
 using Domain.Core.Trading.Orders;
@@ -15,17 +16,20 @@ namespace DataImport.Disk_IO.EtlFile
         private readonly IOrderFileToOrderSerialiser _orderFileSerialiser;
         private readonly IEtlFileValidator _etlFileValidator;
         private readonly IEtlUploadErrorStore _etlUploadErrorStore;
+        private readonly IUploadConfiguration _configuration;
 
         public UploadEtlFileProcessor(
             IOrderFileToOrderSerialiser orderFileSerialiser,
             IEtlFileValidator etlFileValidator,
             IEtlUploadErrorStore etlUploadErrorStore,
+            IUploadConfiguration configuration,
             ILogger<UploadEtlFileProcessor> logger)
             : base(logger)
         {
             _orderFileSerialiser = orderFileSerialiser ?? throw new ArgumentNullException(nameof(orderFileSerialiser));
             _etlFileValidator = etlFileValidator ?? throw new ArgumentNullException(nameof(etlFileValidator));
             _etlUploadErrorStore = etlUploadErrorStore ?? throw new ArgumentNullException(nameof(etlUploadErrorStore));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         protected override void MapRecord(
@@ -68,15 +72,40 @@ namespace DataImport.Disk_IO.EtlFile
             if (_orderFileSerialiser.FailedParseTotal > 0)
             {
                 Logger.LogError($"{UploadFileProcessorName} had {_orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
+
+                if (!string.IsNullOrWhiteSpace(_configuration.DataImportEtlFailureNotifications))
+                {
+                    DispatchEmailNotifications();
+                }
+                else
+                {
+                    Logger.LogInformation($"No ETL notification targets set {_configuration.DataImportEtlFailureNotifications}");
+                }
             }
-
-            var errorMessage = _etlUploadErrorStore.SerialisedErrors();
-
-            // TODO get requirements off elton for how we're passing this information back
-            Logger.LogError(errorMessage);
 
             _orderFileSerialiser.FailedParseTotal = 0;
             _etlUploadErrorStore.Clear();
+        }
+
+        private void DispatchEmailNotifications()
+        {
+            var errorMessage = _etlUploadErrorStore.SerialisedErrors();
+            Logger.LogError(errorMessage);
+
+            var trimmedTargets =
+                _configuration
+                    .DataImportEtlFailureNotifications
+                    .Split(',')
+                    .Where(i => !string.IsNullOrWhiteSpace(i))
+                    .Select(y => y.Trim());
+
+            if (!trimmedTargets.Any())
+            {
+                Logger.LogInformation($"No ETL notification targets set {_configuration.DataImportEtlFailureNotifications}");
+                return;
+            }
+
+            // 
         }
     }
 }

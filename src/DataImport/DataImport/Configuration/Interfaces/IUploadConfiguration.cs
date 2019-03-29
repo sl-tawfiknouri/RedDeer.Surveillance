@@ -7,6 +7,7 @@
 
         string DataImportEquityFileUploadDirectoryPath { get; }
         string DataImportEquityFileFtpDirectoryPath { get; }
+        string DataImportEtlFailureNotifications { get; }
 
         string DataImportAllocationFileUploadDirectoryPath { get; }
         string DataImportAllocationFileFtpDirectoryPath { get; }

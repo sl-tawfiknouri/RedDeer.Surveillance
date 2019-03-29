@@ -20,6 +20,8 @@ namespace DataImport.Configuration
         public string DataImportEtlFileFtpDirectoryPath { get; set; }
         public string DataImportEtlFileUploadDirectoryPath { get; set; }
 
+        public string DataImportEtlFailureNotifications { get; set; }
+
         public bool AutoSchedule { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
     

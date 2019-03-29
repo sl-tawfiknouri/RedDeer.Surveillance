@@ -20,7 +20,7 @@ namespace DataImport.Disk_IO.EtlFile
             IOrderFileToOrderSerialiser orderFileSerialiser,
             IEtlFileValidator etlFileValidator,
             IEtlUploadErrorStore etlUploadErrorStore,
-            ILogger logger)
+            ILogger<UploadEtlFileProcessor> logger)
             : base(logger)
         {
             _orderFileSerialiser = orderFileSerialiser ?? throw new ArgumentNullException(nameof(orderFileSerialiser));

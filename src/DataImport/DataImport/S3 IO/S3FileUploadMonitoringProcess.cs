@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
+using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
 using Infrastructure.Network.Aws;
@@ -20,6 +21,7 @@ namespace DataImport.S3_IO
 
         private IUploadAllocationFileMonitor _uploadAllocationFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
+        private IUploadEtlFileMonitor _uploadEtlFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
         private readonly IUploadConfiguration _configuration;
         private readonly IAwsQueueClient _queueClient;
@@ -42,7 +44,8 @@ namespace DataImport.S3_IO
 
         public void Initialise(
             IUploadAllocationFileMonitor uploadAllocationFileMonitor,
-            IUploadTradeFileMonitor uploadTradeFileMonitor)
+            IUploadTradeFileMonitor uploadTradeFileMonitor,
+            IUploadEtlFileMonitor uploadEtlFileMonitor)
         {
             try
             {
@@ -50,6 +53,7 @@ namespace DataImport.S3_IO
 
                 _uploadAllocationFileMonitor = uploadAllocationFileMonitor;
                 _uploadTradeFileMonitor = uploadTradeFileMonitor;
+                _uploadEtlFileMonitor = uploadEtlFileMonitor;
                 _cts = new CancellationTokenSource();
                 _token = new AwsResusableCancellationToken();
 
@@ -125,7 +129,7 @@ namespace DataImport.S3_IO
             string ftpDirectoryPath,
             string uploadDirectoryPath)
         {
-            bool ProcessFile(string x) => true;
+            bool ProcessFile(string x) => _uploadEtlFileMonitor.ProcessFile(x);
             await ProcessS3File(dto, ftpDirectoryPath, uploadDirectoryPath, ProcessFile);
         }
 

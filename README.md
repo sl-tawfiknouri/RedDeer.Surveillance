@@ -42,7 +42,6 @@
 | CaseMessageQueueName | {env}-surveillance-{client}-casemessage |
 | DataImportS3UploadQueueName | {env}-surveillance-{client}-ftp |
 | UploadCoordinatorQueueName | {env}-surveillance-{client}-uploadcoordinator |
-
 #### Client Service
 |Configuration Setting|Example value|
 |--|--|
@@ -63,6 +62,9 @@
 | DataImportTradeFileFtpDirectoryPath | {dirname_1}\\FtpTrade |
 | DataImportEquityFileFtpDirectoryPath | {dirname_2}\\FtpEquity |
 | DataImportAllocationFileFtpDirectoryPath | {dirname_3}\\FtpAllocation |  
+| DataImportEtlFileUploadDirectoryPath | {dirname_4} |
+| DataImportEtlFileFtpDirectoryPath | {dirname_4}\\FtpEtl |
+
 
 ## Data Synchronizer Service
 ### Dependencies

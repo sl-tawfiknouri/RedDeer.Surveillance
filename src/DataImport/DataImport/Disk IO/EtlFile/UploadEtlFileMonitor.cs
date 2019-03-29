@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EtlFile.Interfaces;
-using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
 using Domain.Core.Trading.Orders;
@@ -21,7 +20,7 @@ namespace DataImport.Disk_IO.EtlFile
     public class UploadEtlFileMonitor : BaseUploadFileMonitor, IUploadEtlFileMonitor
     {
         private readonly IUploadConfiguration _uploadConfiguration;
-        private readonly IUploadTradeFileProcessor _fileProcessor;
+        private readonly IUploadEtlFileProcessor _fileProcessor;
         private readonly IEnrichmentService _enrichmentService;
         private readonly IOrdersRepository _ordersRepository;
         private readonly IFileUploadOrdersRepository _fileUploadOrdersRepository;
@@ -33,7 +32,7 @@ namespace DataImport.Disk_IO.EtlFile
         public UploadEtlFileMonitor(
             IUploadConfiguration uploadConfiguration,
             IReddeerDirectory directory,
-            IUploadTradeFileProcessor fileProcessor,
+            IUploadEtlFileProcessor fileProcessor,
             IEnrichmentService enrichmentService,
             IOrdersRepository ordersRepository,
             IFileUploadOrdersRepository fileUploadOrdersRepository,

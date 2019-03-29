@@ -14,15 +14,18 @@ namespace DataImport.Disk_IO.EtlFile
     {
         private readonly IOrderFileToOrderSerialiser _orderFileSerialiser;
         private readonly IEtlFileValidator _etlFileValidator;
-        
+        private readonly IEtlUploadErrorStore _etlUploadErrorStore;
+
         public UploadEtlFileProcessor(
             IOrderFileToOrderSerialiser orderFileSerialiser,
             IEtlFileValidator etlFileValidator,
+            IEtlUploadErrorStore etlUploadErrorStore,
             ILogger logger)
             : base(logger)
         {
             _orderFileSerialiser = orderFileSerialiser ?? throw new ArgumentNullException(nameof(orderFileSerialiser));
             _etlFileValidator = etlFileValidator ?? throw new ArgumentNullException(nameof(etlFileValidator));
+            _etlUploadErrorStore = etlUploadErrorStore ?? throw new ArgumentNullException(nameof(etlUploadErrorStore));
         }
 
         protected override void MapRecord(
@@ -32,10 +35,6 @@ namespace DataImport.Disk_IO.EtlFile
         {
             Logger.LogInformation($"About to validate record {record?.RowId}");
             var validationResult = _etlFileValidator.Validate(record);
-
-            /*
-             * DO THIS BIT DIFFERENTLY
-             */
 
             if (!validationResult.IsValid)
             {
@@ -48,6 +47,8 @@ namespace DataImport.Disk_IO.EtlFile
                     var consolidatedErrorMessage = validationResult.Errors.Aggregate(string.Empty, (a, b) => a + " " + b.ErrorMessage);
                     Logger.LogWarning(consolidatedErrorMessage);
                 }
+
+                _etlUploadErrorStore.Add(record, validationResult.Errors);
 
                 return;
             }
@@ -69,7 +70,13 @@ namespace DataImport.Disk_IO.EtlFile
                 Logger.LogError($"{UploadFileProcessorName} had {_orderFileSerialiser.FailedParseTotal} rows with errors when parsing the input CSV file ({path})");
             }
 
+            var errorMessage = _etlUploadErrorStore.SerialisedErrors();
+
+            // TODO get requirements off elton for how we're passing this information back
+            Logger.LogError(errorMessage);
+
             _orderFileSerialiser.FailedParseTotal = 0;
+            _etlUploadErrorStore.Clear();
         }
     }
 }

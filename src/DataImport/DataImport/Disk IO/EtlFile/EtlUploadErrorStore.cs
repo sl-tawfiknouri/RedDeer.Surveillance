@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DataImport.Disk_IO.EtlFile.Interfaces;
 using FluentValidation.Results;
@@ -35,7 +36,7 @@ namespace DataImport.Disk_IO.EtlFile
 
         public string SerialisedErrors()
         {
-            return _etlErrors.Select(i => i.ToString()).Aggregate(string.Empty, (x,i) => $"{x} {i}");
+            return _etlErrors.Select(i => i.ToString()).Aggregate(string.Empty, (x,i) => $"{x} {i} {Environment.NewLine}");
         }
     }
 }

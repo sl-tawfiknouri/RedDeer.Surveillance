@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DataImport.Disk_IO.EtlFile.Interfaces;
 using FluentValidation.Results;
-using Newtonsoft.Json;
 using SharedKernel.Files.Orders;
 
 namespace DataImport.Disk_IO.EtlFile
@@ -23,10 +22,7 @@ namespace DataImport.Disk_IO.EtlFile
 
         public override string ToString()
         {
-            var recordData =
-                Record != null
-                    ? JsonConvert.SerializeObject(Record)
-                    : string.Empty;
+            var recordData = $"Order id {Record.OrderId}";
 
             var failureMessages =
                 Failures?.Select(FailureMessage).ToList()

@@ -102,7 +102,8 @@ namespace DataImport.Disk_IO.EtlFile
                     .DataImportEtlFailureNotifications
                     .Split(',')
                     .Where(i => !string.IsNullOrWhiteSpace(i))
-                    .Select(y => y.Trim());
+                    .Select(y => y.Trim())
+                    .ToList();
 
             if (!trimmedTargets.Any())
             {
@@ -110,7 +111,17 @@ namespace DataImport.Disk_IO.EtlFile
                 return;
             }
 
-            _messageSender.Send(new SendEmailToRecipient());
+            var message = new SendEmailToRecipient
+            {
+                Subject = "Surveillance File Validation",
+                Message = errorMessage,
+
+                OverrideDefaultFromAddress = false,
+                ToAddresses = trimmedTargets,
+                IsHtml = true,
+            };
+
+            _messageSender.Send(message);
         }
     }
 }

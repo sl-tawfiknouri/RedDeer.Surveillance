@@ -75,6 +75,7 @@ namespace DataImport
             For<IAllocationFileCsvToOrderAllocationSerialiser>().Use<AllocationFileCsvToOrderAllocationSerialiser>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
+            For<IEmailNotificationMessageSender>().Use<EmailNotificationMessageSender>();
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
 
             For<IUploadEtlFileMonitor>().Use<UploadEtlFileMonitor>();

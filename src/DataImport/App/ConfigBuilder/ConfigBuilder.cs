@@ -99,7 +99,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
                 AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
                 BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder)
+                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
             };
         }
 

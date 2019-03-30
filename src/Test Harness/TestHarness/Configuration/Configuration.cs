@@ -10,6 +10,7 @@ namespace TestHarness.Configuration
         public string ScheduleRuleDistributedWorkQueueName { get; set; }
         public string UploadCoordinatorQueueName { get; set; }
         public string TestRuleRunUpdateQueueName { get; set; }
+        public string EmailServiceSendEmailQueueName { get; set; }
         public string ScheduledRuleDeadLetterQueueName { get; set; }
         public string CaseMessageDeadLetterQueueName { get; set; }
         public string ScheduleRuleDistributedWorkDeadLetterQueueName { get; set; }

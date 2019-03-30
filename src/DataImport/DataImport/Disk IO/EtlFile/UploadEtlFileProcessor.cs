@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Contracts.Email;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Shared;
+using DataImport.MessageBusIO.Interfaces;
 using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Files.Orders;
@@ -17,12 +19,14 @@ namespace DataImport.Disk_IO.EtlFile
         private readonly IEtlFileValidator _etlFileValidator;
         private readonly IEtlUploadErrorStore _etlUploadErrorStore;
         private readonly IUploadConfiguration _configuration;
+        private readonly IEmailNotificationMessageSender _messageSender;
 
         public UploadEtlFileProcessor(
             IOrderFileToOrderSerialiser orderFileSerialiser,
             IEtlFileValidator etlFileValidator,
             IEtlUploadErrorStore etlUploadErrorStore,
             IUploadConfiguration configuration,
+            IEmailNotificationMessageSender messageSender,
             ILogger<UploadEtlFileProcessor> logger)
             : base(logger)
         {
@@ -30,6 +34,7 @@ namespace DataImport.Disk_IO.EtlFile
             _etlFileValidator = etlFileValidator ?? throw new ArgumentNullException(nameof(etlFileValidator));
             _etlUploadErrorStore = etlUploadErrorStore ?? throw new ArgumentNullException(nameof(etlUploadErrorStore));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _messageSender = messageSender ?? throw new ArgumentNullException(nameof(messageSender));
         }
 
         protected override void MapRecord(
@@ -105,7 +110,7 @@ namespace DataImport.Disk_IO.EtlFile
                 return;
             }
 
-            // 
+            _messageSender.Send(new SendEmailToRecipient());
         }
     }
 }

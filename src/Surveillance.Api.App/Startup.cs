@@ -170,11 +170,8 @@ namespace Surveillance.Api.App
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHttpsRedirection();
-            }
 
+            app.UseHttpsRedirection();
             app.UseIpRateLimiting();
             app.UseResponseCompression();
 

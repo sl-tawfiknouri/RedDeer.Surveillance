@@ -5,6 +5,6 @@ namespace DataImport.MessageBusIO.Interfaces
 {
     public interface IEmailNotificationMessageSender
     {
-        Task Send(SendEmailToRecipient message);
+        Task Send(SendSimpleEmailToRecipient message);
     }
 }

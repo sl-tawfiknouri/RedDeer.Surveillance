@@ -124,7 +124,7 @@ namespace DataImport.Disk_IO.EtlFile
                 return;
             }
 
-            var message = new SendEmailToRecipient
+            var message = new SendSimpleEmailToRecipient
             {
                 Subject = "Surveillance File Validation",
                 Message = errorMessage,

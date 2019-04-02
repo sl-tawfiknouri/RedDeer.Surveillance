@@ -5,7 +5,7 @@ using Contracts.Email;
 using DataImport.MessageBusIO.Interfaces;
 using Infrastructure.Network.Aws.Interfaces;
 using Microsoft.Extensions.Logging;
-using RedDeer.Contracts.SurveillanceService.Interfaces;
+using IMessageBusSerialiser = Contracts.Email.IMessageBusSerialiser;
 
 namespace DataImport.MessageBusIO
 {
@@ -28,7 +28,7 @@ namespace DataImport.MessageBusIO
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Send(SendEmailToRecipient message)
+        public async Task Send(SendSimpleEmailToRecipient message)
         {
             if (message == null)
             {

@@ -178,7 +178,7 @@ namespace Surveillance.Api.App
 
             app.UseAuthentication();
 
-            app.UseGraphQL<SurveillanceSchema>();
+            app.UseGraphQL<SurveillanceSchema>("/graphql/surveillance");
             app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
         }
     }

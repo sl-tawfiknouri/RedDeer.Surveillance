@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Security.Core;
 using Security.Core.Abstractions;
 using Security.Core.Services;
+using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
 using Surveillance.Api.App.Infrastructure.Interfaces;
 
@@ -113,6 +114,7 @@ namespace Surveillance.Api.App
                     else
                     {
                         _logger.LogError($"No secret key found for JWT");
+                        throw new JwtMissingSecurityException();
                     }
 
                     options.TokenValidationParameters = new TokenValidationParameters

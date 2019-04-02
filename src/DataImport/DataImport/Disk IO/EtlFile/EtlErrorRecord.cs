@@ -30,7 +30,7 @@ namespace DataImport.Disk_IO.EtlFile
 
             var projectedFailureMessages =
                 failureMessages.Any() ?
-                failureMessages.Aggregate("Errors. ", (x, y) => $"{x} {y} {Environment.NewLine}")
+                failureMessages.Aggregate(string.Empty, (x, y) => $"{x} {y} {Environment.NewLine}")
                 : string.Empty;
 
             return $"{recordData} {Environment.NewLine} {projectedFailureMessages} {Environment.NewLine}";

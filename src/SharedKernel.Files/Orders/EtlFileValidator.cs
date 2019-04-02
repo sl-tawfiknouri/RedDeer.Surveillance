@@ -32,10 +32,12 @@ namespace SharedKernel.Files.Orders
         
         private void RulesForSufficientInstrumentIdentificationCodes()
         {
-            RuleFor(x => x).Must(x =>
-                !string.IsNullOrWhiteSpace(x.InstrumentIsin)
-                || !string.IsNullOrWhiteSpace(x.InstrumentSedol)
-                || !string.IsNullOrWhiteSpace(x.InstrumentFigi));
+            RuleFor(x => x)
+                .Must(x =>
+                    !string.IsNullOrWhiteSpace(x.InstrumentIsin)
+                    || !string.IsNullOrWhiteSpace(x.InstrumentSedol)
+                    || !string.IsNullOrWhiteSpace(x.InstrumentFigi))
+                .WithMessage("Instrument must have either a sedol, isin or figi");
         }
 
         private void RulesForIdentificationCodes()

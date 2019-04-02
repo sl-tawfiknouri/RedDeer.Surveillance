@@ -36,7 +36,22 @@ namespace DataImport.Disk_IO.EtlFile
 
         public string SerialisedErrors()
         {
-            return _etlErrors.Select(i => i.ToString()).Aggregate(string.Empty, (x,i) => $"{x} {i} {Environment.NewLine}");
+            return _etlErrors.Select(i => i.ToString()).Aggregate(string.Empty, (x, i) => $"{x} {i} {Environment.NewLine}");
+        }
+
+        public IEnumerable<string> SerialisedErrors(int segmentLimit)
+        {
+            var listCnt = _etlErrors.Count;
+            var iterations = 0;
+
+            while (listCnt > 0)
+            {
+                listCnt -= segmentLimit;
+                var errors = _etlErrors.Skip(iterations * segmentLimit).Take(segmentLimit);
+                iterations++;
+
+                yield return errors.Select(i => i.ToString()).Aggregate(string.Empty, (x, i) => $"{x} {i} {Environment.NewLine}");
+            }
         }
     }
 }

@@ -10,5 +10,6 @@ namespace DataImport.Disk_IO.EtlFile.Interfaces
         void Clear();
         string SerialisedErrors();
         IReadOnlyCollection<string> SerialisedRecordErrors();
+        IEnumerable<string> SerialisedErrors(int segmentLimit);
     }
 }

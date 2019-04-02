@@ -94,7 +94,20 @@ namespace DataImport.Disk_IO.EtlFile
 
         private void DispatchEmailNotifications()
         {
-            var errorMessage = _etlUploadErrorStore.SerialisedErrors();
+            // each error record is roughly around 1kb, limit of 256k for message. Under utilise sent rows to allow for very bad error states.
+            var errorBody = _etlUploadErrorStore.SerialisedErrors(100);
+
+            foreach (var error in errorBody)
+            {
+                DispatchEmail(error);
+            }
+        }
+
+        private void DispatchEmail(string errorBody)
+        {
+            var preamble = $"Uploaded file for surveillance received at {DateTime.UtcNow} (UTC) had validation errors. The file will not be processed until these errors are addressed. {Environment.NewLine} {Environment.NewLine}";
+
+            var errorMessage = $"{preamble} {errorBody}";
             Logger.LogError(errorMessage);
 
             var trimmedTargets =

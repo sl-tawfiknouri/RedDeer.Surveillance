@@ -14,7 +14,7 @@ namespace Surveillance.Api.App.Infrastructure
 
         public IClaimsManifest Manifest { get; }
 
-        public bool CanReadApi(ClaimsPrincipal principal)
+        public bool IsAuthorised(ClaimsPrincipal principal)
         {
             return principal.HasClaim(i =>
                 string.Equals(i.Value, Manifest.SurveillanceReaderPrivilege, StringComparison.OrdinalIgnoreCase)

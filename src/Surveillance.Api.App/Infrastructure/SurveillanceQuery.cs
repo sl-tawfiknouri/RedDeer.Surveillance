@@ -13,7 +13,7 @@ namespace Surveillance.Api.App.Infrastructure
             IHttpContextAccessor ctx,
             IActiveRulesService ruleService)
         {
-            if (!authorisation.CanReadApi(ctx.HttpContext.User))
+            if (!authorisation.IsAuthorised(ctx.HttpContext.User))
             {
                 return;
             }          

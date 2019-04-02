@@ -5,7 +5,7 @@ namespace Surveillance.Api.App.Infrastructure
 {
     public class SurveillanceStubAuthorisation : ISurveillanceAuthorisation
     {
-        public bool CanReadApi(ClaimsPrincipal principal)
+        public bool IsAuthorised(ClaimsPrincipal principal)
         {
             return true;
         }

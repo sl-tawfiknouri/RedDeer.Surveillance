@@ -38,7 +38,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
                     validationFailures);
 
             var recordStr = record.ToString();
-            var expectedResponse = $"Order id 54321 {Environment.NewLine} Errors.  Apple. Expected type fruit, not company {Environment.NewLine} {Environment.NewLine}";
+            var expectedResponse = $"Order id 54321 {Environment.NewLine}  Apple. Expected type fruit, not company {Environment.NewLine} {Environment.NewLine}";
 
             Assert.AreEqual(recordStr, expectedResponse);
         }
@@ -58,7 +58,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
                     validationFailures);
 
             var recordStr = record.ToString();
-            var expectedResponse = $"Order id 12345 {Environment.NewLine} Errors.  Apple. Expected type fruit, not company {Environment.NewLine} Java. Expected type location, not programming language {Environment.NewLine} {Environment.NewLine}";
+            var expectedResponse = $"Order id 12345 {Environment.NewLine}  Apple. Expected type fruit, not company {Environment.NewLine} Java. Expected type location, not programming language {Environment.NewLine} {Environment.NewLine}";
 
             Assert.AreEqual(recordStr, expectedResponse);
         }

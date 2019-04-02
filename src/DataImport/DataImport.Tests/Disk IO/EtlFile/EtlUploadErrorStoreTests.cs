@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DataImport.Disk_IO.EtlFile;
 using FluentValidation.Results;
 using NUnit.Framework;
@@ -46,7 +47,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
             store.Add(contract, validationFailures);
             var errors = store.SerialisedErrors();
             var expectedResult =
-                " Order id 12345 \r\n  \r\n \r\n";
+                $" Order id 12345 {Environment.NewLine}  {Environment.NewLine} {Environment.NewLine}";
 
             Assert.AreEqual(errors, expectedResult);
         }

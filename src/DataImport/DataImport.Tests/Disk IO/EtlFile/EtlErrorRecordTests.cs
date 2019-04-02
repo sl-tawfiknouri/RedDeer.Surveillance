@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DataImport.Disk_IO.EtlFile;
 using FluentValidation.Results;
 using NUnit.Framework;
@@ -18,7 +19,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
                     new List<ValidationFailure>());
 
             var recordStr = record.ToString();
-            var expectedResponse = "Order id 23456 \r\n  \r\n";
+            var expectedResponse = $"Order id 23456 {Environment.NewLine}  {Environment.NewLine}";
 
             Assert.AreEqual(recordStr, expectedResponse);
         }
@@ -37,7 +38,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
                     validationFailures);
 
             var recordStr = record.ToString();
-            var expectedResponse = "Order id 54321 \r\n Errors.  Apple. Expected type fruit, not company \r\n \r\n";
+            var expectedResponse = $"Order id 54321 {Environment.NewLine} Errors.  Apple. Expected type fruit, not company {Environment.NewLine} {Environment.NewLine}";
 
             Assert.AreEqual(recordStr, expectedResponse);
         }
@@ -57,7 +58,7 @@ namespace DataImport.Tests.Disk_IO.EtlFile
                     validationFailures);
 
             var recordStr = record.ToString();
-            var expectedResponse = "Order id 12345 \r\n Errors.  Apple. Expected type fruit, not company \r\n Java. Expected type location, not programming language \r\n \r\n";
+            var expectedResponse = $"Order id 12345 {Environment.NewLine} Errors.  Apple. Expected type fruit, not company {Environment.NewLine} Java. Expected type location, not programming language {Environment.NewLine} {Environment.NewLine}";
 
             Assert.AreEqual(recordStr, expectedResponse);
         }

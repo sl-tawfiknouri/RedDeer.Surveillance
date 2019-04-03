@@ -128,7 +128,11 @@ namespace Surveillance.DataLayer.Api.RuleParameter
                 using (var httpClient = _httpClientFactory.ClientServiceHttpClient(
                     _dataLayerConfiguration.ClientServiceUrl,
                     _dataLayerConfiguration.SurveillanceUserApiAccessToken))
-                {
+                {    
+                    _logger.LogInformation($"RuleParameterApiRepository ClientserviceUrl {_dataLayerConfiguration.ClientServiceUrl}");
+                    _logger.LogInformation($"RuleParameterApiRepository ApiToken {_dataLayerConfiguration.SurveillanceUserApiAccessToken}");
+                    _logger.LogInformation($"RuleParameterApiRepository HeartbeatRoute {_dataLayerConfiguration.SurveillanceUserApiAccessToken}");
+              
                     var result = await httpClient.GetAsync(HeartbeatRoute, token);
 
                     if (!result.IsSuccessStatusCode)

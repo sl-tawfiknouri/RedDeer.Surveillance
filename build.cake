@@ -138,7 +138,7 @@ Task("Publish")
 				{				
 					Configuration = "Release",
 					Runtime = "ubuntu-x64",
-					NoBuild=true,
+					NoBuild=false,
 					NoRestore=true,
 					Verbosity=DotNetCoreVerbosity.Normal
 				};	

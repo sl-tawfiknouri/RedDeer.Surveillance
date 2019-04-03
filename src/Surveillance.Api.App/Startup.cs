@@ -9,7 +9,6 @@ using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -75,9 +74,7 @@ namespace Surveillance.Api.App
         {
             if (_environment.IsDevelopment())
             {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
-
-                // services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
+                services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
             }
             else
             {
@@ -124,28 +121,15 @@ namespace Surveillance.Api.App
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ClockSkew = TimeSpan.FromMinutes(1),
-                        RequireExpirationTime = false,
-                        ValidateLifetime = false,
-                        ValidateIssuer = false,
-                        ValidIssuers = new string[0],
-                        ValidateAudience = false,
-                        ValidAudiences = new string[0],
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        ValidateIssuer = true,
+                        ValidIssuers = validIssuers,
+                        ValidateAudience = true,
+                        ValidAudiences = validAudiences,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKeys = issuerSigningKeys
                     };
-
-                    //options.TokenValidationParameters = new TokenValidationParameters
-                    //{
-                    //    ClockSkew = TimeSpan.FromMinutes(1),
-                    //    RequireExpirationTime = true,
-                    //    ValidateLifetime = true,
-                    //    ValidateIssuer = true,
-                    //    ValidIssuers = validIssuers,
-                    //    ValidateAudience = true,
-                    //    ValidAudiences = validAudiences,
-                    //    ValidateIssuerSigningKey = true,
-                    //    IssuerSigningKeys = issuerSigningKeys
-                    //};
 
                     options.Events = new JwtBearerEvents
                     {

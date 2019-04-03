@@ -9,6 +9,7 @@ using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -55,9 +56,10 @@ namespace Surveillance.Api.App
 
             services.AddScoped<SurveillanceSchema>();
             services.AddScoped<IClaimsManifest, ClaimsManifest>();
-
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+
+            var manifest = new ClaimsManifest();
 
             services
                 .AddGraphQL(o =>
@@ -73,7 +75,9 @@ namespace Surveillance.Api.App
         {
             if (_environment.IsDevelopment())
             {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
+                services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
+
+                // services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
             }
             else
             {
@@ -120,15 +124,28 @@ namespace Surveillance.Api.App
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ClockSkew = TimeSpan.FromMinutes(1),
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        ValidateIssuer = true,
-                        ValidIssuers = validIssuers,
-                        ValidateAudience = true,
-                        ValidAudiences = validAudiences,
+                        RequireExpirationTime = false,
+                        ValidateLifetime = false,
+                        ValidateIssuer = false,
+                        ValidIssuers = new string[0],
+                        ValidateAudience = false,
+                        ValidAudiences = new string[0],
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKeys = issuerSigningKeys
                     };
+
+                    //options.TokenValidationParameters = new TokenValidationParameters
+                    //{
+                    //    ClockSkew = TimeSpan.FromMinutes(1),
+                    //    RequireExpirationTime = true,
+                    //    ValidateLifetime = true,
+                    //    ValidateIssuer = true,
+                    //    ValidIssuers = validIssuers,
+                    //    ValidateAudience = true,
+                    //    ValidAudiences = validAudiences,
+                    //    ValidateIssuerSigningKey = true,
+                    //    IssuerSigningKeys = issuerSigningKeys
+                    //};
 
                     options.Events = new JwtBearerEvents
                     {
@@ -170,8 +187,11 @@ namespace Surveillance.Api.App
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
-            app.UseHttpsRedirection();
             app.UseIpRateLimiting();
             app.UseResponseCompression();
 

@@ -41,7 +41,7 @@ namespace DataImport.Disk_IO.TradeFile
 
                 if (validationResult.Errors.Any())
                 {
-                    var consolidatedErrorMessage = validationResult.Errors.Aggregate(string.Empty, (a, b) => a + " " + b.ErrorMessage);
+                    var consolidatedErrorMessage = validationResult.Errors.Aggregate($"order {record?.OrderId}", (a, b) => a + " " + b.ErrorMessage);
                     Logger.LogWarning(consolidatedErrorMessage);
                 }
 

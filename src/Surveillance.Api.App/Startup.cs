@@ -50,8 +50,8 @@ namespace Surveillance.Api.App
             services.AddHttpContextAccessor();
             AddRateLimiting(services);
             AddJwtAuth(services);
-            AddSurveillanceAuth(services);
 
+            services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
             services.AddScoped<SurveillanceSchema>();
             services.AddScoped<IClaimsManifest, ClaimsManifest>();
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
@@ -67,18 +67,6 @@ namespace Surveillance.Api.App
                 })
                 .AddGraphTypes(ServiceLifetime.Scoped)
                 .AddDataLoader();
-        }
-
-        private void AddSurveillanceAuth(IServiceCollection services)
-        {
-            if (_environment.IsDevelopment())
-            {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceStubAuthorisation>();
-            }
-            else
-            {
-                services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
-            }
         }
 
         private void AddJwtAuth(IServiceCollection services)

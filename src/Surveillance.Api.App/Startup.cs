@@ -161,9 +161,10 @@ namespace Surveillance.Api.App
             }
             else
             {
-                app.UseHttpsRedirection();
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseIpRateLimiting();
             app.UseResponseCompression();
 

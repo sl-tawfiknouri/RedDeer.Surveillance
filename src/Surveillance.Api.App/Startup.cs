@@ -80,7 +80,7 @@ namespace Surveillance.Api.App
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
 
-                    options.RequireHttpsMetadata = !_environment.IsDevelopment();
+                    options.RequireHttpsMetadata = true;
 
                     var domainManifest = new DomainManifest();
                     var environment = Configuration.GetValue<string>("Environment");

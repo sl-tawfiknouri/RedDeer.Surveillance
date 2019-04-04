@@ -124,8 +124,10 @@ namespace Surveillance.Api.App
                         OnAuthenticationFailed = (context) =>
                         {
                             _logger.LogError(context.Exception, $"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
+
+                            context.Response.StatusCode = 401;
                             context.Fail("Invalid JWT token");
-                            context.HttpContext.Abort();
+                            
                             return Task.CompletedTask;
                         },
 
@@ -170,6 +172,16 @@ namespace Surveillance.Api.App
             app.UseResponseCompression();
 
             app.UseAuthentication();
+
+            // Stopping execution when UnAuthenticated
+            app.Use(async (context, next) =>
+            {
+                if (context.Response.StatusCode != 401)
+                {
+                    await next.Invoke();
+                }
+            });
+
             app.UseGraphQL<SurveillanceSchema>("/graphql/surveillance");
         }
     }

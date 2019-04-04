@@ -65,6 +65,7 @@ namespace Surveillance.Api.App
                     o.ExposeExceptions = _environment.IsDevelopment();
                     o.EnableMetrics = true;
                 })
+                .AddUserContextBuilder(i => i.User)
                 .AddGraphTypes(ServiceLifetime.Scoped)
                 .AddDataLoader();
         }

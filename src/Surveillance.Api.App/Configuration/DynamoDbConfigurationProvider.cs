@@ -20,9 +20,6 @@ namespace Surveillance.Api.App.Configuration
         private readonly object _lock = new object();
         private readonly IEnvironmentService _environmentService;
         private readonly IAmazonDynamoDB _client;
-
-        public static bool IsEc2Instance { get; private set; }
-        public static bool IsUnitTest { get; private set; }
         public NLog.Logger Logger { get; }
 
         public DynamoDbConfigurationProvider(
@@ -44,11 +41,8 @@ namespace Surveillance.Api.App.Configuration
                 {
                     return _dynamoConfig;
                 }
-
-                IsUnitTest = _environmentService.IsUnitTest();
-                IsEc2Instance = _environmentService.IsEc2Instance();
-
-                if (IsEc2Instance)
+               
+                if (_environmentService.IsEc2Instance())
                 {
                     var environment = GetTag("Environment");
                     var dynamoDbConfigKey = $"{environment}-surveillanceapi-{GetTag("Customer")}".ToLower();

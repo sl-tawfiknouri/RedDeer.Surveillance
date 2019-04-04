@@ -125,6 +125,7 @@ namespace Surveillance.Api.App
                         {
                             _logger.LogError(context.Exception, $"Authentication Failed for Identity: {context.Principal?.Identity?.Name}");
                             context.Fail("Invalid JWT token");
+                            context.HttpContext.Abort();
                             return Task.CompletedTask;
                         },
 

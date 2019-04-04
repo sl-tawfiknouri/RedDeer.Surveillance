@@ -7,7 +7,6 @@ using Domain.Surveillance.Rules;
 using Domain.Surveillance.Rules.Interfaces;
 using GraphQL;
 using GraphQL.Server;
-using GraphQL.Server.Ui.Playground;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -180,9 +179,7 @@ namespace Surveillance.Api.App
             app.UseResponseCompression();
 
             app.UseAuthentication();
-
             app.UseGraphQL<SurveillanceSchema>("/graphql/surveillance");
-            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
         }
     }
 }

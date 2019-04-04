@@ -24,7 +24,6 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.17.13" />
     <PackageReference Include="AWSSDK.EC2" Version="3.3.87" />
     <PackageReference Include="DasMulli.Win32.ServiceUtils" Version="1.2.0" />
-    <PackageReference Include="GraphiQL" Version="1.2.0" />
     <PackageReference Include="GraphQL" Version="2.4.0" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="3.4.0" />

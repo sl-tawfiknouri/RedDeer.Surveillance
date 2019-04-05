@@ -8,6 +8,7 @@
         string ScheduleRuleDistributedWorkQueueName { get; }
         string UploadCoordinatorQueueName { get; }
         string TestRuleRunUpdateQueueName { get; }
+        string EmailServiceSendEmailQueueName { get; }
         string AuroraConnectionString { get; }
     }
 }

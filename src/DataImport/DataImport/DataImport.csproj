@@ -13,10 +13,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NLog" Version="4.5.11" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.6.0" />
+    <PackageReference Include="Reddeer.Contracts.Email" Version="1.1.0" />
     <PackageReference Include="StructureMap" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure.Network\Infrastructure.Network.csproj" />
     <ProjectReference Include="..\..\SharedKernel.Files\SharedKernel.Files.csproj" />
     <ProjectReference Include="..\..\Surveillance.System.Auditing\Surveillance.Auditing.csproj" />
     <ProjectReference Include="..\..\Surveillance\Surveillance.DataLayer\Surveillance.DataLayer.csproj" />

@@ -12,6 +12,7 @@ namespace DataSynchroniser.Configuration
         public string ScheduleRuleDistributedWorkQueueName { get; set; }
         public string UploadCoordinatorQueueName { get; set; }
         public string TestRuleRunUpdateQueueName { get; set; }
+        public string EmailServiceSendEmailQueueName { get; set; }
         public string AuroraConnectionString { get; set; }
         public string SurveillanceAuroraConnectionString { get; set; }
 

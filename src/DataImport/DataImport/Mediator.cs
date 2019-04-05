@@ -1,5 +1,6 @@
 ﻿using System;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
+using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.File_Scanner.Interfaces;
 using DataImport.Interfaces;
@@ -14,6 +15,7 @@ namespace DataImport
         private readonly IEnrichmentService _enrichmentService;
         private readonly IUploadAllocationFileMonitor _allocationFileMonitor;
         private readonly IUploadTradeFileMonitor _tradeFileMonitor;
+        private readonly IUploadEtlFileMonitor _etlFileMonitor;
         private readonly IS3FileUploadMonitoringProcess _s3FileUploadProcess;
         private readonly IFileScannerScheduler _fileScanner;
         private readonly ILogger _logger;
@@ -22,6 +24,7 @@ namespace DataImport
             IEnrichmentService enrichmentService,
             IUploadAllocationFileMonitor allocationFileMonitor,
             IUploadTradeFileMonitor tradeFileMonitor,
+            IUploadEtlFileMonitor etlFileMonitor,
             IS3FileUploadMonitoringProcess s3FileUploadProcess,
             IFileScannerScheduler fileScanner,
             ILogger<Mediator> logger)
@@ -37,6 +40,10 @@ namespace DataImport
             _tradeFileMonitor =
                 tradeFileMonitor
                 ?? throw new ArgumentNullException(nameof(tradeFileMonitor));
+
+            _etlFileMonitor =
+                etlFileMonitor
+                ?? throw new ArgumentNullException(nameof(etlFileMonitor));
 
             _s3FileUploadProcess =
                 s3FileUploadProcess
@@ -58,8 +65,9 @@ namespace DataImport
                 _enrichmentService.Initialise();
                 _tradeFileMonitor.Initiate();
                 _allocationFileMonitor.Initiate();
+                _etlFileMonitor.Initiate();
                 _fileScanner.Initialise();
-                _s3FileUploadProcess.Initialise(_allocationFileMonitor, _tradeFileMonitor);
+                _s3FileUploadProcess.Initialise(_allocationFileMonitor, _tradeFileMonitor, _etlFileMonitor);
 
                 _logger.LogInformation("Completed initiating data import in mediator");
             }

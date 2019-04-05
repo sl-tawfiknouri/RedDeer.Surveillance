@@ -28,16 +28,17 @@ namespace DataImport.File_Scanner
             var yesterday = DateTime.UtcNow.AddDays(-1);
             var fileUploads = await _uploadFileRepository.GetOnDate(yesterday);
 
+            var uploadedEtlFile = fileUploads.Any(i => i.FileType == (int)SystemProcessOperationUploadFileType.EtlDataFile);
             var uploadedOrdersFile = fileUploads.Any(i => i.FileType == (int)SystemProcessOperationUploadFileType.OrderDataFile);
             var uploadedAllocationsFile = fileUploads.Any(i => i.FileType == (int)SystemProcessOperationUploadFileType.AllocationDataFile);
 
-            if (uploadedOrdersFile && uploadedAllocationsFile)
+            if ((uploadedOrdersFile || uploadedEtlFile) && uploadedAllocationsFile)
             {
                 _logger.LogInformation($"FileScanner scan found both Orders and Allocations files");
                 return;
             }
 
-            if (!uploadedOrdersFile)
+            if (!uploadedOrdersFile && !uploadedEtlFile)
             {
                 _logger.LogError($"FileScanner Scan found a missing Orders File for {yesterday.Date}. Expected to find a file. CLIENTSERVICES");
             }

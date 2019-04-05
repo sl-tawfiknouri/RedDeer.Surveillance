@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataImport.Disk_IO.Shared;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;

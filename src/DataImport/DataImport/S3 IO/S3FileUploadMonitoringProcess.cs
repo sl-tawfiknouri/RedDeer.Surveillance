@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
+using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.S3_IO.Interfaces;
 using Infrastructure.Network.Aws;
@@ -18,10 +19,9 @@ namespace DataImport.S3_IO
         private CancellationTokenSource _cts;
         private AwsResusableCancellationToken _token;
 
-        private readonly object _lock = new object();
-
         private IUploadAllocationFileMonitor _uploadAllocationFileMonitor;
         private IUploadTradeFileMonitor _uploadTradeFileMonitor;
+        private IUploadEtlFileMonitor _uploadEtlFileMonitor;
         private readonly IFileUploadMessageMapper _mapper;
         private readonly IUploadConfiguration _configuration;
         private readonly IAwsQueueClient _queueClient;
@@ -44,7 +44,8 @@ namespace DataImport.S3_IO
 
         public void Initialise(
             IUploadAllocationFileMonitor uploadAllocationFileMonitor,
-            IUploadTradeFileMonitor uploadTradeFileMonitor)
+            IUploadTradeFileMonitor uploadTradeFileMonitor,
+            IUploadEtlFileMonitor uploadEtlFileMonitor)
         {
             try
             {
@@ -52,6 +53,7 @@ namespace DataImport.S3_IO
 
                 _uploadAllocationFileMonitor = uploadAllocationFileMonitor;
                 _uploadTradeFileMonitor = uploadTradeFileMonitor;
+                _uploadEtlFileMonitor = uploadEtlFileMonitor;
                 _cts = new CancellationTokenSource();
                 _token = new AwsResusableCancellationToken();
 
@@ -105,6 +107,12 @@ namespace DataImport.S3_IO
                             _configuration.DataImportAllocationFileUploadDirectoryPath);
                         paf.Wait();
                         break;
+                    case "surveillance-etl-order":
+                        await ProcessEtlFile(
+                            dto,
+                            _configuration.DataImportEtlFileFtpDirectoryPath,
+                            _configuration.DataImportEtlFileUploadDirectoryPath);
+                        break;
                     default:
                         _logger.LogInformation($"S3 File Upload Monitoring Process did not recognise the directory of a file. Ignoring file. {dto.FileName}");
                         return;
@@ -116,7 +124,38 @@ namespace DataImport.S3_IO
             }
         }
 
-        private async Task ProcessTradeFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
+        private async Task ProcessEtlFile(
+            FileUploadMessageDto dto,
+            string ftpDirectoryPath,
+            string uploadDirectoryPath)
+        {
+            bool ProcessFile(string x) => _uploadEtlFileMonitor.ProcessFile(x);
+            await ProcessS3File(dto, ftpDirectoryPath, uploadDirectoryPath, ProcessFile);
+        }
+
+        private async Task ProcessTradeFile(
+            FileUploadMessageDto dto,
+            string ftpDirectoryPath,
+            string uploadDirectoryPath)
+        {
+            bool ProcessFile(string x) => _uploadTradeFileMonitor.ProcessFile(x);
+            await ProcessS3File(dto, ftpDirectoryPath, uploadDirectoryPath, ProcessFile);
+        }
+
+        private async Task ProcessAllocationFile(
+            FileUploadMessageDto dto,
+            string ftpDirectoryPath,
+            string uploadDirectoryPath)
+        {
+            bool ProcessFile(string x) => _uploadAllocationFileMonitor.ProcessFile(x);
+            await ProcessS3File(dto, ftpDirectoryPath, uploadDirectoryPath, ProcessFile);
+        }
+
+        private async Task ProcessS3File(
+            FileUploadMessageDto dto,
+            string ftpDirectoryPath,
+            string uploadDirectoryPath,
+            Func<string, bool> processFileDelegate)
         {
             await ProcessFile(dto, 3, ftpDirectoryPath);
 
@@ -129,7 +168,7 @@ namespace DataImport.S3_IO
                 try
                 {
                     _logger.LogInformation($"S3 processing trade file {file}");
-                    var result = _uploadTradeFileMonitor.ProcessFile(file);
+                    var result = processFileDelegate(file);
 
                     if (result == false)
                     {
@@ -157,47 +196,6 @@ namespace DataImport.S3_IO
             _logger.LogInformation($"Moved all {fileCount}.");
         }
 
-        private async Task ProcessAllocationFile(FileUploadMessageDto dto, string ftpDirectoryPath, string uploadDirectoryPath)
-        {
-            await ProcessFile(dto, 3, ftpDirectoryPath);
-
-            var files = Directory.EnumerateFiles(ftpDirectoryPath).ToList();
-            var fileCount = files.Count;
-            _logger.LogInformation($"Found {fileCount} files in the local ftp folder. Moving to the processing folder.");
-
-            foreach (var file in files)
-            {
-                try
-                {
-                    _logger.LogInformation($"S3 processing trade file {file}");
-                    var result = _uploadAllocationFileMonitor.ProcessFile(file);
-
-                    if (result == false)
-                    {
-                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
-                        _token.Cancel = true;
-                    }
-
-                    if (File.Exists(file))
-                    {
-                        _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");
-                        File.Delete(file);
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"S3 Processor could not find file {file}");
-                    }
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError($"S3 File Upload Monitoring Process moving process allocation file {file} to {uploadDirectoryPath} {e.Message}");
-                    continue;
-                }
-            }
-
-            _logger.LogInformation($"S3 File Upload Moved all {fileCount} files.");
-        }
-
         private async Task ProcessFile(FileUploadMessageDto dto, int retries, string ftpDirectoryPath)
         {
             var versionId = string.IsNullOrWhiteSpace(dto?.VersionId) ? "" : $"{dto?.VersionId}-";
@@ -210,7 +208,7 @@ namespace DataImport.S3_IO
             }
             else
             {
-                _logger.LogInformation($"S3 Processor about to process file ({dto?.ToString()}).");
+                _logger.LogInformation($"S3 Processor about to process file ({dto}).");
             }
 
             fileName = $"{versionId}{fileName}";
@@ -222,13 +220,13 @@ namespace DataImport.S3_IO
 
             if (result)
             {
-                _logger.LogInformation($"S3 Processor successfully retrieved file ({dto?.ToString()}) to {destinationFileName}");
+                _logger.LogInformation($"S3 Processor successfully retrieved file ({dto}) to {destinationFileName}");
                 return;
             }
 
             if (retries <= 0)
             {
-                _logger.LogError($"S3 Processor ran out of retries trying to fetch file ({dto?.ToString()}) to {destinationFileName}");
+                _logger.LogError($"S3 Processor ran out of retries trying to fetch file ({dto}) to {destinationFileName}");
                 return;
             }
 

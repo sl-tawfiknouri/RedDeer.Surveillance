@@ -60,7 +60,10 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 DataImportTradeFileFtpDirectoryPath = GetSetting("DataImportTradeFileFtpDirectoryPath", configurationBuilder),
                 DataImportEquityFileFtpDirectoryPath = GetSetting("DataImportEquityFileFtpDirectoryPath", configurationBuilder),
                 DataImportAllocationFileUploadDirectoryPath = GetSetting("DataImportAllocationFileUploadDirectoryPath", configurationBuilder),
-                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder)
+                DataImportAllocationFileFtpDirectoryPath = GetSetting("DataImportAllocationFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFileUploadDirectoryPath = GetSetting("DataImportEtlFileUploadDirectoryPath", configurationBuilder),
+                DataImportEtlFileFtpDirectoryPath = GetSetting("DataImportEtlFileFtpDirectoryPath", configurationBuilder),
+                DataImportEtlFailureNotifications = GetSetting("DataImportEtlFailureNotifications", configurationBuilder)
             };
 
             return networkConfiguration;
@@ -96,7 +99,8 @@ namespace RedDeer.DataImport.DataImport.App.ConfigBuilder
                 SurveillanceUserApiAccessToken = GetSetting("SurveillanceUserApiAccessToken", configurationBuilder),
                 AuroraConnectionString = GetSetting("AuroraConnectionString", configurationBuilder),
                 BmllServiceUrl = GetSetting("BmllServiceUrlAndPort", configurationBuilder),
-                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder)
+                UploadCoordinatorQueueName = GetSetting("UploadCoordinatorQueueName", configurationBuilder),
+                EmailServiceSendEmailQueueName = GetSetting("EmailServiceSendEmailQueueName", configurationBuilder)
             };
         }
 

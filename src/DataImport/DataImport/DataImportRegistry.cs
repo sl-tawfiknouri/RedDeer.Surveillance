@@ -1,5 +1,7 @@
 ﻿using DataImport.Disk_IO.AllocationFile;
 using DataImport.Disk_IO.AllocationFile.Interfaces;
+using DataImport.Disk_IO.EtlFile;
+using DataImport.Disk_IO.EtlFile.Interfaces;
 using DataImport.Disk_IO.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
@@ -73,7 +75,13 @@ namespace DataImport
             For<IAllocationFileCsvToOrderAllocationSerialiser>().Use<AllocationFileCsvToOrderAllocationSerialiser>();
             For<IAllocationFileProcessor>().Use<AllocationFileProcessor>();
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
+            For<IEmailNotificationMessageSender>().Use<EmailNotificationMessageSender>();
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
+
+            For<IUploadEtlFileMonitor>().Use<UploadEtlFileMonitor>();
+            For<IUploadEtlFileProcessor>().Use<UploadEtlFileProcessor>();
+            For<IEtlFileValidator>().Use<EtlFileValidator>();
+            For<IEtlUploadErrorStore>().Use<EtlUploadErrorStore>();
 
             For<IFileScanner>().Use<FileScanner>();
             For<IFileScannerScheduler>().Use<FileScannerScheduler>();

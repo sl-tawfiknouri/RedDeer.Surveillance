@@ -57,8 +57,6 @@ namespace Surveillance.Api.App
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
-            var manifest = new ClaimsManifest();
-
             services
                 .AddGraphQL(o =>
                 {

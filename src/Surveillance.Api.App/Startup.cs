@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 using AspNetCoreRateLimit;
 using Domain.Surveillance.Rules;
 using Domain.Surveillance.Rules.Interfaces;
+using Domain.Surveillance.Scheduling;
 using GraphQL;
+using GraphQL.Authorization;
 using GraphQL.Server;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,9 +20,9 @@ using Microsoft.IdentityModel.Tokens;
 using Security.Core;
 using Security.Core.Abstractions;
 using Security.Core.Services;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
-using Surveillance.Api.App.Infrastructure.Interfaces;
 
 namespace Surveillance.Api.App
 {
@@ -47,15 +50,49 @@ namespace Surveillance.Api.App
 
             services.AddOptions();
             services.AddMemoryCache();
-            services.AddHttpContextAccessor();
             AddRateLimiting(services);
             AddJwtAuth(services);
 
-            services.AddScoped<ISurveillanceAuthorisation, SurveillanceAuthorisation>();
-            services.AddScoped<SurveillanceSchema>();
+            services.AddScoped<ISchema>(s =>
+            {
+                var schema = new SurveillanceSchema(new FuncDependencyResolver(s.GetRequiredService));
+                schema.FindType(nameof(Rules)).AuthorizeWith(PolicyManifest.UserPolicy);
+                return schema;
+            });
+
             services.AddScoped<IClaimsManifest, ClaimsManifest>();
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+            services.AddScoped<IProvideClaimsPrincipal, GraphQlUserContext>();
+
+            var manifest = new ClaimsManifest();
+
+            services.AddGraphQlAuth(_ =>
+            {
+                _.AddPolicy(
+                    PolicyManifest.AdminPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReaderPrivilege, manifest.SurveillanceWriterPrivilege));
+
+                _.AddPolicy(
+                    PolicyManifest.AdminReaderPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReaderPrivilege));
+
+                _.AddPolicy(
+                    PolicyManifest.AdminWriterPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceWriterPrivilege));
+
+                _.AddPolicy(
+                    PolicyManifest.UserPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReader, manifest.SurveillanceWriter));
+
+                _.AddPolicy(
+                    PolicyManifest.UserReaderPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReader));
+
+                _.AddPolicy(
+                    PolicyManifest.UserWriterPolicy,
+                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceWriter));
+            });
 
             services
                 .AddGraphQL(o =>
@@ -63,7 +100,7 @@ namespace Surveillance.Api.App
                     o.ExposeExceptions = _environment.IsDevelopment();
                     o.EnableMetrics = true;
                 })
-                .AddUserContextBuilder(i => i.User)
+                .AddUserContextBuilder(i => new GraphQlUserContext { User = i.User })
                 .AddGraphTypes(ServiceLifetime.Scoped)
                 .AddDataLoader();
         }
@@ -180,7 +217,7 @@ namespace Surveillance.Api.App
                 }
             });
 
-            app.UseGraphQL<SurveillanceSchema>("/graphql/surveillance");
+            app.UseGraphQL<ISchema>("/graphql/surveillance");
         }
     }
 }

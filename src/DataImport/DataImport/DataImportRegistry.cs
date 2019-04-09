@@ -77,6 +77,7 @@ namespace DataImport
             For<IUploadCoordinatorMessageSender>().Use<UploadCoordinatorMessageSender>();
             For<IEmailNotificationMessageSender>().Use<EmailNotificationMessageSender>();
             For<IMessageBusSerialiser>().Use<MessageBusSerialiser>();
+            For<Contracts.Email.IMessageBusSerialiser>().Use<Contracts.Email.MessageBusSerialiser>();
 
             For<IUploadEtlFileMonitor>().Use<UploadEtlFileMonitor>();
             For<IUploadEtlFileProcessor>().Use<UploadEtlFileProcessor>();

@@ -1,0 +1,30 @@
+﻿using GraphQL.DataLoader;
+using GraphQL.Types;
+using Surveillance.Api.DataAccess.Abstractions.Entities;
+using Surveillance.Api.DataAccess.Abstractions.Repositories;
+
+namespace Surveillance.Api.App.Types.Engine
+{
+    public class SystemProcessOperationDistributeRuleGraphType : ObjectGraphType<ISystemProcessOperationDistributeRule>
+    {
+        public SystemProcessOperationDistributeRuleGraphType(
+            ISystemProcessOperationRepository operationRepository,
+            IDataLoaderContextAccessor dataLoaderAccessor)
+        {
+            Field(i => i.Id).Description("Identifier for the system process operation distribute rule");
+            Field<SystemProcessOperationGraphType>("ProcessOperation", resolve: context =>
+            {
+                var loader =
+                    dataLoaderAccessor.Context.GetOrAddLoader(
+                        $"GetSystemProcessOperationById-{context.Source.Id}",
+                        () => operationRepository.GetForId(context.Source.Id));
+
+                return loader.LoadAsync();
+            });
+
+            Field(i => i.InitialStart).Description("Scheduled rule start before distribution");
+            Field(i => i.InitialEnd).Description("Scheduled rule end before distribution");
+            Field(i => i.RulesDistributed).Description("Rules distributed by the disassemble operation");
+        }
+    }
+}

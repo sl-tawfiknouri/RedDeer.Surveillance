@@ -1,4 +1,6 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.Authorization;
+using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 
 namespace Surveillance.Api.App.Types.Trading
@@ -7,6 +9,7 @@ namespace Surveillance.Api.App.Types.Trading
     {
         public OrderDatesGraphType()
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
             Field(i => i.PlacedDate).Description("Order placed on");
             Field(i => i.BookedDate).Description("Order booked with internal traders on");
             Field(i => i.AmendedDate).Description("Order last amended on");

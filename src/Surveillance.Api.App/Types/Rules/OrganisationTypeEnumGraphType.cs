@@ -1,5 +1,7 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.Authorization;
+using GraphQL.Types;
 using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
+using Surveillance.Api.App.Authorization;
 
 namespace Surveillance.Api.App.Types.Rules
 {
@@ -7,6 +9,8 @@ namespace Surveillance.Api.App.Types.Rules
     {
         public OrganisationTypeEnumGraphType()
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
+
             Name = "OrganisationFactors";
         }
     }

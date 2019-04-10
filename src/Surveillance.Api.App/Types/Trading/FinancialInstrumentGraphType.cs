@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using GraphQL.Authorization;
 using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 
@@ -12,6 +14,8 @@ namespace Surveillance.Api.App.Types.Trading
             IMarketRepository marketRepository,
             IDataLoaderContextAccessor dataLoader)
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
+
             Field(i => i.Id).Description("Financial Instrument Identifier");
 
             Field<ListGraphType<MarketGraphType>>(

@@ -1,5 +1,7 @@
 ﻿using Domain.Core.Markets;
+using GraphQL.Authorization;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 
 namespace Surveillance.Api.App.Types.Trading
 {
@@ -7,6 +9,7 @@ namespace Surveillance.Api.App.Types.Trading
     {
         public MarketEnumGraphType()
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
             Name = "MarketCategory";
         }
     }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AspNetCoreRateLimit;
 using Domain.Surveillance.Rules;
 using Domain.Surveillance.Rules.Interfaces;
-using Domain.Surveillance.Scheduling;
 using GraphQL;
 using GraphQL.Authorization;
 using GraphQL.Server;
@@ -60,7 +59,6 @@ namespace Surveillance.Api.App
             services.AddScoped<ISchema>(s =>
             {
                 var schema = new SurveillanceSchema(new FuncDependencyResolver(s.GetRequiredService));
-                schema.FindType(nameof(Rules)).AuthorizeWith(PolicyManifest.UserPolicy);
                 return schema;
             });
 

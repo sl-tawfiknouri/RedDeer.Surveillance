@@ -1,5 +1,7 @@
-﻿using GraphQL.DataLoader;
+﻿using GraphQL.Authorization;
+using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Types.Engine;
 using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
@@ -14,6 +16,8 @@ namespace Surveillance.Api.App.Types.Rules
             ISystemProcessOperationRepository operationRepository,
             IDataLoaderContextAccessor dataLoaderAccessor)
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
+
             Field(t => t.Id).Description("Primary Key");
             Field(t => t.CorrelationId).Description("Correlation identifier for rule runs");
             Field(t => t.IsBackTest).Description("Was the rule run part of a back test?");

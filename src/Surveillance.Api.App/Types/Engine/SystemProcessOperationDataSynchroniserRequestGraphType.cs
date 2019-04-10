@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GraphQL.Authorization;
 using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 
@@ -14,6 +16,8 @@ namespace Surveillance.Api.App.Types.Engine
             ISystemProcessOperationRuleRunRepository ruleRunRepository,
             IDataLoaderContextAccessor dataLoaderAccessor)
         {
+            this.AuthorizeWith(PolicyManifest.AdminPolicy);
+
             Field(i => i.Id).Description("Identifier for the system process operation data synchroniser request");
             Field(i => i.QueueMessageId).Description("Queue message id");
 

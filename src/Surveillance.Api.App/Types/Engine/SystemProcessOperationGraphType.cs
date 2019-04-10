@@ -1,5 +1,7 @@
-﻿using GraphQL.DataLoader;
+﻿using GraphQL.Authorization;
+using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
 
@@ -11,6 +13,8 @@ namespace Surveillance.Api.App.Types.Engine
             ISystemProcessRepository operationRepository,
             IDataLoaderContextAccessor dataLoaderAccessor)
         {
+            this.AuthorizeWith(PolicyManifest.AdminPolicy);
+
             Field(i => i.Id).Description("Identifier for the system process operation");
             Field(i => i.SystemProcessId).Description("Identifier for the system process");
 

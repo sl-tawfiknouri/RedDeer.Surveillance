@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using GraphQL.Authorization;
 using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Types.Organisation;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
@@ -15,6 +17,8 @@ namespace Surveillance.Api.App.Types.Trading
             IOrderRepository orderRepository,
             IDataLoaderContextAccessor dataLoader)
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
+
             Field(i => i.Id).Description("Primary key");
 
             Field<ListGraphType<MarketGraphType>>(

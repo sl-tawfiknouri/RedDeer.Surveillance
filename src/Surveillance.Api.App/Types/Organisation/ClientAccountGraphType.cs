@@ -1,5 +1,7 @@
-﻿using GraphQL.DataLoader;
+﻿using GraphQL.Authorization;
+using GraphQL.DataLoader;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
@@ -10,6 +12,8 @@ namespace Surveillance.Api.App.Types.Organisation
     {
         public ClientAccountGraphType(IOrderRepository repository, IDataLoaderContextAccessor dataLoaderAccessor)
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
+
             Field(i => i.Id).Description("Identifier for the client account");
             Field<ListGraphType<OrderLedgerGraphType>>(
                 "Portfolio",

@@ -1,5 +1,7 @@
 ﻿using Domain.Core.Trading.Interfaces;
+using GraphQL.Authorization;
 using GraphQL.Types;
+using Surveillance.Api.App.Authorization;
 
 namespace Surveillance.Api.App.Types.Trading
 {
@@ -7,6 +9,7 @@ namespace Surveillance.Api.App.Types.Trading
     {
         public OrderLedgerGraphType()
         {
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
             Field<ListGraphType<OrderGraphType>>().Name("Orders").Description("The orders associated with this portfolio");
         }
     }

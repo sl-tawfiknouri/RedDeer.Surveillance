@@ -44,6 +44,7 @@
     <ProjectReference Include="..\Domain.Surveillance\Domain.Surveillance.csproj" />
     <ProjectReference Include="..\Infrastructure.Network\Infrastructure.Network.csproj" />
     <ProjectReference Include="..\Surveillance.Api.DataAccess.Abstractions\Surveillance.Api.DataAccess.Abstractions.csproj" />
+    <ProjectReference Include="..\Surveillance.Api.DataAccess\Surveillance.Api.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>

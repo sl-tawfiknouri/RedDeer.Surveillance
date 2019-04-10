@@ -18,7 +18,7 @@ namespace Surveillance.Api.DataAccess.DbContexts.Factory
         public IGraphQlDbContext Build()
         {
             var options = new DbContextOptionsBuilder<GraphQlDbContext>();
-            var connectionString = _config.GetValue<string>("connectionstring");
+            var connectionString = _config.GetValue<string>("SurveillanceApiConnectionString");
             
             options
                 .UseMySql(

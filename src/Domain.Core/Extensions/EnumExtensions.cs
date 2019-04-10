@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Domain.Core.Extensions
@@ -24,6 +25,18 @@ namespace Domain.Core.Extensions
                 }
             }
             return enumerationValue.ToString();
+        }
+
+        public static IList<T> GetEnumPermutations<T>(this T enumerationValue) where T : struct
+        {
+            var enumTypes = new List<T>();
+            var enumValues = Enum.GetValues(typeof(T));
+            foreach (var val in enumValues)
+            {
+                enumTypes.Add((T)val);
+            }
+
+            return enumTypes;
         }
     }
 }

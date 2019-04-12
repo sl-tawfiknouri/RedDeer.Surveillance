@@ -123,8 +123,9 @@ namespace DataImport.Disk_IO.EtlFile
         private void DispatchEmail(string errorBody)
         {
             var preamble = $"Uploaded file for surveillance received at {DateTime.UtcNow} (UTC) had validation errors. The file will not be processed until these errors are addressed. {Environment.NewLine} {Environment.NewLine}";
+            var htmlTaggedPreamble = HtmlTagEnvironmentNewLines(preamble);
 
-            var errorMessage = $"{preamble} {errorBody}";
+            var errorMessage = $"{htmlTaggedPreamble} {errorBody}";
             Logger.LogError(errorMessage);
 
             var trimmedTargets =

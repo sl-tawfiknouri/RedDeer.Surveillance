@@ -95,12 +95,29 @@ namespace DataImport.Disk_IO.EtlFile
         private void DispatchEmailNotifications()
         {
             // each error record is roughly around 1kb, limit of 256k for message. Under utilise sent rows to allow for very bad error states.
-            var errorBody = _etlUploadErrorStore.SerialisedErrors(100);
+            var errorBody = _etlUploadErrorStore.SerialisedErrors(100).ToList().Take(3);
 
             foreach (var error in errorBody)
             {
-                DispatchEmail(error);
+                var htmlTaggedBody = HtmlTagEnvironmentNewLines(error);
+                DispatchEmail(htmlTaggedBody);
             }
+        }
+
+        /// <summary>
+        /// This function is order dependant - if there is html in situ for the text body its transformation is potentially dangerous
+        /// </summary>
+        private string HtmlTagEnvironmentNewLines(string body)
+        {
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                return string.Empty;
+            }
+
+            const string htmlNewLineTag = " <br/> ";
+            body = body.Replace(Environment.NewLine, htmlNewLineTag);
+
+            return body;
         }
 
         private void DispatchEmail(string errorBody)

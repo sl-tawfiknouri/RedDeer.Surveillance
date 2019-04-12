@@ -16,7 +16,7 @@ namespace Surveillance.Api.App.Types.Organisation
 
             Field(t => t.Name).Description("Fund name");
             Field<ListGraphType<OrderLedgerGraphType>>(
-                "Portfolio",
+                "portfolio",
                 resolve: context =>
                 {
                     var loader = dataLoaderAccessor.Context.GetOrAddCollectionBatchLoader<string, IOrderLedger>(

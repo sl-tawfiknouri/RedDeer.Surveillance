@@ -19,7 +19,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.Id).Description("Financial Instrument Identifier");
 
             Field<ListGraphType<MarketGraphType>>(
-                "Market",
+                "market",
                 description: "Market associated with the instrument",
                 resolve: context =>
                 {
@@ -47,7 +47,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.ReddeerId).Description("The reddeer id (security master list) for the instrument");
             Field(i => i.EnrichmentDate).Description("The date the security was enriched on in UTC and in UK time format");
 
-            Field<InstrumentTypeGraphType>("InstrumentType", description: "The type of the instrument");
+            Field<InstrumentTypeGraphType>("instrumentType", description: "The type of the instrument");
 
             Field(i => i.UnderlyingCfi).Description("CFI code for the underlying");
             Field(i => i.UnderlyingName).Description("Name of the underlying instrument");

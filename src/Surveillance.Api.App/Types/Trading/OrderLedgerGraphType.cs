@@ -10,7 +10,7 @@ namespace Surveillance.Api.App.Types.Trading
         public OrderLedgerGraphType()
         {
             this.AuthorizeWith(PolicyManifest.UserPolicy);
-            Field<ListGraphType<OrderGraphType>>().Name("Orders").Description("The orders associated with this portfolio");
+            Field<ListGraphType<OrderGraphType>>().Name("orders").Description("The orders associated with this portfolio");
         }
     }
 }

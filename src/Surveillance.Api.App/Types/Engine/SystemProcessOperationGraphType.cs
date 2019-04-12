@@ -18,7 +18,7 @@ namespace Surveillance.Api.App.Types.Engine
             Field(i => i.Id).Description("Identifier for the system process operation");
             Field(i => i.SystemProcessId).Description("Identifier for the system process");
 
-            Field<SystemProcessGraphType>("Process", resolve: context =>
+            Field<SystemProcessGraphType>("process", resolve: context =>
             {
                 var loader =
                     dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcess>(

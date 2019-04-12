@@ -22,7 +22,7 @@ namespace Surveillance.Api.App.Types.Engine
             Field(i => i.QueueMessageId).Description("Queue message id");
 
             Field(i => i.RuleRunId).Description("Rule run identifier for the data synchroniser");
-            Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>("RuleRun", resolve: context =>
+            Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>("ruleRun", resolve: context =>
             {
                 IQueryable<ISystemProcessOperationRuleRun> IdQuery(IQueryable<ISystemProcessOperationRuleRun> i) => i.Where(x => x.SystemProcessOperationId == context.Source.RuleRunId);
 
@@ -34,7 +34,7 @@ namespace Surveillance.Api.App.Types.Engine
                 return loader.LoadAsync();
             });
 
-            Field<SystemProcessOperationGraphType>("ProcessOperation", resolve: context =>
+            Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
             {
                 var loader =
                     dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcessOperation>(

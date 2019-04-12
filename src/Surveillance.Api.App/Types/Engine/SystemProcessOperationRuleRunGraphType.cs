@@ -24,7 +24,7 @@ namespace Surveillance.Api.App.Types.Engine
             Field(i => i.Start).Description("The start date for the rule run. The actual data for the rule run is pushed out by the rule time window");
             Field(i => i.End).Description("The end date for the rule run. This is the date in the data, not in the real world");
 
-            Field<SystemProcessOperationGraphType>("ProcessOperation", resolve: context =>
+            Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
             {
                 var loader =
                     dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcessOperation>(

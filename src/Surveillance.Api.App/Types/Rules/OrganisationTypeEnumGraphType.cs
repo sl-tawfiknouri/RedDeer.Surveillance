@@ -11,7 +11,7 @@ namespace Surveillance.Api.App.Types.Rules
         {
             this.AuthorizeWith(PolicyManifest.UserPolicy);
 
-            Name = "OrganisationFactors";
+            Name = "organisationFactors";
         }
     }
 }

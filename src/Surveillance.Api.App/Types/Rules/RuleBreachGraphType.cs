@@ -35,7 +35,7 @@ namespace Surveillance.Api.App.Types.Rules
             Field(t => t.OrganisationalFactorValue).Description("The organisational factor value for the organisational factor type i.e. for funds 'The medallion fund'");
             Field(t => t.SystemOperationId).Description("sys op id");
 
-            Field<SystemProcessOperationGraphType>("ProcessOperation", resolve: context =>
+            Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
             {
                 var loader =
                         dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcessOperation>(

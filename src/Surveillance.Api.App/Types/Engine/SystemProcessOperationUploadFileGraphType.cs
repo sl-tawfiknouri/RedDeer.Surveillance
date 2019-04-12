@@ -14,7 +14,7 @@ namespace Surveillance.Api.App.Types.Engine
             this.AuthorizeWith(PolicyManifest.AdminPolicy);
 
             Field(i => i.Id).Description("Identifier for the system process operation upload file");
-            Field<SystemProcessOperationGraphType>("ProcessOperation", resolve: context =>
+            Field<SystemProcessOperationGraphType>("processOperation", resolve: context =>
             {
                 var loader =
                     dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcessOperation>(

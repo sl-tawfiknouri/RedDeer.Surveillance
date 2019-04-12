@@ -16,7 +16,7 @@ namespace Surveillance.Api.App.Types.Organisation
 
             Field(i => i.Id).Description("Identifier for the client account");
             Field<ListGraphType<OrderLedgerGraphType>>(
-                "Portfolio",
+                "portfolio",
                 resolve: context =>
                 {
                     var loader = dataLoaderAccessor.Context.GetOrAddCollectionBatchLoader<string, IOrderLedger>(

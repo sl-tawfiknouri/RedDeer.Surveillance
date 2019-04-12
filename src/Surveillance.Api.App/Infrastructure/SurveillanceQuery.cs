@@ -33,7 +33,7 @@ namespace Surveillance.Api.App.Infrastructure
             IHttpContextAccessor ctx)
         {
              Field<ListGraphType<FinancialInstrumentGraphType>>(
-                "financialinstruments",
+                "financialInstruments",
                 "The financial instruments known to surveillance",
                 arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
                 resolve: context =>
@@ -47,7 +47,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>(
-                "ruleruns",
+                "ruleRuns",
                 description: "The rule runs executed by the system",
                 resolve: context =>
                 {
@@ -57,7 +57,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<SystemProcessOperationUploadFileGraphType>>(
-                "uploadfiles",
+                "uploadFiles",
                 description: "The files uploaded by the system",
                 resolve: context =>
                 {
@@ -67,7 +67,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<SystemProcessOperationDataSynchroniserRequestGraphType>>(
-                "datasynchroniser",
+                "dataSynchroniser",
                 description: "The data synchroniser requests logged by the system",
                 resolve: context =>
                 {
@@ -77,7 +77,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<SystemProcessOperationDistributeRuleGraphType>>(
-                "distributerule",
+                "distributeRule",
                 description: "The rules distributed by the schedule disassembler",
                 resolve: context =>
                 {
@@ -87,7 +87,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<OrderLedgerGraphType>(
-                "metaledger",
+                "metaLedger",
                 description: "Consolidated company portfolio incorporating all funds",
                 resolve: context =>
                 {
@@ -121,7 +121,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<ClientAccountGraphType>>(
-                "clientaccounts",
+                "clientAccounts",
                 description: "The list of client accounts allocated to by surveilled orders",
                 arguments: new QueryArguments(new QueryArgument<StringGraphType> { Name = "id" }),
                 resolve: context =>
@@ -145,7 +145,7 @@ namespace Surveillance.Api.App.Infrastructure
                 });
 
             Field<ListGraphType<RuleBreachGraphType>>(
-                "rulebreaches",
+                "ruleBreaches",
                 description: "Policy rule violations detected by the surveillance engine",
                 arguments: new QueryArguments(new QueryArgument<IdGraphType> { Name = "id" }),
                 resolve: context =>
@@ -174,17 +174,17 @@ namespace Surveillance.Api.App.Infrastructure
                 resolve: context => ruleService.EnabledRules());
 
             Field<ListGraphType<OrganisationTypeEnumGraphType>>(
-                "organisationfactors",
+                "organisationFactors",
                 "The type of organisation factors",
                 resolve: context => OrganisationalFactors.None.GetEnumPermutations());
 
             Field<ListGraphType<OrderTypeGraphType>>(
-                "ordertypes",
+                "orderTypes",
                 "The type of the order given to market",
                 resolve: context => OrderTypes.NONE.GetEnumPermutations());
 
             Field<ListGraphType<InstrumentTypeGraphType>>(
-                "instrumenttypes",
+                "instrumentTypes",
                 "A primitive perspective on the asset class. To see further details use the CFI code",
                 resolve: context => InstrumentTypes.None.GetEnumPermutations());
 

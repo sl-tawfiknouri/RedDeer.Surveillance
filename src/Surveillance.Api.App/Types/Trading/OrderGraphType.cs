@@ -22,7 +22,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.Id).Description("Primary key");
 
             Field<ListGraphType<MarketGraphType>>(
-                "Market",
+                "market",
                 description: "Market associated with the order",
                 resolve: context =>
                 {
@@ -38,7 +38,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.SecurityId).Description("Security Id");
 
             Field<ListGraphType<FinancialInstrumentGraphType>>(
-                "FinancialInstrument",
+                "financialInstrument",
                 description: "Instrument subject to trading in the order",
                 resolve: context =>
                 {
@@ -53,10 +53,10 @@ namespace Surveillance.Api.App.Types.Trading
 
             Field(i => i.ClientOrderId).Description("Client Order Id");
 
-            Field<OrderDatesGraphType>().Name("OrderDates").Description("Dates of key events in the order life cycle");
-            Field<OrderManagementSystemGraphType>().Name("Oms").Description("Order Management System data");
-            Field<OrderTypeGraphType>().Name("OrderTypes").Description("Order type delivered to market i.e. market/limit etc");
-            Field<OrderDirectionGraphType>().Name("OrderDirection").Description("Order direction such as buy/sell short/cover");
+            Field<OrderDatesGraphType>().Name("orderDates").Description("Dates of key events in the order life cycle");
+            Field<OrderManagementSystemGraphType>().Name("oms").Description("Order Management System data");
+            Field<OrderTypeGraphType>().Name("orderTypes").Description("Order type delivered to market i.e. market/limit etc");
+            Field<OrderDirectionGraphType>().Name("orderDirection").Description("Order direction such as buy/sell short/cover");
 
             Field(i => i.Currency).Description("Order currency values are denominated in");
             Field(i => i.SettlementCurrency).Description("Order settlement currency");
@@ -68,7 +68,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.OrderedVolume).Description("Order volume ordered");
             Field(i => i.FilledVolume).Description("Order actual filled volume can be larger or smaller than ordered volume");
 
-            Field<TraderGraphType>().Name("Trader").Description("Trader handling the order salient properties");
+            Field<TraderGraphType>().Name("trader").Description("Trader handling the order salient properties");
 
             Field(i => i.ClearingAgent).Description("Clearing agent used for the trade");
             Field(i => i.DealingInstructions).Description("Instructions for dealer");
@@ -84,7 +84,7 @@ namespace Surveillance.Api.App.Types.Trading
             Field(i => i.Autoscheduled).Description("Order has been autoscheduled");
 
             Field<ListGraphType<FundGraphType>>(
-                "Fund",
+                "fund",
                 description: "The fund the order was allocated to",
                 resolve: context =>
                 {
@@ -98,7 +98,7 @@ namespace Surveillance.Api.App.Types.Trading
                 });
 
             Field<ListGraphType<StrategyGraphType>>(
-                "Strategy",
+                "strategy",
                 description: "The strategy the order was allocated to",
                 resolve: context =>
                 {
@@ -112,7 +112,7 @@ namespace Surveillance.Api.App.Types.Trading
                 });
 
             Field<ListGraphType<ClientAccountGraphType>>(
-                "ClientAccount",
+                "clientAccount",
                 description: "The client account the order was allocated to",
                 resolve: context =>
                 {

@@ -28,7 +28,7 @@ namespace SharedKernel.Files.PropertyValidators
 
             if (hasDateOnlyFormat && dateOnlyResult.Year < 2010)
             {
-                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+                context.MessageFormatter.AppendArgument(context.PropertyName, $"{prop} has a year preceding 2010 which is out of range");
                 return false;
             }
 
@@ -41,11 +41,11 @@ namespace SharedKernel.Files.PropertyValidators
 
             if (hasDateAndTimeFormat && dateAndTimeResult.Year < 2010)
             {
-                context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+                context.MessageFormatter.AppendArgument(context.PropertyName, $"{prop} has a year preceding 2010 which is out of range");
                 return false;
             }
 
-            context.MessageFormatter.AppendArgument(context.PropertyName, prop);
+            context.MessageFormatter.AppendArgument(context.PropertyName, $"{prop} could not recognise date provided as being correctly formatted");
             return false;
         }
     }

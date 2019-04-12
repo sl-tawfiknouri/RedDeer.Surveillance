@@ -119,8 +119,8 @@ namespace SharedKernel.Files.Orders
                 .When(x => !string.IsNullOrWhiteSpace(x.OrderSettlementCurrency))
                 .WithMessage("OrderSettlementCurrency must have a length of 3 characters when it is provided"); ;
 
-            RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType"));
-            RuleFor(x => x.OrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition"));
+            RuleFor(x => x.OrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("OrderType")).WithMessage("Order type was not in a valid range. Order types are a closed set");
+            RuleFor(x => x.OrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("OrderPosition")).WithMessage("Order position was not in a valid range. Order position are a closed set"); ;
 
             RuleFor(x => x.OrderLimitPrice)
                 .NotEmpty()
@@ -128,35 +128,36 @@ namespace SharedKernel.Files.Orders
                 .WithMessage("OrderLimitPrice must have a value when the order is of type LIMIT");
 
             RuleFor(x => x.OrderCleanDirty).SetValidator(new EnumParseableValidator<OrderCleanDirty>("OrderCleanDirty"))
-                .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty));
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderCleanDirty)).WithMessage("Order clean dirty was not in a valid range. Order clean dirty are a closed set"); ;
 
             RuleFor(x => x.OrderTraderName).MaximumLength(255).WithMessage("Order Trader Name should not exceed 255 characters in length");
             RuleFor(x => x.OrderClearingAgent).MaximumLength(255).WithMessage("OrderClearingAgent must have a maximum length of 255 characters"); ;
             RuleFor(x => x.OrderDealingInstructions).MaximumLength(4095).WithMessage("OrderDealingInstructions must have a maximum length of 4095 characters"); ;
 
-            RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
-            RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
-            RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
+            RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice")).WithMessage("Order limit price was not a valid value");
+            RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice")).WithMessage("Order average price was not a valid value");
+            RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume")).WithMessage("Order filled volume was not a valid long value (64 bit integer)");
             RuleFor(x => x.OrderFilledVolume)
                 .Must(x => !string.IsNullOrWhiteSpace(x))
                 .When(y => !string.IsNullOrWhiteSpace(y.OrderFilledDate))
                 .WithMessage("Must have an order filled volume when there is an order filled date");
             RuleFor(x => x.OrderOrderedVolume)
                 .Must(x => !string.IsNullOrWhiteSpace(x))
-                .SetValidator(new LongParseableValidator("OrderOrderedVolume"));
+                .SetValidator(new LongParseableValidator("OrderOrderedVolume")).WithMessage("Order filled volume was not a valid long value (64 bit integer)");
 
             RuleFor(x => x.OrderAccumulatedInterest)
                 .SetValidator(new DecimalParseableValidator("OrderAccumulatedInterest"))
-                .When(x => !string.IsNullOrWhiteSpace(x.OrderAccumulatedInterest));
+                .When(x => !string.IsNullOrWhiteSpace(x.OrderAccumulatedInterest))
+                .WithMessage("Order accumulated interest was not recognised as a parseable decimal value");
 
-            RuleFor(x => x.OrderPlacedDate).NotEmpty();
-            RuleFor(x => x.OrderPlacedDate).SetValidator(new DateParseableValidator("OrderPlacedDate"));
-            RuleFor(x => x.OrderBookedDate).SetValidator(new DateParseableValidator("OrderBookedDate"));
-            RuleFor(x => x.OrderAmendedDate).SetValidator(new DateParseableValidator("OrderAmendedDate"));
-            RuleFor(x => x.OrderRejectedDate).SetValidator(new DateParseableValidator("OrderRejectedDate"));
-            RuleFor(x => x.OrderCancelledDate).SetValidator(new DateParseableValidator("OrderCancelledDate"));
-            RuleFor(x => x.OrderFilledDate).SetValidator(new DateParseableValidator("OrderFilledDate"));
-            RuleFor(x => x.OrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("OrderOrderedVolume"));
+            RuleFor(x => x.OrderPlacedDate).NotEmpty().WithMessage($"OrderPlacedDate must not be empty");
+            RuleFor(x => x.OrderPlacedDate).SetValidator(new DateParseableValidator("OrderPlacedDate")).WithMessage($"OrderPlacedDate was not recognised as a valid date");
+            RuleFor(x => x.OrderBookedDate).SetValidator(new DateParseableValidator("OrderBookedDate")).WithMessage($"OrderBookedDate was not recognised as a valid date");
+            RuleFor(x => x.OrderAmendedDate).SetValidator(new DateParseableValidator("OrderAmendedDate")).WithMessage($"OrderAmendedDate was not recognised as a valid date");
+            RuleFor(x => x.OrderRejectedDate).SetValidator(new DateParseableValidator("OrderRejectedDate")).WithMessage($"OrderRejectedDate was not recognised as a valid date");
+            RuleFor(x => x.OrderCancelledDate).SetValidator(new DateParseableValidator("OrderCancelledDate")).WithMessage($"OrderCancelledDate  was not recognised as a valid date");
+            RuleFor(x => x.OrderFilledDate).SetValidator(new DateParseableValidator("OrderFilledDate")).WithMessage($"OrderFilledDate was not recognised as a valid date");
+            RuleFor(x => x.OrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("OrderOrderedVolume")).WithMessage($"OrderOrderedVolume was not recognised as a non zero long (64 bit integer)");
 
             RuleFor(x => x.OrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
@@ -183,25 +184,28 @@ namespace SharedKernel.Files.Orders
 
             RuleFor(x => x.DealerOrderCleanDirty)
                 .SetValidator(new EnumParseableValidator<OrderCleanDirty>("DealerOrderCleanDirty"))
-                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderCleanDirty));
+                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderCleanDirty))
+                .WithMessage("DealerOrderCleanDirty was not recognised as a valid value. It is a closed set");
 
-            RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderType).NotEmpty().SetValidator(new EnumParseableValidator<OrderTypes>("TradeType")).When(HasDealerOrderData).WithMessage("DealerOrderType was not recognised as a valid value. It is a closed set");
+            RuleFor(x => x.DealerOrderDirection).NotEmpty().SetValidator(new EnumParseableValidator<OrderDirections>("TradePosition")).When(HasDealerOrderData).WithMessage("DealerOrderDirection was not recognised as a valid value. It is a closed set");
 
             RuleFor(x => x.DealerOrderLimitPrice)
                 .NotEmpty()
                 .When(x => string.Equals(x.DealerOrderType, "LIMIT", StringComparison.InvariantCultureIgnoreCase))
-                .WithMessage("DealerOrderLimitPrice must be provided when there is a dealer order type of LIMIT"); ;
+                .WithMessage("DealerOrderLimitPrice must be provided when there is a dealer order type of LIMIT");
 
-            RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasDealerOrderData).WithMessage("DealerOrderLimitPrice must be provided when there is a dealer order type of LIMIT");
+            RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData).WithMessage("DealerOrderAveragePrice was not recognised as a valid decimal");
+            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData).WithMessage("DealerOrderOrderedVolume was not recognised as a valid non zero long (64 bit integer)");
+            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData).WithMessage("DealerOrderFilledVolume was not recognised as a valid nullable long (64 bit integer)");
             RuleFor(x => x.DealerOrderAccumulatedInterest)
                 .SetValidator(new DecimalParseableValidator("AccumulatedInterest"))
-                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderAccumulatedInterest));
+                .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderAccumulatedInterest))
+                .WithMessage("DealerOrderAccumulatedInterest was not recognised as a valid decimal");
 
             RuleFor(x => x.DealerOrderDealerName).MaximumLength(255).When(HasDealerOrderData).WithMessage("DealerOrderDealerName must have a maximum length of 255 characters");
+
             RuleFor(x => x.DealerOrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Trade position had an illegal value of 'none'");
@@ -210,13 +214,13 @@ namespace SharedKernel.Files.Orders
                 .Must(x => !string.Equals(x, "0", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("TradePosition had an illegal value of '0'");
 
-            RuleFor(x => x.DealerOrderPlacedDate).NotEmpty().When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderPlacedDate).SetValidator(new DateParseableValidator("DealerOrderPlacedDate")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderBookedDate).SetValidator(new DateParseableValidator("DealerOrderBookedDate")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderAmendedDate).SetValidator(new DateParseableValidator("DealerOrderAmendedDate")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderCancelledDate).SetValidator(new DateParseableValidator("DealerOrderCancelledDate")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderRejectedDate).SetValidator(new DateParseableValidator("DealerOrderRejectedDate")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderFilledDate).SetValidator(new DateParseableValidator("DealerOrderFilledDate")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderPlacedDate).NotEmpty().When(HasDealerOrderData).WithMessage($"DealerOrderPlacedDate must not be empty");
+            RuleFor(x => x.DealerOrderPlacedDate).SetValidator(new DateParseableValidator("DealerOrderPlacedDate")).When(HasDealerOrderData).WithMessage("DealerOrderPlacedDate was not recognised as a valid date");
+            RuleFor(x => x.DealerOrderBookedDate).SetValidator(new DateParseableValidator("DealerOrderBookedDate")).When(HasDealerOrderData).WithMessage("DealerOrderBookedDate was not recognised as a valid date");
+            RuleFor(x => x.DealerOrderAmendedDate).SetValidator(new DateParseableValidator("DealerOrderAmendedDate")).When(HasDealerOrderData).WithMessage("DealerOrderAmendedDate was not recognised as a valid date");
+            RuleFor(x => x.DealerOrderCancelledDate).SetValidator(new DateParseableValidator("DealerOrderCancelledDate")).When(HasDealerOrderData).WithMessage("DealerOrderCancelledDate was not recognised as a valid date");
+            RuleFor(x => x.DealerOrderRejectedDate).SetValidator(new DateParseableValidator("DealerOrderRejectedDate")).When(HasDealerOrderData).WithMessage("DealerOrderRejectedDate was not recognised as a valid date");
+            RuleFor(x => x.DealerOrderFilledDate).SetValidator(new DateParseableValidator("DealerOrderFilledDate")).When(HasDealerOrderData).WithMessage("DealerOrderFilledDate was not recognised as a valid date");
         }
 
         private bool HasDealerOrderData(OrderFileContract contract)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataImport.Configuration.Interfaces;
@@ -10,6 +11,7 @@ using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Queues;
 using SharedKernel.Files.Orders;
+using SharedKernel.Files.Orders.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Auditing.DataLayer.Processes;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
@@ -26,6 +28,7 @@ namespace DataImport.Disk_IO.EtlFile
         private readonly IFileUploadOrdersRepository _fileUploadOrdersRepository;
         private readonly IUploadCoordinatorMessageSender _fileUploadMessageSender;
         private readonly ISystemProcessContext _systemProcessContext;
+        private readonly IOmsVersioner _omsVersioner;
         private readonly ILogger _logger;
         private readonly object _lock = new object();
 
@@ -38,6 +41,7 @@ namespace DataImport.Disk_IO.EtlFile
             IFileUploadOrdersRepository fileUploadOrdersRepository,
             IUploadCoordinatorMessageSender fileUploadMessageSender,
             ISystemProcessContext systemProcessContext,
+            IOmsVersioner omsVersioner,
             ILogger<UploadEtlFileMonitor> logger)
             : base(directory, logger, "Upload Etl File Monitor")
         {
@@ -48,6 +52,7 @@ namespace DataImport.Disk_IO.EtlFile
             _fileUploadOrdersRepository = fileUploadOrdersRepository ?? throw new ArgumentNullException(nameof(fileUploadOrdersRepository));
             _fileUploadMessageSender = fileUploadMessageSender ?? throw new ArgumentNullException(nameof(fileUploadMessageSender));
             _systemProcessContext = systemProcessContext ?? throw new ArgumentNullException(nameof(systemProcessContext));
+            _omsVersioner = omsVersioner ?? throw new ArgumentNullException(nameof(omsVersioner));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -126,18 +131,19 @@ namespace DataImport.Disk_IO.EtlFile
             ISystemProcessOperationUploadFileContext fileUpload)
         {
             var uploadGuid = Guid.NewGuid().ToString();
-            _logger.LogInformation($"{path} is about to submit {csvReadResults.SuccessfulReads?.Count} records to the orders repository.");
+            var orders = _omsVersioner.ProjectOmsVersion(csvReadResults.SuccessfulReads);
+            _logger.LogInformation($"{path} is about to submit {orders?.Count} records to the orders repository.");
 
-            foreach (var item in csvReadResults.SuccessfulReads)
+            foreach (var item in orders)
             {
                 item.IsInputBatch = true;
                 item.InputBatchId = uploadGuid;
-                item.BatchSize = csvReadResults.SuccessfulReads.Count;
+                item.BatchSize = orders.Count;
                 _ordersRepository.Create(item).Wait();
             }
 
             _logger.LogInformation($"{path} has uploaded the csv records. Now about to link uploaded orders to file upload id.");
-            InsertFileUploadOrderIds(csvReadResults, fileUpload);
+            InsertFileUploadOrderIds(orders, fileUpload);
             _logger.LogInformation($"{path} has uploaded the csv records. Now about to enrich the security data.");
             _enrichmentService.Scan();
             _logger.LogInformation($"{path} has enriched the csv records. Now about to delete {path}.");
@@ -149,11 +155,11 @@ namespace DataImport.Disk_IO.EtlFile
         }
 
         private void InsertFileUploadOrderIds(
-            UploadFileProcessorResult<OrderFileContract, Order> csvReadResults,
+            IReadOnlyCollection<Order> orders,
             ISystemProcessOperationUploadFileContext fileUpload)
         {
-            if (csvReadResults.SuccessfulReads == null
-                || !csvReadResults.SuccessfulReads.Any())
+            if (orders == null
+                || !orders.Any())
             {
                 return;
             }
@@ -164,15 +170,14 @@ namespace DataImport.Disk_IO.EtlFile
             }
 
             var orderIds =
-                csvReadResults
-                    .SuccessfulReads
-                    .Select(i => i.ReddeerOrderId?.ToString())
-                    .Where(i => !string.IsNullOrWhiteSpace(i))
-                    .ToList();
+                orders
+                .Select(i => i.ReddeerOrderId?.ToString())
+                .Where(i => !string.IsNullOrWhiteSpace(i))
+                .ToList();
 
-            _logger.LogInformation($"{fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Now about to save the link between the file upload and orders");
+            _logger.LogInformation($"{fileUpload.FileUpload.Id} has uploaded the {orders.Count} csv records. Now about to save the link between the file upload and orders");
             _fileUploadOrdersRepository.Create(orderIds, fileUpload.FileUpload.Id).Wait();
-            _logger.LogInformation($"{fileUpload.FileUpload.Id} has uploaded the {orderIds.Count} csv records. Completed saving the link between the file upload and orders");
+            _logger.LogInformation($"{fileUpload.FileUpload.Id} has uploaded the {orders.Count} csv records. Completed saving the link between the file upload and orders");
 
             var uploadMessage = new AutoScheduleMessage();
             _fileUploadMessageSender.Send(uploadMessage).Wait();

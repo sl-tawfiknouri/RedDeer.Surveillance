@@ -170,12 +170,6 @@ namespace DataImport.S3_IO
                     _logger.LogInformation($"S3 processing trade file {file}");
                     var result = processFileDelegate(file);
 
-                    if (result == false)
-                    {
-                        _logger.LogInformation($"S3 Processor cancellation token initiated for {file}");
-                        _token.Cancel = true;
-                    }
-
                     if (File.Exists(file))
                     {
                         _logger.LogInformation($"S3 completed processing {file}. Now deleting {file}.");

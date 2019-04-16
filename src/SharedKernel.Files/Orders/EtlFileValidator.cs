@@ -43,7 +43,8 @@ namespace SharedKernel.Files.Orders
         private void RulesForIdentificationCodes()
         {
             RuleFor(x => x.InstrumentSedol)
-                .Length(7)
+                .MinimumLength(6)
+                .MaximumLength(7)
                 .When(x => !string.IsNullOrWhiteSpace(x.InstrumentSedol))
                 .WithMessage("Instrument Sedol must have a length of 7 characters when it is provided");
 

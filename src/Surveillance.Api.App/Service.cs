@@ -11,6 +11,7 @@ using NLog;
 using NLog.Web;
 using Surveillance.Api.App.Configuration;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Surveillance.Api.App
 {
@@ -32,7 +33,14 @@ namespace Surveillance.Api.App
         {
             Logger.Log(NLog.LogLevel.Info, "Service Starting.");
 
-            _webHost = CreateWebHostBuilder(startupArguments).Build();
+            var dynamoDbConfig = GetDynamoDbConfig();
+            var url = dynamoDbConfig?.FirstOrDefault(i => string.Equals(i.Key, "SurveillanceApiUrl", System.StringComparison.OrdinalIgnoreCase)).Value;
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                url = "https://localhost:8888";
+            }
+
+            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url).Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
@@ -55,16 +63,18 @@ namespace Surveillance.Api.App
             Logger.Log(NLog.LogLevel.Info, "Service Started.");
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url) =>
         WebHost
             .CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration(i => i.AddInMemoryCollection(GetDynamoDbConfig()))
+            .ConfigureAppConfiguration(i => i.AddInMemoryCollection(dynamoDbConfig))
             .UseStartup<Startup>()
             .ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
             })
+            .UseKestrel()
+            .UseUrls(url)
             .UseNLog();
 
         private static IEnumerable<KeyValuePair<string, string>> GetDynamoDbConfig()

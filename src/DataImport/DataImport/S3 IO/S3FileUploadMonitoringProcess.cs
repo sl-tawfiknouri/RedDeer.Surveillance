@@ -167,8 +167,13 @@ namespace DataImport.S3_IO
             {
                 try
                 {
-                    _logger.LogInformation($"S3 processing trade file {file}");
+                    _logger.LogInformation($"S3 processing file {file}");
                     var result = processFileDelegate(file);
+
+                    if (!result)
+                    {
+                        _logger.LogError($"S3 processing file {file} was unsuccessful");
+                    }
 
                     if (File.Exists(file))
                     {

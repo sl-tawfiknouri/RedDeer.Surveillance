@@ -48,7 +48,7 @@ namespace SharedKernel.Files.Orders
         private void RulesForIdentificationCodes()
         {
             RuleFor(x => x.InstrumentSedol)
-                .MinimumLength(6)
+                .MinimumLength(1)
                 .MaximumLength(7)
                 .When(x => !string.IsNullOrWhiteSpace(x.InstrumentSedol))
                 .WithMessage("Instrument Sedol must have a length of 7 characters when it is provided");
@@ -82,7 +82,8 @@ namespace SharedKernel.Files.Orders
         private void RulesForDerivativeIdentificationCodes()
         {
             RuleFor(x => x.InstrumentUnderlyingSedol)
-                .Length(7)
+                .MinimumLength(1)
+                .MaximumLength(7)
                 .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingSedol))
                 .WithMessage("Instrument Underlying Sedol must have a length of 7 characters when it is provided");
 

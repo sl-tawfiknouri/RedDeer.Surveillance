@@ -400,9 +400,9 @@ namespace SharedKernel.Files.Orders
                 return sedol;
             }
 
-            if (sedol.Length == 6)
+            while (sedol.Length < 7)
             {
-                return $"0{sedol}";
+                sedol = $"0{sedol}";
             }
 
             return sedol;

@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using DataImport.Configuration.Interfaces;
 using DataImport.Disk_IO.TradeFile;
 using DataImport.Disk_IO.TradeFile.Interfaces;
 using DataImport.MessageBusIO.Interfaces;
 using DataImport.Services.Interfaces;
+using Domain.Core.Trading.Orders;
 using FakeItEasy;
 using Infrastructure.Network.Disk.Interfaces;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using SharedKernel.Files.Orders.Interfaces;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.DataLayer.Aurora.Files.Interfaces;
 using Surveillance.DataLayer.Aurora.Orders.Interfaces;
@@ -24,6 +27,7 @@ namespace DataImport.Tests.Disk_IO
         private IOrdersRepository _ordersRepository;
         private IFileUploadOrdersRepository _fileUploadOrdersRepository;
         private IUploadCoordinatorMessageSender _messageSender;
+        private IOmsVersioner _omsVersioner;
 
         private ISystemProcessContext _systemProcessContext;
         private ILogger<UploadTradeFileMonitor> _logger;
@@ -39,7 +43,12 @@ namespace DataImport.Tests.Disk_IO
             _fileUploadOrdersRepository = A.Fake<IFileUploadOrdersRepository>();
             _systemProcessContext = A.Fake<ISystemProcessContext>();
             _messageSender = A.Fake<IUploadCoordinatorMessageSender>();
+            _omsVersioner = A.Fake<IOmsVersioner>();
             _logger = A.Fake<ILogger<UploadTradeFileMonitor>>();
+
+            A
+                .CallTo(() => _omsVersioner.ProjectOmsVersion(A<IReadOnlyCollection<Order>>.Ignored))
+                .ReturnsLazily(a => (IReadOnlyCollection<Order>)a.Arguments[0]);
         }
 
         [Test]
@@ -56,6 +65,7 @@ namespace DataImport.Tests.Disk_IO
                     _fileUploadOrdersRepository,
                     _messageSender,
                     _systemProcessContext,
+                    _omsVersioner,
                     _logger));
         }
 
@@ -73,6 +83,7 @@ namespace DataImport.Tests.Disk_IO
                     _fileUploadOrdersRepository,
                     _messageSender,
                     _systemProcessContext,
+                    _omsVersioner,
                     _logger));
         }
 
@@ -90,6 +101,7 @@ namespace DataImport.Tests.Disk_IO
                     _fileUploadOrdersRepository,
                     _messageSender,
                     _systemProcessContext,
+                    _omsVersioner,
                     _logger));
         }
 
@@ -107,6 +119,7 @@ namespace DataImport.Tests.Disk_IO
                     _fileUploadOrdersRepository,
                     _messageSender,
                     _systemProcessContext,
+                    _omsVersioner,
                     null));
         }
 
@@ -122,6 +135,7 @@ namespace DataImport.Tests.Disk_IO
                 _fileUploadOrdersRepository,
                 _messageSender,
                 _systemProcessContext,
+                _omsVersioner,
                 _logger);
 
             monitor.Initiate();
@@ -144,6 +158,7 @@ namespace DataImport.Tests.Disk_IO
                 _fileUploadOrdersRepository,
                 _messageSender,
                 _systemProcessContext,
+                _omsVersioner,
                 _logger);
 
             A.CallTo(() => _uploadConfiguration.DataImportTradeFileUploadDirectoryPath).Returns("testPath");

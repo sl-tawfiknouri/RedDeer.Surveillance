@@ -178,8 +178,8 @@ namespace SharedKernel.Files.Orders
             var orderOptionExpirationDate = MapDate(contract.OrderOptionExpirationDate);
             var orderOptionEuropeanAmerican = MapToEnum<OptionEuropeanAmerican>(contract.OrderOptionEuropeanAmerican);
 
-            var orderedVolume = MapLong(contract.OrderOrderedVolume);
-            var filledVolume = MapLong(contract.OrderFilledVolume);
+            var orderedVolume = MapLongWithRounding(contract.OrderOrderedVolume);
+            var filledVolume = MapLongWithRounding(contract.OrderFilledVolume);
 
             var accInterest = MapDecimal(contract.OrderAccumulatedInterest);
             
@@ -242,8 +242,8 @@ namespace SharedKernel.Files.Orders
             var cleanDirty = MapToEnum<OrderCleanDirty>(contract.DealerOrderCleanDirty);
             var euroAmerican = MapToEnum<OptionEuropeanAmerican>(contract.DealerOrderOptionEuropeanAmerican);
 
-            var orderedVolume = MapLong(contract.DealerOrderOrderedVolume);
-            var filledVolume = MapLong(contract.DealerOrderFilledVolume);
+            var orderedVolume = MapLongWithRounding(contract.DealerOrderOrderedVolume);
+            var filledVolume = MapLongWithRounding(contract.DealerOrderFilledVolume);
 
             var accumulatedInterest = MapDecimal(contract.DealerOrderAccumulatedInterest);
             var optionStrikePrice = MapDecimal(contract.DealerOrderOptionStrikePrice);
@@ -321,6 +321,23 @@ namespace SharedKernel.Files.Orders
             return null;
         }
 
+        private long? MapLongWithRounding(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            var success = decimal.TryParse(value, out var result);
+
+            if (!success)
+                return null;
+
+            var adjustedToIntegerValue = Math.Round(result, 0, MidpointRounding.AwayFromZero);
+
+            return MapLong(adjustedToIntegerValue.ToString());
+        }
+
         private long? MapLong(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -344,7 +361,7 @@ namespace SharedKernel.Files.Orders
                     string.Empty,
                     null,
                     contract.InstrumentClientIdentifier,
-                    contract.InstrumentSedol,
+                    AdjustTruncatedSedols(contract.InstrumentSedol),
                     contract.InstrumentIsin,
                     contract.InstrumentFigi,
                     contract.InstrumentCusip,
@@ -370,6 +387,25 @@ namespace SharedKernel.Files.Orders
                 contract.InstrumentUnderlyingName ?? string.Empty,
                 contract.InstrumentUnderlyingCfi ?? string.Empty,
                 contract.InstrumentUnderlyingIssuerIdentifier ?? string.Empty);
+        }
+
+        /// <summary>
+        /// Excel has a tendency to truncate leading 0s on valid sedols.
+        /// Insert these in if this is the case
+        /// </summary>
+        private string AdjustTruncatedSedols(string sedol)
+        {
+            if (string.IsNullOrWhiteSpace(sedol))
+            {
+                return sedol;
+            }
+
+            while (sedol.Length < 7)
+            {
+                sedol = $"0{sedol}";
+            }
+
+            return sedol;
         }
 
         private Market MapMarket(OrderFileContract contract)

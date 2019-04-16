@@ -329,6 +329,7 @@ namespace DataImport.Integration.Tests.Validation
                 _fileUploadOrdersRepository,
                 _uploadMessageSender,
                 _systemProcessContext,
+                new OmsVersioner(new OmsOrderFieldCompression()),
                 new NullLogger<UploadTradeFileMonitor>());
         }
 

@@ -48,7 +48,8 @@ namespace SharedKernel.Files.Orders
         private void RulesForIdentificationCodes()
         {
             RuleFor(x => x.InstrumentSedol)
-                .Length(7)
+                .MinimumLength(1)
+                .MaximumLength(7)
                 .When(x => !string.IsNullOrWhiteSpace(x.InstrumentSedol))
                 .WithMessage("Instrument Sedol must have a length of 7 characters when it is provided");
 
@@ -81,7 +82,8 @@ namespace SharedKernel.Files.Orders
         private void RulesForDerivativeIdentificationCodes()
         {
             RuleFor(x => x.InstrumentUnderlyingSedol)
-                .Length(7)
+                .MinimumLength(1)
+                .MaximumLength(7)
                 .When(x => !string.IsNullOrWhiteSpace(x.InstrumentUnderlyingSedol))
                 .WithMessage("Instrument Underlying Sedol must have a length of 7 characters when it is provided");
 
@@ -141,14 +143,14 @@ namespace SharedKernel.Files.Orders
 
             RuleFor(x => x.OrderLimitPrice).SetValidator(new DecimalParseableValidator("OrderLimitPrice"));
             RuleFor(x => x.OrderAverageFillPrice).SetValidator(new DecimalParseableValidator("OrderAveragePrice"));
-            RuleFor(x => x.OrderFilledVolume).SetValidator(new LongParseableValidator("OrderFilledVolume"));
+            RuleFor(x => x.OrderFilledVolume).SetValidator(new DecimalParseableValidator("OrderFilledVolume"));
             RuleFor(x => x.OrderFilledVolume)
                 .Must(x => !string.IsNullOrWhiteSpace(x))
                 .When(y => !string.IsNullOrWhiteSpace(y.OrderFilledDate))
                 .WithMessage("Must have an order filled volume when there is an order filled date");
             RuleFor(x => x.OrderOrderedVolume)
                 .Must(x => !string.IsNullOrWhiteSpace(x))
-                .SetValidator(new LongParseableValidator("OrderOrderedVolume"));
+                .SetValidator(new NonZeroDecimalParseableValidator("OrderOrderedVolume"));
 
             RuleFor(x => x.OrderAccumulatedInterest)
                 .SetValidator(new DecimalParseableValidator("OrderAccumulatedInterest"))
@@ -215,8 +217,6 @@ namespace SharedKernel.Files.Orders
                 }
             });
 
-            RuleFor(x => x.OrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("OrderOrderedVolume"));
-
             RuleFor(x => x.OrderDirection)
                 .Must(x => !string.Equals(x, "none", StringComparison.InvariantCultureIgnoreCase))
                 .WithMessage("Order position had an illegal value of 'none'");
@@ -254,8 +254,8 @@ namespace SharedKernel.Files.Orders
 
             RuleFor(x => x.DealerOrderLimitPrice).SetValidator(new DecimalParseableValidator("TradeLimitPrice")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderAverageFillPrice).SetValidator(new DecimalParseableValidator("TradeAveragePrice")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroLongParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
-            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new LongParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderOrderedVolume).SetValidator(new NonZeroDecimalParseableValidator("TradeOrderedVolume")).When(HasDealerOrderData);
+            RuleFor(x => x.DealerOrderFilledVolume).SetValidator(new DecimalParseableValidator("TradeFilledVolume")).When(HasDealerOrderData);
             RuleFor(x => x.DealerOrderAccumulatedInterest)
                 .SetValidator(new DecimalParseableValidator("AccumulatedInterest"))
                 .When(x => !string.IsNullOrWhiteSpace(x.DealerOrderAccumulatedInterest));

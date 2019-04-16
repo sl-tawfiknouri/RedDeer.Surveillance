@@ -67,6 +67,7 @@ namespace DataImport.Disk_IO.EtlFile
             {
                 Logger.LogInformation($"Processor successfully validated and mapped record {record?.RowId}");
                 marketUpdates.Add(mappedRecord);
+                return;
             }
 
             Logger.LogInformation($"Processor did not successfully map record {record?.RowId}");

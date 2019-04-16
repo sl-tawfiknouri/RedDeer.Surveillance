@@ -86,6 +86,9 @@ namespace DataImport
 
             For<IFileScanner>().Use<FileScanner>();
             For<IFileScannerScheduler>().Use<FileScannerScheduler>();
+
+            For<IOmsOrderFieldCompression>().Use<OmsOrderFieldCompression>();
+            For<IOmsVersioner>().Use<OmsVersioner>();
         }
     }
 }

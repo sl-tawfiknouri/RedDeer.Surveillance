@@ -4,6 +4,7 @@
 * Import trade files
 * Enrich trade file data via calls to external data providers (e.g. BMLL)
 * Execute pre-configured rules to identify potential breaches
+* Provide API services to other apps
 
 ## Surveillance Service
 ### Dependencies
@@ -110,7 +111,58 @@ _via direct access to Surveillance Db and via queues_
 | TestRuleRunUpdateQueueName | {environment}-surveillance-{client}-scheduledrule-dlq |
 
 
+## Surveillance GraphQL API Service
+### Dependencies
+#### No service dependencies
 
+#### Queues
+|Configuration Setting|Example value|
+|--|--|
+| NONE | |
+
+#### Database
+|Configuration Setting|Example value|
+|--|--|
+|SurveillanceApiConnectionString|server=0.0.0.0; port=0000;uid=any;pwd='any';database={env}_{dbname}; Allow User Variables=True|
+
+#### Pre-requisite configuration settings
+| AutoScheduleRules | true |
+| Secret-Key-Jwt | JWT secret key! |
+| IpRateLimiting |   "IpRateLimiting": {
+    "EnableEndpointRateLimiting": false,
+    "StackBlockedRequests": false,
+    "RealIpHeader": "X-Real-IP",
+    "ClientIdHeader": "X-ClientId",
+    "HttpStatusCode": 429,
+    "GeneralRules": [
+      {
+        "Endpoint": "*",
+        "Period": "10s",
+        "Limit": 100
+      },
+      {
+        "Endpoint": "*",
+        "Period": "15m",
+        "Limit": 8000
+      },
+      {
+        "Endpoint": "*",
+        "Period": "12h",
+        "Limit": 130000
+      },
+      {
+        "Endpoint": "*",
+        "Period": "7d",
+        "Limit": 1500000
+      }
+    ]
+  },|
+  | IpRateLimitPolicies |   "IpRateLimitPolicies": {
+    "IpRules": []
+  } |
+  | SurveillanceApiUrl | https://localhost:1234 |
+
+Note - SurveillanceApiUrl needs to be HTTPS | There must be a secret key jwt provided or the application will crash
 
 
 ==================== Surveillance analysis components ====================

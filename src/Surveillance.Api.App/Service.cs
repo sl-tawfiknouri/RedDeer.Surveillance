@@ -24,6 +24,8 @@ namespace Surveillance.Api.App
         private bool _stopRequestedByWindows;
         public string ServiceName => Program.ServiceName;
 
+        public TestOverrides TestOverrides { get; set; }
+
         public Service(ILogger<Service> logger)
         {
             _cts = new CancellationTokenSource();
@@ -33,7 +35,7 @@ namespace Surveillance.Api.App
         {
             Logger.Log(NLog.LogLevel.Info, "Service Starting.");
 
-            var dynamoDbConfig = GetDynamoDbConfig();
+            var dynamoDbConfig = TestOverrides?.Config ?? GetDynamoDbConfig();
             var url = dynamoDbConfig?.FirstOrDefault(i => string.Equals(i.Key, "SurveillanceApiUrl", System.StringComparison.OrdinalIgnoreCase)).Value;
             if (string.IsNullOrWhiteSpace(url))
             {

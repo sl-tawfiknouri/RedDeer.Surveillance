@@ -23,6 +23,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
             var layering = dto.Layerings?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
             var highVolume = dto.HighVolumes?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
             var washTrade = dto.WashTrades?.Select(x => x as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
+            var ramping = dto.Rampings?.Select(_ => _ as IIdentifiableRule)?.ToList() ?? new List<IIdentifiableRule>();
 
             var identifiableRuleList =
                 cancelledOrders
@@ -32,6 +33,7 @@ namespace Surveillance.Engine.Rules.RuleParameters.Services
                 .Concat(layering)
                 .Concat(highVolume)
                 .Concat(washTrade)
+                .Concat(ramping)
                 .Where(x => x != null)
                 .ToList();
 

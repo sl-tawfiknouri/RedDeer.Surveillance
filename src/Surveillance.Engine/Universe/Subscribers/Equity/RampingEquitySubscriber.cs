@@ -8,6 +8,9 @@ using RedDeer.Contracts.SurveillanceService.Api.RuleParameter;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
+using Surveillance.Engine.Rules.Factories.Equities;
+using Surveillance.Engine.Rules.Factories.Equities.Interfaces;
+using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Interfaces;
@@ -23,17 +26,20 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
         private readonly IRuleParameterToRulesMapper _ruleParameterMapper;
         private readonly IUniverseFilterFactory _universeFilterFactory;
         private readonly IOrganisationalFactorBrokerServiceFactory _brokerServiceFactory;
+        private readonly IEquityRuleRampingFactory _equityRuleRampingFactory;
         private readonly ILogger<RampingEquitySubscriber> _logger;
 
         public RampingEquitySubscriber(
             IRuleParameterToRulesMapper ruleParameterMapper,
             IUniverseFilterFactory universeFilterFactory,
             IOrganisationalFactorBrokerServiceFactory brokerServiceFactory,
+            IEquityRuleRampingFactory equityRuleRampingFactory,
             ILogger<RampingEquitySubscriber> logger)
         {
             _ruleParameterMapper = ruleParameterMapper ?? throw new ArgumentNullException(nameof(ruleParameterMapper));
             _universeFilterFactory = universeFilterFactory ?? throw new ArgumentNullException(nameof(universeFilterFactory));
             _brokerServiceFactory = brokerServiceFactory ?? throw new ArgumentNullException(nameof(brokerServiceFactory));
+            _equityRuleRampingFactory = equityRuleRampingFactory ?? throw new ArgumentNullException(nameof(equityRuleRampingFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -58,14 +64,15 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             var rampingParameters = _ruleParameterMapper.Map(dtos);
 
-            return SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters);
+            return SubscribeToUniverse(execution, opCtx, alertStream, rampingParameters, dataRequestSubscriber);
         }
 
         private IReadOnlyCollection<IObserver<IUniverseEvent>> SubscribeToUniverse(
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IReadOnlyCollection<IRampingRuleEquitiesParameters> rampingParameters)
+            IReadOnlyCollection<IRampingRuleEquitiesParameters> rampingParameters,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             var subscriptions = new List<IObserver<IUniverseEvent>>();
 
@@ -74,7 +81,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             {
                 foreach (var param in rampingParameters)
                 {
-                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param);
+                    var baseSubscriber = SubscribeParamToUniverse(execution, opCtx, alertStream, param, dataRequestSubscriber);
                     var broker = _brokerServiceFactory.Build(baseSubscriber, param.Factors, param.AggregateNonFactorableIntoOwnCategory);
                     subscriptions.Add(broker);
                 }
@@ -92,7 +99,8 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             ScheduledExecution execution,
             ISystemProcessOperationContext opCtx,
             IUniverseAlertStream alertStream,
-            IRampingRuleEquitiesParameters param)
+            IRampingRuleEquitiesParameters param,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber)
         {
             var ruleCtx = opCtx
                 .CreateAndStartRuleRunContext(
@@ -107,7 +115,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                     execution.IsForceRerun);
 
             var runMode = execution.IsForceRerun ? RuleRunMode.ForceRun : RuleRunMode.ValidationRun;
-            var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode);
+            var rampingRule = _equityRuleRampingFactory.Build(param, ruleCtx, alertStream, runMode, dataRequestSubscriber);
 
             if (param.HasFilters())
             {

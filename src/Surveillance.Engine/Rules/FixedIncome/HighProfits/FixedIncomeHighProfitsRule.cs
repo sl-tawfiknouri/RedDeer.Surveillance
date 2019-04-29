@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             IHighProfitsRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             ILogger<FixedIncomeHighProfitsRule> logger,
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
                 Versioner.Version(1, 0),
                 "Fixed Income High Profits Rule",
                 ruleCtx,
-                marketCacheFactory,
+                factory,
                 runMode,
                 logger,
                 tradingStackLogger)

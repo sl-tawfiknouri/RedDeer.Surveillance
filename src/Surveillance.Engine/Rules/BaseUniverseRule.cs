@@ -45,7 +45,7 @@ namespace Surveillance.Engine.Rules.Rules
             string version,
             string name,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
@@ -55,12 +55,12 @@ namespace Surveillance.Engine.Rules.Rules
             Version = version ?? string.Empty;
 
             UniverseEquityIntradayCache =
-                marketCacheFactory?.BuildIntraday(windowSize, runMode)
-                ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+                factory?.BuildIntraday(windowSize, runMode)
+                ?? throw new ArgumentNullException(nameof(factory));
 
             UniverseEquityInterdayCache =
-                marketCacheFactory?.BuildInterday(runMode)
-                ?? throw new ArgumentNullException(nameof(marketCacheFactory));
+                factory?.BuildInterday(runMode)
+                ?? throw new ArgumentNullException(nameof(factory));
 
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();

@@ -25,7 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             IHighVolumeIssuanceRuleFixedIncomeParameters parameters,
             IUniverseFixedIncomeOrderFilterService orderFilterService,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IUniverseMarketCacheFactory marketCacheFactory,
+            IUniverseMarketCacheFactory factory,
             RuleRunMode runMode,
             IUniverseAlertStream alertStream,
             ILogger<FixedIncomeHighVolumeIssuanceRule> logger,
@@ -36,7 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
                 Versioner.Version(1, 0),
                 $"{nameof(FixedIncomeHighVolumeIssuanceRule)}",
                 ruleCtx,
-                marketCacheFactory,
+                factory,
                 runMode,
                 logger,
                 tradingStackLogger)

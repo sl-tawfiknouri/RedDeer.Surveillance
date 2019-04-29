@@ -18,13 +18,10 @@ namespace Surveillance.Api.Tests
         static void Main(string[] args)
         {
             // TestOverrides
-            var testOverrides = new TestOverrides
+            var startupConfig = new StartupConfig
             {
-                Config = new Dictionary<string, string>
-                {
-                    ["Secret-Key-Jwt"] = @"fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F"
-                },
-                ConfigureServices = (services) =>
+                IsTest = true,
+                ConfigureTestServices = (services) =>
                 {
                     services.AddScoped<IGraphQlDbContextFactory, DbContextFactory>();
                 }
@@ -39,7 +36,7 @@ namespace Surveillance.Api.Tests
 
             // backend api service
             var service = new Service(null);
-            service.TestOverrides = testOverrides;
+            service.StartupConfig = startupConfig;
             service.Start(new string[0], () => { });
 
             // attempt request

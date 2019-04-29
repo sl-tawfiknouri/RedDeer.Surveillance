@@ -24,7 +24,7 @@ namespace Surveillance.Api.App
         private bool _stopRequestedByWindows;
         public string ServiceName => Program.ServiceName;
 
-        public TestOverrides TestOverrides { get; set; }
+        public IStartupConfig StartupConfig { get; set; } = new StartupConfig();
 
         public Service(ILogger<Service> logger)
         {
@@ -35,14 +35,14 @@ namespace Surveillance.Api.App
         {
             Logger.Log(NLog.LogLevel.Info, "Service Starting.");
 
-            var dynamoDbConfig = TestOverrides?.Config ?? GetDynamoDbConfig();
+            var dynamoDbConfig = StartupConfig.IsTest ? null : GetDynamoDbConfig(); // No need to spend time checking dynamo db if in test mode
             var url = dynamoDbConfig?.FirstOrDefault(i => string.Equals(i.Key, "SurveillanceApiUrl", System.StringComparison.OrdinalIgnoreCase)).Value;
             if (string.IsNullOrWhiteSpace(url))
             {
                 url = "https://localhost:8888";
             }
 
-            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url, TestOverrides).Build();
+            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url, StartupConfig).Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
@@ -65,11 +65,11 @@ namespace Surveillance.Api.App
             Logger.Log(NLog.LogLevel.Info, "Service Started.");
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url, TestOverrides testOverrides) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url, IStartupConfig startupConfig) =>
         WebHost
             .CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(i => i.AddInMemoryCollection(dynamoDbConfig))
-            .ConfigureServices(c => testOverrides?.ConfigureServices?.Invoke(c))
+            .ConfigureServices(services => services.AddScoped(x => startupConfig))
             .UseStartup<Startup>()
             .ConfigureLogging(logging =>
             {

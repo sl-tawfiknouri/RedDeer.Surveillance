@@ -34,15 +34,18 @@ namespace Surveillance.Api.App
     {
         private readonly IHostingEnvironment _environment;
         private readonly ILogger _logger;
+        private readonly IStartupConfig _startupConfig;
 
         public Startup(
             IConfiguration configuration,
             IHostingEnvironment environment,
-            ILogger<Startup> logger)
+            ILogger<Startup> logger,
+            IStartupConfig startupConfig)
         {
             Configuration = configuration;
             _environment = environment;
             _logger = logger;
+            _startupConfig = startupConfig;
         }
 
         public IConfiguration Configuration { get; }
@@ -67,11 +70,7 @@ namespace Surveillance.Api.App
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.AddScoped<IProvideClaimsPrincipal, GraphQlUserContext>();
-
-            if (!services.Any(x => x.ServiceType == typeof(IGraphQlDbContextFactory)))
-            {
-                services.AddScoped<IGraphQlDbContextFactory, GraphQlDbContextFactory>();
-            }
+            services.AddScoped<IGraphQlDbContextFactory, GraphQlDbContextFactory>();
 
             services.AddScoped<IMarketRepository, MarketRepository>();
             services.AddScoped<IRuleBreachRepository, RuleBreachRepository>();
@@ -83,6 +82,12 @@ namespace Surveillance.Api.App
             services.AddScoped<ISystemProcessOperationRepository, SystemProcessOperationRepository>();
             services.AddScoped<ISystemProcessRepository, SystemProcessRepository>();
             services.AddScoped<IFinancialInstrumentRepository, FinancialInstrumentRepository>();
+
+            // Test services should be added at end of list so that they can override defaults
+            if (_startupConfig.IsTest)
+            {
+                _startupConfig.ConfigureTestServices(services);
+            }
 
             var manifest = new ClaimsManifest();
 

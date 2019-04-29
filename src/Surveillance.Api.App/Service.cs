@@ -42,7 +42,7 @@ namespace Surveillance.Api.App
                 url = "https://localhost:8888";
             }
 
-            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url).Build();
+            _webHost = CreateWebHostBuilder(startupArguments, dynamoDbConfig, url, TestOverrides).Build();
 
             // Make sure the windows service is stopped if the
             // ASP.NET Core stack stops for any reason
@@ -65,10 +65,11 @@ namespace Surveillance.Api.App
             Logger.Log(NLog.LogLevel.Info, "Service Started.");
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args, IEnumerable<KeyValuePair<string, string>> dynamoDbConfig, string url, TestOverrides testOverrides) =>
         WebHost
             .CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(i => i.AddInMemoryCollection(dynamoDbConfig))
+            .ConfigureServices(c => testOverrides?.ConfigureServices?.Invoke(c))
             .UseStartup<Startup>()
             .ConfigureLogging(logging =>
             {

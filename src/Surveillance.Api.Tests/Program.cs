@@ -1,5 +1,7 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using Surveillance.Api.App;
+using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,7 +20,11 @@ namespace Surveillance.Api.Tests
             {
                 Config = new Dictionary<string, string>
                 {
-                    { "Secret-Key-Jwt", "fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F" }
+                    ["Secret-Key-Jwt"] = "fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F"
+                },
+                ConfigureServices = (services) =>
+                {
+                    services.AddScoped<IGraphQlDbContextFactory, DbContextFactory>();
                 }
             };
 

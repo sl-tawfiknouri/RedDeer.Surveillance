@@ -5,6 +5,7 @@ using Surveillance.Api.Client;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,14 +43,20 @@ namespace Surveillance.Api.Tests
             service.Start(new string[0], () => { });
 
             // attempt request
-            var client = new ApiClient();
+            var client = new ApiClient(new HttpClientHandler
+            {
+                UseProxy = false,
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; }
+            });
             try
             {
-                client.RequestAsync().Wait();
+                var count = client.RuleBreachesCountAsync().Result;
+                Logger.Info($"Rules Breaches Count = {count}");
             }
             catch (Exception e)
             {
-                Logger.Info(e);
+                Logger.Info("Exception in graphql request");
+                Logger.Error(e);
             }
 
             // wait for user interaction

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
@@ -66,7 +67,11 @@ namespace Surveillance.Api.App
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.AddScoped<IProvideClaimsPrincipal, GraphQlUserContext>();
-            services.AddScoped<IGraphQlDbContextFactory, GraphQlDbContextFactory>();
+
+            if (!services.Any(x => x.ServiceType == typeof(IGraphQlDbContextFactory)))
+            {
+                services.AddScoped<IGraphQlDbContextFactory, GraphQlDbContextFactory>();
+            }
 
             services.AddScoped<IMarketRepository, MarketRepository>();
             services.AddScoped<IRuleBreachRepository, RuleBreachRepository>();

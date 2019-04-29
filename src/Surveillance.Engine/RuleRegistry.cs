@@ -180,7 +180,6 @@ namespace Surveillance.Engine.Rules
             For<IEquityRuleWashTradeFactory>().Use<EquityRuleWashTradeFactory>();
             For<IWashTradeRuleMessageSender>().Use<WashTradeRuleMessageSender>();
             For<IWashTradeCachedMessageSender>().Use<WashTradeCachedMessageSender>();
-            For<IWashTradePositionPairer>().Use<WashTradePositionPairer>();
             For<IClusteringService>().Use<ClusteringService>().Singleton();
 
 

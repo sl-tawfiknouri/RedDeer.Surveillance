@@ -36,7 +36,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
     {
         private readonly ILogger _logger;
         private readonly IWashTradeRuleEquitiesParameters _equitiesParameters;
-        private readonly IWashTradePositionPairer _positionPairer;
         private readonly IClusteringService _clustering;
         private readonly IUniverseAlertStream _alertStream;
         private readonly ICurrencyConverterService _currencyConverterService;
@@ -45,7 +44,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
         public WashTradeRule(
             IWashTradeRuleEquitiesParameters equitiesParameters,
             ISystemProcessOperationRunRuleContext ruleCtx,
-            IWashTradePositionPairer positionPairer,
             IClusteringService clustering,
             IUniverseAlertStream alertStream,
             ICurrencyConverterService currencyConverterService,
@@ -66,7 +64,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 tradingHistoryLogger)
         {
             _equitiesParameters = equitiesParameters ?? throw new ArgumentNullException(nameof(equitiesParameters));
-            _positionPairer = positionPairer ?? throw new ArgumentNullException(nameof(positionPairer));
             _clustering = clustering ?? throw new ArgumentNullException(nameof(clustering));
             _currencyConverterService = currencyConverterService ?? throw new ArgumentNullException(nameof(currencyConverterService));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -107,16 +104,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
             averagePositionCheckTask.Wait();
             var averagePositionCheck = averagePositionCheckTask.Result;
 
-            // Pairing trade analysis
-            var pairingPositionsCheckTask = PairingTrades(liveTrades);
-            pairingPositionsCheckTask.Wait();
-            var pairingPositionsCheck = pairingPositionsCheckTask.Result;
-
             // Clustering trade analysis
             var clusteringPositionCheck = ClusteringTrades(liveTrades);
 
             if ((averagePositionCheck == null || !averagePositionCheck.AveragePositionRuleBreach)
-                && (pairingPositionsCheck == null || !pairingPositionsCheck.PairingPositionRuleBreach)
                 && (clusteringPositionCheck == null || !clusteringPositionCheck.ClusteringPositionBreach))
             {
                 return;
@@ -136,7 +127,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                     tradePosition,
                     security,
                     averagePositionCheck,
-                    pairingPositionsCheck,
                     clusteringPositionCheck);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.WashTrade, breach, RuleCtx);
@@ -256,135 +246,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.WashTrade
                 activeTrades.Count,
                 relativeValue,
                 convertedCurrency);
-        }
-
-        public async Task<WashTradeRuleBreach.WashTradePairingPositionBreach> PairingTrades(List<Order> activeTrades)
-        {
-            if (!_equitiesParameters.PerformPairingPositionAnalysis)
-            {
-                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-            }
-
-            if (activeTrades == null
-                || !activeTrades.Any())
-            {
-                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-            }
-
-            var tradingWithinThreshold = await CheckAbsoluteMoneyIsBelowMaximumThreshold(activeTrades);
-
-            if (!tradingWithinThreshold)
-            {
-                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-            }
-            
-            var pairings = _positionPairer.PairUp(activeTrades, _equitiesParameters);
-
-            if (_equitiesParameters.PairingPositionPercentageVolumeDifferenceThreshold != null)
-            {
-                pairings = FilteredPairsByVolume(pairings);
-            }
-
-            if (!pairings.Any())
-            {
-                return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-            }
-
-            var buyCount = pairings.SelectMany(a => a.Buys.Get()).Count();
-            var sellCount = pairings.SelectMany(a => a.Sells.Get()).Count();
-            var totalTradesWithinPairings = buyCount + sellCount;
-
-            if (_equitiesParameters.PairingPositionMinimumNumberOfPairedTrades == null)
-            {
-                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
-            }
-
-            if ((totalTradesWithinPairings) >= _equitiesParameters.PairingPositionMinimumNumberOfPairedTrades.GetValueOrDefault(0))
-            {
-                return new WashTradeRuleBreach.WashTradePairingPositionBreach(true, pairings.Count, totalTradesWithinPairings);
-            }
-
-            return WashTradeRuleBreach.WashTradePairingPositionBreach.None();
-        }
-
-        private IReadOnlyCollection<PositionCluster> FilteredPairsByVolume(IReadOnlyCollection<PositionCluster> pairs)
-        {
-            if (pairs == null
-                || !pairs.Any())
-            {
-                return new PositionCluster[0];
-            }
-
-            var results = new List<PositionCluster>();
-            foreach (var pair in pairs)
-            {
-                var buyVolume = pair.Buys.Get().Sum(b => b.OrderFilledVolume.GetValueOrDefault());
-                var sellVolume = pair.Sells.Get().Sum(s => s.OrderFilledVolume.GetValueOrDefault());
-
-                if (buyVolume == sellVolume)
-                {
-                    results.Add(pair);
-                    continue;
-                }
-
-                var larger = Math.Max(buyVolume, sellVolume);
-                var smaller = Math.Min(buyVolume, sellVolume);
-                var offset = (decimal)larger * (_equitiesParameters?.PairingPositionPercentageVolumeDifferenceThreshold.GetValueOrDefault(0) ?? 0m);
-
-                if ((smaller >= larger - offset))
-                {
-                    results.Add(pair);
-                    continue;
-                }
-            }
-
-            return results;
-        }
-
-        private async Task<bool> CheckAbsoluteMoneyIsBelowMaximumThreshold(List<Order> activeTrades)
-        {
-            if (_equitiesParameters.PairingPositionMaximumAbsoluteMoney == null
-                || string.IsNullOrWhiteSpace(_equitiesParameters.PairingPositionMaximumAbsoluteCurrency))
-            {
-                return true;
-            }
-
-            var buyPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.BUY || at.OrderDirection == OrderDirections.COVER).ToList());
-            var sellPosition = new List<Order>(activeTrades.Where(at => at.OrderDirection == OrderDirections.SELL || at.OrderDirection == OrderDirections.SHORT).ToList());
-
-            var valueOfBuy = buyPosition.Sum(bp => bp.OrderFilledVolume.GetValueOrDefault() * (bp.OrderAverageFillPrice.GetValueOrDefault().Value));
-            var valueOfSell = sellPosition.Sum(sp => sp.OrderFilledVolume.GetValueOrDefault() * (sp.OrderAverageFillPrice.GetValueOrDefault().Value));
-
-            if (valueOfBuy == 0)
-            {
-                return false;
-            }
-
-            if (valueOfSell == 0)
-            {
-                return false;
-            }
-
-            var absDifference = Math.Abs(valueOfBuy - valueOfSell);
-            var currency = new Domain.Core.Financial.Money.Currency(activeTrades.FirstOrDefault()?.OrderCurrency.Code ?? string.Empty);
-            var absMoney = new Money(absDifference, currency);
-
-            var targetCurrency = new Domain.Core.Financial.Money.Currency(_equitiesParameters.AveragePositionMaximumAbsoluteValueChangeCurrency);
-            var convertedCurrency = await _currencyConverterService.Convert(new[] { absMoney }, targetCurrency, UniverseDateTime, RuleCtx);
-
-            if (convertedCurrency == null)
-            {
-                _logger.LogError($"was not able to determine currency conversion. Will evaluate pairing trades on its own merits.");
-
-                return true;
-            }
-
-            if (convertedCurrency?.Value > _equitiesParameters.PairingPositionMaximumAbsoluteMoney.GetValueOrDefault(0))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringTrades(List<Order> activeTrades)

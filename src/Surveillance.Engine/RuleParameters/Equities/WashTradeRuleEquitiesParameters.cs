@@ -12,17 +12,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,
-            bool performPairingPositionAnalysis,
             bool performClusteringPositionAnalysis,
             int? averagePositionMinimumNumberOfTrades,
             decimal? averagePositionMaximumPositionValueChange,
             decimal? averagePositionMaximumAbsoluteValueChangeAmount,
             string averagePositionMaximumAbsoluteValueChangeCurrency,
-            int? pairingPositionMinimumNumberOfPairedTrades,
-            decimal? pairingPositionPercentagePriceChangeThresholdPerPair,
-            decimal? pairingPositionPercentageVolumeDifferenceThreshold,
-            decimal? pairingPositionMaximumAbsoluteMoney,
-            string pairingPositionMaximumAbsoluteCurrency,
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
             IReadOnlyCollection<ClientOrganisationalFactors> factors,
@@ -33,19 +27,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             WindowSize = windowSize;
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
-            PerformPairingPositionAnalysis = performPairingPositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
 
             AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
             AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
             AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
             AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
-
-            PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
-            PairingPositionPercentagePriceChangeThresholdPerPair = pairingPositionPercentagePriceChangeThresholdPerPair;
-            PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
-            PairingPositionMaximumAbsoluteMoney = pairingPositionMaximumAbsoluteMoney;
-            PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
 
             ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
             ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
@@ -64,17 +51,11 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             string id,
             TimeSpan windowSize,
             bool performAveragePositionAnalysis,
-            bool performPairingPositionAnalysis,
             bool performClusteringPositionAnalysis,
             int? averagePositionMinimumNumberOfTrades,
             decimal? averagePositionMaximumPositionValueChange,
             decimal? averagePositionMaximumAbsoluteValueChangeAmount,
             string averagePositionMaximumAbsoluteValueChangeCurrency,
-            int? pairingPositionMinimumNumberOfPairedTrades,
-            decimal? pairingPositionPercentagePriceChangeThresholdPerPair,
-            decimal? pairingPositionPercentageVolumeDifferenceThreshold,
-            decimal? pairingPositionMaximumAbsoluteMoney,
-            string pairingPositionMaximumAbsoluteCurrency,
             int? clusteringPositionMinimumNumberOfTrades,
             decimal? clusteringPercentageValueDifferenceThreshold,
             RuleFilter accounts,
@@ -90,19 +71,12 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
             WindowSize = windowSize;
 
             PerformAveragePositionAnalysis = performAveragePositionAnalysis;
-            PerformPairingPositionAnalysis = performPairingPositionAnalysis;
             PerformClusteringPositionAnalysis = performClusteringPositionAnalysis;
 
             AveragePositionMinimumNumberOfTrades = averagePositionMinimumNumberOfTrades;
             AveragePositionMaximumPositionValueChange = averagePositionMaximumPositionValueChange;
             AveragePositionMaximumAbsoluteValueChangeAmount = averagePositionMaximumAbsoluteValueChangeAmount;
             AveragePositionMaximumAbsoluteValueChangeCurrency = averagePositionMaximumAbsoluteValueChangeCurrency;
-
-            PairingPositionMinimumNumberOfPairedTrades = pairingPositionMinimumNumberOfPairedTrades;
-            PairingPositionPercentagePriceChangeThresholdPerPair = pairingPositionPercentagePriceChangeThresholdPerPair;
-            PairingPositionPercentageVolumeDifferenceThreshold = pairingPositionPercentageVolumeDifferenceThreshold;
-            PairingPositionMaximumAbsoluteMoney = pairingPositionMaximumAbsoluteMoney;
-            PairingPositionMaximumAbsoluteCurrency = pairingPositionMaximumAbsoluteCurrency;
 
             ClusteringPositionMinimumNumberOfTrades = clusteringPositionMinimumNumberOfTrades;
             ClusteringPercentageValueDifferenceThreshold = clusteringPercentageValueDifferenceThreshold;
@@ -123,7 +97,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
 
         // Enabled analysis settings
         public bool PerformAveragePositionAnalysis { get; }
-        public bool PerformPairingPositionAnalysis { get; }
         public bool PerformClusteringPositionAnalysis { get; }
 
 
@@ -132,13 +105,6 @@ namespace Surveillance.Engine.Rules.RuleParameters.Equities
         public decimal? AveragePositionMaximumPositionValueChange { get; }
         public decimal? AveragePositionMaximumAbsoluteValueChangeAmount { get; }
         public string AveragePositionMaximumAbsoluteValueChangeCurrency { get; }
-
-        // Pairing parameters
-        public int? PairingPositionMinimumNumberOfPairedTrades { get; }
-        public decimal? PairingPositionPercentagePriceChangeThresholdPerPair { get; }
-        public decimal? PairingPositionPercentageVolumeDifferenceThreshold { get; }
-        public decimal? PairingPositionMaximumAbsoluteMoney { get; }
-        public string PairingPositionMaximumAbsoluteCurrency { get; }
         
         // Clustering (k-means) parameters
         public int? ClusteringPositionMinimumNumberOfTrades { get; }

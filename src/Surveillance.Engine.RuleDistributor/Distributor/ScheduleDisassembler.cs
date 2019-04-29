@@ -120,6 +120,10 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         var fixedIncomeWashTrade = parameters.FixedIncomeWashTrades?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleCtx);
                         break;
+                    case Rules.Ramping:
+                        var ramping = (List<IIdentifiableRule>)new object();
+                        await ScheduleRuleRuns(execution, ramping, rule, ruleCtx);
+                        break;
                     default:
                         _logger.LogError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");
                         ruleCtx.EventError($"{rule.Rule} was scheduled but not recognised by the Schedule Rule method in distributed rule.");

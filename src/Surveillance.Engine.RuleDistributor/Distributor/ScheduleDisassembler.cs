@@ -121,7 +121,7 @@ namespace Surveillance.Engine.RuleDistributor.Distributor
                         await ScheduleRuleRuns(execution, fixedIncomeWashTrade, rule, ruleCtx);
                         break;
                     case Rules.Ramping:
-                        var ramping = (List<IIdentifiableRule>)new object();
+                        var ramping = parameters.Rampings?.Select(co => co as IIdentifiableRule)?.ToList();
                         await ScheduleRuleRuns(execution, ramping, rule, ruleCtx);
                         break;
                     default:

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Surveillance.Api.Tests
+namespace Surveillance.Api.Tests.Infrastructure
 {
     public class DbContext : GraphQlDbContext
     {
@@ -13,12 +13,6 @@ namespace Surveillance.Api.Tests
         {
         }
 
-        public void SetTestData()
-        {
-            var ruleBreach = new RuleBreach();
-            _ruleBreach.Add(ruleBreach);
-
-            SaveChanges();
-        }
+        public DbSet<RuleBreach> RuleBreaches => _ruleBreach;
     }
 }

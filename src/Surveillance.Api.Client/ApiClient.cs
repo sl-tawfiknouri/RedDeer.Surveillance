@@ -9,14 +9,9 @@ namespace Surveillance.Api.Client
 {
     public class ApiClient
     {
-        private HttpClientHandler _httpClientHandler;
+        private readonly GraphQLClient _client;
 
         public ApiClient(HttpClientHandler httpClientHandler)
-        {
-            _httpClientHandler = httpClientHandler;
-        }
-
-        public async Task<int> RuleBreachesCountAsync()
         {
             /* {
                  "exp": 1577836800,
@@ -26,12 +21,16 @@ namespace Surveillance.Api.Client
                } */
             var bearer = @"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4MzY4MDAsImlzcyI6ImRldjp0ZXN0OmNsaWVudHNlcnZpY2UiLCJhdWQiOiJkZXY6dGVzdDpjbGllbnRzZXJ2aWNlIiwicmVkZGVlciI6InN1cnZlaWxsYW5jZSByZWFkZXIifQ.HbvU5W3O5btPQ7Ou5aiyscPuBrRJ6iCm3Jig-QqikBE";
 
-            var client = new GraphQLClient("https://localhost:8888/graphql/surveillance", new GraphQLClientOptions
+            _client = new GraphQLClient("https://localhost:8888/graphql/surveillance", new GraphQLClientOptions
             {
-                HttpMessageHandler = _httpClientHandler
+                HttpMessageHandler = httpClientHandler
             });
-            client.DefaultRequestHeaders.Add("Authorization", $"bearer {bearer}");
-            var response = await client.PostAsync(new GraphQLRequest()
+            _client.DefaultRequestHeaders.Add("Authorization", $"bearer {bearer}");
+        }
+
+        public async Task<int> RuleBreachesCountAsync()
+        {
+            var response = await _client.PostAsync(new GraphQLRequest()
             {
                 Query = @"{ ruleBreaches { id } }"
             });

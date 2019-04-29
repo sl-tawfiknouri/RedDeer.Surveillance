@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Surveillance.Api.App\Surveillance.Api.App.csproj" />
+    <ProjectReference Include="..\Surveillance.Api.Client\Surveillance.Api.Client.csproj" />
   </ItemGroup>
 
 </Project>

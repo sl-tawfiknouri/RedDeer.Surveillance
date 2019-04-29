@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using Surveillance.Api.App;
+using Surveillance.Api.Client;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Surveillance.Api.Tests
             {
                 Config = new Dictionary<string, string>
                 {
-                    ["Secret-Key-Jwt"] = "fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F"
+                    ["Secret-Key-Jwt"] = @"fTjWnZr4u7x!A%D*G-KaPdSgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t7w!z$C&F"
                 },
                 ConfigureServices = (services) =>
                 {
@@ -39,6 +40,17 @@ namespace Surveillance.Api.Tests
             var service = new Service(null);
             service.TestOverrides = testOverrides;
             service.Start(new string[0], () => { });
+
+            // attempt request
+            var client = new ApiClient();
+            try
+            {
+                client.RequestAsync().Wait();
+            }
+            catch (Exception e)
+            {
+                Logger.Info(e);
+            }
 
             // wait for user interaction
             Logger.Info("Waiting for user keyboard...");

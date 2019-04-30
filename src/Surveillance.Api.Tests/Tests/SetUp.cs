@@ -52,11 +52,20 @@ namespace Surveillance.Api.Tests.Tests
             _service = service;
 
             // ApiClient
-            var client = new ApiClient(new HttpClientHandler
+            /* {
+                 "exp": 1577836800,
+                 "iss": "dev:test:clientservice",
+                 "aud": "dev:test:clientservice",
+                 "reddeer": "surveillance reader"
+               } */
+            var bearer = @"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Nzc4MzY4MDAsImlzcyI6ImRldjp0ZXN0OmNsaWVudHNlcnZpY2UiLCJhdWQiOiJkZXY6dGVzdDpjbGllbnRzZXJ2aWNlIiwicmVkZGVlciI6InN1cnZlaWxsYW5jZSByZWFkZXIifQ.HbvU5W3O5btPQ7Ou5aiyscPuBrRJ6iCm3Jig-QqikBE";
+            var url = "https://localhost:8888/graphql/surveillance";
+
+            var client = new ApiClient(url, bearer, new CustomGraphQLHttpExecutor(new HttpClientHandler
             {
                 UseProxy = false,
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; }
-            });
+            }));
             Dependencies.ApiClient = client;
         }
 

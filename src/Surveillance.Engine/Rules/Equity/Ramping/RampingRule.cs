@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
@@ -18,6 +19,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
     public class RampingRule : BaseUniverseRule, IRampingRule
     {
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IRampingRuleEquitiesParameters _rampingParameters;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
@@ -42,6 +44,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 logger,
                 tradingStackLogger)
         {
+            _rampingParameters = rampingParameters ?? throw new ArgumentNullException(nameof(rampingParameters));
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
@@ -57,6 +60,52 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
+            var tradeWindow = history?.ActiveTradeHistory();
+
+            if (tradeWindow == null
+                || !tradeWindow.Any())
+            {
+                return;
+            }
+
+            // ok so we have the trades plus the top one
+            var mostRecentTrade = tradeWindow.Peek();
+
+            if (!ExceedsTradingFrequencyThreshold())
+            {
+                // LOG THEN EXIT
+                _logger.LogInformation($"Trading Frequency of {_rampingParameters.ThresholdOrdersExecutedInWindow} was not exceeded. Returning.");
+                return;
+            }
+
+            if (!ExceedsTradingVolumeInWindowThreshold())
+            {
+                // LOG THEN EXIT
+                _logger.LogInformation($"Trading Volume of {_rampingParameters.ThresholdVolumePercentageWindow} was not exceeded. Returning.");
+                return;
+            }
+
+
+        }
+
+        private bool ExceedsTradingFrequencyThreshold()
+        {
+            if (_rampingParameters?.ThresholdOrdersExecutedInWindow == null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ExceedsTradingVolumeInWindowThreshold()
+        {
+            if (_rampingParameters?.ThresholdVolumePercentageWindow == null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)

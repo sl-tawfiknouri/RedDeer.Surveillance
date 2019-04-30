@@ -13,6 +13,14 @@ namespace Surveillance.Api.Tests.Infrastructure
         {
         }
 
-        public DbSet<RuleBreach> RuleBreaches => _ruleBreach;
+        public DbSet<RuleBreach> DbRuleBreaches => _ruleBreach;
+        public DbSet<RuleBreachOrder> DbRuleBreachOrders => _ruleBreachOrders;
+        public DbSet<Order> DbOrders => _orders;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<RuleBreachOrder>()
+                .HasKey(c => new { c.RuleBreachId, c.OrderId });
+        }
     }
 }

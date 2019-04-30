@@ -29,11 +29,8 @@ namespace Surveillance.Api.Tests.Tests
             NLog.Web.NLogBuilder.ConfigureNLog(config); // set config when nlog used from asp net core
 
             // Database
-            var optionBuilders = new DbContextOptionsBuilder<Infrastructure.DbContext>();
-            optionBuilders.UseInMemoryDatabase("inMemoryDB", (inMemoryDbContextOptionsBuilder) => { });
-            var context = new Infrastructure.DbContext(optionBuilders.Options);
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            Dependencies.DbContext = context;
+            var factory = new DbContextFactory();
+            Dependencies.DbContext = factory.Build() as Infrastructure.DbContext;
 
             // Backend api StartupConfig
             var startupConfig = new StartupConfig

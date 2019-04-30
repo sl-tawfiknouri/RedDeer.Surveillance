@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Dtos
 {
-    public class RuleBreachDto
+    public class OrderDto
     {
         public int Id { get; set; }
-        public string RuleId { get; set; }
-        public List<OrderDto> Orders { get; set; }
+        public decimal? LimitPrice { get; set; }
     }
 }

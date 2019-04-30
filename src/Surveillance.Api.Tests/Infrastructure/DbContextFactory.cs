@@ -1,4 +1,5 @@
-﻿using Surveillance.Api.DataAccess.Abstractions.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Surveillance.Api.DataAccess.Abstractions.DbContexts;
 using Surveillance.Api.DataAccess.Abstractions.DbContexts.Factory;
 using Surveillance.Api.Tests.Tests;
 using System;
@@ -11,7 +12,11 @@ namespace Surveillance.Api.Tests.Infrastructure
     {
         public IGraphQlDbContext Build()
         {
-            return Dependencies.DbContext;
+            var optionBuilders = new DbContextOptionsBuilder<DbContext>();
+            optionBuilders.UseInMemoryDatabase("inMemoryDB", (inMemoryDbContextOptionsBuilder) => { });
+            var context = new DbContext(optionBuilders.Options);
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            return context;
         }
     }
 }

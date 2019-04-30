@@ -1,7 +1,6 @@
-﻿using SAHB.GraphQLClient.Builder;
-using SAHB.GraphQLClient.QueryGenerator;
-using Surveillance.Api.Client.Dtos;
+﻿using Surveillance.Api.Client.Dtos;
 using Surveillance.Api.Client.Infrastructure;
+using Surveillance.Api.Client.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,15 +12,11 @@ namespace Surveillance.Api.Client.Queries
 
     public class RuleBreachQuery : Query<Response>
     {
-        private List<Action<IGraphQLQueryFieldBuilder>> _actions = new List<Action<IGraphQLQueryFieldBuilder>>();
-        private List<GraphQLQueryArgument> _arguments = new List<GraphQLQueryArgument>();
+        public RuleBreachNode RuleBreachNode { get; private set; }
 
-        public RuleBreachQuery ArgumentId(int id)
+        public RuleBreachQuery()
         {
-            _actions.Add(ruleBreaches =>
-                ruleBreaches.Argument("id", "", "ruleBreach_id"));
-            _arguments.Add(new GraphQLQueryArgument("ruleBreach_id", id));
-            return this;
+            RuleBreachNode = new RuleBreachNode(this);
         }
 
         internal override async Task<Response> HandleAsync(IRequest request)
@@ -30,15 +25,9 @@ namespace Surveillance.Api.Client.Queries
                 builder
                     .Field("ruleBreaches", ruleBreaches =>
                     {
-                        ruleBreaches
-                            .Field("id")
-                            .Field("ruleId");
-                        
-                        foreach (var action in _actions)
-                        {
-                            action(ruleBreaches);
-                        }
-                    }), _arguments.ToArray());
+                        RuleBreachNode._actions.ForEach(x => x(ruleBreaches));
+                    }),
+                    _arguments.ToArray());
 
             return response.ruleBreaches.ToObject<Response>();
         }

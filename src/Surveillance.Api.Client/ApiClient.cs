@@ -17,7 +17,7 @@ namespace Surveillance.Api.Client
             _request = new Request(url, bearer, httpExecutor);
         }
 
-        public async Task<R> QueryAsync<R>(IQuery<R> query)
+        public async Task<R> QueryAsync<R>(Query<R> query)
         {
             return await query.HandleAsync(_request);
         }

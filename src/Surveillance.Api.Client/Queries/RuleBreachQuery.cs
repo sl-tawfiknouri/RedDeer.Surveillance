@@ -11,7 +11,7 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<RuleBreachDto>;
 
-    public class RuleBreachQuery : IQuery<Response>
+    public class RuleBreachQuery : Query<Response>
     {
         private List<Action<IGraphQLQueryFieldBuilder>> _actions = new List<Action<IGraphQLQueryFieldBuilder>>();
         private List<GraphQLQueryArgument> _arguments = new List<GraphQLQueryArgument>();
@@ -24,7 +24,7 @@ namespace Surveillance.Api.Client.Queries
             return this;
         }
 
-        public async Task<Response> HandleAsync(IRequest request)
+        internal override async Task<Response> HandleAsync(IRequest request)
         {
             var response = await request.QueryAsync(builder =>
                 builder

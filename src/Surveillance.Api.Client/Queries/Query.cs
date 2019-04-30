@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Surveillance.Api.Client.Queries
 {
-    public interface IQuery<R>
+    public abstract class Query<R>
     {
-        Task<R> HandleAsync(IRequest request);
+        internal abstract Task<R> HandleAsync(IRequest request);
     }
 }

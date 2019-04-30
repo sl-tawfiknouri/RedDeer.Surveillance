@@ -55,7 +55,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
                 return new IObserver<IUniverseEvent>[0];
             }
 
-            var filteredParameters = execution.Rules.SelectMany(ru => ru.Ids).Where(ru => ru != null).ToList();
+            var filteredParameters = execution.Rules.SelectMany(_ => _.Ids).Where(_ => _ != null).ToList();
             var dtos =
                 ruleParameters
                     .Rampings
@@ -88,8 +88,8 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
             }
             else
             {
-                _logger.LogError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
-                opCtx.EventError("Rule Scheduler - tried to schedule a cancelled order rule execution with no parameters set");
+                _logger.LogError("tried to schedule a cancelled order rule execution with no parameters set");
+                opCtx.EventError("tried to schedule a cancelled order rule execution with no parameters set");
             }
 
             return subscriptions;
@@ -119,7 +119,7 @@ namespace Surveillance.Engine.Rules.Universe.Subscribers.Equity
 
             if (param.HasFilters())
             {
-                _logger.LogInformation($"RampingEquitySubscriber parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
+                _logger.LogInformation($"parameters had filters. Inserting filtered universe in {opCtx.Id} OpCtx");
                 var filteredUniverse = _universeFilterFactory.Build(param.Accounts, param.Traders, param.Markets, param.Funds, param.Strategies);
                 filteredUniverse.Subscribe(rampingRule);
 

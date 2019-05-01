@@ -58,7 +58,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             return _orderFilter.Filter(value);
         }
 
-        protected override void RunPostOrderEvent(ITradingHistoryStack history)
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
         {
             var tradeWindow = history?.ActiveTradeHistory();
 
@@ -105,12 +105,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             return false;
         }
 
-        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        protected override void RunPostOrderEvent(ITradingHistoryStack history)
         {
         }
 
-        public override void RunOrderFilledEvent(ITradingHistoryStack history)
-        {           
+        protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
+        {
         }
 
         protected override void Genesis()

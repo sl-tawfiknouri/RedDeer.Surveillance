@@ -68,9 +68,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            // ok so we have the trades plus the top one
-            var mostRecentTrade = tradeWindow.Peek();
-
             if (!ExceedsTradingFrequencyThreshold())
             {
                 // LOG THEN EXIT
@@ -110,6 +107,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
         protected override void RunInitialSubmissionRule(ITradingHistoryStack history)
         {
+        }
+
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {           
         }
 
         protected override void Genesis()

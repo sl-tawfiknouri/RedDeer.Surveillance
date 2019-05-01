@@ -265,6 +265,15 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
             _logger.LogInformation($"RunInitialSubmissionRule completed for {UniverseDateTime}");
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            _logger.LogInformation($"RunOrderFilledEvent called at {UniverseDateTime}");
+
+
+
+            _logger.LogInformation($"RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation($"Genesis called at {UniverseDateTime}");

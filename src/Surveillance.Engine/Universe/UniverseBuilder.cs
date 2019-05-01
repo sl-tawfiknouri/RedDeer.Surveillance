@@ -136,6 +136,14 @@ namespace Surveillance.Engine.Rules.Universe
                     .Select(tr => new UniverseEvent(UniverseStateEvent.Order, tr.MostRecentDateEvent(), tr))
                     .ToArray();
 
+            var tradeFilledEvents =
+                trades
+                    .Where(tr => tr != null)
+                    .Where(tr => tr.OrderStatus() == OrderStatus.Filled)
+                    .Where(tr => tr.FilledDate != null)
+                    .Select(tr => new UniverseEvent(UniverseStateEvent.OrderFilled, tr.FilledDate.Value, tr))
+                    .ToArray();
+
             var intradayEquityEvents =
                 equityIntradayUpdates
                     .Select(exch => new UniverseEvent(UniverseStateEvent.EquityIntradayTick, exch.Epoch, exch))
@@ -157,6 +165,7 @@ namespace Surveillance.Engine.Rules.Universe
             var intraUniversalHistoryEvents = new List<IUniverseEvent>();
             intraUniversalHistoryEvents.AddRange(tradeSubmittedEvents);
             intraUniversalHistoryEvents.AddRange(tradeStatusChangedOnEvents);
+            intraUniversalHistoryEvents.AddRange(tradeFilledEvents);
             intraUniversalHistoryEvents.AddRange(intradayEquityEvents);
             intraUniversalHistoryEvents.AddRange(interDayEquityEvents);
             intraUniversalHistoryEvents.AddRange(marketEvents);

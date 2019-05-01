@@ -500,6 +500,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Layering
             // we don't analyse rules based on when their status last changed in the layering rule
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            // we don't analyse rules based on fills in the layering rule
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation("Genesis occurred");

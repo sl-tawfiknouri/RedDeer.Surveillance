@@ -71,6 +71,14 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighProfits
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunInitialSubmissionRule completed for {UniverseDateTime}");
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent called at {UniverseDateTime}");
+
+
+            _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighProfitsRule)} Universe Genesis called at {UniverseDateTime}");

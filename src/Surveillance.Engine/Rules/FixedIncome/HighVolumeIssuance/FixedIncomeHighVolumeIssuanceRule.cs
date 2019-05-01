@@ -71,6 +71,14 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.HighVolumeIssuance
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunInitialSubmissionRule completed for {UniverseDateTime}");
         }
 
+        public override void RunOrderFilledEvent(ITradingHistoryStack history)
+        {
+            _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent called at {UniverseDateTime}");
+
+
+            _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} RunOrderFilledEvent completed for {UniverseDateTime}");
+        }
+
         protected override void Genesis()
         {
             _logger.LogInformation($"{nameof(FixedIncomeHighVolumeIssuanceRule)} Genesis called at {UniverseDateTime}");

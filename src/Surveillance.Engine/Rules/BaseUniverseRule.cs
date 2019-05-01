@@ -27,6 +27,7 @@ namespace Surveillance.Engine.Rules.Rules
         protected IUniverseEquityIntradayCache UniverseEquityIntradayCache;
         protected IUniverseEquityInterDayCache UniverseEquityInterdayCache;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingHistory;
+        protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingFillsHistory;
         protected ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack> TradingInitialHistory;
 
         protected ScheduledExecution Schedule;
@@ -63,6 +64,7 @@ namespace Surveillance.Engine.Rules.Rules
                 ?? throw new ArgumentNullException(nameof(factory));
 
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
+            TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>();
             RuleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _name = name ?? "Unnamed rule";
@@ -117,6 +119,9 @@ namespace Surveillance.Engine.Rules.Rules
                         break;
                     case UniverseStateEvent.Order:
                         Trade(value);
+                        break;
+                    case UniverseStateEvent.OrderFilled:
+                        TradeFilled(value);
                         break;
                     case UniverseStateEvent.ExchangeOpen:
                         MarketOpened(value);
@@ -235,6 +240,42 @@ namespace Surveillance.Engine.Rules.Rules
             RunPostOrderEvent(updatedHistory);
         }
 
+        private void TradeFilled(IUniverseEvent universeEvent)
+        {
+            if (!(universeEvent.UnderlyingEvent is Order value))
+            {
+                return;
+            }
+
+            if (value.FilledDate == null)
+            {
+                _logger?.LogError($"Trade filled with null fill date {value.Instrument.Identifiers}");
+                return;
+            }
+
+            _logger?.LogTrace($"Trade Filled event (status changed) in base universe rule occuring for {_name} | event/universe time {universeEvent.EventTime} | reddeer order id (p key){value.ReddeerOrderId}");
+
+            UniverseDateTime = universeEvent.EventTime;
+
+            if (!TradingFillsHistory.ContainsKey(value.Instrument.Identifiers))
+            {
+                // ReSharper disable once PossibleInvalidOperationException
+                var history = new TradingHistoryStack(WindowSize, i => i.FilledDate.Value, _tradingStackLogger);
+                history.Add(value, value.FilledDate.Value);
+                TradingFillsHistory.TryAdd(value.Instrument.Identifiers, history);
+            }
+            else
+            {
+                TradingFillsHistory.TryGetValue(value.Instrument.Identifiers, out var history);
+                history?.Add(value, value.FilledDate.Value);
+                history?.ArchiveExpiredActiveItems(value.FilledDate.Value);
+            }
+
+            TradingFillsHistory.TryGetValue(value.Instrument.Identifiers, out var updatedHistory);
+
+            RunOrderFilledEvent(updatedHistory);
+        }
+
         private void MarketOpened(IUniverseEvent universeEvent)
         {
             if (!(universeEvent.UnderlyingEvent is MarketOpenClose value))
@@ -330,6 +371,12 @@ namespace Surveillance.Engine.Rules.Rules
         /// </summary>
         protected abstract void RunInitialSubmissionRule(ITradingHistoryStack history);
 
+        /// <summary>
+        /// We have some rules which are based off of filled orders and we would prefer
+        /// to have them ordered by their fill date/time
+        /// </summary>
+        public abstract void RunOrderFilledEvent(ITradingHistoryStack history);
+
         protected abstract void Genesis();
         protected abstract void MarketOpen(MarketOpenClose exchange);
         protected abstract void MarketClose(MarketOpenClose exchange);
@@ -338,12 +385,12 @@ namespace Surveillance.Engine.Rules.Rules
         public Domain.Surveillance.Scheduling.Rules Rule { get; }
         public string Version { get; }
 
-
         public void BaseClone()
         {
             UniverseEquityIntradayCache = (IUniverseEquityIntradayCache)UniverseEquityIntradayCache.Clone();
             UniverseEquityInterdayCache = (IUniverseEquityInterDayCache) UniverseEquityInterdayCache.Clone();
             TradingHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingHistory);
+            TradingFillsHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingFillsHistory);
             TradingInitialHistory = new ConcurrentDictionary<InstrumentIdentifiers, ITradingHistoryStack>(TradingInitialHistory);
         }
     }

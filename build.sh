@@ -6,7 +6,7 @@
 ##########################################################################
  
 # Define directories.
-CAKE_VERSION=0.31.0
+CAKE_VERSION=0.33.0
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TOOLS_DIR=$SCRIPT_DIR/tools
 TOOLS_PROJ=$TOOLS_DIR/tools.csproj

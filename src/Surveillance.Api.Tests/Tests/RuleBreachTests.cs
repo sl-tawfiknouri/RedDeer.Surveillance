@@ -1,12 +1,75 @@
 ﻿using NUnit.Framework;
 using Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
 {
     public class RuleBreachTests : BaseTest
     {
+        [Test]
+        public async Task CanRequest_RuleBreach_AllFields()
+        {
+            // arrange
+            _dbContext.DbRuleBreaches.Add(new RuleBreach
+            {
+                Id = 5,
+                StartOfPeriodUnderInvestigation = new DateTime(2020, 01, 01, 01, 01, 01, DateTimeKind.Utc),
+                EndOfPeriodUnderInvestigation = new DateTime(2020, 06, 03, 05, 06, 07, DateTimeKind.Utc),
+                ReddeerEnrichmentId = "VOD LN",
+                Title = "Test Rule Breach",
+                Description = "This is a description",
+                Venue = "London",
+                AssetCfi = "Equity",
+                CreatedOn = new DateTime(2020, 03, 01, 12, 12, 12),
+                RuleId = "abc",
+                CorrelationId = "xyz123",
+                IsBackTest = true,
+                SystemOperationId = 789
+            });
+            await _dbContext.SaveChangesAsync();
+
+            var query = new RuleBreachQuery();
+            query
+                .RuleBreachNode
+                    .FieldId()
+                    .FieldStartOfPeriodUnderInvestigation()
+                    .FieldEndOfPeriodUnderInvestigation()
+                    .FieldReddeerEnrichmentId()
+                    .FieldTitle()
+                    .FieldDescription()
+                    .FieldVenue()
+                    .FieldAssetCfi()
+                    .FieldCreatedOn()
+                    .FieldRuleId()
+                    .FieldCorrelationId()
+                    .FieldIsBackTest()
+                    .FieldSystemOperationId();
+
+            // act
+            var ruleBreaches = await _apiClient.QueryAsync(query);
+
+            // assert
+            Assert.That(ruleBreaches, Has.Count.EqualTo(1));
+
+            var ruleBreach = ruleBreaches[0];
+            Assert.That(ruleBreach.Id, Is.EqualTo(5));
+            Assert.That(ruleBreach.StartOfPeriodUnderInvestigation, Is.EqualTo(new DateTime(2020, 01, 01, 01, 01, 01, DateTimeKind.Utc)));
+            Assert.That(ruleBreach.EndOfPeriodUnderInvestigation, Is.EqualTo(new DateTime(2020, 06, 03, 05, 06, 07, DateTimeKind.Utc)));
+            Assert.That(ruleBreach.ReddeerEnrichmentId, Is.EqualTo("VOD LN"));
+            Assert.That(ruleBreach.Title, Is.EqualTo("Test Rule Breach"));
+            Assert.That(ruleBreach.Description, Is.EqualTo("This is a description"));
+            Assert.That(ruleBreach.Venue, Is.EqualTo("London"));
+            Assert.That(ruleBreach.AssetCfi, Is.EqualTo("Equity"));
+            Assert.That(ruleBreach.CreatedOn, Is.EqualTo(new DateTime(2020, 03, 01, 12, 12, 12)));
+            Assert.That(ruleBreach.RuleId, Is.EqualTo("abc"));
+            Assert.That(ruleBreach.CorrelationId, Is.EqualTo("xyz123"));
+            Assert.That(ruleBreach.IsBackTest, Is.EqualTo(true));
+            Assert.That(ruleBreach.SystemOperationId, Is.EqualTo(789));
+            Assert.That(ruleBreach.Orders, Is.Null);
+        }
+
         [Test]
         public async Task CanRequest_RuleBreaches_WithoutOrders()
         {
@@ -35,13 +98,11 @@ namespace Surveillance.Api.Tests.Tests
             // assert
             Assert.That(ruleBreaches, Has.Count.EqualTo(2));
 
-            var ruleBreach0 = ruleBreaches[0];
-            Assert.That(ruleBreach0.Id, Is.EqualTo(5));
+            var ruleBreach0 = ruleBreaches.Find(x => x.Id == 5);
             Assert.That(ruleBreach0.RuleId, Is.EqualTo("abc"));
             Assert.That(ruleBreach0.Orders, Is.Null);
 
-            var ruleBreach1 = ruleBreaches[1];
-            Assert.That(ruleBreach1.Id, Is.EqualTo(6));
+            var ruleBreach1 = ruleBreaches.Find(x => x.Id == 6);
             Assert.That(ruleBreach1.RuleId, Is.EqualTo("xyz"));
             Assert.That(ruleBreach1.Orders, Is.Null);
         }

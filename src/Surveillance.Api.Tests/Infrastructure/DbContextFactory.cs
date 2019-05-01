@@ -15,7 +15,6 @@ namespace Surveillance.Api.Tests.Infrastructure
             var optionBuilders = new DbContextOptionsBuilder<DbContext>();
             optionBuilders.UseInMemoryDatabase("inMemoryDB", (inMemoryDbContextOptionsBuilder) => { });
             var context = new DbContext(optionBuilders.Options);
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             return context;
         }
     }

@@ -11,7 +11,7 @@ namespace Domain.Surveillance.TimeSeries
             TimeSpan span,
             DateTime initiation)
         {
-            return TimeSeriesTrendClassification.Chaotic;
+            return TimeSeriesTrendClassification.Increasing;
         }
     }
 }

@@ -7,6 +7,7 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Trades.Interfaces;
@@ -20,6 +21,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
     {
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IRampingRuleEquitiesParameters _rampingParameters;
+        private readonly ITimeSeriesTrendClassifier _trendClassifier;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
@@ -31,6 +33,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             IUniverseMarketCacheFactory factory,
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
+            ITimeSeriesTrendClassifier trendClassifier,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -49,6 +52,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _trendClassifier = trendClassifier ?? throw new ArgumentNullException(nameof(trendClassifier));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
@@ -82,6 +86,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
+            var lastTrade = tradeWindow.Peek();
+            var pricingTrends = _trendClassifier.Classify(lastTrade.Instrument, WindowSize, UniverseDateTime);
 
         }
 

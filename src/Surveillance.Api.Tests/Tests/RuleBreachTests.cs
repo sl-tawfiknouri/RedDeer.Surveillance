@@ -5,38 +5,77 @@ using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
 {
-    public class RuleBreachTests
+    public class RuleBreachTests : BaseTest
     {
         [Test]
-        public async Task CanRequestRuleBreachByIdWithOrders()
+        public async Task CanRequest_RuleBreaches_WithoutOrders()
         {
             // arrange
-            Dependencies.DbContext.DbRuleBreaches.Add(new RuleBreach
+            _dbContext.DbRuleBreaches.Add(new RuleBreach
             {
                 Id = 5,
                 RuleId = "abc"
             });
-            Dependencies.DbContext.DbOrders.Add(new Order
+            _dbContext.DbRuleBreaches.Add(new RuleBreach
+            {
+                Id = 6,
+                RuleId = "xyz"
+            });
+            await _dbContext.SaveChangesAsync();
+
+            var query = new RuleBreachQuery();
+            query
+                .RuleBreachNode
+                    .FieldId()
+                    .FieldRuleId();
+
+            // act
+            var ruleBreaches = await _apiClient.QueryAsync(query);
+
+            // assert
+            Assert.That(ruleBreaches, Has.Count.EqualTo(2));
+
+            var ruleBreach0 = ruleBreaches[0];
+            Assert.That(ruleBreach0.Id, Is.EqualTo(5));
+            Assert.That(ruleBreach0.RuleId, Is.EqualTo("abc"));
+            Assert.That(ruleBreach0.Orders, Is.Null);
+
+            var ruleBreach1 = ruleBreaches[1];
+            Assert.That(ruleBreach1.Id, Is.EqualTo(6));
+            Assert.That(ruleBreach1.RuleId, Is.EqualTo("xyz"));
+            Assert.That(ruleBreach1.Orders, Is.Null);
+        }
+
+        [Test]
+        public async Task CanRequest_RuleBreachById_WithOrders()
+        {
+            // arrange
+            _dbContext.DbRuleBreaches.Add(new RuleBreach
+            {
+                Id = 5,
+                RuleId = "abc"
+            });
+            _dbContext.DbOrders.Add(new Order
             {
                 Id = 8,
                 LimitPrice = 6.78m
             });
-            Dependencies.DbContext.DbOrders.Add(new Order
+            _dbContext.DbOrders.Add(new Order
             {
                 Id = 9,
                 LimitPrice = 3.45m
             });
-            Dependencies.DbContext.DbRuleBreachOrders.Add(new RuleBreachOrder
+            _dbContext.DbRuleBreachOrders.Add(new RuleBreachOrder
             {
                 RuleBreachId = 5,
                 OrderId = 8
             });
-            Dependencies.DbContext.DbRuleBreachOrders.Add(new RuleBreachOrder
+            _dbContext.DbRuleBreachOrders.Add(new RuleBreachOrder
             {
                 RuleBreachId = 5,
                 OrderId = 9
             });
-            await Dependencies.DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             var query = new RuleBreachQuery();
             query
@@ -49,7 +88,7 @@ namespace Surveillance.Api.Tests.Tests
                         .FieldLimitPrice();
 
             // act
-            var ruleBreaches = await Dependencies.ApiClient.QueryAsync(query);
+            var ruleBreaches = await _apiClient.QueryAsync(query);
 
             // assert
             Assert.That(ruleBreaches, Has.Count.EqualTo(1));

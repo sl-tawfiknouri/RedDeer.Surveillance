@@ -7,7 +7,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces
     {
         IWashTradeRuleParameters EquitiesParameters { get; }
         WashTradeRuleBreach.WashTradeAveragePositionBreach AveragePositionBreach { get; }
-        WashTradeRuleBreach.WashTradePairingPositionBreach PairingPositionBreach { get; }
         WashTradeRuleBreach.WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }
     }
 }

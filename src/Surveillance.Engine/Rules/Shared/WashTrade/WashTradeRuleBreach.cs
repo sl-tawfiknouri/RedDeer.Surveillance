@@ -21,7 +21,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             ITradePosition tradePosition,
             FinancialInstrument security,
             WashTradeAveragePositionBreach averagePositionBreach,
-            WashTradePairingPositionBreach pairingPositionBreach,
             WashTradeClusteringPositionBreach clusteringPositionBreach)
         {
             FactorValue = factorValue;
@@ -33,7 +32,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             Security = security;
 
             AveragePositionBreach = averagePositionBreach ?? throw new ArgumentNullException(nameof(averagePositionBreach));
-            PairingPositionBreach = pairingPositionBreach ?? throw new ArgumentNullException(nameof(pairingPositionBreach));
             ClusteringPositionBreach = clusteringPositionBreach ?? throw new ArgumentNullException(nameof(clusteringPositionBreach));
 
             RuleParameterId = equitiesParameters?.Id ?? string.Empty;
@@ -48,7 +46,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
         public FinancialInstrument Security { get; }
 
         public WashTradeAveragePositionBreach AveragePositionBreach { get; }
-        public WashTradePairingPositionBreach PairingPositionBreach { get; }
         public WashTradeClusteringPositionBreach ClusteringPositionBreach { get; }
 
         public bool IsBackTestRun { get; set; }

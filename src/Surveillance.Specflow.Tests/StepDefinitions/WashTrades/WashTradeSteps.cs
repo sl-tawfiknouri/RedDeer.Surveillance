@@ -15,7 +15,6 @@ using Surveillance.Engine.Rules.RuleParameters.Equities;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -35,7 +34,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
 
         // wash trade factory and arguments
         private ICurrencyConverterService _currencyConverterService;
-        private IWashTradePositionPairer _positionPairer;
         private IClusteringService _washTradeClustering;
         private IUniverseEquityOrderFilterService _universeOrderFilterService;
         private IUniverseMarketCacheFactory _universeMarketCacheFactory;
@@ -66,7 +64,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
             var currencyLogger = new NullLogger<CurrencyConverterService>();
             _currencyConverterService = new CurrencyConverterService(exchangeRateApiRepository, currencyLogger);
 
-            _positionPairer = new WashTradePositionPairer();
             _washTradeClustering = new ClusteringService();
             _universeOrderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _universeMarketCacheFactory = A.Fake<IUniverseMarketCacheFactory>();
@@ -76,7 +73,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
             _equityRuleWashTradeFactory =
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     _washTradeClustering,
                     _universeOrderFilterService,
                     _universeMarketCacheFactory,
@@ -103,17 +99,11 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.WashTrades
                     "0",
                     new System.TimeSpan(parameters.WindowHours, 0, 0),
                     parameters.UseAverageNetting.GetValueOrDefault(false),
-                    parameters.UsePairing.GetValueOrDefault(false),
                     parameters.UseClustering.GetValueOrDefault(false),
                     parameters.MinimumNumberOfTrades,
                     parameters.MaximumPositionChangeValue,
                     parameters.MaximumAbsoluteValueChange,
                     parameters.MaximumAbsoluteValueChangeCurrency,
-                    parameters.PairingPositionMinimumNumberOfPairedTrades,
-                    parameters.PairingPositionPercentagePriceChangeThresholdPerPair,
-                    parameters.PairingPositionPercentageVolumeDifferenceThreshold,
-                    parameters.PairingPositionMaximumAbsoluteMoney,
-                    parameters.PairingPositionMaximumAbsoluteCurrency,
                     parameters.ClusteringPositionMinimumNumberOfTrades,
                     parameters.ClusteringPercentageValueDifferenceThreshold,
                     new[] { ClientOrganisationalFactors.None },

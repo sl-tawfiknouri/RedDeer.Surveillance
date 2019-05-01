@@ -101,7 +101,6 @@ namespace Surveillance.Engine.Rules.Rules.FixedIncome.WashTrade
                     new TradePosition(filteredOrders),
                     security,
                     averageNettingAnalysis,
-                    WashTradePairingPositionBreach.None(),
                     clusteringAnalysis);
 
             var universeAlert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.FixedIncomeWashTrades, breach, RuleCtx);

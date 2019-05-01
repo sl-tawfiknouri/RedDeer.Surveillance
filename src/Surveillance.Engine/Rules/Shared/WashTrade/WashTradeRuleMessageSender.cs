@@ -54,11 +54,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
                 positionAverage = BuildAveragePositionDescription(breach);
             }
 
-            if (breach.PairingPositionBreach?.PairingPositionRuleBreach ?? false)
-            {
-                positionPaired = BuildPositionPairedDescription(breach);
-            }
-
             if (breach.ClusteringPositionBreach?.ClusteringPositionBreach ?? false)
             {
                 positionClustering = BuildPositionClusteringDescription(breach);
@@ -96,11 +91,6 @@ namespace Surveillance.Engine.Rules.Rules.Shared.WashTrade
             }
 
             return averagePosition;
-        }
-
-        private string BuildPositionPairedDescription(IWashTradeRuleBreach breach)
-        {
-            return $" Paired position rule breach was found for a total of {breach.PairingPositionBreach.PairedTradesInBreach} pairs. {breach.PairingPositionBreach.PairedTradesTotal} individual trades constituted the paired trades total.";
         }
 
         private string BuildPositionClusteringDescription(IWashTradeRuleBreach breach)

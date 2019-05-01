@@ -14,7 +14,6 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.OrganisationalFactors;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Tests.Helpers;
@@ -32,7 +31,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
         private ISystemProcessOperationRunRuleContext _ruleCtx;
         private IUniverseAlertStream _alertStream;
         private IClusteringService _clustering;
-        private IWashTradePositionPairer _positionPairer;
         private IWashTradeRuleEquitiesParameters _equitiesParameters;
         private IUniverseOrderFilter _orderFilter;
         private IUniverseMarketCacheFactory _factory;
@@ -50,7 +48,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             _ruleCtx = A.Fake<ISystemProcessOperationRunRuleContext>();
             _alertStream = A.Fake<IUniverseAlertStream>();
             _clustering = new ClusteringService();
-            _positionPairer = A.Fake<IWashTradePositionPairer>();
             _equitiesParameters = A.Fake<IWashTradeRuleEquitiesParameters>();
             _logger = A.Fake<ILogger>();
             _ruleRunRepository = A.Fake<IRuleRunDataRequestRepository>();
@@ -75,7 +72,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -98,7 +94,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -121,7 +116,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -145,7 +139,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -179,7 +172,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -214,7 +206,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -259,7 +250,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -300,7 +290,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -357,7 +346,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,
@@ -434,7 +422,6 @@ namespace Surveillance.Engine.Rules.Tests.Rules.Equities.WashTrades
             var rule = new WashTradeRule(
                 _equitiesParameters,
                 _ruleCtx,
-                _positionPairer,
                 _clustering,
                 _alertStream,
                 _currencyConverterService,

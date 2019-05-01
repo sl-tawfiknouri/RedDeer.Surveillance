@@ -11,7 +11,6 @@ using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.WashTrade;
-using Surveillance.Engine.Rules.Rules.Equity.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Rules.Shared.WashTrade.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -22,7 +21,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
     public class WashTradeRuleFactoryTests
     {
         private ICurrencyConverterService _currencyConverterService;
-        private IWashTradePositionPairer _positionPairer;
         private IClusteringService _clustering;
         private IUniverseEquityOrderFilterService _orderFilterService;
         private IUniverseMarketCacheFactory _factory;
@@ -37,7 +35,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         public void Setup()
         {
             _currencyConverterService = A.Fake<ICurrencyConverterService>();
-            _positionPairer = A.Fake<IWashTradePositionPairer>();
             _clustering = A.Fake<IClusteringService>();
             _orderFilterService = A.Fake<IUniverseEquityOrderFilterService>();
             _factory = A.Fake<IUniverseMarketCacheFactory>();
@@ -56,22 +53,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     null,
-                    _positionPairer, 
-                    _clustering,
-                    _orderFilterService,
-                    _factory,
-                    _logger,
-                    _tradingHistoryLogger));
-        }
-
-        [Test]
-        public void Constructor_PositionPairer_Null_Throws_Exception()
-        {
-            // ReSharper disable once ObjectCreationAsStatement
-            Assert.Throws<ArgumentNullException>(() =>
-                new EquityRuleWashTradeFactory(
-                    _currencyConverterService,
-                    null,
                     _clustering,
                     _orderFilterService,
                     _factory,
@@ -86,7 +67,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     null,
                     _orderFilterService,
                     _factory,
@@ -101,7 +81,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     _clustering,
                     null,
                     _factory,
@@ -116,7 +95,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     _clustering,
                     _orderFilterService,
                     null,
@@ -131,7 +109,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     _clustering,
                     _orderFilterService,
                     _factory,
@@ -146,7 +123,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
             Assert.Throws<ArgumentNullException>(() =>
                 new EquityRuleWashTradeFactory(
                     _currencyConverterService,
-                    _positionPairer,
                     _clustering,
                     _orderFilterService,
                     _factory,
@@ -159,7 +135,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleWashTradeFactory(
                 _currencyConverterService,
-                _positionPairer,
                 _clustering,
                 _orderFilterService,
                 _factory,
@@ -174,7 +149,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleWashTradeFactory(
                 _currencyConverterService,
-                _positionPairer,
                 _clustering,
                 _orderFilterService,
                 _factory,
@@ -189,7 +163,6 @@ namespace Surveillance.Engine.Rules.Tests.Factories.Equities
         {
             var factory = new EquityRuleWashTradeFactory(
                 _currencyConverterService,
-                _positionPairer,
                 _clustering,
                 _orderFilterService,
                 _factory,

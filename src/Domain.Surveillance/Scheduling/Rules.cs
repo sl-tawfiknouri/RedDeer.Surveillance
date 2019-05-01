@@ -37,6 +37,8 @@ namespace Domain.Surveillance.Scheduling
         [Description("Fixed Income High Volume Issuance")]
         FixedIncomeHighVolumeIssuance,
         [Description("Fixed Income Wash Trades")]
-        FixedIncomeWashTrades
+        FixedIncomeWashTrades,
+        [Description("Ramping")]
+        Ramping
     }
 }

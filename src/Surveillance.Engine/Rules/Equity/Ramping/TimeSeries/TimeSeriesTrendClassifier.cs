@@ -1,8 +1,8 @@
 ﻿using System;
 using Domain.Core.Financial.Assets.Interfaces;
-using Domain.Surveillance.TimeSeries.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 
-namespace Domain.Surveillance.TimeSeries
+namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
 {
     public class TimeSeriesTrendClassifier : ITimeSeriesTrendClassifier
     {

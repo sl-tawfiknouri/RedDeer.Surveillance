@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain.Core.Financial.Assets.Interfaces;
 
-namespace Domain.Surveillance.TimeSeries.Interfaces
+namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces
 {
     public interface ITimeSeriesTrendClassifier
     {

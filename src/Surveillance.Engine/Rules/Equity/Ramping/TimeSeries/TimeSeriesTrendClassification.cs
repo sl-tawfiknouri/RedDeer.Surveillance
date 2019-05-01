@@ -1,4 +1,4 @@
-﻿namespace Domain.Surveillance.TimeSeries
+﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
 {
     public enum TimeSeriesTrendClassification
     {

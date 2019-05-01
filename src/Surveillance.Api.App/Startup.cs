@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
@@ -33,15 +34,18 @@ namespace Surveillance.Api.App
     {
         private readonly IHostingEnvironment _environment;
         private readonly ILogger _logger;
+        private readonly IStartupConfig _startupConfig;
 
         public Startup(
             IConfiguration configuration,
             IHostingEnvironment environment,
-            ILogger<Startup> logger)
+            ILogger<Startup> logger,
+            IStartupConfig startupConfig)
         {
             Configuration = configuration;
             _environment = environment;
             _logger = logger;
+            _startupConfig = startupConfig;
         }
 
         public IConfiguration Configuration { get; }
@@ -78,6 +82,12 @@ namespace Surveillance.Api.App
             services.AddScoped<ISystemProcessOperationRepository, SystemProcessOperationRepository>();
             services.AddScoped<ISystemProcessRepository, SystemProcessRepository>();
             services.AddScoped<IFinancialInstrumentRepository, FinancialInstrumentRepository>();
+
+            // Test services should be added at end of list so that they can override defaults
+            if (_startupConfig.IsTest)
+            {
+                _startupConfig.ConfigureTestServices(services);
+            }
 
             var manifest = new ClaimsManifest();
 

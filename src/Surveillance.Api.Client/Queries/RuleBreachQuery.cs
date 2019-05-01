@@ -1,0 +1,35 @@
+﻿using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Infrastructure;
+using Surveillance.Api.Client.Nodes;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Surveillance.Api.Client.Queries
+{
+    using Response = List<RuleBreachDto>;
+
+    public class RuleBreachQuery : Query<Response>
+    {
+        public RuleBreachNode RuleBreachNode { get; private set; }
+
+        public RuleBreachQuery()
+        {
+            RuleBreachNode = new RuleBreachNode(this);
+        }
+
+        internal override async Task<Response> HandleAsync(IRequest request)
+        {
+            var response = await request.QueryAsync(builder =>
+                builder
+                    .Field("ruleBreaches", ruleBreaches =>
+                    {
+                        RuleBreachNode._actions.ForEach(x => x(ruleBreaches));
+                    }),
+                    _arguments.ToArray());
+
+            return response.ruleBreaches.ToObject<Response>();
+        }
+    }
+}

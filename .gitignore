@@ -12,3 +12,9 @@ src/PicklesDocumentation/
 
 .dotnet/*
 tools/*
+
+# NCrunch
+*.n[Cc]runch*
+.*crunch*.local.xml
+src/_NCrunch_*
+*nCrunchTemp_*

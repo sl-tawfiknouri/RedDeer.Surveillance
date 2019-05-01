@@ -5,7 +5,6 @@ namespace Surveillance.Api.DataAccess.Entities
 {
     public class RuleBreachOrder : IRuleBreachOrder
     {
-        [Key]
         public int RuleBreachId { get; set; }
         public int OrderId { get; set; }
     }

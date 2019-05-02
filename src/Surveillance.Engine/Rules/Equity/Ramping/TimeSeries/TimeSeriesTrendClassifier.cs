@@ -12,7 +12,15 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
             TimeSpan span, 
             DateTime initiation)
         {
-            return new ITimeSeriesTrendClassification[0];
+            return new ITimeSeriesTrendClassification[]
+            {
+                new TimeSeriesTrendClassification(
+                    financialInstrument,
+                    TimeSeriesTrend.Increasing,
+                    initiation,
+                    initiation.Add(span),
+                    TimeSegmentLength.ThirtyDay) 
+            };
         }
     }
 }

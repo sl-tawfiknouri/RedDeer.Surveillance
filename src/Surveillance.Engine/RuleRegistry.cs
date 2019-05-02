@@ -60,6 +60,8 @@ using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Spoofing;
@@ -242,6 +244,7 @@ namespace Surveillance.Engine.Rules
             For<ITimeSeriesTrendClassifier>().Use<TimeSeriesTrendClassifier>();
 
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
+            For<IPriceImpactClassifier>().Use<PriceImpactClassifier>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
         }

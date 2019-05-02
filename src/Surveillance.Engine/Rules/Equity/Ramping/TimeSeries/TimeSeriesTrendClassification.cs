@@ -10,17 +10,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
             IFinancialInstrument instrument,
             TimeSeriesTrend trend, 
             DateTime commencementUtc,
-            DateTime terminationUtc)
+            DateTime terminationUtc,
+            TimeSegmentLength timeSegment)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             Trend = trend;
             CommencementUtc = commencementUtc;
             TerminationUtc = terminationUtc;
+            TimeSegment = timeSegment;
         }
 
         public IFinancialInstrument Instrument { get; }
-
         public TimeSeriesTrend Trend { get; }
+        public TimeSegmentLength TimeSegment { get; }
 
         public DateTime CommencementUtc { get; }
         public DateTime TerminationUtc { get; }

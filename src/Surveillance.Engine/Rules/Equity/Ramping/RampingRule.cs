@@ -7,6 +7,7 @@ using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -22,6 +23,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IRampingRuleEquitiesParameters _rampingParameters;
         private readonly ITimeSeriesTrendClassifier _trendClassifier;
+        private readonly IPriceImpactClassifier _priceImpactClassifier;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
@@ -34,6 +36,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
             ITimeSeriesTrendClassifier trendClassifier,
+            IPriceImpactClassifier priceImpactClassifier,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -51,8 +54,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _trendClassifier = trendClassifier ?? throw new ArgumentNullException(nameof(trendClassifier));
+            _priceImpactClassifier = priceImpactClassifier ?? throw new ArgumentNullException(nameof(priceImpactClassifier));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
@@ -88,6 +92,20 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
             var lastTrade = tradeWindow.Peek();
             var pricingTrends = _trendClassifier.Classify(lastTrade.Instrument, WindowSize, UniverseDateTime);
+
+            if (pricingTrends == null
+                || !pricingTrends.Any())
+            {
+                // LOG THEN EXIT
+                _logger.LogInformation($"Pricing trends unable to calculate on {UniverseDateTime} for window size {WindowSize} with instrument {lastTrade.Instrument}.");
+                return;
+            }
+
+            // var weightedVolumePriceImpact = _priceImpactClassifier.ClassifyByWeightedVolume(tradeWindow);
+            var tradeCountPriceImpact = _priceImpactClassifier.ClassifyByTradeCount(tradeWindow);
+
+            // now add together the price impact scalar with the price trend vector...lets just make it a vector now
+            
 
         }
 

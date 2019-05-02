@@ -9,6 +9,7 @@ using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Trades;
 using Surveillance.Engine.Rules.Universe.Filter.Interfaces;
@@ -20,6 +21,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IUniverseMarketCacheFactory _factory;
         private readonly ITimeSeriesTrendClassifier _timeSeriesTrendClassifier;
+        private readonly IPriceImpactClassifier _priceImpactClassifier;
         private readonly ILogger<IRampingRule> _logger;
         private readonly ILogger<TradingHistoryStack> _tradingHistoryLogger;
 
@@ -27,6 +29,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
             ITimeSeriesTrendClassifier timeSeriesTrendClassifier,
+            IPriceImpactClassifier priceImpactClassifier,
             ILogger<IRampingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
         {
@@ -35,6 +38,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
             _timeSeriesTrendClassifier = timeSeriesTrendClassifier ?? throw new ArgumentNullException(nameof(timeSeriesTrendClassifier));
+            _priceImpactClassifier = priceImpactClassifier ?? throw new ArgumentNullException(nameof(priceImpactClassifier));
         }
 
         public IRampingRule Build(
@@ -52,6 +56,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 _orderFilterService,
                 runMode,
                 _timeSeriesTrendClassifier,
+                _priceImpactClassifier,
                 _logger,
                 _tradingHistoryLogger);
         }

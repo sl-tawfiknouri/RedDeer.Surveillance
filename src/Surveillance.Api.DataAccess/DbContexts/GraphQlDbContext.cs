@@ -55,7 +55,7 @@ namespace Surveillance.Api.DataAccess.DbContexts
             modelBuilder.Entity<Order>().ToTable("Orders");
             modelBuilder.Entity<OrdersAllocation>().ToTable("OrdersAllocation");
             modelBuilder.Entity<RuleBreach>().ToTable("RuleBreach");
-            modelBuilder.Entity<RuleBreachOrder>().ToTable("RuleBreachOrders");
+            modelBuilder.Entity<RuleBreachOrder>().ToTable("RuleBreachOrders").HasKey(c => new { c.RuleBreachId, c.OrderId });
             modelBuilder.Entity<SystemProcess>().ToTable("SystemProcess");
             modelBuilder.Entity<SystemProcessOperation>().ToTable("SystemProcessOperation");
             modelBuilder.Entity<SystemProcessOperationRuleRun>().ToTable("SystemProcessOperationRuleRun");

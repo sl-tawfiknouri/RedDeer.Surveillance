@@ -12,9 +12,9 @@ namespace Surveillance.Api.Client
     {
         private Request _request;
 
-        public ApiClient(string url, string bearer, IGraphQLHttpExecutor httpExecutor = null)
+        public ApiClient(string url, string bearer, HttpMessageHandler httpMessageHandler = null)
         {
-            _request = new Request(url, bearer, httpExecutor);
+            _request = new Request(url, bearer, httpMessageHandler);
         }
 
         public async Task<R> QueryAsync<R>(Query<R> query)

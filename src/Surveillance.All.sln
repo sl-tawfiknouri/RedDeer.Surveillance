@@ -115,9 +115,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{8372576C-846
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.App", "Surveillance.Api.App\Surveillance.Api.App.csproj", "{C0616ED6-3D0B-45B9-89F3-14FFC04655C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Api.DataAccess", "Surveillance.Api.DataAccess\Surveillance.Api.DataAccess.csproj", "{00A3F2DB-311A-4192-8AD1-210B55CACA47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.DataAccess", "Surveillance.Api.DataAccess\Surveillance.Api.DataAccess.csproj", "{00A3F2DB-311A-4192-8AD1-210B55CACA47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Api.DataAccess.Abstractions", "Surveillance.Api.DataAccess.Abstractions\Surveillance.Api.DataAccess.Abstractions.csproj", "{CB8771E1-BD1C-4184-868E-5DC13F785083}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.DataAccess.Abstractions", "Surveillance.Api.DataAccess.Abstractions\Surveillance.Api.DataAccess.Abstractions.csproj", "{CB8771E1-BD1C-4184-868E-5DC13F785083}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.Tests", "Surveillance.Api.Tests\Surveillance.Api.Tests.csproj", "{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Api.Client", "Surveillance.Api.Client\Surveillance.Api.Client.csproj", "{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -309,6 +313,14 @@ Global
 		{CB8771E1-BD1C-4184-868E-5DC13F785083}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB8771E1-BD1C-4184-868E-5DC13F785083}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB8771E1-BD1C-4184-868E-5DC13F785083}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -360,6 +372,8 @@ Global
 		{C0616ED6-3D0B-45B9-89F3-14FFC04655C2} = {8372576C-846D-4156-8EBD-A6F78916ADF8}
 		{00A3F2DB-311A-4192-8AD1-210B55CACA47} = {8372576C-846D-4156-8EBD-A6F78916ADF8}
 		{CB8771E1-BD1C-4184-868E-5DC13F785083} = {8372576C-846D-4156-8EBD-A6F78916ADF8}
+		{EACA3E68-51E1-4422-A5BB-E6163F2A82FC} = {8372576C-846D-4156-8EBD-A6F78916ADF8}
+		{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B} = {8372576C-846D-4156-8EBD-A6F78916ADF8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BF8E945-EBB2-4A72-913C-629901C463DC}

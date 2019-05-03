@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Markets.Timebars;
 using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
@@ -27,7 +28,9 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
         /// <summary>
         /// Oldest order at head, youngest (root) at tail
         /// </summary>
-        public IRampingStrategySummaryPanel Analyse(IReadOnlyCollection<Order> orderSegment)
+        public IRampingStrategySummaryPanel Analyse(
+            IReadOnlyCollection<Order> orderSegment,
+            List<EquityInstrumentIntraDayTimeBar> timeBars)
         {
             if (!orderSegment.Any())
             {
@@ -45,19 +48,19 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
             var fromThirtyDay = to - TimeSpan.FromDays(30);
 
             var dayOne = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
-            var segmentPriceTrendOne = _trendClassifier.Classify(head.Instrument, fromOneDay, to);
+            var segmentPriceTrendOne = _trendClassifier.Classify(timeBars, head.Instrument, fromOneDay, to, TimeSegment.OneDay);
             var dayOneSummary = IdentifyRampingStrategy(dayOne, segmentPriceTrendOne, TimeSegment.OneDay);
 
             var dayFive = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
-            var segmentPriceTrendFive = _trendClassifier.Classify(head.Instrument, fromFiveDay, to);
+            var segmentPriceTrendFive = _trendClassifier.Classify(timeBars, head.Instrument, fromFiveDay, to, TimeSegment.FiveDay);
             var dayFiveSummary = IdentifyRampingStrategy(dayFive, segmentPriceTrendFive, TimeSegment.FiveDay);
 
             var dayFifteen = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(15), TimeSegment.FifteenDay);
-            var segmentPriceTrendFifteen = _trendClassifier.Classify(head.Instrument, fromFifteenDay, to);
+            var segmentPriceTrendFifteen = _trendClassifier.Classify(timeBars, head.Instrument, fromFifteenDay, to, TimeSegment.FifteenDay);
             var dayFifteenSummary = IdentifyRampingStrategy(dayFifteen, segmentPriceTrendFifteen, TimeSegment.FifteenDay);
 
             var dayThirty = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
-            var segmentPriceTrendThirty = _trendClassifier.Classify(head.Instrument, fromThirtyDay, to);
+            var segmentPriceTrendThirty = _trendClassifier.Classify(timeBars, head.Instrument, fromThirtyDay, to, TimeSegment.ThirtyDay);
             var dayThirtySummary = IdentifyRampingStrategy(dayThirty, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
 
             return new RampingStrategySummaryPanel(dayOneSummary, dayFiveSummary, dayFifteenSummary, dayThirtySummary);

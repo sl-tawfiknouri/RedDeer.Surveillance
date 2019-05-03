@@ -190,7 +190,6 @@ namespace Surveillance.Engine.Rules.Markets
             return new MarketDataResponse<List<EquityInstrumentIntraDayTimeBar>>(responses, false, true);
         }
 
-
         /// <summary>
         /// Assumes that any data implies that the whole data set/range is covered
         /// </summary>

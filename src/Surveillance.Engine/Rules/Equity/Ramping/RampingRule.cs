@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
 using Surveillance.Engine.Rules.Analytics.Streams;
 using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
+using Surveillance.Engine.Rules.Data.Subscribers.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
+using Surveillance.Engine.Rules.Markets.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
@@ -20,12 +23,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 {
     public class RampingRule : BaseUniverseRule, IRampingRule
     {
-        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
+        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly IRampingRuleEquitiesParameters _rampingParameters;
+        private readonly IMarketTradingHoursService _tradingHoursService;
+        private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IRampingAnalyser _rampingAnalyser;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
+
         private readonly ILogger _logger;
+        private bool _hadMissingData = false;
 
         public RampingRule(
             IRampingRuleEquitiesParameters rampingParameters,
@@ -35,6 +42,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
             IRampingAnalyser rampingAnalyser,
+            IMarketTradingHoursService tradingHoursService,
+            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -54,6 +63,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
             _rampingAnalyser = rampingAnalyser ?? throw new ArgumentNullException(nameof(rampingAnalyser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
+            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
         }
 
         public IFactorValue OrganisationFactorValue { get; set; }
@@ -87,7 +98,31 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow);
+            var lastTrade = tradeWindow.Peek();
+            var tradingHours = _tradingHoursService.GetTradingHoursForMic(lastTrade.Market?.MarketIdentifierCode);
+            if (!tradingHours.IsValid)
+            {
+                _logger.LogError($"Request for trading hours was invalid. MIC - {lastTrade.Market?.MarketIdentifierCode}");
+            }
+
+            var marketDataRequest = new MarketDataRequest(
+                lastTrade.Market?.MarketIdentifierCode,
+                lastTrade.Instrument.Cfi,
+                lastTrade.Instrument.Identifiers,
+                tradingHours.OpeningInUtcForDay(UniverseDateTime.Subtract(WindowSize)),
+                tradingHours.ClosingInUtcForDay(UniverseDateTime),
+                _ruleCtx?.Id());
+
+            var marketData = UniverseEquityIntradayCache.GetMarkets(marketDataRequest);
+
+            if (marketData.HadMissingData)
+            {
+                _hadMissingData = true;
+                _logger.LogWarning($"Missing data for {marketDataRequest}.");
+                return;
+            }
+            
+            var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow, marketData.Response);
             var breachDetected = rampingAnalysis.HasRampingStrategy();
 
             if (!breachDetected)
@@ -97,7 +132,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            var lastTrade = tradeWindow.Peek();
             var tradePosition = new TradePosition(tradeWindow.ToList());
 
             var breach =
@@ -162,6 +196,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         protected override void EndOfUniverse()
         {
             _logger.LogInformation("Eschaton occured");
+
+            if (_hadMissingData && RunMode == RuleRunMode.ValidationRun)
+            {
+                // delete event
+                var alert = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Ramping, null, _ruleCtx, false, true);
+                _alertStream.Add(alert);
+
+                _dataRequestSubscriber.SubmitRequest();
+            }
+
             _ruleCtx?.EndEvent();
         }
 

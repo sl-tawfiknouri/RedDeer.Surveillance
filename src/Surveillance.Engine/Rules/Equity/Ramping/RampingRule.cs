@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System;;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -92,19 +91,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
             var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow);
 
-        }
-     
-        private IRampingStrategySummary IdentifyStrategy(
-            IPriceImpactSummary priceImpact,
-            ITimeSeriesTrendClassification trendClassification)
-        {
-            if (priceImpact == null
-                || trendClassification == null)
-            {
-                return new RampingStrategySummary(priceImpact, trendClassification, RampingStrategy.Unknown, TimeSegment.ThirtyDay);
-            }
 
-            return new RampingStrategySummary(priceImpact, trendClassification, RampingStrategy.Reinforcing, TimeSegment.ThirtyDay);
         }
 
         private bool ExceedsTradingFrequencyThreshold()

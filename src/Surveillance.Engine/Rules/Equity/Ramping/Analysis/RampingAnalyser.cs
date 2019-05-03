@@ -4,6 +4,7 @@ using System.Linq;
 using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
@@ -62,13 +63,48 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
             ITimeSeriesTrendClassification trendClassification,
             TimeSegment timeSegment)
         {
-            var strategy = RampingStrategy.Unknown;
-
-            return new RampingStrategySummary(
+            if (priceImpactSummary.Classification == PriceImpactClassification.Unknown)
+            {
+                return new RampingStrategySummary(
                     priceImpactSummary,
                     trendClassification,
-                    strategy,
+                    RampingStrategy.Unknown,
                     timeSegment);
+            }
+
+            if (priceImpactSummary.Classification == PriceImpactClassification.Positive)
+            {
+                var rampingStrategy =
+                    trendClassification.Trend == TimeSeriesTrend.Increasing
+                        ? RampingStrategy.Reinforcing
+                        : RampingStrategy.Unknown;
+
+                return new RampingStrategySummary(
+                    priceImpactSummary,
+                    trendClassification,
+                    rampingStrategy,
+                    timeSegment);
+            }
+
+            if (priceImpactSummary.Classification == PriceImpactClassification.Negative)
+            {
+                var rampingStrategy =
+                    trendClassification.Trend == TimeSeriesTrend.Decreasing
+                        ? RampingStrategy.Reinforcing
+                        : RampingStrategy.Unknown;
+
+                return new RampingStrategySummary(
+                    priceImpactSummary,
+                    trendClassification,
+                    rampingStrategy,
+                    timeSegment);
+            }
+
+            return new RampingStrategySummary(
+                priceImpactSummary,
+                trendClassification,
+                RampingStrategy.Unknown,
+                timeSegment);
         }
 
         private IPriceImpactSummary ClassifyPriceImpactByDate(

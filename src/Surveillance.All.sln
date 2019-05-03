@@ -121,7 +121,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.DataAccess
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.Tests", "Surveillance.Api.Tests\Surveillance.Api.Tests.csproj", "{EACA3E68-51E1-4422-A5BB-E6163F2A82FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Surveillance.Api.Client", "Surveillance.Api.Client\Surveillance.Api.Client.csproj", "{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Surveillance.Api.Client", "Surveillance.Api.Client\Surveillance.Api.Client.csproj", "{1F709E1F-CD9D-4FA6-876F-5FB50C3BC36B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

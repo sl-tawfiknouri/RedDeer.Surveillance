@@ -4,6 +4,7 @@ using Surveillance.Api.Client.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Client.Queries
@@ -19,17 +20,9 @@ namespace Surveillance.Api.Client.Queries
             RuleRunNode = new RuleRunNode(this);
         }
 
-        internal override async Task<Response> HandleAsync(IRequest request)
+        internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            var response = await request.QueryAsync(builder =>
-                builder
-                    .Field("ruleRuns", ruleRuns =>
-                    {
-                        RuleRunNode._actions.ForEach(x => x(ruleRuns));
-                    }),
-                    _arguments.ToArray());
-
-            return response.ruleRuns.ToObject<Response>();
+            return await BuildAndPost<Response>("ruleRuns", RuleRunNode, request, ctx);
         }
     }
 }

@@ -2,6 +2,7 @@
 using Surveillance.Api.Client.Queries;
 using Surveillance.Api.DataAccess.Entities;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
@@ -49,7 +50,7 @@ namespace Surveillance.Api.Tests.Tests
                     .FieldSystemOperationId();
 
             // act
-            var ruleBreaches = await _apiClient.QueryAsync(query);
+            var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
             Assert.That(ruleBreaches, Has.Count.EqualTo(1));
@@ -94,7 +95,7 @@ namespace Surveillance.Api.Tests.Tests
                     .FieldRuleId();
 
             // act
-            var ruleBreaches = await _apiClient.QueryAsync(query);
+            var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
             Assert.That(ruleBreaches, Has.Count.EqualTo(2));
@@ -165,7 +166,7 @@ namespace Surveillance.Api.Tests.Tests
                         .FieldLimitPrice();
 
             // act
-            var ruleBreaches = await _apiClient.QueryAsync(query);
+            var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
             Assert.That(ruleBreaches, Has.Count.EqualTo(1));

@@ -24,15 +24,6 @@ namespace Surveillance.Api.Client.Nodes
         public RuleBreachNode FieldCorrelationId() => AddField("correlationId", this);
         public RuleBreachNode FieldIsBackTest() => AddField("isBackTest", this);
         public RuleBreachNode FieldSystemOperationId() => AddField("systemOperationId", this);
-        public OrderNode FieldOrders()
-        {
-            var orderGraph = new OrderNode(this);
-            _actions.Add(ruleBreaches => ruleBreaches
-                .Field("orders", orders =>
-                 {
-                     orderGraph._actions.ForEach(x => x(orders));
-                 }));
-            return orderGraph;
-        }
+        public OrderNode FieldOrders() => AddChild("orders", new OrderNode(this));
     }
 }

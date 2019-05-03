@@ -4,6 +4,7 @@ using Surveillance.Api.DataAccess.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Surveillance.Api.Tests.Tests
@@ -24,9 +25,14 @@ namespace Surveillance.Api.Tests.Tests
                 Id = 4,
                 CorrelationId = "abc"
             });
-            _dbContext.DbRuleRuns.Add(new SystemProcessOperationRuleRun // a rule run which shouldn't be found
+            _dbContext.DbRuleRuns.Add(new SystemProcessOperationRuleRun
             {
                 Id = 5,
+                CorrelationId = "def"
+            });
+            _dbContext.DbRuleRuns.Add(new SystemProcessOperationRuleRun // a rule run which shouldn't be found
+            {
+                Id = 6,
                 CorrelationId = "xyz"
             });
             await _dbContext.SaveChangesAsync();
@@ -34,15 +40,15 @@ namespace Surveillance.Api.Tests.Tests
             var query = new RuleRunQuery();
             query
                 .RuleRunNode
-                    .ArgumentCorrelationIds(new string[] { "abc" })
+                    .ArgumentCorrelationIds(new List<string> { "abc", "def" })
                     .FieldId()
                     .FieldCorrelationId();
 
             // act
-            var ruleRuns = await _apiClient.QueryAsync(query);
+            var ruleRuns = await _apiClient.QueryAsync(query, CancellationToken.None);
 
             // assert
-            Assert.That(ruleRuns, Has.Count.EqualTo(2));
+            Assert.That(ruleRuns, Has.Count.EqualTo(3));
         }
     }
 }

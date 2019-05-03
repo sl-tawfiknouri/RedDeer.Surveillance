@@ -1,5 +1,4 @@
-﻿using SAHB.GraphQLClient.Builder;
-using SAHB.GraphQLClient.QueryGenerator;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +7,11 @@ namespace Surveillance.Api.Client.Infrastructure
 {
     public class Node : NodeParent
     {
-        public NodeParent _parent { get; private set; }
-        internal List<Action<IGraphQLQueryFieldBuilder>> _actions = new List<Action<IGraphQLQueryFieldBuilder>>();
+        private readonly NodeParent _parent;
+        private readonly Dictionary<string, object> _arguments = new Dictionary<string, object>();
+        private readonly Dictionary<string, Node> _fields = new Dictionary<string, Node>();
 
-        public Node(NodeParent parent) : base(parent)
+        public Node(NodeParent parent)
         {
             _parent = parent;
         }
@@ -21,18 +21,55 @@ namespace Surveillance.Api.Client.Infrastructure
             return _parent as T;
         }
 
-        protected T AddArgument<T>(string name, object value, T self)
+        protected T AddArgument<T>(string name, object value, T self) where T : Node
         {
-            var variable = Guid.NewGuid().ToString();
-            _actions.Add(graph => graph.Argument(name, "", variable));
-            _arguments.Add(new GraphQLQueryArgument(variable, value));
+            _arguments[name] = value;
             return self;
         }
 
-        protected T AddField<T>(string name, T self)
+        protected T AddField<T>(string name, T self) where T : Node
         {
-            _actions.Add(x => x.Field(name));
+            _fields[name] = null;
             return self;
+        }
+
+        protected T AddChild<T>(string name, T node) where T : Node
+        {
+            _fields[name] = node;
+            return node;
+        }
+
+        internal string Build(string name)
+        {
+            var arguments = new List<string>();
+            foreach (var argument in _arguments)
+            {
+                arguments.Add($"{argument.Key}: {JsonConvert.SerializeObject(argument.Value)}");
+            }
+
+            var fields = new List<string>();
+            foreach (var field in _fields)
+            {
+                if (field.Value != null)
+                {
+                    fields.Add(field.Value.Build(field.Key));
+                }
+                else
+                {
+                    fields.Add(field.Key);
+                }
+            }
+
+            var s = name;
+            if (arguments.Count > 0)
+            {
+                s += "(" + string.Join(", ", arguments) + ")";
+            }
+            if (fields.Count > 0)
+            {
+                s += " { " + string.Join(", ", fields) + " }";
+            }
+            return s;
         }
     }
 }

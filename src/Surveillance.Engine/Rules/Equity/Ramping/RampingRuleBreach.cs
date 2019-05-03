@@ -12,7 +12,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             TimeSpan window,
             ITradePosition trades,
             FinancialInstrument security,
-            bool isBackTestRun,
             string ruleParameterId,
             string systemOperationId,
             string correlationId,
@@ -21,7 +20,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             Window = window;
             Trades = trades;
             Security = security;
-            IsBackTestRun = isBackTestRun;
             RuleParameterId = ruleParameterId ?? string.Empty;
             SystemOperationId = systemOperationId ?? string.Empty;
             CorrelationId = correlationId ?? string.Empty;

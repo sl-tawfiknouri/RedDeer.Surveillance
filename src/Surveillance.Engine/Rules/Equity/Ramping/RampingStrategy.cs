@@ -1,8 +1,12 @@
-﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
+﻿using System.ComponentModel;
+
+namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 {
     public enum RampingStrategy
     {
+        [Description("Unknown")]
         Unknown,
+        [Description("Reinforcement")]
         Reinforcing
     }
 }

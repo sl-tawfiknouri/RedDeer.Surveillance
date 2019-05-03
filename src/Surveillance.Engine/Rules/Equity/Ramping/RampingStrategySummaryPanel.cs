@@ -24,10 +24,10 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 
         public bool HasRampingStrategy()
         {
-            return OneDayAnalysis?.Strategy == RampingStrategy.Reinforcing
-                   || FiveDayAnalysis?.Strategy == RampingStrategy.Reinforcing
-                   || FifteenDayAnalysis?.Strategy == RampingStrategy.Reinforcing
-                   || ThirtyDayAnalysis?.Strategy == RampingStrategy.Reinforcing;
+            return OneDayAnalysis?.RampingStrategy == RampingStrategy.Reinforcing
+                   || FiveDayAnalysis?.RampingStrategy == RampingStrategy.Reinforcing
+                   || FifteenDayAnalysis?.RampingStrategy == RampingStrategy.Reinforcing
+                   || ThirtyDayAnalysis?.RampingStrategy == RampingStrategy.Reinforcing;
         }
     }
 }

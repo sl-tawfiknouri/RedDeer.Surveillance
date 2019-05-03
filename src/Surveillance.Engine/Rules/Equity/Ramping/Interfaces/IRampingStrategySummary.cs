@@ -8,7 +8,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces
     {
         TimeSegment TimeSegment { get; }
         IPriceImpactSummary PriceImpact { get; }
-        RampingStrategy Strategy { get; }
+        RampingStrategy RampingStrategy { get; }
         ITimeSeriesTrendClassification TrendClassification { get; }
     }
 }

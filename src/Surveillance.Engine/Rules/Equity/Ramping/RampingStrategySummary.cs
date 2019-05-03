@@ -11,18 +11,18 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
         public RampingStrategySummary(
             IPriceImpactSummary priceImpact,
             ITimeSeriesTrendClassification trendClassification,
-            RampingStrategy strategy,
+            RampingStrategy rampingStrategy,
             TimeSegment timeSegment)
         {
             PriceImpact = priceImpact ?? throw new ArgumentNullException(nameof(priceImpact));
             TrendClassification = trendClassification ?? throw new ArgumentNullException(nameof(trendClassification));
-            Strategy = strategy;
+            RampingStrategy = rampingStrategy;
             TimeSegment = timeSegment;
         }
 
         public TimeSegment TimeSegment { get; }
         public IPriceImpactSummary PriceImpact { get; }
         public ITimeSeriesTrendClassification TrendClassification { get; }
-        public RampingStrategy Strategy { get; }
+        public RampingStrategy RampingStrategy { get; }
     }
 }

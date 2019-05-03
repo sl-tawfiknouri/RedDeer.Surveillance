@@ -59,6 +59,8 @@ using Surveillance.Engine.Rules.Rules.Equity.Layering.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose;
 using Surveillance.Engine.Rules.Rules.Equity.MarkingTheClose.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
@@ -247,6 +249,7 @@ namespace Surveillance.Engine.Rules
             For<IOrderPriceImpactClassifier>().Use<OrderPriceImpactClassifier>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
+            For<IRampingAnalyser>().Use<RampingAnalyser>();
         }
     }
 }

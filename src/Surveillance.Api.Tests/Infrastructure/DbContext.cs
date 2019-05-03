@@ -16,6 +16,7 @@ namespace Surveillance.Api.Tests.Infrastructure
         public DbSet<RuleBreach> DbRuleBreaches => _ruleBreach;
         public DbSet<RuleBreachOrder> DbRuleBreachOrders => _ruleBreachOrders;
         public DbSet<Order> DbOrders => _orders;
+        public DbSet<SystemProcessOperationRuleRun> DbRuleRuns => _ruleRun;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

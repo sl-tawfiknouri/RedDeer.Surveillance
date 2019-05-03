@@ -88,7 +88,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow);
-            var breachDetected = HasRampingBreach(rampingAnalysis);
+            var breachDetected = rampingAnalysis.HasRampingStrategy();
 
             if (!breachDetected)
             {
@@ -113,11 +113,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
             var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Ramping, breach, _ruleCtx);
             _alertStream.Add(message);
-        }
-
-        private bool HasRampingBreach(IRampingStrategySummaryPanel panel)
-        {
-            return true;
         }
 
         private bool ExceedsTradingFrequencyThreshold()

@@ -41,21 +41,26 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
 
             var fromOneDay = to - TimeSpan.FromDays(1);
             var fromFiveDay = to - TimeSpan.FromDays(5);
+            var fromFifteenDay = to - TimeSpan.FromDays(15);
             var fromThirtyDay = to - TimeSpan.FromDays(30);
 
-            var dayOne = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
+            var dayOne = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
             var segmentPriceTrendOne = _trendClassifier.Classify(head.Instrument, fromOneDay, to);
             var dayOneSummary = IdentifyRampingStrategy(dayOne, segmentPriceTrendOne, TimeSegment.OneDay);
 
-            var dayFive = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
+            var dayFive = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
             var segmentPriceTrendFive = _trendClassifier.Classify(head.Instrument, fromFiveDay, to);
             var dayFiveSummary = IdentifyRampingStrategy(dayFive, segmentPriceTrendFive, TimeSegment.FiveDay);
 
-            var dayThirty = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
+            var dayFifteen = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(15), TimeSegment.FifteenDay);
+            var segmentPriceTrendFifteen = _trendClassifier.Classify(head.Instrument, fromFifteenDay, to);
+            var dayFifteenSummary = IdentifyRampingStrategy(dayFifteen, segmentPriceTrendFifteen, TimeSegment.FifteenDay);
+
+            var dayThirty = ClassifyOrderPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
             var segmentPriceTrendThirty = _trendClassifier.Classify(head.Instrument, fromThirtyDay, to);
             var dayThirtySummary = IdentifyRampingStrategy(dayThirty, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
 
-            return new RampingStrategySummaryPanel(dayOneSummary, dayFiveSummary, dayThirtySummary);
+            return new RampingStrategySummaryPanel(dayOneSummary, dayFiveSummary, dayFifteenSummary, dayThirtySummary);
         }
 
         public IRampingStrategySummary IdentifyRampingStrategy(
@@ -107,7 +112,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
                 timeSegment);
         }
 
-        private IPriceImpactSummary ClassifyPriceImpactByDate(
+        private IPriceImpactSummary ClassifyOrderPriceImpactByDate(
             Order root,
             IReadOnlyCollection<Order> orderSegment,
             TimeSpan span,

@@ -4,6 +4,7 @@
     {
         OneDay,
         FiveDay,
+        FifteenDay,
         ThirtyDay
     }
 }

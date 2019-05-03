@@ -6,9 +6,9 @@ using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis
 {
-    public class PriceImpactClassifier : IPriceImpactClassifier
+    public class OrderPriceImpactClassifier : IOrderPriceImpactClassifier
     {
-        IPriceImpactSummary IPriceImpactClassifier.ClassifyByTradeCount(IReadOnlyCollection<Order> orders, TimeSegment segment)
+        public IPriceImpactSummary ClassifyByTradeCount(IReadOnlyCollection<Order> orders, TimeSegment segment)
         {
             if (!orders.Any())
             {
@@ -18,7 +18,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis
             return new PriceImpactSummary(PriceImpactClassification.Positive, segment);
         }
 
-        IPriceImpactSummary IPriceImpactClassifier.ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders, TimeSegment segment)
+        public IPriceImpactSummary ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders, TimeSegment segment)
         {
             if (!orders.Any())
             {

@@ -14,14 +14,14 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
     public class RampingAnalyser : IRampingAnalyser
     {
         private readonly ITimeSeriesTrendClassifier _trendClassifier;
-        private readonly IPriceImpactClassifier _priceImpactClassifier;
+        private readonly IOrderPriceImpactClassifier _orderPriceImpactClassifier;
 
         public RampingAnalyser(
             ITimeSeriesTrendClassifier trendClassifier,
-            IPriceImpactClassifier priceImpactClassifier)
+            IOrderPriceImpactClassifier orderPriceImpactClassifier)
         {
             _trendClassifier = trendClassifier ?? throw new ArgumentNullException(nameof(trendClassifier));
-            _priceImpactClassifier = priceImpactClassifier ?? throw new ArgumentNullException(nameof(priceImpactClassifier));
+            _orderPriceImpactClassifier = orderPriceImpactClassifier ?? throw new ArgumentNullException(nameof(orderPriceImpactClassifier));
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
             TimeSegment segment)
         {
             var filteredOrders = FilterOrderByDate(root, orderSegment, span);
-            var segmentTradeTrend = _priceImpactClassifier.ClassifyByTradeCount(filteredOrders, segment);
+            var segmentTradeTrend = _orderPriceImpactClassifier.ClassifyByTradeCount(filteredOrders, segment);
 
             return segmentTradeTrend;
         }

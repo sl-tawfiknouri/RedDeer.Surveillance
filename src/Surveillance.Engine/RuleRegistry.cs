@@ -244,7 +244,7 @@ namespace Surveillance.Engine.Rules
             For<ITimeSeriesTrendClassifier>().Use<TimeSeriesTrendClassifier>();
 
             For<IOrderAnalysisService>().Use<OrderAnalysisService>();
-            For<IPriceImpactClassifier>().Use<PriceImpactClassifier>();
+            For<IOrderPriceImpactClassifier>().Use<OrderPriceImpactClassifier>();
 
             For<IAnalysisEngine>().Use<AnalysisEngine>();
         }

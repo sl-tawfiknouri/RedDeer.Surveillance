@@ -30,13 +30,12 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
         {
             if (!orderSegment.Any())
             {
-                return new RampingStrategySummaryPanel();
+                return null;
             }
 
             var orderedOrders = orderSegment.Reverse();
 
             var head = orderedOrders.First();
-            var tail = orderedOrders.Last();
             var to = head.FilledDate.Value;
 
             var fromOneDay = to - TimeSpan.FromDays(1);
@@ -45,14 +44,31 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
 
             var dayOne = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
             var segmentPriceTrendOne = _trendClassifier.Classify(head.Instrument, fromOneDay, to);
+            var dayOneSummary = IdentifyRampingStrategy(dayOne, segmentPriceTrendOne, TimeSegment.OneDay);
 
             var dayFive = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
             var segmentPriceTrendFive = _trendClassifier.Classify(head.Instrument, fromFiveDay, to);
+            var dayFiveSummary = IdentifyRampingStrategy(dayFive, segmentPriceTrendFive, TimeSegment.FiveDay);
 
             var dayThirty = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
             var segmentPriceTrendThirty = _trendClassifier.Classify(head.Instrument, fromThirtyDay, to);
+            var dayThirtySummary = IdentifyRampingStrategy(dayThirty, segmentPriceTrendThirty, TimeSegment.ThirtyDay);
 
-            return new RampingStrategySummaryPanel();
+            return new RampingStrategySummaryPanel(dayOneSummary, dayFiveSummary, dayThirtySummary);
+        }
+
+        public IRampingStrategySummary IdentifyRampingStrategy(
+            IPriceImpactSummary priceImpactSummary,
+            ITimeSeriesTrendClassification trendClassification,
+            TimeSegment timeSegment)
+        {
+            var strategy = RampingStrategy.Unknown;
+
+            return new RampingStrategySummary(
+                    priceImpactSummary,
+                    trendClassification,
+                    strategy,
+                    timeSegment);
         }
 
         private IPriceImpactSummary ClassifyPriceImpactByDate(

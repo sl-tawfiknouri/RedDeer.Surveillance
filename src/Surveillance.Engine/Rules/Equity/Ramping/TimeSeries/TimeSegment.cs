@@ -1,6 +1,6 @@
 ﻿namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
 {
-    public enum TimeSegmentLength
+    public enum TimeSegment
     {
         OneDay,
         FiveDay,

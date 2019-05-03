@@ -19,7 +19,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
                     TimeSeriesTrend.Increasing,
                     initiation,
                     initiation.Add(span),
-                    TimeSegmentLength.ThirtyDay) 
+                    TimeSegment.ThirtyDay) 
             };
         }
     }

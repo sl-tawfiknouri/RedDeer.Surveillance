@@ -11,7 +11,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
             TimeSeriesTrend trend, 
             DateTime commencementUtc,
             DateTime terminationUtc,
-            TimeSegmentLength timeSegment)
+            TimeSegment timeSegment)
         {
             Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
             Trend = trend;
@@ -22,7 +22,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
 
         public IFinancialInstrument Instrument { get; }
         public TimeSeriesTrend Trend { get; }
-        public TimeSegmentLength TimeSegment { get; }
+        public TimeSegment TimeSegment { get; }
 
         public DateTime CommencementUtc { get; }
         public DateTime TerminationUtc { get; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Surveillance.Auditing.Context.Interfaces;
@@ -6,8 +7,10 @@ using Surveillance.Engine.Rules.Analytics.Streams.Interfaces;
 using Surveillance.Engine.Rules.Factories.Equities;
 using Surveillance.Engine.Rules.Factories.Interfaces;
 using Surveillance.Engine.Rules.RuleParameters.Equities.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 using Surveillance.Engine.Rules.Rules.Interfaces;
 using Surveillance.Engine.Rules.Trades;
@@ -22,8 +25,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
     {
         private readonly ISystemProcessOperationRunRuleContext _ruleCtx;
         private readonly IRampingRuleEquitiesParameters _rampingParameters;
-        private readonly ITimeSeriesTrendClassifier _trendClassifier;
-        private readonly IPriceImpactClassifier _priceImpactClassifier;
+        private readonly IRampingAnalyser _rampingAnalyser;
         private readonly IUniverseAlertStream _alertStream;
         private readonly IUniverseOrderFilter _orderFilter;
         private readonly ILogger _logger;
@@ -35,8 +37,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             IUniverseMarketCacheFactory factory,
             IUniverseOrderFilter orderFilter,
             RuleRunMode runMode,
-            ITimeSeriesTrendClassifier trendClassifier,
-            IPriceImpactClassifier priceImpactClassifier,
+            IRampingAnalyser rampingAnalyser,
             ILogger logger,
             ILogger<TradingHistoryStack> tradingStackLogger)
             : base(
@@ -54,8 +55,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _alertStream = alertStream ?? throw new ArgumentNullException(nameof(alertStream));
             _ruleCtx = ruleCtx ?? throw new ArgumentNullException(nameof(ruleCtx));
             _orderFilter = orderFilter ?? throw new ArgumentNullException(nameof(orderFilter));
-            _trendClassifier = trendClassifier ?? throw new ArgumentNullException(nameof(trendClassifier));
-            _priceImpactClassifier = priceImpactClassifier ?? throw new ArgumentNullException(nameof(priceImpactClassifier));
+            _rampingAnalyser = rampingAnalyser ?? throw new ArgumentNullException(nameof(rampingAnalyser));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -90,23 +90,21 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            var lastTrade = tradeWindow.Peek();
-            var pricingTrends = _trendClassifier.Classify(lastTrade.Instrument, WindowSize, UniverseDateTime);
+            var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow);
 
-            if (pricingTrends == null
-                || !pricingTrends.Any())
+        }
+     
+        private IRampingStrategySummary IdentifyStrategy(
+            IPriceImpactSummary priceImpact,
+            ITimeSeriesTrendClassification trendClassification)
+        {
+            if (priceImpact == null
+                || trendClassification == null)
             {
-                // LOG THEN EXIT
-                _logger.LogInformation($"Pricing trends unable to calculate on {UniverseDateTime} for window size {WindowSize} with instrument {lastTrade.Instrument}.");
-                return;
+                return new RampingStrategySummary(priceImpact, trendClassification, RampingStrategy.Unknown, TimeSegment.ThirtyDay);
             }
 
-            // var weightedVolumePriceImpact = _priceImpactClassifier.ClassifyByWeightedVolume(tradeWindow);
-            var tradeCountPriceImpact = _priceImpactClassifier.ClassifyByTradeCount(tradeWindow);
-
-            // now add together the price impact scalar with the price trend vector...lets just make it a vector now
-            
-
+            return new RampingStrategySummary(priceImpact, trendClassification, RampingStrategy.Reinforcing, TimeSegment.ThirtyDay);
         }
 
         private bool ExceedsTradingFrequencyThreshold()

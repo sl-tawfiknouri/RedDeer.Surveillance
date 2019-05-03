@@ -5,7 +5,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interface
 {
     public interface IPriceImpactClassifier
     {
-        IReadOnlyCollection<PriceImpactClassification> ClassifyByTradeCount(IReadOnlyCollection<Order> orders);
-        IReadOnlyCollection<PriceImpactClassification> ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders);
+        IReadOnlyCollection<IPriceImpactSummary> ClassifyByTradeCount(IReadOnlyCollection<Order> orders);
+        IReadOnlyCollection<IPriceImpactSummary> ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders);
     }
 }

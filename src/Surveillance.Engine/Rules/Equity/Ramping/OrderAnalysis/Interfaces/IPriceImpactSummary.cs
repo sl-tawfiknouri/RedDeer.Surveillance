@@ -5,6 +5,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interface
     public interface IPriceImpactSummary
     {
         PriceImpactClassification Classification { get; }
-        TimeSegmentLength TimeSegment { get; }
+        TimeSegment TimeSegment { get; }
     }
 }

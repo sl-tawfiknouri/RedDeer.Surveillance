@@ -7,13 +7,13 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis
     {
         public PriceImpactSummary(
             PriceImpactClassification classification,
-            TimeSegmentLength timeSegment)
+            TimeSegment timeSegment)
         {
             Classification = classification;
             TimeSegment = timeSegment;
         }
 
         public PriceImpactClassification Classification { get; }
-        public TimeSegmentLength TimeSegment { get; }
+        public TimeSegment TimeSegment { get; }
     }
 }

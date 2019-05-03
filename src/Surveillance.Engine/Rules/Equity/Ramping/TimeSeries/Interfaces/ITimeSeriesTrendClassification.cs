@@ -10,6 +10,6 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces
         TimeSpan Length { get; }
         DateTime TerminationUtc { get; }
         TimeSeriesTrend Trend { get; }
-        TimeSegmentLength TimeSegment { get; }
+        TimeSegment TimeSegment { get; }
     }
 }

@@ -13,6 +13,11 @@ namespace Surveillance.Api.Client.Nodes
 
         public RuleRunNode FieldId() => AddField("id", this);
         public RuleRunNode FieldCorrelationId() => AddField("correlationId", this);
+        public RuleRunNode FieldRuleDescription() => AddField("ruleDescription", this);
+        public RuleRunNode FieldRuleVersion() => AddField("ruleVersion", this);
+        public RuleRunNode FieldScheduleRuleStart() => AddField("start", this);
+        public RuleRunNode FieldScheduleRuleEnd() => AddField("end", this);
+        public ProcessOperationNode FieldProcessOperation() => AddChild("processOperation", new ProcessOperationNode(this));
 
     }
 }

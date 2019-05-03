@@ -1,6 +1,7 @@
 ﻿using GraphQL.Client;
 using GraphQL.Common.Request;
 using GraphQL.Common.Response;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace Surveillance.Api.Client.Infrastructure
             }
             if (response.Errors?.Any() ?? false)
             {
-                throw new Exception($"GraphQL Request Errors {response.Errors.Length}");
+                throw new Exception($"GraphQL Request Errors ({response.Errors.Length}) {JsonConvert.SerializeObject(response.Errors)}");
             }
 
             return response;

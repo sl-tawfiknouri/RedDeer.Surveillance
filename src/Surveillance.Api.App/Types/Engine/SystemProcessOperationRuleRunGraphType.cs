@@ -28,8 +28,8 @@ namespace Surveillance.Api.App.Types.Engine
             {
                 var loader =
                     dataLoaderAccessor.Context.GetOrAddLoader<ISystemProcessOperation>(
-                        $"GetSystemProcessOperationById-{context.Source.Id}",
-                        () => operationRepository.GetForId(context.Source.Id));
+                        $"GetSystemProcessOperationById-{context.Source.SystemProcessOperationId}",
+                        () => operationRepository.GetForId(context.Source.SystemProcessOperationId));
 
                 return loader.LoadAsync();
             });

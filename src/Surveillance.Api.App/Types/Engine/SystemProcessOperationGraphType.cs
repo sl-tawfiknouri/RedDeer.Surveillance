@@ -13,7 +13,7 @@ namespace Surveillance.Api.App.Types.Engine
             ISystemProcessRepository operationRepository,
             IDataLoaderContextAccessor dataLoaderAccessor)
         {
-            this.AuthorizeWith(PolicyManifest.AdminPolicy);
+            this.AuthorizeWith(PolicyManifest.UserPolicy);
 
             Field(i => i.Id).Description("Identifier for the system process operation");
             Field(i => i.SystemProcessId).Description("Identifier for the system process");

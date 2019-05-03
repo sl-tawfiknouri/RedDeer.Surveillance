@@ -18,12 +18,12 @@ namespace Surveillance.Api.Client.Infrastructure
         private readonly string _bearer;
         private readonly IGraphQLHttpClient _client;
 
-        public Request(string url, string bearer, IGraphQLHttpExecutor httpExecutor)
+        public Request(string url, string bearer, HttpMessageHandler httpMessageHandler)
         {
             _url = url;
             _bearer = bearer;
 
-            var executor = httpExecutor ?? new GraphQLHttpExecutor();
+            var executor = new CustomGraphQLHttpExecutor(httpMessageHandler);
             var fieldBuilder = new GraphQLFieldBuilder();
             var queryGenerator = new GraphQLQueryGeneratorFromFields();
             _client = new GraphQLHttpClient(executor, fieldBuilder, queryGenerator);

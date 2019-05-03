@@ -16,6 +16,7 @@ namespace Surveillance.Api.Tests.Tests
             {
                 Id = 5,
                 StartOfPeriodUnderInvestigation = new DateTime(2020, 01, 01, 01, 01, 01, DateTimeKind.Utc),
+                // end date in british summer time, to check that using GB formatting doesn't cause any timezone changes
                 EndOfPeriodUnderInvestigation = new DateTime(2020, 06, 03, 05, 06, 07, DateTimeKind.Utc),
                 ReddeerEnrichmentId = "VOD LN",
                 Title = "Test Rule Breach",
@@ -116,6 +117,16 @@ namespace Surveillance.Api.Tests.Tests
                 Id = 5,
                 RuleId = "abc"
             });
+            _dbContext.DbRuleBreaches.Add(new RuleBreach // a rule breach which shouldn't be found
+            {
+                Id = 6,
+                RuleId = "xyz"
+            });
+            _dbContext.DbOrders.Add(new Order // an order which shouldn't be found
+            {
+                Id = 7,
+                LimitPrice = 1.78m
+            });
             _dbContext.DbOrders.Add(new Order
             {
                 Id = 8,
@@ -125,6 +136,11 @@ namespace Surveillance.Api.Tests.Tests
             {
                 Id = 9,
                 LimitPrice = 3.45m
+            });
+            _dbContext.DbRuleBreachOrders.Add(new RuleBreachOrder // a rule breach order which shouldn't be found
+            {
+                RuleBreachId = 4,
+                OrderId = 7
             });
             _dbContext.DbRuleBreachOrders.Add(new RuleBreachOrder
             {

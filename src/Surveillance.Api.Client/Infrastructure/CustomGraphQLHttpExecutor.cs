@@ -9,7 +9,7 @@ using SAHB.GraphQLClient.Exceptions;
 using SAHB.GraphQLClient.Executor;
 using SAHB.GraphQLClient.Result;
 
-namespace Surveillance.Api.Tests.Infrastructure
+namespace Surveillance.Api.Client.Infrastructure
 {
     /// <summary>
     /// NOTE: This is copied source code from SAHB.GraphQLClient project

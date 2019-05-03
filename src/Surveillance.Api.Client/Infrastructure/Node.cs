@@ -21,18 +21,18 @@ namespace Surveillance.Api.Client.Infrastructure
             return _parent as T;
         }
 
-        protected T AddArgument<T>(string name, object value, T child)
+        protected T AddArgument<T>(string name, object value, T self)
         {
             var variable = Guid.NewGuid().ToString();
             _actions.Add(graph => graph.Argument(name, "", variable));
             _arguments.Add(new GraphQLQueryArgument(variable, value));
-            return child;
+            return self;
         }
 
-        protected T AddField<T>(string name, T child)
+        protected T AddField<T>(string name, T self)
         {
             _actions.Add(x => x.Field(name));
-            return child;
+            return self;
         }
     }
 }

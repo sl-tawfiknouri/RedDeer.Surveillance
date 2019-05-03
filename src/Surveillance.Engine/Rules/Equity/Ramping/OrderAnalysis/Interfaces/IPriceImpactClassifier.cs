@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Domain.Core.Trading.Orders;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces
 {
     public interface IPriceImpactClassifier
     {
-        IReadOnlyCollection<IPriceImpactSummary> ClassifyByTradeCount(IReadOnlyCollection<Order> orders);
-        IReadOnlyCollection<IPriceImpactSummary> ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders);
+        IPriceImpactSummary ClassifyByTradeCount(IReadOnlyCollection<Order> orders, TimeSegment segment);
+        IPriceImpactSummary ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders, TimeSegment segment);
     }
 }

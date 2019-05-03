@@ -8,36 +8,24 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis
 {
     public class PriceImpactClassifier : IPriceImpactClassifier
     {
-        IReadOnlyCollection<IPriceImpactSummary> IPriceImpactClassifier.ClassifyByTradeCount(IReadOnlyCollection<Order> orders)
+        IPriceImpactSummary IPriceImpactClassifier.ClassifyByTradeCount(IReadOnlyCollection<Order> orders, TimeSegment segment)
         {
             if (!orders.Any())
             {
-                return new[]
-                {
-                    new PriceImpactSummary(PriceImpactClassification.Unknown, TimeSegment.ThirtyDay)
-                };
+                return new PriceImpactSummary(PriceImpactClassification.Unknown, segment);
             }
 
-            return new[]
-            {
-                new PriceImpactSummary(PriceImpactClassification.Positive, TimeSegment.ThirtyDay)
-            };
+            return new PriceImpactSummary(PriceImpactClassification.Positive, segment);
         }
 
-        IReadOnlyCollection<IPriceImpactSummary> IPriceImpactClassifier.ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders)
+        IPriceImpactSummary IPriceImpactClassifier.ClassifyByWeightedVolume(IReadOnlyCollection<Order> orders, TimeSegment segment)
         {
             if (!orders.Any())
             {
-                return new[]
-                {
-                    new PriceImpactSummary(PriceImpactClassification.Unknown, TimeSegment.ThirtyDay)
-                };
+                return new PriceImpactSummary(PriceImpactClassification.Unknown, segment);
             }
 
-            return new []
-            {
-                new PriceImpactSummary(PriceImpactClassification.Positive, TimeSegment.ThirtyDay)
-            };
+            return new PriceImpactSummary(PriceImpactClassification.Positive, segment);
         }
     }
 }

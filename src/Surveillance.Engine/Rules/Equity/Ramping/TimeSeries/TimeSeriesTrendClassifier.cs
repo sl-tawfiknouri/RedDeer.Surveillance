@@ -9,16 +9,16 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
     {
         IReadOnlyCollection<ITimeSeriesTrendClassification> ITimeSeriesTrendClassifier.Classify(
             IFinancialInstrument financialInstrument, 
-            TimeSpan span, 
-            DateTime initiation)
+            DateTime commencement, 
+            DateTime termination)
         {
             return new ITimeSeriesTrendClassification[]
             {
                 new TimeSeriesTrendClassification(
                     financialInstrument,
                     TimeSeriesTrend.Increasing,
-                    initiation,
-                    initiation.Add(span),
+                    commencement,
+                    termination,
                     TimeSegment.ThirtyDay) 
             };
         }

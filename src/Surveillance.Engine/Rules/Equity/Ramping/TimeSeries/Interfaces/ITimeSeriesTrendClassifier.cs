@@ -8,7 +8,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces
     {
         IReadOnlyCollection<ITimeSeriesTrendClassification> Classify(
             IFinancialInstrument financialInstrument,
-            TimeSpan span,
-            DateTime initiation);
+            DateTime commencement,
+            DateTime termination);
     }
 }

@@ -5,6 +5,7 @@ using Domain.Core.Trading.Orders;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.Interfaces;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.OrderAnalysis.Interfaces;
+using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries;
 using Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries.Interfaces;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
@@ -36,32 +37,32 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.Analysis
 
             var head = orderedOrders.First();
             var tail = orderedOrders.Last();
-
-            // initiation
-            var from = tail.FilledDate.Value;
-
-            // termination
             var to = head.FilledDate.Value;
 
-            var span = to - from;
+            var fromOneDay = to - TimeSpan.FromDays(1);
+            var fromFiveDay = to - TimeSpan.FromDays(5);
+            var fromThirtyDay = to - TimeSpan.FromDays(30);
 
-            // price trend in this segment
-            var segmentPriceTrend = _trendClassifier.Classify(head.Instrument, span, from);
+            var dayOne = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1), TimeSegment.OneDay);
+            var segmentPriceTrendOne = _trendClassifier.Classify(head.Instrument, fromOneDay, to);
 
-            var dayOne = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(1));
-            var dayFive = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5));
-            var dayThirty = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30));
-            
+            var dayFive = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(5), TimeSegment.FiveDay);
+            var segmentPriceTrendFive = _trendClassifier.Classify(head.Instrument, fromFiveDay, to);
+
+            var dayThirty = ClassifyPriceImpactByDate(head, orderSegment, TimeSpan.FromDays(30), TimeSegment.ThirtyDay);
+            var segmentPriceTrendThirty = _trendClassifier.Classify(head.Instrument, fromThirtyDay, to);
+
             return new RampingStrategySummaryPanel();
         }
 
-        private IReadOnlyCollection<IPriceImpactSummary> ClassifyPriceImpactByDate(
+        private IPriceImpactSummary ClassifyPriceImpactByDate(
             Order root,
             IReadOnlyCollection<Order> orderSegment,
-            TimeSpan span)
+            TimeSpan span,
+            TimeSegment segment)
         {
             var filteredOrders = FilterOrderByDate(root, orderSegment, span);
-            var segmentTradeTrend = _priceImpactClassifier.ClassifyByTradeCount(filteredOrders);
+            var segmentTradeTrend = _priceImpactClassifier.ClassifyByTradeCount(filteredOrders, segment);
 
             return segmentTradeTrend;
         }

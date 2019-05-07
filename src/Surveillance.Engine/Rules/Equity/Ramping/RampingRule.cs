@@ -103,6 +103,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             if (!tradingHours.IsValid)
             {
                 _logger.LogError($"Request for trading hours was invalid. MIC - {lastTrade.Market?.MarketIdentifierCode}");
+                return;
             }
 
             var marketDataRequest = new MarketDataRequest(
@@ -123,9 +124,8 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
             
             var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow, marketData.Response);
-            var breachDetected = rampingAnalysis.HasRampingStrategy();
 
-            if (!breachDetected)
+            if (!rampingAnalysis.HasRampingStrategy())
             {
                 // LOG THEN EXIT
                 _logger.LogInformation($"A rule breach was not detected. Returning.");

@@ -6,7 +6,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
     {
         [Description("Unknown")]
         Unknown,
-        [Description("Reinforcement")]
+        [Description("Reinforcing")]
         Reinforcing
     }
 }

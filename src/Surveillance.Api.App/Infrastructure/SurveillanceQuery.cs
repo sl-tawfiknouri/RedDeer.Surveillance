@@ -14,6 +14,7 @@ using Surveillance.Api.App.Types.Rules;
 using Surveillance.Api.App.Types.Trading;
 using Surveillance.Api.DataAccess.Abstractions.Entities;
 using Surveillance.Api.DataAccess.Abstractions.Repositories;
+using System.Collections.Generic;
 
 namespace Surveillance.Api.App.Infrastructure
 {
@@ -49,11 +50,15 @@ namespace Surveillance.Api.App.Infrastructure
             Field<ListGraphType<SystemProcessOperationRuleRunGraphType>>(
                 "ruleRuns",
                 description: "The rule runs executed by the system",
+                arguments: new QueryArguments(new QueryArgument<ListGraphType<StringGraphType>> { Name = "correlationIds" }),
                 resolve: context =>
                 {
-                    var dataLoader = dataAccessor.Context.GetOrAddLoader("allRuleRuns", ruleRunRepository.GetAllDb);
+                    var correlationIds = context.GetArgument<List<string>>("correlationIds");
 
-                    return dataLoader.LoadAsync();
+                    IQueryable<ISystemProcessOperationRuleRun> filter(IQueryable<ISystemProcessOperationRuleRun> i)
+                        => i.Where(x => correlationIds == null || correlationIds.Contains(x.CorrelationId));
+
+                    return ruleRunRepository.Query(filter);
                 });
 
             Field<ListGraphType<SystemProcessOperationUploadFileGraphType>>(

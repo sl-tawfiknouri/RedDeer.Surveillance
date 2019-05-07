@@ -18,3 +18,7 @@ tools/*
 .*crunch*.local.xml
 src/_NCrunch_*
 *nCrunchTemp_*
+
+# appsettings
+src/Surveillance.Api.App/appsettings.json
+src/Surveillance/App/appsettings.json

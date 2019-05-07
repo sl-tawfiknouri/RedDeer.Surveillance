@@ -20,6 +20,8 @@ namespace Surveillance.Api.Tests.Tests
             RemoveAll(_dbContext.DbRuleBreaches);
             RemoveAll(_dbContext.DbRuleBreachOrders);
             RemoveAll(_dbContext.DbOrders);
+            RemoveAll(_dbContext.DbRuleRuns);
+            RemoveAll(_dbContext.DbProcessOperations);
             await _dbContext.SaveChangesAsync();
         }
 

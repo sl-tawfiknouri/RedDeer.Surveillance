@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Domain.Core.Trading.Orders;
 using Microsoft.Extensions.Logging;
 using SharedKernel.Contracts.Markets;
 using Surveillance.Auditing.Context.Interfaces;
@@ -21,6 +23,12 @@ using Surveillance.Engine.Rules.Universe.MarketEvents;
 
 namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
 {
+    /// <summary>
+    /// We've tried to solve some issues imperatively with logic that can be
+    /// solved with using statistics - such as using cross correlation and/or auto correlations
+    /// in order to keep this rule simple/easy to understand
+    /// if we need to increase the sophistication of this rule - stats is the route to go down - RT 07/05/2019
+    /// </summary>
     public class RampingRule : BaseUniverseRule, IRampingRule
     {
         private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
@@ -122,13 +130,35 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 _logger.LogWarning($"Missing data for {marketDataRequest}.");
                 return;
             }
-            
-            var rampingAnalysis = _rampingAnalyser.Analyse(tradeWindow, marketData.Response);
 
-            if (!rampingAnalysis.HasRampingStrategy())
+            var windowStackCopy = new Stack<Order>(tradeWindow);
+            var rampingOrders = new Stack<Order>(windowStackCopy);
+            var rampingAnalysisResults = new List<IRampingStrategySummaryPanel>();
+
+            while (rampingOrders.Any())
+            {
+                var rampingOrderList = rampingOrders.ToList();
+                var rootOrder = rampingOrders.Peek();
+                var marketDataSubset = marketData.Response.Where(_ => _.TimeStamp <= rootOrder.FilledDate).ToList();
+                var rampingAnalysisResult = _rampingAnalyser.Analyse(rampingOrderList, marketDataSubset);
+                rampingAnalysisResults.Add(rampingAnalysisResult);
+                rampingOrders.Pop();
+            }
+
+            if (!rampingAnalysisResults.Any()
+                || !rampingAnalysisResults.Last().HasRampingStrategy()
+                || rampingAnalysisResults.All(_ => !_.HasRampingStrategy()))
             {
                 // LOG THEN EXIT
-                _logger.LogInformation($"A rule breach was not detected. Returning.");
+                _logger.LogInformation($"A rule breach was not detected for {lastTrade?.Instrument?.Identifiers}. Returning.");
+                return;
+            }
+
+            var autocorrelation = AutoCorrelation(rampingAnalysisResults);
+            if (autocorrelation < _rampingParameters.AutoCorrelationCoefficient)
+            {
+                // LOG THEN EXIT
+                _logger.LogInformation($"A rule breach was not detected due to an auto correlation of {autocorrelation} for {lastTrade?.Instrument?.Identifiers}. Returning.");
                 return;
             }
 
@@ -140,14 +170,35 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                     tradePosition,
                     lastTrade.Instrument,
                     _rampingParameters.Id,
-                    _ruleCtx.Id(),
-                    _ruleCtx.CorrelationId(),
+                    _ruleCtx?.Id(),
+                    _ruleCtx?.CorrelationId(),
                     OrganisationFactorValue,
-                    rampingAnalysis);
+                    rampingAnalysisResults.Last());
 
             _logger.LogInformation($"RunRule has breached parameter conditions for {lastTrade?.Instrument?.Identifiers}. Adding message to alert stream.");
             var message = new UniverseAlertEvent(Domain.Surveillance.Scheduling.Rules.Ramping, breach, _ruleCtx);
             _alertStream.Add(message);
+        }
+
+        public decimal AutoCorrelation(List<IRampingStrategySummaryPanel> panels)
+        {
+            if (panels == null
+                || !panels.Any())
+            {
+                return 0;
+            }
+
+            decimal rampCount = panels.Count(_ => _.HasRampingStrategy());
+            decimal totals = panels.Count;
+
+            if (rampCount == 0)
+            {
+                return 0;
+            }
+
+            var rampingPercentage = rampCount / totals;
+
+            return rampingPercentage;
         }
 
         private bool ExceedsTradingFrequencyThreshold()

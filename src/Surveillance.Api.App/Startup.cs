@@ -17,9 +17,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Security.Core;
-using Security.Core.Abstractions;
-using Security.Core.Services;
+using RedDeer.Security.Core;
+using RedDeer.Security.Core.Abstractions;
+using RedDeer.Security.Core.Services;
 using Surveillance.Api.App.Authorization;
 using Surveillance.Api.App.Exceptions;
 using Surveillance.Api.App.Infrastructure;
@@ -66,7 +66,6 @@ namespace Surveillance.Api.App
                 return schema;
             });
 
-            services.AddScoped<IClaimsManifest, ClaimsManifest>();
             services.AddSingleton<IActiveRulesService, ActiveRulesService>();
             services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
             services.AddScoped<IProvideClaimsPrincipal, GraphQlUserContext>();
@@ -89,33 +88,33 @@ namespace Surveillance.Api.App
                 _startupConfig.ConfigureTestServices(services);
             }
 
-            var manifest = new ClaimsManifest();
+            var jwtTokenService = new JwtTokenService();
 
             services.AddGraphQlAuth(_ =>
             {
                 _.AddPolicy(
                     PolicyManifest.AdminPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReaderPrivilege, manifest.SurveillanceWriterPrivilege));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.AdminRead).ToString(), new Claim(ScopeType.Surveillance, AccessType.AdminWrite).ToString()));
 
                 _.AddPolicy(
                     PolicyManifest.AdminReaderPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReaderPrivilege));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.AdminRead).ToString()));
 
                 _.AddPolicy(
                     PolicyManifest.AdminWriterPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceWriterPrivilege));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.AdminWrite).ToString()));
 
                 _.AddPolicy(
                     PolicyManifest.UserPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReader, manifest.SurveillanceWriter));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.Read).ToString(), new Claim(ScopeType.Surveillance, AccessType.Write).ToString()));
 
                 _.AddPolicy(
                     PolicyManifest.UserReaderPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceReader));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.Read).ToString()));
 
                 _.AddPolicy(
                     PolicyManifest.UserWriterPolicy,
-                    p => p.RequireClaim(PolicyManifest.ClaimName, manifest.SurveillanceWriter));
+                    p => p.RequireClaim(jwtTokenService.ClaimType, new Claim(ScopeType.Surveillance, AccessType.Write).ToString()));
             });
 
             services
@@ -141,13 +140,10 @@ namespace Surveillance.Api.App
 
                     options.RequireHttpsMetadata = true;
 
-                    var domainManifest = new DomainManifest();
                     var environment = Configuration.GetValue<string>("Environment");
                     var client = Configuration.GetValue<string>("Customer");
-                    var clientIssuer = new ComponentName(environment, client, domainManifest.ClientService);
-                    var serialiser = new ComponentNameSerialiserService();
-
-                    var serialisedClientIssuer = serialiser.Serialise(clientIssuer);
+                    var clientIssuer = new ComponentName(environment, client, ScopeType.ClientService);
+                    var serialisedClientIssuer = clientIssuer.ToString();
 
                     var validIssuers = new[] { serialisedClientIssuer };
                     var validAudiences = new[] { serialisedClientIssuer };

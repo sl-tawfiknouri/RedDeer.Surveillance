@@ -154,11 +154,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return;
             }
 
-            var autocorrelation = AutoCorrelation(rampingAnalysisResults);
-            if (autocorrelation < _rampingParameters.AutoCorrelationCoefficient)
+            var rampingPrevalence = RampingPrevalence(rampingAnalysisResults);
+            if (rampingPrevalence < _rampingParameters.AutoCorrelationCoefficient)
             {
                 // LOG THEN EXIT
-                _logger.LogInformation($"A rule breach was not detected due to an auto correlation of {autocorrelation} for {lastTrade?.Instrument?.Identifiers}. Returning.");
+                _logger.LogInformation($"A rule breach was not detected due to an auto correlation of {rampingPrevalence} for {lastTrade?.Instrument?.Identifiers}. Returning.");
                 return;
             }
 
@@ -180,7 +180,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             _alertStream.Add(message);
         }
 
-        public decimal AutoCorrelation(List<IRampingStrategySummaryPanel> panels)
+        public decimal RampingPrevalence(List<IRampingStrategySummaryPanel> panels)
         {
             if (panels == null
                 || !panels.Any())
@@ -208,7 +208,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return true;
             }
 
-            return false;
+            return true;
         }
 
         private bool ExceedsTradingVolumeInWindowThreshold()
@@ -218,7 +218,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
                 return true;
             }
 
-            return false;
+            return true;
         }
 
         protected override void RunPostOrderEvent(ITradingHistoryStack history)

@@ -23,12 +23,20 @@ namespace Surveillance.Api.Client.Infrastructure
 
         protected T AddArgument<T>(string name, object value, T self) where T : Node
         {
+            if (self != this)
+            {
+                throw new Exception("Self must be set to this");
+            }
             _arguments[name] = value;
             return self;
         }
 
         protected T AddField<T>(string name, T self) where T : Node
         {
+            if (self != this)
+            {
+                throw new Exception("Self must be set to this");
+            }
             _fields[name] = null;
             return self;
         }

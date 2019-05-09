@@ -46,5 +46,8 @@ namespace Surveillance.Api.DataAccess.Abstractions.Entities
         string Fund { get; }
         string Strategy { get; }
         string ClientAccount { get; }
+        string OrderVersion { get; }
+        string OrderVersionLinkId { get; }
+        string OrderGroupId { get; }
     }
 }

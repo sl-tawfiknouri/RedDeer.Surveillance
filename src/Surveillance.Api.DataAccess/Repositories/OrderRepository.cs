@@ -371,5 +371,15 @@ namespace Surveillance.Api.DataAccess.Repositories
 
             return mappedOrders.ToArray();
         }
+
+        public async Task<IEnumerable<IOrder>> Query(Func<IQueryable<IOrder>, IQueryable<IOrder>> query)
+        {
+            using (var dbContext = _factory.Build())
+            {
+                var orders = await query(dbContext.Orders).AsNoTracking().ToListAsync();
+
+                return orders;
+            }
+        }
     }
 }

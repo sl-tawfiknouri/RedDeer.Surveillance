@@ -13,7 +13,7 @@ namespace Surveillance.Api.Client.Queries
 
     public class RuleRunQuery : Query<Response>
     {
-        public RuleRunNode RuleRunNode { get; private set; }
+        public RuleRunNode RuleRunNode { get; }
 
         public RuleRunQuery()
         {

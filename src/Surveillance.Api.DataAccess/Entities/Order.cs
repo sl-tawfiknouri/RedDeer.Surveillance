@@ -227,6 +227,21 @@ namespace Surveillance.Api.DataAccess.Entities
             get => ClientAccount;
         }
 
+        string IOrder.OrderVersion
+        {
+            get => OrderVersion;
+        }
+
+        string IOrder.OrderVersionLinkId
+        {
+            get => OrderVersionLinkId;
+        }
+
+        string IOrder.OrderGroupId
+        {
+            get => OrderGroupId;
+        }
+
         public object Clone()
         {
             return this.MemberwiseClone();

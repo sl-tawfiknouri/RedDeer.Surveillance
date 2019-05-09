@@ -173,6 +173,20 @@ namespace Surveillance.Api.App.Infrastructure
                     return orderRepository.TradersQuery(IdQuery);
                 });
 
+            Field<ListGraphType<OrderGraphType>>(
+                "orders",
+                description: "Orders uploaded by client",
+                arguments: new QueryArguments(new QueryArgument<ListGraphType<IntGraphType>> { Name = "ids" }),
+                resolve: context =>
+                {
+                    var ids = context.GetArgument<List<int>>("ids");
+
+                    IQueryable<IOrder> filter(IQueryable<IOrder> i)
+                        => i.Where(x => ids == null || ids.Contains(x.Id));
+
+                    return orderRepository.Query(filter);
+                });
+
             Field<ListGraphType<RulesTypeEnumGraphType>>(
                 "rules",
                 "The category of the rule",

@@ -1,5 +1,6 @@
 ﻿using GraphQL.Common.Request;
 using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
 using System;
@@ -12,20 +13,18 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<RuleBreachDto>;
 
-    public class RuleBreachQuery : Query<RuleBreachQuery, Response>
+    public class RuleBreachQuery : Query<Response>
     {
-        public RuleBreachNode RuleBreachNode { get; }
+        public RuleBreachFilter<RuleBreachNode> Filter { get; }
 
         public RuleBreachQuery()
         {
-            RuleBreachNode = new RuleBreachNode(this);
+            Filter = new RuleBreachFilter<RuleBreachNode>(new RuleBreachNode(this));
         }
-
-        public RuleBreachQuery ArgumentId(int id) => AddArgument("id", id);
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("ruleBreaches", RuleBreachNode, request, ctx);
+            return await BuildAndPost<Response>("ruleBreaches", Filter, request, ctx);
         }
     }
 }

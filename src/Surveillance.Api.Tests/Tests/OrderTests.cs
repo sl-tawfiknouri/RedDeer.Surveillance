@@ -81,59 +81,60 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .OrderNode
-                    .FieldId()
-                    .FieldClientOrderId()
-                    .FieldOrderVersion()
-                    .FieldOrderVersionLinkId()
-                    .FieldOrderGroupId()
-                    .FieldOrderType()
-                    .FieldDirection()
-                    .FieldCurrency()
-                    .FieldSettlementCurrency()
-                    .FieldCleanDirty()
-                    .FieldAccumulatedInterest()
-                    .FieldLimitPrice()
-                    .FieldAverageFillPrice()
-                    .FieldOrderedVolume()
-                    .FieldFilledVolume()
-                    .FieldClearingAgent()
-                    .FieldDealingInstructions()
-                    .FieldOptionStrikePrice()
-                    .FieldOptionExpirationDate()
-                    .FieldOptionEuropeanAmerican()
-                    .FieldOrderDates()
-                        .FieldPlaced()
-                        .FieldBooked()
-                        .FieldAmended()
-                        .FieldRejected()
-                        .FieldCancelled()
-                        .FieldFilled()
-                        .FieldStatusChanged()
-                        .Parent<OrderNode>()
-                    .FieldTrader()
+                .Filter
+                    .Node
                         .FieldId()
-                        .FieldName()
-                        .Parent<OrderNode>()
-                    .FieldMarket()
-                        .FieldId()
-                        .FieldMarketId()
-                        .FieldMarketName()
-                        .Parent<OrderNode>()
-                    .FieldFinancialInstrument()
-                        .FieldId()
-                        .FieldClientIdentifier()
-                        .FieldSedol()
-                        .FieldIsin()
-                        .FieldFigi()
-                        .FieldCusip()
-                        .FieldLei()
-                        .FieldExchangeSymbol()
-                        .FieldBloombergTicker()
-                        .FieldSecurityName()
-                        .FieldCfi()
-                        .FieldIssuerIdentifier()
-                        .FieldReddeerId();
+                        .FieldClientOrderId()
+                        .FieldOrderVersion()
+                        .FieldOrderVersionLinkId()
+                        .FieldOrderGroupId()
+                        .FieldOrderType()
+                        .FieldDirection()
+                        .FieldCurrency()
+                        .FieldSettlementCurrency()
+                        .FieldCleanDirty()
+                        .FieldAccumulatedInterest()
+                        .FieldLimitPrice()
+                        .FieldAverageFillPrice()
+                        .FieldOrderedVolume()
+                        .FieldFilledVolume()
+                        .FieldClearingAgent()
+                        .FieldDealingInstructions()
+                        .FieldOptionStrikePrice()
+                        .FieldOptionExpirationDate()
+                        .FieldOptionEuropeanAmerican()
+                        .FieldOrderDates()
+                            .FieldPlaced()
+                            .FieldBooked()
+                            .FieldAmended()
+                            .FieldRejected()
+                            .FieldCancelled()
+                            .FieldFilled()
+                            .FieldStatusChanged()
+                            .Parent<OrderNode>()
+                        .FieldTrader()
+                            .FieldId()
+                            .FieldName()
+                            .Parent<OrderNode>()
+                        .FieldMarket()
+                            .FieldId()
+                            .FieldMarketId()
+                            .FieldMarketName()
+                            .Parent<OrderNode>()
+                        .FieldFinancialInstrument()
+                            .FieldId()
+                            .FieldClientIdentifier()
+                            .FieldSedol()
+                            .FieldIsin()
+                            .FieldFigi()
+                            .FieldCusip()
+                            .FieldLei()
+                            .FieldExchangeSymbol()
+                            .FieldBloombergTicker()
+                            .FieldSecurityName()
+                            .FieldCfi()
+                            .FieldIssuerIdentifier()
+                            .FieldReddeerId();
         
             // act  
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -219,9 +220,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .ArgumentIds(new List<int> { 4, 5 })
-                .OrderNode
-                    .FieldId();
+                .Filter
+                    .ArgumentIds(new List<int> { 4, 5 })
+                    .Node
+                        .FieldId();
 
             // act
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -256,9 +258,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .ArgumentTake(2)
-                .OrderNode
-                    .FieldId();
+                .Filter
+                    .ArgumentTake(2)
+                    .Node
+                        .FieldId();
 
             // act
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -296,9 +299,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .ArgumentTraderIds(new List<string> { "vic", "bob" })
-                .OrderNode
-                    .FieldId();
+                .Filter
+                    .ArgumentTraderIds(new List<string> { "vic", "bob" })
+                    .Node
+                        .FieldId();
 
             // act
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -363,9 +367,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
-                .OrderNode
-                    .FieldId();
+                .Filter
+                    .ArgumentReddeerIds(new List<string> { "abc", "xyz" })
+                    .Node
+                        .FieldId();
 
             // act
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -406,10 +411,11 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderQuery();
             query
-                .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
-                .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
-                .OrderNode
-                    .FieldId();
+                .Filter
+                    .ArgumentPlacedDateFrom(new DateTime(2019, 05, 11, 07, 50, 05, DateTimeKind.Utc))
+                    .ArgumentPlacedDateTo(new DateTime(2019, 05, 12, 07, 50, 05, DateTimeKind.Utc))
+                    .Node
+                        .FieldId();
 
             // act
             var orders = await _apiClient.QueryAsync(query, CancellationToken.None);

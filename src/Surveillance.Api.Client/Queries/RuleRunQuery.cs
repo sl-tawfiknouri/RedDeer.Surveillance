@@ -1,4 +1,5 @@
 ﻿using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
 using System;
@@ -11,20 +12,18 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<RuleRunDto>;
 
-    public class RuleRunQuery : Query<RuleRunQuery, Response>
+    public class RuleRunQuery : Query<Response>
     {
-        public RuleRunNode RuleRunNode { get; }
+        public RuleRunFilter<RuleRunNode> Filter { get; }
 
         public RuleRunQuery()
         {
-            RuleRunNode = new RuleRunNode(this);
+            Filter = new RuleRunFilter<RuleRunNode>(new RuleRunNode(this));
         }
-
-        public RuleRunQuery ArgumentCorrelationIds(List<string> correlationIds) => AddArgument("correlationIds", correlationIds);
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("ruleRuns", RuleRunNode, request, ctx);
+            return await BuildAndPost<Response>("ruleRuns", Filter, request, ctx);
         }
     }
 }

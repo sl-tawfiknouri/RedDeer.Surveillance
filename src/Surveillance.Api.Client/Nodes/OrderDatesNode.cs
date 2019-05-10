@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class OrderDatesNode : Node<OrderDatesNode>
     {
-        public OrderDatesNode(NodeParent parent) : base(parent) { }
+        public OrderDatesNode(Parent parent) : base(parent) { }
 
         public OrderDatesNode FieldAmended() => AddField("amendedDate");
         public OrderDatesNode FieldBooked() => AddField("bookedDate");

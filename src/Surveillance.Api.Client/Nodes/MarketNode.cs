@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class MarketNode : Node<MarketNode>
     {
-        public MarketNode(NodeParent parent) : base(parent) { }
+        public MarketNode(Parent parent) : base(parent) { }
 
         public MarketNode FieldId() => AddField("id");
         public MarketNode FieldMarketId() => AddField("marketId");

@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class FinancialInstrumentNode : Node<FinancialInstrumentNode>
     {
-        public FinancialInstrumentNode(NodeParent parent) : base(parent) { }
+        public FinancialInstrumentNode(Parent parent) : base(parent) { }
 
         public FinancialInstrumentNode FieldId() => AddField("id");
         public FinancialInstrumentNode FieldClientIdentifier() => AddField("clientIdentifier");

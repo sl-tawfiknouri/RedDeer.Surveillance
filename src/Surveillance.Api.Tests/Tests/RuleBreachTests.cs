@@ -34,20 +34,21 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleBreachQuery();
             query
-                .RuleBreachNode
-                    .FieldId()
-                    .FieldStartOfPeriodUnderInvestigation()
-                    .FieldEndOfPeriodUnderInvestigation()
-                    .FieldReddeerEnrichmentId()
-                    .FieldTitle()
-                    .FieldDescription()
-                    .FieldVenue()
-                    .FieldAssetCfi()
-                    .FieldCreatedOn()
-                    .FieldRuleId()
-                    .FieldCorrelationId()
-                    .FieldIsBackTest()
-                    .FieldSystemOperationId();
+                .Filter
+                    .Node
+                        .FieldId()
+                        .FieldStartOfPeriodUnderInvestigation()
+                        .FieldEndOfPeriodUnderInvestigation()
+                        .FieldReddeerEnrichmentId()
+                        .FieldTitle()
+                        .FieldDescription()
+                        .FieldVenue()
+                        .FieldAssetCfi()
+                        .FieldCreatedOn()
+                        .FieldRuleId()
+                        .FieldCorrelationId()
+                        .FieldIsBackTest()
+                        .FieldSystemOperationId();
 
             // act
             var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -90,9 +91,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleBreachQuery();
             query
-                .RuleBreachNode
-                    .FieldId()
-                    .FieldRuleId();
+                .Filter
+                    .Node
+                        .FieldId()
+                        .FieldRuleId();
 
             // act
             var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);
@@ -157,13 +159,14 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new RuleBreachQuery();
             query
-                .ArgumentId(5)
-                .RuleBreachNode
-                    .FieldId()
-                    .FieldRuleId()
-                    .FieldOrders()
+                .Filter
+                    .ArgumentId(5)
+                    .Node
                         .FieldId()
-                        .FieldLimitPrice();
+                        .FieldRuleId()
+                        .FieldOrders()
+                            .FieldId()
+                            .FieldLimitPrice();
 
             // act
             var ruleBreaches = await _apiClient.QueryAsync(query, CancellationToken.None);

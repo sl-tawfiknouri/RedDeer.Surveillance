@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class TraderNode : Node<TraderNode>
     {
-        public TraderNode(NodeParent parent) : base(parent) { }
+        public TraderNode(Parent parent) : base(parent) { }
 
         public TraderNode FieldId() => AddField("id");
         public TraderNode FieldName() => AddField("name");

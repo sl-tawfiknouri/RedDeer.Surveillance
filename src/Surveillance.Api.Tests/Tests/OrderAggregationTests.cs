@@ -40,9 +40,10 @@ namespace Surveillance.Api.Tests.Tests
 
             var query = new OrderAggregationQuery();
             query
-                .AggregationNode
-                    .FieldKey()
-                    .FieldCount();
+                .Filter
+                    .Node
+                        .FieldKey()
+                        .FieldCount();
 
             // act
             var aggregations = await _apiClient.QueryAsync(query, CancellationToken.None);

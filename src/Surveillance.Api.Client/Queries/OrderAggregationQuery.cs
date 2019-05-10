@@ -1,4 +1,5 @@
 ﻿using Surveillance.Api.Client.Dtos;
+using Surveillance.Api.Client.Filters;
 using Surveillance.Api.Client.Infrastructure;
 using Surveillance.Api.Client.Nodes;
 using System;
@@ -11,18 +12,18 @@ namespace Surveillance.Api.Client.Queries
 {
     using Response = List<AggregationDto>;
 
-    public class OrderAggregationQuery : Query<OrderAggregationQuery, Response>
+    public class OrderAggregationQuery : Query<Response>
     {
-        public AggregationNode AggregationNode { get; }
+        public OrderFilter<AggregationNode> Filter { get; }
 
         public OrderAggregationQuery()
         {
-            AggregationNode = new AggregationNode(this);
+            Filter = new OrderFilter<AggregationNode>(new AggregationNode(this));
         }
 
         internal override async Task<Response> HandleAsync(IRequest request, CancellationToken ctx)
         {
-            return await BuildAndPost<Response>("orderAggregation", AggregationNode as Node<AggregationNode>, request, ctx);
+            return await BuildAndPost<Response>("orderAggregation", Filter, request, ctx);
         }
     }
 }

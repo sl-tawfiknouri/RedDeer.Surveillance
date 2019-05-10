@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class RuleRunNode : Node<RuleRunNode>
     {
-        public RuleRunNode(NodeParent parent) : base(parent) { }
+        public RuleRunNode(Parent parent) : base(parent) { }
 
         public RuleRunNode FieldId() => AddField("id");
         public RuleRunNode FieldCorrelationId() => AddField("correlationId");

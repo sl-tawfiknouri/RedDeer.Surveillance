@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Infrastructure
 {
-    public abstract class NodeParent
+    public abstract class NodeBase : Parent
     {
-        protected readonly Dictionary<string, NodeParent> _fields = new Dictionary<string, NodeParent>();
+        protected readonly Dictionary<string, Parent> _fields = new Dictionary<string, Parent>();
 
-        internal string Build(string name, Dictionary<string, object> argumentsDictionary)
+        internal override string Build(string name, Dictionary<string, object> argumentsDictionary)
         {
             var arguments = new List<string>();
             if (argumentsDictionary != null)

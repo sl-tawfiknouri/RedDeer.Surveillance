@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Surveillance.Api.Client.Infrastructure
 {
-    public class Node<Z> : NodeParent where Z : class
+    public class Node<Z> : NodeBase where Z : class
     {
-        private readonly NodeParent _parent;
+        private readonly Parent _parent;
 
-        public Node(NodeParent parent)
+        public Node(Parent parent)
         {
             _parent = parent;
         }
 
-        public T Parent<T>() where T : NodeParent
+        public T Parent<T>() where T : Parent
         {
             return _parent as T;
         }
@@ -26,7 +26,7 @@ namespace Surveillance.Api.Client.Infrastructure
             return this as Z;
         }
 
-        protected T AddChild<T>(string name, T node) where T : NodeParent
+        protected T AddChild<T>(string name, T node) where T : Parent
         {
             _fields[name] = node;
             return node;

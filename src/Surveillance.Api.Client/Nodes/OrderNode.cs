@@ -7,7 +7,7 @@ namespace Surveillance.Api.Client.Nodes
 {
     public class OrderNode : Node<OrderNode>
     {
-        public OrderNode(NodeParent parent) : base(parent) { }
+        public OrderNode(Parent parent) : base(parent) { }
 
         public OrderNode FieldId() => AddField("id");
         public OrderNode FieldClientOrderId() => AddField("clientOrderId");

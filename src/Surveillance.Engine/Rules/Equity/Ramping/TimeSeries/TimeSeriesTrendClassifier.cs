@@ -38,9 +38,11 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping.TimeSeries
                     timeSegment);
             }
 
+            var orderedTimeBars = timeBars.OrderBy(_ => _.TimeStamp).ToList();
+
             // basic implementation for initial work - we will make this more sophisticated in response to tests
-            var initial = timeBars.FirstOrDefault();
-            var final = timeBars.LastOrDefault();
+            var initial = orderedTimeBars.FirstOrDefault();
+            var final = orderedTimeBars.LastOrDefault();
 
             if (initial == null
                 || final == null)

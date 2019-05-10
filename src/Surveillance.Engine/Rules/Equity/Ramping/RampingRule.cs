@@ -146,7 +146,7 @@ namespace Surveillance.Engine.Rules.Rules.Equity.Ramping
             }
 
             if (!rampingAnalysisResults.Any()
-                || !rampingAnalysisResults.Last().HasRampingStrategy()
+                || !rampingAnalysisResults.First().HasRampingStrategy()
                 || rampingAnalysisResults.All(_ => !_.HasRampingStrategy()))
             {
                 // LOG THEN EXIT

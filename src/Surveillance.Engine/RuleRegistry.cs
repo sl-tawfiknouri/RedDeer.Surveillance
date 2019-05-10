@@ -207,7 +207,8 @@ namespace Surveillance.Engine.Rules
             For<IRampingRule>().Use<RampingRule>();
             For<IEquityRuleRampingFactory>().Use<EquityRuleRampingFactory>();
             For<IRampingRuleMessageSender>().Use<RampingRuleMessageSender>();
-            
+            For<IRampingRuleCachedMessageSender>().Use<RampingRuleCachedMessageSender>();
+
             For<IPortfolioFactory>().Use<PortfolioFactory>();
             
             For<IRuleParameterToRulesMapper>().Use<RuleParameterToRulesMapper>();

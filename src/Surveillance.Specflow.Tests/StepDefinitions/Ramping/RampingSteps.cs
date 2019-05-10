@@ -89,7 +89,6 @@ namespace Surveillance.Specflow.Tests.StepDefinitions.Ramping
                     _rampingAnalyser,
                     _equityOrderFilterService,
                     universeMarketCacheFactory,
-                    _dataRequestSubscriber,
                     _tradingHoursService,
                     new NullLogger<RampingRule>(),
                     new NullLogger<TradingHistoryStack>());

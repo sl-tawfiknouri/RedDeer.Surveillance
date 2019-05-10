@@ -32,7 +32,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _equityWashTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
-        private readonly IRampingRuleMessageSender _rampingRuleMessageSender;
+        private readonly IRampingRuleCachedMessageSender _rampingRuleMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         private readonly bool _isBackTest;
@@ -49,7 +49,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender equityWashTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
-            IRampingRuleMessageSender rampingRuleMessageSender,
+            IRampingRuleCachedMessageSender rampingRuleMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _isBackTest = isBackTest;

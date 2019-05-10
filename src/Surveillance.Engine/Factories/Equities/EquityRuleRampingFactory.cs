@@ -18,7 +18,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
 {
     public class EquityRuleRampingFactory : IEquityRuleRampingFactory
     {
-        private readonly IUniverseDataRequestsSubscriber _dataRequestSubscriber;
         private readonly IUniverseEquityOrderFilterService _orderFilterService;
         private readonly IMarketTradingHoursService _tradingHoursService;
         private readonly IUniverseMarketCacheFactory _factory;
@@ -30,7 +29,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             IRampingAnalyser rampingAnalyser,
             IUniverseEquityOrderFilterService orderFilterService,
             IUniverseMarketCacheFactory factory,
-            IUniverseDataRequestsSubscriber dataRequestSubscriber,
             IMarketTradingHoursService tradingHoursService,
             ILogger<IRampingRule> logger,
             ILogger<TradingHistoryStack> tradingHistoryLogger)
@@ -40,7 +38,6 @@ namespace Surveillance.Engine.Rules.Factories.Equities
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tradingHistoryLogger = tradingHistoryLogger ?? throw new ArgumentNullException(nameof(tradingHistoryLogger));
-            _dataRequestSubscriber = dataRequestSubscriber ?? throw new ArgumentNullException(nameof(dataRequestSubscriber));
             _tradingHoursService = tradingHoursService ?? throw new ArgumentNullException(nameof(tradingHoursService));
         }
 
@@ -60,7 +57,7 @@ namespace Surveillance.Engine.Rules.Factories.Equities
                 runMode,
                 _rampingAnalyser,
                 _tradingHoursService,
-                _dataRequestSubscriber,
+                dataRequestSubscriber,
                 _logger,
                 _tradingHistoryLogger);
         }

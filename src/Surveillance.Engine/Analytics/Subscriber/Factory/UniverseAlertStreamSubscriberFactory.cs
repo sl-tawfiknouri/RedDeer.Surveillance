@@ -23,7 +23,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
         private readonly ISpoofingRuleMessageSender _spoofingMessageSender;
         private readonly IWashTradeCachedMessageSender _washTradeMessageSender;
         private readonly IWashTradeCachedMessageSender _fixedIncomeWashTradeMessageSender;
-        private readonly IRampingRuleMessageSender _rampingMessageSender;
+        private readonly IRampingRuleCachedMessageSender _rampingMessageSender;
         private readonly ILogger<IUniverseAlertSubscriber> _logger;
 
         public UniverseAlertStreamSubscriberFactory(
@@ -35,7 +35,7 @@ namespace Surveillance.Engine.Rules.Analytics.Subscriber.Factory
             ISpoofingRuleMessageSender spoofingMessageSender,
             IWashTradeCachedMessageSender washTradeMessageSender,
             IWashTradeCachedMessageSender fixedIncomeWashTradeMessageSender,
-            IRampingRuleMessageSender rampingMessageSender,
+            IRampingRuleCachedMessageSender rampingMessageSender,
             ILogger<IUniverseAlertSubscriber> logger)
         {
             _cancelledOrderMessageSender =
